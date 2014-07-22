@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
     public class LineFileDocs : IDisposable
     {
 
-        private StreamReader Reader;
+        private TextReader Reader;
         private static readonly int BUFFER_SIZE = 1 << 16; // 64K
         private readonly AtomicInteger Id = new AtomicInteger();
         private readonly string Path;
@@ -114,7 +114,7 @@ namespace Lucene.Net.Util
                     if (Path.EndsWith(".gz"))
                     {
                         // if it is a gzip file, we need to use InputStream and slowly skipTo:
-                        @is = new FileStream(file.FullName, FileMode.Append);
+                        @is = new FileStream(file.FullName, FileMode.Append, FileAccess.Write);
                     }
                     else
                     {
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util
                             Console.WriteLine("TEST: LineFileDocs: file seek to fp=" + seekTo + " on open");
                         }
                         channel.Position = seekTo;
-                        @is = new FileStream(channel.ToString(), FileMode.Append);
+                        @is = new FileStream(channel.ToString(), FileMode.Append, FileAccess.Write);
                         needSkip = false;
                     }
                 }
@@ -138,7 +138,15 @@ namespace Lucene.Net.Util
 
                 if (Path.EndsWith(".gz"))
                 {
-                    @is = new GZipStream(@is, CompressionMode.Decompress);
+                    using (var gzs = new GZipStream(@is, CompressionMode.Decompress))
+                    {
+                        var temp = new MemoryStream();
+                        gzs.CopyTo(temp);
+                        // Free up the previous stream
+                        @is.Close();
+                        // Use the decompressed stream now
+                        @is = temp;
+                    }
                     // guestimate:
                     size = (long)(size * 2.8);
                 }
@@ -168,7 +176,9 @@ namespace Lucene.Net.Util
                 }
 
                 //CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
-                Reader = new StreamReader(@is.ToString());//, BUFFER_SIZE);
+                MemoryStream ms = new MemoryStream();
+                @is.CopyTo(ms);
+                Reader = new StringReader(Encoding.UTF8.GetString(ms.ToArray()));//, BUFFER_SIZE);
 
                 if (seekTo > 0L)
                 {

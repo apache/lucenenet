@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
                     reader.FillSlice(slice, pos, len);
                     for (int byteUpto = 0; byteUpto < len; byteUpto++)
                     {
-                        Assert.AreEqual(answer[pos + byteUpto], slice.Bytes[slice.Offset + byteUpto]);
+                        Assert.AreEqual(answer[pos + byteUpto], (byte)slice.Bytes[slice.Offset + byteUpto]);
                     }
                 }
                 input.Dispose();

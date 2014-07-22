@@ -71,8 +71,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Release()
             {
-                //LUCENE TO-DO Not sure why this method isn't registering. DVP : IDisposable
-                //((DocValuesProducer)@object).Dispose();
+                @object.Dispose();
                 lock (OuterInstance)
                 {
                     OuterInstance.GenDVProducers.Remove(Gen);
@@ -87,8 +86,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 RefCount<DocValuesProducer> dvp;
-                GenDVProducers.TryGetValue(gen, out dvp);
-                if (dvp == null)
+                if (!(GenDVProducers.TryGetValue(gen, out dvp)))
                 {
                     dvp = NewDocValuesProducer(si, context, dir, dvFormat, gen, infos, termsIndexDivisor);
                     Debug.Assert(dvp != null);

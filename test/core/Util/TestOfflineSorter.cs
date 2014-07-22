@@ -43,7 +43,7 @@ namespace Lucene.Net.Util
             base.SetUp();
             TempDir = CreateTempDir("mergesort");
             TestUtil.Rm(TempDir);
-            TempDir.mkdirs();
+            TempDir.Create();
         }
 
         [TearDown]
@@ -105,7 +105,7 @@ namespace Lucene.Net.Util
             return bytes;
         }
 
-        internal static readonly IComparer<sbyte[]> unsignedByteOrderComparator = new ComparatorAnonymousInnerClassHelper();
+        internal static readonly IComparer<byte[]> unsignedByteOrderComparator = new ComparatorAnonymousInnerClassHelper();
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<byte[]>
         {
@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
         {
             File unsorted = WriteAll("unsorted", data);
 
-            Arrays.Sort(data, unsignedByteOrderComparator);
+            Array.Sort(data, unsignedByteOrderComparator);
             File golden = WriteAll("golden", data);
 
             File sorted = new File(TempDir, "sorted");

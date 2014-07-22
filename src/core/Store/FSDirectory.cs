@@ -21,6 +21,7 @@ using System.Collections.Generic;
 
 // Used only for WRITE_LOCK_NAME in deprecated create=true case:
 using System.IO;
+using System.Linq;
 using Lucene.Net.Support;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Constants = Lucene.Net.Util.Constants;
@@ -255,28 +256,27 @@ namespace Lucene.Net.Store
         ///  <exception cref="System.IO.IOException"> if list() returns null  </exception>
         public static string[] ListAll(DirectoryInfo dir)
         {
-            if (!dir.Exists)
+            if (!System.IO.Directory.Exists(dir.FullName))
             {
                 throw new NoSuchDirectoryException("directory '" + dir + "' does not exist");
             }
-            /*else if (!File.Exists(dir.FullName))
+            else if (File.Exists(dir.FullName))
             {
-              throw new NoSuchDirectoryException("file '" + dir + "' exists but is not a directory");
-            }*/
+                throw new NoSuchDirectoryException("file '" + dir + "' exists but is not a directory");
+            }
 
             // Exclude subdirs
-            FileInfo[] files = dir.GetFiles();
+            FileInfo[] files = dir.EnumerateFiles().ToArray();
             string[] result = new String[files.Length];
 
             for (int i = 0; i < files.Length; i++)
             {
                 result[i] = files[i].Name;
             }
-            /*
-              if (result == null)
-              {
-                  throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
-              }*/
+            if (result == null)
+            {
+                throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
+            }
 
             return result;
         }

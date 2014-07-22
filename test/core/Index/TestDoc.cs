@@ -64,10 +64,8 @@ namespace Lucene.Net.Index
                 Console.WriteLine("TEST: setUp");
             }
             WorkDir = CreateTempDir("TestDoc");
-            WorkDir.mkdirs();
 
             IndexDir = CreateTempDir("testIndex");
-            IndexDir.mkdirs();
 
             Directory directory = NewFSDirectory(IndexDir);
             directory.Dispose();
@@ -85,8 +83,8 @@ namespace Lucene.Net.Index
 
             try
             {
-                FileInfo f = new FileInfo(WorkDir, name);
-                if (f.Exists())
+                FileInfo f = new FileInfo(Path.Combine(WorkDir.FullName, name));
+                if (f.Exists)
                 {
                     f.Delete();
                 }
@@ -200,7 +198,7 @@ namespace Lucene.Net.Index
 
         private SegmentCommitInfo IndexDoc(IndexWriter writer, string fileName)
         {
-            FileInfo file = new FileInfo(WorkDir, fileName);
+            FileInfo file = new FileInfo(Path.Combine(WorkDir.FullName, fileName));
             Document doc = new Document();
             InputStreamReader @is = new InputStreamReader(new FileInputStream(file), IOUtils.CHARSET_UTF_8);
             doc.Add(new TextField("contents", @is));

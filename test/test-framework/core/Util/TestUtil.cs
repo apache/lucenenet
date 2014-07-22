@@ -1354,7 +1354,7 @@ namespace Lucene.Net.Util
             {
                 // mix up case
                 string mixedUp = TestUtil.RandomlyRecaseCodePoints(random, sb.ToString());
-                Debug.Assert(mixedUp.Length == sb.Length);
+                Debug.Assert(mixedUp.Length == sb.Length, "Lengths are not the same: mixedUp = " + mixedUp + ", length = " + mixedUp.Length + ", sb = " + sb + ", length = " + sb.Length);
                 return mixedUp;
             }
             else

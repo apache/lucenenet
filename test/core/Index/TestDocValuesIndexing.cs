@@ -609,7 +609,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                w.AddIndexes(new Directory[] { dir2 });
+                w.AddIndexes(dir2);
             }
             catch (System.ArgumentException iae)
             {

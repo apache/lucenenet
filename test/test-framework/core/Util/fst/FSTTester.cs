@@ -306,94 +306,94 @@ namespace Lucene.Net.Util.Fst
 
 
         internal virtual FST<T> DoTest(int prune1, int prune2, bool allowRandomSuffixSharing)
-	  {
-		if (LuceneTestCase.VERBOSE)
-		{
-		  Console.WriteLine("\nTEST: prune1=" + prune1 + " prune2=" + prune2);
-		}
+        {
+            if (LuceneTestCase.VERBOSE)
+            {
+                Console.WriteLine("\nTEST: prune1=" + prune1 + " prune2=" + prune2);
+            }
 
-		bool willRewrite = Random.NextBoolean();
+            bool willRewrite = Random.NextBoolean();
 
-		Builder<T> builder = new Builder<T>(InputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, prune1, prune2, prune1 == 0 && prune2 == 0, allowRandomSuffixSharing ? Random.NextBoolean() : true, allowRandomSuffixSharing ? TestUtil.NextInt(Random, 1, 10) : int.MaxValue, Outputs, null, willRewrite, PackedInts.DEFAULT, true, 15);
-		if (LuceneTestCase.VERBOSE)
-		{
-		  if (willRewrite)
-		  {
-			Console.WriteLine("TEST: packed FST");
-		  }
-		  else
-		  {
-			Console.WriteLine("TEST: non-packed FST");
-		  }
-		}
+            Builder<T> builder = new Builder<T>(InputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, prune1, prune2, prune1 == 0 && prune2 == 0, allowRandomSuffixSharing ? Random.NextBoolean() : true, allowRandomSuffixSharing ? TestUtil.NextInt(Random, 1, 10) : int.MaxValue, Outputs, null, willRewrite, PackedInts.DEFAULT, true, 15);
+            if (LuceneTestCase.VERBOSE)
+            {
+                if (willRewrite)
+                {
+                    Console.WriteLine("TEST: packed FST");
+                }
+                else
+                {
+                    Console.WriteLine("TEST: non-packed FST");
+                }
+            }
 
-		foreach (InputOutput<T> pair in Pairs)
-		{
-		  if (pair.Output is IList)
-		  {
-			IList<long> longValues = (IList<long>) pair.Output;
-			Builder<object> builderObject = builder as Builder<object>;
-			foreach (long value in longValues)
-			{
-			  builderObject.Add(pair.Input, value);
-			}
-		  }
-		  else
-		  {
-			builder.Add(pair.Input, pair.Output);
-		  }
-		}
-		FST<T> fst = builder.Finish();
+            foreach (InputOutput<T> pair in Pairs)
+            {
+                if (pair.Output is IList)
+                {
+                    IList<long> longValues = (IList<long>)pair.Output;
+                    Builder<object> builderObject = builder as Builder<object>;
+                    foreach (long value in longValues)
+                    {
+                        builderObject.Add(pair.Input, value);
+                    }
+                }
+                else
+                {
+                    builder.Add(pair.Input, pair.Output);
+                }
+            }
+            FST<T> fst = builder.Finish();
 
-		if (Random.NextBoolean() && fst != null && !willRewrite)
-		{
-		  IOContext context = LuceneTestCase.NewIOContext(Random);
-		  IndexOutput @out = Dir.CreateOutput("fst.bin", context);
-		  fst.Save(@out);
-		  @out.Dispose();
-		  IndexInput @in = Dir.OpenInput("fst.bin", context);
-		  try
-		  {
-			fst = new FST<T>(@in, Outputs);
-		  }
-		  finally
-		  {
-			@in.Dispose();
-			Dir.DeleteFile("fst.bin");
-		  }
-		}
+            if (Random.NextBoolean() && fst != null && !willRewrite)
+            {
+                IOContext context = LuceneTestCase.NewIOContext(Random);
+                IndexOutput @out = Dir.CreateOutput("fst.bin", context);
+                fst.Save(@out);
+                @out.Dispose();
+                IndexInput @in = Dir.OpenInput("fst.bin", context);
+                try
+                {
+                    fst = new FST<T>(@in, Outputs);
+                }
+                finally
+                {
+                    @in.Dispose();
+                    Dir.DeleteFile("fst.bin");
+                }
+            }
 
-		if (LuceneTestCase.VERBOSE && Pairs.Count <= 20 && fst != null)
-		{
-		  TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.Open), IOUtils.CHARSET_UTF_8);
-		  Util.toDot(fst, w, false, false);
-		  w.Close();
-		  Console.WriteLine("SAVED out.dot");
-		}
+            if (LuceneTestCase.VERBOSE && Pairs.Count <= 20 && fst != null)
+            {
+                TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.Open), IOUtils.CHARSET_UTF_8);
+                Util.toDot(fst, w, false, false);
+                w.Close();
+                Console.WriteLine("SAVED out.dot");
+            }
 
-		if (LuceneTestCase.VERBOSE)
-		{
-		  if (fst == null)
-		  {
-			Console.WriteLine("  fst has 0 nodes (fully pruned)");
-		  }
-		  else
-		  {
-			Console.WriteLine("  fst has " + fst.NodeCount + " nodes and " + fst.ArcCount + " arcs");
-		  }
-		}
+            if (LuceneTestCase.VERBOSE)
+            {
+                if (fst == null)
+                {
+                    Console.WriteLine("  fst has 0 nodes (fully pruned)");
+                }
+                else
+                {
+                    Console.WriteLine("  fst has " + fst.NodeCount + " nodes and " + fst.ArcCount + " arcs");
+                }
+            }
 
-		if (prune1 == 0 && prune2 == 0)
-		{
-		  VerifyUnPruned(InputMode, fst);
-		}
-		else
-		{
-		  VerifyPruned(InputMode, fst, prune1, prune2);
-		}
+            if (prune1 == 0 && prune2 == 0)
+            {
+                VerifyUnPruned(InputMode, fst);
+            }
+            else
+            {
+                VerifyPruned(InputMode, fst, prune1, prune2);
+            }
 
-		return fst;
-	  }
+            return fst;
+        }
 
         protected internal virtual bool OutputsEqual(T a, T b)
         {

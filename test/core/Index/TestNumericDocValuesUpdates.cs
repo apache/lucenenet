@@ -1270,7 +1270,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Random random = Random();
-                    while (NumUpdates.AndDecrement > 0)
+                    while (NumUpdates.GetAndDecrement() > 0)
                     {
                         double group = random.NextDouble();
                         Term t;

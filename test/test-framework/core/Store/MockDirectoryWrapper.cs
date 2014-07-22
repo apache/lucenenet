@@ -727,8 +727,7 @@ namespace Lucene.Net.Store
 
         internal virtual void AddFileHandle(IDisposable c, string name, Handle handle)
         {
-
-            Trace.TraceInformation("Add {0} {1}", c, name);
+            //Trace.TraceInformation("Add {0} {1}", c, name);
 
             lock (this)
             {
@@ -1071,7 +1070,7 @@ namespace Lucene.Net.Store
 
         internal virtual void RemoveOpenFile(IDisposable c, string name)
         {
-            Trace.TraceInformation("Remove {0} {1}", c, name);
+            //Trace.TraceInformation("Rem {0} {1}", c, name);
 
             lock (this)
             {

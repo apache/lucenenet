@@ -88,6 +88,9 @@ namespace Lucene.Net.Support
         {
             for (int i = offset; i < offset + length; i++)
             {
+                // dst is being built in big-endian format (opposite of typical C#)
+                // When reading back, to make any sense of this, the bytes requested from the buffer
+                // MUST have their endianness flipped
                 dst[i] = Get();
             }
 

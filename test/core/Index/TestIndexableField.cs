@@ -2,451 +2,458 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using Lucene.Net.Document;
 
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
 
-	using Analyzer = Lucene.Net.Analysis.Analyzer;
-	using TokenStream = Lucene.Net.Analysis.TokenStream;
-	using Codec = Lucene.Net.Codecs.Codec;
-	using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
-	using Document = Lucene.Net.Document.Document;
-	using Field = Lucene.Net.Document.Field;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using BooleanClause = Lucene.Net.Search.BooleanClause;
-	using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-	using TermQuery = Lucene.Net.Search.TermQuery;
-	using TopDocs = Lucene.Net.Search.TopDocs;
-	using Directory = Lucene.Net.Store.Directory;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    using BooleanClause = Lucene.Net.Search.BooleanClause;
+    using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using TermQuery = Lucene.Net.Search.TermQuery;
+    using TopDocs = Lucene.Net.Search.TopDocs;
+    using Directory = Lucene.Net.Store.Directory;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
     [TestFixture]
-	public class TestIndexableField : LuceneTestCase
-	{
+    public class TestIndexableField : LuceneTestCase
+    {
 
-	  private class MyField : IndexableField
-	  {
-		  private readonly TestIndexableField OuterInstance;
+        private class MyField : IndexableField
+        {
+            private readonly TestIndexableField OuterInstance;
 
 
-		  internal readonly int Counter;
-	      internal readonly IndexableFieldType fieldType;
+            internal readonly int Counter;
+            internal readonly IndexableFieldType fieldType;
 
-	      public MyField()
-	      {
-	          fieldType = new IndexableFieldTypeAnonymousInnerClassHelper(this);
-	      }
+            public MyField()
+            {
+                fieldType = new IndexableFieldTypeAnonymousInnerClassHelper(this);
+            }
 
-		private class IndexableFieldTypeAnonymousInnerClassHelper : IndexableFieldType
-		{
-		    private MyField OuterInstance;
-			public IndexableFieldTypeAnonymousInnerClassHelper(MyField outerInstance)
-			{
-			    OuterInstance = outerInstance;
-			}
-
-			public bool Indexed
-			{
-			    get { return (OuterInstance.Counter % 10) != 3; }
-                set { }
-			}
-
-			public bool Stored
-			{
-			    get { return (OuterInstance.Counter & 1) == 0 || (OuterInstance.Counter%10) == 3; }
-                set { }
-			}
-
-			public bool Tokenized
-			{
-			    get { return true; }
-                set { }
-			}
-
-			public bool StoreTermVectors
-			{
-			    get { return Indexed && OuterInstance.Counter%2 == 1 && OuterInstance.Counter%10 != 9; }
-                set { }
-			}
-
-			public bool StoreTermVectorOffsets
-			{
-			    get { return StoreTermVectors && OuterInstance.Counter%10 != 9; }
-                set { }
-			}
-
-			public bool StoreTermVectorPositions
-			{
-			    get { return StoreTermVectors && OuterInstance.Counter%10 != 9; }
-                set { }
-			}
-
-			public bool StoreTermVectorPayloads
-			{
-			    get
-			    {
-			       if (Codec.Default is Lucene3xCodec)
-			      {
-				    return false; // 3.x doesnt support
-			      }
-			      else
-			      {
-				    return StoreTermVectors && OuterInstance.Counter % 10 != 9;
-			      } 
-			    }
-                set { }
-			}
-
-			public bool OmitNorms
-			{
-			    get { return false; }
-                set { }
-			}
-
-			public FieldInfo.IndexOptions_e? IndexOptionsValue
-			{
-			    get { return FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS; }
-                set { }
-			}
-
-			public DocValuesType? DocValueType
-			{
-			    get { return null; }
-                set { }
-			}
-		}
-
-		public MyField(TestIndexableField outerInstance, int counter)
-		{
-			this.OuterInstance = outerInstance;
-		  this.Counter = counter;
-		}
-
-		public string Name()
-		{
-		  return "f" + Counter;
-		}
-
-		public float GetBoost()
-		{
-		  return 1.0f + (float)Random().NextDouble();
-		}
-
-		public BytesRef BinaryValue()
-		{
-		  if ((Counter % 10) == 3)
-		  {
-			sbyte[] bytes = new sbyte[10];
-			for (int idx = 0;idx < bytes.Length;idx++)
-			{
-			  bytes[idx] = (sbyte)(Counter + idx);
-			}
-			return new BytesRef(bytes, 0, bytes.Length);
-		  }
-		  else
-		  {
-			return null;
-		  }
-		}
-
-		public string StringValue
-		{
-		    get
-		    {
-                int fieldID = Counter % 10;
-                if (fieldID != 3 && fieldID != 7)
+            private class IndexableFieldTypeAnonymousInnerClassHelper : IndexableFieldType
+            {
+                private MyField OuterInstance;
+                public IndexableFieldTypeAnonymousInnerClassHelper(MyField outerInstance)
                 {
-                    return "text " + Counter;
+                    OuterInstance = outerInstance;
+                }
+
+                public bool Indexed
+                {
+                    get { return (OuterInstance.Counter % 10) != 3; }
+                    set { }
+                }
+
+                public bool Stored
+                {
+                    get { return (OuterInstance.Counter & 1) == 0 || (OuterInstance.Counter % 10) == 3; }
+                    set { }
+                }
+
+                public bool Tokenized
+                {
+                    get { return true; }
+                    set { }
+                }
+
+                public bool StoreTermVectors
+                {
+                    get { return Indexed && OuterInstance.Counter % 2 == 1 && OuterInstance.Counter % 10 != 9; }
+                    set { }
+                }
+
+                public bool StoreTermVectorOffsets
+                {
+                    get { return StoreTermVectors && OuterInstance.Counter % 10 != 9; }
+                    set { }
+                }
+
+                public bool StoreTermVectorPositions
+                {
+                    get { return StoreTermVectors && OuterInstance.Counter % 10 != 9; }
+                    set { }
+                }
+
+                public bool StoreTermVectorPayloads
+                {
+                    get
+                    {
+                        if (Codec.Default is Lucene3xCodec)
+                        {
+                            return false; // 3.x doesnt support
+                        }
+                        else
+                        {
+                            return StoreTermVectors && OuterInstance.Counter % 10 != 9;
+                        }
+                    }
+                    set { }
+                }
+
+                public bool OmitNorms
+                {
+                    get { return false; }
+                    set { }
+                }
+
+                public FieldInfo.IndexOptions_e? IndexOptionsValue
+                {
+                    get { return FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS; }
+                    set { }
+                }
+
+                public FieldType.NumericType? NumericTypeValue
+                {
+                    get { throw new NotImplementedException(); }
+                    set { }
+                }
+
+                public DocValuesType? DocValueType
+                {
+                    get { return null; }
+                    set { }
+                }
+            }
+
+            public MyField(TestIndexableField outerInstance, int counter)
+            {
+                this.OuterInstance = outerInstance;
+                this.Counter = counter;
+            }
+
+            public string Name()
+            {
+                return "f" + Counter;
+            }
+
+            public float GetBoost()
+            {
+                return 1.0f + (float)Random().NextDouble();
+            }
+
+            public BytesRef BinaryValue()
+            {
+                if ((Counter % 10) == 3)
+                {
+                    sbyte[] bytes = new sbyte[10];
+                    for (int idx = 0; idx < bytes.Length; idx++)
+                    {
+                        bytes[idx] = (sbyte)(Counter + idx);
+                    }
+                    return new BytesRef(bytes, 0, bytes.Length);
                 }
                 else
                 {
                     return null;
                 }
-		    }
-		}
+            }
 
-		public TextReader ReaderValue
-		{
-		    get
-		    {
-		          if (Counter % 10 == 7)
-		          {
-			        return new StringReader("text " + Counter);
-		          }
-		          else
-		          {
-			        return null;
-		          }
-		    }
-            
-		}
+            public string StringValue
+            {
+                get
+                {
+                    int fieldID = Counter % 10;
+                    if (fieldID != 3 && fieldID != 7)
+                    {
+                        return "text " + Counter;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
 
-		public object NumericValue
-		{
-		    get { return null; }
-		}
+            public TextReader ReaderValue
+            {
+                get
+                {
+                    if (Counter % 10 == 7)
+                    {
+                        return new StringReader("text " + Counter);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
 
-		public IndexableFieldType FieldType()
-		{
-		  return fieldType;
-		}
+            }
 
-		public TokenStream GetTokenStream(Analyzer analyzer)
-		{
-		  return ReaderValue != null ? analyzer.TokenStream(Name(), ReaderValue) : analyzer.TokenStream(Name(), new StringReader(StringValue));
-		}
-	  }
+            public object NumericValue
+            {
+                get { return null; }
+            }
 
-	  // Silly test showing how to index documents w/o using Lucene's core
-	  // Document nor Field class
-      [Test]
-      public virtual void TestArbitraryFields()
-	  {
+            public IndexableFieldType FieldType()
+            {
+                return fieldType;
+            }
 
-		Directory dir = NewDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            public TokenStream GetTokenStream(Analyzer analyzer)
+            {
+                return ReaderValue != null ? analyzer.TokenStream(Name(), ReaderValue) : analyzer.TokenStream(Name(), new StringReader(StringValue));
+            }
+        }
 
-		int NUM_DOCS = AtLeast(27);
-		if (VERBOSE)
-		{
-		  Console.WriteLine("TEST: " + NUM_DOCS + " docs");
-		}
-		int[] fieldsPerDoc = new int[NUM_DOCS];
-		int baseCount = 0;
+        // Silly test showing how to index documents w/o using Lucene's core
+        // Document nor Field class
+        [Test]
+        public virtual void TestArbitraryFields()
+        {
 
-		for (int docCount = 0;docCount < NUM_DOCS;docCount++)
-		{
-		  int fieldCount = TestUtil.NextInt(Random(), 1, 17);
-		  fieldsPerDoc[docCount] = fieldCount - 1;
+            Directory dir = NewDirectory();
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 
-		  int finalDocCount = docCount;
-		  if (VERBOSE)
-		  {
-			Console.WriteLine("TEST: " + fieldCount + " fields in doc " + docCount);
-		  }
+            int NUM_DOCS = AtLeast(27);
+            if (VERBOSE)
+            {
+                Console.WriteLine("TEST: " + NUM_DOCS + " docs");
+            }
+            int[] fieldsPerDoc = new int[NUM_DOCS];
+            int baseCount = 0;
 
-		  int finalBaseCount = baseCount;
-		  baseCount += fieldCount - 1;
+            for (int docCount = 0; docCount < NUM_DOCS; docCount++)
+            {
+                int fieldCount = TestUtil.NextInt(Random(), 1, 17);
+                fieldsPerDoc[docCount] = fieldCount - 1;
 
-		  w.AddDocument(new IterableAnonymousInnerClassHelper(this, fieldCount, finalDocCount, finalBaseCount));
-		}
+                int finalDocCount = docCount;
+                if (VERBOSE)
+                {
+                    Console.WriteLine("TEST: " + fieldCount + " fields in doc " + docCount);
+                }
 
-		IndexReader r = w.Reader;
-        w.Dispose();
+                int finalBaseCount = baseCount;
+                baseCount += fieldCount - 1;
 
-		IndexSearcher s = NewSearcher(r);
-		int counter = 0;
-		for (int id = 0;id < NUM_DOCS;id++)
-		{
-		  if (VERBOSE)
-		  {
-			Console.WriteLine("TEST: verify doc id=" + id + " (" + fieldsPerDoc[id] + " fields) counter=" + counter);
-		  }
-		  TopDocs hits = s.Search(new TermQuery(new Term("id", "" + id)), 1);
-		  Assert.AreEqual(1, hits.TotalHits);
-		  int docID = hits.ScoreDocs[0].Doc;
-		  Document doc = s.Doc(docID);
-		  int endCounter = counter + fieldsPerDoc[id];
-		  while (counter < endCounter)
-		  {
-			string name = "f" + counter;
-			int fieldID = counter % 10;
+                w.AddDocument(new IterableAnonymousInnerClassHelper(this, fieldCount, finalDocCount, finalBaseCount));
+            }
 
-			bool stored = (counter & 1) == 0 || fieldID == 3;
-			bool binary = fieldID == 3;
-			bool indexed = fieldID != 3;
+            IndexReader r = w.Reader;
+            w.Dispose();
 
-			string stringValue;
-			if (fieldID != 3 && fieldID != 9)
-			{
-			  stringValue = "text " + counter;
-			}
-			else
-			{
-			  stringValue = null;
-			}
+            IndexSearcher s = NewSearcher(r);
+            int counter = 0;
+            for (int id = 0; id < NUM_DOCS; id++)
+            {
+                if (VERBOSE)
+                {
+                    Console.WriteLine("TEST: verify doc id=" + id + " (" + fieldsPerDoc[id] + " fields) counter=" + counter);
+                }
+                TopDocs hits = s.Search(new TermQuery(new Term("id", "" + id)), 1);
+                Assert.AreEqual(1, hits.TotalHits);
+                int docID = hits.ScoreDocs[0].Doc;
+                Document doc = s.Doc(docID);
+                int endCounter = counter + fieldsPerDoc[id];
+                while (counter < endCounter)
+                {
+                    string name = "f" + counter;
+                    int fieldID = counter % 10;
 
-			// stored:
-			if (stored)
-			{
-			  IndexableField f = doc.GetField(name);
-			  Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
-			  if (binary)
-			  {
-				Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
-				BytesRef b = f.BinaryValue();
-				Assert.IsNotNull(b);
-				Assert.AreEqual(10, b.Length);
-				for (int idx = 0;idx < 10;idx++)
-				{
-				  Assert.AreEqual((sbyte)(idx + counter), b.Bytes[b.Offset + idx]);
-				}
-			  }
-			  else
-			  {
-				Debug.Assert(stringValue != null);
-				Assert.AreEqual(stringValue, f.StringValue);
-			  }
-			}
+                    bool stored = (counter & 1) == 0 || fieldID == 3;
+                    bool binary = fieldID == 3;
+                    bool indexed = fieldID != 3;
 
-			if (indexed)
-			{
-			  bool tv = counter % 2 == 1 && fieldID != 9;
-			  if (tv)
-			  {
-				Terms tfv = r.GetTermVectors(docID).Terms(name);
-				Assert.IsNotNull(tfv);
-				TermsEnum termsEnum = tfv.Iterator(null);
-				Assert.AreEqual(new BytesRef("" + counter), termsEnum.Next());
-				Assert.AreEqual(1, termsEnum.TotalTermFreq());
-				DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
-				Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-				Assert.AreEqual(1, dpEnum.Freq());
-				Assert.AreEqual(1, dpEnum.NextPosition());
+                    string stringValue;
+                    if (fieldID != 3 && fieldID != 9)
+                    {
+                        stringValue = "text " + counter;
+                    }
+                    else
+                    {
+                        stringValue = null;
+                    }
 
-				Assert.AreEqual(new BytesRef("text"), termsEnum.Next());
-				Assert.AreEqual(1, termsEnum.TotalTermFreq());
-				dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
-				Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-				Assert.AreEqual(1, dpEnum.Freq());
-				Assert.AreEqual(0, dpEnum.NextPosition());
+                    // stored:
+                    if (stored)
+                    {
+                        IndexableField f = doc.GetField(name);
+                        Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
+                        if (binary)
+                        {
+                            Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
+                            BytesRef b = f.BinaryValue();
+                            Assert.IsNotNull(b);
+                            Assert.AreEqual(10, b.Length);
+                            for (int idx = 0; idx < 10; idx++)
+                            {
+                                Assert.AreEqual((sbyte)(idx + counter), b.Bytes[b.Offset + idx]);
+                            }
+                        }
+                        else
+                        {
+                            Debug.Assert(stringValue != null);
+                            Assert.AreEqual(stringValue, f.StringValue);
+                        }
+                    }
 
-				Assert.IsNull(termsEnum.Next());
+                    if (indexed)
+                    {
+                        bool tv = counter % 2 == 1 && fieldID != 9;
+                        if (tv)
+                        {
+                            Terms tfv = r.GetTermVectors(docID).Terms(name);
+                            Assert.IsNotNull(tfv);
+                            TermsEnum termsEnum = tfv.Iterator(null);
+                            Assert.AreEqual(new BytesRef("" + counter), termsEnum.Next());
+                            Assert.AreEqual(1, termsEnum.TotalTermFreq());
+                            DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+                            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+                            Assert.AreEqual(1, dpEnum.Freq());
+                            Assert.AreEqual(1, dpEnum.NextPosition());
 
-				// TODO: offsets
+                            Assert.AreEqual(new BytesRef("text"), termsEnum.Next());
+                            Assert.AreEqual(1, termsEnum.TotalTermFreq());
+                            dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
+                            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+                            Assert.AreEqual(1, dpEnum.Freq());
+                            Assert.AreEqual(0, dpEnum.NextPosition());
 
-			  }
-			  else
-			  {
-				Fields vectors = r.GetTermVectors(docID);
-				Assert.IsTrue(vectors == null || vectors.Terms(name) == null);
-			  }
+                            Assert.IsNull(termsEnum.Next());
 
-			  BooleanQuery bq = new BooleanQuery();
-			  bq.Add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
-			  bq.Add(new TermQuery(new Term(name, "text")), BooleanClause.Occur_e.MUST);
-			  TopDocs hits2 = s.Search(bq, 1);
-			  Assert.AreEqual(1, hits2.TotalHits);
-			  Assert.AreEqual(docID, hits2.ScoreDocs[0].Doc);
+                            // TODO: offsets
 
-			  bq = new BooleanQuery();
-			  bq.Add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
-			  bq.Add(new TermQuery(new Term(name, "" + counter)), BooleanClause.Occur_e.MUST);
-			  TopDocs hits3 = s.Search(bq, 1);
-			  Assert.AreEqual(1, hits3.TotalHits);
-			  Assert.AreEqual(docID, hits3.ScoreDocs[0].Doc);
-			}
+                        }
+                        else
+                        {
+                            Fields vectors = r.GetTermVectors(docID);
+                            Assert.IsTrue(vectors == null || vectors.Terms(name) == null);
+                        }
 
-			counter++;
-		  }
-		}
+                        BooleanQuery bq = new BooleanQuery();
+                        bq.Add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
+                        bq.Add(new TermQuery(new Term(name, "text")), BooleanClause.Occur_e.MUST);
+                        TopDocs hits2 = s.Search(bq, 1);
+                        Assert.AreEqual(1, hits2.TotalHits);
+                        Assert.AreEqual(docID, hits2.ScoreDocs[0].Doc);
 
-		r.Dispose();
-		dir.Dispose();
-	  }
+                        bq = new BooleanQuery();
+                        bq.Add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
+                        bq.Add(new TermQuery(new Term(name, "" + counter)), BooleanClause.Occur_e.MUST);
+                        TopDocs hits3 = s.Search(bq, 1);
+                        Assert.AreEqual(1, hits3.TotalHits);
+                        Assert.AreEqual(docID, hits3.ScoreDocs[0].Doc);
+                    }
 
-	  private class IterableAnonymousInnerClassHelper : IEnumerable<IndexableField>
-	  {
-		  private readonly TestIndexableField OuterInstance;
+                    counter++;
+                }
+            }
 
-		  private int FieldCount;
-		  private int FinalDocCount;
-		  private int FinalBaseCount;
+            r.Dispose();
+            dir.Dispose();
+        }
 
-		  public IterableAnonymousInnerClassHelper(TestIndexableField outerInstance, int fieldCount, int finalDocCount, int finalBaseCount)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.FieldCount = fieldCount;
-			  this.FinalDocCount = finalDocCount;
-			  this.FinalBaseCount = finalBaseCount;
-		  }
+        private class IterableAnonymousInnerClassHelper : IEnumerable<IndexableField>
+        {
+            private readonly TestIndexableField OuterInstance;
 
-		  public virtual IEnumerator<IndexableField> GetEnumerator()
-		  {
-			return new IteratorAnonymousInnerClassHelper(this, OuterInstance);
-		  }
+            private int FieldCount;
+            private int FinalDocCount;
+            private int FinalBaseCount;
 
-	      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-	      {
-	          return GetEnumerator();
-	      }
+            public IterableAnonymousInnerClassHelper(TestIndexableField outerInstance, int fieldCount, int finalDocCount, int finalBaseCount)
+            {
+                this.OuterInstance = outerInstance;
+                this.FieldCount = fieldCount;
+                this.FinalDocCount = finalDocCount;
+                this.FinalBaseCount = finalBaseCount;
+            }
 
-		  private class IteratorAnonymousInnerClassHelper : IEnumerator<IndexableField>
-		  {
-			  private readonly IterableAnonymousInnerClassHelper OuterInstance;
-              private readonly TestIndexableField OuterTextIndexableField;
+            public virtual IEnumerator<IndexableField> GetEnumerator()
+            {
+                return new IteratorAnonymousInnerClassHelper(this, OuterInstance);
+            }
 
-			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance, TestIndexableField outerTextIndexableField)
-			  {
-				  this.OuterInstance = outerInstance;
-			      OuterTextIndexableField = outerTextIndexableField;
-			  }
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
 
-			  internal int fieldUpto;
-		      private IndexableField current;
+            private class IteratorAnonymousInnerClassHelper : IEnumerator<IndexableField>
+            {
+                private readonly IterableAnonymousInnerClassHelper OuterInstance;
+                private readonly TestIndexableField OuterTextIndexableField;
 
-		      public bool MoveNext()
-		      {
-		          if (fieldUpto >= OuterInstance.FieldCount)
-		          {
-		              return false;
-		          }
+                public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance, TestIndexableField outerTextIndexableField)
+                {
+                    this.OuterInstance = outerInstance;
+                    OuterTextIndexableField = outerTextIndexableField;
+                }
 
-                  Debug.Assert(fieldUpto < OuterInstance.FieldCount);
-                  if (fieldUpto == 0)
-                  {
-                      fieldUpto = 1;
-                      current =  NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
-                  }
-                  else
-                  {
-                      current = new MyField(OuterTextIndexableField, OuterInstance.FinalBaseCount + (fieldUpto++ - 1));
-                  }
+                internal int fieldUpto;
+                private IndexableField current;
 
-		          return true;
-		      }
+                public bool MoveNext()
+                {
+                    if (fieldUpto >= OuterInstance.FieldCount)
+                    {
+                        return false;
+                    }
 
-		      public IndexableField Current
-		      {
-		          get { return current; }
-		      }
+                    Debug.Assert(fieldUpto < OuterInstance.FieldCount);
+                    if (fieldUpto == 0)
+                    {
+                        fieldUpto = 1;
+                        current = NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
+                    }
+                    else
+                    {
+                        current = new MyField(OuterTextIndexableField, OuterInstance.FinalBaseCount + (fieldUpto++ - 1));
+                    }
 
-		      object System.Collections.IEnumerator.Current
-		      {
-		          get { return Current; }
-		      }
+                    return true;
+                }
 
-              public void Dispose() { }
+                public IndexableField Current
+                {
+                    get { return current; }
+                }
 
-		      public void Reset()
-		      {
-		          throw new NotImplementedException();
-		      }
-		  }
-	  }
-	}
+                object System.Collections.IEnumerator.Current
+                {
+                    get { return Current; }
+                }
+
+                public void Dispose() { }
+
+                public void Reset()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+        }
+    }
 
 }

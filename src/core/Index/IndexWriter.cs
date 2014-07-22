@@ -2640,8 +2640,11 @@ namespace Lucene.Net.Index
                         }
 
                         // close all the closeables we can (but important is readerPool and writeLock to prevent leaks)
+                        if (WriteLock != null)
+                        {
+                            WriteLock.Release();
+                        }
                         IOUtils.CloseWhileHandlingException(readerPool, Deleter, WriteLock);
-                        WriteLock.Release();
                         WriteLock = null;
                     }
                     closed = true;
@@ -2974,7 +2977,7 @@ namespace Lucene.Net.Index
         ///  to match with a call to <seealso cref="IOUtils#close"/> in a
         ///  finally clause. 
         /// </summary>
-        private IList<Lock> AcquireWriteLocks(params Directory[] dirs)
+        private IEnumerable<Lock> AcquireWriteLocks(params Directory[] dirs)
         {
             IList<Lock> locks = new List<Lock>();
             for (int i = 0; i < dirs.Length; i++)
@@ -2989,7 +2992,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    if (success == false)
+                    if (!success)
                     {
                         // Release all previously acquired locks:
                         IOUtils.CloseWhileHandlingException(locks);
@@ -3049,7 +3052,7 @@ namespace Lucene.Net.Index
 
             NoDupDirs(dirs);
 
-            IList<Lock> locks = AcquireWriteLocks(dirs);
+            IEnumerable<Lock> locks = AcquireWriteLocks(dirs);
 
             bool successTop = false;
 
@@ -3159,9 +3162,19 @@ namespace Lucene.Net.Index
             }
             finally
             {
+
+                if (locks != null)
+                {
+                    foreach (var lk in locks)
+                    {
+                        lk.Release();
+                    }
+                }
+
                 if (successTop)
                 {
                     IOUtils.Close(locks);
+
                 }
                 else
                 {

@@ -347,7 +347,8 @@ namespace Lucene.Net.Index
                 threads[i].Start();
             }
             latch.countDown();
-            while (!doneLatch.@await(1, TimeUnit.MILLISECONDS))
+            //Wait for 1 millisecond
+            while (!doneLatch.@await(new TimeSpan(0, 0, 0, 0, 1)))
             {
                 modifier.DeleteAll();
                 if (VERBOSE)

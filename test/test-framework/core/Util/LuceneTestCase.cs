@@ -2624,11 +2624,15 @@ namespace Lucene.Net.Util
                 {
                     throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
                 }
-                f = new DirectoryInfo(Path.Combine(System.IO.Path.GetTempPath(), prefix + "-" + attempt));
+                f = new DirectoryInfo(Path.Combine(System.IO.Path.GetTempPath(), "LuceneTemp", prefix + "-" + attempt));
+
                 try
                 {
-                    f.Create();
-                    iterate = false;
+                    if (!f.Exists)
+                    {
+                        f.Create();
+                        iterate = false;
+                    }
                 }
                 catch (IOException exc)
                 {

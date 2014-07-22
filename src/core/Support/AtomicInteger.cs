@@ -28,6 +28,13 @@ namespace Lucene.Net.Support
             return Interlocked.Decrement(ref value);
         }
 
+        public int GetAndDecrement()
+        {
+            int ret = value;
+            Interlocked.Decrement(ref value);
+            return ret;
+        }
+
         public void Set(int value_)
         {
             Interlocked.Exchange(ref value, value_);

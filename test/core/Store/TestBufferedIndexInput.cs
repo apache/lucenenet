@@ -170,7 +170,7 @@ namespace Lucene.Net.Store
             Assert.AreEqual(pos + size, input.FilePointer);
             for (int i = 0; i < size; i++)
             {
-                Assert.AreEqual(Byten(pos + i), Buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));
+                Assert.AreEqual(Byten(pos + i), (byte)Buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));
             }
         }
 

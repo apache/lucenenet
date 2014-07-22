@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
                 if (checkPoint.Get())
                 {
 
-                    Assert.IsTrue("timed out waiting for update threads - deadlock?", sync.UpdateJoin.@await(10, TimeUnit.SECONDS));
+                    Assert.IsTrue(sync.UpdateJoin.@await(new TimeSpan(0, 0, 0, 10)), "timed out waiting for update threads - deadlock?");
                     if (exceptions.Count > 0)
                     {
                         foreach (Exception throwable in exceptions)
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
                 checkPoint.Set(true);
             }
 
-            Assert.IsTrue(sync.UpdateJoin.@await(10, TimeUnit.SECONDS));
+            Assert.IsTrue(sync.UpdateJoin.@await(new TimeSpan(0, 0, 0, 10)));
             AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
             checkPoint.Set(false);
             stop.Set(true);
@@ -471,7 +471,7 @@ namespace Lucene.Net.Index
 
             public bool @await()
             {
-                return Waiter.@await(10, TimeUnit.SECONDS);
+                return Waiter.@await(new TimeSpan(0, 0, 0, 10));
             }
 
         }

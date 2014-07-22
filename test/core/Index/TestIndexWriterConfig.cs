@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
             HashSet<string> allSetters = new HashSet<string>();
             foreach (Method m in typeof(IndexWriterConfig).DeclaredMethods)
             {
-                if (m.Name.StartsWith("set") && !Modifier.isStatic(m.Modifiers))
+                if (m.Name.StartsWith("Set") && !Modifier.isStatic(m.Modifiers))
                 {
                     allSetters.Add(m.Name);
                     // setters overridden from LiveIndexWriterConfig are returned twice, once with 
@@ -203,7 +203,7 @@ namespace Lucene.Net.Index
             HashSet<string> liveGetters = new HashSet<string>();
             foreach (Method m in typeof(LiveIndexWriterConfig).DeclaredMethods)
             {
-                if (m.Name.StartsWith("get") && !Modifier.isStatic(m.Modifiers))
+                if (m.Name.StartsWith("Get") && !Modifier.isStatic(m.Modifiers))
                 {
                     liveGetters.Add(m.Name);
                 }
@@ -211,10 +211,10 @@ namespace Lucene.Net.Index
 
             foreach (Method m in typeof(IndexWriterConfig).DeclaredMethods)
             {
-                if (m.Name.StartsWith("get") && !Modifier.isStatic(m.Modifiers))
+                if (m.Name.StartsWith("Get") && !Modifier.isStatic(m.Modifiers))
                 {
-                    Assert.AreEqual("method " + m.Name + " not overrided by IndexWriterConfig", typeof(IndexWriterConfig), m.DeclaringClass);
-                    Assert.IsTrue("method " + m.Name + " not declared on LiveIndexWriterConfig", liveGetters.Contains(m.Name));
+                    Assert.AreEqual(typeof(IndexWriterConfig), m.DeclaringClass, "method " + m.Name + " not overrided by IndexWriterConfig");
+                    Assert.IsTrue(liveGetters.Contains(m.Name), "method " + m.Name + " not declared on LiveIndexWriterConfig");
                 }
             }
         }
@@ -256,7 +256,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                Assert.IsTrue(f.Name + " not found in toString", str.IndexOf(f.Name) != -1);
+                Assert.IsTrue(str.IndexOf(f.Name) != -1, f.Name + " not found in toString");
             }
         }
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
             }
 
             // Test IndexingChain
-            Assert.IsTrue(DocumentsWriterPerThread.defaultIndexingChain == conf.IndexingChain);
+            Assert.IsTrue(DocumentsWriterPerThread.DefaultIndexingChain == conf.IndexingChain);
             conf.SetIndexingChain(new MyIndexingChain());
             Assert.AreEqual(typeof(MyIndexingChain), conf.IndexingChain.GetType());
             try

@@ -1,5 +1,6 @@
 
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Search
 {
@@ -529,13 +530,16 @@ namespace Lucene.Net.Search
 
 			Console.Error.WriteLine("------- " + test + " -------");
 
-			DecimalFormat f = new DecimalFormat("0.000000", DecimalFormatSymbols.getInstance(Locale.ROOT));
+		    NumberFormatInfo f = new NumberFormatInfo();
+		    f.NumberDecimalSeparator = ".";
+
+			//DecimalFormat f = new DecimalFormat("0.000000", DecimalFormatSymbols.getInstance(Locale.ROOT));
 
 			for (int i = 0; i < h.Length; i++)
 			{
 				Document d = searcher.Doc(h[i].Doc);
-				float score = h[i].Score;
-				Console.Error.WriteLine("#" + i + ": " + f.format(score) + " - " + d.Get("id") + " - " + d.Get("data"));
+				decimal score = (decimal)h[i].Score;
+				Console.Error.WriteLine("#" + i + ": " + score.ToString(f) + " - " + d.Get("id") + " - " + d.Get("data"));
 			}
 		}
 	}

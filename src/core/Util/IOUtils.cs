@@ -443,7 +443,7 @@ namespace Lucene.Net.Util
             try
             {
                 //FileChannel file = FileChannel.open(fileToSync.toPath(), isDir ? StandardOpenOption.READ : StandardOpenOption.WRITE);
-                FileStream fs = new FileStream(fileToSync.DirectoryName, FileMode.OpenOrCreate, isDir ? FileAccess.Read : FileAccess.Write);
+                FileStream fs = new FileStream(fileToSync.FullName, FileMode.OpenOrCreate, isDir ? FileAccess.Read : FileAccess.Write);
                 for (int retry = 0; retry < 5; retry++)
                 {
                     try

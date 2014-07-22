@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using NUnit.Framework;
 namespace Lucene.Net.Util
 {
@@ -42,7 +43,7 @@ namespace Lucene.Net.Util
         public virtual void TestBuildSetup()
         {
             // common-build.xml sets lucene.version, if not, we skip this test!
-            string version = System.getProperty("lucene.version");
+            string version = AppSettings.Get("lucene.version", null);
             AssumeTrue("Null lucene.version test property. You should run the tests with the official Lucene build file", version != null);
 
             // remove anything after a "-" from the version string:

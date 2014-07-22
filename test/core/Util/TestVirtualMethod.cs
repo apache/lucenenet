@@ -70,19 +70,19 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestGeneral()
         {
-            Assert.AreEqual(0, PublicTestMethod.getImplementationDistance(this.GetType()));
-            Assert.AreEqual(1, PublicTestMethod.getImplementationDistance(typeof(TestClass1)));
-            Assert.AreEqual(1, PublicTestMethod.getImplementationDistance(typeof(TestClass2)));
-            Assert.AreEqual(3, PublicTestMethod.getImplementationDistance(typeof(TestClass3)));
-            Assert.IsFalse(PublicTestMethod.isOverriddenAsOf(typeof(TestClass4)));
-            Assert.IsFalse(PublicTestMethod.isOverriddenAsOf(typeof(TestClass5)));
+            Assert.AreEqual(0, PublicTestMethod.GetImplementationDistance(this.GetType()));
+            Assert.AreEqual(1, PublicTestMethod.GetImplementationDistance(typeof(TestClass1)));
+            Assert.AreEqual(1, PublicTestMethod.GetImplementationDistance(typeof(TestClass2)));
+            Assert.AreEqual(3, PublicTestMethod.GetImplementationDistance(typeof(TestClass3)));
+            Assert.IsFalse(PublicTestMethod.IsOverriddenAsOf(typeof(TestClass4)));
+            Assert.IsFalse(PublicTestMethod.IsOverriddenAsOf(typeof(TestClass5)));
 
-            Assert.AreEqual(0, ProtectedTestMethod.getImplementationDistance(this.GetType()));
-            Assert.AreEqual(1, ProtectedTestMethod.getImplementationDistance(typeof(TestClass1)));
-            Assert.AreEqual(2, ProtectedTestMethod.getImplementationDistance(typeof(TestClass2)));
-            Assert.AreEqual(2, ProtectedTestMethod.getImplementationDistance(typeof(TestClass3)));
-            Assert.IsFalse(ProtectedTestMethod.isOverriddenAsOf(typeof(TestClass4)));
-            Assert.IsFalse(ProtectedTestMethod.isOverriddenAsOf(typeof(TestClass5)));
+            Assert.AreEqual(0, ProtectedTestMethod.GetImplementationDistance(this.GetType()));
+            Assert.AreEqual(1, ProtectedTestMethod.GetImplementationDistance(typeof(TestClass1)));
+            Assert.AreEqual(2, ProtectedTestMethod.GetImplementationDistance(typeof(TestClass2)));
+            Assert.AreEqual(2, ProtectedTestMethod.GetImplementationDistance(typeof(TestClass3)));
+            Assert.IsFalse(ProtectedTestMethod.IsOverriddenAsOf(typeof(TestClass4)));
+            Assert.IsFalse(ProtectedTestMethod.IsOverriddenAsOf(typeof(TestClass5)));
 
             Assert.IsTrue(VirtualMethod.compareImplementationDistance(typeof(TestClass3), PublicTestMethod, ProtectedTestMethod) > 0);
             Assert.AreEqual(0, VirtualMethod.compareImplementationDistance(typeof(TestClass5), PublicTestMethod, ProtectedTestMethod));
@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
             try
             {
 	            // cast to Class to remove generics:
-	            PublicTestMethod.getImplementationDistance(typeof((Type) LuceneTestCase));
+	            PublicTestMethod.GetImplementationDistance(typeof((Type) LuceneTestCase));
 	            Assert.Fail("LuceneTestCase is not a subclass and can never override publicTest(String)");
             }
             catch (System.ArgumentException arg)
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
 
             try
             {
-	            new VirtualMethod<>(typeof(TestVirtualMethod), "bogus");
+	            new VirtualMethod<Type>(typeof(TestVirtualMethod), "bogus");
 	            Assert.Fail("Method bogus() does not exist, so IAE should be thrown");
             }
             catch (System.ArgumentException arg)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Util
 
             try
             {
-	            new VirtualMethod<>(typeof(TestClass2), "publicTest", typeof(string));
+	            new VirtualMethod<Type>(typeof(TestClass2), "publicTest", typeof(string));
 	            Assert.Fail("Method publicTest(String) is not declared in TestClass2, so IAE should be thrown");
             }
             catch (System.ArgumentException arg)
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
             try
             {
 	            // try to create a second instance of the same baseClass / method combination
-	            new VirtualMethod<>(typeof(TestVirtualMethod), "publicTest", typeof(string));
+	            new VirtualMethod<Type>(typeof(TestVirtualMethod), "publicTest", typeof(string));
 	            Assert.Fail("Violating singleton status succeeded");
             }
             catch (System.NotSupportedException arg)

@@ -8,6 +8,7 @@ namespace Lucene.Net.Support
 {
     public static class FileStreamExtensions
     {
+        //Reads bytes from the Filestream into the bytebuffer
         public static int Read(this FileStream file, ByteBuffer dst, long position)
         {
             // TODO: check this logic, could probably optimize
@@ -26,6 +27,7 @@ namespace Lucene.Net.Support
                 if (v == -1)
                     break;
                 dst.Put((byte)v);
+                count++;
             }
 
             file.Seek(original, SeekOrigin.Begin);
