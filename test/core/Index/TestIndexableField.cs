@@ -147,6 +147,7 @@ namespace Lucene.Net.Index
             }
 
             public MyField(TestIndexableField outerInstance, int counter)
+                : this()
             {
                 this.OuterInstance = outerInstance;
                 this.Counter = counter;

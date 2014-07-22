@@ -698,7 +698,7 @@ namespace Lucene.Net.Index
             {
                 if (DoFail)
                 {
-                    var trace = new StackTrace(new Exception());
+                    var trace = new StackTrace();
                     bool sawAppend = false;
                     bool sawFlush = false;
                     foreach (var frame in trace.GetFrames())
@@ -1054,7 +1054,7 @@ namespace Lucene.Net.Index
                 if (DoFail)
                 {
 
-                    var trace = new StackTrace(new Exception());
+                    var trace = new StackTrace();
                     foreach (var frame in trace.GetFrames())
                     {
                         var method = frame.GetMethod();
@@ -1866,7 +1866,7 @@ namespace Lucene.Net.Index
             {
                 if (DoFail && name.StartsWith("segments_"))
                 {
-                    var trace = new StackTrace(new Exception());
+                    var trace = new StackTrace();
                     foreach (var frame in trace.GetFrames())
                     {
                         var method = frame.GetMethod();
@@ -2390,7 +2390,7 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                var trace = new StackTrace(new Exception());
+                var trace = new StackTrace();
                 bool sawSeal = false;
                 bool sawWrite = false;
                 foreach (var frame in trace.GetFrames())
@@ -2598,7 +2598,7 @@ namespace Lucene.Net.Index
             public override void Eval(MockDirectoryWrapper dir)
             {
                 bool maybeFail = false;
-                var trace = new StackTrace(new Exception());
+                var trace = new StackTrace();
                 foreach (var frame in trace.GetFrames())
                 {
                     var method = frame.GetMethod();

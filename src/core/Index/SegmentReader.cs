@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lucene.Net.Index
 {
@@ -255,7 +256,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                string segmentSuffix = info.FieldInfosGen == -1 ? "" : Convert.ToString(info.FieldInfosGen, Character.MAX_RADIX);
+                string segmentSuffix = info.FieldInfosGen == -1 ? "" : info.FieldInfosGen.ToString(CultureInfo.InvariantCulture);//Convert.ToString(info.FieldInfosGen, Character.MAX_RADIX));
                 return info.Info.Codec.FieldInfosFormat().FieldInfosReader.Read(dir, info.Info.Name, segmentSuffix, IOContext.READONCE);
             }
             finally

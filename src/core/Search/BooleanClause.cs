@@ -2,32 +2,32 @@ using System;
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	/// <summary>
-	/// A clause in a BooleanQuery. </summary>
-	public class BooleanClause
-	{
+    /// <summary>
+    /// A clause in a BooleanQuery. </summary>
+    public class BooleanClause
+    {
 
-	  /// <summary>
-	  /// Specifies how clauses are to occur in matching documents. </summary>
-	  public enum Occur_e
-	  {
+        /// <summary>
+        /// Specifies how clauses are to occur in matching documents. </summary>
+        public enum Occur_e
+        {
             MUST, SHOULD, MUST_NOT/*
 		/// <summary>
 		/// Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
@@ -66,108 +66,108 @@ namespace Lucene.Net.Search
 			}
 		}*/
 
-      }
-
-      private string ToString(Occur_e occur)
-      {
-          switch (occur)
-          {
-              case Occur_e.MUST:
-                  return "+";
-              case Occur_e.SHOULD:
-                  return "";
-              case Occur_e.MUST_NOT:
-                  return "-";
-              default:
-                  throw new Exception("Invalid Occur_e value");
-          }
-      }
-
-	  /// <summary>
-	  /// The query whose matching documents are combined by the boolean query.
-	  /// </summary>
-	  private Query query;
-
-	  private Occur_e occur;
-
-
-	  /// <summary>
-	  /// Constructs a BooleanClause.
-	  /// </summary>
-	  public BooleanClause(Query query, Occur_e occur)
-	  {
-		this.query = query;
-		this.occur = occur;
-
-	  }
-
-	  public Occur_e Occur
-	  {
-		get 
-        {
-            return occur;
         }
-        set 
+
+        private string ToString(Occur_e occur)
         {
-            occur = value;
+            switch (occur)
+            {
+                case Occur_e.MUST:
+                    return "+";
+                case Occur_e.SHOULD:
+                    return "";
+                case Occur_e.MUST_NOT:
+                    return "-";
+                default:
+                    throw new Exception("Invalid Occur_e value");
+            }
         }
-	  }
+
+        /// <summary>
+        /// The query whose matching documents are combined by the boolean query.
+        /// </summary>
+        private Query query;
+
+        private Occur_e occur;
 
 
-	  public Query Query
-	  {
-          get 
-          {
-               return query;
-          }
-          set 
-          {
-              query = value;
-          }
-	  }
+        /// <summary>
+        /// Constructs a BooleanClause.
+        /// </summary>
+        public BooleanClause(Query query, Occur_e occur)
+        {
+            this.query = query;
+            this.occur = occur;
 
-	  public bool Prohibited
-	  {
-          get 
-          {
-            return Occur_e.MUST_NOT == occur;
-          }
-	  }
+        }
 
-	  public bool Required
-	  {
-          get
-          {
-              return Occur_e.MUST == occur;
-          }
-	  }
+        public Occur_e Occur
+        {
+            get
+            {
+                return occur;
+            }
+            set
+            {
+                occur = value;
+            }
+        }
 
 
+        public Query Query
+        {
+            get
+            {
+                return query;
+            }
+            set
+            {
+                query = value;
+            }
+        }
 
-	  /// <summary>
-	  /// Returns true if <code>o</code> is equal to this. </summary>
-	  public bool Equals(object o)
-	  {
-		if (o == null || !(o is BooleanClause))
-		{
-		  return false;
-		}
-		BooleanClause other = (BooleanClause)o;
-		return this.query.Equals(other.query) && this.occur == other.occur;
-	  }
+        public bool Prohibited
+        {
+            get
+            {
+                return Occur_e.MUST_NOT == occur;
+            }
+        }
 
-	  /// <summary>
-	  /// Returns a hash code value for this object. </summary>
-	  public int GetHashCode()
-	  {
-		return query.GetHashCode() ^ (Occur_e.MUST == occur?1:0) ^ (Occur_e.MUST_NOT == occur?2:0);
-	  }
+        public bool Required
+        {
+            get
+            {
+                return Occur_e.MUST == occur;
+            }
+        }
 
 
-	  public string ToString()
-	  {
-          return ToString(occur) + query.ToString();
-	  }
-	}
+
+        /// <summary>
+        /// Returns true if <code>o</code> is equal to this. </summary>
+        public bool Equals(object o)
+        {
+            if (o == null || !(o is BooleanClause))
+            {
+                return false;
+            }
+            BooleanClause other = (BooleanClause)o;
+            return this.query.Equals(other.query) && this.occur == other.occur;
+        }
+
+        /// <summary>
+        /// Returns a hash code value for this object. </summary>
+        public int GetHashCode()
+        {
+            return query.GetHashCode() ^ (Occur_e.MUST == occur ? 1 : 0) ^ (Occur_e.MUST_NOT == occur ? 2 : 0);
+        }
+
+
+        public string ToString()
+        {
+            return ToString(occur) + query.ToString();
+        }
+    }
 
 }

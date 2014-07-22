@@ -143,8 +143,8 @@ namespace Lucene.Net.Search
                 Console.WriteLine("multi segment: " + q2);
                 Console.WriteLine("multi segment with duplicates: " + q3);
             }
-            Assert.AreEqual(q1, q2, "The multi-segment case must produce same rewritten query");
-            Assert.AreEqual(q1, q3, "The multi-segment case with duplicates must produce same rewritten query");
+            Assert.IsTrue(q1.Equals(q2), "The multi-segment case must produce same rewritten query");
+            Assert.IsTrue(q1.Equals(q3), "The multi-segment case with duplicates must produce same rewritten query");
             CheckBooleanQueryOrder(q1);
             CheckBooleanQueryOrder(q2);
             CheckBooleanQueryOrder(q3);
@@ -191,8 +191,8 @@ namespace Lucene.Net.Search
                 Console.WriteLine("multi segment: " + q2);
                 Console.WriteLine("multi segment with duplicates: " + q3);
             }
-            Assert.AreEqual(q1, q2, "The multi-segment case must produce same rewritten query");
-            Assert.AreEqual(q1, q3, "The multi-segment case with duplicates must produce same rewritten query");
+            Assert.IsTrue(q1.Equals(q2), "The multi-segment case must produce same rewritten query");
+            Assert.IsTrue(q1.Equals(q3), "The multi-segment case with duplicates must produce same rewritten query");
             CheckBooleanQueryBoosts((BooleanQuery)q1);
             CheckBooleanQueryBoosts((BooleanQuery)q2);
             CheckBooleanQueryBoosts((BooleanQuery)q3);

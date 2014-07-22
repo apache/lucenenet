@@ -35,9 +35,6 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Support;
     using System.IO;
-    /*using Test = org.junit.Test;
-
-    using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;*/
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -56,8 +53,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({"Appending","Lucene3x","Lucene40","Lucene41","Lucene42","Lucene45"}) public class TestNumericDocValuesUpdates extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestNumericDocValuesUpdates : LuceneTestCase
     {
@@ -71,8 +66,6 @@ namespace Lucene.Net.Index
             return doc;
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdatesAreFlushed() throws java.io.IOException
         [Test]
         public virtual void TestUpdatesAreFlushed()
         {
@@ -96,8 +89,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testSimple() throws Exception
         [Test]
         public virtual void TestSimple()
         {
@@ -137,8 +128,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateFewSegments() throws Exception
         [Test]
         public virtual void TestUpdateFewSegments()
         {
@@ -196,8 +185,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testReopen() throws Exception
         [Test]
         public virtual void TestReopen()
         {
@@ -237,8 +224,6 @@ namespace Lucene.Net.Index
             IOUtils.Close(writer, reader1, reader2, dir);
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdatesAndDeletes() throws Exception
         [Test]
         public virtual void TestUpdatesAndDeletes()
         {
@@ -298,8 +283,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdatesWithDeletes() throws Exception
         [Test]
         public virtual void TestUpdatesWithDeletes()
         {
@@ -340,8 +323,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateAndDeleteSameDocument() throws Exception
         [Test]
         public virtual void TestUpdateAndDeleteSameDocument()
         {
@@ -382,8 +363,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testMultipleDocValuesTypes() throws Exception
         [Test]
         public virtual void TestMultipleDocValuesTypes()
         {
@@ -440,8 +419,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testMultipleNumericDocValues() throws Exception
         [Test]
         public virtual void TestMultipleNumericDocValues()
         {
@@ -478,8 +455,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testDocumentWithNoValue() throws Exception
         [Test]
         public virtual void TestDocumentWithNoValue()
         {
@@ -515,8 +490,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUnsetValue() throws Exception
         [Test]
         public virtual void TestUnsetValue()
         {
@@ -598,8 +571,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateNonNumericDocValuesField() throws Exception
         [Test]
         public virtual void TestUpdateNonNumericDocValuesField()
         {
@@ -640,8 +611,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testDifferentDVFormatPerField() throws Exception
         [Test]
         public virtual void TestDifferentDVFormatPerField()
         {
@@ -693,8 +662,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateSameDocMultipleTimes() throws Exception
         [Test]
         public virtual void TestUpdateSameDocMultipleTimes()
         {
@@ -724,8 +691,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testSegmentMerges() throws Exception
         [Test]
         public virtual void TestSegmentMerges()
         {
@@ -808,8 +773,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateDocumentByMultipleTerms() throws Exception
         [Test]
         public virtual void TestUpdateDocumentByMultipleTerms()
         {
@@ -841,8 +804,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testManyReopensAndFields() throws Exception
         [Test]
         public virtual void TestManyReopensAndFields()
         {
@@ -975,8 +936,6 @@ namespace Lucene.Net.Index
             IOUtils.Close(writer, reader, dir);
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateSegmentWithNoDocValues() throws Exception
         [Test]
         public virtual void TestUpdateSegmentWithNoDocValues()
         {
@@ -1033,8 +992,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateSegmentWithPostingButNoDocValues() throws Exception
         [Test]
         public virtual void TestUpdateSegmentWithPostingButNoDocValues()
         {
@@ -1148,8 +1105,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testStressMultiThreading() throws Exception
         [Test]
         public virtual void TestStressMultiThreading()
         {
@@ -1364,8 +1319,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateDifferentDocsInDifferentGens() throws Exception
         [Test]
         public virtual void TestUpdateDifferentDocsInDifferentGens()
         {
@@ -1410,8 +1363,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testChangeCodec() throws Exception
         [Test]
         public virtual void TestChangeCodec()
         {
@@ -1480,8 +1431,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testAddIndexes() throws Exception
         [Test]
         public virtual void TestAddIndexes()
         {
@@ -1550,8 +1499,6 @@ namespace Lucene.Net.Index
             IOUtils.Close(dir1, dir2);
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testDeleteUnusedUpdatesFiles() throws Exception
         [Test]
         public virtual void TestDeleteUnusedUpdatesFiles()
         {
@@ -1586,8 +1533,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testTonsOfUpdates() throws Exception
         [Test]
         public virtual void TestTonsOfUpdates()
         {
@@ -1666,8 +1611,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdatesOrder() throws Exception
         [Test]
         public virtual void TestUpdatesOrder()
         {
@@ -1696,8 +1639,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateAllDeletedSegment() throws Exception
         [Test]
         public virtual void TestUpdateAllDeletedSegment()
         {
@@ -1724,8 +1665,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testUpdateTwoNonexistingTerms() throws Exception
         [Test]
         public virtual void TestUpdateTwoNonexistingTerms()
         {

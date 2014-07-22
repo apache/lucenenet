@@ -166,7 +166,6 @@ namespace Lucene.Net.Search
         /// <seealso cref= #checkHitCollector </seealso>
         public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
         {
-
             ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
 
             SortedSet<int?> correct = new SortedSet<int?>();

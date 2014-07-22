@@ -197,9 +197,11 @@ namespace Lucene.Net.Index
 
         public virtual void AddQuery(Query query, int docIDUpto)
         {
-            int? current = Queries[query] = docIDUpto;
+            int? prev;
+            Queries.TryGetValue(query, out prev);
+            Queries[query] = docIDUpto;
             // increment bytes used only if the query wasn't added so far.
-            if (current == null)
+            if (prev == null)
             {
                 BytesUsed.AddAndGet(BYTES_PER_DEL_QUERY);
             }
@@ -241,15 +243,15 @@ namespace Lucene.Net.Index
         public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
         {
             /*Linked*/
-            HashMap<Term, NumericDocValuesUpdate> fieldUpdates = NumericUpdates[update.Field];
-            if (fieldUpdates == null)
+            HashMap<Term, NumericDocValuesUpdate> fieldUpdates;
+            if (!NumericUpdates.TryGetValue(update.Field, out fieldUpdates))
             {
                 fieldUpdates = new /*Linked*/HashMap<Term, NumericDocValuesUpdate>();
                 NumericUpdates[update.Field] = fieldUpdates;
                 BytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
             }
-            NumericDocValuesUpdate current = fieldUpdates[update.Term];
-            if (current != null && docIDUpto < current.DocIDUpto)
+            NumericDocValuesUpdate current;
+            if (fieldUpdates.TryGetValue(update.Term, out current) && docIDUpto < current.DocIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the
@@ -276,15 +278,15 @@ namespace Lucene.Net.Index
         public virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto)
         {
             /*Linked*/
-            HashMap<Term, BinaryDocValuesUpdate> fieldUpdates = BinaryUpdates[update.Field];
-            if (fieldUpdates == null)
+            HashMap<Term, BinaryDocValuesUpdate> fieldUpdates;
+            if (!BinaryUpdates.TryGetValue(update.Field, out fieldUpdates)) ;
             {
                 fieldUpdates = new /*Linked*/HashMap<Term, BinaryDocValuesUpdate>();
                 BinaryUpdates[update.Field] = fieldUpdates;
                 BytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
             }
-            BinaryDocValuesUpdate current = fieldUpdates[update.Term];
-            if (current != null && docIDUpto < current.DocIDUpto)
+            BinaryDocValuesUpdate current;
+            if (fieldUpdates.TryGetValue(update.Term, out current) && docIDUpto < current.DocIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the

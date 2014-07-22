@@ -257,10 +257,10 @@ namespace Lucene.Net.Store
             Directory dir2 = NewFSDirectory(fdir1, new NativeFSLockFactory(fdir2));
 
             string prefix1 = dir1.LockFactory.LockPrefix;
-            Assert.IsNull("Lock prefix for lockDir same as directory should be null", prefix1);
+            Assert.IsNull(prefix1, "Lock prefix for lockDir same as directory should be null");
 
             string prefix2 = dir2.LockFactory.LockPrefix;
-            Assert.IsNotNull("Lock prefix for lockDir outside of directory should be not null", prefix2);
+            Assert.IsNotNull(prefix2, "Lock prefix for lockDir outside of directory should be not null");
 
             dir1.Dispose();
             dir2.Dispose();
@@ -278,15 +278,15 @@ namespace Lucene.Net.Store
             DirectoryInfo dirName = CreateTempDir("TestLockFactory.10");
 
             Directory dir = new SimpleFSDirectory(dirName);
-            Assert.IsNull("Default lock prefix should be null", dir.LockFactory.LockPrefix);
+            Assert.IsNull(dir.LockFactory.LockPrefix, "Default lock prefix should be null");
             dir.Dispose();
 
             dir = new MMapDirectory(dirName);
-            Assert.IsNull("Default lock prefix should be null", dir.LockFactory.LockPrefix);
+            Assert.IsNull(dir.LockFactory.LockPrefix, "Default lock prefix should be null");
             dir.Dispose();
 
             dir = new NIOFSDirectory(dirName);
-            Assert.IsNull("Default lock prefix should be null", dir.LockFactory.LockPrefix);
+            Assert.IsNull(dir.LockFactory.LockPrefix, "Default lock prefix should be null");
             dir.Dispose();
 
             TestUtil.Rm(dirName);

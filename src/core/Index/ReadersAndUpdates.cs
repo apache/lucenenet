@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading;
 
@@ -515,7 +516,7 @@ namespace Lucene.Net.Index
 
                         fieldInfos = builder.Finish();
                         long nextFieldInfosGen = Info.NextFieldInfosGen;
-                        string segmentSuffix = Convert.ToString(nextFieldInfosGen, Character.MAX_RADIX);
+                        string segmentSuffix = nextFieldInfosGen.ToString(CultureInfo.InvariantCulture);//Convert.ToString(nextFieldInfosGen, Character.MAX_RADIX));
                         SegmentWriteState state = new SegmentWriteState(null, trackingDir, Info.Info, fieldInfos, Writer.Config.TermIndexInterval, null, IOContext.DEFAULT, segmentSuffix);
                         DocValuesFormat docValuesFormat = codec.DocValuesFormat();
                         DocValuesConsumer fieldsConsumer = docValuesFormat.FieldsConsumer(state);

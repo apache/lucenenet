@@ -962,7 +962,7 @@ namespace Lucene.Net.Index
                 {
 
                     bool seen = false;
-                    var trace = new StackTrace(new Exception());
+                    var trace = new StackTrace();
                     foreach (var frame in trace.GetFrames())
                     {
                         var method = frame.GetMethod();
@@ -988,7 +988,7 @@ namespace Lucene.Net.Index
                 if (!failed)
                 {
 
-                    var trace = new StackTrace(new Exception());
+                    var trace = new StackTrace();
                     foreach (var frame in trace.GetFrames())
                     {
                         var method = frame.GetMethod();

@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
             AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
             Scorer ds = dw.Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
             Assert.IsTrue(ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "firsttime skipTo found no match");
-            Assert.AreEqual("found wrong docid", "d4", r.Document(ds.DocID()).Get("id"));
+            Assert.AreEqual("d4", r.Document(ds.DocID()).Get("id"), "found wrong docid");
         }
 
         [Test]
@@ -398,7 +398,7 @@ namespace Lucene.Net.Search
                 {
                     Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
                 }
-                Assert.AreEqual("wrong last", "d1", s.Doc(h[h.Length - 1].Doc).Get("id"));
+                Assert.AreEqual("d1", s.Doc(h[h.Length - 1].Doc).Get("id"), "wrong last");
                 float score1 = h[h.Length - 1].Score;
                 Assert.IsTrue(score > score1, "d1 does not have worse score then others: " + score + " >? " + score1);
             }
@@ -499,10 +499,10 @@ namespace Lucene.Net.Search
                 string doc2 = s.Doc(h[2].Doc).Get("id");
                 string doc3 = s.Doc(h[3].Doc).Get("id");
 
-                Assert.AreEqual("doc0 should be d4: ", "d4", doc0);
-                Assert.AreEqual("doc1 should be d3: ", "d3", doc1);
-                Assert.AreEqual("doc2 should be d2: ", "d2", doc2);
-                Assert.AreEqual("doc3 should be d1: ", "d1", doc3);
+                Assert.AreEqual("d4", doc0, "doc0 should be d4: ");
+                Assert.AreEqual("d3", doc1, "doc1 should be d3: ");
+                Assert.AreEqual("d2", doc2, "doc2 should be d2: ");
+                Assert.AreEqual("d1", doc3, "doc3 should be d1: ");
 
                 Assert.IsTrue(score0 > score1, "d4 does not have a better score then d3: " + score0 + " >? " + score1);
                 Assert.IsTrue(score1 > score2, "d3 does not have a better score then d2: " + score1 + " >? " + score2);
@@ -511,7 +511,7 @@ namespace Lucene.Net.Search
             }
             catch (Exception e)
             {
-                PrintHits("testBooleanOptionalWithTiebreakerAndBoost", h, s);
+                PrintHits("TestBooleanOptionalWithTiebreakerAndBoost", h, s);
                 throw e;
             }
         }

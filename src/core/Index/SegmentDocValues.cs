@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace Lucene.Net.Index
             if ((long)gen != -1)
             {
                 dvDir = si.Info.Dir; // gen'd files are written outside CFS, so use SegInfo directory
-                segmentSuffix = Convert.ToString((long)gen, Character.MAX_RADIX);
+                segmentSuffix = ((long)gen).ToString(CultureInfo.InvariantCulture);//Convert.ToString((long)gen, Character.MAX_RADIX);
             }
 
             // set SegmentReadState to list only the fields that are relevant to that gen

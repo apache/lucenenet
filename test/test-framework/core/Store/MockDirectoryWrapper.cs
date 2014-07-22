@@ -3,6 +3,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -591,11 +592,11 @@ namespace Lucene.Net.Store
 
                         if (!assertNoDeleteOpenFile)
                         {
-                            throw FillOpenTrace(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                            throw (IOException)FillOpenTrace(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                         }
                         else
                         {
-                            throw FillOpenTrace(new InvalidOperationException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                            throw (AssertionException)FillOpenTrace(new AssertionException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                         }
                     }
                     else

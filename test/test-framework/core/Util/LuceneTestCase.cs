@@ -1442,6 +1442,8 @@ namespace Lucene.Net.Util
                 }
             }
 
+            Trace.TraceInformation("Type of Directory is : {0}", clazzName);
+
             try
             {
                 Type clazz = CommandLineUtil.LoadDirectoryClass(clazzName);

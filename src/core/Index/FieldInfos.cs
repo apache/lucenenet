@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
             /// Returns true if the {@code fieldName} exists in the map and is of the
             /// same {@code dvType}.
             /// </summary>
-            internal bool Contains(string fieldName, DocValuesType_e dvType)
+            internal bool Contains(string fieldName, DocValuesType_e? dvType)
             {
                 lock (this)
                 {
@@ -309,7 +309,9 @@ namespace Lucene.Net.Index
                     else
                     {
                         // only return true if the field has the same dvType as the requested one
-                        return dvType == DocValuesType[fieldName];
+                        DocValuesType_e? dvCand;
+                        DocValuesType.TryGetValue(fieldName, out dvCand);
+                        return dvType == dvCand;
                     }
                 }
             }

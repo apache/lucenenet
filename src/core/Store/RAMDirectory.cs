@@ -246,8 +246,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             RAMFile file;
-            FileMap.TryGetValue(name, out file);
-            if (file == null)
+            if (!FileMap.TryGetValue(name, out file))
             {
                 throw new FileNotFoundException(name);
             }

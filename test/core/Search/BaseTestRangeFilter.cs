@@ -196,8 +196,8 @@ namespace Lucene.Net.Search
                 string aa = Pad(a);
                 string bb = Pad(b);
                 string label = a + ":" + aa + " vs " + b + ":" + bb;
-                Assert.AreEqual(aa.Length, bb.Length, "length of " + label);
-                Assert.IsTrue(aa.CompareTo(bb) < 0, "compare less than " + label);
+                Assert.AreEqual(aa.Length, bb.Length, "i=" + i + ": length of " + label);
+                Assert.IsTrue(aa.CompareTo(bb) < 0, "i=" + i + ": compare less than " + label);
             }
 
         }

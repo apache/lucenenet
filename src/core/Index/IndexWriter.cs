@@ -5769,7 +5769,7 @@ namespace Lucene.Net.Index
         public static ICollection<string> CreateCompoundFile(InfoStream infoStream, Directory directory, CheckAbort checkAbort, SegmentInfo info, IOContext context)
         {
 
-            string fileName = Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION);
+            string fileName = Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION);
             if (infoStream.IsEnabled("IW"))
             {
                 infoStream.Message("IW", "create compound file " + fileName);
@@ -5778,7 +5778,7 @@ namespace Lucene.Net.Index
             // Now merge all added files
             ICollection<string> files = info.Files;
             CompoundFileDirectory cfsDir = new CompoundFileDirectory(directory, fileName, context, true);
-            System.IO.IOException prior = null;
+            IOException prior = null;
             try
             {
                 foreach (string file in files)

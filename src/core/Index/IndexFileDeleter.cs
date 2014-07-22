@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
@@ -693,7 +694,7 @@ namespace Lucene.Net.Index
                 }
                 Directory.DeleteFile(fileName);
             } // if delete fails
-            catch (IOException e)
+            catch (Exception e)
             {
                 // Some operating systems (e.g. Windows) don't
                 // permit a file to be deleted while it is opened
@@ -702,9 +703,12 @@ namespace Lucene.Net.Index
                 // the file is open in another process, and queue
                 // the file for subsequent deletion.
 
+                Debug.Assert(e.Message.Contains("cannot delete"));
+
                 if (InfoStream.IsEnabled("IFD"))
                 {
-                    InfoStream.Message("IFD", "unable to remove file \"" + fileName + "\": " + e.ToString() + "; Will re-try later.");
+                    InfoStream.Message("IFD",
+                        "unable to remove file \"" + fileName + "\": " + e.ToString() + "; Will re-try later.");
                 }
                 if (Deletable == null)
                 {
