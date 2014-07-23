@@ -288,7 +288,7 @@ namespace Lucene.Net.Util
         public int AllocSlice(sbyte[] slice, int upto)
         {
 
-            int level = slice[upto] & 15;
+            int level = slice[upto] & 0xF;
             int newLevel = NEXT_LEVEL_ARRAY[level];
             int newSize = LEVEL_SIZE_ARRAY[newLevel];
 

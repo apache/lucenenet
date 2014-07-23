@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Term = Lucene.Net.Index.Term;
-	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
+	using Occur = Lucene.Net.Search.BooleanClause.Occur;
 	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
 	using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
 	using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;

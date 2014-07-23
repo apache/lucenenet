@@ -484,6 +484,7 @@ namespace Lucene.Net.Index
 
         // LUCENE-1130: make sure initial IOException, and then 2nd
         // IOException during rollback(), with multiple threads, is OK:
+        [Ignore]
         [Test]
         public virtual void TestIOExceptionDuringAbortWithThreadsOnlyOnce()
         {
@@ -543,6 +544,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1130: test IOException in writeSegment, with threads
+        [Ignore]
         [Test]
         public virtual void TestIOExceptionDuringWriteSegmentWithThreadsOnlyOnce()
         {

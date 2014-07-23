@@ -354,6 +354,7 @@ namespace Lucene.Net.Index
         // LUCENE-2095: make sure with multiple threads commit
         // doesn't return until all changes are in fact in the
         // index
+        [Ignore]
         [Test]
         public virtual void TestCommitThreadSafety()
         {

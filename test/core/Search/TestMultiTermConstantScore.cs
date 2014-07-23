@@ -191,8 +191,8 @@ namespace Lucene.Net.Search
             TermQuery dummyTerm = new TermQuery(new Term("data", "1"));
 
             BooleanQuery bq = new BooleanQuery();
-            bq.Add(dummyTerm, BooleanClause.Occur_e.SHOULD); // hits one doc
-            bq.Add(Csrq("data", "#", "#", T, T), BooleanClause.Occur_e.SHOULD); // hits no docs
+            bq.Add(dummyTerm, BooleanClause.Occur.SHOULD); // hits one doc
+            bq.Add(Csrq("data", "#", "#", T, T), BooleanClause.Occur.SHOULD); // hits no docs
             result = search.Search(bq, null, 1000).ScoreDocs;
             int numHits = result.Length;
             AssertEquals("wrong number of results", 1, numHits);
@@ -203,8 +203,8 @@ namespace Lucene.Net.Search
             }
 
             bq = new BooleanQuery();
-            bq.Add(dummyTerm, BooleanClause.Occur_e.SHOULD); // hits one doc
-            bq.Add(Csrq("data", "#", "#", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE), BooleanClause.Occur_e.SHOULD); // hits no docs
+            bq.Add(dummyTerm, BooleanClause.Occur.SHOULD); // hits one doc
+            bq.Add(Csrq("data", "#", "#", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE), BooleanClause.Occur.SHOULD); // hits no docs
             result = search.Search(bq, null, 1000).ScoreDocs;
             numHits = result.Length;
             AssertEquals("wrong number of results", 1, numHits);
@@ -214,8 +214,8 @@ namespace Lucene.Net.Search
             }
 
             bq = new BooleanQuery();
-            bq.Add(dummyTerm, BooleanClause.Occur_e.SHOULD); // hits one doc
-            bq.Add(Csrq("data", "#", "#", T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), BooleanClause.Occur_e.SHOULD); // hits no docs
+            bq.Add(dummyTerm, BooleanClause.Occur.SHOULD); // hits one doc
+            bq.Add(Csrq("data", "#", "#", T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), BooleanClause.Occur.SHOULD); // hits no docs
             result = search.Search(bq, null, 1000).ScoreDocs;
             numHits = result.Length;
             AssertEquals("wrong number of results", 1, numHits);
@@ -248,8 +248,8 @@ namespace Lucene.Net.Search
             q1.Boost = .1f;
             Query q2 = Csrq("data", "Z", "Z", T, T); // matches document #1
             BooleanQuery bq = new BooleanQuery(true);
-            bq.Add(q1, BooleanClause.Occur_e.SHOULD);
-            bq.Add(q2, BooleanClause.Occur_e.SHOULD);
+            bq.Add(q1, BooleanClause.Occur.SHOULD);
+            bq.Add(q2, BooleanClause.Occur.SHOULD);
 
             ScoreDoc[] hits = search.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits[0].Doc);
@@ -260,8 +260,8 @@ namespace Lucene.Net.Search
             q1.Boost = .1f;
             q2 = Csrq("data", "Z", "Z", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE); // matches document #1
             bq = new BooleanQuery(true);
-            bq.Add(q1, BooleanClause.Occur_e.SHOULD);
-            bq.Add(q2, BooleanClause.Occur_e.SHOULD);
+            bq.Add(q1, BooleanClause.Occur.SHOULD);
+            bq.Add(q2, BooleanClause.Occur.SHOULD);
 
             hits = search.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits[0].Doc);
@@ -272,8 +272,8 @@ namespace Lucene.Net.Search
             q1.Boost = 10f;
             q2 = Csrq("data", "Z", "Z", T, T); // matches document #1
             bq = new BooleanQuery(true);
-            bq.Add(q1, BooleanClause.Occur_e.SHOULD);
-            bq.Add(q2, BooleanClause.Occur_e.SHOULD);
+            bq.Add(q1, BooleanClause.Occur.SHOULD);
+            bq.Add(q2, BooleanClause.Occur.SHOULD);
 
             hits = search.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits[0].Doc);
@@ -336,8 +336,8 @@ namespace Lucene.Net.Search
             // ConstantScoreRangeQuery and make sure hte order is the same
 
             BooleanQuery q = new BooleanQuery();
-            q.Add(rq, BooleanClause.Occur_e.MUST); // T, F);
-            q.Add(Csrq("data", "1", "6", T, T), BooleanClause.Occur_e.MUST); // T, F);
+            q.Add(rq, BooleanClause.Occur.MUST); // T, F);
+            q.Add(Csrq("data", "1", "6", T, T), BooleanClause.Occur.MUST); // T, F);
 
             ScoreDoc[] actual = search.Search(q, null, 1000).ScoreDocs;
 

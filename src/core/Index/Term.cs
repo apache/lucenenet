@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
     ///  things like dates, email addresses, urls, etc.  
     /// </summary>
 
-    public sealed class Term : IComparable<Term>
+    public sealed class Term : IComparable<Term>, IEquatable<Term>
     {
         internal string Field_Renamed;
         internal BytesRef Bytes_Renamed;
@@ -130,42 +130,8 @@ namespace Lucene.Net.Index
 
         public override bool Equals(object obj)
         {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (obj == null)
-            {
-                return false;
-            }
-            if (this.GetType() != obj.GetType())
-            {
-                return false;
-            }
-            Term other = (Term)obj;
-            if (Field_Renamed == null)
-            {
-                if (other.Field_Renamed != null)
-                {
-                    return false;
-                }
-            }
-            else if (!Field_Renamed.Equals(other.Field_Renamed))
-            {
-                return false;
-            }
-            if (Bytes_Renamed == null)
-            {
-                if (other.Bytes_Renamed != null)
-                {
-                    return false;
-                }
-            }
-            else if (!Bytes_Renamed.Equals(other.Bytes_Renamed))
-            {
-                return false;
-            }
-            return true;
+            Term t = obj as Term;
+            return this.Equals(t);
         }
 
         public override int GetHashCode()
@@ -207,6 +173,42 @@ namespace Lucene.Net.Index
         {
             Field_Renamed = fld;
             this.Bytes_Renamed = bytes;
+        }
+
+        public bool Equals(Term other)
+        {
+            if (object.ReferenceEquals(null, other))
+            {
+                return object.ReferenceEquals(null, this);
+            }
+            if (object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (this.GetType() != other.GetType())
+            {
+                return false;
+            }
+
+            if (string.Compare(this.Field_Renamed, other.Field_Renamed, StringComparison.Ordinal) != 0)
+            {
+                return false;
+            }
+
+            if (Bytes_Renamed == null)
+            {
+                if (other.Bytes_Renamed != null)
+                {
+                    return false;
+                }
+            }
+            else if (!Bytes_Renamed.Equals(other.Bytes_Renamed))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override string ToString()

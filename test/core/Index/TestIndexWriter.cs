@@ -676,9 +676,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestNullLockFactory()
         {
-
-
-
             Directory dir = new MyRAMDirectory(new RAMDirectory());
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             for (int i = 0; i < 100; i++)

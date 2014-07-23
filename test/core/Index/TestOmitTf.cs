@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
     using FieldType = Lucene.Net.Document.FieldType;
     using TextField = Lucene.Net.Document.TextField;
     using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
     using Collector = Lucene.Net.Search.Collector;

@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestNeverDelete : LuceneTestCase
     {
-
+        [Ignore]
         [Test]
         public virtual void TestIndexing()
         {

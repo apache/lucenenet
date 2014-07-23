@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
     using Term = Lucene.Net.Index.Term;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using Directory = Lucene.Net.Store.Directory;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

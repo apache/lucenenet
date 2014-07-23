@@ -116,8 +116,8 @@ namespace Lucene.Net.Search.Spans
 
 		Query spanQuery = new SpanTermQuery(new Term(FIELD_TEXT, "work"));
 		BooleanQuery query = new BooleanQuery();
-		query.Add(spanQuery, BooleanClause.Occur_e.MUST);
-		query.Add(spanQuery, BooleanClause.Occur_e.MUST);
+		query.Add(spanQuery, BooleanClause.Occur.MUST);
+		query.Add(spanQuery, BooleanClause.Occur.MUST);
 		string[] expectedIds = new string[] {"1", "2", "3", "4"};
 		float[] expectedScores = new float[] {expectedScore, expectedScore, expectedScore, expectedScore};
 		AssertHits(s, query, "two span queries", expectedIds, expectedScores);

@@ -303,6 +303,7 @@
     <Compile Include="core\Search\TestBoolean2.cs" />
     <Compile Include="core\Search\TestBooleanMinShouldMatch.cs" />
     <Compile Include="core\Search\TestBooleanOr.cs" />
+    <Compile Include="core\Search\TestBooleanQuery.cs" />
     <Compile Include="core\Search\TestBooleanQueryVisitSubscorers.cs" />
     <Compile Include="core\Search\TestBooleanScorer.cs" />
     <Compile Include="core\Search\TestCachingCollector.cs" />
@@ -330,8 +331,10 @@
     <Compile Include="core\Search\TestFilteredQuery.cs" />
     <Compile Include="core\Search\TestFilteredSearch.cs" />
     <Compile Include="core\Search\TestFuzzyQuery.cs" />
+    <Compile Include="core\Search\TestIndexSearcher.cs" />
     <Compile Include="core\Search\TestLiveFieldValues.cs" />
     <Compile Include="core\Search\TestMatchAllDocsQuery.cs" />
+    <Compile Include="core\Search\TestMinShouldMatch2.cs" />
     <Compile Include="core\Search\TestMultiPhraseQuery.cs" />
     <Compile Include="core\Search\TestMultiTermConstantScore.cs" />
     <Compile Include="core\Search\TestMultiTermQueryRewrites.cs" />
@@ -358,6 +361,7 @@
     <Compile Include="core\Search\TestScoreCachingWrappingScorer.cs" />
     <Compile Include="core\Search\TestScorerPerf.cs" />
     <Compile Include="core\Search\TestSearchAfter.cs" />
+    <Compile Include="core\Search\TestSearcherManager.cs" />
     <Compile Include="core\Search\TestSearchWithThreads.cs" />
     <Compile Include="core\Search\TestShardSearching.cs" />
     <Compile Include="core\Search\TestSimilarity.cs" />

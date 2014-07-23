@@ -703,7 +703,7 @@ namespace Lucene.Net.Index
                 // the file is open in another process, and queue
                 // the file for subsequent deletion.
 
-                Debug.Assert(e.Message.Contains("cannot delete"));
+                //Debug.Assert(e.Message.Contains("cannot delete"));
 
                 if (InfoStream.IsEnabled("IFD"))
                 {

@@ -148,6 +148,7 @@ namespace Lucene.Net.Search.Spans
 
         }
 
+        [Ignore]
         [Test]
         public virtual void TestNoSuchMultiTermsInNotNear()
         {

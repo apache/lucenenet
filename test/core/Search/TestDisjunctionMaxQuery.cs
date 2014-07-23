@@ -337,7 +337,7 @@ namespace Lucene.Net.Search
                 DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
                 q1.Add(Tq("hed", "albino"));
                 q1.Add(Tq("dek", "albino"));
-                q.Add(q1, BooleanClause.Occur_e.MUST); // true,false);
+                q.Add(q1, BooleanClause.Occur.MUST); // true,false);
                 QueryUtils.Check(Random(), q1, s);
 
             }
@@ -345,7 +345,7 @@ namespace Lucene.Net.Search
                 DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
                 q2.Add(Tq("hed", "elephant"));
                 q2.Add(Tq("dek", "elephant"));
-                q.Add(q2, BooleanClause.Occur_e.MUST); // true,false);
+                q.Add(q2, BooleanClause.Occur.MUST); // true,false);
                 QueryUtils.Check(Random(), q2, s);
             }
 
@@ -378,13 +378,13 @@ namespace Lucene.Net.Search
                 DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
                 q1.Add(Tq("hed", "albino"));
                 q1.Add(Tq("dek", "albino"));
-                q.Add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
+                q.Add(q1, BooleanClause.Occur.SHOULD); // false,false);
             }
             {
                 DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
                 q2.Add(Tq("hed", "elephant"));
                 q2.Add(Tq("dek", "elephant"));
-                q.Add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
+                q.Add(q2, BooleanClause.Occur.SHOULD); // false,false);
             }
             QueryUtils.Check(Random(), q, s);
 
@@ -418,13 +418,13 @@ namespace Lucene.Net.Search
                 DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
                 q1.Add(Tq("hed", "albino"));
                 q1.Add(Tq("dek", "albino"));
-                q.Add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
+                q.Add(q1, BooleanClause.Occur.SHOULD); // false,false);
             }
             {
                 DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
                 q2.Add(Tq("hed", "elephant"));
                 q2.Add(Tq("dek", "elephant"));
-                q.Add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
+                q.Add(q2, BooleanClause.Occur.SHOULD); // false,false);
             }
             QueryUtils.Check(Random(), q, s);
 
@@ -448,10 +448,10 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(doc0.Equals("d2") || doc0.Equals("d4"), "doc0 should be d2 or d4: " + doc0);
                 Assert.IsTrue(doc1.Equals("d2") || doc1.Equals("d4"), "doc1 should be d2 or d4: " + doc0);
                 Assert.AreEqual(score0, score1, SCORE_COMP_THRESH, "score0 and score1 should match");
-                Assert.AreEqual("wrong third", "d3", doc2);
+                Assert.AreEqual("d3", doc2, "wrong third");
                 Assert.IsTrue(score1 > score2, "d3 does not have worse score then d2 and d4: " + score1 + " >? " + score2);
 
-                Assert.AreEqual("wrong fourth", "d1", doc3);
+                Assert.AreEqual("d1", doc3, "wrong fourth");
                 Assert.IsTrue(score2 > score3, "d1 does not have worse score then d3: " + score2 + " >? " + score3);
 
             }
@@ -472,13 +472,13 @@ namespace Lucene.Net.Search
                 DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
                 q1.Add(Tq("hed", "albino", 1.5f));
                 q1.Add(Tq("dek", "albino"));
-                q.Add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
+                q.Add(q1, BooleanClause.Occur.SHOULD); // false,false);
             }
             {
                 DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
                 q2.Add(Tq("hed", "elephant", 1.5f));
                 q2.Add(Tq("dek", "elephant"));
-                q.Add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
+                q.Add(q2, BooleanClause.Occur.SHOULD); // false,false);
             }
             QueryUtils.Check(Random(), q, s);
 

@@ -21,12 +21,12 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// A clause in a BooleanQuery. </summary>
-    public class BooleanClause
+    public class BooleanClause : IEquatable<BooleanClause>
     {
 
         /// <summary>
         /// Specifies how clauses are to occur in matching documents. </summary>
-        public enum Occur_e
+        public enum Occur
         {
             MUST, SHOULD, MUST_NOT/*
 		/// <summary>
@@ -68,15 +68,15 @@ namespace Lucene.Net.Search
 
         }
 
-        private string ToString(Occur_e occur)
+        private string ToString(Occur occur)
         {
             switch (occur)
             {
-                case Occur_e.MUST:
+                case Occur.MUST:
                     return "+";
-                case Occur_e.SHOULD:
+                case Occur.SHOULD:
                     return "";
-                case Occur_e.MUST_NOT:
+                case Occur.MUST_NOT:
                     return "-";
                 default:
                     throw new Exception("Invalid Occur_e value");
@@ -88,20 +88,20 @@ namespace Lucene.Net.Search
         /// </summary>
         private Query query;
 
-        private Occur_e occur;
+        private Occur occur;
 
 
         /// <summary>
         /// Constructs a BooleanClause.
         /// </summary>
-        public BooleanClause(Query query, Occur_e occur)
+        public BooleanClause(Query query, Occur occur)
         {
             this.query = query;
             this.occur = occur;
 
         }
 
-        public Occur_e Occur
+        public Occur Occur_
         {
             get
             {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Occur_e.MUST_NOT == occur;
+                return Occur.MUST_NOT == occur;
             }
         }
 
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Occur_e.MUST == occur;
+                return Occur.MUST == occur;
             }
         }
 
@@ -148,21 +148,31 @@ namespace Lucene.Net.Search
         /// Returns true if <code>o</code> is equal to this. </summary>
         public bool Equals(object o)
         {
-            if (o == null || !(o is BooleanClause))
-            {
-                return false;
-            }
-            BooleanClause other = (BooleanClause)o;
-            return this.query.Equals(other.query) && this.occur == other.occur;
+            BooleanClause bc = o as BooleanClause; 
+            return this.Equals(bc);
         }
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
         public int GetHashCode()
         {
-            return query.GetHashCode() ^ (Occur_e.MUST == occur ? 1 : 0) ^ (Occur_e.MUST_NOT == occur ? 2 : 0);
+            return query.GetHashCode() ^ (Occur.MUST == occur ? 1 : 0) ^ (Occur.MUST_NOT == occur ? 2 : 0);
         }
 
+
+        public bool Equals(BooleanClause other)
+        {
+            bool success = true;
+            if (object.ReferenceEquals(null, other))
+            {
+                return object.ReferenceEquals(null, this);
+            }
+            if (query == null)
+            {
+                success &= other.Query == null;
+            }
+            return success && this.query.Equals(other.query) && this.occur == other.occur;
+        }
 
         public string ToString()
         {

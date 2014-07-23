@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using ReaderClosedListener = Lucene.Net.Index.IndexReader.ReaderClosedListener;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using Lucene.Net.Search;
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
