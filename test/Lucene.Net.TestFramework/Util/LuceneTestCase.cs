@@ -35,8 +35,8 @@ namespace Lucene.Net.TestFramework
         static LuceneTestCase()
         {
             random = new ThreadLocal<System.Random>(() => {
-                
-                Thread.Sleep(20);
+
+              
                 return new System.Random((int) DateTime.Now.Ticks & 0x0000FFFF);
             });
         }

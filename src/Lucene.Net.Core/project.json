@@ -1,6 +1,7 @@
 ﻿{
     "licenses": ["apache 2.0"],
     "dependencies": {
+        "Microsoft.Framework.ConfigurationModel": "1.0.0-alpha2"
     },
     "license": "apache 2.0",
     "configurations" : {
@@ -13,6 +14,7 @@
                 "System.Linq": "",
                 "System.Reflection": "",
                 "System.Runtime": "",
+                "System.Reflection.Extensions": "",
                 "System.Text.RegularExpressions": "",
                 "System.Diagnostics.Debug": ""
             }

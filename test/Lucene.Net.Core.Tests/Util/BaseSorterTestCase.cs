@@ -184,7 +184,7 @@ namespace Lucene.Net.Util
         /// of order.
         /// 
         /// This could be caused by the differences in implementation of Array.Sort, the Java version of Array.sort
-        /// and the SortRange impelementation.
+        /// and the SortRange implementation.
         /// 
         ///  To work around this for the short term, the minValue is currently constrained to have a minValue of 1 and
         ///  RANDOM_LOW_CARDINALITY strategy currently omits checking for matching ordinal positions.

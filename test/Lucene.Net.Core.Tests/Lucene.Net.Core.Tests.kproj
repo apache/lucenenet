@@ -56,6 +56,7 @@
     <Compile Include="Util\BaseSorterTestCase.cs" />
     <Compile Include="Util\TestBits.cs" />
     <Compile Include="Util\TestInPlaceMergeSorter.cs" />
+    <Compile Include="Util\TestRamEstimatorUsage.cs" />
     <Compile Include="Util\TestVersion.cs" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\AspNet\Microsoft.Web.AspNet.targets" Condition="'$(VSToolsPath)' != ''" />

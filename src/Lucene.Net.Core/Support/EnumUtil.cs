@@ -35,7 +35,7 @@ namespace Lucene.Net
         /// <exception cref="System.ArgumentException">Throws when T is not an enum.</exception>
         /// <returns>Returns an IEnumerable&lt;T&gt; of enum values for type T.</returns>
         public static IList<T> ValuesOf<T>()
-        {
+        { 
             // TODO: 5.0 resource: put exception message in resource.
             if (!typeof(T).GetTypeInfo().IsEnum)
                 throw new ArgumentException("Type of T must be an enum");
