@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
             LUCENE_VERSION = version;
         }
 
-        // TODO 5.9 see if the constants for JVM & JAVA are actually needed.
+        // TODO 5.9 determine if the constants for JVM & JAVA are actually needed.
         // public static readonly String JVM_VENDOR = AppSettings.Get("java.vm.vendor", "");
         // public static readonly String JVM_VERSION = AppSettings.Get("java.vm.version", "");
         // public static readonly String JVM_NAME = AppSettings.Get("java.vm.name", "");

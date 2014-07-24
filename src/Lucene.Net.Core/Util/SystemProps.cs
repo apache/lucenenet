@@ -25,6 +25,7 @@ namespace Lucene.Net.Util
     /// <see cref="EnvironmentVariablesConfigurationSource"/> for the <see cref="Constants"/> class.
     /// Other configuration sources may be added at runtime. 
     /// </summary>
+    [CLSCompliant(false)]
     public static class SystemProps
     {
         private static Configuration s_config = new Configuration();
@@ -34,28 +35,43 @@ namespace Lucene.Net.Util
             s_config.Add(new EnvironmentVariablesConfigurationSource());
         }
 
-#pragma warning disable "CS3001"
         /// <summary>
-        /// 
+        /// Adds the <see cref="IConfigurationSource"/> to what is available in <see cref="SystemProps"/>.
         /// </summary>
         /// <param name="configurationSource"></param>
         public static void Add(IConfigurationSource configurationSource)
-#pragma warning restore "CS3001"
         {
-           
             s_config.Add(configurationSource);
         }
 
+        /// <summary>
+        /// Gets the string value associated with the specified <paramref name="key"/>.
+        /// </summary>
+        /// <param name="key">The identifier associated with a value.</param>
+        /// <returns>The <see cref="System.String"/> value.</returns>
         public static string Get(string key)
         {
             return s_config.Get(key);
         }
 
+        /// <summary>
+        /// Gets the <typeparamref name="T"/> value associated with the specified <paramref name="key"/>.
+        /// </summary>
+        /// <typeparam name="T">The expected value type.</typeparam>
+        /// <param name="key">The identifier associated with a value.</param>
+        /// <returns>The <typeparamref name="T"/> value.</returns>
         public static T Get<T>(string key)
         {
             return Get<T>(key, default(T));
         }
 
+        /// <summary>
+        ///  Gets the <typeparamref name="T"/> value associated with the specified <paramref name="key"/>.
+        /// </summary>
+        /// <typeparam name="T">The expected value type</typeparam>
+        /// <param name="key">The identifier associated with a value.</param>
+        /// <param name="defaultValue">The default value that will be supplied if the key returns null.</param>
+        /// <returns>The <typeparamref name="T"/> value.</returns>
         public static T Get<T>(string key, T defaultValue)
         {
             var value = s_config.Get(key);
@@ -65,10 +81,12 @@ namespace Lucene.Net.Util
             return (T)Convert.ChangeType(value, typeof(T));
         }
 
-#pragma warning disable "CS3001"
-        // TODO: <Insert justification for suppressing CS3001>
+
+        /// <summary>
+        /// Instructs the SystemProps to use this configuration object for Lucene.Net
+        /// </summary>
+        /// <param name="configuration">The <see cref="Configuration"/> object.</param>
         public static void UseConfiguration(Configuration configuration)
-#pragma warning restore "CS3001"
         {
             s_config = configuration;
         }

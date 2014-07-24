@@ -30,26 +30,12 @@ namespace Lucene.Net.Util
 
 
     /// <summary> 
-    /// Estimates the size of a given object using a given MemoryModel for primitive
-    /// size information. 
-    /// 
-    /// Higher level languages abstract Memory Management away. <see cref="RamUsageEstimator"/>
-    /// attempts to estimate the object's actual size, even though the size of the object
-    /// cannot be accurately computed due to the barrier that languages like C# and Java have.  
-    /// 
-    /// Resource Usage: 
-    /// 
-    /// Internally uses a Map to temporally hold a reference to every
-    /// object seen. 
-    /// 
-    /// If checkIntered, all Strings checked will be interned, but those
-    /// that were not already interned will be released for GC when the
-    /// estimate is complete.
+    ///  <see cref="RamUsageEstimator"/> estimate the size of memory allocation for an object, even though the size of the object
+    /// cannot be accurately computed due to the barrier that higher level languages like C# and Java have. 
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         The JVM FEATURE should only be ported if mono or different version of the 
-    ///         .NET framework handle memory allocation differently.
+    ///        References on .NET memory allocation for objects and arrays: 
     ///     </para>
     ///     <list type="">
     ///         <item>
@@ -75,10 +61,10 @@ namespace Lucene.Net.Util
     ///         </item>
     ///     </list>
     /// </remarks>
+    // The JVM FEATURE enum should only be ported if mono or different version of the 
+    // .NET framework handle memory allocation differently.
     public sealed class RamUsageEstimator
     {
-        public static readonly string JVM_INFO_STRING;
-
         /// <summary>
         /// The number of bytes for one killabyte. 
         /// </summary>
@@ -226,14 +212,9 @@ namespace Lucene.Net.Util
             // The Java Version references "sun.misc.Unsafe", the closest class to have one or two of the
             // methods that Unsafe has is System.Runtime.InteropServices.Marshal
 
-            // Based on various sources, here are basic building blocks for estimating the 
-            // memory of objects for .NET 
-
-            // .NET has a different overhead for arrays of value types than
-            // it does for arrays of reference types. 
-
-            // The logic is written differently than its Java Counterpart in hopes
-            // to be more clear in how the ram estimates are calculated.
+            // The logic below is written different than the Java Version so
+            // a developer can visually see how the number of bytes are actually
+            // added up.
 
             int typeObjectPointer = 4; // 4 bytes  32 bit
             int syncBlock = 4;
@@ -260,24 +241,18 @@ namespace Lucene.Net.Util
 
             NUM_BYTES_OBJECT_REF = referenceTypeSize;
             NUM_BYTES_OBJECT_HEADER = objectHeader;
-            NUM_BYTES_VALUE_TYPE_ARRAY_HEADER = valueTypeArrayHeader;
-            NUM_BYTES_REFERENCE_TYPE_ARRAY_HEADER = referenceTypeArrayHeader;
             NUM_BYTES_OBJECT_ALIGNMENT = memoryAlignmentSize;
 
-            /*
-            JVM_INFO_STRING = "[JVM: " +
-                Constants.JVM_NAME + ", " + Constants.JVM_VERSION + ", " + Constants.JVM_VENDOR + ", " +
-                Constants.JAVA_VENDOR + ", " + Constants.JAVA_VERSION + "]"; */
+            // .NET has a different overhead for arrays of value types than
+            // it does for arrays of reference types.
+
+            NUM_BYTES_VALUE_TYPE_ARRAY_HEADER = valueTypeArrayHeader;
+            NUM_BYTES_REFERENCE_TYPE_ARRAY_HEADER = referenceTypeArrayHeader;
         }
 
         public static long AdjustForField(long sizeSoFar, FieldInfo f)
         {
             var typeInfo = f.FieldType.GetTypeInfo();
-            if (f.FieldType == typeof(string))
-            {
-
-            }
-
             int fsize = typeInfo.IsPrimitive ? primitiveSizes[f.FieldType] : NUM_BYTES_OBJECT_REF;
 
             if (f.DeclaringType != null && f.DeclaringType.GetTypeInfo().IsValueType)
@@ -359,7 +334,7 @@ namespace Lucene.Net.Util
         /// arrays.
         /// </summary>
         /// <param name="array">The object array.</param>
-        /// <returns>The size in bytes.</returns>
+        /// <returns>The size of the array in bytes.</returns>
         public static long ShallowSizeOf(Object[] array)
         {
 
@@ -371,12 +346,12 @@ namespace Lucene.Net.Util
 
 
         /// <summary>
-        /// Estimates a "shallow" memory usage of the given object. For arrays, this will be the
+        /// Returns the "shallow" size of memory allocation in bytes for the given object. For arrays, this will be the
         /// memory taken by array storage(no subreferences will be followed). For objects, this
         /// will be the memory taken by the fields.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">The object.</param>
+        /// <returns>The size of the object in bytes.</returns>
         public static long ShallowSizeOf(Object obj)
         {
             if (obj == null)
@@ -388,10 +363,6 @@ namespace Lucene.Net.Util
             {
                 return ShallowSizeOfArray((Array)obj);
             }
-            if(type == typeof(string))
-            {
-                return ShallowSizeOfArray(obj.ToString().ToCharArray());
-            }
             else
             {
                 return ShallowSizeOfInstance(type);
@@ -399,11 +370,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the shallow instance size in bytes of the memory allocated that an object
+        /// Returns the shallow size of memory allocation in bytes of the memory allocated that an object
         /// of the specified type could occupy.
         /// </summary>
         /// <param name="instanceType">The type information used to estimate memory allocation.</param>
-        /// <returns></returns>
+        /// <returns>The size of the object in bytes.</returns>
         /// <exception cref="ArgumentException">Throws when the <paramref name="instanceType"/> is an <see cref="System.Array"/>.</exception>
         public static long ShallowSizeOfInstance(Type instanceType)
         {
@@ -419,14 +390,11 @@ namespace Lucene.Net.Util
 
             long size = NUM_BYTES_OBJECT_HEADER;
 
-            // Walk type hierarchy
-            for (; type != null; type = type.GetTypeInfo().BaseType)
+            // GetRuntimeFields includes inherited fields. 
+            var fields = type.GetRuntimeFields().Where(o => !o.IsStatic);
+            foreach (FieldInfo f in fields)
             {
-                var fields = type.GetRuntimeFields().Where(o => !o.IsStatic);
-                foreach (FieldInfo f in fields)
-                {
-                    size = AdjustForField(size, f);
-                }
+                size = AdjustForField(size, f);
             }
 
             return AlignObjectSize(size);
@@ -446,6 +414,7 @@ namespace Lucene.Net.Util
                     size = NUM_BYTES_VALUE_TYPE_ARRAY_HEADER;
                     size += (long)length * primitiveSizes[arrayElementType];
                 }
+      
                 else
                 {
                     size = NUM_BYTES_REFERENCE_TYPE_ARRAY_HEADER;
@@ -457,7 +426,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Retrns the size of the memory allocatio for a string.
+        /// Retrns the size of the memory allocation for a string.
         /// </summary>
         /// <param name="array">The string.</param>
         /// <returns>The size of the memory allocation.</returns>
@@ -503,15 +472,5 @@ namespace Lucene.Net.Util
 
             return size;
         }
-    
-
-      
-      
-
-       
-
-
-        
-
     }
 }

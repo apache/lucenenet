@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
     public class TestRamUsageEstimator : LuceneTestCase
     {
 
-        //[Test(Skip = "Verifying that RamUsageEstimator works as expected.")]
+        [Test]
         public void TestSanity()
         {
             Func<object, long> sizeOf = RamUsageTester.SizeOf;
@@ -38,26 +38,17 @@ namespace Lucene.Net.Util
             Ok(size > shallowSize, "the size {0} must be greater than the shallow size {1}", size, shallowSize);
 
             var holder = new Holder { holder = new Holder("string2", 5000L) };
-            /**
-                TODO: account for actual values of fields for RamEstimatorUsage.   
-             
-                This test will fail as RamUsageTest.SizeOf and RamUsageEstimator.ShallowSizeOfInstance
-                do the exact same thing. 
-            
-                SizeOf doesn't 
-                currently transerve the objects and get an accurate memory count of the values of the fields on the 
-                objects which is why it is failing. 
-                
 
-                var left = sizeOf(holder);
+            var left = sizeOf(holder);
                 var right = RamUsageEstimator.ShallowSizeOfInstance(holder.GetType());
-                Ok(left > right, "sizeOf(holder) {0} must be greater than the shallow size {1}", left, right);
-            */
-
+            Ok(left > right, "sizeOf(holder) {0} must be greater than the shallow size {1}", left, right);
             Ok(sizeOf(holder) > sizeOf(holder.holder));
 
             Ok(RamUsageEstimator.ShallowSizeOfInstance(typeof(HolderSubclass)) >= RamUsageEstimator.ShallowSizeOfInstance(typeof(Holder)));
-            Ok(RamUsageEstimator.ShallowSizeOfInstance(typeof(Holder)) == RamUsageEstimator.ShallowSizeOfInstance(typeof(HolderSubclass2)));
+
+            var holderShallow = RamUsageEstimator.ShallowSizeOfInstance(typeof(Holder));
+            var holder2Shallow = RamUsageEstimator.ShallowSizeOfInstance(typeof(HolderSubclass2));
+            Ok(holderShallow ==  holder2Shallow, "Holder {0} should be equal to HolderSubclass2 {1}", holderShallow, holder2Shallow);
 
             var strings = new string[] {
                     "test string",

@@ -137,20 +137,18 @@ namespace Lucene.Net.Util
             ClassCache cachedInfo;
             long shallowInstanceSize = RamUsageEstimator.NUM_BYTES_OBJECT_HEADER;
             List<FieldInfo> referenceFields = new List<FieldInfo>(32);
-            for (Type c = instanceType; c != null; c = c.GetTypeInfo().BaseType)
-            {
-                var fields = c.GetRuntimeFields().Where(o => !o.IsStatic);
-                foreach (FieldInfo f in fields)
-                {
-                   
-                    shallowInstanceSize = RamUsageEstimator.AdjustForField(shallowInstanceSize, f);
 
-                    if (!f.FieldType.GetTypeInfo().IsPrimitive)
-                    {
-                        referenceFields.Add(f);
-                    }
-                    
+            // GetRuntimeFields includes inherited fields. 
+            var fields = instanceType.GetRuntimeFields().Where(o => !o.IsStatic);
+            foreach (FieldInfo f in fields)
+            {
+                shallowInstanceSize = RamUsageEstimator.AdjustForField(shallowInstanceSize, f);
+
+                if (!f.FieldType.GetTypeInfo().IsPrimitive)
+                {
+                    referenceFields.Add(f);
                 }
+
             }
 
             cachedInfo = new ClassCache(RamUsageEstimator.AlignObjectSize(shallowInstanceSize), referenceFields.ToArray());
