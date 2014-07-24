@@ -31,7 +31,8 @@ namespace Lucene.Net.Util
             // chars is null
             Throws<ArgumentNullException>(() =>
             {
-                ArrayUtil.ParseInt(null);
+                string value = null;
+                ArrayUtil.ParseInt(value);
             });
 
             // chars is empty
@@ -55,19 +56,19 @@ namespace Lucene.Net.Util
             });
 
             // throws when limit > chars.Length
-            Throws<ArgumentException>(() =>
+            Throws<ArgumentOutOfRangeException>(() =>
             {
                 ArrayUtil.ParseInt("12".ToCharArray(), limit: 20);
             });
 
             // throws when offset > chars.length;
-            Throws<ArgumentException>(() =>
+            Throws<ArgumentOutOfRangeException>(() =>
             {
-                ArrayUtil.ParseInt("12".ToCharArray(), offset: 20);
+                ArrayUtil.ParseInt("12", offset: 20);
             });
 
             // throws when offset < 0.
-            Throws<ArgumentException>(() =>
+            Throws<ArgumentOutOfRangeException>(() =>
             {
                 ArrayUtil.ParseInt("12".ToCharArray(), offset: -1);
             });

@@ -6,23 +6,68 @@ namespace Lucene.Net
     using System.Collections.Generic;
 
     /// <summary>
-    /// Summary description for ArrayUtil
+    /// Utility methods for manipulating arrays.
     /// </summary>
     public static class ArrayUtil
     {
 
-        public static int ParseInt(this char[] chars, int offset = 0, int limit = -1, int radix = 10)
+
+        /// <summary>
+        /// Parses the string argument as if it was an int value and returns the result.
+        /// </summary>
+        /// <param name="chars">A string representation of an int quantity. </param>
+        /// <param name="offset">The position in the <paramref name="chars"/> array to start parsing.</param>
+        /// <param name="limit">The number of characters to parse after the <paramref name="offset"/>.</param>
+        /// <param name="radix"> The base to use for conversion. </param>
+        /// <returns> int the value represented by the argument </returns>
+        /// <exception cref="ArgumentNullException">Throws when <paramref name="chars"/> is null.</exception>
+        /// <exception cref="ArgumentException">Throws when <paramref name="chars"/> is empty.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     <list>
+        ///         <item>Throws when <paramref name="offset"/> is less than zero or greater than <paramref name="chars"/>.Length.</item>
+        ///         <item>Throws when <paramref name="limit"/> is greater than <paramref name="chars"/>.Length.</item>
+        ///         <item>Throws when <paramref name="radix"/> is less than 2 or greater than 36.</item>
+        ///     </list>
+        /// </exception>
+        /// <exception cref="FormatException">Throws when a character cannot be translated into a integer.</exception>
+        public static int ParseInt(this string chars, int offset = 0, int limit = -1, int radix = 10)
         {
             Check.NotNull("chars", chars);
+
+            return ParseInt(chars.ToCharArray(), offset, limit, radix);
+        }
+
+        /// <summary>
+        /// Parses the string argument as if it was an int value and returns the result.
+        /// </summary>
+        /// <param name="chars">A string representation of an int quantity. </param>
+        /// <param name="offset">The position in the <paramref name="chars"/> array to start parsing.</param>
+        /// <param name="limit">The number of characters to parse after the <paramref name="offset"/>.</param>
+        /// <param name="radix"> The base to use for conversion. </param>
+        /// <returns>The integer value that was parsed from <pararef name="chars" />.</returns>
+        /// <exception cref="ArgumentNullException">Throws when <paramref name="chars"/> is null.</exception>
+        /// <exception cref="ArgumentException">Throws when <paramref name="chars"/> is empty.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     <list>
+        ///         <item>Throws when <paramref name="offset"/> is less than zero or greater than <paramref name="chars"/>.Length.</item>
+        ///         <item>Throws when <paramref name="limit"/> is greater than <paramref name="chars"/>.Length.</item>
+        ///         <item>Throws when <paramref name="radix"/> is less than 2 or greater than 36.</item>
+        ///     </list>
+        /// </exception>
+        /// <exception cref="FormatException">Throws when a character cannot be translated into a integer.</exception>
+        public static int ParseInt(this char[] chars, int offset = 0, int limit = -1, int radix = 10)
+        {
+            Check.NotNull("chars", chars, false);
             Check.Condition(chars.Length == 0, "chars", "The parameter, chars, must not be an empty array.");
-            Check.Condition(offset < 0 || offset > chars.Length, "offset", 
+            Check.Condition<ArgumentOutOfRangeException>(
+                offset < 0 || offset > chars.Length,  
                 "The parameter, offset ({0}), must be greater than -1 and less than parameter, chars.Length ({1}).", offset, chars.Length);
 
             if (limit < 0)
                 limit = chars.Length;
 
-            Check.Condition(
-                limit > chars.Length, "limit", 
+            Check.Condition<ArgumentOutOfRangeException>(
+                limit > chars.Length,
                 "The parameter, limit ({0}), must be less than or equal to the length of the parameter, chars ({1}).", 
                  limit, chars.Length);
 
@@ -43,10 +88,11 @@ namespace Lucene.Net
                 limit--;
             }
 
-            return Parse(chars, offset, limit, radix, negative);
+            return ParseInt(chars, offset, limit, radix, negative);
         }
 
-        private static int Parse(char[] chars, int offset, int len, int radix, bool negative)
+        // parse() in Java
+        private static int ParseInt(char[] chars, int offset, int len, int radix, bool negative)
         {
             int max = int.MinValue / radix;
             int result = 0;
