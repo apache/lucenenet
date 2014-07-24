@@ -119,9 +119,9 @@ namespace Lucene.Net.Util
         }
 
         [DebuggerHidden]
-        public static void Throws<T>(Action code) where T : Exception
+        public static T Throws<T>(Action code) where T : Exception
         {
-            Assert.Throws<T>(code);
+            return Assert.Throws<T>(code);
         }
         
         #endif

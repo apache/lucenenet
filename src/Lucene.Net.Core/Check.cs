@@ -23,12 +23,42 @@ namespace Lucene.Net
 {
     using System;
     using System.Diagnostics;
+    using System.Reflection;
 
     /// <summary>
     /// Checks for code for issues that causes an error. Think of it as the replacement for Guard.
     /// </summary>
     internal static class Check
     {
+
+        [DebuggerStepThrough]
+        public static void Condition(bool condition, string name, string message, params object[] args)
+        {
+            if (condition)
+            {
+                var formattedMessage = message;
+                if (args != null && args.Length > 0)
+                    formattedMessage = string.Format(message, args);
+
+                throw new ArgumentException(formattedMessage, name);
+            }
+        }
+
+        [DebuggerStepThrough]
+        public static void Condition<T>(bool condition, string message, params object[] args) where T : Exception
+        {
+            if (condition)
+            {
+                var formattedMessage = message;
+                if (args != null && args.Length > 0)
+                    formattedMessage = string.Format(message, args);
+
+                var ctorArgs = new object[] { formattedMessage };
+                var exception = (T)Activator.CreateInstance(typeof(T), ctorArgs);
+
+                throw exception;
+            }
+        }
 
         [DebuggerStepThrough]
         public static void InRangeOfLength(int start, int count, int length)

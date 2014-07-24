@@ -43,6 +43,8 @@ namespace Lucene.Net.Util
             Ok(Constants.OS_VERSION != null);
             Ok(Constants.OS_ARCH != null);
             Ok(Constants.LUCENE_VERSION != null);
+
+#if!PORTABLE
             Console.WriteLine(" ");
             Console.WriteLine("Constants");
             Console.WriteLine("---------------------------------------");
@@ -51,6 +53,7 @@ namespace Lucene.Net.Util
             Console.WriteLine("OS Arch:         {0}", Constants.OS_ARCH);
             Console.WriteLine("Lucene Version:  {0}", Constants.LUCENE_VERSION);
             Console.WriteLine(" ");
+#endif
         }
 
         [Test]
