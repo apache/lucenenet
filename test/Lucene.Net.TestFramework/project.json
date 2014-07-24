@@ -12,8 +12,8 @@
 
     
     "dependencies": {
-            "Xunit.KRunner": "1.0.0-*"
-
+        "Xunit.KRunner": "1.0.0-*",
+        "Lucene.Net.Core": ""
     },
 
     "configurations" : {

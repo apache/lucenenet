@@ -25,10 +25,17 @@ namespace Lucene.Net.Util
     using System.Globalization;
     using System.Reflection;
     using System.Linq;
+    using System.Runtime.InteropServices;
 
 
-    /// <summary> Estimates the size of a given Object using a given MemoryModel for primitive
-    /// size information.
+
+    /// <summary> 
+    /// Estimates the size of a given object using a given MemoryModel for primitive
+    /// size information. 
+    /// 
+    /// Higher level languages abstract Memory Management away. <see cref="RamUsageEstimator"/>
+    /// attempts to estimate the object's actual size, even though the size of the object
+    /// cannot be accurately computed due to the barrier that languages like C# and Java have.  
     /// 
     /// Resource Usage: 
     /// 
@@ -39,15 +46,144 @@ namespace Lucene.Net.Util
     /// that were not already interned will be released for GC when the
     /// estimate is complete.
     /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         The JVM FEATURE should only be ported if mono or different version of the 
+    ///         .NET framework handle memory allocation differently.
+    ///     </para>
+    ///     <list type="">
+    ///         <item>
+    ///             <see href="http://atlasteit.wordpress.com/2012/07/18/advanced-c-programming-6-everything-about-memory-allocation-in-net/">
+    ///              .NET Memory Allocation
+    ///             </see>
+    ///         </item>
+    ///         
+    ///         <item>
+    ///             <see href="https://www.simple-talk.com/dotnet/.net-framework/object-overhead-the-hidden-.net-memory--allocation-cost/">
+    ///             Hiden Object Overhead.
+    ///             </see>
+    ///         </item>
+    ///         <item>
+    ///             <see href="http://stackoverflow.com/questions/1589669/overhead-of-a-net-array">
+    ///             Overhead of a .NET Array
+    ///             </see>
+    ///         </item>
+    ///         <item>
+    ///             <see href="http://blogs.msdn.com/b/microsoft_press/archive/2012/11/29/new-book-clr-via-c-fourth-edition.aspx">
+    ///              Clr via C#
+    ///             </see>
+    ///         </item>
+    ///     </list>
+    /// </remarks>
     public sealed class RamUsageEstimator
     {
         public static readonly string JVM_INFO_STRING;
 
+        /// <summary>
+        /// The number of bytes for one killabyte. 
+        /// </summary>
         public const long ONE_KB = 1024L;
 
+        /// <summary>
+        /// The number of bytes for one megabyte. 
+        /// </summary>
         public const long ONE_MB = ONE_KB * ONE_KB;
 
+        /// <summary>
+        /// The number of bytes for one gigbyte. 
+        /// </summary>
         public const long ONE_GB = ONE_KB * ONE_MB;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="bool"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_BOOLEAN = 1;
+
+        /// <summary>
+        /// The number of bytes that an <see cref="sbyte"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_SBYTE = 1;
+
+        /// <summary>
+        /// The number of bytes that a byte <see cref="byte"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_BYTE = 1;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="char"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_CHAR = 2;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="char"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_SHORT = 2;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="short"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_USHORT = 2;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="ushort"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_INT = 4;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="int"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_UINT = 4;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="unit"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_FLOAT = 4;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="float"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_LONG = 8;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="ulong"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_ULONG = 8;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="double"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_DOUBLE = 8;
+
+        /// <summary>
+        /// The number of bytes that a <see cref="decimal"/> takes up in memory.
+        /// </summary>
+        public const int NUM_BYTES_DECIMAL = 16;
+
+        /// <summary>
+        ///The number of bytes for that an object reference takes up in memory.
+        /// </summary>
+        public static readonly int NUM_BYTES_OBJECT_REF;
+
+        /// <summary>
+        /// The number of bytes for that the overhead of an object takes up in memory.
+        /// </summary>
+        public static readonly int NUM_BYTES_OBJECT_HEADER;
+
+        /// <summary>
+        /// The number of bytes for that the overhead of an value type array takes up in memory.
+        /// </summary>
+        public static readonly int NUM_BYTES_VALUE_TYPE_ARRAY_HEADER;
+
+        /// <summary>
+        /// The number of bytes for that the overhead of an value type array takes up in memory.
+        /// </summary>
+        public static readonly int NUM_BYTES_REFERENCE_TYPE_ARRAY_HEADER;
+
+        /// <summary>
+        /// The number of bytes used to align memory for an object. 
+        /// </summary>
+        public static readonly int NUM_BYTES_OBJECT_ALIGNMENT;
+
 
         /// <summary>
         /// No instantiation
@@ -56,55 +192,77 @@ namespace Lucene.Net.Util
         {
         }
 
-        public const int NUM_BYTES_BOOLEAN = 1;
-        public const int NUM_BYTES_BYTE = 1;
-        public const int NUM_BYTES_CHAR = 2;
-        public const int NUM_BYTES_SHORT = 2;
-        public const int NUM_BYTES_INT = 4;
-        public const int NUM_BYTES_FLOAT = 4;
-        public const int NUM_BYTES_LONG = 8;
-        public const int NUM_BYTES_DOUBLE = 8;
 
-        public static readonly int NUM_BYTES_OBJECT_REF;
-
-        public static readonly int NUM_BYTES_OBJECT_HEADER;
-
-        public static readonly int NUM_BYTES_ARRAY_HEADER;
-
-        public static readonly int NUM_BYTES_OBJECT_ALIGNMENT;
 
         private static readonly IDictionary<Type, int> primitiveSizes;
 
         static RamUsageEstimator()
         {
-
-
-            var x = new HashMap<Type, int>();
-           
             primitiveSizes = new HashMap<Type, int>();
+
+            // 1 
             primitiveSizes[typeof(bool)] = NUM_BYTES_BOOLEAN;
             primitiveSizes[typeof(byte)] = NUM_BYTES_BYTE;
-            primitiveSizes[typeof(sbyte)] = NUM_BYTES_BYTE;
+            primitiveSizes[typeof(sbyte)] = NUM_BYTES_SBYTE;
+
+            // 2
             primitiveSizes[typeof(char)] = NUM_BYTES_CHAR;
             primitiveSizes[typeof(short)] = NUM_BYTES_SHORT;
+            primitiveSizes[typeof(ushort)] = NUM_BYTES_USHORT;
+
+            // 4
             primitiveSizes[typeof(int)] = NUM_BYTES_INT;
+            primitiveSizes[typeof(uint)] = NUM_BYTES_UINT;
             primitiveSizes[typeof(float)] = NUM_BYTES_FLOAT;
-            primitiveSizes[typeof(double)] = NUM_BYTES_DOUBLE;
+
+            // 8
             primitiveSizes[typeof(long)] = NUM_BYTES_LONG;
+            primitiveSizes[typeof(ulong)] = NUM_BYTES_ULONG;
+            primitiveSizes[typeof(double)] = NUM_BYTES_DOUBLE;
 
-            // These were copied from the Java version of lucene and may not be correct.
-            // The referenceSize and objectHeader seem to be correct according to 
-            // https://www.simple-talk.com/dotnet/.net-framework/object-overhead-the-hidden-.net-memory--allocation-cost/
-            int referenceSize = Constants.KRE_IS_64BIT ? 8 : 4;
-            int objectHeader = Constants.KRE_IS_64BIT ? 16 : 8;
-            int arrayHeader = Constants.KRE_IS_64BIT ? 24 : 12;
-            int objectAlignment = Constants.KRE_IS_64BIT ? 8 : 4;
+            // 16
+            primitiveSizes[typeof(decimal)] = NUM_BYTES_DECIMAL;
 
-            NUM_BYTES_OBJECT_REF = referenceSize;
+            // The Java Version references "sun.misc.Unsafe", the closest class to have one or two of the
+            // methods that Unsafe has is System.Runtime.InteropServices.Marshal
+
+            // Based on various sources, here are basic building blocks for estimating the 
+            // memory of objects for .NET 
+
+            // .NET has a different overhead for arrays of value types than
+            // it does for arrays of reference types. 
+
+            // The logic is written differently than its Java Counterpart in hopes
+            // to be more clear in how the ram estimates are calculated.
+
+            int typeObjectPointer = 4; // 4 bytes  32 bit
+            int syncBlock = 4;
+            int arrayLength = 4;
+            int elementReferenceMethodTable = 4;
+            int memoryAlignmentSize = 4;
+            int referenceTypeSize = 4;
+
+            if (Constants.KRE_IS_64BIT)
+            {
+                referenceTypeSize = 8;
+                typeObjectPointer = 8; // 8 bytes  64 bit
+                syncBlock = 8; // 8 bytes  64 bit
+                arrayLength = 8; // 8 bytes 64 bit
+                elementReferenceMethodTable = 8; // 8 bytes 64 bit
+                memoryAlignmentSize = 8; // 8 bytes 64 bit
+            }
+
+            
+
+            int objectHeader = typeObjectPointer + syncBlock;
+            int valueTypeArrayHeader = typeObjectPointer + syncBlock + arrayLength;
+            int referenceTypeArrayHeader = typeObjectPointer + syncBlock + arrayLength + elementReferenceMethodTable;
+
+            NUM_BYTES_OBJECT_REF = referenceTypeSize;
             NUM_BYTES_OBJECT_HEADER = objectHeader;
-            NUM_BYTES_ARRAY_HEADER = arrayHeader;
-            NUM_BYTES_OBJECT_ALIGNMENT = objectAlignment;
-
+            NUM_BYTES_VALUE_TYPE_ARRAY_HEADER = valueTypeArrayHeader;
+            NUM_BYTES_REFERENCE_TYPE_ARRAY_HEADER = referenceTypeArrayHeader;
+            NUM_BYTES_OBJECT_ALIGNMENT = memoryAlignmentSize;
 
             /*
             JVM_INFO_STRING = "[JVM: " +
@@ -112,18 +270,47 @@ namespace Lucene.Net.Util
                 Constants.JAVA_VENDOR + ", " + Constants.JAVA_VERSION + "]"; */
         }
 
-        private sealed class ClassCache
+        public static long AdjustForField(long sizeSoFar, FieldInfo f)
         {
-            public readonly long alignedShallowInstanceSize;
-            public readonly FieldInfo[] referenceFields;
-
-            public ClassCache(long alignedShallowInstanceSize, FieldInfo[] referenceFields)
+            var typeInfo = f.FieldType.GetTypeInfo();
+            if (f.FieldType == typeof(string))
             {
-                this.alignedShallowInstanceSize = alignedShallowInstanceSize;
-                this.referenceFields = referenceFields;
+
             }
+
+            int fsize = typeInfo.IsPrimitive ? primitiveSizes[f.FieldType] : NUM_BYTES_OBJECT_REF;
+
+            if (f.DeclaringType != null && f.DeclaringType.GetTypeInfo().IsValueType)
+            {
+                try
+                {
+                    // this is the closest thing that .NET has to getting the FieldOffset.
+                    // objectFieldOffsetMethod
+
+                    // here is a .NET Fiddle that shows what the code in Java is attempting to account for
+                    // https://dotnetfiddle.net/7fSZ5b
+
+                    // the alternative would be to create an express to use Marshal.OffsetOf<T>(fieldName).
+#pragma warning disable 0618
+                    var offset = Marshal.OffsetOf(f.DeclaringType, f.Name).ToInt64() + fsize;
+#pragma warning restore 0618
+                    Math.Max(sizeSoFar, offset);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            return sizeSoFar + fsize;
         }
 
+
+        /// <summary>
+        /// Estimates the aligned memory size of the object.
+        /// </summary>
+        /// <param name="size">The current estimated size of the object.</param>
+        /// <returns>The size of the object after its alignment. </returns>
         public static long AlignObjectSize(long size)
         {
             size += (long)NUM_BYTES_OBJECT_ALIGNMENT - 1L;
@@ -131,263 +318,17 @@ namespace Lucene.Net.Util
         }
 
 
-        public static long SizeOf<T>(T[] array) where T : struct
-        {
-            int? size = primitiveSizes[typeof(T)];
-
-            if (size.HasValue)
-                return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)size * array.Length);
-
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + array.Length);
-        }
-
-        /*
-        public static long SizeOf(byte[] arr)
-        {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
-        }
-
-        public static long SizeOf(sbyte[] arr)
-        {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
-        }
-
-        public static long SizeOf(bool[] arr)
-        {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
-        }
-
-        public static long SizeOf(char[] arr)
-        {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_CHAR * arr.Length);
-        }
-
-        public static long SizeOf(short[] arr)
-        {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_SHORT * arr.Length);
-        }
-
-        public static long SizeOf(int[] arr)
-        {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT * arr.Length);
-        }
-
-        public static long SizeOf(float[] arr)
-        {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_FLOAT * arr.Length);
-        }
-
-        public static long SizeOf(long[] arr)
-        {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_LONG * arr.Length);
-        }
-
-        public static long SizeOf(double[] arr)
-        {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_DOUBLE * arr.Length);
-        }*/
-
-        public static long SizeOf(Object obj)
-        {
-            return MeasureObjectSize(obj);
-        }
-
-        public static long ShallowSizeOf(Object obj)
-        {
-            if (obj == null) return 0;
-            Type clz = obj.GetType();
-            if (clz.IsArray)
-            {
-                return ShallowSizeOfArray((Array)obj);
-            }
-            else
-            {
-                return ShallowSizeOfInstance(clz);
-            }
-        }
-
-        public static long ShallowSizeOfInstance(Type clazz)
-        {
-            // typeInfo = clazz.
-            var type = clazz;
-            var typeInfo = clazz.GetTypeInfo();
-            if (typeInfo.IsArray)
-                throw new ArgumentException("This method does not work with array classes.");
-            if (typeInfo.IsPrimitive)
-                return primitiveSizes[typeInfo.AsType()];
-
-            long size = NUM_BYTES_OBJECT_HEADER;
-
-            // Walk type hierarchy
-            for (; type != null; type = type.GetTypeInfo().BaseType)
-            {
-                var fields = type.GetRuntimeFields().Where(o => o.IsPublic && !o.IsStatic);
-                foreach (FieldInfo f in fields)
-                {
-                    if (!f.IsStatic)
-                    {
-                        size = AdjustForField(size, f);
-                    }
-                }
-            }
-
-            return AlignObjectSize(size);
-        }
-
-        private static long ShallowSizeOfArray(Array array)
-        {
-            long size = NUM_BYTES_ARRAY_HEADER;
-            int len = array.Length;
-            if (len > 0)
-            {
-                Type arrayElementType = array.GetType().GetElementType();
-                var arrayElementTypeInfo = arrayElementType.GetTypeInfo();
-               
-                if (arrayElementTypeInfo.IsPrimitive)
-                {
-                    size += (long)len * primitiveSizes[arrayElementType];
-                }
-                else
-                {
-                    size += (long)NUM_BYTES_OBJECT_REF * len;
-                }
-            }
-            return AlignObjectSize(size);
-        }
-
-        private static long MeasureObjectSize(Object root)
-        {
-            // Objects seen so far.
-            HashSet<Object> seen = new HashSet<Object>();
-            // Class cache with reference Field and precalculated shallow size. 
-            HashMap<Type, ClassCache> classCache = new HashMap<Type, ClassCache>();
-            // Stack of objects pending traversal. Recursion caused stack overflows. 
-            Stack<Object> stack = new Stack<Object>();
-            stack.Push(root);
-
-            long totalSize = 0;
-            while (stack.Count > 0)
-            {
-                Object ob = stack.Pop();
-
-                if (ob == null || seen.Contains(ob))
-                {
-                    continue;
-                }
-                seen.Add(ob);
-
-                Type obClazz = ob.GetType();
-                if (obClazz.IsArray)
-                {
-                    /*
-                     * Consider an array, possibly of primitive types. Push any of its references to
-                     * the processing stack and accumulate this array's shallow size. 
-                     */
-                    long size = NUM_BYTES_ARRAY_HEADER;
-                    Array array = (Array)ob;
-                    int len = array.Length;
-                    if (len > 0)
-                    {
-                        var componentType = obClazz.GetElementType();
-                        var componentTypeInfo = componentType.GetTypeInfo();
-                        if (componentTypeInfo.IsPrimitive)
-                        {
-                            size += (long)len * primitiveSizes[componentType];
-                        }
-                        else
-                        {
-                            size += (long)NUM_BYTES_OBJECT_REF * len;
-
-                            // Push refs for traversal later.
-                            for (int i = len; --i >= 0;)
-                            {
-                                Object o = array.GetValue(i);
-                                if (o != null && !seen.Contains(o))
-                                {
-                                    stack.Push(o);
-                                }
-                            }
-                        }
-                    }
-                    totalSize += AlignObjectSize(size);
-                }
-                else
-                {
-                    /*
-                     * Consider an object. Push any references it has to the processing stack
-                     * and accumulate this object's shallow size. 
-                     */
-                    ClassCache cachedInfo = classCache[obClazz];
-                    if (cachedInfo == null)
-                    {
-                        classCache[obClazz] = cachedInfo = CreateCacheEntry(obClazz);
-                    }
-
-                    foreach (FieldInfo f in cachedInfo.referenceFields)
-                    {
-                        // Fast path to eliminate redundancies.
-                        Object o = f.GetValue(ob);
-                        if (o != null && !seen.Contains(o))
-                        {
-                            stack.Push(o);
-                        }
-                    }
-
-                    totalSize += cachedInfo.alignedShallowInstanceSize;
-
-                }
-            }
-
-            // Help the GC (?).
-            seen.Clear();
-            stack.Clear();
-            classCache.Clear();
-
-            return totalSize;
-        }
-
-        private static ClassCache CreateCacheEntry(Type type)
-        {
-          
-            ClassCache cachedInfo;
-            long shallowInstanceSize = NUM_BYTES_OBJECT_HEADER;
-            List<FieldInfo> referenceFields = new List<FieldInfo>(32);
-            for (var c = type; c != null; c = c.GetTypeInfo().BaseType)
-            {
-                
-                var fields = c.GetRuntimeFields().Where(o => o.IsPublic && !o.IsStatic);
-                foreach (FieldInfo f in fields)
-                {
-                    shallowInstanceSize = AdjustForField(shallowInstanceSize, f);
-
-                    if (!f.FieldType.GetTypeInfo().IsPrimitive)
-                    {
-                        referenceFields.Add(f);
-                    }
-                }
-            }
-
-            cachedInfo = new ClassCache(
-                AlignObjectSize(shallowInstanceSize),
-                referenceFields.ToArray());
-            return cachedInfo;
-        }
-
-        private static long AdjustForField(long sizeSoFar, FieldInfo f)
-        {
-            var typeInfo = f.FieldType.GetTypeInfo();
-            int fsize = typeInfo.IsPrimitive ? primitiveSizes[f.FieldType] : NUM_BYTES_OBJECT_REF;
-
-            // TODO: there was a lot of other stuff here, not sure if needed
-            return sizeSoFar + fsize;
-        }
-
+        /// <summary> 
+        /// Returns the memory size in the human readable units. (GB, MB, KB or bytes).
+        /// </summary>
         public static string HumanReadableUnits(long bytes)
         {
             return HumanReadableUnits(bytes, new NumberFormatInfo() { NumberDecimalDigits = 1 });
         }
 
-        /// <summary> Return good default units based on byte size.</summary>
+        /// <summary> 
+        /// Returns the memory size in the human readable units. (GB, MB, KB or bytes).
+        /// </summary>
         public static string HumanReadableUnits(long bytes, IFormatProvider df)
         {
             string newSizeAndUnits;
@@ -412,126 +353,165 @@ namespace Lucene.Net.Util
             return newSizeAndUnits;
         }
 
-        public class JvmFeature
+        /// <summary>
+        /// Returns the shallow size of the array's memory allocation in bytes. Use this 
+        /// method instead of <see cref="ShallowSizeOf(object)"/> to avoid reflection for 
+        /// arrays.
+        /// </summary>
+        /// <param name="array">The object array.</param>
+        /// <returns>The size in bytes.</returns>
+        public static long ShallowSizeOf(Object[] array)
         {
-            public string Description { get; private set; }
 
+            var bytes = (long)NUM_BYTES_OBJECT_REF;
+            long size = NUM_BYTES_REFERENCE_TYPE_ARRAY_HEADER + bytes * array.Length;
 
+            return AlignObjectSize(size);
         }
 
-        public static IEnumerable<string> UnsupportedFeatures
-        {
 
-            get { return new string[0];  }
+        /// <summary>
+        /// Estimates a "shallow" memory usage of the given object. For arrays, this will be the
+        /// memory taken by array storage(no subreferences will be followed). For objects, this
+        /// will be the memory taken by the fields.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static long ShallowSizeOf(Object obj)
+        {
+            if (obj == null)
+                return 0;
+
+            Type type = obj.GetType();
+
+            if (type.IsArray)
+            {
+                return ShallowSizeOfArray((Array)obj);
+            }
+            if(type == typeof(string))
+            {
+                return ShallowSizeOfArray(obj.ToString().ToCharArray());
+            }
+            else
+            {
+                return ShallowSizeOfInstance(type);
+            }
         }
 
-        public static IEnumerable<string> SupportedFeatures
+        /// <summary>
+        /// Returns the shallow instance size in bytes of the memory allocated that an object
+        /// of the specified type could occupy.
+        /// </summary>
+        /// <param name="instanceType">The type information used to estimate memory allocation.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Throws when the <paramref name="instanceType"/> is an <see cref="System.Array"/>.</exception>
+        public static long ShallowSizeOfInstance(Type instanceType)
         {
-            get { return new string[0]; }
+            // typeInfo = clazz.
+            var type = instanceType;
+            var typeInfo = instanceType.GetTypeInfo();
+
+            if (typeInfo.IsArray)
+                throw new ArgumentException("This method does not work with Arrays.");
+
+            if (typeInfo.IsPrimitive)
+                return primitiveSizes[typeInfo.AsType()];
+
+            long size = NUM_BYTES_OBJECT_HEADER;
+
+            // Walk type hierarchy
+            for (; type != null; type = type.GetTypeInfo().BaseType)
+            {
+                var fields = type.GetRuntimeFields().Where(o => !o.IsStatic);
+                foreach (FieldInfo f in fields)
+                {
+                    size = AdjustForField(size, f);
+                }
+            }
+
+            return AlignObjectSize(size);
         }
 
-        //public long EstimateRamUsage(System.Object obj)
-        //{
-        //    long size = Size(obj);
-        //    seen.Clear();
-        //    return size;
-        //}
+        private static long ShallowSizeOfArray(Array array)
+        {
+            long size = 0L;
+            int length = array.Length;
+            if (length > 0)
+            {
+                Type arrayElementType = array.GetType().GetElementType();
+                var arrayElementTypeInfo = arrayElementType.GetTypeInfo();
 
-        //private long Size(System.Object obj)
-        //{
-        //    if (obj == null)
-        //    {
-        //        return 0;
-        //    }
-        //    // interned not part of this object
-        //    if (checkInterned && obj is System.String && obj == (System.Object) String.Intern(((System.String) obj)))
-        //    {
-        //        // interned string will be eligible
-        //        // for GC on
-        //        // estimateRamUsage(Object) return
-        //        return 0;
-        //    }
+                if (arrayElementTypeInfo.IsPrimitive)
+                {
+                    size = NUM_BYTES_VALUE_TYPE_ARRAY_HEADER;
+                    size += (long)length * primitiveSizes[arrayElementType];
+                }
+                else
+                {
+                    size = NUM_BYTES_REFERENCE_TYPE_ARRAY_HEADER;
+                    size += (long)NUM_BYTES_OBJECT_REF * length;
+                }
+            }
 
-        //    // skip if we have seen before
-        //    if (seen.ContainsKey(obj))
-        //    {
-        //        return 0;
-        //    }
+            return AlignObjectSize(size);
+        }
 
-        //    // add to seen
-        //    seen[obj] = null;
+        /// <summary>
+        /// Retrns the size of the memory allocatio for a string.
+        /// </summary>
+        /// <param name="array">The string.</param>
+        /// <returns>The size of the memory allocation.</returns>
+        public static long SizeOf(string array)
+        {
+            return SizeOf(array.ToCharArray());
+        }
 
-        //    System.Type clazz = obj.GetType();
-        //    if (clazz.IsArray)
-        //    {
-        //        return SizeOfArray(obj);
-        //    }
+        /// <summary>
+        /// Returns the size of the memory allocation for <typeparamref name="T"/>[]. If the
+        /// array is not a primitive type, it defers the array to <see cref="ShallowSizeOfArray(Array)"/> 
+        /// </summary>
+        /// <typeparam name="T">The element type of the array</typeparam>
+        /// <param name="array">The array of <typeparamref name="T"/>.</param>
+        /// <returns>The size of the memory allocation.</returns>
+        public static long SizeOf<T>(T[] array) where T : struct
+        {
+            var type = typeof(T);
+            if (!primitiveSizes.ContainsKey(type))
+                return ShallowSizeOfArray(array);
 
-        //    long size = 0;
+            int bytes = primitiveSizes[type];
+          
+            var size = (long)NUM_BYTES_VALUE_TYPE_ARRAY_HEADER + (long)bytes * array.Length;
 
-        //    // walk type hierarchy
-        //    while (clazz != null)
-        //    {
-        //        System.Reflection.FieldInfo[] fields = clazz.GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly | System.Reflection.BindingFlags.Static);
-        //        for (int i = 0; i < fields.Length; i++)
-        //        {
-        //            if (fields[i].IsStatic)
-        //            {
-        //                continue;
-        //            }
+            return AlignObjectSize(size);
+        }
 
-        //            if (fields[i].FieldType.IsPrimitive)
-        //            {
-        //                size += memoryModel.GetPrimitiveSize(fields[i].FieldType);
-        //            }
-        //            else
-        //            {
-        //                size += refSize;
-        //                fields[i].GetType(); 
-        //                try
-        //                {
-        //                    System.Object value_Renamed = fields[i].GetValue(obj);
-        //                    if (value_Renamed != null)
-        //                    {
-        //                        size += Size(value_Renamed);
-        //                    }
-        //                }
-        //                catch (System.UnauthorizedAccessException)
-        //                {
-        //                    // ignore for now?
-        //                }
-        //            }
-        //        }
-        //        clazz = clazz.BaseType;
-        //    }
-        //    size += classSize;
-        //    return size;
-        //}
+        /// <summary>
+        /// Return the size of the provided array of <see cref="IAccountable"/> by summing
+        /// up the shallow size of the array and the <see cref="IAccountable.RamBytesUsed"/> reported
+        /// by each <see cref="IAccountable"/>
+        /// </summary>
+        /// <param name="accountables">The array of <see cref="IAccountable"/></param>
+        /// <returns>The memory allocation size.</returns>
+        public static long SizeOf(IAccountable[] accountables)
+        {
+            var size = ShallowSizeOf(accountables);
+            foreach (var accountable in accountables)
+            {
+                size += accountable.RamBytesUsed;
+            }
 
-        //private long SizeOfArray(System.Object obj)
-        //{
-        //    int len = ((System.Array) obj).Length;
-        //    if (len == 0)
-        //    {
-        //        return 0;
-        //    }
-        //    long size = arraySize;
-        //    System.Type arrayElementClazz = obj.GetType().GetElementType();
-        //    if (arrayElementClazz.IsPrimitive)
-        //    {
-        //        size += len * memoryModel.GetPrimitiveSize(arrayElementClazz);
-        //    }
-        //    else
-        //    {
-        //        for (int i = 0; i < len; i++)
-        //        {
-        //            size += refSize + Size(((System.Array) obj).GetValue(i));
-        //        }
-        //    }
+            return size;
+        }
+    
 
-        //    return size;
-        //}
+      
+      
 
+       
+
+
+        
 
     }
 }

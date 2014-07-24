@@ -38,5 +38,28 @@ namespace Lucene.Net.Support
 
             return (T)instance.Clone(deepClone);
         }
+
+        /// <summary>
+        /// Computes the integer into Austin Appleby's MurmurHash3
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///     <see cref="https://code.google.com/p/smhasher/wiki/MurmurHash3">MurmurHash3</see>
+        ///     </para>
+        /// </remarks>
+        /// <param name="value">The value, usually from a <see cref="System.Object.GetHashCode"/>.</param>
+        /// <returns>The computed hash.</returns>
+        public static int ComputeMurmurHash3(this int value)
+        {
+            uint x = (uint)value;
+
+            x ^= x >> 16;
+            x *= 0x85ebca6b;
+            x ^= x >> 13;
+            x *= 0xc2b2ae35;
+            x ^= x >> 16;
+
+            return (int)x;
+        }
     }
 }
