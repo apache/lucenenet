@@ -1,5 +1,6 @@
 ﻿{
     "licenses": ["apache 2.0"],
+    "version": "5.0.0.0",
     "compilationOptions": {
         "warningsAsErrors": false,
         "define": ["XUNIT"]
@@ -14,8 +15,8 @@
     "dependencies": {
         "Lucene.Net.Core":  "",
         "Lucene.Net.TestFramework": "",
-        "Xunit.KRunner": "1.0.0-*"
-
+        "Xunit.KRunner": "1.0.0-*",
+        "System.Console": "4.0.0.0"
     },
 
     "configurations" : {
@@ -28,6 +29,7 @@
             "dependencies": {
                 "System.Runtime": "4.0.20.0",
                 "System.Diagnostics.Debug": "4.0.10.0"
+              
             }
             
         }

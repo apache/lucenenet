@@ -20,7 +20,7 @@
  */
 
 
-namespace Lucene.Net.TestFramework
+namespace Lucene.Net.Util
 {
     using System;
     using System.Collections.Generic;

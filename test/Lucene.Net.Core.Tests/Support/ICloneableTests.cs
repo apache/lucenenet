@@ -22,7 +22,7 @@
 
 namespace Lucene.Net.Support
 {
-    using Lucene.Net.TestFramework;
+    using Lucene.Net.Util;
     using System;
 
     /// <summary>

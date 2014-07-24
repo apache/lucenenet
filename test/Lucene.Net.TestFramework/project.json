@@ -1,5 +1,6 @@
 ﻿{
     "licenses": ["apache 2.0"],
+      "version": "5.0.0.0",
     "compilationOptions": {
         "warningsAsErrors": false,
         "define": ["XUNIT"]

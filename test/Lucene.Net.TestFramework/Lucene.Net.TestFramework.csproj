@@ -30,7 +30,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net</RootNamespace>
-    <AssemblyName>Lucene.Net.TestFramework</AssemblyName>
+    <AssemblyName>Lucene.Net</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -62,7 +62,6 @@
     <Compile Include="Util\LuceneTestCase.cs" />
     <Compile Include="Util\RamUsageTester.cs" />
     <Compile Include="Util\TestAttribute.cs" />
-    <Compile Include="Util\TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="xunit.abstractions">

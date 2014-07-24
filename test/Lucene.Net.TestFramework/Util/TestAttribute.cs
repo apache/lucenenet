@@ -19,7 +19,7 @@
  *
  */
 
-namespace Lucene.Net.TestFramework
+namespace Lucene.Net.Util
 {
     /// <summary>
     /// Summary description for TestAttribute

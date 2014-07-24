@@ -20,13 +20,14 @@ namespace Lucene.Net.Util
     using Microsoft.Framework.ConfigurationModel;
     using System;
 
+
     /// <summary>
     /// SystemProps gets configuration properties for Lucene.Net. By default, it loads 
     /// <see cref="EnvironmentVariablesConfigurationSource"/> for the <see cref="Constants"/> class.
     /// Other configuration sources may be added at runtime. 
     /// </summary>
-    [CLSCompliant(false)]
-    public static class SystemProps
+
+    public class SystemProps
     {
         private static Configuration s_config = new Configuration();
 
@@ -39,7 +40,9 @@ namespace Lucene.Net.Util
         /// Adds the <see cref="IConfigurationSource"/> to what is available in <see cref="SystemProps"/>.
         /// </summary>
         /// <param name="configurationSource"></param>
+#pragma warning disable "CS3001"
         public static void Add(IConfigurationSource configurationSource)
+#pragma warning restore "CS3001"
         {
             s_config.Add(configurationSource);
         }
@@ -71,7 +74,7 @@ namespace Lucene.Net.Util
         /// <typeparam name="T">The expected value type</typeparam>
         /// <param name="key">The identifier associated with a value.</param>
         /// <param name="defaultValue">The default value that will be supplied if the key returns null.</param>
-        /// <returns>The <typeparamref name="T"/> value.</returns>
+        /// <returns></returns>
         public static T Get<T>(string key, T defaultValue)
         {
             var value = s_config.Get(key);
@@ -83,12 +86,16 @@ namespace Lucene.Net.Util
 
 
         /// <summary>
-        /// Instructs the SystemProps to use this configuration object for Lucene.Net
+        /// 
         /// </summary>
-        /// <param name="configuration">The <see cref="Configuration"/> object.</param>
+        /// <param name="configuration"></param>
+
+#pragma warning disable "CS3001"
         public static void UseConfiguration(Configuration configuration)
+#pragma warning restore "CS3001"
         {
             s_config = configuration;
         }
     }
+
 }

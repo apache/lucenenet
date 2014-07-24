@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
 
             if(version == null)
             {
-                version = EnsureMainVersionWithoutAlphaBeta() + "-SNAPSHOT";
+                version = MainVersionWithoutAlphaBeta + "-SNAPSHOT";
             }
 
             LUCENE_VERSION = version;
@@ -117,16 +117,20 @@ namespace Lucene.Net.Util
             return s.ToString();
         }
 
+      
 
-        private static string EnsureMainVersionWithoutAlphaBeta()
+        public static string MainVersionWithoutAlphaBeta
         {
-            var parts = LUCENE_MAIN_VERSION.Split('.');
-            if (parts.Length == 4 && "0".Equals(parts[2]))
+            get
             {
-                return parts[0] + "." + parts[1];
-            }
+                var parts = LUCENE_MAIN_VERSION.Split('.');
+                if (parts.Length == 4 && "0".Equals(parts[2]))
+                {
+                    return parts[0] + "." + parts[1];
+                }
 
-            return LUCENE_MAIN_VERSION;
+                return LUCENE_MAIN_VERSION;
+            }
         }
     }
 
