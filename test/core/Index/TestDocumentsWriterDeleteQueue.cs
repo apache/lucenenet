@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using Apache.NMS.Util;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -81,8 +82,8 @@ namespace Lucene.Net.Index
                 }
                 Assert.AreEqual(j + 1, queue.NumGlobalTermDeletes());
             }
-            Assert.AreEqual(uniqueValues, bd1.Terms.Keys);
-            Assert.AreEqual(uniqueValues, bd2.Terms.Keys);
+            Assert.AreEqual(uniqueValues, bd1.Terms_Nunit().Keys);
+            Assert.AreEqual(uniqueValues, bd2.Terms_Nunit().Keys);
             HashSet<Term> frozenSet = new HashSet<Term>();
             foreach (Term t in queue.FreezeGlobalBuffer(null).TermsIterable())
             {
@@ -98,7 +99,7 @@ namespace Lucene.Net.Index
         {
             for (int i = start; i <= end; i++)
             {
-                Assert.AreEqual(Convert.ToInt32(end), deletes.Terms[new Term("id", ids[i].ToString())]);
+                Assert.AreEqual(Convert.ToInt32(end), deletes.Terms_Nunit()[new Term("id", ids[i].ToString())]);
             }
         }
 
@@ -161,7 +162,7 @@ namespace Lucene.Net.Index
                 {
                     FrozenBufferedUpdates freezeGlobalBuffer = queue.FreezeGlobalBuffer(null);
                     Assert.AreEqual(termsSinceFreeze, freezeGlobalBuffer.TermCount);
-                    Assert.AreEqual(queriesSinceFreeze, freezeGlobalBuffer.Queries.Length);
+                    Assert.AreEqual(queriesSinceFreeze, ((Query[])freezeGlobalBuffer.Queries_Nunit()).Length);
                     queriesSinceFreeze = 0;
                     termsSinceFreeze = 0;
                     Assert.IsFalse(queue.AnyChanges());
@@ -169,11 +170,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        //LUCENE TODO: Compilation problems
+        /*[Test]
         public virtual void TestPartiallyAppliedGlobalSlice()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-            Field field = typeof(DocumentsWriterDeleteQueue).GetDeclaredField("globalBufferLock");
+            System.Reflection.FieldInfo field = typeof(DocumentsWriterDeleteQueue).GetField("GlobalBufferLock");
             field.Accessible = true;
             ReentrantLock @lock = (ReentrantLock)field.Get(queue);
             @lock.@Lock();
@@ -188,7 +190,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(freezeGlobalBuffer.Any());
             Assert.AreEqual(1, freezeGlobalBuffer.TermCount);
             Assert.IsFalse(queue.AnyChanges(), "all changes applied");
-        }
+        }*/
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
@@ -241,7 +243,7 @@ namespace Lucene.Net.Index
                 queue.UpdateSlice(slice);
                 BufferedUpdates deletes = updateThread.Deletes;
                 slice.Apply(deletes, BufferedUpdates.MAX_INT);
-                Assert.AreEqual(uniqueValues, deletes.Terms.Keys);
+                Assert.AreEqual(uniqueValues, deletes.Terms_Nunit().Keys);
             }
             queue.TryApplyGlobalSlice();
             HashSet<Term> frozenSet = new HashSet<Term>();
@@ -287,7 +289,7 @@ namespace Lucene.Net.Index
                     throw new ThreadInterruptedException(e);
                 }
                 int i = 0;
-                while ((i = Index.AndIncrement) < Ids.Length)
+                while ((i = Index.GetAndIncrement()) < Ids.Length)
                 {
                     Term term = new Term("id", Ids[i].ToString());
                     Queue.Add(term, Slice);

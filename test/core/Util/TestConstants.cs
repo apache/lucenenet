@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Lucene.Net.Support;
 using NUnit.Framework;
 namespace Lucene.Net.Util
@@ -35,7 +36,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestLuceneMainVersionConstant()
         {
-            Assert.IsTrue(Constants.LUCENE_MAIN_VERSION.matches("\\d+\\.\\d+(|\\.0\\.\\d+)"), "LUCENE_MAIN_VERSION does not follow pattern: 'x.y' (stable release) or 'x.y.0.z' (alpha/beta version)" + VersionDetails);
+            Assert.IsTrue(Regex.IsMatch(Constants.LUCENE_MAIN_VERSION, "\\d+\\.\\d+(|\\.0\\.\\d+)", RegexOptions.IgnoreCase), "LUCENE_MAIN_VERSION does not follow pattern: 'x.y' (stable release) or 'x.y.0.z' (alpha/beta version)" + VersionDetails);
             Assert.IsTrue(Constants.LUCENE_VERSION.StartsWith(Constants.MainVersionWithoutAlphaBeta()), "LUCENE_VERSION does not start with LUCENE_MAIN_VERSION (without alpha/beta marker)" + VersionDetails);
         }
 
@@ -47,8 +48,8 @@ namespace Lucene.Net.Util
             AssumeTrue("Null lucene.version test property. You should run the tests with the official Lucene build file", version != null);
 
             // remove anything after a "-" from the version string:
-            version = version.ReplaceAll("-.*$", "");
-            string versionConstant = Constants.LUCENE_VERSION.ReplaceAll("-.*$", "");
+            version = Regex.Replace(version, "-.*$", "");
+            string versionConstant = Regex.Replace(Constants.LUCENE_VERSION, "-.*$", "");
             Assert.IsTrue(versionConstant.StartsWith(version) || version.StartsWith(versionConstant), "LUCENE_VERSION should share the same prefix with lucene.version test property ('" + version + "')." + VersionDetails);
         }
 

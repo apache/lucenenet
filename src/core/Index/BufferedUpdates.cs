@@ -157,6 +157,12 @@ namespace Lucene.Net.Index
             this.BytesUsed = new AtomicLong();
         }
 
+        // Do not use outside of Nunit
+        public IDictionary<Term, int?> Terms_Nunit()
+        {
+            return Terms;
+        }
+
         public override string ToString()
         {
             if (VERBOSE_DELETES)

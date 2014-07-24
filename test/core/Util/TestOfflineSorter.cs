@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
     using NUnit.Framework;
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,6 +25,8 @@ namespace Lucene.Net.Util
          */
 
 
+    //LUCENE PORT NOTE: The corresponding file was left out of the port due to being experimental on not porting properly
+    /*
     using BufferSize = Lucene.Net.Util.OfflineSorter.BufferSize;
     using ByteSequencesWriter = Lucene.Net.Util.OfflineSorter.ByteSequencesWriter;
     using SortInfo = Lucene.Net.Util.OfflineSorter.SortInfo;
@@ -97,7 +99,7 @@ namespace Lucene.Net.Util
             while (howMuchData > 0)
             {
                 sbyte[] current = new sbyte[Random().Next(256)];
-                Random().NextBytes(current);
+                Random().NextBytes((byte[])(Array)current);
                 data.Add(current);
                 howMuchData -= current.Length;
             }
@@ -219,6 +221,6 @@ namespace Lucene.Net.Util
             {
             }
         }
-    }
+    }*/
 
 }

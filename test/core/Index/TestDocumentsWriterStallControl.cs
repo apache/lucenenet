@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
             ctrl.UpdateStalled(true);
             waitThreads = WaitThreads(AtLeast(1), ctrl);
             Start(waitThreads);
-            AwaitState(Thread.State.WAITING, waitThreads);
+            AwaitState(ThreadState.WaitSleepJoin, waitThreads);
             Assert.IsTrue(ctrl.HasBlocked());
             Assert.IsTrue(ctrl.AnyStalledThreads());
             ctrl.UpdateStalled(false);
@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
                 threads[i].Join(2000);
                 if (threads[i].IsAlive && threads[i] is Waiter)
                 {
-                    if (threads[i].State == Thread.State.WAITING)
+                    if (threads[i].State == ThreadState.WaitSleepJoin)
                     {
                         Assert.Fail("waiter is not released - anyThreadsStalled: " + ctrl.AnyStalledThreads());
                     }
@@ -369,7 +369,7 @@ namespace Lucene.Net.Index
         {
             foreach (ThreadClass thread in threads)
             {
-                if (Thread.State.TERMINATED != thread.State)
+                if (ThreadState.Stopped != thread.State)
                 {
                     return false;
                 }
@@ -423,7 +423,7 @@ namespace Lucene.Net.Index
         /// Waits for all incoming threads to be in wait()
         ///  methods. 
         /// </summary>
-        public static void AwaitState(Thread.State state, params ThreadClass[] threads)
+        public static void AwaitState(ThreadState state, params ThreadClass[] threads)
         {
             while (true)
             {

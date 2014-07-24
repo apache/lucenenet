@@ -311,5 +311,10 @@ namespace Lucene.Net.Support
         {
             return this.threadField.GetHashCode();
         }
+
+        public ThreadState State
+        {
+            get { return threadField.ThreadState; }
+        }
     }
 }

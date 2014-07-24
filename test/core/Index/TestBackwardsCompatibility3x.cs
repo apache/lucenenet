@@ -69,8 +69,6 @@ namespace Lucene.Net.Index
     // don't use 3.x codec, its unrealistic since it means
     // we won't even be running the actual code, only the impostor
     // Sep codec cannot yet handle the offsets we add when changing indexes!
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({"Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene40", "Lucene41", "Appending", "Lucene42", "Lucene45"}) public class TestBackwardsCompatibility3x extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestBackwardsCompatibility3x : LuceneTestCase
     {

@@ -697,7 +697,7 @@ namespace Lucene.Net.Index
         /// Returns current {@code noCFSRatio}.
         /// </summary>
         ///  <seealso cref= #setNoCFSRatio  </seealso>
-        public double NoCFSRatio
+        public virtual double NoCFSRatio
         {
             get
             {
@@ -716,7 +716,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the largest size allowed for a compound file segment </summary>
-        public double MaxCFSSegmentSizeMB
+        public virtual double MaxCFSSegmentSizeMB
         {
             get
             {

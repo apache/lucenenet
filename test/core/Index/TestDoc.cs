@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
 
         private FileInfo CreateOutput(string name, string text)
         {
-            TextWriter fw = null;
+            //TextWriter fw = null;
             StreamWriter pw = null;
 
             try
@@ -89,8 +89,8 @@ namespace Lucene.Net.Index
                     f.Delete();
                 }
 
-                fw = new OutputStreamWriter(new FileOutputStream(f), IOUtils.CHARSET_UTF_8);
-                pw = new StreamWriter(fw);
+                //fw = new StreamWriter(new FileOutputStream(f), IOUtils.CHARSET_UTF_8);
+                pw = new StreamWriter(f.FullName);
                 pw.WriteLine(text);
                 return f;
 
@@ -101,10 +101,10 @@ namespace Lucene.Net.Index
                 {
                     pw.Dispose();
                 }
-                if (fw != null)
+                /*if (fw != null)
                 {
                     fw.Dispose();
-                }
+                }*/
             }
         }
 
@@ -121,8 +121,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestIndexAndMerge()
         {
-            StringWriter sw = new StringWriter();
-            StreamWriter @out = new StreamWriter(sw, true);
+            MemoryStream sw = new MemoryStream();
+            StreamWriter @out = new StreamWriter(sw);
 
             Directory directory = NewFSDirectory(IndexDir, null);
 
@@ -158,8 +158,8 @@ namespace Lucene.Net.Index
             string multiFileOutput = sw.ToString();
             //System.out.println(multiFileOutput);
 
-            sw = new StringWriter();
-            @out = new StreamWriter(sw, true);
+            sw = new MemoryStream();
+            @out = new StreamWriter(sw);
 
             directory = NewFSDirectory(IndexDir, null);
 
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
         {
             FileInfo file = new FileInfo(Path.Combine(WorkDir.FullName, fileName));
             Document doc = new Document();
-            InputStreamReader @is = new InputStreamReader(new FileInputStream(file), IOUtils.CHARSET_UTF_8);
+            StreamReader @is = new StreamReader(file.FullName);
             doc.Add(new TextField("contents", @is));
             writer.AddDocument(doc);
             writer.Commit();

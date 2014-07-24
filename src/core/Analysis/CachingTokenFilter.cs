@@ -23,84 +23,85 @@ namespace Lucene.Net.Analysis
 
     using AttributeSource = Lucene.Net.Util.AttributeSource;
 
-	/// <summary>
-	/// this class can be used if the token attributes of a TokenStream
-	/// are intended to be consumed more than once. It caches
-	/// all token attribute states locally in a List.
-	/// 
-	/// <P>CachingTokenFilter implements the optional method
-	/// <seealso cref="TokenStream#reset()"/>, which repositions the
-	/// stream to the first Token. 
-	/// </summary>
-	public sealed class CachingTokenFilter : TokenFilter
-	{
-	  private LinkedList<AttributeSource.State> Cache = null;
-	  private IEnumerator<AttributeSource.State> Iterator = null;
-	  private AttributeSource.State FinalState;
+    /// <summary>
+    /// this class can be used if the token attributes of a TokenStream
+    /// are intended to be consumed more than once. It caches
+    /// all token attribute states locally in a List.
+    /// 
+    /// <P>CachingTokenFilter implements the optional method
+    /// <seealso cref="TokenStream#reset()"/>, which repositions the
+    /// stream to the first Token. 
+    /// </summary>
+    public sealed class CachingTokenFilter : TokenFilter
+    {
+        private LinkedList<AttributeSource.State> Cache = null;
+        private IEnumerator<AttributeSource.State> Iterator = null;
+        private AttributeSource.State FinalState;
 
-	  /// <summary>
-	  /// Create a new CachingTokenFilter around <code>input</code>,
-	  /// caching its token attributes, which can be replayed again
-	  /// after a call to <seealso cref="#reset()"/>.
-	  /// </summary>
-	  public CachingTokenFilter(TokenStream input) : base(input)
-	  {
-	  }
+        /// <summary>
+        /// Create a new CachingTokenFilter around <code>input</code>,
+        /// caching its token attributes, which can be replayed again
+        /// after a call to <seealso cref="#reset()"/>.
+        /// </summary>
+        public CachingTokenFilter(TokenStream input)
+            : base(input)
+        {
+        }
 
-	  public override bool IncrementToken()
-	  {
-		if (Cache == null)
-		{
-		  // fill cache lazily
-          Cache = new LinkedList<AttributeSource.State>();
-		  FillCache();
-		  Iterator = Cache.GetEnumerator();
-		}
+        public override bool IncrementToken()
+        {
+            if (Cache == null)
+            {
+                // fill cache lazily
+                Cache = new LinkedList<AttributeSource.State>();
+                FillCache();
+                Iterator = Cache.GetEnumerator();
+            }
 
-		if (!Iterator.MoveNext())
-		{
-		  // the cache is exhausted, return false
-		  return false;
-		}
-		// Since the TokenFilter can be reset, the tokens need to be preserved as immutable.
-		RestoreState(Iterator.Current);
-		return true;
-	  }
+            if (!Iterator.MoveNext())
+            {
+                // the cache is exhausted, return false
+                return false;
+            }
+            // Since the TokenFilter can be reset, the tokens need to be preserved as immutable.
+            RestoreState(Iterator.Current);
+            return true;
+        }
 
-	  public override void End()
-	  {
-		if (FinalState != null)
-		{
-		  RestoreState(FinalState);
-		}
-	  }
+        public override void End()
+        {
+            if (FinalState != null)
+            {
+                RestoreState(FinalState);
+            }
+        }
 
-	  /// <summary>
-	  /// Rewinds the iterator to the beginning of the cached list.
-	  /// <p>
-	  /// Note that this does not call reset() on the wrapped tokenstream ever, even
-	  /// the first time. You should reset() the inner tokenstream before wrapping
-	  /// it with CachingTokenFilter.
-	  /// </summary>
-	  public override void Reset()
-	  {
-		if (Cache != null)
-		{
-		  Iterator = Cache.GetEnumerator();
-		}
-	  }
+        /// <summary>
+        /// Rewinds the iterator to the beginning of the cached list.
+        /// <p>
+        /// Note that this does not call reset() on the wrapped tokenstream ever, even
+        /// the first time. You should reset() the inner tokenstream before wrapping
+        /// it with CachingTokenFilter.
+        /// </summary>
+        public override void Reset()
+        {
+            if (Cache != null)
+            {
+                Iterator = Cache.GetEnumerator();
+            }
+        }
 
-	  private void FillCache()
-	  {
-		while (Input.IncrementToken())
-		{
-		  Cache.AddLast(CaptureState());
-		}
-		// capture final state
-		Input.End();
-		FinalState = CaptureState();
-	  }
+        private void FillCache()
+        {
+            while (Input.IncrementToken())
+            {
+                Cache.AddLast(CaptureState());
+            }
+            // capture final state
+            Input.End();
+            FinalState = CaptureState();
+        }
 
-	}
+    }
 
 }

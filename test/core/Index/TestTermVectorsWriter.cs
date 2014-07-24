@@ -134,8 +134,8 @@ namespace Lucene.Net.Index
             Assert.AreEqual(4, dpEnum.EndOffset());
 
             dpEnum.NextPosition();
-            Assert.AreEqual(5, dpEnum.StartOffset());
-            Assert.AreEqual(9, dpEnum.EndOffset());
+            Assert.AreEqual(4, dpEnum.StartOffset());
+            Assert.AreEqual(8, dpEnum.EndOffset());
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
             r.Dispose();
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
             customType.StoreTermVectors = true;
             customType.StoreTermVectorPositions = true;
             customType.StoreTermVectorOffsets = true;
-            Field f = NewField("field", "abcd   ", customType);
+            Field f = NewField("field", "abcd    ", customType);
             doc.Add(f);
             doc.Add(f);
             w.AddDocument(doc);
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
             IOException priorException = null;
-            TokenStream stream = analyzer.TokenStream("field", new StringReader("abcd   "));
+            TokenStream stream = analyzer.TokenStream("field", new StringReader("abcd    "));
             try
             {
                 stream.Reset(); // TODO: weird to reset before wrapping with CachingTokenFilter... correct?
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
             customType.StoreTermVectors = true;
             customType.StoreTermVectorPositions = true;
             customType.StoreTermVectorOffsets = true;
-            Field f = NewField("field", "abcd the", customType);
+            Field f = NewField("field", "abcd the ", customType);
             doc.Add(f);
             doc.Add(f);
             w.AddDocument(doc);
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
             customType.StoreTermVectors = true;
             customType.StoreTermVectorPositions = true;
             customType.StoreTermVectorOffsets = true;
-            Field f = NewField("field", "abcd the  ", customType);
+            Field f = NewField("field", "abcd the   ", customType);
             Field f2 = NewField("field", "crunch man", customType);
             doc.Add(f);
             doc.Add(f2);
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
             customType.StoreTermVectors = true;
             customType.StoreTermVectorPositions = true;
             customType.StoreTermVectorOffsets = true;
-            Field f = NewField("field", "", customType);
+            Field f = NewField("field", " ", customType);
             Field f2 = NewField("field", "crunch man", customType);
             doc.Add(f);
             doc.Add(f2);
@@ -369,7 +369,7 @@ namespace Lucene.Net.Index
 
             Field f = NewField("field", "abcd", customType);
             doc.Add(f);
-            doc.Add(NewField("field", "", customType));
+            doc.Add(NewField("field", "  ", customType));
 
             Field f2 = NewField("field", "crunch", customType);
             doc.Add(f2);

@@ -108,8 +108,6 @@ namespace Lucene.Net.Search.Payloads
             return new PayloadNearQuery(clauses, 0, inOrder, function);
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
         [TestFixtureSetUp]
         public static void BeforeClass()
         {
@@ -131,8 +129,6 @@ namespace Lucene.Net.Search.Payloads
             Searcher.Similarity = Similarity;
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
         [TestFixtureTearDown]
         public static void AfterClass()
         {
@@ -156,11 +152,12 @@ namespace Lucene.Net.Search.Payloads
             // and all the similarity factors are set to 1
             hits = Searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
-            Assert.IsTrue(hits.TotalHits == 10, "should be 10 hits");
+            // 10 documents were added with the tokens "twenty two", each has 3 instances
+            Assert.AreEqual(10, hits.TotalHits, "should be 10 hits");
             for (int j = 0; j < hits.ScoreDocs.Length; j++)
             {
                 ScoreDoc doc = hits.ScoreDocs[j];
-                Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
+                Assert.AreEqual(3, doc.Score, doc.Score + " does not equal: " + 3);
             }
             for (int i = 1; i < 10; i++)
             {
@@ -179,7 +176,7 @@ namespace Lucene.Net.Search.Payloads
                     ScoreDoc doc = hits.ScoreDocs[j];
                     //        System.out.println("Doc: " + doc.toString());
                     //        System.out.println("Explain: " + searcher.Explain(query, doc.Doc));
-                    Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
+                    Assert.AreEqual(3, doc.Score, doc.Score + " does not equal: " + 3);
                 }
             }
         }
@@ -220,15 +217,15 @@ namespace Lucene.Net.Search.Payloads
             // and all the similarity factors are set to 1
             hits = Searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
-            Assert.IsTrue(hits.TotalHits == 10, "should be 10 hits");
+            Assert.AreEqual(10, hits.TotalHits, "should be 10 hits");
             for (int j = 0; j < hits.ScoreDocs.Length; j++)
             {
                 ScoreDoc doc = hits.ScoreDocs[j];
-                Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
+                Assert.AreEqual(3, doc.Score, doc.Score + " does not equal: " + 3);
                 Explanation explain = Searcher.Explain(query, hits.ScoreDocs[j].Doc);
                 string exp = explain.ToString();
                 Assert.IsTrue(exp.IndexOf("AveragePayloadFunction") > -1, exp);
-                Assert.IsTrue(explain.Value == 3f, hits.ScoreDocs[j].Score + " explain value does not equal: " + 3);
+                Assert.AreEqual(3f, explain.Value, hits.ScoreDocs[j].Score + " explain value does not equal: " + 3);
             }
         }
         [Test]
@@ -242,15 +239,15 @@ namespace Lucene.Net.Search.Payloads
             // all 10 hits should have score = 4 (max payload value)
             hits = Searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
-            Assert.IsTrue(hits.TotalHits == 10, "should be 10 hits");
+            Assert.AreEqual(10, hits.TotalHits, "should be 10 hits");
             for (int j = 0; j < hits.ScoreDocs.Length; j++)
             {
                 ScoreDoc doc = hits.ScoreDocs[j];
-                Assert.IsTrue(doc.Score == 4, doc.Score + " does not equal: " + 4);
+                Assert.AreEqual(4, doc.Score, doc.Score + " does not equal: " + 4);
                 Explanation explain = Searcher.Explain(query, hits.ScoreDocs[j].Doc);
                 string exp = explain.ToString();
                 Assert.IsTrue(exp.IndexOf("MaxPayloadFunction") > -1, exp);
-                Assert.IsTrue(explain.Value == 4f, hits.ScoreDocs[j].Score + " explain value does not equal: " + 4);
+                Assert.AreEqual(4f, explain.Value, hits.ScoreDocs[j].Score + " explain value does not equal: " + 4);
             }
         }
         [Test]
@@ -264,15 +261,15 @@ namespace Lucene.Net.Search.Payloads
             // all 10 hits should have score = 2 (min payload value)
             hits = Searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
-            Assert.IsTrue(hits.TotalHits == 10, "should be 10 hits");
+            Assert.AreEqual(10, hits.TotalHits, "should be 10 hits");
             for (int j = 0; j < hits.ScoreDocs.Length; j++)
             {
                 ScoreDoc doc = hits.ScoreDocs[j];
-                Assert.IsTrue(doc.Score == 2, doc.Score + " does not equal: " + 2);
+                Assert.AreEqual(2, doc.Score, doc.Score + " does not equal: " + 2);
                 Explanation explain = Searcher.Explain(query, hits.ScoreDocs[j].Doc);
                 string exp = explain.ToString();
                 Assert.IsTrue(exp.IndexOf("MinPayloadFunction") > -1, exp);
-                Assert.IsTrue(explain.Value == 2f, hits.ScoreDocs[j].Score + " explain value does not equal: " + 2);
+                Assert.AreEqual(2f, explain.Value, hits.ScoreDocs[j].Score + " explain value does not equal: " + 2);
             }
         }
         private SpanQuery[] Clauses
@@ -312,7 +309,7 @@ namespace Lucene.Net.Search.Payloads
             //    System.out.println("Explain: " + searcher.Explain(query, doc.Doc));
             Assert.IsTrue(hits.TotalHits == 1, "there should only be one hit");
             // should have score = 3 because adjacent terms have payloads of 2,4
-            Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
+            Assert.AreEqual(3, doc.Score, doc.Score + " does not equal: " + 3);
         }
 
         [Test]

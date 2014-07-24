@@ -131,7 +131,7 @@ namespace Lucene.Net.Search
                 }
                 try
                 {
-                    Assert.AreEqual(docs.Count, s.Search(new TermQuery(id), 10).TotalHits);
+                    Assert.AreEqual(docs.Count(), s.Search(new TermQuery(id), 10).TotalHits);
                 }
                 finally
                 {
@@ -257,34 +257,34 @@ namespace Lucene.Net.Search
         }
 
         protected internal override void DoAfterWriter(TaskScheduler es)
-	  {
-		double minReopenSec = 0.01 + 0.05 * Random().NextDouble();
-		double maxReopenSec = minReopenSec * (1.0 + 10 * Random().NextDouble());
+	    {
+		    double minReopenSec = 0.01 + 0.05 * Random().NextDouble();
+		    double maxReopenSec = minReopenSec * (1.0 + 10 * Random().NextDouble());
 
-		if (VERBOSE)
-		{
-		  Console.WriteLine("TEST: make SearcherManager maxReopenSec=" + maxReopenSec + " minReopenSec=" + minReopenSec);
-		}
+		    if (VERBOSE)
+		    {
+		      Console.WriteLine("TEST: make SearcherManager maxReopenSec=" + maxReopenSec + " minReopenSec=" + minReopenSec);
+		    }
 
-		GenWriter = new TrackingIndexWriter(Writer);
+		    GenWriter = new TrackingIndexWriter(Writer);
 
-		SearcherFactory sf = new SearcherFactoryAnonymousInnerClassHelper(this, es);
+		    SearcherFactory sf = new SearcherFactoryAnonymousInnerClassHelper(this, es);
 
-		NrtNoDeletes = new SearcherManager(writer, false, sf);
-		NrtDeletes = new SearcherManager(writer, true, sf);
+		    NrtNoDeletes = new SearcherManager(Writer, false, sf);
+		    NrtDeletes = new SearcherManager(Writer, true, sf);
 
-		NrtDeletesThread = new ControlledRealTimeReopenThread<>(GenWriter, NrtDeletes, maxReopenSec, minReopenSec);
-		NrtDeletesThread.Name = "NRTDeletes Reopen Thread";
-		NrtDeletesThread.Priority = Math.Min(Thread.CurrentThread.Priority + 2, Thread.MAX_PRIORITY);
-		NrtDeletesThread.Daemon = true;
-		NrtDeletesThread.Start();
+		    NrtDeletesThread = new ControlledRealTimeReopenThread<>(GenWriter, NrtDeletes, maxReopenSec, minReopenSec);
+		    NrtDeletesThread.Name = "NRTDeletes Reopen Thread";
+		    NrtDeletesThread.Priority = Math.Min(Thread.CurrentThread.Priority + 2, Thread.MAX_PRIORITY);
+		    NrtDeletesThread.SetDaemon(true);
+		    NrtDeletesThread.Start();
 
-		NrtNoDeletesThread = new ControlledRealTimeReopenThread<>(GenWriter, NrtNoDeletes, maxReopenSec, minReopenSec);
-		NrtNoDeletesThread.Name = "NRTNoDeletes Reopen Thread";
-		NrtNoDeletesThread.Priority = Math.Min(Thread.CurrentThread.Priority + 2, Thread.MAX_PRIORITY);
-		NrtNoDeletesThread.Daemon = true;
-		NrtNoDeletesThread.Start();
-	  }
+		    NrtNoDeletesThread = new ControlledRealTimeReopenThread<>(GenWriter, NrtNoDeletes, maxReopenSec, minReopenSec);
+		    NrtNoDeletesThread.Name = "NRTNoDeletes Reopen Thread";
+		    NrtNoDeletesThread.Priority = Math.Min(Thread.CurrentThread.Priority + 2, Thread.MAX_PRIORITY);
+		    NrtNoDeletesThread.SetDaemon(true);
+		    NrtNoDeletesThread.Start();
+	    }
 
         private class SearcherFactoryAnonymousInnerClassHelper : SearcherFactory
         {
@@ -473,14 +473,14 @@ namespace Lucene.Net.Search
             private readonly TestControlledRealTimeReopenThread OuterInstance;
 
             private long LastGen;
-            private ControlledRealTimeReopenThread<IndexSearcher> Thread;
+            private ControlledRealTimeReopenThread<IndexSearcher> thread;
             private AtomicBoolean Finished;
 
             public ThreadAnonymousInnerClassHelper2(TestControlledRealTimeReopenThread outerInstance, long lastGen, ControlledRealTimeReopenThread<IndexSearcher> thread, AtomicBoolean finished)
             {
                 this.OuterInstance = outerInstance;
                 this.LastGen = lastGen;
-                this.Thread = thread;
+                this.thread = thread;
                 this.Finished = finished;
             }
 
@@ -488,7 +488,7 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    Thread.WaitForGeneration(LastGen);
+                    thread.WaitForGeneration(LastGen);
                 }
                 catch (ThreadInterruptedException ie)
                 {
@@ -643,7 +643,7 @@ namespace Lucene.Net.Search
             TrackingIndexWriter tiw = new TrackingIndexWriter(iw);
             ControlledRealTimeReopenThread<IndexSearcher> controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(tiw, sm, maxStaleSecs, 0);
 
-            controlledRealTimeReopenThread.Daemon = true;
+            controlledRealTimeReopenThread.SetDaemon(true);
             controlledRealTimeReopenThread.Start();
 
             IList<Thread> commitThreads = new List<Thread>();

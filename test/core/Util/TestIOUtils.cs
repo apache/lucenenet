@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util
@@ -61,19 +62,19 @@ namespace Lucene.Net.Util
             catch (TestException e1)
             {
                 Assert.AreEqual("BASE-EXCEPTION", e1.Message);
-                StringWriter sw = new StringWriter();
+                StringBuilder sb = new StringBuilder();
                 //StreamWriter pw = new StreamWriter(sw);
                 //e1.printStackTrace(pw);
-                Console.Error.WriteLine(e1.StackTrace);
+                sb.Append(e1.StackTrace);
                 //pw.Flush();
-                string trace = sw.ToString();
+                string trace = sb.ToString();
                 if (VERBOSE)
                 {
                     Console.WriteLine("TestIOUtils.testSuppressedExceptions: Thrown Exception stack trace:");
                     Console.WriteLine(trace);
                 }
-                Assert.IsTrue(trace.Contains("java.io.IOException: TEST-IO-EXCEPTION-1"), "Stack trace does not contain first suppressed Exception: " + trace);
-                Assert.IsTrue(trace.Contains("java.io.IOException: TEST-IO-EXCEPTION-2"), "Stack trace does not contain second suppressed Exception: " + trace);
+                Assert.IsTrue(trace.Contains("IOException: TEST-IO-EXCEPTION-1"), "Stack trace does not contain first suppressed Exception: " + trace);
+                Assert.IsTrue(trace.Contains("IOException: TEST-IO-EXCEPTION-2"), "Stack trace does not contain second suppressed Exception: " + trace);
             }
             catch (IOException e2)
             {
@@ -92,18 +93,18 @@ namespace Lucene.Net.Util
             catch (IOException e2)
             {
                 Assert.AreEqual("TEST-IO-EXCEPTION-1", e2.Message);
-                StringWriter sw = new StringWriter();
-                Console.Error.WriteLine(e2.StackTrace);
+                StringBuilder sb = new StringBuilder();
+                sb.Append(e2.StackTrace);
                 //StreamWriter pw = new StreamWriter(sw);
                 //e2.printStackTrace(pw);
                 //pw.Flush();
-                string trace = sw.ToString();
+                string trace = sb.ToString();
                 if (VERBOSE)
                 {
-                    Console.WriteLine("TestIOUtils.testSuppressedExceptions: Thrown Exception stack trace:");
+                    Console.WriteLine("TestIOUtils.TestSuppressedExceptions: Thrown Exception stack trace:");
                     Console.WriteLine(trace);
                 }
-                Assert.IsTrue(trace.Contains("java.io.IOException: TEST-IO-EXCEPTION-2"), "Stack trace does not contain suppressed Exception: " + trace);
+                Assert.IsTrue(trace.Contains("IOException: TEST-IO-EXCEPTION-2"), "Stack trace does not contain suppressed Exception: " + trace);
             }
         }
 

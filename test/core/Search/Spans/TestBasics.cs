@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Spans
             for (int i = 0; i < 2000; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("field", i.ToString()/*English.IntToEnglish(i)*/, Field.Store.YES));
+                doc.Add(NewTextField("field", English.IntToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
             Reader = writer.Reader;

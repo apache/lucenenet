@@ -82,14 +82,10 @@ namespace Lucene.Net.Analysis
             {
                 get
                 {
-                    try
-                    {
-                        return ClearCalled;
-                    }
-                    finally
-                    {
-                        ClearCalled = false;
-                    }
+                    Trace.TraceInformation("ResetCalled");
+                    bool old = ClearCalled;
+                    ClearCalled = false;
+                    return old;
                 }
             }
 
@@ -200,7 +196,7 @@ namespace Lucene.Net.Analysis
                     keywordAtt.Keyword = (i & 1) == 0;
                 }
 
-                var reset = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
+                bool reset = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
                 Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
                 Assert.IsTrue(reset, "ClearAttributes() was not called correctly in TokenStream chain");
 

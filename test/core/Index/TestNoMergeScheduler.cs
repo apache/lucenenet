@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
@@ -38,14 +39,15 @@ namespace Lucene.Net.Index
             ms.Merge(null, RandomInts.RandomFrom(Random(), Enum.GetValues(typeof(MergeTrigger)).Cast<MergeTrigger>().ToArray()), Random().NextBoolean());
         }
 
-        [Test]
+        //LUCENE TODO: Compilation problems
+        /*[Test]
         public virtual void TestFinalSingleton()
-	  {
-		Assert.IsTrue(Modifier.isFinal(typeof(NoMergeScheduler).Modifiers));
-		Constructor<?>[] ctors = typeof(NoMergeScheduler).DeclaredConstructors;
-		Assert.AreEqual("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
-		Assert.IsTrue("that 1 should be private: " + ctors[0], Modifier.isPrivate(ctors[0].Modifiers));
-	  }
+	    {
+		    Assert.IsTrue(Modifier.isFinal(typeof(NoMergeScheduler).Modifiers));
+		    Constructor<?>[] ctors = typeof(NoMergeScheduler).DeclaredConstructors;
+		    Assert.AreEqual("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
+		    Assert.IsTrue("that 1 should be private: " + ctors[0], Modifier.isPrivate(ctors[0].Modifiers));
+	    }*/
 
         [Test]
         public virtual void TestMethodsOverridden()
@@ -53,16 +55,16 @@ namespace Lucene.Net.Index
             // Ensures that all methods of MergeScheduler are overridden. That's
             // important to ensure that NoMergeScheduler overrides everything, so that
             // no unexpected behavior/error occurs
-            foreach (Method m in typeof(NoMergeScheduler).Methods)
+            foreach (MethodInfo m in typeof(NoMergeScheduler).GetMethods())
             {
                 // getDeclaredMethods() returns just those methods that are declared on
                 // NoMergeScheduler. getMethods() returns those that are visible in that
                 // context, including ones from Object. So just filter out Object. If in
                 // the future MergeScheduler will extend a different class than Object,
                 // this will need to change.
-                if (m.DeclaringClass != typeof(object))
+                if (m.DeclaringType != typeof(object))
                 {
-                    Assert.IsTrue(m + " is not overridden !", m.DeclaringClass == typeof(NoMergeScheduler));
+                    Assert.IsTrue(m.DeclaringType == typeof(NoMergeScheduler), m + " is not overridden !");
                 }
             }
         }

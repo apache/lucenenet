@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestRamUsageEstimator : LuceneTestCase
     {
-        [Test]
+        /*[Test]
         public virtual void TestSanity()
         {
             Assert.IsTrue(sizeof(new string("test string")) > ShallowSizeOfInstance(typeof(string)));
@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
 
             string[] strings = new string[] { new string("test string"), new string("hollow"), new string("catchmaster") };
             Assert.IsTrue(sizeof(strings) > shallowSizeOf(strings));
-        }
+        }*/
 
         [Test]
         public virtual void TestStaticOverloads()
@@ -86,7 +86,8 @@ namespace Lucene.Net.Util
                 Assert.AreEqual(sizeof(array), sizeof((object)array));
             }
         }
-        /*
+
+        /* LUCENE PORT: The JVM is obviously not relevant to our purposes
         [Test]
         public virtual void TestReferenceSize()
         {

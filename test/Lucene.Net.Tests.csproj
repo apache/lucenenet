@@ -175,10 +175,13 @@
     <Compile Include="core\Index\TestDeletionPolicy.cs" />
     <Compile Include="core\Index\TestDirectoryReader.cs" />
     <Compile Include="core\Index\TestDirectoryReaderReopen.cs" />
+    <Compile Include="core\Index\TestDoc.cs" />
     <Compile Include="core\Index\TestDocCount.cs" />
     <Compile Include="core\Index\TestDocInverterPerFieldErrorInfo.cs" />
     <Compile Include="core\Index\TestDocsAndPositions.cs" />
     <Compile Include="core\Index\TestDocTermOrds.cs" />
+    <Compile Include="core\Index\TestDocumentsWriterDeleteQueue.cs" />
+    <Compile Include="core\Index\TestDocumentsWriterStallControl.cs" />
     <Compile Include="core\Index\TestDocumentWriter.cs" />
     <Compile Include="core\Index\TestDocValuesFormat.cs" />
     <Compile Include="core\Index\TestDocValuesIndexing.cs" />
@@ -187,6 +190,7 @@
     <Compile Include="core\Index\TestExceedMaxTermLength.cs" />
     <Compile Include="core\Index\TestFieldInfos.cs" />
     <Compile Include="core\Index\TestFieldsReader.cs" />
+    <Compile Include="core\Index\TestFilterAtomicReader.cs" />
     <Compile Include="core\Index\TestFlex.cs" />
     <Compile Include="core\Index\TestForceMergeForever.cs" />
     <Compile Include="core\Index\TestForTooMuchCloning.cs" />
@@ -197,6 +201,7 @@
     <Compile Include="core\Index\TestIndexReaderClose.cs" />
     <Compile Include="core\Index\TestIndexWriter.cs" />
     <Compile Include="core\Index\TestIndexWriterCommit.cs" />
+    <Compile Include="core\Index\TestIndexWriterConfig.cs" />
     <Compile Include="core\Index\TestIndexWriterDelete.cs" />
     <Compile Include="core\Index\TestIndexWriterExceptions.cs" />
     <Compile Include="core\Index\TestIndexWriterForceMerge.cs" />
@@ -222,6 +227,9 @@
     <Compile Include="core\Index\TestMultiLevelSkipList.cs" />
     <Compile Include="core\Index\TestNeverDelete.cs" />
     <Compile Include="core\Index\TestNewestSegment.cs" />
+    <Compile Include="core\Index\TestNoDeletionPolicy.cs" />
+    <Compile Include="core\Index\TestNoMergePolicy.cs" />
+    <Compile Include="core\Index\TestNoMergeScheduler.cs" />
     <Compile Include="core\Index\TestNorms.cs" />
     <Compile Include="core\Index\TestNRTReaderWithThreads.cs" />
     <Compile Include="core\Index\TestNRTThreads.cs" />
@@ -481,6 +489,7 @@
     <Compile Include="core\Util\TestCollectionUtil.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestConstants.cs" />
     <Compile Include="core\Util\TestDocIdBitSet.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -577,6 +586,7 @@
     <Compile Include="core\Util\TestVersionComparator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestVirtualMethod.cs" />
     <Compile Include="core\Util\TestWAH8DocIdSet.cs">
       <SubType>Code</SubType>
     </Compile>

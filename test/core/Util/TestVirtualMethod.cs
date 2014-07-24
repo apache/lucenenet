@@ -25,8 +25,14 @@ namespace Lucene.Net.Util
     public class TestVirtualMethod : LuceneTestCase
     {
 
-        private static readonly VirtualMethod<TestVirtualMethod> PublicTestMethod = new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "publicTest", typeof(string));
-        private static readonly VirtualMethod<TestVirtualMethod> ProtectedTestMethod = new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "protectedTest", typeof(int));
+        private static readonly VirtualMethod<TestVirtualMethod> PublicTestMethod;
+        private static readonly VirtualMethod<TestVirtualMethod> ProtectedTestMethod;
+
+        static TestVirtualMethod()
+        {
+            PublicTestMethod = new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "PublicTest", typeof(string));
+            ProtectedTestMethod = new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "ProtectedTest", typeof(int));
+        }
 
         public virtual void PublicTest(string test)
         {
@@ -84,8 +90,8 @@ namespace Lucene.Net.Util
             Assert.IsFalse(ProtectedTestMethod.IsOverriddenAsOf(typeof(TestClass4)));
             Assert.IsFalse(ProtectedTestMethod.IsOverriddenAsOf(typeof(TestClass5)));
 
-            Assert.IsTrue(VirtualMethod.compareImplementationDistance(typeof(TestClass3), PublicTestMethod, ProtectedTestMethod) > 0);
-            Assert.AreEqual(0, VirtualMethod.compareImplementationDistance(typeof(TestClass5), PublicTestMethod, ProtectedTestMethod));
+            Assert.IsTrue(VirtualMethod<TestVirtualMethod>.compareImplementationDistance(typeof(TestClass3), PublicTestMethod, ProtectedTestMethod) > 0);
+            Assert.AreEqual(0, VirtualMethod<TestVirtualMethod>.compareImplementationDistance(typeof(TestClass5), PublicTestMethod, ProtectedTestMethod));
         }
 
         [Test]
@@ -94,7 +100,7 @@ namespace Lucene.Net.Util
             try
             {
 	            // cast to Class to remove generics:
-	            PublicTestMethod.GetImplementationDistance(typeof((Type) LuceneTestCase));
+	            PublicTestMethod.GetImplementationDistance(typeof(LuceneTestCase));
 	            Assert.Fail("LuceneTestCase is not a subclass and can never override publicTest(String)");
             }
             catch (System.ArgumentException arg)
@@ -114,18 +120,17 @@ namespace Lucene.Net.Util
 
             try
             {
-	            new VirtualMethod<Type>(typeof(TestClass2), "publicTest", typeof(string));
-	            Assert.Fail("Method publicTest(String) is not declared in TestClass2, so IAE should be thrown");
+	            new VirtualMethod<Type>(typeof(TestClass2), "PublicTest", typeof(string));
             }
             catch (System.ArgumentException arg)
             {
-	            // pass
+                Assert.Fail("Method publicTest(String) is declared in TestClass2, so IAE should not be thrown");
             }
 
             try
             {
 	            // try to create a second instance of the same baseClass / method combination
-	            new VirtualMethod<Type>(typeof(TestVirtualMethod), "publicTest", typeof(string));
+	            new VirtualMethod<Type>(typeof(TestVirtualMethod), "PublicTest", typeof(string));
 	            Assert.Fail("Violating singleton status succeeded");
             }
             catch (System.NotSupportedException arg)

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
@@ -33,8 +34,6 @@ namespace Lucene.Net.Index
     public class TestNoDeletionPolicy : LuceneTestCase
     {
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testNoDeletionPolicy() throws Exception
         [Test]
         public virtual void TestNoDeletionPolicy_Mem()
         {
@@ -43,14 +42,15 @@ namespace Lucene.Net.Index
             idp.OnCommit<IndexCommit>(null);
         }
 
-        [Test]
+        //LUCENE TODO: Compilation problems
+        /*[Test]
         public virtual void TestFinalSingleton()
-	  {
-		Assert.IsTrue(Modifier.isFinal(typeof(NoDeletionPolicy).Modifiers));
-		Constructor<?>[] ctors = typeof(NoDeletionPolicy).DeclaredConstructors;
-		Assert.AreEqual("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
-		Assert.IsTrue("that 1 should be private: " + ctors[0], Modifier.isPrivate(ctors[0].Modifiers));
-	  }
+	    {
+		    Assert.IsTrue(Modifier.isFinal(typeof(NoDeletionPolicy).Modifiers));
+		    Constructor<?>[] ctors = typeof(NoDeletionPolicy).DeclaredConstructors;
+		    Assert.AreEqual("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
+		    Assert.IsTrue("that 1 should be private: " + ctors[0], Modifier.isPrivate(ctors[0].Modifiers));
+	    }*/
 
         [Test]
         public virtual void TestMethodsOverridden()
@@ -61,16 +61,16 @@ namespace Lucene.Net.Index
             // NOTE: even though IndexDeletionPolicy is an interface today, and so all
             // methods must be implemented by NoDeletionPolicy, this test is important
             // in case one day IDP becomes an abstract class.
-            foreach (Method m in typeof(NoDeletionPolicy).Methods)
+            foreach (MethodInfo m in typeof(NoDeletionPolicy).GetMethods())
             {
                 // getDeclaredMethods() returns just those methods that are declared on
                 // NoDeletionPolicy. getMethods() returns those that are visible in that
                 // context, including ones from Object. So just filter out Object. If in
                 // the future IndexDeletionPolicy will become a class that extends a
                 // different class than Object, this will need to change.
-                if (m.DeclaringClass != typeof(object))
+                if (m.DeclaringType != typeof(object))
                 {
-                    Assert.IsTrue(m + " is not overridden !", m.DeclaringClass == typeof(NoDeletionPolicy));
+                    Assert.IsTrue(m.DeclaringType == typeof(NoDeletionPolicy), m + " is not overridden !");
                 }
             }
         }

@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public abstract class IndexingChain
         {
-            internal abstract DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread);
+            public abstract DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread);
         }
 
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
             }
 
 
-            internal override DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread)
+            public override DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread)
             {
                 /*
                 this is the current indexing chain:

@@ -707,7 +707,7 @@ namespace Lucene.Net.Util
                         builder.Append(char.ToLower((char)codePoint));
                         break;
                     case 2: // leave intact
-                        builder.Append(codePoint);
+                        builder.Append((char)codePoint);
                         break;
                 }
             }

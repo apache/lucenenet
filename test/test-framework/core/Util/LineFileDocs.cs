@@ -102,8 +102,8 @@ namespace Lucene.Net.Util
 
                 try
                 {
-                    //@is = new FileStream(Path, FileMode.Open);
-                    @is = File.OpenRead(Path);
+                    @is = new FileStream(Path, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+                    //@is = File.OpenRead(Path);
                 }
                 catch (Exception FSfail)
                 {
@@ -185,6 +185,8 @@ namespace Lucene.Net.Util
                     // read one more line, to make sure we are not inside a Windows linebreak (\r\n):
                     Reader.ReadLine();
                 }
+
+                @is.Dispose();
             }
         }
 
