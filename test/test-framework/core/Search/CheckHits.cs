@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
@@ -95,8 +96,9 @@ namespace Lucene.Net.Search
         /// <seealso cref= #checkHits </seealso>
         public static void CheckHitCollector(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
         {
-
             QueryUtils.Check(random, query, searcher);
+
+            Trace.TraceInformation("Checked");
 
             SortedSet<int?> correct = new SortedSet<int?>();
             for (int i = 0; i < results.Length; i++)
@@ -105,8 +107,9 @@ namespace Lucene.Net.Search
             }
             SortedSet<int?> actual = new SortedSet<int?>();
             Collector c = new SetCollector(actual);
-
+            
             searcher.Search(query, c);
+
             Assert.AreEqual(correct, actual, "Simple: " + query.ToString(defaultFieldName));
 
             for (int i = -1; i < 2; i++)

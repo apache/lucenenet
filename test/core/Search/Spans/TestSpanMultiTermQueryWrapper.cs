@@ -66,7 +66,6 @@ namespace Lucene.Net.Search.Spans
             base.TearDown();
         }
 
-        [Ignore]
         [Test]
         public virtual void TestWildcard()
         {
@@ -77,7 +76,6 @@ namespace Lucene.Net.Search.Spans
             Assert.AreEqual(1, Searcher.Search(sfq, 10).TotalHits);
         }
 
-        [Ignore]
         [Test]
         public virtual void TestPrefix()
         {
@@ -109,7 +107,6 @@ namespace Lucene.Net.Search.Spans
             Assert.AreEqual(1, Searcher.Search(sprq, 10).TotalHits);
         }
 
-        [Ignore]
         [Test]
         public virtual void TestNoSuchMultiTermsInNear()
         {
@@ -148,7 +145,6 @@ namespace Lucene.Net.Search.Spans
 
         }
 
-        [Ignore]
         [Test]
         public virtual void TestNoSuchMultiTermsInNotNear()
         {

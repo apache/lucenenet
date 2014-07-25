@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
 
             foreach (MethodInfo m in typeof(IndexWriterConfig).GetMethods())
             {
-                if (m.DeclaringType == typeof(IndexWriterConfig) && m.Name.StartsWith("get"))
+                if (m.DeclaringType == typeof(IndexWriterConfig) && m.Name.StartsWith("get") && !m.Name.StartsWith("get_"))
                 {
                     Assert.IsTrue(getters.Contains(m.Name), "method " + m.Name + " is not tested for defaults");
                 }
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
 
             foreach (MethodInfo m in typeof(IndexWriterConfig).GetMethods())
             {
-                if (m.Name.StartsWith("get") && !m.IsStatic)
+                if (m.Name.StartsWith("get") && !m.Name.StartsWith("get_") && !m.IsStatic)
                 {
                     Assert.AreEqual(typeof(IndexWriterConfig), m.DeclaringType, "method " + m.Name + " not overrided by IndexWriterConfig");
                     Assert.IsTrue(liveGetters.Contains(m.Name), "method " + m.Name + " not declared on LiveIndexWriterConfig");

@@ -36,7 +36,6 @@ namespace Lucene.Net.Search
     /// <summary>
     /// TestWildcard tests the '*' and '?' wildcard characters.
     /// </summary>
-    [Ignore]
     [TestFixture]
     public class TestWildcard : LuceneTestCase
     {
@@ -159,7 +158,6 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Tests Wildcard queries with an asterisk.
         /// </summary>
-        [Ignore]
         [Test]
         public virtual void TestAsterisk()
         {

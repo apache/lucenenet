@@ -484,7 +484,6 @@ namespace Lucene.Net.Index
 
         // LUCENE-1130: make sure initial IOException, and then 2nd
         // IOException during rollback(), with multiple threads, is OK:
-        [Ignore]
         [Test]
         public virtual void TestIOExceptionDuringAbortWithThreadsOnlyOnce()
         {
@@ -544,7 +543,6 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1130: test IOException in writeSegment, with threads
-        [Ignore]
         [Test]
         public virtual void TestIOExceptionDuringWriteSegmentWithThreadsOnlyOnce()
         {
@@ -555,7 +553,6 @@ namespace Lucene.Net.Index
         //  that we attempt to open at the same time.  As long as the first IndexWriter completes
         //  and closes before the second IndexWriter time's out trying to get the Lock,
         //  we should see both documents
-        [Ignore]
         [Test]
         public virtual void TestOpenTwoIndexWritersOnDifferentThreads()
         {

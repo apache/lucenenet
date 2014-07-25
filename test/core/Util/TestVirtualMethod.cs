@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         public virtual void PublicTest(string test)
         {
         }
-        protected internal virtual void ProtectedTest(int test)
+        protected virtual void ProtectedTest(int test)
         {
         }
 
@@ -46,14 +46,14 @@ namespace Lucene.Net.Util
             public override void PublicTest(string test)
             {
             }
-            protected internal override void ProtectedTest(int test)
+            protected override void ProtectedTest(int test)
             {
             }
         }
 
         internal class TestClass2 : TestClass1
         {
-            protected internal override void ProtectedTest(int test) // make it public here
+            protected override void ProtectedTest(int test) // make it public here
             {
             }
         }

@@ -30,7 +30,6 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Support;
 
-    [Ignore]
     [TestFixture]
     public class TestNRTReaderWithThreads : LuceneTestCase
     {
@@ -41,9 +40,10 @@ namespace Lucene.Net.Index
         public virtual void TestIndexing()
         {
             Directory mainDir = NewDirectory();
-            if (mainDir is MockDirectoryWrapper)
+            MockDirectoryWrapper wrapper = mainDir as MockDirectoryWrapper;
+            if (wrapper != null)
             {
-                ((MockDirectoryWrapper)mainDir).AssertNoDeleteOpenFile = true;
+                wrapper.AssertNoDeleteOpenFile = true;
             }
             IndexWriter writer = new IndexWriter(mainDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false, 2)));
             IndexReader reader = writer.Reader; // start pooling readers

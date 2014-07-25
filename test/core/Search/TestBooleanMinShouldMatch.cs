@@ -109,7 +109,6 @@ namespace Lucene.Net.Search
             QueryUtils.Check(Random(), q, s);
         }
 
-        [Ignore]
         [Test]
         public virtual void TestAllOptional()
         {
@@ -123,7 +122,6 @@ namespace Lucene.Net.Search
             VerifyNrHits(q, 2);
         }
 
-        [Ignore]
         [Test]
         public virtual void TestOneReqAndSomeOptional()
         {
@@ -157,7 +155,6 @@ namespace Lucene.Net.Search
             VerifyNrHits(q, 5);
         }
 
-        [Ignore]
         [Test]
         public virtual void TestOneProhibAndSomeOptional()
         {

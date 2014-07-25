@@ -1025,5 +1025,4 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
     }
-
 }

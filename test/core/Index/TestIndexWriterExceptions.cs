@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
             internal IndexWriter Writer;
 
             internal readonly Random r = new Random(Random().Next());
-            internal volatile Exception Failure;
+            internal volatile Exception Failure = null;
 
             public IndexerThread(TestIndexWriterExceptions outerInstance, int i, IndexWriter writer)
             {
@@ -1682,7 +1682,7 @@ namespace Lucene.Net.Index
             public override void Eval(MockDirectoryWrapper dir)
             {
 
-                var trace = new StackTrace(new Exception());
+                var trace = new StackTrace();
                 bool fail = false;
                 foreach (var frame in trace.GetFrames())
                 {

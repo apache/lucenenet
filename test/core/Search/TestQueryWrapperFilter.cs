@@ -135,7 +135,6 @@ namespace Lucene.Net.Search
             d.Dispose();
         }
 
-        [Ignore]
         [Test]
         public virtual void TestThousandDocuments()
         {

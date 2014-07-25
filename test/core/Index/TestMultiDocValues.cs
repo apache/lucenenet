@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < numDocs; i++)
                 {
                     single.Document = i;
-                    List<long?> expectedList = new List<long?>();
+                    List<long> expectedList = new List<long>();
                     long ord;
                     while ((ord = single.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {
@@ -289,7 +289,7 @@ namespace Lucene.Net.Index
                     int upto = 0;
                     while ((ord = multi.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {
-                        Assert.AreEqual((long)expectedList[upto], ord);
+                        Assert.AreEqual(expectedList[upto], ord);
                         upto++;
                     }
                     Assert.AreEqual(expectedList.Count, upto);

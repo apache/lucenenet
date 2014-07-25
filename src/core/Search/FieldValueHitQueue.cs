@@ -249,7 +249,7 @@ namespace Lucene.Net.Search
         internal virtual FieldDoc FillFields(FieldValueHitQueue.Entry entry)
         {
             int n = Comparators.Length;
-            object[] fields = new object[n];
+            IComparable[] fields = new IComparable[n];
             for (int i = 0; i < n; ++i)
             {
                 fields[i] = Comparators[i].Value(entry.Slot);

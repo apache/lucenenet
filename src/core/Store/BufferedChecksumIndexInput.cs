@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
         public override void ReadBytes(byte[] b, int offset, int len)
         {
             Main.ReadBytes(b, offset, len);
-            Digest.Update((byte[])(Array)b, offset, len);
+            Digest.Update(b, offset, len);
         }
         /*
               public override void ReadBytes(byte[] b, int offset, int len)

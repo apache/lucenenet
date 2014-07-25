@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Lucene.Net.Search
 {
 
@@ -576,9 +578,8 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "zz")), BooleanClause.Occur.SHOULD);
             q.Add(new TermQuery(new Term(FIELD, "w5")), BooleanClause.Occur.SHOULD);
             q.Add(new TermQuery(new Term(FIELD, "w4")), BooleanClause.Occur.SHOULD);
-
+            
             Qtest(q, new int[] { 0, 3 });
-
         }
 
         /* BQ of TQ: using alt so some fields have zero boost and some don't */

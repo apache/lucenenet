@@ -126,11 +126,12 @@ namespace Lucene.Net.Index
 
             Directory directory = NewFSDirectory(IndexDir, null);
 
-            if (directory is MockDirectoryWrapper)
+            MockDirectoryWrapper wrapper = directory as MockDirectoryWrapper;
+            if (wrapper != null)
             {
                 // We create unreferenced files (we don't even write
                 // a segments file):
-                ((MockDirectoryWrapper)directory).AssertNoUnrefencedFilesOnClose = false;
+                wrapper.AssertNoUnrefencedFilesOnClose = false;
             }
 
             IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
@@ -163,11 +164,12 @@ namespace Lucene.Net.Index
 
             directory = NewFSDirectory(IndexDir, null);
 
-            if (directory is MockDirectoryWrapper)
+            wrapper = directory as MockDirectoryWrapper;
+            if (wrapper != null)
             {
                 // We create unreferenced files (we don't even write
                 // a segments file):
-                ((MockDirectoryWrapper)directory).AssertNoUnrefencedFilesOnClose = false;
+                wrapper.AssertNoUnrefencedFilesOnClose = false;
             }
 
             writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));

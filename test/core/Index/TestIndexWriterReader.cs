@@ -735,7 +735,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Ignore]
         [Test]
         public virtual void TestMergeWarmer()
         {
@@ -841,7 +840,6 @@ namespace Lucene.Net.Index
         }
 
         // Stress test reopen during addIndexes
-        [Ignore]
         [Test]
         public virtual void TestDuringAddIndexes()
         {
@@ -1392,7 +1390,6 @@ namespace Lucene.Net.Index
         /// Make sure if all we do is open NRT reader against
         ///  writer, we don't see merge starvation. 
         /// </summary>
-        [Ignore]
         [Test]
         public virtual void TestTooManySegments()
         {

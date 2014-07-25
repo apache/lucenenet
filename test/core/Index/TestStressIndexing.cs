@@ -29,7 +29,6 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
 
-    [Ignore]
     [TestFixture]
     public class TestStressIndexing : LuceneTestCase
     {
@@ -198,14 +197,14 @@ namespace Lucene.Net.Index
           Run above stress test against RAMDirectory and then
           FSDirectory.
         */
-        [Ignore]
         [Test]
         public virtual void TestStressIndexAndSearching()
         {
             Directory directory = NewDirectory();
-            if (directory is MockDirectoryWrapper)
+            MockDirectoryWrapper wrapper = directory as MockDirectoryWrapper;
+            if (wrapper != null)
             {
-                ((MockDirectoryWrapper)directory).AssertNoUnrefencedFilesOnClose = true;
+                wrapper.AssertNoUnrefencedFilesOnClose = true;
             }
 
             RunStressTest(directory, new ConcurrentMergeScheduler());

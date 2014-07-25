@@ -578,9 +578,6 @@ namespace Lucene.Net.Codecs
 
                         for (int arcIdx = 0; arcIdx < node.NumArcs; arcIdx++)
                         {
-                            //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-                            //ORIGINAL LINE: @SuppressWarnings("unchecked") final Lucene.Net.Util.Fst.Builder.UnCompiledNode<Object> target = (Lucene.Net.Util.Fst.Builder.UnCompiledNode<Object>) node.arcs[arcIdx].target;
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
                             Builder<object>.UnCompiledNode<object> target = (Builder<object>.UnCompiledNode<object>)node.Arcs[arcIdx].Target;
                             totCount += target.InputCount;
                             target.Clear();
@@ -627,8 +624,6 @@ namespace Lucene.Net.Codecs
                     // and we found 30 terms/sub-blocks starting w/ that
                     // prefix, and minItemsInBlock <= 30 <=
                     // maxItemsInBlock.
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final PendingBlock nonFloorBlock = writeBlock(prevTerm, prefixLength, prefixLength, count, count, 0, false, -1, true);
                     PendingBlock nonFloorBlock = WriteBlock(prevTerm, prefixLength, prefixLength, count, count, 0, false, -1, true);
                     nonFloorBlock.CompileIndex(null, OuterInstance.ScratchBytes);
                     Pending.Add(nonFloorBlock);
@@ -778,8 +773,6 @@ namespace Lucene.Net.Codecs
                     int curStart = count;
                     subCount = 0;
 
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final java.util.List<PendingBlock> floorBlocks = new java.util.ArrayList<>();
                     IList<PendingBlock> floorBlocks = new List<PendingBlock>();
                     PendingBlock firstBlock = null;
 
@@ -793,8 +786,6 @@ namespace Lucene.Net.Codecs
                         // crossed the min count
                         if (pendingCount >= OuterInstance.MinItemsInBlock)
                         {
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int curPrefixLength;
                             int curPrefixLength;
                             if (startLabel == -1)
                             {
@@ -807,8 +798,6 @@ namespace Lucene.Net.Codecs
                                 prevTerm.Ints[prevTerm.Offset + prefixLength] = startLabel;
                             }
                             //System.out.println("  " + subCount + " subs");
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final PendingBlock floorBlock = writeBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, subTermCountSums[1+sub], true, startLabel, curStart == pendingCount);
                             PendingBlock floorBlock = WriteBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, SubTermCountSums[1 + sub], true, startLabel, curStart == pendingCount);
                             if (firstBlock == null)
                             {
@@ -868,8 +857,6 @@ namespace Lucene.Net.Codecs
             }
 
             // for debugging
-            //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-            //ORIGINAL LINE: @SuppressWarnings("unused") private String toString(Lucene.Net.Util.BytesRef b)
             internal virtual string ToString(BytesRef b)
             {
                 try
@@ -998,8 +985,6 @@ namespace Lucene.Net.Codecs
                         {
                             PendingTerm term = (PendingTerm)ent;
                             BlockTermState state = term.State;
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int suffix = term.term.length - prefixLength;
                             int suffix = term.Term.Length - prefixLength;
                             // if (DEBUG) {
                             //   BytesRef suffixBytes = new BytesRef(suffix);
@@ -1044,8 +1029,6 @@ namespace Lucene.Net.Codecs
                         else
                         {
                             PendingBlock block = (PendingBlock)ent;
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int suffix = block.prefix.length - prefixLength;
                             int suffix = block.Prefix.Length - prefixLength;
 
                             Debug.Assert(suffix > 0);
@@ -1177,8 +1160,6 @@ namespace Lucene.Net.Codecs
 
                     // We better have one final "root" block:
                     Debug.Assert(Pending.Count == 1 && !Pending[0].IsTerm, "pending.size()=" + Pending.Count + " pending=" + Pending);
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final PendingBlock root = (PendingBlock) pending.get(0);
                     PendingBlock root = (PendingBlock)Pending[0];
                     Debug.Assert(root.Prefix.Length == 0);
                     Debug.Assert(root.Index.EmptyOutput != null);
@@ -1223,11 +1204,7 @@ namespace Lucene.Net.Codecs
             try
             {
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long dirStart = out.getFilePointer();
                 long dirStart = @out.FilePointer;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long indexDirStart = indexOut.getFilePointer();
                 long indexDirStart = IndexOut.FilePointer;
 
                 @out.WriteVInt(Fields.Count);

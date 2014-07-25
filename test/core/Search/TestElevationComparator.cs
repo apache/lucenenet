@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
                 return this;
             }
 
-            public override object Value(int slot)
+            public override IComparable Value(int slot)
             {
                 return Convert.ToInt32(values[slot]);
             }

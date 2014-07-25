@@ -101,6 +101,7 @@ namespace Lucene.Net.Index
 
         // Make sure running BG merges still work fine even when
         // we are hitting exceptions during flushing.
+        [Ignore]
         [Test]
         public virtual void TestFlushExceptions()
         {

@@ -646,8 +646,6 @@ namespace Lucene.Net.Index
                 // slurp the del file into CFS:
                 if (flushedSegment.LiveDocs != null)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int delCount = flushedSegment.delCount;
                     int delCount = flushedSegment.DelCount;
                     Debug.Assert(delCount > 0);
                     if (InfoStream.IsEnabled("DWPT"))

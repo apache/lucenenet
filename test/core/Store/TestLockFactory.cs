@@ -162,9 +162,7 @@ namespace Lucene.Net.Store
         // IndexWriters over & over in 2 threads and making sure
         // no unexpected exceptions are raised, but use
         // NativeFSLockFactory:
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Nightly public void testStressLocksNativeFSLockFactory() throws Exception
-        [Ignore]
+        [Ignore]//marked @nightly
         [Test]
         public virtual void TestStressLocksNativeFSLockFactory()
         {

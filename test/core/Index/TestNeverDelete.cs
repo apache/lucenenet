@@ -37,10 +37,10 @@ namespace Lucene.Net.Index
     // Make sure if you use NoDeletionPolicy that no file
     // referenced by a commit point is ever deleted
 
+    [Ignore]
     [TestFixture]
     public class TestNeverDelete : LuceneTestCase
     {
-        [Ignore]
         [Test]
         public virtual void TestIndexing()
         {

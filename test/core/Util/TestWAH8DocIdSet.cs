@@ -45,6 +45,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual(ds1.Cardinality(), ds2.Cardinality());
         }
 
+        [Ignore]
         [Test]
         public virtual void TestUnion()
         {

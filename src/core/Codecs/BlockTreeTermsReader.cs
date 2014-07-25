@@ -969,8 +969,6 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
                         Debug.Assert(NextEnt != -1 && NextEnt < EntCount, "nextEnt=" + NextEnt + " entCount=" + EntCount + " fp=" + Fp);
                         NextEnt++;
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int code = suffixesReader.readVInt();
                         int code = SuffixesReader.ReadVInt();
                         Suffix = (int)((uint)code >> 1);
                         StartBytePos = SuffixesReader.Position;
@@ -2527,8 +2525,6 @@ namespace Lucene.Net.Codecs
                         // this method catches up all internal state so next()
                         // works properly:
                         //if (DEBUG) System.out.println("  re-seek to pending term=" + term.utf8ToString() + " " + term);
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final boolean result = seekExact(term);
                         bool result = SeekExact(Term_Renamed);
                         Debug.Assert(result);
                     }
@@ -2553,8 +2549,6 @@ namespace Lucene.Net.Codecs
                                 TermExists = false;
                                 return null;
                             }
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final long lastFP = currentFrame.fpOrig;
                             long lastFP = CurrentFrame.FpOrig;
                             CurrentFrame = Stack[CurrentFrame.Ord - 1];
 
@@ -2971,8 +2965,6 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
                         Debug.Assert(NextEnt != -1 && NextEnt < EntCount, "nextEnt=" + NextEnt + " entCount=" + EntCount + " fp=" + Fp);
                         NextEnt++;
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int code = suffixesReader.readVInt();
                         int code = SuffixesReader.ReadVInt();
                         Suffix = (int)((uint)code >> 1);
                         StartBytePos = SuffixesReader.Position;
@@ -3017,8 +3009,6 @@ namespace Lucene.Net.Codecs
                             return;
                         }
 
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int targetLabel = target.bytes[target.offset + prefix] & 0xFF;
                         int targetLabel = target.Bytes[target.Offset + Prefix] & 0xFF;
 
                         // if (DEBUG) {
@@ -3038,8 +3028,6 @@ namespace Lucene.Net.Codecs
                         long newFP = FpOrig;
                         while (true)
                         {
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final long code = floorDataReader.readVLong();
                             long code = FloorDataReader.ReadVLong();
                             newFP = FpOrig + ((long)((ulong)code >> 1));
                             HasTerms = (code & 1) != 0;
@@ -3094,8 +3082,6 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) System.out.println("\nBTTR.decodeMetadata seg=" + segment + " mdUpto=" + metaDataUpto + " vs termBlockOrd=" + state.termBlockOrd);
 
                         // lazily catch up on metadata decode:
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int limit = getTermBlockOrd();
                         int limit = TermBlockOrd;
                         bool absolute = MetaDataUpto == 0;
                         Debug.Assert(limit > 0);
@@ -3162,23 +3148,17 @@ namespace Lucene.Net.Codecs
                             return;
                         }
                         Debug.Assert(subFP < Fp, "fp=" + Fp + " subFP=" + subFP);
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final long targetSubCode = fp - subFP;
                         long targetSubCode = Fp - subFP;
                         //if (DEBUG) System.out.println("    targetSubCode=" + targetSubCode);
                         while (true)
                         {
                             Debug.Assert(NextEnt < EntCount);
                             NextEnt++;
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int code = suffixesReader.readVInt();
                             int code = SuffixesReader.ReadVInt();
                             SuffixesReader.SkipBytes(IsLeafBlock ? code : (int)((uint)code >> 1));
                             //if (DEBUG) System.out.println("    " + nextEnt + " (of " + entCount + ") ent isSubBlock=" + ((code&1)==1));
                             if ((code & 1) != 0)
                             {
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final long subCode = suffixesReader.readVLong();
                                 long subCode = SuffixesReader.ReadVLong();
                                 //if (DEBUG) System.out.println("      subCode=" + subCode);
                                 if (targetSubCode == subCode)
@@ -3244,14 +3224,10 @@ namespace Lucene.Net.Codecs
                             //   System.out.println("      cycle: term " + (nextEnt-1) + " (of " + entCount + ") suffix=" + brToString(suffixBytesRef));
                             // }
 
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int termLen = prefix + suffix;
                             int termLen = Prefix + Suffix;
                             StartBytePos = SuffixesReader.Position;
                             SuffixesReader.SkipBytes(Suffix);
 
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int targetLimit = target.offset + (target.length < termLen ? target.length : termLen);
                             int targetLimit = target.Offset + (target.Length < termLen ? target.Length : termLen);
                             int targetPos = target.Offset + Prefix;
 
@@ -3260,11 +3236,7 @@ namespace Lucene.Net.Codecs
                             int bytePos = StartBytePos;
                             while (true)
                             {
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int cmp;
                                 int cmp;
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final boolean stop;
                                 bool stop;
                                 if (targetPos < targetLimit)
                                 {
@@ -3388,8 +3360,6 @@ namespace Lucene.Net.Codecs
                         {
                             NextEnt++;
 
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int code = suffixesReader.readVInt();
                             int code = SuffixesReader.ReadVInt();
                             Suffix = (int)((uint)code >> 1);
                             // if (DEBUG) {
@@ -3401,8 +3371,6 @@ namespace Lucene.Net.Codecs
                             // }
 
                             OuterInstance.TermExists = (code & 1) == 0;
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int termLen = prefix + suffix;
                             int termLen = Prefix + Suffix;
                             StartBytePos = SuffixesReader.Position;
                             SuffixesReader.SkipBytes(Suffix);
@@ -3417,8 +3385,6 @@ namespace Lucene.Net.Codecs
                                 LastSubFP = Fp - SubCode;
                             }
 
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int targetLimit = target.offset + (target.length < termLen ? target.length : termLen);
                             int targetLimit = target.Offset + (target.Length < termLen ? target.Length : termLen);
                             int targetPos = target.Offset + Prefix;
 
@@ -3427,11 +3393,7 @@ namespace Lucene.Net.Codecs
                             int bytePos = StartBytePos;
                             while (true)
                             {
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int cmp;
                                 int cmp;
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final boolean stop;
                                 bool stop;
                                 if (targetPos < targetLimit)
                                 {

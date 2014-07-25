@@ -72,7 +72,6 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Ignore]
         [Test]
         public virtual void TestSimple()
         {

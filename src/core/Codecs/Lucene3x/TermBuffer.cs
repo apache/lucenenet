@@ -132,12 +132,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return null;
             }
 
-            if (Term == null)
-            {
-                Term = new Term(Field, BytesRef.DeepCopyOf(Bytes));
-            }
-
-            return Term;
+            return Term ?? (Term = new Term(Field, BytesRef.DeepCopyOf(Bytes)));
         }
 
         public object Clone()

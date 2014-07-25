@@ -78,7 +78,6 @@ namespace Lucene.Net.Index
             Counter = 0;
         }
 
-        [Ignore]
         [Test]
         public virtual void TestSimpleSkip()
         {
