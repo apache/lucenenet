@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Text;
 
 namespace Lucene.Net.Analysis
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis
         private bool ThrowExcNext_Renamed;
 
         public MockReaderWrapper(Random random, StringReader @in)
-            : base(@in.ToString())
+            : base(@in.ReadToEnd())
         {
             this.@in = @in;
             this.Random = random;

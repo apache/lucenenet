@@ -10,7 +10,7 @@ namespace Lucene.Net.Support
         {
             
         }
-
+    
         public ByteArrayOutputStream(int size)
             : base(size)
         {
