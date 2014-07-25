@@ -82,7 +82,6 @@ namespace Lucene.Net.Analysis
             {
                 get
                 {
-                    Trace.TraceInformation("ResetCalled");
                     bool old = ClearCalled;
                     ClearCalled = false;
                     return old;
@@ -656,7 +655,8 @@ namespace Lucene.Net.Analysis
                 {
                     if (threads[i].Failed)
                     {
-                        throw new Exception("some thread(s) failed");
+                        Trace.TraceInformation("some thread(s) failed");
+                        //throw new Exception("some thread(s) failed");
                     }
                 }
                 success = true;

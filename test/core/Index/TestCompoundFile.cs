@@ -854,7 +854,7 @@ namespace Lucene.Net.Index
 
             for (int fileIdx = 0; fileIdx < FILE_COUNT; fileIdx++)
             {
-                Assert.AreEqual((sbyte)fileIdx, ins[fileIdx].ReadByte());
+                Assert.AreEqual((byte)fileIdx, ins[fileIdx].ReadByte());
             }
 
             for (int fileIdx = 0; fileIdx < FILE_COUNT; fileIdx++)

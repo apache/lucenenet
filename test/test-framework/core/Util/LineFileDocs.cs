@@ -114,7 +114,7 @@ namespace Lucene.Net.Util
                     if (Path.EndsWith(".gz"))
                     {
                         // if it is a gzip file, we need to use InputStream and slowly skipTo:
-                        @is = new FileStream(file.FullName, FileMode.Append, FileAccess.Write);
+                        @is = new FileStream(file.FullName, FileMode.Append, FileAccess.Write, FileShare.Read);
                     }
                     else
                     {
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util
                             Console.WriteLine("TEST: LineFileDocs: file seek to fp=" + seekTo + " on open");
                         }
                         channel.Position = seekTo;
-                        @is = new FileStream(channel.ToString(), FileMode.Append, FileAccess.Write);
+                        @is = new FileStream(channel.ToString(), FileMode.Append, FileAccess.Write, FileShare.Read);
                         needSkip = false;
                     }
                 }
