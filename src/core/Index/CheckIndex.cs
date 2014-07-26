@@ -438,6 +438,11 @@ namespace Lucene.Net.Index
             }
         }
 
+        public void FlushInfoStream()
+        {
+            infoStream.Flush();
+        }
+
         private static void Msg(StreamWriter @out, string msg)
         {
             if (@out != null)

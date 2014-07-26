@@ -279,11 +279,12 @@ namespace Lucene.Net.Util
             ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             CheckIndex checker = new CheckIndex(dir);
             checker.CrossCheckTermVectors = crossCheckTermVectors;
-            checker.SetInfoStream(new StreamWriter(bos, Encoding.UTF8), true);//TODO set to false
+            checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
             CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
             if (indexStatus == null || indexStatus.Clean == false)
             {
                 Console.WriteLine("CheckIndex failed");
+                checker.FlushInfoStream();
                 Console.WriteLine(bos.ToString());
                 throw new Exception("CheckIndex failed");
             }
@@ -324,6 +325,7 @@ namespace Lucene.Net.Util
             if (fieldNormStatus.Error != null || termIndexStatus.Error != null || storedFieldStatus.Error != null || termVectorStatus.Error != null || docValuesStatus.Error != null)
             {
                 Console.WriteLine("CheckReader failed");
+                infoStream.Flush();
                 Console.WriteLine(bos.ToString());
                 throw new Exception("CheckReader failed");
             }

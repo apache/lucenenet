@@ -69,6 +69,7 @@ namespace Lucene.Net.Index
             if (indexStatus.Clean == false)
             {
                 Console.WriteLine("CheckIndex failed");
+                checker.FlushInfoStream();
                 Console.WriteLine(bos.ToString());
                 Assert.Fail();
             }

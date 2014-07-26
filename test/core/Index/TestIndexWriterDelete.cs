@@ -1391,24 +1391,26 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, w.SegmentCount);
             w.Dispose();
 
-            //ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
-            MemoryStream bos = new MemoryStream(1024);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+            //MemoryStream bos = new MemoryStream(1024);
             CheckIndex checker = new CheckIndex(dir);
-            checker.SetInfoStream(new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8), false);
+            checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
             CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
             Assert.IsTrue(indexStatus.Clean);
+            checker.FlushInfoStream();
             string s = bos.ToString();
 
             // Segment should have deletions:
-            Assert.IsTrue(s.Contains("has deletions"));
+            Assert.IsTrue(s.Contains("has deletions"), "string was: " + s);
             w = new IndexWriter(dir, (IndexWriterConfig)iwc.Clone());
             w.ForceMerge(1);
             w.Dispose();
 
-            bos = new MemoryStream(1024);
-            checker.SetInfoStream(new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8), false);
+            bos = new ByteArrayOutputStream(1024);
+            checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
             indexStatus = checker.DoCheckIndex(null);
             Assert.IsTrue(indexStatus.Clean);
+            checker.FlushInfoStream();
             s = bos.ToString();
             Assert.IsFalse(s.Contains("has deletions"));
             dir.Dispose();

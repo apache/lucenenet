@@ -1032,7 +1032,6 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(0, scratch.Length);
             }
             reader.Dispose();
-
             dir.Dispose();
         }
 
