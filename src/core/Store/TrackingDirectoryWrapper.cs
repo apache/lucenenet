@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,14 +19,12 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     /// <summary>
     /// A delegating Directory that records which files were
-    ///  written to and deleted. 
+    ///  written to and deleted.
     /// </summary>
     public sealed class TrackingDirectoryWrapper : FilterDirectory
     {
-
         private readonly ISet<string> CreatedFileNames = new HashSet<string>();
 
         public TrackingDirectoryWrapper(Directory @in)
@@ -67,7 +64,5 @@ namespace Lucene.Net.Store
                 return CreatedFileNames;
             }
         }
-
     }
-
 }

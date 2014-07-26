@@ -1,61 +1,56 @@
+using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lucene.Net.Index;
-using Lucene.Net.Util;
-using Lucene.Net.Store;
 
 namespace Lucene.Net.Codecs.Lucene42
 {
+    using Lucene.Net.Support;
+    using Lucene.Net.Util.Fst;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
+    using Bits = Lucene.Net.Util.Bits;
+    using BlockPackedReader = Lucene.Net.Util.Packed.BlockPackedReader;
+    using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using DocValues = Lucene.Net.Index.DocValues;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using DocValues = Lucene.Net.Index.DocValues;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using IntsRef = Lucene.Net.Util.IntsRef;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using MonotonicBlockPackedReader = Lucene.Net.Util.Packed.MonotonicBlockPackedReader;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PagedBytes = Lucene.Net.Util.PagedBytes;
+    using PositiveIntOutputs = Lucene.Net.Util.Fst.PositiveIntOutputs;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
-    using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using IntsRef = Lucene.Net.Util.IntsRef;
-    using PagedBytes = Lucene.Net.Util.PagedBytes;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using Lucene.Net.Util.Fst;
-    using PositiveIntOutputs = Lucene.Net.Util.Fst.PositiveIntOutputs;
     using Util = Lucene.Net.Util.Fst.Util;
-    using BlockPackedReader = Lucene.Net.Util.Packed.BlockPackedReader;
-    using MonotonicBlockPackedReader = Lucene.Net.Util.Packed.MonotonicBlockPackedReader;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Reader for <seealso cref="Lucene42DocValuesFormat"/>
@@ -64,6 +59,7 @@ namespace Lucene.Net.Codecs.Lucene42
     {
         // metadata maps (just file pointers and minimal stuff)
         private readonly IDictionary<int, NumericEntry> Numerics;
+
         private readonly IDictionary<int, BinaryEntry> Binaries;
         private readonly IDictionary<int, FSTEntry> Fsts;
         private readonly IndexInput Data;
@@ -71,6 +67,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
         // ram instances we have already loaded
         private readonly IDictionary<int, NumericDocValues> NumericInstances = new Dictionary<int, NumericDocValues>();
+
         private readonly IDictionary<int, BinaryDocValues> BinaryInstances = new Dictionary<int, BinaryDocValues>();
         private readonly IDictionary<int, FST<long>> FstInstances = new Dictionary<int, FST<long>>();
 
@@ -180,6 +177,7 @@ namespace Lucene.Net.Codecs.Lucene42
                         case GCD_COMPRESSED:
                         case UNCOMPRESSED:
                             break;
+
                         default:
                             throw new CorruptIndexException("Unknown format: " + entry.Format + ", input=" + meta);
                     }
@@ -268,16 +266,19 @@ namespace Lucene.Net.Codecs.Lucene42
                     PackedInts.Reader ordsReader = PackedInts.GetReaderNoHeader(Data, PackedInts.Format.ById(formatID), entry.PackedIntsVersion, MaxDoc, bitsPerValue);
                     RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(decode) + ordsReader.RamBytesUsed());
                     return new NumericDocValuesAnonymousInnerClassHelper(this, decode, ordsReader);
+
                 case DELTA_COMPRESSED:
                     int blockSize = Data.ReadVInt();
                     BlockPackedReader reader = new BlockPackedReader(Data, entry.PackedIntsVersion, blockSize, MaxDoc, false);
                     RamBytesUsed_Renamed.AddAndGet(reader.RamBytesUsed());
                     return reader;
+
                 case UNCOMPRESSED:
                     byte[] bytes = new byte[MaxDoc];
                     Data.ReadBytes(bytes, 0, bytes.Length);
                     RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
                     return new NumericDocValuesAnonymousInnerClassHelper2(this, bytes);
+
                 case GCD_COMPRESSED:
                     long min = Data.ReadLong();
                     long mult = Data.ReadLong();
@@ -285,6 +286,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     BlockPackedReader quotientReader = new BlockPackedReader(Data, entry.PackedIntsVersion, quotientBlockSize, MaxDoc, false);
                     RamBytesUsed_Renamed.AddAndGet(quotientReader.RamBytesUsed());
                     return new NumericDocValuesAnonymousInnerClassHelper3(this, min, mult, quotientReader);
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -737,6 +739,7 @@ namespace Lucene.Net.Codecs.Lucene42
             // this is all for the complicated seek(ord)...
             // maybe we should add a FSTEnum that supports this operation?
             internal readonly FST<long> Fst;
+
             internal readonly FST<long>.BytesReader BytesReader;
             internal readonly FST<long>.Arc<long> FirstArc = new FST<long>.Arc<long>();
             internal readonly FST<long>.Arc<long> ScratchArc = new FST<long>.Arc<long>();
@@ -847,5 +850,4 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
     }
-
 }

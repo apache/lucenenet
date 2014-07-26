@@ -1,11 +1,10 @@
+using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +25,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestIOUtils : LuceneTestCase
     {
-
         internal sealed class BrokenIDisposable : IDisposable
         {
             internal readonly int i;
@@ -107,7 +105,5 @@ namespace Lucene.Net.Util
                 Assert.IsTrue(trace.Contains("IOException: TEST-IO-EXCEPTION-2"), "Stack trace does not contain suppressed Exception: " + trace);
             }
         }
-
     }
-
 }

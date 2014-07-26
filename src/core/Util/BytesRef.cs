@@ -1,11 +1,10 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,7 @@ namespace Lucene.Net.Util
     /// Represents byte[], as a slice (offset + length) into an
     ///  existing byte[].  The <seealso cref="#bytes"/> member should never be null;
     ///  use <seealso cref="#EMPTY_BYTES"/> if necessary.
-    /// 
+    ///
     /// <p><b>Important note:</b> Unless otherwise noted, Lucene uses this class to
     /// represent terms that are encoded as <b>UTF8</b> bytes in the index. To
     /// convert them to a Java <seealso cref="String"/> (which is UTF16), use <seealso cref="#utf8ToString"/>.
@@ -74,7 +73,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this instance will directly reference bytes w/o making a copy.
-        /// bytes should not be null 
+        /// bytes should not be null
         /// </summary>
         public BytesRef(sbyte[] bytes)
             : this(bytes, 0, bytes.Length)
@@ -92,7 +91,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Initialize the byte[] from the UTF8 bytes
-        /// for the provided String.  
+        /// for the provided String.
         /// </summary>
         /// <param name="text"> this must be well-formed
         /// unicode text, with no unpaired surrogates. </param>
@@ -104,7 +103,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Initialize the byte[] from the UTF8 bytes
-        /// for the provided String.  
+        /// for the provided String.
         /// </summary>
         /// <param name="text"> this must be well-formed
         /// unicode text, with no unpaired surrogates. </param>
@@ -181,7 +180,7 @@ namespace Lucene.Net.Util
         ///  <p> this is currently implemented as MurmurHash3 (32
         ///  bit), using the seed from {@link
         ///  StringHelper#GOOD_FAST_HASH_SEED}, but is subject to
-        ///  change from release to release. 
+        ///  change from release to release.
         /// </summary>
         public override int GetHashCode()
         {
@@ -203,7 +202,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Interprets stored bytes as UTF8 bytes, returning the
-        ///  resulting string 
+        ///  resulting string
         /// </summary>
         public string Utf8ToString()
         {
@@ -234,7 +233,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Copies the bytes from the given <seealso cref="BytesRef"/>
         /// <p>
-        /// NOTE: if this would exceed the array size, this method creates a 
+        /// NOTE: if this would exceed the array size, this method creates a
         /// new reference array.
         /// </summary>
         public void CopyBytes(BytesRef other)
@@ -251,7 +250,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Appends the bytes from the given <seealso cref="BytesRef"/>
         /// <p>
-        /// NOTE: if this would exceed the array size, this method creates a 
+        /// NOTE: if this would exceed the array size, this method creates a
         /// new reference array.
         /// </summary>
         public void Append(BytesRef other)
@@ -269,10 +268,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Used to grow the reference array. 
-        /// 
+        /// Used to grow the reference array.
+        ///
         /// In general this should not be used as it does not take the offset into account.
-        /// @lucene.internal 
+        /// @lucene.internal
         /// </summary>
         public void Grow(int newLength)
         {
@@ -331,11 +330,11 @@ namespace Lucene.Net.Util
             }
         }
 
-        /// @deprecated this comparator is only a transition mechanism 
+        /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
         private static readonly IComparer<BytesRef> Utf8SortedAsUTF16SortOrder = new UTF8SortedAsUTF16Comparator();
 
-        /// @deprecated this comparator is only a transition mechanism 
+        /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
         public static IComparer<BytesRef> UTF8SortedAsUTF16Comparer
         {
@@ -345,7 +344,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        /// @deprecated this comparator is only a transition mechanism 
+        /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
         private class UTF8SortedAsUTF16Comparator : IComparer<BytesRef>
         {
@@ -356,7 +355,6 @@ namespace Lucene.Net.Util
 
             public virtual int Compare(BytesRef a, BytesRef b)
             {
-
                 sbyte[] aBytes = a.Bytes;
                 int aUpto = a.Offset;
                 sbyte[] bBytes = b.Bytes;
@@ -379,14 +377,13 @@ namespace Lucene.Net.Util
 
                     if (aByte != bByte)
                     {
-
                         // See http://icu-project.org/docs/papers/utf16_code_point_order.html#utf-8-in-utf-16-order
 
                         // We know the terms are not equal, but, we may
                         // have to carefully fixup the bytes at the
                         // difference to match UTF16's sort order:
 
-                        // NOTE: instead of moving supplementary code points (0xee and 0xef) to the unused 0xfe and 0xff, 
+                        // NOTE: instead of moving supplementary code points (0xee and 0xef) to the unused 0xfe and 0xff,
                         // we move them to the unused 0xfc and 0xfd [reserved for future 6-byte character sequences]
                         // this reserves 0xff for preflex's term reordering (surrogate dance), and if unicode grows such
                         // that 6-byte sequences are needed we have much bigger problems anyway.
@@ -411,7 +408,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new BytesRef that points to a copy of the bytes from 
+        /// Creates a new BytesRef that points to a copy of the bytes from
         /// <code>other</code>
         /// <p>
         /// The returned BytesRef will have a length of other.length
@@ -426,7 +423,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Performs internal consistency checks.
-        /// Always returns true (or throws InvalidOperationException) 
+        /// Always returns true (or throws InvalidOperationException)
         /// </summary>
         public bool Valid
         {
@@ -464,5 +461,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

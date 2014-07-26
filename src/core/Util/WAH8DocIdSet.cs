@@ -1,35 +1,33 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
+    using Lucene.Net.Support;
+    using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
-    using DataInput = Lucene.Net.Store.DataInput;
     using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// <seealso cref="DocIdSet"/> implementation based on word-aligned hybrid encoding on
@@ -78,7 +76,6 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class WAH8DocIdSet : DocIdSet
     {
-
         // Minimum index interval, intervals below this value can't guarantee anymore
         // that this set implementation won't be significantly larger than a FixedBitSet
         // The reason is that a single sequence saves at least one byte and an index
@@ -204,6 +201,7 @@ namespace Lucene.Net.Util
             {
                 case 0:
                     return EMPTY;
+
                 case 1:
                     var iter = docIdSets.GetEnumerator();
                     iter.MoveNext();
@@ -273,7 +271,6 @@ namespace Lucene.Net.Util
         /// Word-based builder. </summary>
         public class WordBuilder
         {
-
             internal readonly GrowableByteArrayDataOutput @out;
             internal readonly GrowableByteArrayDataOutput DirtyWords;
             internal int Clean;
@@ -301,7 +298,7 @@ namespace Lucene.Net.Util
             ///  which is at most <code>4/i</code>, but likely much less.The default index
             ///  interval is <code>8</code>, meaning the index has an overhead of at most
             ///  50%. To disable indexing, you can pass <seealso cref="Integer#MAX_VALUE"/> as an
-            ///  index interval. 
+            ///  index interval.
             /// </summary>
             public virtual object SetIndexInterval(int indexInterval)
             {
@@ -397,10 +394,12 @@ namespace Lucene.Net.Util
                                     DirtyWords.WriteByte(word);
                                 }
                                 break;
+
                             case 2:
                                 DirtyWords.WriteByte((sbyte)0);
                                 DirtyWords.WriteByte(word);
                                 break;
+
                             default:
                                 WriteSequence();
                                 Clean = wordNum - LastWordNum - 1;
@@ -437,10 +436,12 @@ namespace Lucene.Net.Util
                                 DirtyWords.WriteByte(word);
                             }
                             break;
+
                         case 2:
                             DirtyWords.WriteByte((sbyte)0);
                             DirtyWords.WriteByte(word);
                             break;
+
                         default:
                             WriteSequence();
                             Reverse = false;
@@ -506,14 +507,12 @@ namespace Lucene.Net.Util
 
                 return new WAH8DocIdSet(data, Cardinality, IndexInterval_Renamed, indexPositions, indexWordNums);
             }
-
         }
 
         /// <summary>
         /// A builder for <seealso cref="WAH8DocIdSet"/>s. </summary>
         public sealed class Builder : WordBuilder
         {
-
             internal int LastDocID;
             internal int WordNum, Word;
 
@@ -579,13 +578,14 @@ namespace Lucene.Net.Util
                 }
                 return base.Build();
             }
-
         }
 
         // where the doc IDs are stored
         private readonly byte[] Data;
+
         private readonly int Cardinality_Renamed;
         private readonly int IndexInterval;
+
         // index for advance(int)
         private readonly MonotonicAppendingLongBuffer Positions, WordNums; // wordNums[i] starts at the sequence at positions[i]
 
@@ -638,8 +638,8 @@ namespace Lucene.Net.Util
 
         public class Iterator : DocIdSetIterator
         {
-
             /* Using the index can be costly for close targets. */
+
             internal static int IndexThreshold(int cardinality, int indexInterval)
             {
                 // Short sequences encode for 3 words (2 clean words and 1 dirty byte),
@@ -891,7 +891,6 @@ namespace Lucene.Net.Util
             {
                 return Cardinality;
             }
-
         }
 
         /// <summary>
@@ -907,7 +906,5 @@ namespace Lucene.Net.Util
         {
             return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_INT) + RamUsageEstimator.SizeOf(Data) + Positions.RamBytesUsed() + WordNums.RamBytesUsed();
         }
-
     }
-
 }

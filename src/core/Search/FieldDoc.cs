@@ -1,10 +1,9 @@
-using System;
 using Lucene.Net.Support;
+using System;
 using System.Text;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -34,15 +33,14 @@ namespace Lucene.Net.Search
     /// The class of each element in the array will be either
     /// Integer, Float or String depending on the type of values
     /// in the terms of each field.
-    /// 
+    ///
     /// <p>Created: Feb 11, 2004 1:23:38 PM
-    /// 
+    ///
     /// @since   lucene 1.4 </summary>
     /// <seealso cref= ScoreDoc </seealso>
     /// <seealso cref= TopFieldDocs </seealso>
     public class FieldDoc : ScoreDoc
     {
-
         /// <summary>
         /// Expert: The values which are used to sort the referenced document.
         /// The order of these will match the original sort criteria given by a
@@ -87,5 +85,4 @@ namespace Lucene.Net.Search
             return sb.ToString();
         }
     }
-
 }

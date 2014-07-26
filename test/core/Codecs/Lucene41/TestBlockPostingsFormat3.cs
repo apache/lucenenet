@@ -1,69 +1,68 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Support;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
+    using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using Document = Lucene.Net.Document.Document;
+    using English = Lucene.Net.Util.English;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockFixedLengthPayloadFilter = Lucene.Net.Analysis.MockFixedLengthPayloadFilter;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using MockVariableLengthPayloadFilter = Lucene.Net.Analysis.MockVariableLengthPayloadFilter;
-    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
-    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using English = Lucene.Net.Util.English;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
-    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
-    using System.IO;
-    using NUnit.Framework;
-    using Lucene.Net.Randomized.Generators;
+    using TextField = Lucene.Net.Document.TextField;
+    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
+    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
 
     /// <summary>
-    /// Tests partial enumeration (only pulling a subset of the indexed data) 
+    /// Tests partial enumeration (only pulling a subset of the indexed data)
     /// </summary>
     [TestFixture]
     public class TestBlockPostingsFormat3 : LuceneTestCase
@@ -302,7 +301,7 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// checks collection-level statistics on Terms 
+        /// checks collection-level statistics on Terms
         /// </summary>
         public virtual void AssertTermsStatistics(Terms leftTerms, Terms rightTerms)
         {
@@ -563,5 +562,4 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
     }
-
 }

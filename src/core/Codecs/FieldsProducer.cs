@@ -1,7 +1,7 @@
 namespace Lucene.Net.Codecs
 {
-
     using System;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -19,40 +19,38 @@ namespace Lucene.Net.Codecs
          * limitations under the License.
          */
 
-
     using Fields = Lucene.Net.Index.Fields;
 
-	/// <summary>
-	/// Abstract API that produces terms, doc, freq, prox, offset and
-	///  payloads postings.  
-	/// 
-	/// @lucene.experimental
-	/// </summary>
+    /// <summary>
+    /// Abstract API that produces terms, doc, freq, prox, offset and
+    ///  payloads postings.
+    ///
+    /// @lucene.experimental
+    /// </summary>
 
-	public abstract class FieldsProducer : Fields, IDisposable
-	{
-	  /// <summary>
-	  /// Sole constructor. (For invocation by subclass 
-	  ///  constructors, typically implicit.) 
-	  /// </summary>
-	  protected internal FieldsProducer()
-	  {
-	  }
+    public abstract class FieldsProducer : Fields, IDisposable
+    {
+        /// <summary>
+        /// Sole constructor. (For invocation by subclass
+        ///  constructors, typically implicit.)
+        /// </summary>
+        protected internal FieldsProducer()
+        {
+        }
 
-	  public abstract void Dispose();
+        public abstract void Dispose();
 
-	  /// <summary>
-	  /// Returns approximate RAM bytes used </summary>
-	  public abstract long RamBytesUsed();
+        /// <summary>
+        /// Returns approximate RAM bytes used </summary>
+        public abstract long RamBytesUsed();
 
-	  /// <summary>
-	  /// Checks consistency of this reader.
-	  /// <p>
-	  /// Note that this may be costly in terms of I/O, e.g. 
-	  /// may involve computing a checksum value against large data files.
-	  /// @lucene.internal
-	  /// </summary>
-	  public abstract void CheckIntegrity();
-	}
-
+        /// <summary>
+        /// Checks consistency of this reader.
+        /// <p>
+        /// Note that this may be costly in terms of I/O, e.g.
+        /// may involve computing a checksum value against large data files.
+        /// @lucene.internal
+        /// </summary>
+        public abstract void CheckIntegrity();
+    }
 }

@@ -2,41 +2,40 @@ using System;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
+    using FailOnNonBulkMergesInfoStream = Lucene.Net.Util.FailOnNonBulkMergesInfoStream;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using StoredField = Lucene.Net.Document.StoredField;
     using StringField = Lucene.Net.Document.StringField;
     using TextField = Lucene.Net.Document.TextField;
-    using Directory = Lucene.Net.Store.Directory;
-    using FailOnNonBulkMergesInfoStream = Lucene.Net.Util.FailOnNonBulkMergesInfoStream;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
 
     [TestFixture]
     public class TestConsistentFieldNumbers : LuceneTestCase
     {
-
         [Test]
         public virtual void TestSameFieldNumbersAcrossSegments()
         {
@@ -99,7 +98,6 @@ namespace Lucene.Net.Index
                 Assert.AreEqual("f2", fis3.FieldInfo(1).Name);
                 Assert.AreEqual("f3", fis3.FieldInfo(2).Name);
                 Assert.AreEqual("f4", fis3.FieldInfo(3).Name);
-
 
                 dir.Dispose();
             }
@@ -175,7 +173,6 @@ namespace Lucene.Net.Index
                     Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
                     Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
                 }
-
 
                 {
                     IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(Random().NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
@@ -369,40 +366,55 @@ namespace Lucene.Net.Index
             {
                 case 0:
                     return new Field(fieldName, "some text", customType);
+
                 case 1:
                     return new TextField(fieldName, "some text", Field.Store.NO);
+
                 case 2:
                     return new Field(fieldName, "some text", customType2);
+
                 case 3:
                     return new Field(fieldName, "some text", customType3);
+
                 case 4:
                     return new Field(fieldName, "some text", customType4);
+
                 case 5:
                     return new Field(fieldName, "some text", customType5);
+
                 case 6:
                     return new Field(fieldName, "some text", customType6);
+
                 case 7:
                     return new Field(fieldName, "some text", customType7);
+
                 case 8:
                     return new Field(fieldName, "some text", customType8);
+
                 case 9:
                     return new Field(fieldName, "some text", customType9);
+
                 case 10:
                     return new Field(fieldName, "some text", customType10);
+
                 case 11:
                     return new Field(fieldName, "some text", customType11);
+
                 case 12:
                     return new Field(fieldName, "some text", customType12);
+
                 case 13:
                     return new Field(fieldName, "some text", customType13);
+
                 case 14:
                     return new Field(fieldName, "some text", customType14);
+
                 case 15:
                     return new Field(fieldName, "some text", customType15);
+
                 default:
                     return null;
             }
         }
     }
-
 }

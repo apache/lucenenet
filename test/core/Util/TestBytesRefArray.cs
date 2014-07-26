@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements. See the NOTICE file distributed with this
@@ -13,9 +12,9 @@ namespace Lucene.Net.Util
      * licenses this file to You under the Apache License, Version 2.0 (the
      * "License"); you may not use this file except in compliance with the License.
      * You may obtain a copy of the License at
-     * 
+     *
      * http://www.apache.org/licenses/LICENSE-2.0
-     * 
+     *
      * Unless required by applicable law or agreed to in writing, software
      * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
      * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -23,11 +22,9 @@ namespace Lucene.Net.Util
      * the License.
      */
 
-
     [TestFixture]
     public class TestBytesRefArray : LuceneTestCase
     {
-
         [Test]
         public virtual void TestAppend()
         {
@@ -66,7 +63,6 @@ namespace Lucene.Net.Util
                 }
                 for (int i = 0; i < 2; i++)
                 {
-
                     IBytesRefIterator iterator = list.Iterator();
                     foreach (string @string in stringList)
                     {
@@ -112,9 +108,6 @@ namespace Lucene.Net.Util
                 Assert.IsNull(iter.Next());
                 Assert.AreEqual(a, stringList.Count);
             }
-
         }
-
     }
-
 }

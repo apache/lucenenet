@@ -2,7 +2,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Search.Spans
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,14 +21,12 @@ namespace Lucene.Net.Search.Spans
 
     using Lucene.Net.Search;
 
-
     /// <summary>
     /// TestExplanations subclass focusing on span queries
     /// </summary>
     [TestFixture]
     public class TestSpanExplanations : TestExplanations
     {
-
         /* simple SpanTermQueries */
 
         [Test]
@@ -38,6 +35,7 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = St("w1");
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestST2()
         {
@@ -45,12 +43,14 @@ namespace Lucene.Net.Search.Spans
             q.Boost = 1000;
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestST4()
         {
             SpanQuery q = St("xx");
             Qtest(q, new int[] { 2, 3 });
         }
+
         [Test]
         public virtual void TestST5()
         {
@@ -67,6 +67,7 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = Sf(("w1"), 1);
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSF2()
         {
@@ -74,18 +75,21 @@ namespace Lucene.Net.Search.Spans
             q.Boost = 1000;
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSF4()
         {
             SpanQuery q = Sf(("xx"), 2);
             Qtest(q, new int[] { 2 });
         }
+
         [Test]
         public virtual void TestSF5()
         {
             SpanQuery q = Sf(("yy"), 2);
             Qtest(q, new int[] { });
         }
+
         [Test]
         public virtual void TestSF6()
         {
@@ -102,26 +106,27 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = Sor("w1", "QQ");
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSO2()
         {
             SpanQuery q = Sor("w1", "w3", "zz");
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSO3()
         {
             SpanQuery q = Sor("w5", "QQ", "yy");
             Qtest(q, new int[] { 0, 2, 3 });
         }
+
         [Test]
         public virtual void TestSO4()
         {
             SpanQuery q = Sor("w5", "QQ", "yy");
             Qtest(q, new int[] { 0, 2, 3 });
         }
-
-
 
         /* some SpanNearQueries */
 
@@ -131,24 +136,28 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = Snear("w1", "QQ", 100, true);
             Qtest(q, new int[] { });
         }
+
         [Test]
         public virtual void TestSNear2()
         {
             SpanQuery q = Snear("w1", "xx", 100, true);
             Qtest(q, new int[] { 2, 3 });
         }
+
         [Test]
         public virtual void TestSNear3()
         {
             SpanQuery q = Snear("w1", "xx", 0, true);
             Qtest(q, new int[] { 2 });
         }
+
         [Test]
         public virtual void TestSNear4()
         {
             SpanQuery q = Snear("w1", "xx", 1, true);
             Qtest(q, new int[] { 2, 3 });
         }
+
         [Test]
         public virtual void TestSNear5()
         {
@@ -162,37 +171,41 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = Snear("w1", "w2", "QQ", 100, true);
             Qtest(q, new int[] { });
         }
+
         [Test]
         public virtual void TestSNear7()
         {
             SpanQuery q = Snear("w1", "xx", "w2", 100, true);
             Qtest(q, new int[] { 2, 3 });
         }
+
         [Test]
         public virtual void TestSNear8()
         {
             SpanQuery q = Snear("w1", "xx", "w2", 0, true);
             Qtest(q, new int[] { 2 });
         }
+
         [Test]
         public virtual void TestSNear9()
         {
             SpanQuery q = Snear("w1", "xx", "w2", 1, true);
             Qtest(q, new int[] { 2, 3 });
         }
+
         [Test]
         public virtual void TestSNear10()
         {
             SpanQuery q = Snear("xx", "w1", "w2", 0, false);
             Qtest(q, new int[] { 2 });
         }
+
         [Test]
         public virtual void TestSNear11()
         {
             SpanQuery q = Snear("w1", "w2", "w3", 1, true);
             Qtest(q, new int[] { 0, 1 });
         }
-
 
         /* some SpanNotQueries */
 
@@ -202,6 +215,7 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = Snot(Sf("w1", 10), St("QQ"));
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSNot2()
         {
@@ -209,12 +223,14 @@ namespace Lucene.Net.Search.Spans
             q.Boost = 1000;
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSNot4()
         {
             SpanQuery q = Snot(Sf("w1", 10), St("xx"));
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSNot5()
         {
@@ -222,6 +238,7 @@ namespace Lucene.Net.Search.Spans
             q.Boost = 1000;
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSNot7()
         {
@@ -230,6 +247,7 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = Snot(f, St("xx"));
             Qtest(q, new int[] { 0, 1, 3 });
         }
+
         [Test]
         public virtual void TestSNot10()
         {
@@ -238,7 +256,5 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = Snot(Snear("w1", "w3", 10, true), t);
             Qtest(q, new int[] { 0, 1, 3 });
         }
-
     }
-
 }

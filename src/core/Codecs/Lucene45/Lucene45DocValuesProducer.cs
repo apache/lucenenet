@@ -1,56 +1,51 @@
-using Lucene.Net.Index;
-using Lucene.Net.Store;
 using Lucene.Net.Util;
-using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene45
 {
+    using Lucene.Net.Support;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using DocValues = Lucene.Net.Index.DocValues;
+    using Bits = Lucene.Net.Util.Bits;
+    using BlockPackedReader = Lucene.Net.Util.Packed.BlockPackedReader;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using DocValues = Lucene.Net.Index.DocValues;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using LongValues = Lucene.Net.Util.LongValues;
+    using MonotonicBlockPackedReader = Lucene.Net.Util.Packed.MonotonicBlockPackedReader;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using RandomAccessOrds = Lucene.Net.Index.RandomAccessOrds;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
-    using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LongValues = Lucene.Net.Util.LongValues;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using BlockPackedReader = Lucene.Net.Util.Packed.BlockPackedReader;
-    using MonotonicBlockPackedReader = Lucene.Net.Util.Packed.MonotonicBlockPackedReader;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// reader for <seealso cref="Lucene45DocValuesFormat"/> </summary>
@@ -68,6 +63,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         // memory-resident structures
         private readonly IDictionary<int, MonotonicBlockPackedReader> AddressInstances = new Dictionary<int, MonotonicBlockPackedReader>();
+
         private readonly IDictionary<int, MonotonicBlockPackedReader> OrdIndexInstances = new Dictionary<int, MonotonicBlockPackedReader>();
 
         /// <summary>
@@ -274,6 +270,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     entry.MinValue = meta.ReadLong();
                     entry.Gcd = meta.ReadLong();
                     break;
+
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
                     if (entry.Count > int.MaxValue)
                     {
@@ -290,8 +287,10 @@ namespace Lucene.Net.Codecs.Lucene45
                         entry.Table[i] = meta.ReadLong();
                     }
                     break;
+
                 case Lucene45DocValuesConsumer.DELTA_COMPRESSED:
                     break;
+
                 default:
                     throw new Exception("Unknown format: " + entry.Format + ", input=" + meta);
             }
@@ -311,17 +310,20 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 case Lucene45DocValuesConsumer.BINARY_FIXED_UNCOMPRESSED:
                     break;
+
                 case Lucene45DocValuesConsumer.BINARY_PREFIX_COMPRESSED:
                     entry.AddressInterval = meta.ReadVInt();
                     entry.AddressesOffset = meta.ReadLong();
                     entry.PackedIntsVersion = meta.ReadVInt();
                     entry.BlockSize = meta.ReadVInt();
                     break;
+
                 case Lucene45DocValuesConsumer.BINARY_VARIABLE_UNCOMPRESSED:
                     entry.AddressesOffset = meta.ReadLong();
                     entry.PackedIntsVersion = meta.ReadVInt();
                     entry.BlockSize = meta.ReadVInt();
                     break;
+
                 default:
                     throw new Exception("Unknown format: " + entry.Format + ", input=" + meta);
             }
@@ -375,16 +377,19 @@ namespace Lucene.Net.Codecs.Lucene45
                 case Lucene45DocValuesConsumer.DELTA_COMPRESSED:
                     BlockPackedReader reader = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
                     return reader;
+
                 case Lucene45DocValuesConsumer.GCD_COMPRESSED:
                     long min = entry.MinValue;
                     long mult = entry.Gcd;
                     BlockPackedReader quotientReader = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
                     return new LongValuesAnonymousInnerClassHelper(this, min, mult, quotientReader);
+
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
                     long[] table = entry.Table;
                     int bitsRequired = PackedInts.BitsRequired(table.Length - 1);
                     PackedInts.Reader ords = PackedInts.GetDirectReaderNoHeader(data, PackedInts.Format.PACKED, entry.PackedIntsVersion, (int)entry.Count, bitsRequired);
                     return new LongValuesAnonymousInnerClassHelper2(this, table, ords);
+
                 default:
                     throw new Exception();
             }
@@ -439,10 +444,13 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 case Lucene45DocValuesConsumer.BINARY_FIXED_UNCOMPRESSED:
                     return GetFixedBinary(field, bytes);
+
                 case Lucene45DocValuesConsumer.BINARY_VARIABLE_UNCOMPRESSED:
                     return GetVariableBinary(field, bytes);
+
                 case Lucene45DocValuesConsumer.BINARY_PREFIX_COMPRESSED:
                     return GetCompressedBinary(field, bytes);
+
                 default:
                     throw new Exception();
             }
@@ -475,7 +483,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 try
                 {
                     Data.Seek(address);
-                    // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource) 
+                    // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource)
                     // assume "they" own the bytes after calling this!
                     sbyte[] buffer = new sbyte[Bytes.MaxLength];
                     Data.ReadBytes(buffer, 0, buffer.Length);
@@ -492,7 +500,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         /// <summary>
         /// returns an address instance for variable-length binary values.
-        ///  @lucene.internal 
+        ///  @lucene.internal
         /// </summary>
         protected internal virtual MonotonicBlockPackedReader GetAddressInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
         {
@@ -545,7 +553,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 try
                 {
                     Data.Seek(startAddress);
-                    // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource) 
+                    // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource)
                     // assume "they" own the bytes after calling this!
                     sbyte[] buffer = new sbyte[length];
                     Data.ReadBytes(buffer, 0, buffer.Length);
@@ -561,8 +569,8 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         /// <summary>
-        /// returns an address instance for prefix-compressed binary values. 
-        /// @lucene.internal 
+        /// returns an address instance for prefix-compressed binary values.
+        /// @lucene.internal
         /// </summary>
         protected internal virtual MonotonicBlockPackedReader GetIntervalInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
         {
@@ -591,7 +599,6 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             return addresses;
         }
-
 
         private BinaryDocValues GetCompressedBinary(FieldInfo field, BinaryEntry bytes)
         {
@@ -629,7 +636,6 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.Binary = binary;
                 this.Ordinals = ordinals;
             }
-
 
             public override int GetOrd(int docID)
             {
@@ -676,7 +682,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         /// <summary>
         /// returns an address instance for sortedset ordinal lists
-        /// @lucene.internal 
+        /// @lucene.internal
         /// </summary>
         protected internal virtual MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field, NumericEntry entry)
         {
@@ -840,7 +846,6 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.@in = @in;
             }
 
-
             public virtual bool Get(int index)
             {
                 try
@@ -866,14 +871,18 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 case FieldInfo.DocValuesType_e.SORTED_SET:
                     return DocValues.DocsWithValue(GetSortedSet(field), MaxDoc);
+
                 case FieldInfo.DocValuesType_e.SORTED:
                     return DocValues.DocsWithValue(GetSorted(field), MaxDoc);
+
                 case FieldInfo.DocValuesType_e.BINARY:
                     BinaryEntry be = Binaries[field.Number];
                     return GetMissingBits(be.MissingOffset);
+
                 case FieldInfo.DocValuesType_e.NUMERIC:
                     NumericEntry ne = Numerics[field.Number];
                     return GetMissingBits(ne.MissingOffset);
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -892,20 +901,25 @@ namespace Lucene.Net.Codecs.Lucene45
             internal NumericEntry()
             {
             }
+
             /// <summary>
             /// offset to the bitset representing docsWithField, or -1 if no documents have missing values </summary>
             internal long MissingOffset;
+
             /// <summary>
             /// offset to the actual numeric values </summary>
             public long Offset;
 
             internal int Format;
+
             /// <summary>
             /// packed ints version used to encode these numerics </summary>
             public int PackedIntsVersion;
+
             /// <summary>
             /// count of values written </summary>
             public long Count;
+
             /// <summary>
             /// packed ints blocksize </summary>
             public int BlockSize;
@@ -922,28 +936,36 @@ namespace Lucene.Net.Codecs.Lucene45
             internal BinaryEntry()
             {
             }
+
             /// <summary>
             /// offset to the bitset representing docsWithField, or -1 if no documents have missing values </summary>
             internal long MissingOffset;
+
             /// <summary>
             /// offset to the actual binary values </summary>
             internal long Offset;
 
             internal int Format;
+
             /// <summary>
             /// count of values written </summary>
             public long Count;
+
             internal int MinLength;
             internal int MaxLength;
+
             /// <summary>
             /// offset to the addressing data that maps a value to its slice of the byte[] </summary>
             public long AddressesOffset;
+
             /// <summary>
             /// interval of shared prefix chunks (when using prefix-compressed binary) </summary>
             public long AddressInterval;
+
             /// <summary>
             /// packed ints version used to encode addressing information </summary>
             public int PackedIntsVersion;
+
             /// <summary>
             /// packed ints blocksize </summary>
             public int BlockSize;
@@ -956,6 +978,7 @@ namespace Lucene.Net.Codecs.Lucene45
             internal SortedSetEntry()
             {
             }
+
             internal int Format;
         }
 
@@ -1071,8 +1094,10 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
 
                 private long currentOrd;
+
                 // TODO: maxLength is negative when all terms are merged away...
                 private readonly BytesRef termBuffer;
+
                 private readonly BytesRef term;
 
                 public override BytesRef Next()
@@ -1235,5 +1260,4 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
     }
-
 }

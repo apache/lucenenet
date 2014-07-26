@@ -28,8 +28,8 @@ namespace Lucene.Net.Support
     /// </summary>
     public class OS
     {
-        static bool isUnix;
-        static bool isWindows;
+        private static bool isUnix;
+        private static bool isWindows;
 
         static OS()
         {

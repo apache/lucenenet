@@ -1,9 +1,8 @@
 namespace Lucene.Net.Search
 {
-
-    using Term = Lucene.Net.Index.Term;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using NUnit.Framework;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
+    using Term = Lucene.Net.Index.Term;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -28,9 +27,8 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestSimpleSearchEquivalence : SearchEquivalenceTestBase
     {
-
         // TODO: we could go a little crazy for a lot of these,
-        // but these are just simple minimal cases in case something 
+        // but these are just simple minimal cases in case something
         // goes horribly wrong. Put more intense tests elsewhere.
 
         /// <summary>
@@ -230,5 +228,4 @@ namespace Lucene.Net.Search
             AssertSameSet(q1, q2);
         }
     }
-
 }

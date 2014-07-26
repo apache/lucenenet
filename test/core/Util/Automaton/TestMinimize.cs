@@ -2,7 +2,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -44,7 +43,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// compare minimized against minimized with a slower, simple impl.
         /// we check not only that they are the same, but that #states/#transitions
-        /// are the same. 
+        /// are the same.
         /// </summary>
         [Ignore]
         [Test]
@@ -71,5 +70,4 @@ namespace Lucene.Net.Util.Automaton
             (new RegExp("+-*(A|.....|BC)*]", RegExp.NONE)).ToAutomaton();
         }
     }
-
 }

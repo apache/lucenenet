@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,8 +19,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
-
     /// <summary>
     /// A <seealso cref="MergePolicy"/> which never returns merges to execute (hence it's
     /// name). It is also a singleton and can be accessed through
@@ -33,7 +30,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class NoMergePolicy : MergePolicy
     {
-
         /// <summary>
         /// A singleton <seealso cref="NoMergePolicy"/> which indicates the index does not use
         /// compound files.
@@ -58,28 +54,34 @@ namespace Lucene.Net.Index
         public override void Dispose()
         {
         }
+
         public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
         {
             return null;
         }
+
         public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
         {
             return null;
         }
+
         public override MergeSpecification FindForcedDeletesMerges(SegmentInfos segmentInfos)
         {
             return null;
         }
+
         public override bool UseCompoundFile(SegmentInfos segments, SegmentCommitInfo newSegment)
         {
             return useCompoundFile;
         }
+
         public override IndexWriter IndexWriter
         {
             set
             {
             }
         }
+
         protected internal override long Size(SegmentCommitInfo info)
         {
             return long.MaxValue;
@@ -96,11 +98,11 @@ namespace Lucene.Net.Index
             get { return base.NoCFSRatio; }
             set { base.NoCFSRatio = value; }
         }
+
         public override double MaxCFSSegmentSizeMB
         {
             get { return base.MaxCFSSegmentSizeMB; }
             set { base.MaxCFSSegmentSizeMB = value; }
         }
     }
-
 }

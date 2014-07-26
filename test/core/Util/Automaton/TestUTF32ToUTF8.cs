@@ -1,13 +1,12 @@
-using System;
-using System.Diagnostics;
-using System.Text;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using System.Text;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -47,7 +46,6 @@ namespace Lucene.Net.Util.Automaton
 
         private void TestOne(Random r, ByteRunAutomaton a, int startCode, int endCode, int iters)
         {
-
             // Verify correct ints are accepted
             int nonSurrogateCount;
             bool ovSurStart;
@@ -123,7 +121,6 @@ namespace Lucene.Net.Util.Automaton
                         continue;
                     }
                     Assert.IsFalse(Matches(a, code), "DFA for range " + startCode + "-" + endCode + " matched invalid code=" + code);
-
                 }
             }
         }
@@ -136,10 +133,13 @@ namespace Lucene.Net.Util.Automaton
             {
                 case 0:
                     return TestUtil.NextInt(r, 0, 128);
+
                 case 1:
                     return TestUtil.NextInt(r, 128, 2048);
+
                 case 2:
                     return TestUtil.NextInt(r, 2048, 65536);
+
                 default:
                     return TestUtil.NextInt(r, 65536, 1 + MAX_UNICODE);
             }
@@ -284,5 +284,4 @@ namespace Lucene.Net.Util.Automaton
             }
         }
     }
-
 }

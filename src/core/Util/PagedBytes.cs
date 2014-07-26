@@ -1,10 +1,9 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +21,6 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
     using IndexInput = Lucene.Net.Store.IndexInput;
@@ -32,17 +30,19 @@ namespace Lucene.Net.Util
     ///  can write-once into the logical byte[] (append only),
     ///  using copy, and then retrieve slices (BytesRef) into it
     ///  using fill.
-    /// 
+    ///
     /// @lucene.internal
-    /// 
+    ///
     /// </summary>
     // TODO: refactor this, byteblockpool, fst.bytestore, and any
     // other "shift/mask big arrays". there are too many of these classes!
     public sealed class PagedBytes
     {
         private readonly IList<sbyte[]> Blocks = new List<sbyte[]>();
+
         // TODO: these are unused?
         private readonly IList<int> BlockEnd = new List<int>();
+
         private readonly int BlockSize;
         private readonly int BlockBits;
         private readonly int BlockMask;
@@ -91,8 +91,8 @@ namespace Lucene.Net.Util
             /// <p>
             /// Slices spanning more than two blocks are not supported.
             /// </p>
-            /// @lucene.internal 
-            /// 
+            /// @lucene.internal
+            ///
             /// </summary>
             public void FillSlice(BytesRef b, long start, int length)
             {
@@ -131,9 +131,9 @@ namespace Lucene.Net.Util
             /// <b>Note:</b> this method does not support slices spanning across block
             /// borders.
             /// </p>
-            /// 
+            ///
             /// @lucene.internal
-            /// 
+            ///
             /// </summary>
             // TODO: this really needs to be refactored into fieldcacheimpl
             public void Fill(BytesRef b, long start)
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// 1&lt;&lt;blockBits must be bigger than biggest single
-        ///  BytesRef slice that will be pulled 
+        ///  BytesRef slice that will be pulled
         /// </summary>
         public PagedBytes(int blockBits)
         {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Copy BytesRef in, setting BytesRef out to the result.
         /// Do not use this if you will use freeze(true).
-        /// this only supports bytes.length <= blockSize 
+        /// this only supports bytes.length <= blockSize
         /// </summary>
         public void Copy(BytesRef bytes, BytesRef @out)
         {
@@ -302,7 +302,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Copy bytes in, writing the length as a 1 or 2 byte
-        ///  vInt prefix. 
+        ///  vInt prefix.
         /// </summary>
         // TODO: this really needs to be refactored into fieldcacheimpl
         public long CopyUsingLengthPrefix(BytesRef bytes)
@@ -382,7 +382,6 @@ namespace Lucene.Net.Util
                     CurrentBlockUpto = (int)(value & OuterInstance.BlockMask);
                 }
             }
-
 
             public override byte ReadByte()
             {
@@ -505,7 +504,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns a DataInput to read values from this
-        ///  PagedBytes instance. 
+        ///  PagedBytes instance.
         /// </summary>
         public PagedBytesDataInput DataInput
         {
@@ -523,7 +522,7 @@ namespace Lucene.Net.Util
         /// Returns a DataOutput that you may use to write into
         ///  this PagedBytes instance.  If you do this, you should
         ///  not call the other writing methods (eg, copy);
-        ///  results are undefined. 
+        ///  results are undefined.
         /// </summary>
         public PagedBytesDataOutput DataOutput
         {
@@ -537,5 +536,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

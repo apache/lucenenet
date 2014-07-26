@@ -1,28 +1,32 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs
 {
+    using System;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using DataInput = Lucene.Net.Store.DataInput;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -30,11 +34,6 @@ namespace Lucene.Net.Codecs
     using MergeState = Lucene.Net.Index.MergeState;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using DataInput = Lucene.Net.Store.DataInput;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using System;
 
     /// <summary>
     /// Codec API for writing term vectors:
@@ -42,28 +41,27 @@ namespace Lucene.Net.Codecs
     /// <ol>
     ///   <li>For every document, <seealso cref="#startDocument(int)"/> is called,
     ///       informing the Codec how many fields will be written.
-    ///   <li><seealso cref="#startField(FieldInfo, int, boolean, boolean, boolean)"/> is called for 
+    ///   <li><seealso cref="#startField(FieldInfo, int, boolean, boolean, boolean)"/> is called for
     ///       each field in the document, informing the codec how many terms
     ///       will be written for that field, and whether or not positions,
     ///       offsets, or payloads are enabled.
     ///   <li>Within each field, <seealso cref="#startTerm(BytesRef, int)"/> is called
     ///       for each term.
-    ///   <li>If offsets and/or positions are enabled, then 
+    ///   <li>If offsets and/or positions are enabled, then
     ///       <seealso cref="#addPosition(int, int, int, BytesRef)"/> will be called for each term
     ///       occurrence.
-    ///   <li>After all documents have been written, <seealso cref="#finish(FieldInfos, int)"/> 
+    ///   <li>After all documents have been written, <seealso cref="#finish(FieldInfos, int)"/>
     ///       is called for verification/sanity-checks.
     ///   <li>Finally the writer is closed (<seealso cref="#close()"/>)
     /// </ol>
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class TermVectorsWriter : IDisposable
     {
-
         /// <summary>
-        /// Sole constructor. (For invocation by subclass 
-        ///  constructors, typically implicit.) 
+        /// Sole constructor. (For invocation by subclass
+        ///  constructors, typically implicit.)
         /// </summary>
         protected internal TermVectorsWriter()
         {
@@ -71,11 +69,11 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called before writing the term vectors of the document.
-        ///  <seealso cref="#startField(FieldInfo, int, boolean, boolean, boolean)"/> will 
-        ///  be called <code>numVectorFields</code> times. Note that if term 
-        ///  vectors are enabled, this is called even if the document 
-        ///  has no vector fields, in this case <code>numVectorFields</code> 
-        ///  will be zero. 
+        ///  <seealso cref="#startField(FieldInfo, int, boolean, boolean, boolean)"/> will
+        ///  be called <code>numVectorFields</code> times. Note that if term
+        ///  vectors are enabled, this is called even if the document
+        ///  has no vector fields, in this case <code>numVectorFields</code>
+        ///  will be zero.
         /// </summary>
         public abstract void StartDocument(int numVectorFields);
 
@@ -87,7 +85,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called before writing the terms of the field.
-        ///  <seealso cref="#startTerm(BytesRef, int)"/> will be called <code>numTerms</code> times. 
+        ///  <seealso cref="#startTerm(BytesRef, int)"/> will be called <code>numTerms</code> times.
         /// </summary>
         public abstract void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads);
 
@@ -100,7 +98,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Adds a term and its term frequency <code>freq</code>.
         /// If this field has positions and/or offsets enabled, then
-        /// <seealso cref="#addPosition(int, int, int, BytesRef)"/> will be called 
+        /// <seealso cref="#addPosition(int, int, int, BytesRef)"/> will be called
         /// <code>freq</code> times respectively.
         /// </summary>
         public abstract void StartTerm(BytesRef term, int freq);
@@ -117,28 +115,28 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Aborts writing entirely, implementation should remove
-        ///  any partially-written files, etc. 
+        ///  any partially-written files, etc.
         /// </summary>
         public abstract void Abort();
 
         /// <summary>
         /// Called before <seealso cref="#close()"/>, passing in the number
-        ///  of documents that were written. Note that this is 
+        ///  of documents that were written. Note that this is
         ///  intentionally redundant (equivalent to the number of
         ///  calls to <seealso cref="#startDocument(int)"/>, but a Codec should
-        ///  check that this is the case to detect the JRE bug described 
-        ///  in LUCENE-1282. 
+        ///  check that this is the case to detect the JRE bug described
+        ///  in LUCENE-1282.
         /// </summary>
         public abstract void Finish(FieldInfos fis, int numDocs);
 
         /// <summary>
         /// Called by IndexWriter when writing new segments.
         /// <p>
-        /// this is an expert API that allows the codec to consume 
+        /// this is an expert API that allows the codec to consume
         /// positions and offsets directly from the indexer.
         /// <p>
         /// The default implementation calls <seealso cref="#addPosition(int, int, int, BytesRef)"/>,
-        /// but subclasses can override this if they want to efficiently write 
+        /// but subclasses can override this if they want to efficiently write
         /// all the positions, then all the offsets, for example.
         /// <p>
         /// NOTE: this API is extremely expert and subject to change or removal!!!
@@ -207,15 +205,15 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Merges in the term vectors from the readers in 
+        /// Merges in the term vectors from the readers in
         ///  <code>mergeState</code>. The default implementation skips
         ///  over deleted documents, and uses <seealso cref="#startDocument(int)"/>,
-        ///  <seealso cref="#startField(FieldInfo, int, boolean, boolean, boolean)"/>, 
+        ///  <seealso cref="#startField(FieldInfo, int, boolean, boolean, boolean)"/>,
         ///  <seealso cref="#startTerm(BytesRef, int)"/>, <seealso cref="#addPosition(int, int, int, BytesRef)"/>,
         ///  and <seealso cref="#finish(FieldInfos, int)"/>,
         ///  returning the number of documents that were written.
         ///  Implementations can override this method for more sophisticated
-        ///  merging (bulk-byte copying, etc). 
+        ///  merging (bulk-byte copying, etc).
         /// </summary>
         public virtual int Merge(MergeState mergeState)
         {
@@ -247,7 +245,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Safe (but, slowish) default method to write every
-        ///  vector field in the document. 
+        ///  vector field in the document.
         /// </summary>
         protected internal void AddAllDocVectors(Fields vectors, MergeState mergeState)
         {
@@ -353,7 +351,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Return the BytesRef Comparator used to sort terms
-        ///  before feeding to this API. 
+        ///  before feeding to this API.
         /// </summary>
         public abstract IComparer<BytesRef> Comparator { get; }
 
@@ -365,5 +363,4 @@ namespace Lucene.Net.Codecs
 
         protected abstract void Dispose(bool disposing);
     }
-
 }

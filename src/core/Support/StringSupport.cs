@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Lucene.Net.Util;
+using System;
 using System.Text;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Support
 {
@@ -10,7 +8,7 @@ namespace Lucene.Net.Support
     {
         public static sbyte[] GetBytes(this string str, Encoding enc)
         {
-            return (sbyte[]) (Array) enc.GetBytes(str);
+            return (sbyte[])(Array)enc.GetBytes(str);
         }
 
         public static BytesRef ToBytesRefArray(this string str, Encoding enc)

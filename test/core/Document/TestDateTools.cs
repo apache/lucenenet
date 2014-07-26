@@ -3,15 +3,14 @@ using System.Globalization;
 
 namespace Lucene.Net.Document
 {
-
-
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     /*using Rule = org.junit.Rule;
     using RuleChain = org.junit.rules.RuleChain;
     using TestRule = org.junit.rules.TestRule;
 
     using SystemPropertiesRestoreRule = com.carrotsearch.randomizedtesting.rules.SystemPropertiesRestoreRule;*/
+
     using NUnit.Framework;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -29,6 +28,7 @@ namespace Lucene.Net.Document
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     [TestFixture]
     public class TestDateTools : LuceneTestCase
     {
@@ -37,7 +37,6 @@ namespace Lucene.Net.Document
         [Test]
         public virtual void TestStringToDate()
         {
-
             DateTime d = default(DateTime);
             d = DateTools.StringToDate("2004");
             Assert.AreEqual("2004-01-01 00:00:00:000", IsoFormat(d));
@@ -72,7 +71,6 @@ namespace Lucene.Net.Document
             catch (Exception e)
             {
             }
-
         }
 
         [Test]
@@ -243,7 +241,5 @@ namespace Lucene.Net.Document
                 //TimeZone.SetDefault(null);    // {{Aroush-2.0}} need porting 'java.util.TimeZone.setDefault'
             }
         }
-
     }
-
 }

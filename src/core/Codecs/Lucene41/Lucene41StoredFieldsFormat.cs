@@ -1,6 +1,5 @@
 namespace Lucene.Net.Codecs.Lucene41
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,12 +22,10 @@ namespace Lucene.Net.Codecs.Lucene41
     using CompressionMode = Lucene.Net.Codecs.Compressing.CompressionMode;
     using Lucene40StoredFieldsFormat = Lucene.Net.Codecs.Lucene40.Lucene40StoredFieldsFormat;
     using StoredFieldVisitor = Lucene.Net.Index.StoredFieldVisitor;
-    using DataOutput = Lucene.Net.Store.DataOutput;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
 
     /// <summary>
     /// Lucene 4.1 stored fields format.
-    /// 
+    ///
     /// <p><b>Principle</b></p>
     /// <p>this <seealso cref="StoredFieldsFormat"/> compresses blocks of 16KB of documents in
     /// order to improve the compression ratio compared to document-level
@@ -118,14 +115,11 @@ namespace Lucene.Net.Codecs.Lucene41
     /// </summary>
     public sealed class Lucene41StoredFieldsFormat : CompressingStoredFieldsFormat
     {
-
         /// <summary>
         /// Sole constructor. </summary>
         public Lucene41StoredFieldsFormat()
             : base("Lucene41StoredFields", CompressionMode.FAST, 1 << 14)
         {
         }
-
     }
-
 }

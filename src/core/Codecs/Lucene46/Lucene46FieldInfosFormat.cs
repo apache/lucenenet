@@ -1,134 +1,131 @@
 namespace Lucene.Net.Codecs.Lucene46
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /// <summary>
+    /// Lucene 4.6 Field Infos format.
+    /// <p>
+    /// <p>Field names are stored in the field info file, with suffix <tt>.fnm</tt>.</p>
+    /// <p>FieldInfos (.fnm) --&gt; Header,FieldsCount, &lt;FieldName,FieldNumber,
+    /// FieldBits,DocValuesBits,DocValuesGen,Attributes&gt; <sup>FieldsCount</sup>,Footer</p>
+    /// <p>Data types:
+    /// <ul>
+    ///   <li>Header --&gt; <seealso cref="CodecUtil#checkHeader CodecHeader"/></li>
+    ///   <li>FieldsCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
+    ///   <li>FieldName --&gt; <seealso cref="DataOutput#writeString String"/></li>
+    ///   <li>FieldBits, DocValuesBits --&gt; <seealso cref="DataOutput#writeByte Byte"/></li>
+    ///   <li>FieldNumber --&gt; <seealso cref="DataOutput#writeInt VInt"/></li>
+    ///   <li>Attributes --&gt; <seealso cref="DataOutput#writeStringStringMap Map&lt;String,String&gt;"/></li>
+    ///   <li>DocValuesGen --&gt; <seealso cref="DataOutput#writeLong(long) Int64"/></li>
+    ///   <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
+    /// </ul>
+    /// </p>
+    /// Field Descriptions:
+    /// <ul>
+    ///   <li>FieldsCount: the number of fields in this file.</li>
+    ///   <li>FieldName: name of the field as a UTF-8 String.</li>
+    ///   <li>FieldNumber: the field's number. Note that unlike previous versions of
+    ///       Lucene, the fields are not numbered implicitly by their order in the
+    ///       file, instead explicitly.</li>
+    ///   <li>FieldBits: a byte containing field options.
+    ///       <ul>
+    ///         <li>The low-order bit is one for indexed fields, and zero for non-indexed
+    ///             fields.</li>
+    ///         <li>The second lowest-order bit is one for fields that have term vectors
+    ///             stored, and zero for fields without term vectors.</li>
+    ///         <li>If the third lowest order-bit is set (0x4), offsets are stored into
+    ///             the postings list in addition to positions.</li>
+    ///         <li>Fourth bit is unused.</li>
+    ///         <li>If the fifth lowest-order bit is set (0x10), norms are omitted for the
+    ///             indexed field.</li>
+    ///         <li>If the sixth lowest-order bit is set (0x20), payloads are stored for the
+    ///             indexed field.</li>
+    ///         <li>If the seventh lowest-order bit is set (0x40), term frequencies and
+    ///             positions omitted for the indexed field.</li>
+    ///         <li>If the eighth lowest-order bit is set (0x80), positions are omitted for the
+    ///             indexed field.</li>
+    ///       </ul>
+    ///    </li>
+    ///    <li>DocValuesBits: a byte containing per-document value types. The type
+    ///        recorded as two four-bit integers, with the high-order bits representing
+    ///        <code>norms</code> options, and the low-order bits representing
+    ///        {@code DocValues} options. Each four-bit integer can be decoded as such:
+    ///        <ul>
+    ///          <li>0: no DocValues for this field.</li>
+    ///          <li>1: NumericDocValues. (<seealso cref="DocValuesType#NUMERIC"/>)</li>
+    ///          <li>2: BinaryDocValues. ({@code DocValuesType#BINARY})</li>
+    ///          <li>3: SortedDocValues. ({@code DocValuesType#SORTED})</li>
+    ///        </ul>
+    ///    </li>
+    ///    <li>DocValuesGen is the generation count of the field's DocValues. If this is -1,
+    ///        there are no DocValues updates to that field. Anything above zero means there
+    ///        are updates stored by <seealso cref="DocValuesFormat"/>.</li>
+    ///    <li>Attributes: a key-value map of codec-private attributes.</li>
+    /// </ul>
+    ///
+    /// @lucene.experimental
+    /// </summary>
+    public sealed class Lucene46FieldInfosFormat : FieldInfosFormat
+    {
+        private readonly FieldInfosReader Reader = new Lucene46FieldInfosReader();
+        private readonly FieldInfosWriter Writer = new Lucene46FieldInfosWriter();
 
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using DataOutput = Lucene.Net.Store.DataOutput;
+        /// <summary>
+        /// Sole constructor. </summary>
+        public Lucene46FieldInfosFormat()
+        {
+        }
 
-	/// <summary>
-	/// Lucene 4.6 Field Infos format.
-	/// <p>
-	/// <p>Field names are stored in the field info file, with suffix <tt>.fnm</tt>.</p>
-	/// <p>FieldInfos (.fnm) --&gt; Header,FieldsCount, &lt;FieldName,FieldNumber,
-	/// FieldBits,DocValuesBits,DocValuesGen,Attributes&gt; <sup>FieldsCount</sup>,Footer</p>
-	/// <p>Data types:
-	/// <ul>
-	///   <li>Header --&gt; <seealso cref="CodecUtil#checkHeader CodecHeader"/></li>
-	///   <li>FieldsCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-	///   <li>FieldName --&gt; <seealso cref="DataOutput#writeString String"/></li>
-	///   <li>FieldBits, DocValuesBits --&gt; <seealso cref="DataOutput#writeByte Byte"/></li>
-	///   <li>FieldNumber --&gt; <seealso cref="DataOutput#writeInt VInt"/></li>
-	///   <li>Attributes --&gt; <seealso cref="DataOutput#writeStringStringMap Map&lt;String,String&gt;"/></li>
-	///   <li>DocValuesGen --&gt; <seealso cref="DataOutput#writeLong(long) Int64"/></li>
-	///   <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
-	/// </ul>
-	/// </p>
-	/// Field Descriptions:
-	/// <ul>
-	///   <li>FieldsCount: the number of fields in this file.</li>
-	///   <li>FieldName: name of the field as a UTF-8 String.</li>
-	///   <li>FieldNumber: the field's number. Note that unlike previous versions of
-	///       Lucene, the fields are not numbered implicitly by their order in the
-	///       file, instead explicitly.</li>
-	///   <li>FieldBits: a byte containing field options.
-	///       <ul>
-	///         <li>The low-order bit is one for indexed fields, and zero for non-indexed
-	///             fields.</li>
-	///         <li>The second lowest-order bit is one for fields that have term vectors
-	///             stored, and zero for fields without term vectors.</li>
-	///         <li>If the third lowest order-bit is set (0x4), offsets are stored into
-	///             the postings list in addition to positions.</li>
-	///         <li>Fourth bit is unused.</li>
-	///         <li>If the fifth lowest-order bit is set (0x10), norms are omitted for the
-	///             indexed field.</li>
-	///         <li>If the sixth lowest-order bit is set (0x20), payloads are stored for the
-	///             indexed field.</li>
-	///         <li>If the seventh lowest-order bit is set (0x40), term frequencies and
-	///             positions omitted for the indexed field.</li>
-	///         <li>If the eighth lowest-order bit is set (0x80), positions are omitted for the
-	///             indexed field.</li>
-	///       </ul>
-	///    </li>
-	///    <li>DocValuesBits: a byte containing per-document value types. The type
-	///        recorded as two four-bit integers, with the high-order bits representing
-	///        <code>norms</code> options, and the low-order bits representing 
-	///        {@code DocValues} options. Each four-bit integer can be decoded as such:
-	///        <ul>
-	///          <li>0: no DocValues for this field.</li>
-	///          <li>1: NumericDocValues. (<seealso cref="DocValuesType#NUMERIC"/>)</li>
-	///          <li>2: BinaryDocValues. ({@code DocValuesType#BINARY})</li>
-	///          <li>3: SortedDocValues. ({@code DocValuesType#SORTED})</li>
-	///        </ul>
-	///    </li>
-	///    <li>DocValuesGen is the generation count of the field's DocValues. If this is -1,
-	///        there are no DocValues updates to that field. Anything above zero means there 
-	///        are updates stored by <seealso cref="DocValuesFormat"/>.</li>
-	///    <li>Attributes: a key-value map of codec-private attributes.</li>
-	/// </ul>
-	/// 
-	/// @lucene.experimental
-	/// </summary>
-	public sealed class Lucene46FieldInfosFormat : FieldInfosFormat
-	{
-	  private readonly FieldInfosReader Reader = new Lucene46FieldInfosReader();
-	  private readonly FieldInfosWriter Writer = new Lucene46FieldInfosWriter();
+        public override FieldInfosReader FieldInfosReader
+        {
+            get
+            {
+                return Reader;
+            }
+        }
 
-	  /// <summary>
-	  /// Sole constructor. </summary>
-	  public Lucene46FieldInfosFormat()
-	  {
-	  }
+        public override FieldInfosWriter FieldInfosWriter
+        {
+            get
+            {
+                return Writer;
+            }
+        }
 
-	  public override FieldInfosReader FieldInfosReader
-	  {
-		  get
-		  {
-			return Reader;
-		  }
-	  }
+        /// <summary>
+        /// Extension of field infos </summary>
+        internal const string EXTENSION = "fnm";
 
-	  public override FieldInfosWriter FieldInfosWriter
-	  {
-		  get
-		  {
-			return Writer;
-		  }
-	  }
+        // Codec header
+        internal const string CODEC_NAME = "Lucene46FieldInfos";
 
-	  /// <summary>
-	  /// Extension of field infos </summary>
-	  internal const string EXTENSION = "fnm";
+        internal const int FORMAT_START = 0;
+        internal const int FORMAT_CHECKSUM = 1;
+        internal const int FORMAT_CURRENT = FORMAT_CHECKSUM;
 
-	  // Codec header
-	  internal const string CODEC_NAME = "Lucene46FieldInfos";
-	  internal const int FORMAT_START = 0;
-	  internal const int FORMAT_CHECKSUM = 1;
-	  internal const int FORMAT_CURRENT = FORMAT_CHECKSUM;
+        // Field flags
+        internal const sbyte IS_INDEXED = 0x1;
 
-	  // Field flags
-	  internal const sbyte IS_INDEXED = 0x1;
-	  internal const sbyte STORE_TERMVECTOR = 0x2;
-	  internal const sbyte STORE_OFFSETS_IN_POSTINGS = 0x4;
-	  internal const sbyte OMIT_NORMS = 0x10;
-	  internal const sbyte STORE_PAYLOADS = 0x20;
-	  internal const sbyte OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
-	  internal const sbyte OMIT_POSITIONS = -128;
-	}
-
+        internal const sbyte STORE_TERMVECTOR = 0x2;
+        internal const sbyte STORE_OFFSETS_IN_POSTINGS = 0x4;
+        internal const sbyte OMIT_NORMS = 0x10;
+        internal const sbyte STORE_PAYLOADS = 0x20;
+        internal const sbyte OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
+        internal const sbyte OMIT_POSITIONS = -128;
+    }
 }

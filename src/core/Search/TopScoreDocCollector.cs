@@ -2,7 +2,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -29,7 +28,7 @@ namespace Lucene.Net.Search
     /// and then (when the scores are tied) docID ascending. When you create an
     /// instance of this collector you should know in advance whether documents are
     /// going to be collected in doc Id order or not.
-    /// 
+    ///
     /// <p><b>NOTE</b>: The values <seealso cref="Float#NaN"/> and
     /// <seealso cref="Float#NEGATIVE_INFINITY"/> are not valid scores.  this
     /// collector will not properly collect hits with such
@@ -37,7 +36,6 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class TopScoreDocCollector : TopDocsCollector<ScoreDoc>
     {
-
         // Assumes docs are scored in order.
         private class InOrderTopScoreDocCollector : TopScoreDocCollector
         {
@@ -77,8 +75,10 @@ namespace Lucene.Net.Search
         private class InOrderPagingScoreDocCollector : TopScoreDocCollector
         {
             internal readonly ScoreDoc After;
+
             // this is always after.doc - docBase, to save an add when score == after.score
             internal int AfterDoc;
+
             internal int CollectedHits;
 
             internal InOrderPagingScoreDocCollector(ScoreDoc after, int numHits)
@@ -183,8 +183,10 @@ namespace Lucene.Net.Search
         private class OutOfOrderPagingScoreDocCollector : TopScoreDocCollector
         {
             internal readonly ScoreDoc After;
+
             // this is always after.doc - docBase, to save an add when score == after.score
             internal int AfterDoc;
+
             internal int CollectedHits;
 
             internal OutOfOrderPagingScoreDocCollector(ScoreDoc after, int numHits)
@@ -252,7 +254,7 @@ namespace Lucene.Net.Search
         /// Creates a new <seealso cref="TopScoreDocCollector"/> given the number of hits to
         /// collect and whether documents are scored in order by the input
         /// <seealso cref="Scorer"/> to <seealso cref="#setScorer(Scorer)"/>.
-        /// 
+        ///
         /// <p><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length
         /// <code>numHits</code>, and fill the array with sentinel
@@ -267,7 +269,7 @@ namespace Lucene.Net.Search
         /// Creates a new <seealso cref="TopScoreDocCollector"/> given the number of hits to
         /// collect, the bottom of the previous page, and whether documents are scored in order by the input
         /// <seealso cref="Scorer"/> to <seealso cref="#setScorer(Scorer)"/>.
-        /// 
+        ///
         /// <p><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length
         /// <code>numHits</code>, and fill the array with sentinel
@@ -275,7 +277,6 @@ namespace Lucene.Net.Search
         /// </summary>
         public static TopScoreDocCollector Create(int numHits, ScoreDoc after, bool docsScoredInOrder)
         {
-
             if (numHits <= 0)
             {
                 throw new System.ArgumentException("numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count");
@@ -289,7 +290,6 @@ namespace Lucene.Net.Search
             {
                 return after == null ? (TopScoreDocCollector)new OutOfOrderTopScoreDocCollector(numHits) : new OutOfOrderPagingScoreDocCollector(after, numHits);
             }
-
         }
 
         internal ScoreDoc PqTop;
@@ -349,5 +349,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

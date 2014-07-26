@@ -2,45 +2,42 @@ using System;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
-    using FSDirectory = Lucene.Net.Store.FSDirectory;
-    using FilterDirectory = Lucene.Net.Store.FilterDirectory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
     using System.IO;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FilterDirectory = Lucene.Net.Store.FilterDirectory;
+    using FSDirectory = Lucene.Net.Store.FSDirectory;
+    using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using TermQuery = Lucene.Net.Search.TermQuery;
+    using TopDocs = Lucene.Net.Search.TopDocs;
 
     [TestFixture]
     public class TestCrashCausesCorruptIndex : LuceneTestCase
     {
-
         internal DirectoryInfo Path;
 
         /// <summary>
@@ -160,12 +157,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// this test class provides direct access to "simulating" a crash right after 
+        /// this test class provides direct access to "simulating" a crash right after
         /// realDirectory.CreateOutput(..) has been called on a certain specified name.
         /// </summary>
         private class CrashAfterCreateOutput : FilterDirectory
         {
-
             internal string CrashAfterCreateOutput_Renamed;
 
             public CrashAfterCreateOutput(Directory realDirectory)
@@ -198,9 +194,6 @@ namespace Lucene.Net.Index
                 }
                 return indexOutput;
             }
-
         }
-
     }
-
 }

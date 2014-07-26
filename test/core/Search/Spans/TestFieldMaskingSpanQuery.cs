@@ -2,40 +2,38 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
     using TFIDFSimilarity = Lucene.Net.Search.Similarities.TFIDFSimilarity;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
 
     [TestFixture]
     public class TestFieldMaskingSpanQuery : LuceneTestCase
     {
-
         protected internal static Document Doc(Field[] fields)
         {
             Document doc = new Document();
@@ -169,7 +167,6 @@ namespace Lucene.Net.Search.Spans
             QueryUtils.CheckUnequal(qA, qB);
             qB.Boost = 9f;
             QueryUtils.CheckEqual(qA, qB);
-
         }
 
         [Test]
@@ -179,6 +176,7 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = new FieldMaskingSpanQuery(q1, "first");
             Check(q, new int[] { }); // :EMPTY:
         }
+
         [Test]
         public virtual void TestNoop1()
         {
@@ -203,7 +201,6 @@ namespace Lucene.Net.Search.Spans
             Check(q, new int[] { 0, 2 });
             q = new SpanNearQuery(new SpanQuery[] { new FieldMaskingSpanQuery(q1, "last"), q2 }, -1, false);
             Check(q, new int[] { 0, 2 });
-
         }
 
         [Test]
@@ -278,7 +275,6 @@ namespace Lucene.Net.Search.Spans
                 Assert.AreEqual(s(spanA), s(spanB), "spanA not equal spanB");
             }
             Assert.IsTrue(!(spanB.Next()), "spanB still going even tough spanA is done");
-
         }
 
         [Test]
@@ -316,11 +312,10 @@ namespace Lucene.Net.Search.Spans
         {
             return s(span.Doc(), span.Start(), span.End());
         }
+
         public virtual string s(int doc, int start, int end)
         {
             return "s(" + doc + "," + start + "," + end + ")";
         }
-
     }
-
 }

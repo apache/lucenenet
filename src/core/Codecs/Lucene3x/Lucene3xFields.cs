@@ -1,55 +1,52 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
     using Term = Lucene.Net.Index.Term;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
     /// <summary>
-    /// Exposes flex API on a pre-flex index, as a codec. 
+    /// Exposes flex API on a pre-flex index, as a codec.
     /// @lucene.experimental </summary>
-    /// @deprecated (4.0) 
+    /// @deprecated (4.0)
     [Obsolete("(4.0)")]
     public class Lucene3xFields : FieldsProducer
     {
-
         private const bool DEBUG_SURROGATES = false;
 
         public TermInfosReader Tis;
@@ -67,7 +64,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public Lucene3xFields(Directory dir, FieldInfos fieldInfos, SegmentInfo info, IOContext context, int indexDivisor)
         {
-
             Si = info;
 
             // NOTE: we must always load terms index, even for
@@ -201,6 +197,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             private readonly Lucene3xFields OuterInstance;
 
             internal readonly FieldInfo FieldInfo;
+
             internal PreTerms(Lucene3xFields outerInstance, FieldInfo fieldInfo)
             {
                 this.OuterInstance = outerInstance;
@@ -423,7 +420,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             // seek finds a matching term, we go there.
             internal virtual bool DoContinue()
             {
-
                 if (DEBUG_SURROGATES)
                 {
                     Console.WriteLine("  try cont");
@@ -437,10 +433,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 while (downTo > limit)
                 {
-
                     if (IsHighBMPChar(PrevTerm.Bytes, downTo))
                     {
-
                         if (DEBUG_SURROGATES)
                         {
                             Console.WriteLine("    found E pos=" + downTo + " vs len=" + PrevTerm.Length);
@@ -489,7 +483,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             // position.
             internal virtual bool DoPop()
             {
-
                 if (DEBUG_SURROGATES)
                 {
                     Console.WriteLine("  try pop");
@@ -500,7 +493,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 if (PrevTerm.Length > NewSuffixStart && IsNonBMPChar(PrevTerm.Bytes, NewSuffixStart) && IsHighBMPChar(ScratchTerm.Bytes, NewSuffixStart))
                 {
-
                     // Seek type 2 -- put 0xFF at this position:
                     ScratchTerm.Bytes[NewSuffixStart] = unchecked((sbyte)0xff);
                     ScratchTerm.Length = NewSuffixStart + 1;
@@ -520,7 +512,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                     // was a seek "forward":
                     if (t2 != null && t2.Field() == InternedFieldName)
                     {
-
                         if (DEBUG_SURROGATES)
                         {
                             Console.WriteLine("      got term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + t2.Bytes());
@@ -528,7 +519,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                         BytesRef b2 = t2.Bytes();
                         Debug.Assert(b2.Offset == 0);
-
 
                         // Set newSuffixStart -- we can't use
                         // termEnum's since the above seek may have
@@ -562,7 +552,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             internal virtual void SurrogateDance()
             {
-
                 if (!UnicodeSortOrder)
                 {
                     return;
@@ -665,7 +654,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                 DoPushes();
             }
 
-
             // Look for seek type 1 ("push"): if the newly added
             // suffix contains any S, we must try to seek to the
             // corresponding E.  If we find a match, we go there;
@@ -674,7 +662,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             // position:
             internal virtual void DoPushes()
             {
-
                 int upTo = NewSuffixStart;
                 if (DEBUG_SURROGATES)
                 {
@@ -685,7 +672,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     if (IsNonBMPChar(ScratchTerm.Bytes, upTo) && (upTo > NewSuffixStart || (upTo >= PrevTerm.Length || (!IsNonBMPChar(PrevTerm.Bytes, upTo) && !IsHighBMPChar(PrevTerm.Bytes, upTo)))))
                     {
-
                         // A non-BMP char (4 bytes UTF8) starts here:
                         Debug.Assert(ScratchTerm.Length >= upTo + 4);
 
@@ -749,7 +735,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                                         break;
                                     }
                                 }
-
                             }
                             else
                             {
@@ -763,7 +748,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                         if (matches)
                         {
-
                             if (DEBUG_SURROGATES)
                             {
                                 Console.WriteLine("      matches!");
@@ -890,7 +874,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else if (t == null || t.Field() != InternedFieldName)
                 {
-
                     // TODO: maybe we can handle this like the next()
                     // into null?  set term as prevTerm then dance?
 
@@ -916,7 +899,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                             if (SeekToNonBMP(SeekTermEnum, ScratchTerm, i))
                             {
-
                                 ScratchTerm.CopyBytes(SeekTermEnum.Term().Bytes());
                                 OuterInstance.TermsDict.SeekEnum(TermEnum, SeekTermEnum.Term(), false);
 
@@ -942,7 +924,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-
                     // We found a non-exact but non-null term; this one
                     // is fun -- just treat it like next, by pretending
                     // requested term was prev:
@@ -1149,6 +1130,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             internal readonly SegmentTermDocs Docs;
             internal int DocID_Renamed = -1;
+
             internal PreDocsEnum(Lucene3xFields outerInstance)
             {
                 this.OuterInstance = outerInstance;
@@ -1218,6 +1200,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             internal readonly SegmentTermPositions Pos;
             internal int DocID_Renamed = -1;
+
             internal PreDocsAndPositionsEnum(Lucene3xFields outerInstance)
             {
                 this.OuterInstance = outerInstance;
@@ -1321,5 +1304,4 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
         }
     }
-
 }

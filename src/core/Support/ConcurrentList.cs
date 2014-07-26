@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Lucene.Net.Support
@@ -188,6 +186,6 @@ namespace Lucene.Net.Support
         public IEnumerator<T> GetEnumerator()
         {
             throw new NotSupportedException();
-        } 
+        }
     }
 }

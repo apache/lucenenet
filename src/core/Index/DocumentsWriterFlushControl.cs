@@ -1,33 +1,32 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements. See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License. You may obtain a copy of the License at
-     *
-     * http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
+    using Lucene.Net.Support;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-    using Lucene.Net.Support;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements. See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License. You may obtain a copy of the License at
+         *
+         * http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 
     /// <summary>
     /// this class controls <seealso cref="DocumentsWriterPerThread"/> flushing during
@@ -43,7 +42,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class DocumentsWriterFlushControl
     {
-
         private readonly long HardMaxBytesPerDWPT;
         private long ActiveBytes_Renamed = 0;
         private long FlushBytes_Renamed = 0;
@@ -52,10 +50,11 @@ namespace Lucene.Net.Index
         internal readonly AtomicBoolean FlushDeletes = new AtomicBoolean(false);
         private bool FullFlush_Renamed = false;
         private readonly Queue<DocumentsWriterPerThread> FlushQueue = new Queue<DocumentsWriterPerThread>();
+
         // only for safety reasons if a DWPT is close to the RAM limit
         private readonly LinkedList<BlockedFlush> BlockedFlushes = new LinkedList<BlockedFlush>();
-        private readonly IdentityHashMap<DocumentsWriterPerThread, long?> FlushingWriters = new IdentityHashMap<DocumentsWriterPerThread, long?>();
 
+        private readonly IdentityHashMap<DocumentsWriterPerThread, long?> FlushingWriters = new IdentityHashMap<DocumentsWriterPerThread, long?>();
 
         internal double MaxConfiguredRamBuffer = 0;
         internal long PeakActiveBytes = 0; // only with assert
@@ -233,7 +232,7 @@ namespace Lucene.Net.Index
         {
             /*
              *  updates the number of documents "finished" while we are in a stalled state.
-             *  this is important for asserting memory upper bounds since it corresponds 
+             *  this is important for asserting memory upper bounds since it corresponds
              *  to the number of threads that are in-flight and crossed the stall control
              *  check before we actually stalled.
              *  see #assertMemory()
@@ -278,7 +277,6 @@ namespace Lucene.Net.Index
 
         private bool UpdateStallState()
         {
-
             //Debug.Assert(Thread.holdsLock(this));
             long limit = StallLimitBytes();
             /*
@@ -332,7 +330,6 @@ namespace Lucene.Net.Index
                         NumPending++; // write access synced
                         Debug.Assert(AssertMemory());
                     } // don't assert on numDocs since we could hit an abort excp. while selecting that dwpt for flushing
-
                 }
             }
         }
@@ -480,7 +477,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns an iterator that provides access to all currently active <seealso cref="ThreadState"/>s 
+        /// Returns an iterator that provides access to all currently active <seealso cref="ThreadState"/>s
         /// </summary>
         public IEnumerator<ThreadState> AllActiveThreadStates()
         {
@@ -506,13 +503,14 @@ namespace Lucene.Net.Index
                 i = 0;
             }
 
-
             public ThreadState Current
             {
                 get { return current; }
             }
 
-            public void Dispose() { }
+            public void Dispose()
+            {
+            }
 
             object System.Collections.IEnumerator.Current
             {
@@ -535,8 +533,6 @@ namespace Lucene.Net.Index
                 throw new NotImplementedException();
             }
         }
-
-
 
         internal void DoOnDelete()
         {
@@ -734,7 +730,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Prunes the blockedQueue by removing all DWPT that are associated with the given flush queue. 
+        /// Prunes the blockedQueue by removing all DWPT that are associated with the given flush queue.
         /// </summary>
         private void PruneBlockedQueue(DocumentsWriterDeleteQueue flushingQueue)
         {
@@ -898,6 +894,7 @@ namespace Lucene.Net.Index
         {
             internal readonly DocumentsWriterPerThread Dwpt;
             internal readonly long Bytes;
+
             internal BlockedFlush(DocumentsWriterPerThread dwpt, long bytes)
                 : base()
             {
@@ -937,8 +934,5 @@ namespace Lucene.Net.Index
                 return InfoStream_Renamed;
             }
         }
-
-
     }
-
 }

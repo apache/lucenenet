@@ -1,6 +1,5 @@
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,11 +19,10 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// A <seealso cref="MergeScheduler"/> that simply does each merge
-    ///  sequentially, using the current thread. 
+    ///  sequentially, using the current thread.
     /// </summary>
     public class SerialMergeScheduler : MergeScheduler
     {
-
         /// <summary>
         /// Sole constructor. </summary>
         public SerialMergeScheduler()
@@ -34,13 +32,12 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Just do the merges in sequence. We do this
         /// "synchronized" so that even if the application is using
-        /// multiple threads, only one merge may run at a time. 
+        /// multiple threads, only one merge may run at a time.
         /// </summary>
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
         {
             lock (this)
             {
-
                 while (true)
                 {
                     MergePolicy.OneMerge merge = writer.NextMerge;
@@ -57,5 +54,4 @@ namespace Lucene.Net.Index
         {
         }
     }
-
 }

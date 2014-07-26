@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,19 +22,22 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// A struct like class that represents a hierarchical relationship between
-    /// <seealso cref="IndexReader"/> instances. 
+    /// <seealso cref="IndexReader"/> instances.
     /// </summary>
     public abstract class IndexReaderContext
     {
         /// <summary>
         /// The reader context for this reader's immediate parent, or null if none </summary>
         public readonly CompositeReaderContext Parent;
+
         /// <summary>
         /// <code>true</code> if this context struct represents the top level reader within the hierarchical context </summary>
         public readonly bool IsTopLevel;
+
         /// <summary>
         /// the doc base for this reader in the parent, <tt>0</tt> if parent is null </summary>
         public readonly int DocBaseInParent;
+
         /// <summary>
         /// the ord for this reader in the parent, <tt>0</tt> if parent is null </summary>
         public readonly int OrdInParent;

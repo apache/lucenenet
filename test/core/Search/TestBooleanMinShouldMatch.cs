@@ -1,38 +1,37 @@
-
 using System;
 using System.Globalization;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using Field = Lucene.Net.Document.Field;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using Document = Lucene.Net.Document.Document;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Directory = Lucene.Net.Store.Directory;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Field = Lucene.Net.Document.Field;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using Term = Lucene.Net.Index.Term;
 
     /// <summary>
     /// Test that BooleanQuery.setMinimumNumberShouldMatch works.
@@ -40,7 +39,6 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestBooleanMinShouldMatch : LuceneTestCase
     {
-
         private static Directory Index;
         private static IndexReader r;
         private static IndexSearcher s;
@@ -85,7 +83,6 @@ namespace Lucene.Net.Search
             Index = null;
         }
 
-
         public virtual void VerifyNrHits(Query q, int expected)
         {
             // bs1
@@ -112,7 +109,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestAllOptional()
         {
-
             BooleanQuery q = new BooleanQuery();
             for (int i = 1; i <= 4; i++)
             {
@@ -125,7 +121,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestOneReqAndSomeOptional()
         {
-
             /* one required, some optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
@@ -141,7 +136,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSomeReqAndSomeOptional()
         {
-
             /* two required, some optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
@@ -158,7 +152,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestOneProhibAndSomeOptional()
         {
-
             /* one prohibited, some optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("data", "1")), BooleanClause.Occur.SHOULD); //false, false);
@@ -174,7 +167,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSomeProhibAndSomeOptional()
         {
-
             /* two prohibited, some optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("data", "1")), BooleanClause.Occur.SHOULD); //false, false);
@@ -191,7 +183,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestOneReqOneProhibAndSomeOptional()
         {
-
             /* one required, one prohibited, some optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("data", "6")), BooleanClause.Occur.MUST); // true,  false);
@@ -209,7 +200,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSomeReqOneProhibAndSomeOptional()
         {
-
             /* two required, one prohibited, some optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
@@ -228,7 +218,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestOneReqSomeProhibAndSomeOptional()
         {
-
             /* one required, two prohibited, some optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("data", "6")), BooleanClause.Occur.MUST); //true,  false);
@@ -247,7 +236,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSomeReqSomeProhibAndSomeOptional()
         {
-
             /* two required, two prohibited, some optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
@@ -267,7 +255,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestMinHigherThenNumOptional()
         {
-
             /* two required, two prohibited, some optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
@@ -287,7 +274,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestMinEqualToNumOptional()
         {
-
             /* two required, two optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.SHOULD); //false, false);
@@ -303,7 +289,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestOneOptionalEqualToMin()
         {
-
             /* two required, one optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
@@ -318,7 +303,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestNoOptionalButMin()
         {
-
             /* two required, no optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
@@ -332,7 +316,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestNoOptionalButMin2()
         {
-
             /* one required, no optional */
             BooleanQuery q = new BooleanQuery();
             q.Add(new TermQuery(new Term("all", "all")), BooleanClause.Occur.MUST); //true,  false);
@@ -352,9 +335,7 @@ namespace Lucene.Net.Search
             // callback object to set a random setMinimumNumberShouldMatch
             TestBoolean2.Callback minNrCB = new CallbackAnonymousInnerClassHelper(this, field, vals);
 
-
-
-            // increase number of iterations for more complete testing      
+            // increase number of iterations for more complete testing
             int num = AtLeast(20);
             for (int i = 0; i < num; i++)
             {
@@ -527,7 +508,6 @@ namespace Lucene.Net.Search
 
         protected internal virtual void PrintHits(string test, ScoreDoc[] h, IndexSearcher searcher)
         {
-
             Console.Error.WriteLine("------- " + test + " -------");
 
             NumberFormatInfo f = new NumberFormatInfo();
@@ -543,5 +523,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

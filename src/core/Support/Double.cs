@@ -25,7 +25,7 @@ using System.Globalization;
 namespace Lucene.Net.Support
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class Double
     {

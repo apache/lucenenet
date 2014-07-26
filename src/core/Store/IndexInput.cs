@@ -2,7 +2,6 @@ using System;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,11 +19,10 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Abstract base class for input from a file in a <seealso cref="Directory"/>.  A
     /// random-access input stream.  Used for all Lucene index input operations.
-    /// 
+    ///
     /// <p>{@code IndexInput} may only be used from one thread, because it is not
     /// thread safe (it keeps internal state like file position). To allow
     /// multithreaded use, every {@code IndexInput} instance must be cloned before
@@ -38,13 +36,12 @@ namespace Lucene.Net.Store
     /// <seealso cref= Directory </seealso>
     public abstract class IndexInput : DataInput, ICloneable, IDisposable
     {
-
         private readonly string ResourceDescription;
 
         /// <summary>
         /// resourceDescription should be a non-null, opaque string
         ///  describing this resource; it's returned from
-        ///  <seealso cref="#toString"/>. 
+        ///  <seealso cref="#toString"/>.
         /// </summary>
         protected internal IndexInput(string resourceDescription)
         {
@@ -100,5 +97,4 @@ namespace Lucene.Net.Store
             return clone;
         }
     }
-
 }

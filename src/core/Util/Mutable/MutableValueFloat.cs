@@ -14,63 +14,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using Lucene.Net.Support;
+
 namespace Lucene.Net.Util.Mutable
 {
+    /// <summary>
+    /// <seealso cref="MutableValue"/> implementation of type
+    /// <code>float</code>.
+    /// </summary>
+    public class MutableValueFloat : MutableValue
+    {
+        public float Value;
 
-	/// <summary>
-	/// <seealso cref="MutableValue"/> implementation of type 
-	/// <code>float</code>.
-	/// </summary>
-	public class MutableValueFloat : MutableValue
-	{
-	  public float Value;
+        public override object ToObject()
+        {
+            return Exists ? (object)Value : null;
+        }
 
-	  public override object ToObject()
-	  {
-		return Exists ? (object)Value : null;
-	  }
+        public override void Copy(MutableValue source)
+        {
+            MutableValueFloat s = (MutableValueFloat)source;
+            Value = s.Value;
+            Exists = s.Exists;
+        }
 
-	  public override void Copy(MutableValue source)
-	  {
-		MutableValueFloat s = (MutableValueFloat) source;
-		Value = s.Value;
-		Exists = s.Exists;
-	  }
+        public override MutableValue Duplicate()
+        {
+            MutableValueFloat v = new MutableValueFloat();
+            v.Value = this.Value;
+            v.Exists = this.Exists;
+            return v;
+        }
 
-	  public override MutableValue Duplicate()
-	  {
-		MutableValueFloat v = new MutableValueFloat();
-		v.Value = this.Value;
-		v.Exists = this.Exists;
-		return v;
-	  }
+        public override bool EqualsSameType(object other)
+        {
+            MutableValueFloat b = (MutableValueFloat)other;
+            return Value == b.Value && Exists == b.Exists;
+        }
 
-	  public override bool EqualsSameType(object other)
-	  {
-		MutableValueFloat b = (MutableValueFloat)other;
-		return Value == b.Value && Exists == b.Exists;
-	  }
+        public override int CompareSameType(object other)
+        {
+            MutableValueFloat b = (MutableValueFloat)other;
+            int c = Value.CompareTo(b.Value);
+            if (c != 0)
+            {
+                return c;
+            }
+            if (Exists == b.Exists)
+            {
+                return 0;
+            }
+            return Exists ? 1 : -1;
+        }
 
-	  public override int CompareSameType(object other)
-	  {
-		MutableValueFloat b = (MutableValueFloat)other;
-		int c = Value.CompareTo(b.Value);
-		if (c != 0)
-		{
-			return c;
-		}
-		if (Exists == b.Exists)
-		{
-			return 0;
-		}
-		return Exists ? 1 : -1;
-	  }
-
-	  public override int GetHashCode()
-	  {
-		return Number.FloatToIntBits(Value);
-	  }
-	}
-
+        public override int GetHashCode()
+        {
+            return Number.FloatToIntBits(Value);
+        }
+    }
 }

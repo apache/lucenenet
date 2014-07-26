@@ -1,9 +1,9 @@
 /*
  * dk.brics.automaton
- * 
+ *
  * Copyright (c) 2001-2009 Anders Moeller
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -14,7 +14,7 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- * 
+ *
  * this SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -29,87 +29,85 @@
 
 namespace Lucene.Net.Util.Automaton
 {
+    /// <summary>
+    /// Pair of states.
+    ///
+    /// @lucene.experimental
+    /// </summary>
+    public class StatePair
+    {
+        internal State s;
+        internal State S1;
+        internal State S2;
 
-	/// <summary>
-	/// Pair of states.
-	/// 
-	/// @lucene.experimental
-	/// </summary>
-	public class StatePair
-	{
-	  internal State s;
-	  internal State S1;
-	  internal State S2;
+        internal StatePair(State s, State s1, State s2)
+        {
+            this.s = s;
+            this.S1 = s1;
+            this.S2 = s2;
+        }
 
-	  internal StatePair(State s, State s1, State s2)
-	  {
-		this.s = s;
-		this.S1 = s1;
-		this.S2 = s2;
-	  }
+        /// <summary>
+        /// Constructs a new state pair.
+        /// </summary>
+        /// <param name="s1"> first state </param>
+        /// <param name="s2"> second state </param>
+        public StatePair(State s1, State s2)
+        {
+            this.S1 = s1;
+            this.S2 = s2;
+        }
 
-	  /// <summary>
-	  /// Constructs a new state pair.
-	  /// </summary>
-	  /// <param name="s1"> first state </param>
-	  /// <param name="s2"> second state </param>
-	  public StatePair(State s1, State s2)
-	  {
-		this.S1 = s1;
-		this.S2 = s2;
-	  }
+        /// <summary>
+        /// Returns first component of this pair.
+        /// </summary>
+        /// <returns> first state </returns>
+        public virtual State FirstState
+        {
+            get
+            {
+                return S1;
+            }
+        }
 
-	  /// <summary>
-	  /// Returns first component of this pair.
-	  /// </summary>
-	  /// <returns> first state </returns>
-	  public virtual State FirstState
-	  {
-		  get
-		  {
-			return S1;
-		  }
-	  }
+        /// <summary>
+        /// Returns second component of this pair.
+        /// </summary>
+        /// <returns> second state </returns>
+        public virtual State SecondState
+        {
+            get
+            {
+                return S2;
+            }
+        }
 
-	  /// <summary>
-	  /// Returns second component of this pair.
-	  /// </summary>
-	  /// <returns> second state </returns>
-	  public virtual State SecondState
-	  {
-		  get
-		  {
-			return S2;
-		  }
-	  }
+        /// <summary>
+        /// Checks for equality.
+        /// </summary>
+        /// <param name="obj"> object to compare with </param>
+        /// <returns> true if <tt>obj</tt> represents the same pair of states as this
+        ///         pair </returns>
+        public override bool Equals(object obj)
+        {
+            if (obj is StatePair)
+            {
+                StatePair p = (StatePair)obj;
+                return p.S1 == S1 && p.S2 == S2;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-	  /// <summary>
-	  /// Checks for equality.
-	  /// </summary>
-	  /// <param name="obj"> object to compare with </param>
-	  /// <returns> true if <tt>obj</tt> represents the same pair of states as this
-	  ///         pair </returns>
-	  public override bool Equals(object obj)
-	  {
-		if (obj is StatePair)
-		{
-		  StatePair p = (StatePair) obj;
-		  return p.S1 == S1 && p.S2 == S2;
-		}
-		else
-		{
-			return false;
-		}
-	  }
-
-	  /// <summary>
-	  /// Returns hash code.
-	  /// </summary>
-	  /// <returns> hash code </returns>
-	  public override int GetHashCode()
-	  {
-          return S1.GetHashCode() + S2.GetHashCode();
-	  }
-	}
-
+        /// <summary>
+        /// Returns hash code.
+        /// </summary>
+        /// <returns> hash code </returns>
+        public override int GetHashCode()
+        {
+            return S1.GetHashCode() + S2.GetHashCode();
+        }
+    }
 }

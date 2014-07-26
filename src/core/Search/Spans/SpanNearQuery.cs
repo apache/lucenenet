@@ -1,43 +1,39 @@
-using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Search.Spans
 {
+    using Lucene.Net.Support;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
-    using Bits = Lucene.Net.Util.Bits;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Matches spans which are near one another.  One can specify <i>slop</i>, the
     /// maximum number of intervening unmatched positions, as well as whether
-    /// matches are required to be in-order. 
+    /// matches are required to be in-order.
     /// </summary>
     public class SpanNearQuery : SpanQuery
     {
@@ -64,7 +60,6 @@ namespace Lucene.Net.Search.Spans
 
         public SpanNearQuery(SpanQuery[] clauses, int slop, bool inOrder, bool collectPayloads)
         {
-
             // copy clauses array into an ArrayList
             this.clauses = new List<SpanQuery>(clauses.Length);
             for (int i = 0; i < clauses.Length; i++)
@@ -122,6 +117,7 @@ namespace Lucene.Net.Search.Spans
                 return field;
             }
         }
+
         public override void ExtractTerms(ISet<Term> terms)
         {
             foreach (SpanQuery clause in clauses)
@@ -129,7 +125,6 @@ namespace Lucene.Net.Search.Spans
                 clause.ExtractTerms(terms);
             }
         }
-
 
         public override string ToString(string field)
         {
@@ -255,5 +250,4 @@ namespace Lucene.Net.Search.Spans
             return result;
         }
     }
-
 }

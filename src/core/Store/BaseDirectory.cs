@@ -2,7 +2,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,12 +25,11 @@ namespace Lucene.Net.Store
     /// </summary>
     public abstract class BaseDirectory : Directory
     {
-
         volatile protected internal bool IsOpen = true;
 
         /// <summary>
         /// Holds the LockFactory instance (implements locking for
-        /// this Directory instance). 
+        /// this Directory instance).
         /// </summary>
         protected internal LockFactory LockFactory_Renamed;
 
@@ -69,7 +67,6 @@ namespace Lucene.Net.Store
             }
         }
 
-
         public override sealed void EnsureOpen()
         {
             if (!IsOpen)
@@ -77,7 +74,5 @@ namespace Lucene.Net.Store
                 throw new AlreadyClosedException("this Directory is closed");
             }
         }
-
     }
-
 }

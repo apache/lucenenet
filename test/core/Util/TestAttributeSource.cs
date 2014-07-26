@@ -1,35 +1,34 @@
+using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
+    using Lucene.Net.Analysis.Tokenattributes;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Token = Lucene.Net.Analysis.Token;
-    using Lucene.Net.Analysis.Tokenattributes;
 
     [TestFixture]
     public class TestAttributeSource : LuceneTestCase
     {
-
         [Test]
         public virtual void TestCaptureState()
         {
@@ -139,38 +138,38 @@ namespace Lucene.Net.Util
 
         [Test]
         public virtual void TestInvalidArguments()
-	    {
-		    try
-		    {
-		      AttributeSource src = new AttributeSource();
-		      src.AddAttribute<Token>();
-		      Assert.Fail("Should throw IllegalArgumentException");
-		    }
-		    catch (System.ArgumentException iae)
-		    {
-		    }
+        {
+            try
+            {
+                AttributeSource src = new AttributeSource();
+                src.AddAttribute<Token>();
+                Assert.Fail("Should throw IllegalArgumentException");
+            }
+            catch (System.ArgumentException iae)
+            {
+            }
 
-		    try
-		    {
-		      AttributeSource src = new AttributeSource(Token.TOKEN_ATTRIBUTE_FACTORY);
-		      src.AddAttribute<Token>();
-		      Assert.Fail("Should throw IllegalArgumentException");
-		    }
-		    catch (System.ArgumentException iae)
-		    {
-		    }
+            try
+            {
+                AttributeSource src = new AttributeSource(Token.TOKEN_ATTRIBUTE_FACTORY);
+                src.AddAttribute<Token>();
+                Assert.Fail("Should throw IllegalArgumentException");
+            }
+            catch (System.ArgumentException iae)
+            {
+            }
 
-		    /*try
-		    {
-		      AttributeSource src = new AttributeSource();
-		      // break this by unsafe cast
-		      src.AddAttribute<typeof((Type)IEnumerator)>();
-		      Assert.Fail("Should throw IllegalArgumentException");
-		    }
-		    catch (System.ArgumentException iae)
-		    {
-		    }*/
-	    }
+            /*try
+            {
+              AttributeSource src = new AttributeSource();
+              // break this by unsafe cast
+              src.AddAttribute<typeof((Type)IEnumerator)>();
+              Assert.Fail("Should throw IllegalArgumentException");
+            }
+            catch (System.ArgumentException iae)
+            {
+            }*/
+        }
 
         [Test]
         public virtual void TestLUCENE_3042()
@@ -184,5 +183,4 @@ namespace Lucene.Net.Util
             Assert.AreEqual(src2.GetHashCode(), src1.GetHashCode());
         }
     }
-
 }

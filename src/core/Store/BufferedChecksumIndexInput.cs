@@ -1,9 +1,7 @@
 using Lucene.Net.Support;
-using System;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +18,6 @@ namespace Lucene.Net.Store
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     /// <summary>
     /// Simple implementation of <seealso cref="ChecksumIndexInput"/> that wraps
@@ -52,6 +49,7 @@ namespace Lucene.Net.Store
             Main.ReadBytes(b, offset, len);
             Digest.Update(b, offset, len);
         }
+
         /*
               public override void ReadBytes(byte[] b, int offset, int len)
               {
@@ -59,6 +57,7 @@ namespace Lucene.Net.Store
                   Digest.Update(b, offset, len);
               }
                 */
+
         public override long Checksum
         {
             get
@@ -90,5 +89,4 @@ namespace Lucene.Net.Store
             throw new System.NotSupportedException();
         }
     }
-
 }

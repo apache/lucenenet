@@ -1,12 +1,10 @@
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -30,7 +28,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestRecyclingIntBlockAllocator : LuceneTestCase
     {
-
         [SetUp]
         public override void SetUp()
         {

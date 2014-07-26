@@ -2,15 +2,16 @@ using System;
 
 namespace Lucene.Net.Index
 {
-
+    using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+
     /// <summary>
     /// Licensed under the Apache License, Version 2.0 (the "License");
     /// you may not use this file except in compliance with the License.
     /// You may obtain a copy of the License at
-    /// 
+    ///
     ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
+    ///
     /// Unless required by applicable law or agreed to in writing, software
     /// distributed under the License is distributed on an "AS IS" BASIS,
     /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,12 +22,10 @@ namespace Lucene.Net.Index
     using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RecyclingByteBlockAllocator = Lucene.Net.Util.RecyclingByteBlockAllocator;
-    using Lucene.Net.Randomized.Generators;
 
     [TestFixture]
     public class TestByteSlices : LuceneTestCase
     {
-
         [Test]
         public virtual void TestBasic()
         {
@@ -44,7 +43,6 @@ namespace Lucene.Net.Index
 
             for (int ti = 0; ti < 100; ti++)
             {
-
                 for (int stream = 0; stream < NUM_STREAM; stream++)
                 {
                     starts[stream] = -1;
@@ -134,5 +132,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

@@ -4,53 +4,49 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using Directory = Lucene.Net.Store.Directory;
-    using Bits = Lucene.Net.Util.Bits;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using Lucene.Net.Support;
     using NUnit.Framework;
+    using Bits = Lucene.Net.Util.Bits;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
     /// <summary>
     /// Test class to illustrate using IndexDeletionPolicy to provide multi-level rollback capability.
     /// this test case creates an index of records 1 to 100, introducing a commit point every 10 records.
-    /// 
+    ///
     /// A "keep all" deletion policy is used to ensure we keep all commit points for testing purposes
     /// </summary>
 
     [TestFixture]
     public class TestTransactionRollback : LuceneTestCase
     {
-
         private const string FIELD_RECORD_ID = "record_id";
         private Directory Dir;
 
         //Rolls back index to a chosen ID
         private void RollBackLast(int id)
         {
-
             // System.out.println("Attempting to rollback to "+id);
             string ids = "-" + id;
             IndexCommit last = null;
@@ -83,7 +79,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRepeatedRollBacks()
         {
-
             int expectedLastRecordId = 100;
             while (expectedLastRecordId > 10)
             {
@@ -231,10 +226,10 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-
             public override void OnCommit<T>(IList<T> commits)
             {
             }
+
             public override void OnInit<T>(IList<T> commits)
             {
                 commits.RemoveAt(commits.Count - 1);
@@ -244,7 +239,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRollbackDeletionPolicy()
         {
-
             for (int i = 0; i < 2; i++)
             {
                 // Unless you specify a prior commit point, rollback
@@ -270,10 +264,10 @@ namespace Lucene.Net.Index
             public override void OnCommit<T>(IList<T> commits)
             {
             }
+
             public override void OnInit<T>(IList<T> commits)
             {
             }
         }
     }
-
 }

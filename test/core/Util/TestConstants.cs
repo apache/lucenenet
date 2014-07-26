@@ -1,9 +1,9 @@
-using System.Text.RegularExpressions;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System.Text.RegularExpressions;
+
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +24,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestConstants : LuceneTestCase
     {
-
         private string VersionDetails
         {
             get
@@ -52,7 +51,5 @@ namespace Lucene.Net.Util
             string versionConstant = Regex.Replace(Constants.LUCENE_VERSION, "-.*$", "");
             Assert.IsTrue(versionConstant.StartsWith(version) || version.StartsWith(versionConstant), "LUCENE_VERSION should share the same prefix with lucene.version test property ('" + version + "')." + VersionDetails);
         }
-
     }
-
 }

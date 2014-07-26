@@ -26,23 +26,30 @@ namespace Lucene.Net.Support
 {
     public class Deflater
     {
-        delegate void SetLevelDelegate(int level);
-        delegate void SetInputDelegate(byte[] input, int offset, int count);
-        delegate void FinishDelegate();
-        delegate bool GetIsFinishedDelegate();
-        delegate int DeflateDelegate(byte[] output);
-        delegate void ResetDelegate();
-        delegate bool GetIsNeedingInputDelegate();
-        delegate int DeflateDelegate3(byte[] output, int offset, int length);
+        private delegate void SetLevelDelegate(int level);
 
-        SetLevelDelegate setLevelMethod;
-        SetInputDelegate setInputMethod;
-        FinishDelegate finishMethod;
-        GetIsFinishedDelegate getIsFinishedMethod;
-        DeflateDelegate deflateMethod;
-        ResetDelegate resetMethod;
-        GetIsNeedingInputDelegate getIsNeedingInputMethod;
-        DeflateDelegate3 deflate3Method;
+        private delegate void SetInputDelegate(byte[] input, int offset, int count);
+
+        private delegate void FinishDelegate();
+
+        private delegate bool GetIsFinishedDelegate();
+
+        private delegate int DeflateDelegate(byte[] output);
+
+        private delegate void ResetDelegate();
+
+        private delegate bool GetIsNeedingInputDelegate();
+
+        private delegate int DeflateDelegate3(byte[] output, int offset, int length);
+
+        private SetLevelDelegate setLevelMethod;
+        private SetInputDelegate setInputMethod;
+        private FinishDelegate finishMethod;
+        private GetIsFinishedDelegate getIsFinishedMethod;
+        private DeflateDelegate deflateMethod;
+        private ResetDelegate resetMethod;
+        private GetIsNeedingInputDelegate getIsNeedingInputMethod;
+        private DeflateDelegate3 deflate3Method;
 
         public const int BEST_COMPRESSION = 9;
 
@@ -74,7 +81,7 @@ namespace Lucene.Net.Support
                 typeof(DeflateDelegate),
                 deflaterInstance,
                 type.GetMethod("Deflate", new Type[] { typeof(byte[]) }));
-            
+
             resetMethod = (ResetDelegate)Delegate.CreateDelegate(
                 typeof(ResetDelegate),
                 deflaterInstance,

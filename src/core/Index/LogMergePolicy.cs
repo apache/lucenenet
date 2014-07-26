@@ -1,14 +1,12 @@
-using System;
-using System.Linq;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Text;
 using Lucene.Net.Support;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.Text;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,8 +24,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
-
     /// <summary>
     /// <p>this class implements a <seealso cref="MergePolicy"/> that tries
     /// to merge segments into levels of exponentially
@@ -37,7 +33,7 @@ namespace Lucene.Net.Index
     /// all segments within the level are merged. You can get or
     /// set the merge factor using <seealso cref="#getMergeFactor()"/> and
     /// <seealso cref="#setMergeFactor(int)"/> respectively.</p>
-    /// 
+    ///
     /// <p>this class is abstract and requires a subclass to
     /// define the <seealso cref="#size"/> method which specifies how a
     /// segment's size is determined.  <seealso cref="LogDocMergePolicy"/>
@@ -49,18 +45,17 @@ namespace Lucene.Net.Index
 
     public abstract class LogMergePolicy : MergePolicy
     {
-
         /// <summary>
         /// Defines the allowed range of log(size) for each
         ///  level.  A level is computed by taking the max segment
         ///  log size, minus LEVEL_LOG_SPAN, and finding all
-        ///  segments falling within that range. 
+        ///  segments falling within that range.
         /// </summary>
         public const double LEVEL_LOG_SPAN = 0.75;
 
         /// <summary>
         /// Default merge factor, which is how many segments are
-        ///  merged at a time 
+        ///  merged at a time
         /// </summary>
         public const int DEFAULT_MERGE_FACTOR = 10;
 
@@ -82,13 +77,13 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Any segments whose size is smaller than this value
         ///  will be rounded up to this value.  this ensures that
-        ///  tiny segments are aggressively merged. 
+        ///  tiny segments are aggressively merged.
         /// </summary>
         protected internal long MinMergeSize;
 
         /// <summary>
         /// If the size of a segment exceeds this value then it
-        ///  will never be merged. 
+        ///  will never be merged.
         /// </summary>
         protected internal long MaxMergeSize;
 
@@ -96,25 +91,25 @@ namespace Lucene.Net.Index
         // out there wrote his own LMP ...
         /// <summary>
         /// If the size of a segment exceeds this value then it
-        /// will never be merged during <seealso cref="IndexWriter#forceMerge"/>. 
+        /// will never be merged during <seealso cref="IndexWriter#forceMerge"/>.
         /// </summary>
         protected internal long MaxMergeSizeForForcedMerge = long.MaxValue;
 
         /// <summary>
         /// If a segment has more than this many documents then it
-        ///  will never be merged. 
+        ///  will never be merged.
         /// </summary>
         protected internal int MaxMergeDocs_Renamed = DEFAULT_MAX_MERGE_DOCS;
 
         /// <summary>
         /// If true, we pro-rate a segment's size by the
-        ///  percentage of non-deleted documents. 
+        ///  percentage of non-deleted documents.
         /// </summary>
         protected internal bool CalibrateSizeByDeletes_Renamed = true;
 
         /// <summary>
-        /// Sole constructor. (For invocation by subclass 
-        ///  constructors, typically implicit.) 
+        /// Sole constructor. (For invocation by subclass
+        ///  constructors, typically implicit.)
         /// </summary>
         public LogMergePolicy()
             : base(DEFAULT_NO_CFS_RATIO, MergePolicy.DEFAULT_MAX_CFS_SEGMENT_SIZE)
@@ -123,7 +118,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns true if {@code LMP} is enabled in {@link
-        ///  IndexWriter}'s {@code infoStream}. 
+        ///  IndexWriter}'s {@code infoStream}.
         /// </summary>
         protected internal virtual bool Verbose()
         {
@@ -133,7 +128,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Print a debug message to <seealso cref="IndexWriter"/>'s {@code
-        ///  infoStream}. 
+        ///  infoStream}.
         /// </summary>
         protected internal virtual void Message(string message)
         {
@@ -146,7 +141,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// <p>Returns the number of segments that are merged at
         /// once and also controls the total number of segments
-        /// allowed to accumulate in the index.</p> 
+        /// allowed to accumulate in the index.</p>
         /// </summary>
         public virtual int MergeFactor
         {
@@ -164,10 +159,9 @@ namespace Lucene.Net.Index
             }
         }
 
-
         /// <summary>
         /// Sets whether the segment size should be calibrated by
-        ///  the number of deletes when choosing segments for merge. 
+        ///  the number of deletes when choosing segments for merge.
         /// </summary>
         public virtual bool CalibrateSizeByDeletes
         {
@@ -181,17 +175,15 @@ namespace Lucene.Net.Index
             }
         }
 
-
         public override void Dispose()
         {
         }
-
 
         /// <summary>
         /// Return the number of documents in the provided {@link
         ///  SegmentCommitInfo}, pro-rated by percentage of
         ///  non-deleted documents if {@link
-        ///  #setCalibrateSizeByDeletes} is set. 
+        ///  #setCalibrateSizeByDeletes} is set.
         /// </summary>
         protected internal virtual long SizeDocs(SegmentCommitInfo info)
         {
@@ -211,7 +203,7 @@ namespace Lucene.Net.Index
         /// Return the byte size of the provided {@link
         ///  SegmentCommitInfo}, pro-rated by percentage of
         ///  non-deleted documents if {@link
-        ///  #setCalibrateSizeByDeletes} is set. 
+        ///  #setCalibrateSizeByDeletes} is set.
         /// </summary>
         protected internal virtual long SizeBytes(SegmentCommitInfo info)
         {
@@ -225,7 +217,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if the number of segments eligible for
         ///  merging is less than or equal to the specified {@code
-        ///  maxNumSegments}. 
+        ///  maxNumSegments}.
         /// </summary>
         protected internal virtual bool IsMerged(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
         {
@@ -325,7 +317,6 @@ namespace Lucene.Net.Index
             {
                 if (maxNumSegments == 1)
                 {
-
                     // Since we must merge down to 1 segment, the
                     // choice is simple:
                     if (last > 1 || !IsMerged(infos, infos.Info(0)))
@@ -335,7 +326,6 @@ namespace Lucene.Net.Index
                 }
                 else if (last > maxNumSegments)
                 {
-
                     // Take care to pick a partial merge that is
                     // least cost, but does not make the index too
                     // lopsided.  If we always just picked the
@@ -381,11 +371,10 @@ namespace Lucene.Net.Index
         ///  compound file format if the current useCompoundFile
         ///  setting is true.  this method returns multiple merges
         ///  (mergeFactor at a time) so the <seealso cref="MergeScheduler"/>
-        ///  in use may make use of concurrency. 
+        ///  in use may make use of concurrency.
         /// </summary>
         public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
         {
-
             Debug.Assert(maxNumSegments > 0);
             if (Verbose())
             {
@@ -556,11 +545,10 @@ namespace Lucene.Net.Index
         ///  #setMergeFactor} segments at a given level.  When
         ///  multiple levels have too many segments, this method
         ///  will return multiple merges, allowing the {@link
-        ///  MergeScheduler} to use concurrency. 
+        ///  MergeScheduler} to use concurrency.
         /// </summary>
         public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos infos)
         {
-
             int numSegments = infos.Size();
             if (Verbose())
             {
@@ -624,7 +612,6 @@ namespace Lucene.Net.Index
             int start = 0;
             while (start < numMergeableSegments)
             {
-
                 // Find max level of all segments not already
                 // quantized.
                 float maxLevel = levels[start].Level;
@@ -732,9 +719,9 @@ namespace Lucene.Net.Index
         /// pauses while indexing to a few seconds.  Larger values
         /// are best for batched indexing and speedier
         /// searches.</p>
-        /// 
+        ///
         /// <p>The default value is <seealso cref="Integer#MAX_VALUE"/>.</p>
-        /// 
+        ///
         /// <p>The default merge policy ({@link
         /// LogByteSizeMergePolicy}) also allows you to set this
         /// limit by net size (in MB) of the segment, using {@link
@@ -752,7 +739,6 @@ namespace Lucene.Net.Index
             }
         }
 
-
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder("[" + this.GetType().Name + ": ");
@@ -767,7 +753,5 @@ namespace Lucene.Net.Index
             sb.Append("]");
             return sb.ToString();
         }
-
     }
-
 }

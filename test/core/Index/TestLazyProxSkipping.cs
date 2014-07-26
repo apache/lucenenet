@@ -1,6 +1,5 @@
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -18,27 +17,25 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using PhraseQuery = Lucene.Net.Search.PhraseQuery;
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
     using System.IO;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
     /// Tests lazy skipping on the proximity file.
-    /// 
+    ///
     /// </summary>
     [TestFixture]
     public class TestLazyProxSkipping : LuceneTestCase
@@ -71,7 +68,6 @@ namespace Lucene.Net.Index
                 }
                 return ii;
             }
-
         }
 
         private void CreateIndex(int numHits)
@@ -202,9 +198,7 @@ namespace Lucene.Net.Index
             }
             reader.Dispose();
             directory.Dispose();
-
         }
-
 
         // Simply extends IndexInput in a way that we are able to count the number
         // of invocations of seek()
@@ -213,7 +207,6 @@ namespace Lucene.Net.Index
             private readonly TestLazyProxSkipping OuterInstance;
 
             internal IndexInput Input;
-
 
             internal SeeksCountingStream(TestLazyProxSkipping outerInstance, IndexInput input)
                 : base("SeekCountingStream(" + input + ")")
@@ -260,8 +253,6 @@ namespace Lucene.Net.Index
             {
                 return new SeeksCountingStream(OuterInstance, (IndexInput)this.Input.Clone());
             }
-
         }
     }
-
 }

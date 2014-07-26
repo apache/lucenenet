@@ -2,9 +2,8 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
-    using DataOutput = Lucene.Net.Store.DataOutput;
     using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
+    using DataOutput = Lucene.Net.Store.DataOutput;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,7 +22,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Class to write byte streams into slices of shared
     /// byte[].  this is used by DocumentsWriter to hold the
@@ -32,7 +30,6 @@ namespace Lucene.Net.Index
 
     public sealed class ByteSliceWriter : DataOutput
     {
-
         private sbyte[] Slice;
         private int Upto;
         private readonly ByteBlockPool Pool;

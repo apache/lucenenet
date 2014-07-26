@@ -2,38 +2,37 @@ using System;
 
 namespace Lucene.Net.Search
 {
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Document.Document;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Field = Lucene.Net.Document.Field;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using Term = Lucene.Net.Index.Term;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Directory = Lucene.Net.Store.Directory;
-    using NUnit.Framework;
+    using Term = Lucene.Net.Index.Term;
 
     /// <summary>
     /// A basic 'positive' Unit test class for the FieldCacheRangeFilter class.
-    /// 
+    ///
     /// <p>
     /// NOTE: at the moment, this class only tests for 'positive' results,
     /// it does not verify the results to ensure there are no 'false positives',
@@ -43,13 +42,11 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestFieldCacheRangeFilter : BaseTestRangeFilter
     {
-
         //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
         //ORIGINAL LINE: @Test public void testRangeFilterId() throws java.io.IOException
         [Test]
         public virtual void TestRangeFilterId()
         {
-
             IndexReader reader = SignedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
@@ -136,7 +133,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterRand()
         {
-
             IndexReader reader = SignedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
@@ -203,7 +199,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterShorts()
         {
-
             IndexReader reader = SignedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
@@ -296,7 +291,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterInts()
         {
-
             IndexReader reader = SignedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
@@ -390,7 +384,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterLongs()
         {
-
             IndexReader reader = SignedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
@@ -486,7 +479,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterFloats()
         {
-
             IndexReader reader = SignedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
@@ -518,7 +510,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterDoubles()
         {
-
             IndexReader reader = SignedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
@@ -590,7 +581,5 @@ namespace Lucene.Net.Search
             reader.Dispose();
             dir.Dispose();
         }
-
     }
-
 }

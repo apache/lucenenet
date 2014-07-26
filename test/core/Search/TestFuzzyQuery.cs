@@ -2,46 +2,44 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using MultiReader = Lucene.Net.Index.MultiReader;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Tests <seealso cref="FuzzyQuery"/>.
-    /// 
+    ///
     /// </summary>
     [TestFixture]
     public class TestFuzzyQuery : LuceneTestCase
     {
-
         [Test]
         public virtual void TestFuzziness()
         {
@@ -161,7 +159,6 @@ namespace Lucene.Net.Search
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
 
-
             query = new FuzzyQuery(new Term("field", "ddddX"), FuzzyQuery.DefaultMaxEdits, 0);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
@@ -187,7 +184,6 @@ namespace Lucene.Net.Search
             query = new FuzzyQuery(new Term("field", "ddddX"), FuzzyQuery.DefaultMaxEdits, 5);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
-
 
             // different field = no match:
             query = new FuzzyQuery(new Term("anotherfield", "ddddX"), FuzzyQuery.DefaultMaxEdits, 0);
@@ -237,8 +233,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// MultiTermQuery provides (via attribute) information about which values
-        /// must be competitive to enter the priority queue. 
-        /// 
+        /// must be competitive to enter the priority queue.
+        ///
         /// FuzzyQuery optimizes itself around this information, if the attribute
         /// is not implemented correctly, there will be problems!
         /// </summary>
@@ -308,7 +304,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestGiga()
         {
-
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             Directory index = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), index);
@@ -387,5 +382,4 @@ namespace Lucene.Net.Search
             writer.AddDocument(doc);
         }
     }
-
 }

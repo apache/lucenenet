@@ -1,7 +1,7 @@
 namespace Lucene.Net.Search
 {
-
     using Lucene.Net.Index;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -24,166 +24,167 @@ namespace Lucene.Net.Search
     using Bits_MatchAllBits = Lucene.Net.Util.Bits_MatchAllBits;
     using Bits_MatchNoBits = Lucene.Net.Util.Bits_MatchNoBits;
 
-	/// <summary>
-	/// A <seealso cref="Filter"/> that accepts all documents that have one or more values in a
-	/// given field. this <seealso cref="Filter"/> request <seealso cref="Bits"/> from the
-	/// <seealso cref="FieldCache"/> and build the bits if not present.
-	/// </summary>
-	public class FieldValueFilter : Filter
-	{
-	  private readonly string Field_Renamed;
-	  private readonly bool Negate_Renamed;
+    /// <summary>
+    /// A <seealso cref="Filter"/> that accepts all documents that have one or more values in a
+    /// given field. this <seealso cref="Filter"/> request <seealso cref="Bits"/> from the
+    /// <seealso cref="FieldCache"/> and build the bits if not present.
+    /// </summary>
+    public class FieldValueFilter : Filter
+    {
+        private readonly string Field_Renamed;
+        private readonly bool Negate_Renamed;
 
-	  /// <summary>
-	  /// Creates a new <seealso cref="FieldValueFilter"/>
-	  /// </summary>
-	  /// <param name="field">
-	  ///          the field to filter </param>
-	  public FieldValueFilter(string field) : this(field, false)
-	  {
-	  }
+        /// <summary>
+        /// Creates a new <seealso cref="FieldValueFilter"/>
+        /// </summary>
+        /// <param name="field">
+        ///          the field to filter </param>
+        public FieldValueFilter(string field)
+            : this(field, false)
+        {
+        }
 
-	  /// <summary>
-	  /// Creates a new <seealso cref="FieldValueFilter"/>
-	  /// </summary>
-	  /// <param name="field">
-	  ///          the field to filter </param>
-	  /// <param name="negate">
-	  ///          iff <code>true</code> all documents with no value in the given
-	  ///          field are accepted.
-	  ///  </param>
-	  public FieldValueFilter(string field, bool negate)
-	  {
-		this.Field_Renamed = field;
-		this.Negate_Renamed = negate;
-	  }
+        /// <summary>
+        /// Creates a new <seealso cref="FieldValueFilter"/>
+        /// </summary>
+        /// <param name="field">
+        ///          the field to filter </param>
+        /// <param name="negate">
+        ///          iff <code>true</code> all documents with no value in the given
+        ///          field are accepted.
+        ///  </param>
+        public FieldValueFilter(string field, bool negate)
+        {
+            this.Field_Renamed = field;
+            this.Negate_Renamed = negate;
+        }
 
-	  /// <summary>
-	  /// Returns the field this filter is applied on. </summary>
-	  /// <returns> the field this filter is applied on. </returns>
-	  public virtual string Field()
-	  {
-		return Field_Renamed;
-	  }
+        /// <summary>
+        /// Returns the field this filter is applied on. </summary>
+        /// <returns> the field this filter is applied on. </returns>
+        public virtual string Field()
+        {
+            return Field_Renamed;
+        }
 
-	  /// <summary>
-	  /// Returns <code>true</code> iff this filter is negated, otherwise <code>false</code> </summary>
-	  /// <returns> <code>true</code> iff this filter is negated, otherwise <code>false</code> </returns>
-	  public virtual bool Negate()
-	  {
-		return Negate_Renamed;
-	  }
+        /// <summary>
+        /// Returns <code>true</code> iff this filter is negated, otherwise <code>false</code> </summary>
+        /// <returns> <code>true</code> iff this filter is negated, otherwise <code>false</code> </returns>
+        public virtual bool Negate()
+        {
+            return Negate_Renamed;
+        }
 
-	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
-	  {
-		Bits docsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader()), Field_Renamed);
-		if (Negate_Renamed)
-		{
-		  if (docsWithField is Bits_MatchAllBits)
-		  {
-			return null;
-		  }
-		  return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, docsWithField);
-		}
-		else
-		{
-		  if (docsWithField is Bits_MatchNoBits)
-		  {
-			return null;
-		  }
-		  if (docsWithField is DocIdSet)
-		  {
-			// UweSays: this is always the case for our current impl - but who knows
-			// :-)
-			return BitsFilteredDocIdSet.Wrap((DocIdSet) docsWithField, acceptDocs);
-		  }
-          return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.Reader().MaxDoc(), acceptDocs, docsWithField);
-		}
-	  }
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+        {
+            Bits docsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader()), Field_Renamed);
+            if (Negate_Renamed)
+            {
+                if (docsWithField is Bits_MatchAllBits)
+                {
+                    return null;
+                }
+                return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, docsWithField);
+            }
+            else
+            {
+                if (docsWithField is Bits_MatchNoBits)
+                {
+                    return null;
+                }
+                if (docsWithField is DocIdSet)
+                {
+                    // UweSays: this is always the case for our current impl - but who knows
+                    // :-)
+                    return BitsFilteredDocIdSet.Wrap((DocIdSet)docsWithField, acceptDocs);
+                }
+                return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.Reader().MaxDoc(), acceptDocs, docsWithField);
+            }
+        }
 
-	  private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
-	  {
-		  private readonly FieldValueFilter OuterInstance;
+        private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
+        {
+            private readonly FieldValueFilter OuterInstance;
 
-		  private Bits DocsWithField;
+            private Bits DocsWithField;
 
-		  public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField) : base(maxDoc, acceptDocs)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.DocsWithField = docsWithField;
-		  }
+            public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField)
+                : base(maxDoc, acceptDocs)
+            {
+                this.OuterInstance = outerInstance;
+                this.DocsWithField = docsWithField;
+            }
 
-		  protected internal override sealed bool MatchDoc(int doc)
-		  {
-			return !DocsWithField.Get(doc);
-		  }
-	  }
+            protected internal override sealed bool MatchDoc(int doc)
+            {
+                return !DocsWithField.Get(doc);
+            }
+        }
 
-	  private class FieldCacheDocIdSetAnonymousInnerClassHelper2 : FieldCacheDocIdSet
-	  {
-		  private readonly FieldValueFilter OuterInstance;
+        private class FieldCacheDocIdSetAnonymousInnerClassHelper2 : FieldCacheDocIdSet
+        {
+            private readonly FieldValueFilter OuterInstance;
 
-		  private Bits DocsWithField;
+            private Bits DocsWithField;
 
-		  public FieldCacheDocIdSetAnonymousInnerClassHelper2(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField) : base(maxDoc, acceptDocs)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.DocsWithField = docsWithField;
-		  }
+            public FieldCacheDocIdSetAnonymousInnerClassHelper2(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField)
+                : base(maxDoc, acceptDocs)
+            {
+                this.OuterInstance = outerInstance;
+                this.DocsWithField = docsWithField;
+            }
 
-		  protected internal override sealed bool MatchDoc(int doc)
-		  {
-			return DocsWithField.Get(doc);
-		  }
-	  }
+            protected internal override sealed bool MatchDoc(int doc)
+            {
+                return DocsWithField.Get(doc);
+            }
+        }
 
-	  public override int GetHashCode()
-	  {
-		const int prime = 31;
-		int result = 1;
-		result = prime * result + ((Field_Renamed == null) ? 0 : Field_Renamed.GetHashCode());
-		result = prime * result + (Negate_Renamed ? 1231 : 1237);
-		return result;
-	  }
+        public override int GetHashCode()
+        {
+            const int prime = 31;
+            int result = 1;
+            result = prime * result + ((Field_Renamed == null) ? 0 : Field_Renamed.GetHashCode());
+            result = prime * result + (Negate_Renamed ? 1231 : 1237);
+            return result;
+        }
 
-	  public override bool Equals(object obj)
-	  {
-		if (this == obj)
-		{
-		  return true;
-		}
-		if (obj == null)
-		{
-		  return false;
-		}
-		if (this.GetType() != obj.GetType())
-		{
-		  return false;
-		}
-		FieldValueFilter other = (FieldValueFilter) obj;
-		if (Field_Renamed == null)
-		{
-		  if (other.Field_Renamed != null)
-		  {
-			return false;
-		  }
-		}
-		else if (!Field_Renamed.Equals(other.Field_Renamed))
-		{
-		  return false;
-		}
-		if (Negate_Renamed != other.Negate_Renamed)
-		{
-		  return false;
-		}
-		return true;
-	  }
+        public override bool Equals(object obj)
+        {
+            if (this == obj)
+            {
+                return true;
+            }
+            if (obj == null)
+            {
+                return false;
+            }
+            if (this.GetType() != obj.GetType())
+            {
+                return false;
+            }
+            FieldValueFilter other = (FieldValueFilter)obj;
+            if (Field_Renamed == null)
+            {
+                if (other.Field_Renamed != null)
+                {
+                    return false;
+                }
+            }
+            else if (!Field_Renamed.Equals(other.Field_Renamed))
+            {
+                return false;
+            }
+            if (Negate_Renamed != other.Negate_Renamed)
+            {
+                return false;
+            }
+            return true;
+        }
 
-	  public override string ToString()
-	  {
-		return "FieldValueFilter [field=" + Field_Renamed + ", negate=" + Negate_Renamed + "]";
-	  }
-
-	}
-
+        public override string ToString()
+        {
+            return "FieldValueFilter [field=" + Field_Renamed + ", negate=" + Negate_Renamed + "]";
+        }
+    }
 }

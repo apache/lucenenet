@@ -1,219 +1,214 @@
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Search.Payloads
 {
-
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-
-
-	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
-	using Term = Lucene.Net.Index.Term;
-	using TermContext = Lucene.Net.Index.TermContext;
-	using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
-	using SpanOrQuery = Lucene.Net.Search.Spans.SpanOrQuery;
-	using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
-	using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
-	using Spans = Lucene.Net.Search.Spans.Spans;
     using Lucene.Net.Index;
 
-	/// <summary>
-	/// Experimental class to get set of payloads for most standard Lucene queries.
-	/// Operates like Highlighter - IndexReader should only contain doc of interest,
-	/// best to use MemoryIndex.
-	/// 
-	/// @lucene.experimental
-	/// 
-	/// </summary>
-	public class PayloadSpanUtil
-	{
-	  private IndexReaderContext Context;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	  /// <param name="context">
-	  ///          that contains doc with payloads to extract
-	  /// </param>
-	  /// <seealso cref= IndexReader#getContext() </seealso>
-	  public PayloadSpanUtil(IndexReaderContext context)
-	  {
-		this.Context = context;
-	  }
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
+    using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
+    using SpanOrQuery = Lucene.Net.Search.Spans.SpanOrQuery;
+    using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
+    using Spans = Lucene.Net.Search.Spans.Spans;
+    using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
+    using Term = Lucene.Net.Index.Term;
+    using TermContext = Lucene.Net.Index.TermContext;
 
-	  /// <summary>
-	  /// Query should be rewritten for wild/fuzzy support.
-	  /// </summary>
-	  /// <param name="query"> rewritten query </param>
-	  /// <returns> payloads Collection </returns>
-	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-	  public virtual ICollection<sbyte[]> GetPayloadsForQuery(Query query)
-	  {
-		ICollection<sbyte[]> payloads = new List<sbyte[]>();
-		QueryToSpanQuery(query, payloads);
-		return payloads;
-	  }
+    /// <summary>
+    /// Experimental class to get set of payloads for most standard Lucene queries.
+    /// Operates like Highlighter - IndexReader should only contain doc of interest,
+    /// best to use MemoryIndex.
+    ///
+    /// @lucene.experimental
+    ///
+    /// </summary>
+    public class PayloadSpanUtil
+    {
+        private IndexReaderContext Context;
 
-	  private void QueryToSpanQuery(Query query, ICollection<sbyte[]> payloads)
-	  {
-		if (query is BooleanQuery)
-		{
-		  BooleanClause[] queryClauses = ((BooleanQuery) query).Clauses;
+        /// <param name="context">
+        ///          that contains doc with payloads to extract
+        /// </param>
+        /// <seealso cref= IndexReader#getContext() </seealso>
+        public PayloadSpanUtil(IndexReaderContext context)
+        {
+            this.Context = context;
+        }
 
-		  for (int i = 0; i < queryClauses.Length; i++)
-		  {
-			if (!queryClauses[i].Prohibited)
-			{
-			  QueryToSpanQuery(queryClauses[i].Query, payloads);
-			}
-		  }
+        /// <summary>
+        /// Query should be rewritten for wild/fuzzy support.
+        /// </summary>
+        /// <param name="query"> rewritten query </param>
+        /// <returns> payloads Collection </returns>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        public virtual ICollection<sbyte[]> GetPayloadsForQuery(Query query)
+        {
+            ICollection<sbyte[]> payloads = new List<sbyte[]>();
+            QueryToSpanQuery(query, payloads);
+            return payloads;
+        }
 
-		}
-		else if (query is PhraseQuery)
-		{
-		  Term[] phraseQueryTerms = ((PhraseQuery) query).Terms;
-		  SpanQuery[] clauses = new SpanQuery[phraseQueryTerms.Length];
-		  for (int i = 0; i < phraseQueryTerms.Length; i++)
-		  {
-			clauses[i] = new SpanTermQuery(phraseQueryTerms[i]);
-		  }
-
-		  int slop = ((PhraseQuery) query).Slop;
-		  bool inorder = false;
-
-		  if (slop == 0)
-		  {
-			inorder = true;
-		  }
-
-		  SpanNearQuery sp = new SpanNearQuery(clauses, slop, inorder);
-		  sp.Boost = query.Boost;
-		  GetPayloads(payloads, sp);
-		}
-		else if (query is TermQuery)
-		{
-		  SpanTermQuery stq = new SpanTermQuery(((TermQuery) query).Term);
-		  stq.Boost = query.Boost;
-		  GetPayloads(payloads, stq);
-		}
-		else if (query is SpanQuery)
-		{
-		  GetPayloads(payloads, (SpanQuery) query);
-		}
-		else if (query is FilteredQuery)
-		{
-		  QueryToSpanQuery(((FilteredQuery) query).Query, payloads);
-		}
-		else if (query is DisjunctionMaxQuery)
-		{
-            IEnumerator<Query> enumerator = ((DisjunctionMaxQuery)query).GetEnumerator();
-            while (enumerator.MoveNext())
+        private void QueryToSpanQuery(Query query, ICollection<sbyte[]> payloads)
+        {
+            if (query is BooleanQuery)
             {
-                QueryToSpanQuery(enumerator.Current, payloads);
+                BooleanClause[] queryClauses = ((BooleanQuery)query).Clauses;
+
+                for (int i = 0; i < queryClauses.Length; i++)
+                {
+                    if (!queryClauses[i].Prohibited)
+                    {
+                        QueryToSpanQuery(queryClauses[i].Query, payloads);
+                    }
+                }
             }
-		}
-		else if (query is MultiPhraseQuery)
-		{
-		  MultiPhraseQuery mpq = (MultiPhraseQuery) query;
-		  IList<Term[]> termArrays = mpq.TermArrays;
-		  int[] positions = mpq.Positions;
-		  if (positions.Length > 0)
-		  {
+            else if (query is PhraseQuery)
+            {
+                Term[] phraseQueryTerms = ((PhraseQuery)query).Terms;
+                SpanQuery[] clauses = new SpanQuery[phraseQueryTerms.Length];
+                for (int i = 0; i < phraseQueryTerms.Length; i++)
+                {
+                    clauses[i] = new SpanTermQuery(phraseQueryTerms[i]);
+                }
 
-			int maxPosition = positions[positions.Length - 1];
-			for (int i = 0; i < positions.Length - 1; ++i)
-			{
-			  if (positions[i] > maxPosition)
-			  {
-				maxPosition = positions[i];
-			  }
-			}
+                int slop = ((PhraseQuery)query).Slop;
+                bool inorder = false;
 
-			IList<Query>[] disjunctLists = new List<Query>[maxPosition + 1];
-			int distinctPositions = 0;
+                if (slop == 0)
+                {
+                    inorder = true;
+                }
 
-			for (int i = 0; i < termArrays.Count; ++i)
-			{
-			  Term[] termArray = termArrays[i];
-			  IList<Query> disjuncts = disjunctLists[positions[i]];
-			  if (disjuncts == null)
-			  {
-				disjuncts = (disjunctLists[positions[i]] = new List<Query>(termArray.Length));
-				++distinctPositions;
-			  }
-			  foreach (Term term in termArray)
-			  {
-				disjuncts.Add(new SpanTermQuery(term));
-			  }
-			}
+                SpanNearQuery sp = new SpanNearQuery(clauses, slop, inorder);
+                sp.Boost = query.Boost;
+                GetPayloads(payloads, sp);
+            }
+            else if (query is TermQuery)
+            {
+                SpanTermQuery stq = new SpanTermQuery(((TermQuery)query).Term);
+                stq.Boost = query.Boost;
+                GetPayloads(payloads, stq);
+            }
+            else if (query is SpanQuery)
+            {
+                GetPayloads(payloads, (SpanQuery)query);
+            }
+            else if (query is FilteredQuery)
+            {
+                QueryToSpanQuery(((FilteredQuery)query).Query, payloads);
+            }
+            else if (query is DisjunctionMaxQuery)
+            {
+                IEnumerator<Query> enumerator = ((DisjunctionMaxQuery)query).GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    QueryToSpanQuery(enumerator.Current, payloads);
+                }
+            }
+            else if (query is MultiPhraseQuery)
+            {
+                MultiPhraseQuery mpq = (MultiPhraseQuery)query;
+                IList<Term[]> termArrays = mpq.TermArrays;
+                int[] positions = mpq.Positions;
+                if (positions.Length > 0)
+                {
+                    int maxPosition = positions[positions.Length - 1];
+                    for (int i = 0; i < positions.Length - 1; ++i)
+                    {
+                        if (positions[i] > maxPosition)
+                        {
+                            maxPosition = positions[i];
+                        }
+                    }
 
-			int positionGaps = 0;
-			int position = 0;
-			SpanQuery[] clauses = new SpanQuery[distinctPositions];
-			for (int i = 0; i < disjunctLists.Length; ++i)
-			{
-			  IList<Query> disjuncts = disjunctLists[i];
-			  if (disjuncts != null)
-			  {
-                  clauses[position++] = new SpanOrQuery(disjuncts.OfType<SpanQuery>().ToArray());
-			  }
-			  else
-			  {
-				++positionGaps;
-			  }
-			}
+                    IList<Query>[] disjunctLists = new List<Query>[maxPosition + 1];
+                    int distinctPositions = 0;
 
-			int slop = mpq.Slop;
-			bool inorder = (slop == 0);
+                    for (int i = 0; i < termArrays.Count; ++i)
+                    {
+                        Term[] termArray = termArrays[i];
+                        IList<Query> disjuncts = disjunctLists[positions[i]];
+                        if (disjuncts == null)
+                        {
+                            disjuncts = (disjunctLists[positions[i]] = new List<Query>(termArray.Length));
+                            ++distinctPositions;
+                        }
+                        foreach (Term term in termArray)
+                        {
+                            disjuncts.Add(new SpanTermQuery(term));
+                        }
+                    }
 
-			SpanNearQuery sp = new SpanNearQuery(clauses, slop + positionGaps, inorder);
-			sp.Boost = query.Boost;
-			GetPayloads(payloads, sp);
-		  }
-		}
-	  }
+                    int positionGaps = 0;
+                    int position = 0;
+                    SpanQuery[] clauses = new SpanQuery[distinctPositions];
+                    for (int i = 0; i < disjunctLists.Length; ++i)
+                    {
+                        IList<Query> disjuncts = disjunctLists[i];
+                        if (disjuncts != null)
+                        {
+                            clauses[position++] = new SpanOrQuery(disjuncts.OfType<SpanQuery>().ToArray());
+                        }
+                        else
+                        {
+                            ++positionGaps;
+                        }
+                    }
 
-	  private void GetPayloads(ICollection<sbyte []> payloads, SpanQuery query)
-	  {
-		IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
-		SortedSet<Term> terms = new SortedSet<Term>();
-		query.ExtractTerms(terms);
-		foreach (Term term in terms)
-		{
-		  termContexts[term] = TermContext.Build(Context, term);
-		}
-		foreach (AtomicReaderContext atomicReaderContext in Context.Leaves())
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Search.Spans.Spans spans = query.getSpans(atomicReaderContext, atomicReaderContext.reader().getLiveDocs(), termContexts);
-		  Spans spans = query.GetSpans(atomicReaderContext, ((AtomicReader)atomicReaderContext.Reader()).LiveDocs, termContexts);
-		  while (spans.Next() == true)
-		  {
-			if (spans.PayloadAvailable)
-			{
-			  ICollection<sbyte[]> payload = spans.Payload;
-			  foreach (sbyte [] bytes in payload)
-			  {
-				payloads.Add(bytes);
-			  }
-			}
-		  }
-		}
-	  }
-	}
+                    int slop = mpq.Slop;
+                    bool inorder = (slop == 0);
 
+                    SpanNearQuery sp = new SpanNearQuery(clauses, slop + positionGaps, inorder);
+                    sp.Boost = query.Boost;
+                    GetPayloads(payloads, sp);
+                }
+            }
+        }
+
+        private void GetPayloads(ICollection<sbyte[]> payloads, SpanQuery query)
+        {
+            IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
+            SortedSet<Term> terms = new SortedSet<Term>();
+            query.ExtractTerms(terms);
+            foreach (Term term in terms)
+            {
+                termContexts[term] = TermContext.Build(Context, term);
+            }
+            foreach (AtomicReaderContext atomicReaderContext in Context.Leaves())
+            {
+                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                //ORIGINAL LINE: final Lucene.Net.Search.Spans.Spans spans = query.getSpans(atomicReaderContext, atomicReaderContext.reader().getLiveDocs(), termContexts);
+                Spans spans = query.GetSpans(atomicReaderContext, ((AtomicReader)atomicReaderContext.Reader()).LiveDocs, termContexts);
+                while (spans.Next() == true)
+                {
+                    if (spans.PayloadAvailable)
+                    {
+                        ICollection<sbyte[]> payload = spans.Payload;
+                        foreach (sbyte[] bytes in payload)
+                        {
+                            payloads.Add(bytes);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

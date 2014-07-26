@@ -5,35 +5,34 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Index;
+    using Lucene.Net.Support;
+    using System.Collections;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using Term = Lucene.Net.Index.Term;
     using Occur_e = Lucene.Net.Search.BooleanClause.Occur;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Bits = Lucene.Net.Util.Bits;
+    using Term = Lucene.Net.Index.Term;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-    using Lucene.Net.Support;
-    using Lucene.Net.Index;
-    using System.Collections;
 
     /// <summary>
     /// A Query that matches documents matching boolean combinations of other
@@ -42,14 +41,13 @@ namespace Lucene.Net.Search
     /// </summary>
     public class BooleanQuery : Query, IEnumerable<BooleanClause>, ICloneable
     {
-
         private static int maxClauseCount = 1024;
 
         /// <summary>
         /// Thrown when an attempt is made to add more than {@link
         /// #getMaxClauseCount()} clauses. this typically happens if
-        /// a PrefixQuery, FuzzyQuery, WildcardQuery, or TermRangeQuery 
-        /// is expanded to many terms during search. 
+        /// a PrefixQuery, FuzzyQuery, WildcardQuery, or TermRangeQuery
+        /// is expanded to many terms during search.
         /// </summary>
         public class TooManyClauses : Exception
         {
@@ -80,7 +78,6 @@ namespace Lucene.Net.Search
             }
         }
 
-
         private EquatableList<BooleanClause> clauses = new EquatableList<BooleanClause>();
         private readonly bool DisableCoord;
 
@@ -93,7 +90,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Constructs an empty boolean query.
-        /// 
+        ///
         /// <seealso cref="Similarity#coord(int,int)"/> may be disabled in scoring, as
         /// appropriate. For example, this score factor does not make sense for most
         /// automatically generated queries, like <seealso cref="WildcardQuery"/> and {@link
@@ -120,7 +117,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Specifies a minimum number of the optional BooleanClauses
         /// which must be satisfied.
-        /// 
+        ///
         /// <p>
         /// By default no optional clauses are necessary for a match
         /// (unless there are no required clauses).  If this method is used,
@@ -144,8 +141,8 @@ namespace Lucene.Net.Search
                 return MinNrShouldMatch;
             }
         }
-        protected internal int MinNrShouldMatch = 0;
 
+        protected internal int MinNrShouldMatch = 0;
 
         /// <summary>
         /// Adds a clause to a boolean query.
@@ -206,7 +203,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Expert: the Weight for BooleanQuery, used to
         /// normalize, score and explain these queries.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public class BooleanWeight : Weight
@@ -216,6 +213,7 @@ namespace Lucene.Net.Search
             /// <summary>
             /// The Similarity implementation. </summary>
             protected internal Similarity similarity;
+
             protected internal List<Weight> Weights;
             protected internal int maxCoord; // num optional + num required
             internal readonly bool DisableCoord;
@@ -255,6 +253,7 @@ namespace Lucene.Net.Search
                     return OuterInstance;
                 }
             }
+
             public override float ValueForNormalization
             {
                 get
@@ -384,7 +383,6 @@ namespace Lucene.Net.Search
 
             public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
             {
-
                 if (scoreDocsInOrder || OuterInstance.MinNrShouldMatch > 1)
                 {
                     // TODO: (LUCENE-4872) in some cases BooleanScorer may be faster for minNrShouldMatch
@@ -514,7 +512,6 @@ namespace Lucene.Net.Search
                 // scorer() will return an out-of-order scorer if requested.
                 return true;
             }
-
         }
 
         public override Weight CreateWeight(IndexSearcher searcher)
@@ -529,7 +526,6 @@ namespace Lucene.Net.Search
                 BooleanClause c = clauses[0];
                 if (!c.Prohibited) // just return clause
                 {
-
                     Query query = c.Query.Rewrite(reader); // rewrite first
 
                     if (Boost != 1.0f) // incorporate boost
@@ -679,7 +675,5 @@ namespace Lucene.Net.Search
         {
             return Number.FloatToIntBits(Boost) ^ (clauses.Count == 0 ? 0 : HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count)) + MinimumNumberShouldMatch + (DisableCoord ? 17 : 0);
         }
-
     }
-
 }

@@ -20,8 +20,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
-
-
     using Lucene.Net.Support;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -31,19 +29,17 @@ namespace Lucene.Net.Util
     /// long[], accessed with an int index, implementing <seealso cref="GetBits"/> and
     /// <seealso cref="DocIdSet"/>. If you need to manage more than 2.1B bits, use
     /// <seealso cref="LongBitSet"/>.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public sealed class FixedBitSet : DocIdSet, Bits
     {
-
         /// <summary>
         /// A <seealso cref="DocIdSetIterator"/> which iterates over set bits in a
         /// <seealso cref="FixedBitSet"/>.
         /// </summary>
         public sealed class FixedBitSetIterator : DocIdSetIterator
         {
-
             internal readonly int NumBits, NumWords;
             internal readonly long[] bits;
             internal int Doc = -1;
@@ -133,7 +129,7 @@ namespace Lucene.Net.Util
         /// If the given <seealso cref="FixedBitSet"/> is large enough to hold {@code numBits},
         /// returns the given bits, otherwise returns a new <seealso cref="FixedBitSet"/> which
         /// can hold the requested number of bits.
-        /// 
+        ///
         /// <p>
         /// <b>NOTE:</b> the returned bitset reuses the underlying {@code long[]} of
         /// the given {@code bits} if possible. Also, calling <seealso cref="#length()"/> on the
@@ -270,7 +266,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns number of set bits.  NOTE: this visits every
         ///  long in the backing bits array, and the result is not
-        ///  internally cached! 
+        ///  internally cached!
         /// </summary>
         public int Cardinality()
         {
@@ -386,7 +382,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Does in-place OR of the bits provided by the
-        ///  iterator. 
+        ///  iterator.
         /// </summary>
         public void Or(DocIdSetIterator iter)
         {
@@ -461,7 +457,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Does in-place AND of the bits provided by the
-        ///  iterator. 
+        ///  iterator.
         /// </summary>
         public void And(DocIdSetIterator iter)
         {
@@ -539,7 +535,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Does in-place AND NOT of the bits provided by the
-        ///  iterator. 
+        ///  iterator.
         /// </summary>
         public void AndNot(DocIdSetIterator iter)
         {
@@ -617,7 +613,7 @@ namespace Lucene.Net.Util
             */
 
             long startmask = -1L << startIndex;
-            long endmask = (long) (unchecked((ulong) -1) >> -endIndex);
+            long endmask = (long)(unchecked((ulong)-1) >> -endIndex);
             //long endmask = -(int)((uint)1L >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
@@ -654,7 +650,7 @@ namespace Lucene.Net.Util
             int endWord = (endIndex - 1) >> 6;
 
             long startmask = -1L << startIndex;
-            long endmask = (long)(unchecked((ulong) - 1) >> -endIndex);
+            long endmask = (long)(unchecked((ulong)-1) >> -endIndex);
             //long endmask = -(int)((uint)1UL >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
@@ -743,5 +739,4 @@ namespace Lucene.Net.Util
             return (int)((h >> 32) ^ h) + unchecked((int)0x98761234);
         }
     }
-
 }

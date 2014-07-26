@@ -3,7 +3,6 @@ using System.Threading;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +20,6 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
@@ -35,20 +33,19 @@ namespace Lucene.Net.Store
     /// </pre>
     /// </summary>
     /// <seealso cref= Directory#makeLock(String)
-    /// 
+    ///
     /// @lucene.internal </seealso>
     public abstract class Lock : IDisposable
     {
-
         /// <summary>
         /// How long <seealso cref="#obtain(long)"/> waits, in milliseconds,
-        ///  in between attempts to acquire the lock. 
+        ///  in between attempts to acquire the lock.
         /// </summary>
         public static long LOCK_POLL_INTERVAL = 1000;
 
         /// <summary>
         /// Pass this value to <seealso cref="#obtain(long)"/> to try
-        ///  forever to obtain the lock. 
+        ///  forever to obtain the lock.
         /// </summary>
         public const long LOCK_OBTAIN_WAIT_FOREVER = -1;
 
@@ -122,14 +119,15 @@ namespace Lucene.Net.Store
         /// Releases exclusive access. </summary>
         public abstract void Release();
 
-        public virtual void Dispose() { }
+        public virtual void Dispose()
+        {
+        }
 
         /// <summary>
         /// Returns true if the resource is currently locked.  Note that one must
-        /// still call <seealso cref="#obtain()"/> before using the resource. 
+        /// still call <seealso cref="#obtain()"/> before using the resource.
         /// </summary>
         public abstract bool Locked { get; }
-
 
         /// <summary>
         /// Utility class for executing code with exclusive access. </summary>
@@ -137,7 +135,6 @@ namespace Lucene.Net.Store
         {
             internal Lock @lock;
             internal long LockWaitTimeout;
-
 
             /// <summary>
             /// Constructs an executor that will grab the named lock. </summary>
@@ -176,7 +173,5 @@ namespace Lucene.Net.Store
                 }
             }
         }
-
     }
-
 }

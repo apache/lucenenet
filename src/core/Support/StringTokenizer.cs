@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Support
@@ -234,8 +232,6 @@ namespace Lucene.Net.Support
             {
                 return _tokens.Count - _index;
             }
-
         }
-
     }
 }

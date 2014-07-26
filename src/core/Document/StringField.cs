@@ -1,6 +1,5 @@
 namespace Lucene.Net.Document
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,21 +24,20 @@ namespace Lucene.Net.Document
     ///  String value is indexed as a single token.  For example
     ///  this might be used for a 'country' field or an 'id'
     ///  field, or any field that you intend to use for sorting
-    ///  or access through the field cache. 
+    ///  or access through the field cache.
     /// </summary>
 
     public sealed class StringField : Field
     {
-
         /// <summary>
         /// Indexed, not tokenized, omits norms, indexes
-        ///  DOCS_ONLY, not stored. 
+        ///  DOCS_ONLY, not stored.
         /// </summary>
         public static readonly FieldType TYPE_NOT_STORED = new FieldType();
 
         /// <summary>
         /// Indexed, not tokenized, omits norms, indexes
-        ///  DOCS_ONLY, stored 
+        ///  DOCS_ONLY, stored
         /// </summary>
         public static readonly FieldType TYPE_STORED = new FieldType();
 
@@ -70,5 +68,4 @@ namespace Lucene.Net.Document
         {
         }
     }
-
 }

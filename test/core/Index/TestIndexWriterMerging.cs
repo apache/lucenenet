@@ -1,43 +1,42 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+
     /*
-    /// Copyright 2006 The Apache Software Foundation
-    /// 
-    /// Licensed under the Apache License, Version 2.0 (the "License");
-    /// you may not use this file except in compliance with the License.
-    /// You may obtain a copy of the License at
-    /// 
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    */
+        /// Copyright 2006 The Apache Software Foundation
+        ///
+        /// Licensed under the Apache License, Version 2.0 (the "License");
+        /// you may not use this file except in compliance with the License.
+        /// You may obtain a copy of the License at
+        ///
+        ///     http://www.apache.org/licenses/LICENSE-2.0
+        ///
+        /// Unless required by applicable law or agreed to in writing, software
+        /// distributed under the License is distributed on an "AS IS" BASIS,
+        /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        /// See the License for the specific language governing permissions and
+        /// limitations under the License.
+        */
 
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
-
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestIndexWriterMerging : LuceneTestCase
     {
-
         /// <summary>
         /// Tests that index merging (specifically addIndexes(Directory...)) doesn't
         /// change the index order of documents.
@@ -102,7 +101,6 @@ namespace Lucene.Net.Index
 
         private void FillIndex(Random random, Directory dir, int start, int numDocs)
         {
-
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(2)));
 
             for (int i = start; i < (start + numDocs); i++)
@@ -305,7 +303,6 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-
                     while (true)
                     {
                         MergePolicy.OneMerge merge = writer.NextMerge;
@@ -476,9 +473,7 @@ namespace Lucene.Net.Index
                     }
                     Thread.@Yield();
                 }
-
             }
         }
     }
-
 }

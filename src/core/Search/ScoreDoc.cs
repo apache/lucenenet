@@ -1,6 +1,5 @@
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,7 +22,6 @@ namespace Lucene.Net.Search
 
     public class ScoreDoc
     {
-
         /// <summary>
         /// The score of this document for the query. </summary>
         public float Score;
@@ -59,5 +57,4 @@ namespace Lucene.Net.Search
             return "doc=" + Doc + " score=" + Score + " shardIndex=" + ShardIndex;
         }
     }
-
 }

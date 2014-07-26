@@ -20,25 +20,24 @@ namespace Lucene.Net.Search.Payloads
      */
 
     using Lucene.Net.Analysis;
+    using NUnit.Framework;
+    using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using English = Lucene.Net.Util.English;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using MultiSpansWrapper = Lucene.Net.Search.Spans.MultiSpansWrapper;
-    using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
-    using Spans = Lucene.Net.Search.Spans.Spans;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Document.Document;
+    using English = Lucene.Net.Util.English;
+    using Field = Lucene.Net.Document.Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MultiSpansWrapper = Lucene.Net.Search.Spans.MultiSpansWrapper;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using Spans = Lucene.Net.Search.Spans.Spans;
+    using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
     using Term = Lucene.Net.Index.Term;
-    using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using System.IO;
-    using NUnit.Framework;
 
     [TestFixture]
     public class TestPayloadTermQuery : LuceneTestCase
@@ -53,7 +52,6 @@ namespace Lucene.Net.Search.Payloads
 
         private class PayloadAnalyzer : Analyzer
         {
-
             internal PayloadAnalyzer()
                 : base(PER_FIELD_REUSE_STRATEGY)
             {
@@ -178,7 +176,6 @@ namespace Lucene.Net.Search.Payloads
             {
               Assert.IsTrue(score == hits.Score(i), "scores are not equal and they should be");
             }*/
-
         }
 
         [Test]
@@ -294,7 +291,6 @@ namespace Lucene.Net.Search.Payloads
             TopDocs hits = Searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
             Assert.IsTrue(hits.TotalHits == 0, "hits Size: " + hits.TotalHits + " is not: " + 0);
-
         }
 
         [Test]
@@ -317,7 +313,6 @@ namespace Lucene.Net.Search.Payloads
 
         internal class BoostingSimilarity : DefaultSimilarity
         {
-
             public override float QueryNorm(float sumOfSquaredWeights)
             {
                 return 1;
@@ -367,7 +362,5 @@ namespace Lucene.Net.Search.Payloads
                 return payload[offset];
             }
         }
-
     }
-
 }

@@ -2,44 +2,44 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
     using SpanFirstQuery = Lucene.Net.Search.Spans.SpanFirstQuery;
     using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
     using SpanNotQuery = Lucene.Net.Search.Spans.SpanNotQuery;
     using SpanOrQuery = Lucene.Net.Search.Spans.SpanOrQuery;
     using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
     using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Term = Lucene.Net.Index.Term;
 
     /// <summary>
     /// Tests primitive queries (ie: that rewrite to themselves) to
     /// insure they match the expected set of docs, and that the score of each
     /// match is equal to the value of the scores explanation.
-    /// 
+    ///
     /// <p>
     /// The assumption is that if all of the "primitive" queries work well,
     /// then anything that rewrites to a primitive will work well also.
@@ -54,8 +54,10 @@ namespace Lucene.Net.Search
         protected internal static Directory Directory;
 
         public const string KEY = "KEY";
+
         // boost on this field is the same as the iterator for the doc
         public const string FIELD = "field";
+
         // same contents, but no field boost
         public const string ALTFIELD = "alt";
 
@@ -123,10 +125,12 @@ namespace Lucene.Net.Search
                 }
                 return @out;
             }
+
             public ItemizedFilter(string keyField, int[] keys)
                 : base(keyField, Int2str(keys))
             {
             }
+
             public ItemizedFilter(int[] keys)
                 : base(KEY, Int2str(keys))
             {
@@ -165,6 +169,7 @@ namespace Lucene.Net.Search
         {
             return Sor(St(s), St(e));
         }
+
         /// <summary>
         /// MACRO for SpanOrQuery containing two SpanQueries </summary>
         public virtual SpanOrQuery Sor(SpanQuery s, SpanQuery e)
@@ -178,6 +183,7 @@ namespace Lucene.Net.Search
         {
             return Sor(St(s), St(m), St(e));
         }
+
         /// <summary>
         /// MACRO for SpanOrQuery containing two SpanQueries </summary>
         public virtual SpanOrQuery Sor(SpanQuery s, SpanQuery m, SpanQuery e)
@@ -191,6 +197,7 @@ namespace Lucene.Net.Search
         {
             return Snear(St(s), St(e), slop, inOrder);
         }
+
         /// <summary>
         /// MACRO for SpanNearQuery containing two SpanQueries </summary>
         public virtual SpanNearQuery Snear(SpanQuery s, SpanQuery e, int slop, bool inOrder)
@@ -198,13 +205,13 @@ namespace Lucene.Net.Search
             return new SpanNearQuery(new SpanQuery[] { s, e }, slop, inOrder);
         }
 
-
         /// <summary>
         /// MACRO for SpanNearQuery containing three SpanTerm queries </summary>
         public virtual SpanNearQuery Snear(string s, string m, string e, int slop, bool inOrder)
         {
             return Snear(St(s), St(m), St(e), slop, inOrder);
         }
+
         /// <summary>
         /// MACRO for SpanNearQuery containing three SpanQueries </summary>
         public virtual SpanNearQuery Snear(SpanQuery s, SpanQuery m, SpanQuery e, int slop, bool inOrder)
@@ -253,5 +260,4 @@ namespace Lucene.Net.Search
             /* NOOP */
         }
     }
-
 }

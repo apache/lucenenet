@@ -15,42 +15,34 @@
  * limitations under the License.
  */
 
-
 using System;
 using System.Collections.Generic;
 
 // Used only for WRITE_LOCK_NAME in deprecated create=true case:
-using System.IO;
 using System.Linq;
-using Lucene.Net.Support;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Constants = Lucene.Net.Util.Constants;
-using System.Threading;
 
 namespace Lucene.Net.Store
 {
-
+    using System.IO;
     using Constants = Lucene.Net.Util.Constants;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using System.IO;
-
 
     /// <summary>
     /// Base class for Directory implementations that store index
-    /// files in the file system.  
+    /// files in the file system.
     /// <a name="subclasses"/>
     /// There are currently three core
     /// subclasses:
-    /// 
+    ///
     /// <ul>
-    /// 
+    ///
     ///  <li> <seealso cref="SimpleFSDirectory"/> is a straightforward
     ///       implementation using java.io.RandomAccessFile.
     ///       However, it has poor concurrent performance
     ///       (multiple threads will bottleneck) as it
     ///       synchronizes when multiple threads read from the
     ///       same file.
-    /// 
+    ///
     ///  <li> <seealso cref="NIOFSDirectory"/> uses java.nio's
     ///       FileChannel's positional io when reading to avoid
     ///       synchronization when reading from the same file.
@@ -62,9 +54,9 @@ namespace Lucene.Net.Store
     ///       <seealso cref="Future#cancel(boolean)"/> should use
     ///       <seealso cref="SimpleFSDirectory"/> instead. See <seealso cref="NIOFSDirectory"/> java doc
     ///       for details.
-    ///        
-    ///        
-    /// 
+    ///
+    ///
+    ///
     ///  <li> <seealso cref="MMapDirectory"/> uses memory-mapped IO when
     ///       reading. this is a good choice if you have plenty
     ///       of virtual memory relative to your index size, eg
@@ -89,13 +81,13 @@ namespace Lucene.Net.Store
     ///       an important limitation to be aware of. this class supplies a
     ///       (possibly dangerous) workaround mentioned in the bug report,
     ///       which may fail on non-Sun JVMs.
-    ///       
+    ///
     ///       Applications using <seealso cref="Thread#interrupt()"/> or
     ///       <seealso cref="Future#cancel(boolean)"/> should use
     ///       <seealso cref="SimpleFSDirectory"/> instead. See <seealso cref="MMapDirectory"/>
     ///       java doc for details.
     /// </ul>
-    /// 
+    ///
     /// Unfortunately, because of system peculiarities, there is
     /// no single overall best implementation.  Therefore, we've
     /// added the <seealso cref="#open"/> method, to allow Lucene to choose
@@ -105,7 +97,7 @@ namespace Lucene.Net.Store
     /// specific implementation, it's best to simply use {@link
     /// #open}.  For all others, you should instantiate the
     /// desired implementation directly.
-    /// 
+    ///
     /// <p>The locking implementation is by default {@link
     /// NativeFSLockFactory}, but can be changed by
     /// passing in a custom <seealso cref="LockFactory"/> instance.
@@ -113,11 +105,10 @@ namespace Lucene.Net.Store
     /// <seealso cref= Directory </seealso>
     public abstract class FSDirectory : BaseDirectory
     {
-
         /// <summary>
         /// Default read chunk size: 8192 bytes (this is the size up to which the JDK
         ///   does not allocate additional arrays while reading/writing) </summary>
-        ///   @deprecated this constant is no longer used since Lucene 4.5. 
+        ///   @deprecated this constant is no longer used since Lucene 4.5.
         [Obsolete("this constant is no longer used since Lucene 4.5.")]
         public const int DEFAULT_READ_CHUNK_SIZE = 8192;
 
@@ -166,21 +157,20 @@ namespace Lucene.Net.Store
             }
 
             LockFactory = lockFactory;
-
         }
 
         /// <summary>
         /// Creates an FSDirectory instance, trying to pick the
         ///  best implementation given the current environment.
         ///  The directory returned uses the <seealso cref="NativeFSLockFactory"/>.
-        /// 
+        ///
         ///  <p>Currently this returns <seealso cref="MMapDirectory"/> for most Solaris
         ///  and Windows 64-bit JREs, <seealso cref="NIOFSDirectory"/> for other
         ///  non-Windows JREs, and <seealso cref="SimpleFSDirectory"/> for other
         ///  JREs on Windows. It is highly recommended that you consult the
         ///  implementation's documentation for your platform before
         ///  using this method.
-        /// 
+        ///
         /// <p><b>NOTE</b>: this method may suddenly change which
         /// implementation is returned from release to release, in
         /// the event that higher performance defaults become
@@ -188,8 +178,8 @@ namespace Lucene.Net.Store
         /// your application, please instantiate it directly,
         /// instead. For optimal performance you should consider using
         /// <seealso cref="MMapDirectory"/> on 64 bit JVMs.
-        /// 
-        /// <p>See <a href="#subclasses">above</a> 
+        ///
+        /// <p>See <a href="#subclasses">above</a>
         /// </summary>
         public static FSDirectory Open(DirectoryInfo path)
         {
@@ -198,7 +188,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Just like <seealso cref="#open(File)"/>, but allows you to
-        ///  also specify a custom <seealso cref="LockFactory"/>. 
+        ///  also specify a custom <seealso cref="LockFactory"/>.
         /// </summary>
         public static FSDirectory Open(DirectoryInfo path, LockFactory lockFactory)
         {
@@ -241,7 +231,6 @@ namespace Lucene.Net.Store
                         lf.LockPrefix = null;
                     }
                 }
-
             }
         }
 
@@ -473,7 +462,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// this setting has no effect anymore. </summary>
-        /// @deprecated this is no longer used since Lucene 4.5. 
+        /// @deprecated this is no longer used since Lucene 4.5.
         [Obsolete("this is no longer used since Lucene 4.5.")]
         public int ReadChunkSize
         {
@@ -490,7 +479,6 @@ namespace Lucene.Net.Store
                 return ChunkSize;
             }
         }
-
 
         /// <summary>
         /// Writes output with <seealso cref="RandomAccessFile#write(byte[], int, int)"/>
@@ -575,5 +563,4 @@ namespace Lucene.Net.Store
             IOUtils.Fsync(new FileInfo(Path.Combine(Directory.FullName, name)), false);
         }
     }
-
 }

@@ -3,49 +3,49 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using Directory = Lucene.Net.Store.Directory;
-    using MatchNoBits = Lucene.Net.Util.Bits_MatchNoBits;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MatchNoBits = Lucene.Net.Util.Bits_MatchNoBits;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Terms = Lucene.Net.Index.Terms;
+    using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
 
     // TODO: really this should be in BaseTestPF or somewhere else? useful test!
     [TestFixture]
     public class TestReuseDocsEnum : LuceneTestCase
     {
-
         [TestFixtureSetUp]
         public static void BeforeClass()
         {
@@ -213,7 +213,5 @@ namespace Lucene.Net.Codecs.Lucene40
 
             lineFileDocs.Dispose();
         }
-
     }
-
 }

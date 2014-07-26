@@ -1,41 +1,39 @@
+using Lucene.Net.Support;
 using System;
 using System.Text;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
-    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
-    using Document = Lucene.Net.Document.Document;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
     using NUnit.Framework;
     using System.IO;
 
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
+    using TextField = Lucene.Net.Document.TextField;
+    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
+    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
 
     /// <summary>
     /// Test adding to the info stream when there's an exception thrown during field analysis.
@@ -145,7 +143,5 @@ namespace Lucene.Net.Index
             writer.Dispose();
             dir.Dispose();
         }
-
     }
-
 }

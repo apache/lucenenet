@@ -1,56 +1,48 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
 {
+    using NUnit.Framework;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using TextField = Lucene.Net.Document.TextField;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using MultiReader = Lucene.Net.Index.MultiReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
     using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NamedThreadFactory = Lucene.Net.Util.NamedThreadFactory;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
+    using Term = Lucene.Net.Index.Term;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestBooleanQuery : LuceneTestCase
     {
-
         [Test]
         public virtual void TestEquality()
         {
@@ -285,7 +277,6 @@ namespace Lucene.Net.Search
                 // verify exact match:
                 for (int iter2 = 0; iter2 < 10; iter2++)
                 {
-
                     weight = s.CreateNormalizedWeight(q);
                     scorer = weight.Scorer(s.LeafContexts[0], null);
 
@@ -410,7 +401,5 @@ namespace Lucene.Net.Search
                 base.Search(leaves, weight, collector);
             }
         }
-
     }
-
 }

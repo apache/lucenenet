@@ -14,63 +14,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Lucene.Net.Util.Mutable
 {
+    /// <summary>
+    /// <seealso cref="MutableValue"/> implementation of type
+    /// <seealso cref="String"/>.
+    /// </summary>
+    public class MutableValueStr : MutableValue
+    {
+        public BytesRef Value = new BytesRef();
 
-	/// <summary>
-	/// <seealso cref="MutableValue"/> implementation of type 
-	/// <seealso cref="String"/>.
-	/// </summary>
-	public class MutableValueStr : MutableValue
-	{
-	  public BytesRef Value = new BytesRef();
+        public override object ToObject()
+        {
+            return Exists ? Value.Utf8ToString() : null;
+        }
 
-	  public override object ToObject()
-	  {
-		return Exists ? Value.Utf8ToString() : null;
-	  }
+        public override void Copy(MutableValue source)
+        {
+            MutableValueStr s = (MutableValueStr)source;
+            Exists = s.Exists;
+            Value.CopyBytes(s.Value);
+        }
 
-	  public override void Copy(MutableValue source)
-	  {
-		MutableValueStr s = (MutableValueStr) source;
-		Exists = s.Exists;
-		Value.CopyBytes(s.Value);
-	  }
+        public override MutableValue Duplicate()
+        {
+            MutableValueStr v = new MutableValueStr();
+            v.Value.CopyBytes(Value);
+            v.Exists = this.Exists;
+            return v;
+        }
 
-	  public override MutableValue Duplicate()
-	  {
-		MutableValueStr v = new MutableValueStr();
-		v.Value.CopyBytes(Value);
-		v.Exists = this.Exists;
-		return v;
-	  }
+        public override bool EqualsSameType(object other)
+        {
+            MutableValueStr b = (MutableValueStr)other;
+            return Value.Equals(b.Value) && Exists == b.Exists;
+        }
 
-	  public override bool EqualsSameType(object other)
-	  {
-		MutableValueStr b = (MutableValueStr)other;
-		return Value.Equals(b.Value) && Exists == b.Exists;
-	  }
+        public override int CompareSameType(object other)
+        {
+            MutableValueStr b = (MutableValueStr)other;
+            int c = Value.CompareTo(b.Value);
+            if (c != 0)
+            {
+                return c;
+            }
+            if (Exists == b.Exists)
+            {
+                return 0;
+            }
+            return Exists ? 1 : -1;
+        }
 
-	  public override int CompareSameType(object other)
-	  {
-		MutableValueStr b = (MutableValueStr)other;
-		int c = Value.CompareTo(b.Value);
-		if (c != 0)
-		{
-			return c;
-		}
-		if (Exists == b.Exists)
-		{
-			return 0;
-		}
-		return Exists ? 1 : -1;
-	  }
-
-
-	  public override int GetHashCode()
-	  {
-		return Value.GetHashCode();
-	  }
-	}
-
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+    }
 }

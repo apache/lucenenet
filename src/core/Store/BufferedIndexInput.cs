@@ -4,7 +4,6 @@ using System.IO;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,12 +21,10 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Base implementation class for buffered <seealso cref="IndexInput"/>. </summary>
     public abstract class BufferedIndexInput : IndexInput
     {
-
         /// <summary>
         /// Default buffer size set to {@value #BUFFER_SIZE}. </summary>
         public const int BUFFER_SIZE = 1024;
@@ -125,7 +122,6 @@ namespace Lucene.Net.Store
             // Subclasses can do something here
             Buffer = newBuffer;
         }
-
 
         private void CheckBufferSize(int bufferSize)
         {
@@ -390,6 +386,7 @@ namespace Lucene.Net.Store
                 return BufferStart + BufferPosition;
             }
         }
+
         public override sealed void Seek(long pos)
         {
             if (pos >= BufferStart && pos < (BufferStart + BufferLength))
@@ -455,11 +452,10 @@ namespace Lucene.Net.Store
             {
                 case IOContext.Context_e.MERGE:
                     return MERGE_BUFFER_SIZE;
+
                 default:
                     return BUFFER_SIZE;
             }
         }
-
     }
-
 }

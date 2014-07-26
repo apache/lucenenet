@@ -21,8 +21,6 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Support
 {
@@ -83,7 +81,7 @@ namespace Lucene.Net.Support
                     bits[i] = shorter[i] | longer[i];
                 }
             }
-           
+
             return bits;
         }
 

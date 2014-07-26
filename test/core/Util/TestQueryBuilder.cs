@@ -1,10 +1,9 @@
-using System.IO;
 using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
+using System.IO;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,23 +21,20 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using Term = Lucene.Net.Index.Term;
     using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using MultiPhraseQuery = Lucene.Net.Search.MultiPhraseQuery;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
     using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
+    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
+    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     [TestFixture]
     public class TestQueryBuilder : LuceneTestCase
@@ -437,5 +433,4 @@ namespace Lucene.Net.Util
             Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "中国", 3));
         }
     }
-
 }

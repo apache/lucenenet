@@ -5,67 +5,64 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using Token = Lucene.Net.Analysis.Token;
-    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using PhraseQuery = Lucene.Net.Search.PhraseQuery;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using FakeIOException = Lucene.Net.Store.MockDirectoryWrapper.FakeIOException;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using InfoStream = Lucene.Net.Util.InfoStream;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
     using System.IO;
 
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
+    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using InfoStream = Lucene.Net.Util.InfoStream;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
+    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
+    using StringField = Lucene.Net.Document.StringField;
+    using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Document.TextField;
+    using Token = Lucene.Net.Analysis.Token;
+    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
+
     [TestFixture]
     public class TestIndexWriterExceptions : LuceneTestCase
     {
-
         private class DocCopyIterator : IEnumerable<Document>
         {
             internal readonly Document Doc;
@@ -82,7 +79,6 @@ namespace Lucene.Net.Index
 
             static DocCopyIterator()
             {
-
                 Custom1.StoreTermVectors = true;
                 Custom1.StoreTermVectorPositions = true;
                 Custom1.StoreTermVectorOffsets = true;
@@ -129,7 +125,6 @@ namespace Lucene.Net.Index
                 internal int upto;
                 private Document current;
 
-
                 public bool MoveNext()
                 {
                     if (upto >= OuterInstance.Count)
@@ -157,15 +152,15 @@ namespace Lucene.Net.Index
                     throw new NotImplementedException();
                 }
 
-                public void Dispose() { }
-
+                public void Dispose()
+                {
+                }
             }
         }
 
         private class IndexerThread : ThreadClass
         {
             private readonly TestIndexWriterExceptions OuterInstance;
-
 
             internal IndexWriter Writer;
 
@@ -181,7 +176,6 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-
                 Document doc = new Document();
 
                 doc.Add(NewTextField(r, "content1", "aaa bbb ccc ddd", Field.Store.YES));
@@ -290,6 +284,7 @@ namespace Lucene.Net.Index
             }
 
             internal Random r = new Random(Random().Next());
+
             public void Apply(string name)
             {
                 if (OuterInstance.DoFail.Value != null && !name.Equals("startDoFlush") && r.Next(40) == 17)
@@ -535,6 +530,7 @@ namespace Lucene.Net.Index
         {
             internal bool DoFail;
             internal bool Failed;
+
             public void Apply(string name)
             {
                 if (DoFail && name.Equals("startMergeInit"))
@@ -544,7 +540,6 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
 
         // LUCENE-1210
         [Test]
@@ -641,7 +636,6 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-
             protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
@@ -677,7 +671,6 @@ namespace Lucene.Net.Index
                     this.count = 0;
                 }
             }
-
         }
 
         private class FailOnlyOnFlush : MockDirectoryWrapper.Failure
@@ -689,6 +682,7 @@ namespace Lucene.Net.Index
             {
                 this.DoFail = true;
             }
+
             public override void ClearDoFail()
             {
                 this.DoFail = false;
@@ -1049,11 +1043,11 @@ namespace Lucene.Net.Index
         private class FailOnlyInSync : MockDirectoryWrapper.Failure
         {
             internal bool DidFail;
+
             public override void Eval(MockDirectoryWrapper dir)
             {
                 if (DoFail)
                 {
-
                     var trace = new StackTrace();
                     foreach (var frame in trace.GetFrames())
                     {
@@ -1121,7 +1115,6 @@ namespace Lucene.Net.Index
 
         private class FailOnlyInCommit : MockDirectoryWrapper.Failure
         {
-
             internal bool FailOnCommit, FailOnDeleteFile;
             internal readonly bool DontFailDuringGlobalFieldMap;
             internal const string PREPARE_STAGE = "prepareCommit";
@@ -1263,7 +1256,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestOutOfMemoryErrorCausesCloseToFail()
         {
-
             AtomicBoolean thrown = new AtomicBoolean(false);
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetInfoStream(new TOOMInfoStreamAnonymousInnerClassHelper(this, thrown)));
@@ -1315,7 +1307,6 @@ namespace Lucene.Net.Index
         // LUCENE-1347
         private sealed class TestPoint4 : RandomIndexWriter.TestPoint
         {
-
             internal bool DoFail;
 
             public void Apply(string name)
@@ -1334,7 +1325,6 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             TestPoint4 testPoint = new TestPoint4();
             IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())), testPoint);
-
 
             AddDoc(w);
             testPoint.DoFail = true;
@@ -1621,7 +1611,6 @@ namespace Lucene.Net.Index
                             w.Commit();
                             TestUtil.CheckIndex(dir);
                         }
-
                     }
                     Document document = new Document();
                     document.Add(new TextField("field", "a field", Field.Store.YES));
@@ -1668,7 +1657,6 @@ namespace Lucene.Net.Index
 
         private class FailOnTermVectors : MockDirectoryWrapper.Failure
         {
-
             internal const string INIT_STAGE = "initTermVectorsWriter";
             internal const string AFTER_INIT_STAGE = "finishDocument";
             internal const string EXC_MSG = "FOTV";
@@ -1681,7 +1669,6 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-
                 var trace = new StackTrace();
                 bool fail = false;
                 foreach (var frame in trace.GetFrames())
@@ -1766,7 +1753,6 @@ namespace Lucene.Net.Index
             r.Dispose();
             dir.Dispose();
         }
-
 
         [Test]
         public virtual void TestUpdateDocsNonAbortingException()
@@ -1990,7 +1976,6 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-
             public string Name()
             {
                 return "foo";
@@ -2017,7 +2002,6 @@ namespace Lucene.Net.Index
                 {
                     return "baz";
                 }
-
             }
 
             public TextReader ReaderValue
@@ -2034,7 +2018,6 @@ namespace Lucene.Net.Index
                 {
                     return null;
                 }
-
             }
 
             public TokenStream GetTokenStream(Analyzer analyzer)
@@ -2048,7 +2031,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTooManyFileException()
         {
-
             // Create failure that throws Too many open files exception randomly
             MockDirectoryWrapper.Failure failure = new FailureAnonymousInnerClassHelper(this);
 
@@ -2111,7 +2093,6 @@ namespace Lucene.Net.Index
             {
                 this.OuterInstance = outerInstance;
             }
-
 
             public override MockDirectoryWrapper.Failure Reset()
             {
@@ -2200,7 +2181,6 @@ namespace Lucene.Net.Index
 
                 try
                 {
-
                     bool defaultCodecSupportsFieldUpdates = DefaultCodecSupportsFieldUpdates();
                     for (int i = 0; i < numDocs; i++)
                     {
@@ -2265,7 +2245,6 @@ namespace Lucene.Net.Index
                         w.Dispose();
                         w = null;
                     }
-
                 }
                 catch (IOException ioe)
                 {
@@ -2386,7 +2365,6 @@ namespace Lucene.Net.Index
                 this.Dir = dir;
                 this.ShouldFail = shouldFail;
             }
-
 
             public override void Eval(MockDirectoryWrapper dir)
             {
@@ -2594,7 +2572,6 @@ namespace Lucene.Net.Index
                 this.Dir = dir;
             }
 
-
             public override void Eval(MockDirectoryWrapper dir)
             {
                 bool maybeFail = false;
@@ -2621,5 +2598,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

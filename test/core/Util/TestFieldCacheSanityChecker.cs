@@ -1,43 +1,42 @@
-using System;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
-
-    /*
-    /// Copyright 2009 The Apache Software Foundation
-    /// 
-    /// Licensed under the Apache License, Version 2.0 (the "License");
-    /// you may not use this file except in compliance with the License.
-    /// You may obtain a copy of the License at
-    /// 
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldCache = Lucene.Net.Search.FieldCache;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using MultiReader = Lucene.Net.Index.MultiReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
-    using Directory = Lucene.Net.Store.Directory;
     using Insanity = Lucene.Net.Util.FieldCacheSanityChecker.Insanity;
     using InsanityType = Lucene.Net.Util.FieldCacheSanityChecker.InsanityType;
+
+    /*
+        /// Copyright 2009 The Apache Software Foundation
+        ///
+        /// Licensed under the Apache License, Version 2.0 (the "License");
+        /// you may not use this file except in compliance with the License.
+        /// You may obtain a copy of the License at
+        ///
+        ///     http://www.apache.org/licenses/LICENSE-2.0
+        ///
+        /// Unless required by applicable law or agreed to in writing, software
+        /// distributed under the License is distributed on an "AS IS" BASIS,
+        /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        /// See the License for the specific language governing permissions and
+        /// limitations under the License.
+        */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MultiReader = Lucene.Net.Index.MultiReader;
+    using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
 
     [TestFixture]
     public class TestFieldCacheSanityChecker : LuceneTestCase
     {
-
         protected internal AtomicReader ReaderA;
         protected internal AtomicReader ReaderB;
         protected internal AtomicReader ReaderX;
@@ -115,7 +114,7 @@ namespace Lucene.Net.Util
             cache.GetInts(ReaderX, "theInt", false);
             cache.GetInts(ReaderX, "theInt", FieldCache_Fields.DEFAULT_INT_PARSER, false);
 
-            // // // 
+            // // //
 
             Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.CacheEntries);
 
@@ -138,7 +137,7 @@ namespace Lucene.Net.Util
             cache.GetTerms(ReaderX, "theInt", false);
             cache.GetBytes(ReaderX, "theByte", false);
 
-            // // // 
+            // // //
 
             Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.CacheEntries);
 
@@ -162,8 +161,7 @@ namespace Lucene.Net.Util
 
             cache.GetBytes(ReaderX, "theByte", false);
 
-
-            // // // 
+            // // //
 
             Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.CacheEntries);
 
@@ -174,7 +172,5 @@ namespace Lucene.Net.Util
             // we expect bad things, don't let tearDown complain about them
             cache.PurgeAllCaches();
         }
-
     }
-
 }

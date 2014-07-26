@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
+using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
-
     /*
     /// Licensed to the Apache Software Foundation (ASF) under one or more
     /// contributor license agreements.  See the NOTICE file distributed with
@@ -13,9 +12,9 @@ namespace Lucene.Net.Util
     /// The ASF licenses this file to You under the Apache License, Version 2.0
     /// (the "License"); you may not use this file except in compliance with
     /// the License.  You may obtain a copy of the License at
-    /// 
+    ///
     ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
+    ///
     /// Unless required by applicable law or agreed to in writing, software
     /// distributed under the License is distributed on an "AS IS" BASIS,
     /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,10 +23,11 @@ namespace Lucene.Net.Util
     */
 
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IOContext = Lucene.Net.Store.IOContext;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+
     //using Ignore = org.junit.Ignore;
 
     //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -36,7 +36,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class Test2BPagedBytes : LuceneTestCase
     {
-
         [Test]
         public virtual void Test()
         {
@@ -86,5 +85,4 @@ namespace Lucene.Net.Util
             dir.Dispose();
         }
     }
-
 }

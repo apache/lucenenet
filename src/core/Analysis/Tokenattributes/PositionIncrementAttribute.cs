@@ -2,7 +2,6 @@ using System;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -50,7 +49,6 @@ namespace Lucene.Net.Analysis.Tokenattributes
             }
         }
 
-
         public override void Clear()
         {
             this.positionIncrement = 1;
@@ -83,5 +81,4 @@ namespace Lucene.Net.Analysis.Tokenattributes
             t.PositionIncrement = positionIncrement;
         }
     }
-
 }

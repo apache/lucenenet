@@ -3,38 +3,35 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using Lucene.Net.Util;
-    using Lucene.Net.Store;
-    using Lucene.Net.Search;
     using Lucene.Net.Analysis;
     using Lucene.Net.Analysis.Tokenattributes;
     using Lucene.Net.Document;
-    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Lucene.Net.Document;
+    using Lucene.Net.Search;
+    using Lucene.Net.Store;
+    using Lucene.Net.Support;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
     using Lucene.Net.Util;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using NUnit.Framework;
     using System.Runtime.CompilerServices;
-    using Lucene.Net.Support;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 
     // NOTE: this test will fail w/ PreFlexRW codec!  (Because
     // this test uses full binary term space, but PreFlex cannot
@@ -52,14 +49,12 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class Test2BTerms : LuceneTestCase
     {
-
         private const int TOKEN_LEN = 5;
 
         private static readonly BytesRef Bytes = new BytesRef(TOKEN_LEN);
 
         private sealed class MyTokenStream : TokenStream
         {
-
             internal readonly int TokensPerDoc;
             internal int TokenCount;
             public readonly IList<BytesRef> SavedTerms = new List<BytesRef>();
@@ -176,7 +171,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void Test2BTerms_Mem()
         {
-
             if ("Lucene3x".Equals(Codec.Default.Name))
             {
                 throw new Exception("this test cannot run with PreFlex codec");
@@ -198,7 +192,6 @@ namespace Lucene.Net.Index
 
             if (true)
             {
-
                 IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
@@ -317,5 +310,4 @@ namespace Lucene.Net.Index
             Assert.IsFalse(failed);
         }
     }
-
 }

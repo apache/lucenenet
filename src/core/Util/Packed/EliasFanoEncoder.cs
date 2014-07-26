@@ -22,9 +22,6 @@ using System.Text;
 
 namespace Lucene.Net.Util.Packed
 {
-
-
-
     /// <summary>
     /// Encode a non decreasing sequence of non negative whole numbers in the Elias-Fano encoding
     /// that was introduced in the 1970's by Peter Elias and Robert Fano.
@@ -75,13 +72,13 @@ namespace Lucene.Net.Util.Packed
     /// <br>
     /// Sebastiano Vigna, "Quasi Succinct Indices", June 19, 2012, sections 3, 4 and 9.
     /// Retrieved from http://arxiv.org/pdf/1206.4300 .
-    /// 
+    ///
     /// <p>The articles originally describing the Elias-Fano representation are:
     /// <br>Peter Elias, "Efficient storage and retrieval by content and address of static files",
     /// J. Assoc. Comput. Mach., 21(2):246â€"260, 1974.
     /// <br>Robert M. Fano, "On the number of bits required to implement an associative memory",
     ///  Memorandum 61, Computer Structures Group, Project MAC, MIT, Cambridge, Mass., 1971.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
 
@@ -101,17 +98,18 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// The default index interval for zero upper bits. </summary>
         public const long DEFAULT_INDEX_INTERVAL = 256;
+
         internal readonly long NumIndexEntries;
         internal readonly long IndexInterval;
         internal readonly int NIndexEntryBits;
+
         /// <summary>
         /// upperZeroBitPositionIndex[i] (filled using packValue) will contain the bit position
         ///  just after the zero bit ((i+1) * indexInterval) in the upper bits.
         /// </summary>
         internal readonly long[] UpperZeroBitPositionIndex;
+
         internal long CurrentEntryIndex; // also indicates how many entries in the index are valid.
-
-
 
         /// <summary>
         /// Construct an Elias-Fano encoder.
@@ -389,8 +387,5 @@ namespace Lucene.Net.Util.Packed
             int h = ((int)(31 * (NumValues + 7 * (NumEncoded + 5 * (NumLowBits + 3 * (NumIndexEntries + 11 * IndexInterval)))))) ^ Arrays.GetHashCode(UpperLongs) ^ Arrays.GetHashCode(LowerLongs);
             return h;
         }
-
     }
-
-
 }

@@ -1,37 +1,35 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Search.Spans
 {
+    using Lucene.Net.Support;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
-    using Bits = Lucene.Net.Util.Bits;
-    using Lucene.Net.Util;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Matches the union of its clauses. </summary>
@@ -44,7 +42,6 @@ namespace Lucene.Net.Search.Spans
         /// Construct a SpanOrQuery merging the provided clauses. </summary>
         public SpanOrQuery(params SpanQuery[] clauses)
         {
-
             // copy clauses array into an ArrayList
             this.clauses = new List<SpanQuery>(clauses.Length);
             for (int i = 0; i < clauses.Length; i++)
@@ -85,6 +82,7 @@ namespace Lucene.Net.Search.Spans
                 return field;
             }
         }
+
         public override void ExtractTerms(ISet<Term> terms)
         {
             foreach (SpanQuery clause in clauses)
@@ -181,7 +179,6 @@ namespace Lucene.Net.Search.Spans
             h ^= Number.FloatToIntBits(Boost);
             return h;
         }
-
 
         private class SpanQueue : Util.PriorityQueue<Spans>
         {
@@ -318,14 +315,17 @@ namespace Lucene.Net.Search.Spans
             {
                 return Top().Doc();
             }
+
             public override int Start()
             {
                 return Top().Start();
             }
+
             public override int End()
             {
                 return Top().End();
             }
+
             public override ICollection<sbyte[]> Payload
             {
                 get
@@ -358,9 +358,6 @@ namespace Lucene.Net.Search.Spans
             {
                 return cost;
             }
-
         }
-
     }
-
 }

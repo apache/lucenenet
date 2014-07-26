@@ -1,11 +1,11 @@
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Text;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-
     using System.IO;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -23,9 +23,7 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-
     using Bits = Lucene.Net.Util.Bits;
-
 
     /// <summary>
     /// An <seealso cref="AtomicReader"/> which reads multiple, parallel indexes.  Each index
@@ -34,12 +32,12 @@ namespace Lucene.Net.Index
     /// Each document contains the union of the fields of all documents
     /// with the same document number.  When searching, matches for a
     /// query term are from the first index added that has the field.
-    /// 
+    ///
     /// <p>this is useful, e.g., with collections that have large fields which
     /// change rarely and small fields that change more frequently.  The smaller
     /// fields may be re-indexed in a new index and both indexes may be searched
     /// together.
-    /// 
+    ///
     /// <p><strong>Warning:</strong> It is up to you to make sure all indexes
     /// are created and modified the same way. For example, if you add
     /// documents to one index, you need to add the same documents in the
@@ -67,7 +65,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Create a ParallelAtomicReader based on the provided
-        ///  readers; auto-closes the given readers on <seealso cref="#close()"/>. 
+        ///  readers; auto-closes the given readers on <seealso cref="#close()"/>.
         /// </summary>
         public ParallelAtomicReader(params AtomicReader[] readers)
             : this(true, readers)
@@ -81,7 +79,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Create a ParallelAtomicReader based on the provided
-        ///  readers. 
+        ///  readers.
         /// </summary>
         public ParallelAtomicReader(bool closeSubReaders, params AtomicReader[] readers)
             : this(closeSubReaders, readers, readers)
@@ -96,7 +94,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Expert: create a ParallelAtomicReader based on the provided
         ///  readers and storedFieldReaders; when a document is
-        ///  loaded, only storedFieldsReaders will be used. 
+        ///  loaded, only storedFieldsReaders will be used.
         /// </summary>
         public ParallelAtomicReader(bool closeSubReaders, AtomicReader[] readers, AtomicReader[] storedFieldsReaders)
         {
@@ -401,5 +399,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

@@ -1,6 +1,5 @@
 namespace Lucene.Net.Search.Payloads
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -18,17 +17,15 @@ namespace Lucene.Net.Search.Payloads
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Calculate the final score as the average score of all payloads seen.
     /// <p/>
-    /// Is thread safe and completely reusable. 
-    /// 
-    /// 
+    /// Is thread safe and completely reusable.
+    ///
+    ///
     /// </summary>
     public class AveragePayloadFunction : PayloadFunction
     {
-
         public override float CurrentScore(int docId, string field, int start, int end, int numPayloadsSeen, float currentScore, float currentPayloadScore)
         {
             return currentPayloadScore + currentScore;
@@ -64,5 +61,4 @@ namespace Lucene.Net.Search.Payloads
             return true;
         }
     }
-
 }

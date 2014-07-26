@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,11 +25,10 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Represents hits returned by {@link
     /// IndexSearcher#search(Query,Filter,int)} and {@link
-    /// IndexSearcher#search(Query,int)}. 
+    /// IndexSearcher#search(Query,int)}.
     /// </summary>
     public class TopDocs
     {
-
         /// <summary>
         /// The total number of hits for the query. </summary>
         public int TotalHits;
@@ -58,7 +56,6 @@ namespace Lucene.Net.Search
                 this.MaxScore_Renamed = value;
             }
         }
-
 
         /// <summary>
         /// Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
@@ -151,6 +148,7 @@ namespace Lucene.Net.Search
         {
             // These are really FieldDoc instances:
             internal readonly ScoreDoc[][] ShardHits;
+
             internal readonly FieldComparator[] comparators;
             internal readonly int[] ReverseMul;
 
@@ -245,10 +243,10 @@ namespace Lucene.Net.Search
         ///  filled (ie, <code>fillFields=true</code> must be
         ///  passed to {@link
         ///  TopFieldCollector#create}.
-        /// 
+        ///
         /// <p>Pass sort=null to merge sort by score descending.
-        /// 
-        /// @lucene.experimental 
+        ///
+        /// @lucene.experimental
         /// </summary>
         public static TopDocs Merge(Sort sort, int topN, TopDocs[] shardHits)
         {
@@ -339,5 +337,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

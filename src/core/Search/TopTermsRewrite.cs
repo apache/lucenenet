@@ -1,37 +1,36 @@
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Support;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
-    using TermState = Lucene.Net.Index.TermState;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Lucene.Net.Support;
+    using TermState = Lucene.Net.Index.TermState;
 
     /// <summary>
     /// Base rewrite method for collecting only the top terms
@@ -41,15 +40,14 @@ namespace Lucene.Net.Search
     public abstract class TopTermsRewrite<Q> : TermCollectingRewrite<Q>
         where Q : Query
     {
-
         private readonly int size;
 
         /// <summary>
-        /// Create a TopTermsBooleanQueryRewrite for 
+        /// Create a TopTermsBooleanQueryRewrite for
         /// at most <code>size</code> terms.
         /// <p>
-        /// NOTE: if <seealso cref="BooleanQuery#getMaxClauseCount"/> is smaller than 
-        /// <code>size</code>, then it will be used instead. 
+        /// NOTE: if <seealso cref="BooleanQuery#getMaxClauseCount"/> is smaller than
+        /// <code>size</code>, then it will be used instead.
         /// </summary>
         public TopTermsRewrite(int size)
         {
@@ -134,6 +132,7 @@ namespace Lucene.Net.Search
 
             // for assert:
             private BytesRef lastTerm;
+
             private bool CompareToLastTerm(BytesRef t)
             {
                 if (lastTerm == null && t != null)
@@ -265,6 +264,7 @@ namespace Lucene.Net.Search
             public readonly BytesRef Bytes = new BytesRef();
             public float Boost;
             public readonly TermContext TermState;
+
             public ScoreTerm(IComparer<BytesRef> termComp, TermContext termState)
             {
                 this.TermComp = termComp;
@@ -284,5 +284,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

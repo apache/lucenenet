@@ -1,36 +1,35 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements. See the NOTICE file distributed with this
-     * work for additional information regarding copyright ownership. The ASF
-     * licenses this file to You under the Apache License, Version 2.0 (the
-     * "License"); you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     * 
-     * http://www.apache.org/licenses/LICENSE-2.0
-     * 
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-     * License for the specific language governing permissions and limitations under
-     * the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements. See the NOTICE file distributed with this
+         * work for additional information regarding copyright ownership. The ASF
+         * licenses this file to You under the Apache License, Version 2.0 (the
+         * "License"); you may not use this file except in compliance with the License.
+         * You may obtain a copy of the License at
+         *
+         * http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+         * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+         * License for the specific language governing permissions and limitations under
+         * the License.
+         */
 
     using CodecUtil = Lucene.Net.Codecs.CodecUtil;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using System.IO;
+    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 
     /// <summary>
     /// A <seealso cref="SnapshotDeletionPolicy"/> which adds a persistence layer so that
@@ -44,18 +43,18 @@ namespace Lucene.Net.Index
     /// <seealso cref="PersistentSnapshotDeletionPolicy"/> and that they all write to a
     /// different <seealso cref="Directory"/>.  It is OK to use the same
     /// Directory that holds the index.
-    /// 
+    ///
     /// <p> this class adds a <seealso cref="#release(long)"/> method to
     /// release commits from a previous snapshot's <seealso cref="IndexCommit#getGeneration"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class PersistentSnapshotDeletionPolicy : SnapshotDeletionPolicy
     {
-
         /// <summary>
         /// Prefix used for the save file. </summary>
         public const string SNAPSHOTS_PREFIX = "snapshots_";
+
         private const int VERSION_START = 0;
         private const int VERSION_CURRENT = VERSION_START;
         private const string CODEC_NAME = "snapshots";
@@ -101,7 +100,6 @@ namespace Lucene.Net.Index
         public PersistentSnapshotDeletionPolicy(IndexDeletionPolicy primary, Directory dir, OpenMode mode)
             : base(primary)
         {
-
             this.Dir = dir;
 
             if (mode == OpenMode.CREATE)
@@ -272,7 +270,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the file name the snapshots are currently
-        ///  saved to, or null if no snapshots have been saved. 
+        ///  saved to, or null if no snapshots have been saved.
         /// </summary>
         public virtual string LastSaveFile
         {
@@ -372,5 +370,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

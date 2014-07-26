@@ -3,54 +3,56 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Index;
+    using NUnit.Framework;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Lucene.Net.Document.Document;
     using DoubleField = Lucene.Net.Document.DoubleField;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using LongField = Lucene.Net.Document.LongField;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LongField = Lucene.Net.Document.LongField;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MultiFields = Lucene.Net.Index.MultiFields;
+    using NumericUtils = Lucene.Net.Util.NumericUtils;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NumericUtils = Lucene.Net.Util.NumericUtils;
     using TestNumericUtils = Lucene.Net.Util.TestNumericUtils; // NaN arrays
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Index;
 
     [TestFixture]
     public class TestNumericRangeQuery64 : LuceneTestCase
     {
         // distance of entries
         private static long Distance;
+
         // shift the starting of the values to the left, to also have negative values:
         private static readonly long StartOffset = -1L << 31;
+
         // number of docs to generate for testing
         private static int NoDocs;
 
@@ -175,15 +177,18 @@ namespace Lucene.Net.Search
                         q.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
                         topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
                         break;
+
                     case 1:
                         type = " (constant score boolean rewrite)";
                         q.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
                         topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
                         break;
+
                     case 2:
                         type = " (filter)";
                         topDocs = Searcher.Search(new MatchAllDocsQuery(), f, NoDocs, Sort.INDEXORDER);
                         break;
+
                     default:
                         return;
                 }
@@ -739,5 +744,4 @@ namespace Lucene.Net.Search
             // difference to int range is tested in TestNumericRangeQuery32
         }
     }
-
 }

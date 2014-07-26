@@ -1,43 +1,40 @@
-using System;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Index
 {
+    using System.IO;
 
     /*
-    /// Copyright 2006 The Apache Software Foundation
-    /// 
-    /// Licensed under the Apache License, Version 2.0 (the "License");
-    /// you may not use this file except in compliance with the License.
-    /// You may obtain a copy of the License at
-    /// 
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    */
-
-
+        /// Copyright 2006 The Apache Software Foundation
+        ///
+        /// Licensed under the Apache License, Version 2.0 (the "License");
+        /// you may not use this file except in compliance with the License.
+        /// You may obtain a copy of the License at
+        ///
+        ///     http://www.apache.org/licenses/LICENSE-2.0
+        ///
+        /// Unless required by applicable law or agreed to in writing, software
+        /// distributed under the License is distributed on an "AS IS" BASIS,
+        /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        /// See the License for the specific language governing permissions and
+        /// limitations under the License.
+        */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using System.IO;
+    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
 
     internal class RepeatingTokenizer : Tokenizer
     {
-
         private readonly Random Random;
         private readonly float PercentDocs;
         private readonly int MaxTF;
@@ -84,10 +81,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestTermdocPerf : LuceneTestCase
     {
-
         internal virtual void AddDocs(Random random, Directory dir, int ndocs, string field, string val, int maxTF, float percentDocs)
         {
-
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, random, val, maxTF, percentDocs);
 
             Document doc = new Document();
@@ -127,7 +122,6 @@ namespace Lucene.Net.Index
                 return new TokenStreamComponents(new RepeatingTokenizer(reader, Val, Random, PercentDocs, MaxTF));
             }
         }
-
 
         public virtual int DoTest(int iter, int ndocs, int maxTF, float percentDocs)
         {
@@ -175,8 +169,5 @@ namespace Lucene.Net.Index
             // performance test for 10% of documents containing a term
             DoTest(100000, 10000, 3, .1f);
         }
-
-
     }
-
 }

@@ -1,51 +1,46 @@
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Codecs.Lucene45
 {
+    using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using MathUtil = Lucene.Net.Util.MathUtil;
-    using StringHelper = Lucene.Net.Util.StringHelper;
-    using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
     using MonotonicBlockPackedWriter = Lucene.Net.Util.Packed.MonotonicBlockPackedWriter;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
-    using Lucene.Net.Store;
-    using Lucene.Net.Util;
+    using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
+    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
+    using StringHelper = Lucene.Net.Util.StringHelper;
 
     /// <summary>
     /// writer for <seealso cref="Lucene45DocValuesFormat"/> </summary>
     public class Lucene45DocValuesConsumer : DocValuesConsumer, IDisposable
     {
-
         internal const int BLOCK_SIZE = 16384;
         internal const int ADDRESS_INTERVAL = 16;
         internal static readonly long MISSING_ORD = BitConverter.DoubleToInt64Bits(-1);
@@ -53,9 +48,11 @@ namespace Lucene.Net.Codecs.Lucene45
         /// <summary>
         /// Compressed using packed blocks of ints. </summary>
         public const int DELTA_COMPRESSED = 0;
+
         /// <summary>
         /// Compressed by computing the GCD. </summary>
         public const int GCD_COMPRESSED = 1;
+
         /// <summary>
         /// Compressed by giving IDs to unique values. </summary>
         public const int TABLE_COMPRESSED = 2;
@@ -63,21 +60,24 @@ namespace Lucene.Net.Codecs.Lucene45
         /// <summary>
         /// Uncompressed binary, written directly (fixed length). </summary>
         public const int BINARY_FIXED_UNCOMPRESSED = 0;
+
         /// <summary>
         /// Uncompressed binary, written directly (variable length). </summary>
         public const int BINARY_VARIABLE_UNCOMPRESSED = 1;
+
         /// <summary>
         /// Compressed binary with shared prefixes </summary>
         public const int BINARY_PREFIX_COMPRESSED = 2;
 
         /// <summary>
         /// Standard storage for sorted set values with 1 level of indirection:
-        ///  docId -> address -> ord. 
+        ///  docId -> address -> ord.
         /// </summary>
         public const int SORTED_SET_WITH_ADDRESSES = 0;
+
         /// <summary>
         /// Single-valued sorted set values, encoded as sorted values, so no level
-        ///  of indirection: docId -> ord. 
+        ///  of indirection: docId -> ord.
         /// </summary>
         public const int SORTED_SET_SINGLE_VALUED_SORTED = 1;
 
@@ -226,6 +226,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     quotientWriter.Finish();
                     break;
+
                 case DELTA_COMPRESSED:
                     BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
                     foreach (long nv in values)
@@ -234,6 +235,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     writer.Finish();
                     break;
+
                 case TABLE_COMPRESSED:
                     long[] decode = uniqueValues.ToArray();//LUCENE TO-DO Hadd oparamerter before
                     Dictionary<long, int> encode = new Dictionary<long, int>();
@@ -251,6 +253,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     ordsWriter.Finish();
                     break;
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -502,6 +505,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             Debug.Assert(!ordsIter.MoveNext());
         }
+
         /*
       private class IterableAnonymousInnerClassHelper : IEnumerable<int>
 	  {
@@ -516,7 +520,6 @@ namespace Lucene.Net.Codecs.Lucene45
 			  this.DocToOrdCount = docToOrdCount;
 			  this.Ords = ords;
 		  }
-
 
           public virtual IEnumerator<BytesRef> GetEnumerator()
 		  {
@@ -626,7 +629,6 @@ throw new NotImplementedException();
                 this.OrdsIt = ordsIt;
             }
 
-
             public virtual bool HasNext()
             {
               return DocToOrdCountIt.HasNext();
@@ -650,7 +652,6 @@ throw new NotImplementedException();
             {
               throw new System.NotSupportedException();
             }
-
         }*/
 
         //}
@@ -688,5 +689,4 @@ throw new NotImplementedException();
             }
         }
     }
-
 }

@@ -3,7 +3,6 @@ using System.Text;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,16 +21,15 @@ namespace Lucene.Net.Analysis
      */
 
     using Lucene.Net.Analysis.Tokenattributes;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
     using Attribute = Lucene.Net.Util.Attribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
 
     [TestFixture]
     public class TestToken : LuceneTestCase
     {
-
         [Test]
         public virtual void TestCtor()
         {
@@ -238,13 +236,16 @@ namespace Lucene.Net.Analysis
             public override void CopyTo(Attribute target)
             {
             }
+
             public override void Clear()
             {
             }
+
             public override bool Equals(object o)
             {
                 return (o is SenselessAttribute);
             }
+
             public override int GetHashCode()
             {
                 return 0;
@@ -270,15 +271,15 @@ namespace Lucene.Net.Analysis
         public virtual void TestAttributeReflection()
         {
             Token t = new Token("foobar", 6, 22, 8);
-            TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>() 
+            TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>()
             {
                 { typeof(ICharTermAttribute).Name + "#term", "foobar" },
                 { typeof(ITermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar") },
-                { typeof(IOffsetAttribute).Name + "#startOffset", 6 }, 
+                { typeof(IOffsetAttribute).Name + "#startOffset", 6 },
                 { typeof(IOffsetAttribute).Name + "#endOffset", 22 },
-                { typeof(IPositionIncrementAttribute).Name + "#positionIncrement", 1 }, 
+                { typeof(IPositionIncrementAttribute).Name + "#positionIncrement", 1 },
                 { typeof(IPayloadAttribute).Name + "#payload", null },
-                { typeof(ITypeAttribute).Name + "#type", TypeAttribute_Fields.DEFAULT_TYPE }, 
+                { typeof(ITypeAttribute).Name + "#type", TypeAttribute_Fields.DEFAULT_TYPE },
                 { typeof(IFlagsAttribute).Name + "#flags", 8 }
             });
         }
@@ -300,5 +301,4 @@ namespace Lucene.Net.Analysis
             return copy;
         }
     }
-
 }

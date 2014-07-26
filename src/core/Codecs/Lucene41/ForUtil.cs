@@ -1,8 +1,8 @@
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util.Packed;
 using System;
 using System.Diagnostics;
-using Lucene.Net.Store;
-using Lucene.Net.Util.Packed;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -34,12 +34,11 @@ namespace Lucene.Net.Codecs.Lucene41
     */
 
     /// <summary>
-    /// Encode all values in normal area with fixed bit width, 
+    /// Encode all values in normal area with fixed bit width,
     /// which is determined by the max value in this block.
     /// </summary>
     public sealed class ForUtil
     {
-
         /// <summary>
         /// Special number of bits per value used whenever all values to encode are equal.
         /// </summary>
@@ -58,6 +57,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// whose size is >= MAX_DATA_SIZE to avoid <seealso cref="ArrayIndexOutOfBoundsException"/>s.
         /// </summary>
         public static readonly int MAX_DATA_SIZE;
+
         static ForUtil()
         {
             int maxDataSize = 0;
@@ -261,7 +261,5 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             return PackedInts.BitsRequired(or);
         }
-
     }
-
 }

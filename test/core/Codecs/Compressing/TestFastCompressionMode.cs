@@ -2,7 +2,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,14 +22,11 @@ namespace Lucene.Net.Codecs.Compressing
     [TestFixture]
     public class TestFastCompressionMode : AbstractTestLZ4CompressionMode
     {
-
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             Mode = CompressionMode.FAST;
         }
-
     }
-
 }

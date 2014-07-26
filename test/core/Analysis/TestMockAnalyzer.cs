@@ -2,54 +2,51 @@ using System;
 
 namespace Lucene.Net.Analysis
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using Fields = Lucene.Net.Index.Fields;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using TestUtil = Lucene.Net.Util.TestUtil;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
     using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
+    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using Fields = Lucene.Net.Index.Fields;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using RegExp = Lucene.Net.Util.Automaton.RegExp;
-    using System.IO;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
-    using Lucene.Net.Randomized.Generators;
+    using Terms = Lucene.Net.Index.Terms;
+    using TermsEnum = Lucene.Net.Index.TermsEnum;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
     public class TestMockAnalyzer : BaseTokenStreamTestCase
     {
-
         /// <summary>
         /// Test a configuration that behaves a lot like WhitespaceAnalyzer </summary>
         [Test]
@@ -325,7 +322,6 @@ namespace Lucene.Net.Analysis
                 this.@delegate = @delegate;
             }
 
-
             protected override TextReader WrapReader(string fieldName, TextReader reader)
             {
                 return new MockCharFilter(reader, 7);
@@ -403,16 +399,16 @@ namespace Lucene.Net.Analysis
             {
                 return @delegate;
             }
+
             public override int GetPositionIncrementGap(string fieldName)
             {
                 return PositionGap;
             }
+
             public override int GetOffsetGap(string fieldName)
             {
                 return OffsetGap;
             }
         }
-
     }
-
 }

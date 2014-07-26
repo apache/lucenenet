@@ -1,7 +1,7 @@
 using System;
+
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,7 +23,6 @@ namespace Lucene.Net.Search
     /// A clause in a BooleanQuery. </summary>
     public class BooleanClause : IEquatable<BooleanClause>
     {
-
         /// <summary>
         /// Specifies how clauses are to occur in matching documents. </summary>
         public enum Occur
@@ -31,18 +30,18 @@ namespace Lucene.Net.Search
             MUST, SHOULD, MUST_NOT/*
 		/// <summary>
 		/// Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
-		MUST 
-        { 
-            public string toString() 
-            { 
+		MUST
+        {
+            public string toString()
+            {
                 return "+";
 	        }
 	    },
 
 		/// <summary>
-		/// Use this operator for clauses that <i>should</i> appear in the 
-		/// matching documents. For a BooleanQuery with no <code>MUST</code> 
-		/// clauses one or more <code>SHOULD</code> clauses must match a document 
+		/// Use this operator for clauses that <i>should</i> appear in the
+		/// matching documents. For a BooleanQuery with no <code>MUST</code>
+		/// clauses one or more <code>SHOULD</code> clauses must match a document
 		/// for the BooleanQuery to match. </summary>
 		/// <seealso cref= BooleanQuery#setMinimumNumberShouldMatch </seealso>
 		SHOULD
@@ -56,7 +55,7 @@ namespace Lucene.Net.Search
 		/// <summary>
 		/// Use this operator for clauses that <i>must not</i> appear in the matching documents.
 		/// Note that it is not possible to search for queries that only consist
-		/// of a <code>MUST_NOT</code> clause. 
+		/// of a <code>MUST_NOT</code> clause.
 		/// </summary>
 		MUST_NOT
 		{
@@ -65,7 +64,6 @@ namespace Lucene.Net.Search
 				return "-";
 			}
 		}*/
-
         }
 
         private string ToString(Occur occur)
@@ -74,10 +72,13 @@ namespace Lucene.Net.Search
             {
                 case Occur.MUST:
                     return "+";
+
                 case Occur.SHOULD:
                     return "";
+
                 case Occur.MUST_NOT:
                     return "-";
+
                 default:
                     throw new Exception("Invalid Occur_e value");
             }
@@ -90,7 +91,6 @@ namespace Lucene.Net.Search
 
         private Occur occur;
 
-
         /// <summary>
         /// Constructs a BooleanClause.
         /// </summary>
@@ -98,7 +98,6 @@ namespace Lucene.Net.Search
         {
             this.query = query;
             this.occur = occur;
-
         }
 
         public Occur Occur_
@@ -112,7 +111,6 @@ namespace Lucene.Net.Search
                 occur = value;
             }
         }
-
 
         public Query Query
         {
@@ -142,13 +140,11 @@ namespace Lucene.Net.Search
             }
         }
 
-
-
         /// <summary>
         /// Returns true if <code>o</code> is equal to this. </summary>
         public bool Equals(object o)
         {
-            BooleanClause bc = o as BooleanClause; 
+            BooleanClause bc = o as BooleanClause;
             return this.Equals(bc);
         }
 
@@ -158,7 +154,6 @@ namespace Lucene.Net.Search
         {
             return query.GetHashCode() ^ (Occur.MUST == occur ? 1 : 0) ^ (Occur.MUST_NOT == occur ? 2 : 0);
         }
-
 
         public bool Equals(BooleanClause other)
         {
@@ -179,5 +174,4 @@ namespace Lucene.Net.Search
             return ToString(occur) + query.ToString();
         }
     }
-
 }

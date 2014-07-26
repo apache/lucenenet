@@ -1,10 +1,8 @@
-using System;
-using System.Diagnostics;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,11 +20,6 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
     using Attribute = Lucene.Net.Util.Attribute;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
 
@@ -86,7 +79,6 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public abstract class TokenStream : AttributeSource, IDisposable
     {
-
         /// <summary>
         /// A TokenStream using the default attribute factory.
         /// </summary>
@@ -132,6 +124,7 @@ namespace Lucene.Net.Analysis
           }
         }
         */
+
         /// <summary>
         /// Consumers (i.e., <seealso cref="IndexWriter"/>) use this method to advance the stream to
         /// the next token. Implementing classes must implement this method and update
@@ -178,11 +171,11 @@ namespace Lucene.Net.Analysis
         public virtual void End()
         {
             ClearAttributes(); // LUCENE-3849: don't consume dirty atts
-            
+
             if (HasAttribute<IPositionIncrementAttribute>())
             {
-              var attr = GetAttribute<IPositionIncrementAttribute>();
-              attr.PositionIncrement = 0;
+                var attr = GetAttribute<IPositionIncrementAttribute>();
+                attr.PositionIncrement = 0;
             }
         }
 
@@ -211,7 +204,5 @@ namespace Lucene.Net.Analysis
         public virtual void Dispose()
         {
         }
-
     }
-
 }

@@ -2,45 +2,45 @@ using System.Text;
 
 namespace Lucene.Net.Index
 {
+    using System;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Codec = Lucene.Net.Codecs.Codec;
-    using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat; // javadocs
+
+    // javadocs
     using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
     using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using InfoStream = Lucene.Net.Util.InfoStream;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using Version = Lucene.Net.Util.Version;
-    using System;
 
     /// <summary>
     /// Holds all the configuration used by <seealso cref="IndexWriter"/> with few setters for
     /// settings that can be changed on an <seealso cref="IndexWriter"/> instance "live".
-    /// 
+    ///
     /// @since 4.0
     /// </summary>
     public class LiveIndexWriterConfig
     {
-
         private readonly Analyzer analyzer;
 
         private volatile int maxBufferedDocs;
@@ -53,19 +53,19 @@ namespace Lucene.Net.Index
         // modified by IndexWriterConfig
         /// <summary>
         /// <seealso cref="DelPolicy"/> controlling when commit
-        ///  points are deleted. 
+        ///  points are deleted.
         /// </summary>
         protected internal volatile IndexDeletionPolicy delPolicy;
 
         /// <summary>
         /// <seealso cref="IndexCommit"/> that <seealso cref="IndexWriter"/> is
-        ///  opened on. 
+        ///  opened on.
         /// </summary>
         protected internal volatile IndexCommit Commit;
 
         /// <summary>
         /// <seealso cref="OpenMode"/> that <seealso cref="IndexWriter"/> is opened
-        ///  with. 
+        ///  with.
         /// </summary>
         protected internal OpenMode_e? openMode;
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// <seealso cref="IndexingChain"/> that determines how documents are
-        ///  indexed. 
+        ///  indexed.
         /// </summary>
         protected internal volatile IndexingChain indexingChain;
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// {@code DocumentsWriterPerThreadPool} to control how
-        ///  threads are allocated to {@code DocumentsWriterPerThread}. 
+        ///  threads are allocated to {@code DocumentsWriterPerThread}.
         /// </summary>
         protected internal volatile DocumentsWriterPerThreadPool indexerThreadPool;
 
@@ -111,13 +111,13 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// <seealso cref="FlushPolicy"/> to control when segments are
-        ///  flushed. 
+        ///  flushed.
         /// </summary>
         protected internal volatile FlushPolicy flushPolicy;
 
         /// <summary>
         /// Sets the hard upper bound on RAM usage for a single
-        ///  segment, after which the segment is forced to flush. 
+        ///  segment, after which the segment is forced to flush.
         /// </summary>
         protected internal volatile int PerThreadHardLimitMB;
 
@@ -226,15 +226,15 @@ namespace Lucene.Net.Index
         /// In particular, <code>numUniqueTerms/interval</code> terms are read into
         /// memory by an IndexReader, and, on average, <code>interval/2</code> terms
         /// must be scanned for each random term access.
-        /// 
+        ///
         /// <p>
         /// Takes effect immediately, but only applies to newly flushed/merged
         /// segments.
-        /// 
+        ///
         /// <p>
         /// <b>NOTE:</b> this parameter does not apply to all PostingsFormat implementations,
         /// including the default one in this release. It only makes sense for term indexes
-        /// that are implemented as a fixed gap between terms. For example, 
+        /// that are implemented as a fixed gap between terms. For example,
         /// <seealso cref="Lucene41PostingsFormat"/> implements the term index instead based upon how
         /// terms share prefixes. To configure its parameters (the minimum and maximum size
         /// for a block), you would instead use  <seealso cref="Lucene41PostingsFormat#Lucene41PostingsFormat(int, int)"/>.
@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
         /// Disabled by default (writer flushes by RAM usage).
         /// <p>
         /// NOTE: this setting won't trigger a segment flush.
-        /// 
+        ///
         /// <p>
         /// Takes effect immediately, but only the next time a document is added,
         /// updated or deleted. Also, if you only delete-by-query, this setting has no
@@ -349,9 +349,9 @@ namespace Lucene.Net.Index
         /// <seealso cref="FlushPolicy"/> only a subset of the buffered documents are flushed and
         /// therefore only parts of the RAM buffer is released.
         /// <p>
-        /// 
+        ///
         /// The default value is <seealso cref="IndexWriterConfig#DEFAULT_RAM_BUFFER_SIZE_MB"/>.
-        /// 
+        ///
         /// <p>
         /// Takes effect immediately, but only the next time a document is added,
         /// updated or deleted.
@@ -389,17 +389,17 @@ namespace Lucene.Net.Index
         /// Determines the minimal number of documents required before the buffered
         /// in-memory documents are flushed as a new Segment. Large values generally
         /// give faster indexing.
-        /// 
+        ///
         /// <p>
         /// When this is set, the writer will flush every maxBufferedDocs added
         /// documents. Pass in <seealso cref="IndexWriterConfig#DISABLE_AUTO_FLUSH"/> to prevent
         /// triggering a flush due to number of buffered documents. Note that if
         /// flushing by RAM usage is also enabled, then the flush will be triggered by
         /// whichever comes first.
-        /// 
+        ///
         /// <p>
         /// Disabled by default (writer flushes by RAM usage).
-        /// 
+        ///
         /// <p>
         /// Takes effect immediately, but only the next time a document is added,
         /// updated or deleted.
@@ -437,7 +437,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Set the merged segment warmer. See <seealso cref="IndexReaderWarmer"/>.
-        /// 
+        ///
         /// <p>
         /// Takes effect on the next merge.
         /// </summary>
@@ -464,7 +464,7 @@ namespace Lucene.Net.Index
         /// terms index won't be loaded by the readers. this is only useful in advanced
         /// situations when you will only .Next() through all terms; attempts to seek
         /// will hit an exception.
-        /// 
+        ///
         /// <p>
         /// Takes effect immediately, but only applies to readers opened after this
         /// call
@@ -720,7 +720,7 @@ namespace Lucene.Net.Index
         /// on existing segments before merging them into a new one.
         /// <p>
         /// Use <code>true</code> to enable this safety check, which can help
-        /// reduce the risk of propagating index corruption from older segments 
+        /// reduce the risk of propagating index corruption from older segments
         /// into new ones, at the expense of slower merging.
         /// </p>
         /// </summary>
@@ -731,8 +731,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if <seealso cref="AtomicReader#checkIntegrity()"/> is called before 
-        ///  merging segments. 
+        /// Returns true if <seealso cref="AtomicReader#checkIntegrity()"/> is called before
+        ///  merging segments.
         /// </summary>
         public virtual bool CheckIntegrityAtMerge
         {
@@ -771,9 +771,5 @@ namespace Lucene.Net.Index
             sb.Append("checkIntegrityAtMerge=").Append(CheckIntegrityAtMerge).Append("\n");
             return sb.ToString();
         }
-
-
-
     }
-
 }

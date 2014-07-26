@@ -2,7 +2,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,356 +19,349 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     using Lucene.Net.Index;
     using Lucene.Net.Support;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
-	internal sealed class ExactPhraseScorer : Scorer
-	{
-	  private readonly int EndMinus1;
+    internal sealed class ExactPhraseScorer : Scorer
+    {
+        private readonly int EndMinus1;
 
-	  private const int CHUNK = 4096;
+        private const int CHUNK = 4096;
 
-	  private int Gen;
-	  private readonly int[] Counts = new int[CHUNK];
-	  private readonly int[] Gens = new int[CHUNK];
+        private int Gen;
+        private readonly int[] Counts = new int[CHUNK];
+        private readonly int[] Gens = new int[CHUNK];
 
-	  internal bool NoDocs;
-	  private readonly long Cost_Renamed;
+        internal bool NoDocs;
+        private readonly long Cost_Renamed;
 
-	  private sealed class ChunkState
-	  {
-		internal readonly DocsAndPositionsEnum PosEnum;
-		internal readonly int Offset;
-		internal readonly bool UseAdvance;
-		internal int PosUpto;
-		internal int PosLimit;
-		internal int Pos;
-		internal int LastPos;
+        private sealed class ChunkState
+        {
+            internal readonly DocsAndPositionsEnum PosEnum;
+            internal readonly int Offset;
+            internal readonly bool UseAdvance;
+            internal int PosUpto;
+            internal int PosLimit;
+            internal int Pos;
+            internal int LastPos;
 
-		public ChunkState(DocsAndPositionsEnum posEnum, int offset, bool useAdvance)
-		{
-		  this.PosEnum = posEnum;
-		  this.Offset = offset;
-		  this.UseAdvance = useAdvance;
-		}
-	  }
+            public ChunkState(DocsAndPositionsEnum posEnum, int offset, bool useAdvance)
+            {
+                this.PosEnum = posEnum;
+                this.Offset = offset;
+                this.UseAdvance = useAdvance;
+            }
+        }
 
-	  private readonly ChunkState[] ChunkStates;
+        private readonly ChunkState[] ChunkStates;
 
-	  private int DocID_Renamed = -1;
-	  private int Freq_Renamed;
+        private int DocID_Renamed = -1;
+        private int Freq_Renamed;
 
-	  private readonly Similarity.SimScorer DocScorer;
+        private readonly Similarity.SimScorer DocScorer;
 
-	  internal ExactPhraseScorer(Weight weight, PhraseQuery.PostingsAndFreq[] postings, Similarity.SimScorer docScorer) : base(weight)
-	  {
-		this.DocScorer = docScorer;
+        internal ExactPhraseScorer(Weight weight, PhraseQuery.PostingsAndFreq[] postings, Similarity.SimScorer docScorer)
+            : base(weight)
+        {
+            this.DocScorer = docScorer;
 
-		ChunkStates = new ChunkState[postings.Length];
+            ChunkStates = new ChunkState[postings.Length];
 
-		EndMinus1 = postings.Length - 1;
+            EndMinus1 = postings.Length - 1;
 
-		// min(cost)
-		Cost_Renamed = postings[0].Postings.Cost();
+            // min(cost)
+            Cost_Renamed = postings[0].Postings.Cost();
 
-		for (int i = 0;i < postings.Length;i++)
-		{
+            for (int i = 0; i < postings.Length; i++)
+            {
+                // Coarse optimization: advance(target) is fairly
+                // costly, so, if the relative freq of the 2nd
+                // rarest term is not that much (> 1/5th) rarer than
+                // the first term, then we just use .nextDoc() when
+                // ANDing.  this buys ~15% gain for phrases where
+                // freq of rarest 2 terms is close:
+                bool useAdvance = postings[i].DocFreq > 5 * postings[0].DocFreq;
+                ChunkStates[i] = new ChunkState(postings[i].Postings, -postings[i].Position, useAdvance);
+                if (i > 0 && postings[i].Postings.NextDoc() == DocIdSetIterator.NO_MORE_DOCS)
+                {
+                    NoDocs = true;
+                    return;
+                }
+            }
+        }
 
-		  // Coarse optimization: advance(target) is fairly
-		  // costly, so, if the relative freq of the 2nd
-		  // rarest term is not that much (> 1/5th) rarer than
-		  // the first term, then we just use .nextDoc() when
-		  // ANDing.  this buys ~15% gain for phrases where
-		  // freq of rarest 2 terms is close:
-		  bool useAdvance = postings[i].DocFreq > 5 * postings[0].DocFreq;
-		  ChunkStates[i] = new ChunkState(postings[i].Postings, -postings[i].Position, useAdvance);
-		  if (i > 0 && postings[i].Postings.NextDoc() == DocIdSetIterator.NO_MORE_DOCS)
-		  {
-			NoDocs = true;
-			return;
-		  }
-		}
-	  }
+        public override int NextDoc()
+        {
+            while (true)
+            {
+                // first (rarest) term
+                int doc = ChunkStates[0].PosEnum.NextDoc();
+                if (doc == DocIdSetIterator.NO_MORE_DOCS)
+                {
+                    DocID_Renamed = doc;
+                    return doc;
+                }
 
-	  public override int NextDoc()
-	  {
-		while (true)
-		{
+                // not-first terms
+                int i = 1;
+                while (i < ChunkStates.Length)
+                {
+                    ChunkState cs = ChunkStates[i];
+                    int doc2 = cs.PosEnum.DocID();
+                    if (cs.UseAdvance)
+                    {
+                        if (doc2 < doc)
+                        {
+                            doc2 = cs.PosEnum.Advance(doc);
+                        }
+                    }
+                    else
+                    {
+                        int iter = 0;
+                        while (doc2 < doc)
+                        {
+                            // safety net -- fallback to .advance if we've
+                            // done too many .nextDocs
+                            if (++iter == 50)
+                            {
+                                doc2 = cs.PosEnum.Advance(doc);
+                                break;
+                            }
+                            else
+                            {
+                                doc2 = cs.PosEnum.NextDoc();
+                            }
+                        }
+                    }
+                    if (doc2 > doc)
+                    {
+                        break;
+                    }
+                    i++;
+                }
 
-		  // first (rarest) term
-		  int doc = ChunkStates[0].PosEnum.NextDoc();
-		  if (doc == DocIdSetIterator.NO_MORE_DOCS)
-		  {
-			DocID_Renamed = doc;
-			return doc;
-		  }
+                if (i == ChunkStates.Length)
+                {
+                    // this doc has all the terms -- now test whether
+                    // phrase occurs
+                    DocID_Renamed = doc;
 
-		  // not-first terms
-		  int i = 1;
-		  while (i < ChunkStates.Length)
-		  {
-			ChunkState cs = ChunkStates[i];
-			int doc2 = cs.PosEnum.DocID();
-			if (cs.UseAdvance)
-			{
-			  if (doc2 < doc)
-			  {
-				doc2 = cs.PosEnum.Advance(doc);
-			  }
-			}
-			else
-			{
-			  int iter = 0;
-			  while (doc2 < doc)
-			  {
-				// safety net -- fallback to .advance if we've
-				// done too many .nextDocs
-				if (++iter == 50)
-				{
-				  doc2 = cs.PosEnum.Advance(doc);
-				  break;
-				}
-				else
-				{
-				  doc2 = cs.PosEnum.NextDoc();
-				}
-			  }
-			}
-			if (doc2 > doc)
-			{
-			  break;
-			}
-			i++;
-		  }
+                    Freq_Renamed = PhraseFreq();
+                    if (Freq_Renamed != 0)
+                    {
+                        return DocID_Renamed;
+                    }
+                }
+            }
+        }
 
-		  if (i == ChunkStates.Length)
-		  {
-			// this doc has all the terms -- now test whether
-			// phrase occurs
-			DocID_Renamed = doc;
+        public override int Advance(int target)
+        {
+            // first term
+            int doc = ChunkStates[0].PosEnum.Advance(target);
+            if (doc == DocIdSetIterator.NO_MORE_DOCS)
+            {
+                DocID_Renamed = DocIdSetIterator.NO_MORE_DOCS;
+                return doc;
+            }
 
-			Freq_Renamed = PhraseFreq();
-			if (Freq_Renamed != 0)
-			{
-			  return DocID_Renamed;
-			}
-		  }
-		}
-	  }
+            while (true)
+            {
+                // not-first terms
+                int i = 1;
+                while (i < ChunkStates.Length)
+                {
+                    int doc2 = ChunkStates[i].PosEnum.DocID();
+                    if (doc2 < doc)
+                    {
+                        doc2 = ChunkStates[i].PosEnum.Advance(doc);
+                    }
+                    if (doc2 > doc)
+                    {
+                        break;
+                    }
+                    i++;
+                }
 
-	  public override int Advance(int target)
-	  {
+                if (i == ChunkStates.Length)
+                {
+                    // this doc has all the terms -- now test whether
+                    // phrase occurs
+                    DocID_Renamed = doc;
+                    Freq_Renamed = PhraseFreq();
+                    if (Freq_Renamed != 0)
+                    {
+                        return DocID_Renamed;
+                    }
+                }
 
-		// first term
-		int doc = ChunkStates[0].PosEnum.Advance(target);
-		if (doc == DocIdSetIterator.NO_MORE_DOCS)
-		{
-		  DocID_Renamed = DocIdSetIterator.NO_MORE_DOCS;
-		  return doc;
-		}
+                doc = ChunkStates[0].PosEnum.NextDoc();
+                if (doc == DocIdSetIterator.NO_MORE_DOCS)
+                {
+                    DocID_Renamed = doc;
+                    return doc;
+                }
+            }
+        }
 
-		while (true)
-		{
+        public override string ToString()
+        {
+            return "ExactPhraseScorer(" + weight + ")";
+        }
 
-		  // not-first terms
-		  int i = 1;
-		  while (i < ChunkStates.Length)
-		  {
-			int doc2 = ChunkStates[i].PosEnum.DocID();
-			if (doc2 < doc)
-			{
-			  doc2 = ChunkStates[i].PosEnum.Advance(doc);
-			}
-			if (doc2 > doc)
-			{
-			  break;
-			}
-			i++;
-		  }
+        public override int Freq()
+        {
+            return Freq_Renamed;
+        }
 
-		  if (i == ChunkStates.Length)
-		  {
-			// this doc has all the terms -- now test whether
-			// phrase occurs
-			DocID_Renamed = doc;
-			Freq_Renamed = PhraseFreq();
-			if (Freq_Renamed != 0)
-			{
-			  return DocID_Renamed;
-			}
-		  }
+        public override int DocID()
+        {
+            return DocID_Renamed;
+        }
 
-		  doc = ChunkStates[0].PosEnum.NextDoc();
-		  if (doc == DocIdSetIterator.NO_MORE_DOCS)
-		  {
-			DocID_Renamed = doc;
-			return doc;
-		  }
-		}
-	  }
+        public override float Score()
+        {
+            return DocScorer.Score(DocID_Renamed, Freq_Renamed);
+        }
 
-	  public override string ToString()
-	  {
-		return "ExactPhraseScorer(" + weight + ")";
-	  }
+        private int PhraseFreq()
+        {
+            Freq_Renamed = 0;
 
-	  public override int Freq()
-	  {
-		return Freq_Renamed;
-	  }
+            // init chunks
+            for (int i = 0; i < ChunkStates.Length; i++)
+            {
+                ChunkState cs = ChunkStates[i];
+                cs.PosLimit = cs.PosEnum.Freq();
+                cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
+                cs.PosUpto = 1;
+                cs.LastPos = -1;
+            }
 
-	  public override int DocID()
-	  {
-		return DocID_Renamed;
-	  }
+            int chunkStart = 0;
+            int chunkEnd = CHUNK;
 
-	  public override float Score()
-	  {
-		return DocScorer.Score(DocID_Renamed, Freq_Renamed);
-	  }
+            // process chunk by chunk
+            bool end = false;
 
-	  private int PhraseFreq()
-	  {
+            // TODO: we could fold in chunkStart into offset and
+            // save one subtract per pos incr
 
-		Freq_Renamed = 0;
+            while (!end)
+            {
+                Gen++;
 
-		// init chunks
-		for (int i = 0;i < ChunkStates.Length;i++)
-		{
-		  ChunkState cs = ChunkStates[i];
-		  cs.PosLimit = cs.PosEnum.Freq();
-		  cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
-		  cs.PosUpto = 1;
-		  cs.LastPos = -1;
-		}
+                if (Gen == 0)
+                {
+                    // wraparound
+                    Arrays.Fill(Gens, 0);
+                    Gen++;
+                }
 
-		int chunkStart = 0;
-		int chunkEnd = CHUNK;
+                // first term
+                {
+                    ChunkState cs = ChunkStates[0];
+                    while (cs.Pos < chunkEnd)
+                    {
+                        if (cs.Pos > cs.LastPos)
+                        {
+                            cs.LastPos = cs.Pos;
+                            int posIndex = cs.Pos - chunkStart;
+                            Counts[posIndex] = 1;
+                            Debug.Assert(Gens[posIndex] != Gen);
+                            Gens[posIndex] = Gen;
+                        }
 
-		// process chunk by chunk
-		bool end = false;
+                        if (cs.PosUpto == cs.PosLimit)
+                        {
+                            end = true;
+                            break;
+                        }
+                        cs.PosUpto++;
+                        cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
+                    }
+                }
 
-		// TODO: we could fold in chunkStart into offset and
-		// save one subtract per pos incr
+                // middle terms
+                bool any = true;
+                for (int t = 1; t < EndMinus1; t++)
+                {
+                    ChunkState cs = ChunkStates[t];
+                    any = false;
+                    while (cs.Pos < chunkEnd)
+                    {
+                        if (cs.Pos > cs.LastPos)
+                        {
+                            cs.LastPos = cs.Pos;
+                            int posIndex = cs.Pos - chunkStart;
+                            if (posIndex >= 0 && Gens[posIndex] == Gen && Counts[posIndex] == t)
+                            {
+                                // viable
+                                Counts[posIndex]++;
+                                any = true;
+                            }
+                        }
 
-		while (!end)
-		{
+                        if (cs.PosUpto == cs.PosLimit)
+                        {
+                            end = true;
+                            break;
+                        }
+                        cs.PosUpto++;
+                        cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
+                    }
 
-		  Gen++;
+                    if (!any)
+                    {
+                        break;
+                    }
+                }
 
-		  if (Gen == 0)
-		  {
-			// wraparound
-			Arrays.Fill(Gens, 0);
-			Gen++;
-		  }
+                if (!any)
+                {
+                    // petered out for this chunk
+                    chunkStart += CHUNK;
+                    chunkEnd += CHUNK;
+                    continue;
+                }
 
-		  // first term
-		  {
-			ChunkState cs = ChunkStates[0];
-			while (cs.Pos < chunkEnd)
-			{
-			  if (cs.Pos > cs.LastPos)
-			  {
-				cs.LastPos = cs.Pos;
-				int posIndex = cs.Pos - chunkStart;
-				Counts[posIndex] = 1;
-				Debug.Assert(Gens[posIndex] != Gen);
-				Gens[posIndex] = Gen;
-			  }
+                // last term
 
-			  if (cs.PosUpto == cs.PosLimit)
-			  {
-				end = true;
-				break;
-			  }
-			  cs.PosUpto++;
-			  cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
-			}
-		  }
+                {
+                    ChunkState cs = ChunkStates[EndMinus1];
+                    while (cs.Pos < chunkEnd)
+                    {
+                        if (cs.Pos > cs.LastPos)
+                        {
+                            cs.LastPos = cs.Pos;
+                            int posIndex = cs.Pos - chunkStart;
+                            if (posIndex >= 0 && Gens[posIndex] == Gen && Counts[posIndex] == EndMinus1)
+                            {
+                                Freq_Renamed++;
+                            }
+                        }
 
-		  // middle terms
-		  bool any = true;
-		  for (int t = 1;t < EndMinus1;t++)
-		  {
-			ChunkState cs = ChunkStates[t];
-			any = false;
-			while (cs.Pos < chunkEnd)
-			{
-			  if (cs.Pos > cs.LastPos)
-			  {
-				cs.LastPos = cs.Pos;
-				int posIndex = cs.Pos - chunkStart;
-				if (posIndex >= 0 && Gens[posIndex] == Gen && Counts[posIndex] == t)
-				{
-				  // viable
-				  Counts[posIndex]++;
-				  any = true;
-				}
-			  }
+                        if (cs.PosUpto == cs.PosLimit)
+                        {
+                            end = true;
+                            break;
+                        }
+                        cs.PosUpto++;
+                        cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
+                    }
+                }
 
-			  if (cs.PosUpto == cs.PosLimit)
-			  {
-				end = true;
-				break;
-			  }
-			  cs.PosUpto++;
-			  cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
-			}
+                chunkStart += CHUNK;
+                chunkEnd += CHUNK;
+            }
 
-			if (!any)
-			{
-			  break;
-			}
-		  }
+            return Freq_Renamed;
+        }
 
-		  if (!any)
-		  {
-			// petered out for this chunk
-			chunkStart += CHUNK;
-			chunkEnd += CHUNK;
-			continue;
-		  }
-
-		  // last term
-
-		  {
-			ChunkState cs = ChunkStates[EndMinus1];
-			while (cs.Pos < chunkEnd)
-			{
-			  if (cs.Pos > cs.LastPos)
-			  {
-				cs.LastPos = cs.Pos;
-				int posIndex = cs.Pos - chunkStart;
-				if (posIndex >= 0 && Gens[posIndex] == Gen && Counts[posIndex] == EndMinus1)
-				{
-				  Freq_Renamed++;
-				}
-			  }
-
-			  if (cs.PosUpto == cs.PosLimit)
-			  {
-				end = true;
-				break;
-			  }
-			  cs.PosUpto++;
-			  cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
-			}
-		  }
-
-		  chunkStart += CHUNK;
-		  chunkEnd += CHUNK;
-		}
-
-		return Freq_Renamed;
-	  }
-
-	  public override long Cost()
-	  {
-		return Cost_Renamed;
-	  }
-	}
-
+        public override long Cost()
+        {
+            return Cost_Renamed;
+        }
+    }
 }

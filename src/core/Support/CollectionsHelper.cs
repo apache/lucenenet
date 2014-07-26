@@ -20,15 +20,14 @@
 */
 
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace Lucene.Net.Support
 {
     /// <summary>
-    /// Support class used to handle Hashtable addition, which does a check 
+    /// Support class used to handle Hashtable addition, which does a check
     /// first to make sure the added item is unique in the hash.
     /// </summary>
     public class CollectionsHelper
@@ -40,7 +39,7 @@ namespace Lucene.Net.Support
 
         public static void AddIfNotContains(System.Collections.Hashtable hashtable, System.Object item)
         {
-            // Added lock around check.  Even though the collection should already have 
+            // Added lock around check.  Even though the collection should already have
             // a synchronized wrapper around it, it doesn't prevent this test from having
             // race conditions.  Two threads can (and have in TestIndexReaderReopen) call
             // hashtable.Contains(item) == false at the same time, then both try to add to
@@ -149,7 +148,6 @@ namespace Lucene.Net.Support
             return false;
         }
 
-
         public static System.String CollectionToString(System.Collections.Generic.IDictionary<string, string> c)
         {
             Hashtable t = new Hashtable();
@@ -171,7 +169,6 @@ namespace Lucene.Net.Support
 
             if (c != null)
             {
-
                 System.Collections.ArrayList l = new System.Collections.ArrayList(c);
 
                 bool isDictionary = (c is System.Collections.BitArray || c is System.Collections.Hashtable || c is System.Collections.IDictionary || c is System.Collections.Specialized.NameValueCollection || (l.Count > 0 && l[0] is System.Collections.DictionaryEntry));
@@ -193,7 +190,6 @@ namespace Lucene.Net.Support
                             s.Append(((System.Collections.Specialized.NameValueCollection)c).GetValues(index)[0]);
                         else
                             s.Append(((System.Collections.DictionaryEntry)l[index]).Value);
-
                     }
                     if (index < l.Count - 1)
                         s.Append(", ");
@@ -240,7 +236,7 @@ namespace Lucene.Net.Support
 
         public static ISet<T> Singleton<T>(T single)
         {
-            T[] singletonArr = new T[]{single};
+            T[] singletonArr = new T[] { single };
             HashSet<T> singleton = new HashSet<T>(singletonArr);
             return singleton;
         }
@@ -308,7 +304,6 @@ namespace Lucene.Net.Support
                 array.SetValue(Temp_Object, index);
         }
 
-
         /// <summary>
         /// Fills the array with an specific value.
         /// </summary>
@@ -324,13 +319,13 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="array1">The array to be compared.</param>
         /// <param name="array2">The array to be compared with.</param>
-        /// <returns>Returns true if the two specified arrays of Objects are equal 
-        /// to one another. The two arrays are considered equal if both arrays 
-        /// contain the same number of elements, and all corresponding pairs of 
-        /// elements in the two arrays are equal. Two objects e1 and e2 are 
-        /// considered equal if (e1==null ? e2==null : e1.equals(e2)). In other 
-        /// words, the two arrays are equal if they contain the same elements in 
-        /// the same order. Also, two array references are considered equal if 
+        /// <returns>Returns true if the two specified arrays of Objects are equal
+        /// to one another. The two arrays are considered equal if both arrays
+        /// contain the same number of elements, and all corresponding pairs of
+        /// elements in the two arrays are equal. Two objects e1 and e2 are
+        /// considered equal if (e1==null ? e2==null : e1.equals(e2)). In other
+        /// words, the two arrays are equal if they contain the same elements in
+        /// the same order. Also, two array references are considered equal if
         /// both are null.</returns>
         public static bool Equals(System.Array array1, System.Array array2)
         {
@@ -408,7 +403,7 @@ namespace Lucene.Net.Support
             }
 
             return retKVPair;
-        } 
+        }
 
         public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
         {

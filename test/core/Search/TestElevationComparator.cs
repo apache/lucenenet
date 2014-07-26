@@ -3,41 +3,39 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Index;
+    using Lucene.Net.Store;
+    using NUnit.Framework;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Document = Lucene.Net.Document.Document;
+    using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
+    using Field = Lucene.Net.Document.Field;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using Lucene.Net.Index;
-    using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Lucene.Net.Store;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using NUnit.Framework;
 
     [TestFixture]
     public class TestElevationComparator : LuceneTestCase
     {
-
         private readonly IDictionary<BytesRef, int?> Priority = new Dictionary<BytesRef, int?>();
-
 
         [Test]
         public virtual void TestSorting()
@@ -66,7 +64,6 @@ namespace Lucene.Net.Search
 
         private void RunTest(IndexSearcher searcher, bool reversed)
         {
-
             BooleanQuery newq = new BooleanQuery(false);
             TermQuery query = new TermQuery(new Term("title", "ipod"));
 
@@ -167,7 +164,6 @@ namespace Lucene.Net.Search
                 tempBR = new BytesRef();
             }
 
-
             internal SortedDocValues idIndex;
             private readonly int[] values;
             private readonly BytesRef tempBR;
@@ -207,7 +203,7 @@ namespace Lucene.Net.Search
                     int? prio;
                     if (OuterInstance.Priority.TryGetValue(tempBR, out prio))
                     {
-                        return (int) prio;
+                        return (int)prio;
                     }
                     return 0;
                 }
@@ -240,5 +236,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

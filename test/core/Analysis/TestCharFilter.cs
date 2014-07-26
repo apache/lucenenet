@@ -1,8 +1,8 @@
 namespace Lucene.Net.Analysis
 {
-
     using NUnit.Framework;
     using System.IO;
+
     /*
              * Licensed to the Apache Software Foundation (ASF) under one or more
              * contributor license agreements.  See the NOTICE file distributed with
@@ -20,13 +20,11 @@ namespace Lucene.Net.Analysis
              * limitations under the License.
              */
 
-
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     [TestFixture]
     public class TestCharFilter : LuceneTestCase
     {
-
         [Test]
         public virtual void TestCharFilter1()
         {
@@ -57,7 +55,6 @@ namespace Lucene.Net.Analysis
 
         internal class CharFilter1 : CharFilter
         {
-
             protected internal CharFilter1(TextReader @in)
                 : base(@in)
             {
@@ -77,7 +74,6 @@ namespace Lucene.Net.Analysis
 
         internal class CharFilter2 : CharFilter
         {
-
             protected internal CharFilter2(TextReader @in)
                 : base(@in)
             {
@@ -95,5 +91,4 @@ namespace Lucene.Net.Analysis
             }
         }
     }
-
 }

@@ -1,15 +1,11 @@
-using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
     using System.Diagnostics;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements. See the NOTICE file distributed with this
@@ -17,16 +13,15 @@ namespace Lucene.Net.Index
          * licenses this file to You under the Apache License, Version 2.0 (the
          * "License"); you may not use this file except in compliance with the License.
          * You may obtain a copy of the License at
-         * 
+         *
          * http://www.apache.org/licenses/LICENSE-2.0
-         * 
+         *
          * Unless required by applicable law or agreed to in writing, software
          * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
          * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
          * License for the specific language governing permissions and limitations under
          * the License.
          */
-
 
     using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
@@ -55,7 +50,7 @@ namespace Lucene.Net.Index
     /// atomically finishing the document. The slice update guarantees a "happens
     /// before" relationship to all other updates in the same indexing session. When a
     /// DWPT updates a document it:
-    /// 
+    ///
     /// <ol>
     /// <li>consumes a document and finishes its processing</li>
     /// <li>updates its private <seealso cref="DeleteSlice"/> either by calling
@@ -65,12 +60,12 @@ namespace Lucene.Net.Index
     /// and resets it</li>
     /// <li>increments its internal document id</li>
     /// </ol>
-    /// 
+    ///
     /// The DWPT also doesn't apply its current documents delete term until it has
     /// updated its delete slice which ensures the consistency of the update. If the
     /// update fails before the DeleteSlice could have been updated the deleteTerm
     /// will also not be added to its private deletes neither to the global deletes.
-    /// 
+    ///
     /// </summary>
     public sealed class DocumentsWriterDeleteQueue
     {
@@ -78,6 +73,7 @@ namespace Lucene.Net.Index
 
         // .NET port: no need for AtomicReferenceFieldUpdater, we can use Interlocked instead
         private readonly DeleteSlice GlobalSlice;
+
         private readonly BufferedUpdates GlobalBufferedUpdates;
         /* only acquired to update the global deletes */
         private readonly ReentrantLock GlobalBufferLock = new ReentrantLock();
@@ -202,7 +198,7 @@ namespace Lucene.Net.Index
             try
             {
                 /*
-                 * check if all items in the global slice were applied 
+                 * check if all items in the global slice were applied
                  * and if the global slice is up-to-date
                  * and if globalBufferedUpdates has changes
                  */
@@ -292,6 +288,7 @@ namespace Lucene.Net.Index
         {
             // No need to be volatile, slices are thread captive (only accessed by one thread)!
             internal Node SliceHead; // we don't apply this one
+
             internal Node SliceTail;
 
             internal DeleteSlice(Node currentTail)
@@ -394,7 +391,7 @@ namespace Lucene.Net.Index
             {
                 // .NET port: Interlocked.CompareExchange(location, value, comparand) is backwards from
                 // AtomicReferenceFieldUpdater.compareAndSet(obj, expect, update), so swapping val and cmp.
-                // Also, it doesn't return bool if it was updated, so we need to compare to see if 
+                // Also, it doesn't return bool if it was updated, so we need to compare to see if
                 // original == comparand to determine whether to return true or false here.
                 Node original = Next;
                 return ReferenceEquals(Interlocked.CompareExchange(ref Next, val, cmp), original);
@@ -403,7 +400,6 @@ namespace Lucene.Net.Index
 
         private sealed class TermNode : Node
         {
-
             internal TermNode(Term term)
                 : base(term)
             {
@@ -459,7 +455,6 @@ namespace Lucene.Net.Index
 
         private sealed class NumericUpdateNode : Node
         {
-
             internal NumericUpdateNode(NumericDocValuesUpdate update)
                 : base(update)
             {
@@ -478,7 +473,6 @@ namespace Lucene.Net.Index
 
         private sealed class BinaryUpdateNode : Node
         {
-
             internal BinaryUpdateNode(BinaryDocValuesUpdate update)
                 : base(update)
             {
@@ -540,8 +534,5 @@ namespace Lucene.Net.Index
         {
             return "DWDQ: [ generation: " + Generation + " ]";
         }
-
-
     }
-
 }

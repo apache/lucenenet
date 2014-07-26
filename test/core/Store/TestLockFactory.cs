@@ -1,50 +1,47 @@
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using Term = Lucene.Net.Index.Term;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using Query = Lucene.Net.Search.Query;
-    using TermQuery = Lucene.Net.Search.TermQuery;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Query = Lucene.Net.Search.Query;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
     public class TestLockFactory : LuceneTestCase
     {
-
         // Verify: we can provide our own LockFactory implementation, the right
         // methods are called at the right time, locks are created, etc.
         [Test]
@@ -224,7 +221,6 @@ namespace Lucene.Net.Store
             Assert.IsFalse(l2.Locked);
         }
 
-
         // Verify: NativeFSLockFactory works correctly if the lock file exists
         [Test]
         public virtual void TestNativeFSLockFactoryLockExists()
@@ -247,7 +243,6 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestNativeFSLockFactoryPrefix()
         {
-
             DirectoryInfo fdir1 = CreateTempDir("TestLockFactory.8");
             DirectoryInfo fdir2 = CreateTempDir("TestLockFactory.8.Lockdir");
             Directory dir1 = NewFSDirectory(fdir1, new NativeFSLockFactory(fdir1));
@@ -271,7 +266,6 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestDefaultFSLockFactoryPrefix()
         {
-
             // Make sure we get null prefix, which wont happen if setLockFactory is ever called.
             DirectoryInfo dirName = CreateTempDir("TestLockFactory.10");
 
@@ -297,12 +291,14 @@ namespace Lucene.Net.Store
             internal Directory Dir;
             internal int NumIteration;
             public bool HitException = false;
+
             public WriterThread(TestLockFactory outerInstance, int numIteration, Directory dir)
             {
                 this.OuterInstance = outerInstance;
                 this.NumIteration = numIteration;
                 this.Dir = dir;
             }
+
             public override void Run()
             {
                 IndexWriter writer = null;
@@ -374,12 +370,14 @@ namespace Lucene.Net.Store
             internal Directory Dir;
             internal int NumIteration;
             public bool HitException = false;
+
             public SearcherThread(TestLockFactory outerInstance, int numIteration, Directory dir)
             {
                 this.OuterInstance = outerInstance;
                 this.NumIteration = numIteration;
                 this.Dir = dir;
             }
+
             public override void Run()
             {
                 IndexReader reader = null;
@@ -435,7 +433,6 @@ namespace Lucene.Net.Store
                 this.OuterInstance = outerInstance;
             }
 
-
             public bool LockPrefixSet;
             public IDictionary<string, Lock> LocksCreated = /*CollectionsHelper.SynchronizedMap(*/new Dictionary<string, Lock>()/*)*/;
             public int MakeLockCount = 0;
@@ -480,10 +477,12 @@ namespace Lucene.Net.Store
                     LockAttempts++;
                     return true;
                 }
+
                 public override void Release()
                 {
                     // do nothing
                 }
+
                 public override bool Locked
                 {
                     get
@@ -501,5 +500,4 @@ namespace Lucene.Net.Store
             writer.AddDocument(doc);
         }
     }
-
 }

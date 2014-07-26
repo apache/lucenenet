@@ -1,50 +1,47 @@
-using System.Diagnostics;
 using Lucene.Net.Analysis.Tokenattributes;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using Token = Lucene.Net.Analysis.Token;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
     using System.IO;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using TextField = Lucene.Net.Document.TextField;
+    using Token = Lucene.Net.Analysis.Token;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
     //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestPayloadsOnVectors extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestPayloadsOnVectors : LuceneTestCase
     {
-
         /// <summary>
         /// some docs have payload att, some not </summary>
         [Test]
@@ -162,7 +159,5 @@ namespace Lucene.Net.Index
             writer.Dispose();
             dir.Dispose();
         }
-
     }
-
 }

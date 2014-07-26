@@ -1,29 +1,29 @@
 namespace Lucene.Net.Codecs.Lucene40
 {
+    using NUnit.Framework;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Directory = Lucene.Net.Store.Directory;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
 
     /// <summary>
     /// <code>TestBitVector</code> tests the <code>BitVector</code>, obviously.
@@ -31,7 +31,6 @@ namespace Lucene.Net.Codecs.Lucene40
     [TestFixture]
     public class TestBitVector : LuceneTestCase
     {
-
         /// <summary>
         /// Test the default constructor on BitVectors of various sizes.
         /// </summary>
@@ -173,7 +172,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Test r/w when size/count cause switching between bit-set and d-gaps file formats.  
+        /// Test r/w when size/count cause switching between bit-set and d-gaps file formats.
         /// </summary>
         [Test]
         public virtual void TestDgaps()
@@ -198,7 +197,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 bv.Set(i);
             } // get a second byte full of set bits
-            // add some more bits here 
+            // add some more bits here
             for (int i = 40; i < 10000; i++)
             {
                 if (Random().Next(1000) == 0)
@@ -323,5 +322,4 @@ namespace Lucene.Net.Codecs.Lucene40
             return equal;
         }
     }
-
 }

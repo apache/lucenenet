@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
+using NUnit.Framework;
 using System;
 using System.Linq;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -77,5 +77,4 @@ namespace Lucene.Net.Util
             Assert.AreEqual(mainVersionParsed, values[values.Length - 2], "Constant one before last must be the same as the parsed LUCENE_MAIN_VERSION (without alpha/beta) constant: " + mainVersionWithoutAlphaBeta);
         }
     }
-
 }

@@ -17,163 +17,161 @@
 
 namespace Lucene.Net.Util
 {
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
-	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    /// <summary>
+    /// An iterator to iterate over set bits in an OpenBitSet.
+    /// this is faster than nextSetBit() for iterating over the complete set of bits,
+    /// especially when the density of the bits set is high.
+    /// </summary>
+    public class OpenBitSetIterator : DocIdSetIterator
+    {
+        // hmmm, what about an iterator that finds zeros though,
+        // or a reverse iterator... should they be separate classes
+        // for efficiency, or have a common root interface?  (or
+        // maybe both?  could ask for a SetBitsIterator, etc...
 
-	/// <summary>
-	/// An iterator to iterate over set bits in an OpenBitSet.
-	/// this is faster than nextSetBit() for iterating over the complete set of bits,
-	/// especially when the density of the bits set is high.
-	/// </summary>
-	public class OpenBitSetIterator : DocIdSetIterator
-	{
+        internal readonly long[] Arr;
+        internal readonly int Words;
+        private int i = -1;
+        private long Word;
+        private int WordShift;
+        private int IndexArray;
+        private int CurDocId = -1;
 
-	  // hmmm, what about an iterator that finds zeros though,
-	  // or a reverse iterator... should they be separate classes
-	  // for efficiency, or have a common root interface?  (or
-	  // maybe both?  could ask for a SetBitsIterator, etc...
+        public OpenBitSetIterator(OpenBitSet obs)
+            : this(obs.Bits, obs.NumWords)
+        {
+        }
 
-	  internal readonly long[] Arr;
-	  internal readonly int Words;
-	  private int i = -1;
-	  private long Word;
-	  private int WordShift;
-	  private int IndexArray;
-	  private int CurDocId = -1;
+        public OpenBitSetIterator(long[] bits, int numWords)
+        {
+            Arr = bits;
+            Words = numWords;
+        }
 
-	  public OpenBitSetIterator(OpenBitSet obs) : this(obs.Bits, obs.NumWords)
-	  {
-	  }
+        // 64 bit shifts
+        private void Shift()
+        {
+            if ((int)Word == 0)
+            {
+                WordShift += 32;
+                Word = (long)((ulong)Word >> 32);
+            }
+            if ((Word & 0x0000FFFF) == 0)
+            {
+                WordShift += 16;
+                Word = (long)((ulong)Word >> 16);
+            }
+            if ((Word & 0x000000FF) == 0)
+            {
+                WordShift += 8;
+                Word = (long)((ulong)Word >> 8);
+            }
+            IndexArray = BitUtil.BitList((sbyte)Word);
+        }
 
-	  public OpenBitSetIterator(long[] bits, int numWords)
-	  {
-		Arr = bits;
-		Words = numWords;
-	  }
+        /// <summary>
+        ///*** alternate shift implementations
+        /// // 32 bit shifts, but a long shift needed at the end
+        /// private void shift2() {
+        ///  int y = (int)word;
+        ///  if (y==0) {wordShift +=32; y = (int)(word >>>32); }
+        ///  if ((y & 0x0000FFFF) == 0) { wordShift +=16; y>>>=16; }
+        ///  if ((y & 0x000000FF) == 0) { wordShift +=8; y>>>=8; }
+        ///  indexArray = bitlist[y & 0xff];
+        ///  word >>>= (wordShift +1);
+        /// }
+        ///
+        /// private void shift3() {
+        ///  int lower = (int)word;
+        ///  int lowByte = lower & 0xff;
+        ///  if (lowByte != 0) {
+        ///    indexArray=bitlist[lowByte];
+        ///    return;
+        ///  }
+        ///  shift();
+        /// }
+        /// *****
+        /// </summary>
 
-	  // 64 bit shifts
-	  private void Shift()
-	  {
-		if ((int)Word == 0)
-		{
-			WordShift += 32;
-			Word = (long)((ulong)Word >> 32);
-		}
-		if ((Word & 0x0000FFFF) == 0)
-		{
-			WordShift += 16;
-			Word = (long)((ulong)Word >> 16);
-		}
-		if ((Word & 0x000000FF) == 0)
-		{
-			WordShift += 8;
-			Word = (long)((ulong)Word >> 8);
-		}
-		IndexArray = BitUtil.BitList((sbyte) Word);
-	  }
+        public override int NextDoc()
+        {
+            if (IndexArray == 0)
+            {
+                if (Word != 0)
+                {
+                    Word = (long)((ulong)Word >> 8);
+                    WordShift += 8;
+                }
 
-	  /// <summary>
-	  ///*** alternate shift implementations
-	  /// // 32 bit shifts, but a long shift needed at the end
-	  /// private void shift2() {
-	  ///  int y = (int)word;
-	  ///  if (y==0) {wordShift +=32; y = (int)(word >>>32); }
-	  ///  if ((y & 0x0000FFFF) == 0) { wordShift +=16; y>>>=16; }
-	  ///  if ((y & 0x000000FF) == 0) { wordShift +=8; y>>>=8; }
-	  ///  indexArray = bitlist[y & 0xff];
-	  ///  word >>>= (wordShift +1);
-	  /// }
-	  /// 
-	  /// private void shift3() {
-	  ///  int lower = (int)word;
-	  ///  int lowByte = lower & 0xff;
-	  ///  if (lowByte != 0) {
-	  ///    indexArray=bitlist[lowByte];
-	  ///    return;
-	  ///  }
-	  ///  shift();
-	  /// }
-	  /// *****
-	  /// </summary>
+                while (Word == 0)
+                {
+                    if (++i >= Words)
+                    {
+                        return CurDocId = NO_MORE_DOCS;
+                    }
+                    Word = Arr[i];
+                    WordShift = -1; // loop invariant code motion should move this
+                }
 
-	  public override int NextDoc()
-	  {
-		if (IndexArray == 0)
-		{
-		  if (Word != 0)
-		  {
-			Word = (long)((ulong)Word >> 8);
-			WordShift += 8;
-		  }
+                // after the first time, should I go with a linear search, or
+                // stick with the binary search in shift?
+                Shift();
+            }
 
-		  while (Word == 0)
-		  {
-			if (++i >= Words)
-			{
-			  return CurDocId = NO_MORE_DOCS;
-			}
-			Word = Arr[i];
-			WordShift = -1; // loop invariant code motion should move this
-		  }
+            int bitIndex = (IndexArray & 0x0f) + WordShift;
+            IndexArray = (int)((uint)IndexArray >> 4);
+            // should i<<6 be cached as a separate variable?
+            // it would only save one cycle in the best circumstances.
+            return CurDocId = (i << 6) + bitIndex;
+        }
 
-		  // after the first time, should I go with a linear search, or
-		  // stick with the binary search in shift?
-		  Shift();
-		}
+        public override int Advance(int target)
+        {
+            IndexArray = 0;
+            i = target >> 6;
+            if (i >= Words)
+            {
+                Word = 0; // setup so next() will also return -1
+                return CurDocId = NO_MORE_DOCS;
+            }
+            WordShift = target & 0x3f;
+            Word = (long)((ulong)Arr[i] >> WordShift);
+            if (Word != 0)
+            {
+                WordShift--; // compensate for 1 based arrIndex
+            }
+            else
+            {
+                while (Word == 0)
+                {
+                    if (++i >= Words)
+                    {
+                        return CurDocId = NO_MORE_DOCS;
+                    }
+                    Word = Arr[i];
+                }
+                WordShift = -1;
+            }
 
-		int bitIndex = (IndexArray & 0x0f) + WordShift;
-		IndexArray = (int)((uint)IndexArray >> 4);
-		// should i<<6 be cached as a separate variable?
-		// it would only save one cycle in the best circumstances.
-		return CurDocId = (i << 6) + bitIndex;
-	  }
+            Shift();
 
-	  public override int Advance(int target)
-	  {
-		IndexArray = 0;
-		i = target >> 6;
-		if (i >= Words)
-		{
-		  Word = 0; // setup so next() will also return -1
-		  return CurDocId = NO_MORE_DOCS;
-		}
-		WordShift = target & 0x3f;
-		Word = (long)((ulong)Arr[i] >> WordShift);
-		if (Word != 0)
-		{
-		  WordShift--; // compensate for 1 based arrIndex
-		}
-		else
-		{
-		  while (Word == 0)
-		  {
-			if (++i >= Words)
-			{
-			  return CurDocId = NO_MORE_DOCS;
-			}
-			Word = Arr[i];
-		  }
-		  WordShift = -1;
-		}
+            int bitIndex = (IndexArray & 0x0f) + WordShift;
+            IndexArray = (int)((uint)IndexArray >> 4);
+            // should i<<6 be cached as a separate variable?
+            // it would only save one cycle in the best circumstances.
+            return CurDocId = (i << 6) + bitIndex;
+        }
 
-		Shift();
+        public override int DocID()
+        {
+            return CurDocId;
+        }
 
-		int bitIndex = (IndexArray & 0x0f) + WordShift;
-		IndexArray = (int)((uint)IndexArray >> 4);
-		// should i<<6 be cached as a separate variable?
-		// it would only save one cycle in the best circumstances.
-		return CurDocId = (i << 6) + bitIndex;
-	  }
-
-	  public override int DocID()
-	  {
-		return CurDocId;
-	  }
-
-	  public override long Cost()
-	  {
-		return Words / 64;
-	  }
-	}
-
+        public override long Cost()
+        {
+            return Words / 64;
+        }
+    }
 }

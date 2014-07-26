@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -48,7 +46,6 @@ namespace Lucene.Net.Util
             Assert.AreEqual(24, set.RehashCount);
         }
 
-
         [Test]
         public virtual void TestRandom()
         {
@@ -73,11 +70,7 @@ namespace Lucene.Net.Util
 
                     Assert.AreEqual(a.Count, b.Size());
                 }
-
             }
-
         }
-
     }
-
 }

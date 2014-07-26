@@ -1,11 +1,10 @@
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-
     using Lucene.Net.Support;
     using System.Collections.Generic;
+
     /*
              * Licensed to the Apache Software Foundation (ASF) under one or more
              * contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +21,6 @@ namespace Lucene.Net.Search
              * See the License for the specific language governing permissions and
              * limitations under the License.
              */
-
 
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
@@ -69,9 +67,8 @@ namespace Lucene.Net.Search
             }
         }
 
-
         /// <summary>
-        /// Prints a query to a string, with <code>field</code> assumed to be the 
+        /// Prints a query to a string, with <code>field</code> assumed to be the
         /// default field and omitted.
         /// </summary>
         public abstract string ToString(string field);
@@ -85,7 +82,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Constructs an appropriate Weight implementation for this query.
-        /// 
+        ///
         /// <p>
         /// Only implemented by primitive queries, which re-write to themselves.
         /// </summary>
@@ -159,5 +156,4 @@ namespace Lucene.Net.Search
             return true;
         }
     }
-
 }

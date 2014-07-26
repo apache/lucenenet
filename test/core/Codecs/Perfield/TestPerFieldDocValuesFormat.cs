@@ -4,50 +4,49 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Perfield
 {
+    using Lucene.Net.Index;
+    using NUnit.Framework;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
     using BaseDocValuesFormatTestCase = Lucene.Net.Index.BaseDocValuesFormatTestCase;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
+    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
+    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using Query = Lucene.Net.Search.Query;
     using RandomCodec = Lucene.Net.Index.RandomCodec;
     using Term = Lucene.Net.Index.Term;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using Query = Lucene.Net.Search.Query;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Index;
+    using TopDocs = Lucene.Net.Search.TopDocs;
 
     /// <summary>
     /// Basic tests of PerFieldDocValuesFormat
@@ -154,5 +153,4 @@ namespace Lucene.Net.Codecs.Perfield
             }
         }
     }
-
 }

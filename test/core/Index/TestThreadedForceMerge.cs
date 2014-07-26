@@ -3,42 +3,40 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using StringField = Lucene.Net.Document.StringField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using English = Lucene.Net.Util.English;
-
+    using FieldType = Lucene.Net.Document.FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using StringField = Lucene.Net.Document.StringField;
 
     [TestFixture]
     public class TestThreadedForceMerge : LuceneTestCase
     {
-
         private static Analyzer ANALYZER;
 
         private const int NUM_THREADS = 3;
@@ -63,7 +61,6 @@ namespace Lucene.Net.Index
 
         public virtual void RunTest(Random random, Directory directory)
         {
-
             IndexWriter writer = new IndexWriter(directory, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(2)).SetMergePolicy(NewLogMergePolicy()));
 
             for (int iter = 0; iter < NUM_ITER; iter++)
@@ -174,6 +171,7 @@ namespace Lucene.Net.Index
           Run above stress test against RAMDirectory and then
           FSDirectory.
         */
+
         [Test]
         public virtual void TestThreadedForceMerge_Mem()
         {
@@ -182,5 +180,4 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
     }
-
 }

@@ -1,9 +1,7 @@
-using System.Diagnostics;
-
 namespace Lucene.Net.Search
 {
-
     using NUnit.Framework;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -29,11 +27,9 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestSimpleExplanations : TestExplanations
     {
-
         // we focus on queries that don't rewrite to other queries.
         // if we get those covered well, then the ones that rewrite should
         // also be covered.
-
 
         /* simple term tests */
 
@@ -42,6 +38,7 @@ namespace Lucene.Net.Search
         {
             Qtest(new TermQuery(new Term(FIELD, "w1")), new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestT2()
         {
@@ -57,6 +54,7 @@ namespace Lucene.Net.Search
         {
             Qtest(new MatchAllDocsQuery(), new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMA2()
         {
@@ -75,6 +73,7 @@ namespace Lucene.Net.Search
             phraseQuery.Add(new Term(FIELD, "w2"));
             Qtest(phraseQuery, new int[] { 0 });
         }
+
         [Test]
         public virtual void TestP2()
         {
@@ -83,6 +82,7 @@ namespace Lucene.Net.Search
             phraseQuery.Add(new Term(FIELD, "w3"));
             Qtest(phraseQuery, new int[] { 1, 3 });
         }
+
         [Test]
         public virtual void TestP3()
         {
@@ -92,6 +92,7 @@ namespace Lucene.Net.Search
             phraseQuery.Add(new Term(FIELD, "w2"));
             Qtest(phraseQuery, new int[] { 0, 1, 2 });
         }
+
         [Test]
         public virtual void TestP4()
         {
@@ -101,6 +102,7 @@ namespace Lucene.Net.Search
             phraseQuery.Add(new Term(FIELD, "w3"));
             Qtest(phraseQuery, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestP5()
         {
@@ -110,6 +112,7 @@ namespace Lucene.Net.Search
             phraseQuery.Add(new Term(FIELD, "w2"));
             Qtest(phraseQuery, new int[] { 1, 3 });
         }
+
         [Test]
         public virtual void TestP6()
         {
@@ -119,6 +122,7 @@ namespace Lucene.Net.Search
             phraseQuery.Add(new Term(FIELD, "w2"));
             Qtest(phraseQuery, new int[] { 0, 1, 3 });
         }
+
         [Test]
         public virtual void TestP7()
         {
@@ -136,16 +140,19 @@ namespace Lucene.Net.Search
         {
             Qtest(new FilteredQuery(new TermQuery(new Term(FIELD, "w1")), new ItemizedFilter(new int[] { 0, 1, 2, 3 })), new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestFQ2()
         {
             Qtest(new FilteredQuery(new TermQuery(new Term(FIELD, "w1")), new ItemizedFilter(new int[] { 0, 2, 3 })), new int[] { 0, 2, 3 });
         }
+
         [Test]
         public virtual void TestFQ3()
         {
             Qtest(new FilteredQuery(new TermQuery(new Term(FIELD, "xx")), new ItemizedFilter(new int[] { 1, 3 })), new int[] { 3 });
         }
+
         [Test]
         public virtual void TestFQ4()
         {
@@ -153,6 +160,7 @@ namespace Lucene.Net.Search
             termQuery.Boost = 1000;
             Qtest(new FilteredQuery(termQuery, new ItemizedFilter(new int[] { 1, 3 })), new int[] { 3 });
         }
+
         [Test]
         public virtual void TestFQ6()
         {
@@ -169,12 +177,14 @@ namespace Lucene.Net.Search
             Query q = new ConstantScoreQuery(new ItemizedFilter(new int[] { 0, 1, 2, 3 }));
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestCSQ2()
         {
             Query q = new ConstantScoreQuery(new ItemizedFilter(new int[] { 1, 3 }));
             Qtest(q, new int[] { 1, 3 });
         }
+
         [Test]
         public virtual void TestCSQ3()
         {
@@ -193,6 +203,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "w5")));
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestDMQ2()
         {
@@ -201,6 +212,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "w5")));
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestDMQ3()
         {
@@ -209,6 +221,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "w5")));
             Qtest(q, new int[] { 0 });
         }
+
         [Test]
         public virtual void TestDMQ4()
         {
@@ -217,6 +230,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "xx")));
             Qtest(q, new int[] { 2, 3 });
         }
+
         [Test]
         public virtual void TestDMQ5()
         {
@@ -230,6 +244,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "xx")));
             Qtest(q, new int[] { 2, 3 });
         }
+
         [Test]
         public virtual void TestDMQ6()
         {
@@ -243,6 +258,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "xx")));
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestDMQ7()
         {
@@ -256,6 +272,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "w2")));
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestDMQ8()
         {
@@ -275,6 +292,7 @@ namespace Lucene.Net.Search
 
             Qtest(q, new int[] { 0, 2, 3 });
         }
+
         [Test]
         public virtual void TestDMQ9()
         {
@@ -305,6 +323,7 @@ namespace Lucene.Net.Search
             q.Add(Ta(new string[] { "w2", "w3", "xx" }));
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMPQ2()
         {
@@ -313,6 +332,7 @@ namespace Lucene.Net.Search
             q.Add(Ta(new string[] { "w2", "w3" }));
             Qtest(q, new int[] { 0, 1, 3 });
         }
+
         [Test]
         public virtual void TestMPQ3()
         {
@@ -321,6 +341,7 @@ namespace Lucene.Net.Search
             q.Add(Ta(new string[] { "w2", "w3" }));
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMPQ4()
         {
@@ -329,6 +350,7 @@ namespace Lucene.Net.Search
             q.Add(Ta(new string[] { "w2" }));
             Qtest(q, new int[] { 0 });
         }
+
         [Test]
         public virtual void TestMPQ5()
         {
@@ -338,6 +360,7 @@ namespace Lucene.Net.Search
             q.Slop = 1;
             Qtest(q, new int[] { 0, 1, 2 });
         }
+
         [Test]
         public virtual void TestMPQ6()
         {
@@ -358,6 +381,7 @@ namespace Lucene.Net.Search
             query.Add(new TermQuery(new Term(FIELD, "w2")), BooleanClause.Occur.MUST);
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ2()
         {
@@ -366,6 +390,7 @@ namespace Lucene.Net.Search
             query.Add(new TermQuery(new Term(FIELD, "w3")), BooleanClause.Occur.MUST);
             Qtest(query, new int[] { 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ3()
         {
@@ -374,6 +399,7 @@ namespace Lucene.Net.Search
             query.Add(new TermQuery(new Term(FIELD, "w3")), BooleanClause.Occur.MUST);
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ4()
         {
@@ -387,6 +413,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ5()
         {
@@ -400,6 +427,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ6()
         {
@@ -413,6 +441,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ7()
         {
@@ -436,6 +465,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0 });
         }
+
         [Test]
         public virtual void TestBQ8()
         {
@@ -459,6 +489,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ9()
         {
@@ -482,6 +513,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ10()
         {
@@ -505,6 +537,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 1 });
         }
+
         [Test]
         public virtual void TestBQ11()
         {
@@ -516,6 +549,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ14()
         {
@@ -524,6 +558,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "w1")), BooleanClause.Occur.SHOULD);
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ15()
         {
@@ -532,6 +567,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "w1")), BooleanClause.Occur.SHOULD);
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ16()
         {
@@ -545,6 +581,7 @@ namespace Lucene.Net.Search
             q.Add(booleanQuery, BooleanClause.Occur.SHOULD);
             Qtest(q, new int[] { 0, 1 });
         }
+
         [Test]
         public virtual void TestBQ17()
         {
@@ -558,6 +595,7 @@ namespace Lucene.Net.Search
             q.Add(booleanQuery, BooleanClause.Occur.SHOULD);
             Qtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ19()
         {
@@ -578,7 +616,7 @@ namespace Lucene.Net.Search
             q.Add(new TermQuery(new Term(FIELD, "zz")), BooleanClause.Occur.SHOULD);
             q.Add(new TermQuery(new Term(FIELD, "w5")), BooleanClause.Occur.SHOULD);
             q.Add(new TermQuery(new Term(FIELD, "w4")), BooleanClause.Occur.SHOULD);
-            
+
             Qtest(q, new int[] { 0, 3 });
         }
 
@@ -593,6 +631,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQ2()
         {
@@ -602,6 +641,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 2, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQ3()
         {
@@ -611,6 +651,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQ4()
         {
@@ -624,6 +665,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQ5()
         {
@@ -637,6 +679,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQ6()
         {
@@ -650,6 +693,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQ7()
         {
@@ -673,6 +717,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQ8()
         {
@@ -696,6 +741,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQ9()
         {
@@ -719,6 +765,7 @@ namespace Lucene.Net.Search
 
             Qtest(outerQuery, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQ10()
         {
@@ -762,6 +809,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQofPQ2()
         {
@@ -779,6 +827,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 1, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQofPQ3()
         {
@@ -798,6 +847,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 2 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQofPQ4()
         {
@@ -817,6 +867,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQofPQ5()
         {
@@ -836,6 +887,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 1, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQofPQ6()
         {
@@ -855,6 +907,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 3 });
         }
+
         [Test]
         public virtual void TestMultiFieldBQofPQ7()
         {
@@ -874,7 +927,5 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
-
     }
-
 }

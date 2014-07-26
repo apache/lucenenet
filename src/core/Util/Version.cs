@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,11 +19,10 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Use by certain classes to match version compatibility
     /// across releases of Lucene.
-    /// 
+    ///
     /// <p><b>WARNING</b>: When changing the version parameter
     /// that you supply to components in Lucene, do not simply
     /// change the version at search-time, but instead also adjust
@@ -34,91 +32,91 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// Match settings and bugs in Lucene's 3.0 release. </summary>
-        /// @deprecated (4.0) Use latest 
+        /// @deprecated (4.0) Use latest
         [System.Obsolete("(4.0) Use latest")]
         LUCENE_30,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 3.1 release. </summary>
-        /// @deprecated (4.0) Use latest 
+        /// @deprecated (4.0) Use latest
         [System.Obsolete("(4.0) Use latest")]
         LUCENE_31,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 3.2 release. </summary>
-        /// @deprecated (4.0) Use latest 
+        /// @deprecated (4.0) Use latest
         [System.Obsolete("(4.0) Use latest")]
         LUCENE_32,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 3.3 release. </summary>
-        /// @deprecated (4.0) Use latest 
+        /// @deprecated (4.0) Use latest
         [System.Obsolete("(4.0) Use latest")]
         LUCENE_33,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 3.4 release. </summary>
-        /// @deprecated (4.0) Use latest 
+        /// @deprecated (4.0) Use latest
         [System.Obsolete("(4.0) Use latest")]
         LUCENE_34,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 3.5 release. </summary>
-        /// @deprecated (4.0) Use latest 
+        /// @deprecated (4.0) Use latest
         [System.Obsolete("(4.0) Use latest")]
         LUCENE_35,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 3.6 release. </summary>
-        /// @deprecated (4.0) Use latest 
+        /// @deprecated (4.0) Use latest
         [System.Obsolete("(4.0) Use latest")]
         LUCENE_36,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 3.6 release. </summary>
-        /// @deprecated (4.1) Use latest 
+        /// @deprecated (4.1) Use latest
         [System.Obsolete("(4.1) Use latest")]
         LUCENE_40,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 4.1 release. </summary>
-        /// @deprecated (4.2) Use latest 
+        /// @deprecated (4.2) Use latest
         [System.Obsolete("(4.2) Use latest")]
         LUCENE_41,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 4.2 release. </summary>
-        /// @deprecated (4.3) Use latest 
+        /// @deprecated (4.3) Use latest
         [System.Obsolete("(4.3) Use latest")]
         LUCENE_42,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 4.3 release. </summary>
-        /// @deprecated (4.4) Use latest 
+        /// @deprecated (4.4) Use latest
         [System.Obsolete("(4.4) Use latest")]
         LUCENE_43,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 4.4 release. </summary>
-        /// @deprecated (4.5) Use latest 
+        /// @deprecated (4.5) Use latest
         [System.Obsolete("(4.5) Use latest")]
         LUCENE_44,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 4.5 release. </summary>
-        /// @deprecated (4.6) Use latest 
+        /// @deprecated (4.6) Use latest
         [System.Obsolete("(4.6) Use latest")]
         LUCENE_45,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 4.6 release. </summary>
-        /// @deprecated (4.7) Use latest 
+        /// @deprecated (4.7) Use latest
         [System.Obsolete("(4.7) Use latest")]
         LUCENE_46,
 
         /// <summary>
         /// Match settings and bugs in Lucene's 4.7 release. </summary>
-        /// @deprecated (4.8) Use latest 
+        /// @deprecated (4.8) Use latest
         [System.Obsolete("(4.8) Use latest")]
         LUCENE_47,
 
@@ -139,21 +137,20 @@ namespace Lucene.Net.Util
         /// then you should instead explicitly specify an actual
         /// version.
         /// <p>
-        /// If you use this constant then you  may need to 
+        /// If you use this constant then you  may need to
         /// <b>re-index all of your documents</b> when upgrading
-        /// Lucene, as the way text is indexed may have changed. 
+        /// Lucene, as the way text is indexed may have changed.
         /// Additionally, you may need to <b>re-test your entire
-        /// application</b> to ensure it behaves as expected, as 
-        /// some defaults may have changed and may break functionality 
+        /// application</b> to ensure it behaves as expected, as
+        /// some defaults may have changed and may break functionality
         /// in your application. </summary>
-        /// @deprecated Use an actual version instead.  
+        /// @deprecated Use an actual version instead.
         [System.Obsolete("Use an actual version instead.")]
         LUCENE_CURRENT
 
-
         //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain methods in .NET:
-
     }
+
     public static class VersionEnumExtensionMethods
     {
         private static Dictionary<string, Version> stringToEnum = new Dictionary<string, Version>()
@@ -218,7 +215,4 @@ namespace Lucene.Net.Util
             return ret;
         }
     }
-
-
-
 }

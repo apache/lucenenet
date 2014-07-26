@@ -39,6 +39,7 @@ namespace Lucene.Net.Support
         }
 
         private static uint[] crc32Table;
+
         public static int GetCRC32HashCode(this byte[] buffer, int offset, int count)
         {
             if (null == buffer)

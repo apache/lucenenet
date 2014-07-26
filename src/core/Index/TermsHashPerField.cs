@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,14 +22,11 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using BytesRefHash = Lucene.Net.Util.BytesRefHash;
     using Counter = Lucene.Net.Util.Counter;
     using IntBlockPool = Lucene.Net.Util.IntBlockPool;
-    using BytesStartArray = Lucene.Net.Util.BytesRefHash.BytesStartArray;
-    using MaxBytesLengthExceededException = Lucene.Net.Util.BytesRefHash.MaxBytesLengthExceededException;
 
     public sealed class TermsHashPerField : InvertedDocConsumerPerField
     {
@@ -48,6 +44,7 @@ namespace Lucene.Net.Index
 
         // Copied from our perThread
         internal readonly IntBlockPool IntPool;
+
         internal readonly ByteBlockPool BytePool;
         internal readonly ByteBlockPool TermBytePool;
 
@@ -187,7 +184,6 @@ namespace Lucene.Net.Index
                 PostingsArray.ByteStarts[termID] = IntUptos[IntUptoStart];
 
                 Consumer.NewTerm(termID);
-
             }
             else
             {
@@ -202,7 +198,6 @@ namespace Lucene.Net.Index
         // Primary entry point (for first TermsHash)
         internal override void Add()
         {
-
             TermAtt.FillBytesRef();
 
             // We are first in the chain so we must "intern" the
@@ -264,7 +259,6 @@ namespace Lucene.Net.Index
                 PostingsArray.ByteStarts[termID] = IntUptos[IntUptoStart];
 
                 Consumer.NewTerm(termID);
-
             }
             else
             {
@@ -333,7 +327,6 @@ namespace Lucene.Net.Index
 
         private sealed class PostingsBytesStartArray : BytesRefHash.BytesStartArray
         {
-
             internal readonly TermsHashPerField PerField;
             internal readonly Counter BytesUsed_Renamed;
 
@@ -376,9 +369,6 @@ namespace Lucene.Net.Index
             {
                 return BytesUsed_Renamed;
             }
-
         }
-
     }
-
 }

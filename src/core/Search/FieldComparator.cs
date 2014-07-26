@@ -3,38 +3,38 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Index;
+    using Lucene.Net.Support;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using Lucene.Net.Support;
-    using Lucene.Net.Index;
+    using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 
     /// <summary>
     /// Expert: a FieldComparator compares hits so as to determine their
     /// sort order when collecting the top results with {@link
     /// TopFieldCollector}.  The concrete public FieldComparator
     /// classes here correspond to the SortField types.
-    /// 
+    ///
     /// <p>this API is designed to achieve high performance
     /// sorting, by exposing a tight interaction with {@link
     /// FieldValueHitQueue} as it visits hits.  Whenever a hit is
@@ -43,14 +43,14 @@ namespace Lucene.Net.Search
     /// FieldComparator} is made aware of segment transitions
     /// during searching in case any internal state it's tracking
     /// needs to be recomputed during these transitions.</p>
-    /// 
+    ///
     /// <p>A comparator must define these functions:</p>
-    /// 
+    ///
     /// <ul>
-    /// 
+    ///
     ///  <li> <seealso cref="#compare"/> Compare a hit at 'slot a'
     ///       with hit 'slot b'.
-    /// 
+    ///
     ///  <li> <seealso cref="#setBottom"/> this method is called by
     ///       <seealso cref="FieldValueHitQueue"/> to notify the
     ///       FieldComparator of the current weakest ("bottom")
@@ -58,43 +58,42 @@ namespace Lucene.Net.Search
     ///       value according to your comparator, in cases where
     ///       your comparator is not the primary one (ie, is only
     ///       used to break ties from the comparators before it).
-    /// 
+    ///
     ///  <li> <seealso cref="#compareBottom"/> Compare a new hit (docID)
     ///       against the "weakest" (bottom) entry in the queue.
-    /// 
+    ///
     ///  <li> <seealso cref="#setTopValue"/> this method is called by
     ///       <seealso cref="TopFieldCollector"/> to notify the
     ///       FieldComparator of the top most value, which is
     ///       used by future calls to <seealso cref="#compareTop"/>.
-    /// 
+    ///
     ///  <li> <seealso cref="#compareBottom"/> Compare a new hit (docID)
     ///       against the "weakest" (bottom) entry in the queue.
-    /// 
+    ///
     ///  <li> <seealso cref="#compareTop"/> Compare a new hit (docID)
     ///       against the top value previously set by a call to
     ///       <seealso cref="#setTopValue"/>.
-    /// 
+    ///
     ///  <li> <seealso cref="#copy"/> Installs a new hit into the
     ///       priority queue.  The <seealso cref="FieldValueHitQueue"/>
     ///       calls this method when a new hit is competitive.
-    /// 
+    ///
     ///  <li> <seealso cref="#setNextReader(AtomicReaderContext)"/> Invoked
     ///       when the search is switching to the next segment.
     ///       You may need to update internal state of the
     ///       comparator, for example retrieving new values from
     ///       the <seealso cref="FieldCache"/>.
-    /// 
+    ///
     ///  <li> <seealso cref="#value"/> Return the sort value stored in
     ///       the specified slot.  this is only called at the end
     ///       of the search, in order to populate {@link
     ///       FieldDoc#fields} when returning the top results.
     /// </ul>
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class FieldComparator<T> : FieldComparator
     {
-
         /// <summary>
         /// Compare hit at slot1 with hit at slot2.
         /// </summary>
@@ -128,7 +127,7 @@ namespace Lucene.Net.Search
         /// should return the same result as {@link
         /// #compare(int,int)}} as if bottom were slot1 and the new
         /// document were slot 2.
-        ///    
+        ///
         /// <p>For a search that hits many results, this method
         /// will be the hotspot (invoked by far the most
         /// frequently).</p>
@@ -182,7 +181,7 @@ namespace Lucene.Net.Search
         ///  impl to assume the type implements Comparable and
         ///  invoke .compareTo; be sure to override this method if
         ///  your FieldComparator's type isn't a Comparable or
-        ///  if your values may sometimes be null 
+        ///  if your values may sometimes be null
         /// </summary>
         public virtual int CompareValues(T first, T second)
         {
@@ -205,7 +204,7 @@ namespace Lucene.Net.Search
         }
     }
 
-    // .NET Port: Using a non-generic class here so that we avoid having to use the 
+    // .NET Port: Using a non-generic class here so that we avoid having to use the
     // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
     public abstract class FieldComparator
     {
@@ -243,7 +242,7 @@ namespace Lucene.Net.Search
         /// should return the same result as {@link
         /// #compare(int,int)}} as if bottom were slot1 and the new
         /// document were slot 2.
-        ///    
+        ///
         /// <p>For a search that hits many results, this method
         /// will be the hotspot (invoked by far the most
         /// frequently).</p>
@@ -291,7 +290,6 @@ namespace Lucene.Net.Search
         ///   comparator across segments </returns>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public abstract FieldComparator SetNextReader(AtomicReaderContext context);
-
 
         /// <summary>
         /// Sets the Scorer to use in case a document's score is
@@ -357,7 +355,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as byte (using {@link
-        ///  FieldCache#getBytes} and sorts by ascending value 
+        ///  FieldCache#getBytes} and sorts by ascending value
         /// </summary>
         [Obsolete]
         public sealed class ByteComparator : NumericComparator<sbyte>
@@ -451,7 +449,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as double (using {@link
-        ///  FieldCache#getDoubles} and sorts by ascending value 
+        ///  FieldCache#getDoubles} and sorts by ascending value
         /// </summary>
         public sealed class DoubleComparator : NumericComparator<double>
         {
@@ -543,7 +541,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as float (using {@link
-        ///  FieldCache#getFloats} and sorts by ascending value 
+        ///  FieldCache#getFloats} and sorts by ascending value
         /// </summary>
         public sealed class FloatComparator : NumericComparator<float>
         {
@@ -636,7 +634,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as short (using {@link
-        ///  FieldCache#getShorts} and sorts by ascending value 
+        ///  FieldCache#getShorts} and sorts by ascending value
         /// </summary>
         [Obsolete]
         public sealed class ShortComparator : NumericComparator<short>
@@ -731,7 +729,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as int (using {@link
-        ///  FieldCache#getInts} and sorts by ascending value 
+        ///  FieldCache#getInts} and sorts by ascending value
         /// </summary>
         public sealed class IntComparator : NumericComparator<int>
         {
@@ -822,7 +820,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Parses field's values as long (using {@link
-        ///  FieldCache#getLongs} and sorts by ascending value 
+        ///  FieldCache#getLongs} and sorts by ascending value
         /// </summary>
         public sealed class LongComparator : NumericComparator<long>
         {
@@ -920,7 +918,7 @@ namespace Lucene.Net.Search
         ///  secondarily by ascending docID, performance is faster
         ///  using <seealso cref="TopScoreDocCollector"/> directly (which {@link
         ///  IndexSearcher#search} uses when no <seealso cref="Sort"/> is
-        ///  specified). 
+        ///  specified).
         /// </summary>
         public sealed class RelevanceComparator : FieldComparator<float>
         {
@@ -1089,7 +1087,7 @@ namespace Lucene.Net.Search
         ///  does most comparisons using the ordinals.  For medium
         ///  to large results, this comparator will be much faster
         ///  than <seealso cref="Lucene.Net.Search.FieldComparator.TermValComparator"/>.  For very small
-        ///  result sets it may be slower. 
+        ///  result sets it may be slower.
         /// </summary>
         public class TermOrdValComparator : FieldComparator<BytesRef>
         {
@@ -1140,6 +1138,7 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Set by setTopValue. </summary>
             internal BytesRef TopValue_Renamed;
+
             internal bool TopSameReader;
             internal int TopOrd;
 
@@ -1147,7 +1146,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// -1 if missing values are sorted first, 1 if they are
-            ///  sorted last 
+            ///  sorted last
             /// </summary>
             internal readonly int MissingSortCmp;
 
@@ -1165,7 +1164,7 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Creates this, with control over how missing values
             ///  are sorted.  Pass sortMissingLast=true to put
-            ///  missing values at the end. 
+            ///  missing values at the end.
             /// </summary>
             public TermOrdValComparator(int numHits, string field, bool sortMissingLast)
             {
@@ -1360,7 +1359,6 @@ namespace Lucene.Net.Search
 
             public override int CompareTop(int doc)
             {
-
                 int ord = TermsIndex.GetOrd(doc);
                 if (ord == -1)
                 {
@@ -1408,14 +1406,14 @@ namespace Lucene.Net.Search
         /// Sorts by field's natural Term sort order.  All
         ///  comparisons are done using BytesRef.compareTo, which is
         ///  slow for medium to large result sets but possibly
-        ///  very fast for very small results sets. 
+        ///  very fast for very small results sets.
         /// </summary>
         // TODO: should we remove this?  who really uses it?
         public sealed class TermValComparator : FieldComparator<BytesRef>
         {
-
             // sentinels, just used internally in this comparator
             internal static readonly sbyte[] MISSING_BYTES = new sbyte[0];
+
             internal static readonly sbyte[] NON_MISSING_BYTES = new sbyte[0];
 
             internal BytesRef[] Values;
@@ -1547,5 +1545,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

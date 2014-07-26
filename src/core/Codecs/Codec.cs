@@ -1,36 +1,35 @@
 namespace Lucene.Net.Codecs
 {
+    using Lucene.Net.Util;
+    using System;
+    using System.Collections.Generic;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig; // javadocs
-    using Lucene.Net.Util;
-    using System.Collections.Generic;
-    using System;
 
     /// <summary>
     /// Encodes/decodes an inverted index segment.
     /// <p>
-    /// Note, when extending this class, the name (<seealso cref="#getName"/>) is 
+    /// Note, when extending this class, the name (<seealso cref="#getName"/>) is
     /// written into the index. In order for the segment to be read, the
     /// name must resolve to your implementation via <seealso cref="#forName(String)"/>.
-    /// this method uses Java's 
+    /// this method uses Java's
     /// <seealso cref="ServiceLoader Service Provider Interface"/> (SPI) to resolve codec names.
     /// <p>
     /// If you implement your own codec, make sure that it has a no-arg constructor
@@ -38,7 +37,6 @@ namespace Lucene.Net.Codecs
     /// <seealso cref= ServiceLoader </seealso>
     public abstract class Codec : NamedSPILoader<Codec>.NamedSPI
     {
-
         private static readonly NamedSPILoader<Codec> Loader;
 
         private readonly string name;
@@ -129,11 +127,11 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Reloads the codec list from the given <seealso cref="ClassLoader"/>.
         /// Changes to the codecs are visible after the method ends, all
-        /// iterators (<seealso cref="#availableCodecs()"/>,...) stay consistent. 
-        /// 
+        /// iterators (<seealso cref="#availableCodecs()"/>,...) stay consistent.
+        ///
         /// <p><b>NOTE:</b> Only new codecs are added, existing ones are
         /// never removed or replaced.
-        /// 
+        ///
         /// <p><em>this method is expensive and should only be called for discovery
         /// of new codecs on the given classpath/classloader!</em>
         /// </summary>
@@ -161,7 +159,6 @@ namespace Lucene.Net.Codecs
             }
         }
 
-
         /// <summary>
         /// returns the codec's name. Subclasses can override to provide
         /// more detail (such as parameters).
@@ -171,5 +168,4 @@ namespace Lucene.Net.Codecs
             return name;
         }
     }
-
 }

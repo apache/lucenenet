@@ -1,45 +1,43 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using Codec = Lucene.Net.Codecs.Codec;
-    using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using LiveDocsFormat = Lucene.Net.Codecs.LiveDocsFormat;
+    using Lucene.Net.Support;
     using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Codec = Lucene.Net.Codecs.Codec;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
+    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using LiveDocsFormat = Lucene.Net.Codecs.LiveDocsFormat;
     using MutableBits = Lucene.Net.Util.MutableBits;
-    using Lucene.Net.Support;
+    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
     // Used by IndexWriter to hold open SegmentReaders (for
     // searching or merging), plus pending deletes and updates,
@@ -85,7 +83,7 @@ namespace Lucene.Net.Index
 
         // Indicates whether this segment is currently being merged. While a segment
         // is merging, all field updates are also registered in the
-        // mergingNumericUpdates map. Also, calls to writeFieldUpdates merge the 
+        // mergingNumericUpdates map. Also, calls to writeFieldUpdates merge the
         // updates with mergingNumericUpdates.
         // That way, when the segment is done merging, IndexWriter can apply the
         // updates on the merged segment too.
@@ -192,7 +190,6 @@ namespace Lucene.Net.Index
 
                 if (MergeReader == null)
                 {
-
                     if (Reader != null)
                     {
                         // Just use the already opened non-merge reader
@@ -706,7 +703,6 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-
         }
 
         private IEnumerable<BytesRef> GetBytesRefEnumerable(SegmentReader reader, string field, BinaryDocValuesFieldUpdates fieldUpdates)
@@ -740,7 +736,6 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-
         }
 
         /*
@@ -784,7 +779,6 @@ namespace Lucene.Net.Index
 				  curDoc = -1;
 				  updateDoc = updatesIter.NextDoc();
 			  }
-
 
 			  internal int curDoc;
 			  internal int updateDoc;
@@ -870,7 +864,6 @@ namespace Lucene.Net.Index
 				  updateDoc = updatesIter.nextDoc();
 				  scratch = new BytesRef();
 			  }
-
 
 			  internal int curDoc;
 			  internal int updateDoc;
@@ -970,7 +963,5 @@ namespace Lucene.Net.Index
             sb.Append(" liveDocsShared=").Append(LiveDocsShared);
             return sb.ToString();
         }
-
     }
-
 }

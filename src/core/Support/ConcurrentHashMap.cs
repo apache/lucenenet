@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Lucene.Net.Support.Compatibility;
 
 namespace Lucene.Net.Support
 {

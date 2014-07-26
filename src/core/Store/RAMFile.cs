@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +21,7 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Represents a file in RAM as a list of byte[] buffers.
-    /// @lucene.internal 
+    /// @lucene.internal
     /// </summary>
     public class RAMFile
     {
@@ -65,7 +64,6 @@ namespace Lucene.Net.Store
             }
         }
 
-
         protected internal byte[] AddBuffer(int size)
         {
             byte[] buffer = NewBuffer(size);
@@ -99,7 +97,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Expert: allocate a new buffer. 
+        /// Expert: allocate a new buffer.
         /// Subclasses can allocate differently. </summary>
         /// <param name="size"> size of allocated buffer. </param>
         /// <returns> allocated buffer. </returns>
@@ -118,7 +116,5 @@ namespace Lucene.Net.Store
                 }
             }
         }
-
     }
-
 }

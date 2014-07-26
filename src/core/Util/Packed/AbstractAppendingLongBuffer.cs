@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,8 +24,8 @@ namespace Lucene.Net.Util.Packed
     /// Common functionality shared by <seealso cref="AppendingDeltaPackedLongBuffer"/> and <seealso cref="MonotonicAppendingLongBuffer"/>. </summary>
     public abstract class AbstractAppendingLongBuffer : LongValues
     {
-
         internal const int MIN_PAGE_SIZE = 64;
+
         // More than 1M doesn't really makes sense with these appending buffers
         // since their goal is to try to have small numbers of bits per value
         internal static readonly int MAX_PAGE_SIZE = 1 << 20;
@@ -127,7 +126,6 @@ namespace Lucene.Net.Util.Packed
             return Get(block, element, arr, off, len);
         }
 
-
         internal abstract long Get(int block, int element);
 
         internal abstract int Get(int block, int element, long[] arr, int off, int len);
@@ -139,12 +137,12 @@ namespace Lucene.Net.Util.Packed
       {
         return new Iterator(this);
       }*/
+
         public abstract Iterator GetIterator();
 
         public sealed class Iterator
         {
             private readonly AbstractAppendingLongBuffer OuterInstance;
-
 
             internal long[] CurrentValues;
             internal int VOff, POff;
@@ -211,7 +209,6 @@ namespace Lucene.Net.Util.Packed
                 }
                 return result;
             }
-
         }
 
         internal virtual long BaseRamBytesUsed()
@@ -246,7 +243,5 @@ namespace Lucene.Net.Util.Packed
             }
             Pending = null;
         }
-
     }
-
 }

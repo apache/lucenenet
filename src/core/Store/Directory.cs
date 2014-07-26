@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Index;
 
 namespace Lucene.Net.Store
 {
-
-    using System.IO;
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -23,29 +20,27 @@ namespace Lucene.Net.Store
          * limitations under the License.
          */
 
-
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
     /// A Directory is a flat list of files.  Files may be written once, when they
     /// are created.  Once a file is created it may only be opened for read, or
     /// deleted.  Random access is permitted both when reading and writing.
-    /// 
+    ///
     /// <p> Java's i/o APIs not used directly, but rather all i/o is
     /// through this API.  this permits things such as: <ul>
     /// <li> implementation of RAM-based indices;
     /// <li> implementation indices stored in a database, via JDBC;
     /// <li> implementation of an index as a single file;
     /// </ul>
-    /// 
+    ///
     /// Directory locking is implemented by an instance of {@link
     /// LockFactory}, and can be changed for each Directory
     /// instance using <seealso cref="#setLockFactory"/>.
-    /// 
+    ///
     /// </summary>
     public abstract class Directory : IDisposable
     {
-
         protected volatile bool isOpen = true;
 
         /// <summary>
@@ -59,7 +54,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Returns true iff a file with the given name exists.
         /// </summary>
-        ///  @deprecated this method will be removed in 5.0 
+        ///  @deprecated this method will be removed in 5.0
         public abstract bool FileExists(string name);
 
         /// <summary>
@@ -80,10 +75,9 @@ namespace Lucene.Net.Store
         ///         length. </exception>
         public abstract long FileLength(string name);
 
-
         /// <summary>
         /// Creates a new, empty file in the directory with the given name.
-        ///    Returns a stream writing this file. 
+        ///    Returns a stream writing this file.
         /// </summary>
         public abstract IndexOutput CreateOutput(string name, IOContext context);
 
@@ -145,7 +139,6 @@ namespace Lucene.Net.Store
         /// <param name="lockFactory"> instance of <seealso cref="LockFactory"/>. </param>
         public abstract LockFactory LockFactory { set; get; }
 
-
         /// <summary>
         /// Return a string identifier that uniquely differentiates
         /// this Directory instance from other Directory instances.
@@ -173,7 +166,7 @@ namespace Lucene.Net.Store
         /// <p>
         /// If you want to copy the entire source directory to the destination one, you
         /// can do so like this:
-        /// 
+        ///
         /// <pre class="prettyprint">
         /// Directory to; // the directory to copy to
         /// for (String file : dir.listAll()) {
@@ -259,6 +252,7 @@ namespace Lucene.Net.Store
             }
 
             private readonly IndexInput @base;
+
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
                 return new SlicedIndexInput("SlicedIndexInput(" + sliceDescription + " in " + @base + ")", @base, offset, length);
@@ -284,9 +278,9 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Allows to create one or more sliced <seealso cref="IndexInput"/> instances from a single 
+        /// Allows to create one or more sliced <seealso cref="IndexInput"/> instances from a single
         /// file handle. Some <seealso cref="Directory"/> implementations may be able to efficiently map slices of a file
-        /// into memory when only certain parts of a file are required.   
+        /// into memory when only certain parts of a file are required.
         /// @lucene.internal
         /// @lucene.experimental
         /// </summary>
@@ -307,9 +301,10 @@ namespace Lucene.Net.Store
             /// <summary>
             /// Returns an <seealso cref="IndexInput"/> slice starting at offset <i>0</i> with a
             /// length equal to the length of the underlying file </summary>
-            /// @deprecated Only for reading CFS files from 3.x indexes. 
+            /// @deprecated Only for reading CFS files from 3.x indexes.
             [Obsolete("Only for reading CFS files from 3.x indexes.")]
             public abstract IndexInput OpenFullSlice();
+
             // can we remove this somehow?
 
             public abstract void Dispose(bool disposing);
@@ -376,6 +371,7 @@ namespace Lucene.Net.Store
             protected override void SeekInternal(long pos)
             {
             }
+
             public override void Dispose()
             {
                 @base.Dispose();
@@ -392,5 +388,4 @@ namespace Lucene.Net.Store
             get { return IsOpen; }
         }
     }
-
 }

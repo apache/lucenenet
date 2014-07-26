@@ -1,58 +1,54 @@
 using System;
-using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs
 {
+    using Lucene.Net.Util.Fst;
+    using System.Text;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using Bits = Lucene.Net.Util.Bits;
+    using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
+    using ByteSequenceOutputs = Lucene.Net.Util.Fst.ByteSequenceOutputs;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using Directory = Lucene.Net.Store.Directory;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using SegmentInfo = Lucene.Net.Index.SegmentInfo;
-    using TermState = Lucene.Net.Index.TermState;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using StringHelper = Lucene.Net.Util.StringHelper;
-    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using RunAutomaton = Lucene.Net.Util.Automaton.RunAutomaton;
+    using SegmentInfo = Lucene.Net.Index.SegmentInfo;
+    using StringHelper = Lucene.Net.Util.StringHelper;
+    using Terms = Lucene.Net.Index.Terms;
+    using TermsEnum = Lucene.Net.Index.TermsEnum;
+    using TermState = Lucene.Net.Index.TermState;
     using Transition = Lucene.Net.Util.Automaton.Transition;
-    using ByteSequenceOutputs = Lucene.Net.Util.Fst.ByteSequenceOutputs;
-    using Lucene.Net.Util.Fst;
-    using Util = Lucene.Net.Util.Fst.Util;
-    using Lucene.Net.Support;
-    using System.Text;
 
     /// <summary>
     /// A block-based terms index and dictionary that assigns
@@ -65,23 +61,23 @@ namespace Lucene.Net.Codecs
     ///  terms dictionary has it's own fixed terms index (ie, it
     ///  does not support a pluggable terms index
     ///  implementation).
-    /// 
+    ///
     ///  <p><b>NOTE</b>: this terms dictionary does not support
     ///  index divisor when opening an IndexReader.  Instead, you
     ///  can change the min/maxItemsPerBlock during indexing.</p>
-    /// 
+    ///
     ///  <p>The data structure used by this implementation is very
     ///  similar to a burst trie
     ///  (http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.18.3499),
     ///  but with added logic to break up too-large blocks of all
     ///  terms sharing a given prefix into smaller ones.</p>
-    /// 
+    ///
     ///  <p>Use <seealso cref="Lucene.Net.Index.CheckIndex"/> with the <code>-verbose</code>
     ///  option to see summary statistics on the blocks in the
     ///  dictionary.
-    /// 
+    ///
     ///  See <seealso cref="BlockTreeTermsWriter"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
 
@@ -93,7 +89,6 @@ namespace Lucene.Net.Codecs
         {
             NO_OUTPUT = FstOutputs.NoOutput;
         }
-
 
         // Open input to the main terms dict file (_X.tib)
         private readonly IndexInput @in;
@@ -328,7 +323,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// BlockTree statistics for a single field 
+        /// BlockTree statistics for a single field
         /// returned by <seealso cref="FieldReader#computeStats()"/>.
         /// </summary>
         public class Stats
@@ -359,7 +354,7 @@ namespace Lucene.Net.Codecs
 
             /// <summary>
             /// The number of floor blocks (meta-blocks larger than the
-            ///  allowed {@code maxItemsPerBlock}) in the terms file. 
+            ///  allowed {@code maxItemsPerBlock}) in the terms file.
             /// </summary>
             public int FloorBlockCount;
 
@@ -369,19 +364,19 @@ namespace Lucene.Net.Codecs
 
             /// <summary>
             /// The number of "internal" blocks (that have both
-            ///  terms and sub-blocks). 
+            ///  terms and sub-blocks).
             /// </summary>
             public int MixedBlockCount;
 
             /// <summary>
             /// The number of "leaf" blocks (blocks that have only
-            ///  terms). 
+            ///  terms).
             /// </summary>
             public int TermsOnlyBlockCount;
 
             /// <summary>
             /// The number of "internal" blocks that do not contain
-            ///  terms (have only sub-blocks). 
+            ///  terms (have only sub-blocks).
             /// </summary>
             public int SubBlocksOnlyBlockCount;
 
@@ -392,6 +387,7 @@ namespace Lucene.Net.Codecs
             /// <summary>
             /// Number of blocks at each prefix depth. </summary>
             public int[] BlockCountByPrefixLen = new int[10];
+
             internal int StartBlockCount;
             internal int EndBlockCount;
 
@@ -402,13 +398,13 @@ namespace Lucene.Net.Codecs
             /// <summary>
             /// Total number of bytes used to store term stats (not
             ///  including what the <seealso cref="PostingsBaseFormat"/>
-            ///  stores. 
+            ///  stores.
             /// </summary>
             public long TotalBlockStatsBytes;
 
             /// <summary>
             /// Total bytes stored by the <seealso cref="PostingsBaseFormat"/>,
-            ///  plus the other few vInts stored in the frame. 
+            ///  plus the other few vInts stored in the frame.
             /// </summary>
             public long TotalBlockOtherBytes;
 
@@ -495,7 +491,7 @@ namespace Lucene.Net.Codecs
             {
                 StringBuilder @out = new StringBuilder();
 
-                /* LUCENE TO-DO I don't think this is neccesary 
+                /* LUCENE TO-DO I don't think this is neccesary
                 try
                 {
                   @out = new PrintStream(bos, false, IOUtils.UTF_8);
@@ -775,8 +771,10 @@ namespace Lucene.Net.Codecs
 
                     // metadata buffer, holding monotonic values
                     public long[] Longs;
+
                     // metadata buffer, holding general values
                     public byte[] Bytes;
+
                     internal ByteArrayDataInput BytesReader;
 
                     // Cumulative output so far
@@ -848,7 +846,6 @@ namespace Lucene.Net.Codecs
 
                     internal void Load(BytesRef frameIndexData)
                     {
-
                         // if (DEBUG) System.out.println("    load fp=" + fp + " fpOrig=" + fpOrig + " frameIndexData=" + frameIndexData + " trans=" + (transitions.length != 0 ? transitions[0] : "n/a" + " state=" + state));
 
                         if (frameIndexData != null && Transitions.Length != 0)
@@ -997,7 +994,6 @@ namespace Lucene.Net.Codecs
 
                     public void DecodeMetaData()
                     {
-
                         // lazily catch up on metadata decode:
                         int limit = TermBlockOrd;
                         bool absolute = MetaDataUpto == 0;
@@ -1006,7 +1002,6 @@ namespace Lucene.Net.Codecs
                         // TODO: better API would be "jump straight to term=N"???
                         while (MetaDataUpto < limit)
                         {
-
                             // TODO: we could make "tiers" of metadata, ie,
                             // decode docFreq/totalTF but don't decode postings
                             // metadata; this way caller could get
@@ -1024,7 +1019,7 @@ namespace Lucene.Net.Codecs
                                 TermState.TotalTermFreq = TermState.DocFreq + StatsReader.ReadVLong();
                                 //if (DEBUG) System.out.println("    totTF=" + state.totalTermFreq);
                             }
-                            // metadata 
+                            // metadata
                             for (int i = 0; i < OuterInstance.OuterInstance.LongsSize; i++)
                             {
                                 Longs[i] = BytesReader.ReadVLong();
@@ -1234,7 +1229,6 @@ namespace Lucene.Net.Codecs
 
                     for (int idx = 0; idx <= target.Length; idx++)
                     {
-
                         while (true)
                         {
                             int savePos = CurrentFrame.SuffixesReader.Position;
@@ -1314,7 +1308,6 @@ namespace Lucene.Net.Codecs
 
                 public override BytesRef Next()
                 {
-
                     // if (DEBUG) {
                     //   System.out.println("\nintEnum.next seg=" + segment);
                     //   System.out.println("  frame ord=" + currentFrame.ord + " prefix=" + brToString(new BytesRef(term.bytes, term.offset, currentFrame.prefix)) + " state=" + currentFrame.state + " lastInFloor?=" + currentFrame.isLastInFloor + " fp=" + currentFrame.fp + " trans=" + (currentFrame.transitions.length == 0 ? "n/a" : currentFrame.transitions[currentFrame.transitionIndex]) + " outputPrefix=" + currentFrame.outputPrefix);
@@ -1616,11 +1609,10 @@ namespace Lucene.Net.Codecs
 
                 /// <summary>
                 /// Runs next() through the entire terms dict,
-                ///  computing aggregate statistics. 
+                ///  computing aggregate statistics.
                 /// </summary>
                 public Stats ComputeBlockStats()
                 {
-
                     Stats stats = new Stats(OuterInstance.OuterInstance.Segment, OuterInstance.FieldInfo.Name);
                     if (OuterInstance.Index != null)
                     {
@@ -1653,7 +1645,6 @@ namespace Lucene.Net.Codecs
 
                     while (true)
                     {
-
                         // Pop finished blocks
                         while (CurrentFrame.NextEnt == CurrentFrame.EntCount)
                         {
@@ -1839,7 +1830,6 @@ namespace Lucene.Net.Codecs
 
                 public override bool SeekExact(BytesRef target)
                 {
-
                     if (OuterInstance.Index == null)
                     {
                         throw new InvalidOperationException("terms index was not loaded");
@@ -1860,7 +1850,6 @@ namespace Lucene.Net.Codecs
 
                     if (CurrentFrame != StaticFrame)
                     {
-
                         // We are already seek'd; find the common
                         // prefix of new seek term vs current term and
                         // re-use the corresponding seek state.  For
@@ -1952,7 +1941,6 @@ namespace Lucene.Net.Codecs
                             //   System.out.println("  target is after current (shares prefixLen=" + targetUpto + "); frame.ord=" + lastFrame.ord);
                             // }
                             CurrentFrame = lastFrame;
-
                         }
                         else if (cmp > 0)
                         {
@@ -1988,11 +1976,9 @@ namespace Lucene.Net.Codecs
                             //term.length = target.length;
                             //return termExists;
                         }
-
                     }
                     else
                     {
-
                         TargetBeforeCurrentLength = -1;
                         arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
 
@@ -2019,14 +2005,12 @@ namespace Lucene.Net.Codecs
 
                     while (targetUpto < target.Length)
                     {
-
                         int targetLabel = target.Bytes[target.Offset + targetUpto] & 0xFF;
 
                         FST<BytesRef>.Arc<BytesRef> nextArc = OuterInstance.Index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
 
                         if (nextArc == null)
                         {
-
                             // Index is exhausted
                             // if (DEBUG) {
                             //   System.out.println("    index: index exhausted label=" + ((char) targetLabel) + " " + toHex(targetLabel));
@@ -2155,7 +2139,6 @@ namespace Lucene.Net.Codecs
 
                     if (CurrentFrame != StaticFrame)
                     {
-
                         // We are already seek'd; find the common
                         // prefix of new seek term vs current term and
                         // re-use the corresponding seek state.  For
@@ -2211,7 +2194,6 @@ namespace Lucene.Net.Codecs
                             targetUpto++;
                         }
 
-
                         if (cmp == 0)
                         {
                             int targetUptoMid = targetUpto;
@@ -2247,7 +2229,6 @@ namespace Lucene.Net.Codecs
                             //System.out.println("  target is after current (shares prefixLen=" + targetUpto + "); clear frame.scanned ord=" + lastFrame.ord);
                             //}
                             CurrentFrame = lastFrame;
-
                         }
                         else if (cmp > 0)
                         {
@@ -2280,11 +2261,9 @@ namespace Lucene.Net.Codecs
                                 //}
                             }
                         }
-
                     }
                     else
                     {
-
                         TargetBeforeCurrentLength = -1;
                         arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
 
@@ -2311,14 +2290,12 @@ namespace Lucene.Net.Codecs
 
                     while (targetUpto < target.Length)
                     {
-
                         int targetLabel = target.Bytes[target.Offset + targetUpto] & 0xFF;
 
                         FST<BytesRef>.Arc<BytesRef> nextArc = OuterInstance.Index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
 
                         if (nextArc == null)
                         {
-
                             // Index is exhausted
                             // if (DEBUG) {
                             //   System.out.println("    index: index exhausted label=" + ((char) targetLabel) + " " + toHex(targetLabel));
@@ -2487,9 +2464,9 @@ namespace Lucene.Net.Codecs
                 /* Decodes only the term bytes of the next term.  If caller then asks for
                    metadata, ie docFreq, totalTermFreq or pulls a D/&PEnum, we then (lazily)
                    decode all metadata up to the current term. */
+
                 public override BytesRef Next()
                 {
-
                     if (@in == null)
                     {
                         // Fresh TermsEnum; seek to first term:
@@ -2700,6 +2677,7 @@ namespace Lucene.Net.Codecs
 
                     // File pointer where this block was loaded from
                     internal long Fp;
+
                     internal long FpOrig;
                     internal long FpEnd;
 
@@ -2745,8 +2723,10 @@ namespace Lucene.Net.Codecs
 
                     // metadata buffer, holding monotonic values
                     public long[] Longs;
+
                     // metadata buffer, holding general values
                     public byte[] Bytes;
+
                     internal ByteArrayDataInput BytesReader;
 
                     public Frame(BlockTreeTermsReader.FieldReader.SegmentTermsEnum outerInstance, int ord)
@@ -2796,15 +2776,15 @@ namespace Lucene.Net.Codecs
                     /* Does initial decode of next block of terms; this
                        doesn't actually decode the docFreq, totalTermFreq,
                        postings details (frq/prx offset, etc.) metadata;
-                       it just loads them as byte[] blobs which are then      
+                       it just loads them as byte[] blobs which are then
                        decoded on-demand if the metadata is ever requested
                        for any term in this block.  this enables terms-only
                        intensive consumes (eg certain MTQs, respelling) to
                        not pay the price of decoding metadata they won't
                        use. */
+
                     internal void LoadBlock()
                     {
-
                         // Clone the IndexInput lazily, so that consumers
                         // that just pull a TermsEnum to
                         // seekExact(TermState) don't pay this cost:
@@ -2878,7 +2858,6 @@ namespace Lucene.Net.Codecs
                         OuterInstance.@in.ReadBytes(Bytes, 0, numBytes);
                         BytesReader.Reset(Bytes, 0, numBytes);
 
-
                         // Sub-blocks of a single floor block are always
                         // written one after another -- tail recurse:
                         FpEnd = OuterInstance.@in.FilePointer;
@@ -2889,7 +2868,6 @@ namespace Lucene.Net.Codecs
 
                     internal void Rewind()
                     {
-
                         // Force reload:
                         Fp = FpOrig;
                         NextEnt = -1;
@@ -3000,7 +2978,6 @@ namespace Lucene.Net.Codecs
                     // floor blocks we "typically" get
                     public void ScanToFloorFrame(BytesRef target)
                     {
-
                         if (!IsFloor || target.Length <= Prefix)
                         {
                             // if (DEBUG) {
@@ -3078,7 +3055,6 @@ namespace Lucene.Net.Codecs
 
                     public void DecodeMetaData()
                     {
-
                         //if (DEBUG) System.out.println("\nBTTR.decodeMetadata seg=" + segment + " mdUpto=" + metaDataUpto + " vs termBlockOrd=" + state.termBlockOrd);
 
                         // lazily catch up on metadata decode:
@@ -3089,7 +3065,6 @@ namespace Lucene.Net.Codecs
                         // TODO: better API would be "jump straight to term=N"???
                         while (MetaDataUpto < limit)
                         {
-
                             // TODO: we could make "tiers" of metadata, ie,
                             // decode docFreq/totalTF but don't decode postings
                             // metadata; this way caller could get
@@ -3107,7 +3082,7 @@ namespace Lucene.Net.Codecs
                                 State.TotalTermFreq = State.DocFreq + StatsReader.ReadVLong();
                                 //if (DEBUG) System.out.println("    totTF=" + state.totalTermFreq);
                             }
-                            // metadata 
+                            // metadata
                             for (int i = 0; i < OuterInstance.OuterInstance.LongsSize; i++)
                             {
                                 Longs[i] = BytesReader.ReadVLong();
@@ -3189,7 +3164,6 @@ namespace Lucene.Net.Codecs
                     // scan the entries check if the suffix matches.
                     public SeekStatus ScanToTermLeaf(BytesRef target, bool exactOnly)
                     {
-
                         // if (DEBUG) System.out.println("    scanToTermLeaf: block fp=" + fp + " prefix=" + prefix + " nextEnt=" + nextEnt + " (of " + entCount + ") target=" + brToString(target) + " term=" + brToString(term));
 
                         Debug.Assert(NextEnt != -1);
@@ -3271,7 +3245,6 @@ namespace Lucene.Net.Codecs
                                 }
                                 else if (cmp > 0)
                                 {
-
                                     // Done!  Current entry is after target --
                                     // return NOT_FOUND:
                                     FillTerm();
@@ -3337,7 +3310,6 @@ namespace Lucene.Net.Codecs
                     // scan the entries check if the suffix matches.
                     public SeekStatus ScanToTermNonLeaf(BytesRef target, bool exactOnly)
                     {
-
                         //if (DEBUG) System.out.println("    scanToTermNonLeaf: block fp=" + fp + " prefix=" + prefix + " nextEnt=" + nextEnt + " (of " + entCount + ") target=" + brToString(target) + " term=" + brToString(term));
 
                         Debug.Assert(NextEnt != -1);
@@ -3429,7 +3401,6 @@ namespace Lucene.Net.Codecs
                                 }
                                 else if (cmp > 0)
                                 {
-
                                     // Done!  Current entry is after target --
                                     // return NOT_FOUND:
                                     FillTerm();
@@ -3527,5 +3498,4 @@ namespace Lucene.Net.Codecs
             }
         }
     }
-
 }

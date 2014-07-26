@@ -1,78 +1,72 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Threading;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using BlockTreeTermsReader = Lucene.Net.Codecs.BlockTreeTermsReader;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
-    using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
-    using Document = Lucene.Net.Document.Document;
-    using DocValuesStatus = Lucene.Net.Index.CheckIndex.Status.DocValuesStatus;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using FSDirectory = Lucene.Net.Store.FSDirectory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using CommandLineUtil = Lucene.Net.Util.CommandLineUtil;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using LongBitSet = Lucene.Net.Util.LongBitSet;
-    using StringHelper = Lucene.Net.Util.StringHelper;
-    using System.IO;
     using Lucene.Net.Support;
     using System.Globalization;
+    using System.IO;
+    using Bits = Lucene.Net.Util.Bits;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using BlockTreeTermsReader = Lucene.Net.Codecs.BlockTreeTermsReader;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using DocValuesStatus = Lucene.Net.Index.CheckIndex.Status.DocValuesStatus;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using LongBitSet = Lucene.Net.Util.LongBitSet;
+    using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
+    using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
+    using StringHelper = Lucene.Net.Util.StringHelper;
 
     /// <summary>
     /// Basic tool and API to check the health of an index and
     /// write a new segments file that removes reference to
     /// problematic segments.
-    /// 
+    ///
     /// <p>As this tool checks every byte in the index, on a large
     /// index it can take quite a long time to run.
-    /// 
+    ///
     /// @lucene.experimental Please make a complete backup of your
     /// index before using this to fix your index!
     /// </summary>
     public class CheckIndex
     {
-
         private StreamWriter infoStream;
         private Directory Dir;
 
         /// <summary>
         /// Returned from <seealso cref="#checkIndex()"/> detailing the health and status of the index.
-        /// 
+        ///
         /// @lucene.experimental
-        /// 
+        ///
         /// </summary>
 
         public class Status
         {
-
             internal Status()
             {
             }
@@ -120,8 +114,8 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// SegmentInfos instance containing only segments that
-            /// had no problems (this is used with the <seealso cref="CheckIndex#fixIndex"/> 
-            /// method to repair the index. 
+            /// had no problems (this is used with the <seealso cref="CheckIndex#fixIndex"/>
+            /// method to repair the index.
             /// </summary>
             internal SegmentInfos NewSegments;
 
@@ -136,7 +130,7 @@ namespace Lucene.Net.Index
             /// <summary>
             /// True if we checked only specific segments ({@link
             /// #checkIndex(List)}) was called with non-null
-            /// argument). 
+            /// argument).
             /// </summary>
             public bool Partial;
 
@@ -155,12 +149,11 @@ namespace Lucene.Net.Index
             /// <summary>
             /// Holds the status of each segment in the index.
             ///  See <seealso cref="#segmentInfos"/>.
-            /// 
+            ///
             /// @lucene.experimental
             /// </summary>
             public class SegmentInfoStatus
             {
-
                 internal SegmentInfoStatus()
                 {
                 }
@@ -187,26 +180,26 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Net size (MB) of the files referenced by this
-                ///  segment. 
+                ///  segment.
                 /// </summary>
                 public double SizeMB;
 
                 /// <summary>
                 /// Doc store offset, if this segment shares the doc
                 ///  store files (stored fields and term vectors) with
-                ///  other segments.  this is -1 if it does not share. 
+                ///  other segments.  this is -1 if it does not share.
                 /// </summary>
                 public int DocStoreOffset = -1;
 
                 /// <summary>
                 /// String of the shared doc store segment, or null if
-                ///  this segment does not share the doc store files. 
+                ///  this segment does not share the doc store files.
                 /// </summary>
                 public string DocStoreSegment;
 
                 /// <summary>
                 /// True if the shared doc store files are compound file
-                ///  format. 
+                ///  format.
                 /// </summary>
                 public bool DocStoreCompoundFile;
 
@@ -224,7 +217,7 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// True if we were able to open an AtomicReader on this
-                ///  segment. 
+                ///  segment.
                 /// </summary>
                 public bool OpenReaderPassed;
 
@@ -235,7 +228,7 @@ namespace Lucene.Net.Index
                 /// <summary>
                 /// Map that includes certain
                 ///  debugging details that IndexWriter records into
-                ///  each segment it creates 
+                ///  each segment it creates
                 /// </summary>
                 public IDictionary<string, string> Diagnostics;
 
@@ -283,7 +276,6 @@ namespace Lucene.Net.Index
             /// </summary>
             public sealed class TermIndexStatus
             {
-
                 internal TermIndexStatus()
                 {
                 }
@@ -312,7 +304,7 @@ namespace Lucene.Net.Index
                 /// Holds details of block allocations in the block
                 ///  tree terms dictionary (this is only set if the
                 ///  <seealso cref="PostingsFormat"/> for this segment uses block
-                ///  tree. 
+                ///  tree.
                 /// </summary>
                 public IDictionary<string, BlockTreeTermsReader.Stats> BlockTreeStats = null;
             }
@@ -322,7 +314,6 @@ namespace Lucene.Net.Index
             /// </summary>
             public sealed class StoredFieldStatus
             {
-
                 internal StoredFieldStatus()
                 {
                 }
@@ -345,7 +336,6 @@ namespace Lucene.Net.Index
             /// </summary>
             public sealed class TermVectorStatus
             {
-
                 internal TermVectorStatus()
                 {
                 }
@@ -368,7 +358,6 @@ namespace Lucene.Net.Index
             /// </summary>
             public sealed class DocValuesStatus
             {
-
                 internal DocValuesStatus()
                 {
                 }
@@ -412,7 +401,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// If true, term vectors are compared against postings to
         ///  make sure they are the same.  this will likely
-        ///  drastically increase time it takes to run CheckIndex! 
+        ///  drastically increase time it takes to run CheckIndex!
         /// </summary>
         public virtual bool CrossCheckTermVectors
         {
@@ -426,13 +415,12 @@ namespace Lucene.Net.Index
             }
         }
 
-
         private bool Verbose;
 
         /// <summary>
         /// Set infoStream where messages should go.  If null, no
         ///  messages are printed.  If verbose is true then more
-        ///  details are printed. 
+        ///  details are printed.
         /// </summary>
         public virtual void SetInfoStream(StreamWriter @out, bool verbose)
         {
@@ -461,13 +449,13 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns a <seealso cref="Status"/> instance detailing
         ///  the state of the index.
-        /// 
+        ///
         ///  <p>As this method checks every byte in the index, on a large
         ///  index it can take quite a long time to run.
-        /// 
+        ///
         ///  <p><b>WARNING</b>: make sure
         ///  you only call this when the index is not opened by any
-        ///  writer. 
+        ///  writer.
         /// </summary>
         public virtual Status DoCheckIndex()
         {
@@ -479,11 +467,11 @@ namespace Lucene.Net.Index
         ///  the state of the index.
         /// </summary>
         ///  <param name="onlySegments"> list of specific segment names to check
-        /// 
+        ///
         ///  <p>As this method checks every byte in the specified
         ///  segments, on a large index it can take quite a long
         ///  time to run.
-        /// 
+        ///
         ///  <p><b>WARNING</b>: make sure
         ///  you only call this when the index is not opened by any
         ///  writer.  </param>
@@ -633,7 +621,6 @@ namespace Lucene.Net.Index
                 return result;
             }
 
-
             result.NewSegments = (SegmentInfos)sis.Clone();
             result.NewSegments.Clear();
             result.MaxSegmentName = -1;
@@ -648,7 +635,6 @@ namespace Lucene.Net.Index
                 }
                 catch
                 {
-                    
                 }
                 if (segmentName > result.MaxSegmentName)
                 {
@@ -839,7 +825,6 @@ namespace Lucene.Net.Index
                     }
 
                     Msg(infoStream, "");
-
                 }
                 catch (Exception t)
                 {
@@ -1051,7 +1036,6 @@ namespace Lucene.Net.Index
                 FixedBitSet visitedDocs = new FixedBitSet(maxDoc);
                 while (true)
                 {
-
                     BytesRef term = termsEnum.Next();
                     if (term == null)
                     {
@@ -1403,7 +1387,6 @@ namespace Lucene.Net.Index
                     // only happen if it's a ghost field (field with
                     // no terms, eg there used to be terms but all
                     // docs got deleted and then merged away):
-
                 }
                 else
                 {
@@ -1608,7 +1591,6 @@ namespace Lucene.Net.Index
         /// </summary>
         public static Status.TermIndexStatus TestPostings(AtomicReader reader, StreamWriter infoStream, bool verbose)
         {
-
             // TODO: we should go and verify term vectors match, if
             // crossCheckTermVectors is on...
 
@@ -1944,6 +1926,7 @@ namespace Lucene.Net.Index
                         throw new Exception(fi.Name + " returns multiple docvalues types!");
                     }
                     break;
+
                 case FieldInfo.DocValuesType_e.SORTED_SET:
                     status.TotalSortedSetFields++;
                     CheckSortedSetDocValues(fi.Name, reader, reader.GetSortedSetDocValues(fi.Name), docsWithField);
@@ -1952,6 +1935,7 @@ namespace Lucene.Net.Index
                         throw new Exception(fi.Name + " returns multiple docvalues types!");
                     }
                     break;
+
                 case FieldInfo.DocValuesType_e.BINARY:
                     status.TotalBinaryFields++;
                     CheckBinaryDocValues(fi.Name, reader, reader.GetBinaryDocValues(fi.Name), docsWithField);
@@ -1960,6 +1944,7 @@ namespace Lucene.Net.Index
                         throw new Exception(fi.Name + " returns multiple docvalues types!");
                     }
                     break;
+
                 case FieldInfo.DocValuesType_e.NUMERIC:
                     status.TotalNumericFields++;
                     CheckNumericDocValues(fi.Name, reader, reader.GetNumericDocValues(fi.Name), docsWithField);
@@ -1968,6 +1953,7 @@ namespace Lucene.Net.Index
                         throw new Exception(fi.Name + " returns multiple docvalues types!");
                     }
                     break;
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -1980,6 +1966,7 @@ namespace Lucene.Net.Index
                 case FieldInfo.DocValuesType_e.NUMERIC:
                     CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc()));
                     break;
+
                 default:
                     throw new InvalidOperationException("wtf: " + fi.NormType);
             }
@@ -2092,7 +2079,6 @@ namespace Lucene.Net.Index
                                 BytesRef term = null;
                                 while ((term = termsEnum.Next()) != null)
                                 {
-
                                     if (hasProx)
                                     {
                                         postings = termsEnum.DocsAndPositions(null, postings);
@@ -2221,7 +2207,7 @@ namespace Lucene.Net.Index
 
                                                     if (payload == null)
                                                     {
-                                                        // we have payloads, but not at this position. 
+                                                        // we have payloads, but not at this position.
                                                         // postings has payloads too, it should not have one at this position
                                                         if (postingsPostings.Payload != null)
                                                         {
@@ -2273,14 +2259,14 @@ namespace Lucene.Net.Index
         ///  remove any of the unreferenced files after it's done;
         ///  you must separately open an <seealso cref="IndexWriter"/>, which
         ///  deletes unreferenced files when it's created.
-        /// 
+        ///
         /// <p><b>WARNING</b>: this writes a
         ///  new segments file into the index, effectively removing
         ///  all documents in broken segments from the index.
         ///  BE CAREFUL.
-        /// 
+        ///
         /// <p><b>WARNING</b>: Make sure you only call this when the
-        ///  index is not opened  by any writer. 
+        ///  index is not opened  by any writer.
         /// </summary>
         public virtual void FixIndex(Status result)
         {
@@ -2308,7 +2294,7 @@ namespace Lucene.Net.Index
 
         /*
         /// Command-line interface to check and fix an index.
-        /// 
+        ///
         ///  <p>
         ///  Run it like this:
         ///  <pre>
@@ -2316,25 +2302,25 @@ namespace Lucene.Net.Index
         ///  </pre>
         ///  <ul>
         ///  <li><code>-fix</code>: actually write a new segments_N file, removing any problematic segments
-        /// 
+        ///
         ///  <li><code>-segment X</code>: only check the specified
         ///  segment(s).  this can be specified multiple times,
         ///  to check more than one segment, eg <code>-segment _2
         ///  -segment _a</code>.  You can't use this with the -fix
         ///  option.
         ///  </ul>
-        /// 
+        ///
         ///  <p><b>WARNING</b>: <code>-fix</code> should only be used on an emergency basis as it will cause
         ///                     documents (perhaps many) to be permanently removed from the index.  Always make
         ///                     a backup copy of your index before running this!  Do not run this tool on an index
         ///                     that is actively being written to.  You have been warned!
-        /// 
+        ///
         ///  <p>                Run without -fix, this tool will open the index, report version information
         ///                     and report any exceptions it hits and what action it would take if -fix were
         ///                     specified.  With -fix, this tool will remove any segments that have issues and
         ///                     write a new segments_N file.  this means all documents contained in the affected
         ///                     segments will be removed.
-        /// 
+        ///
         ///  <p>
         ///                     this tool exits with exit code 1 if the index cannot be opened or has any
         ///                     corruption, else 0.
@@ -2342,7 +2328,6 @@ namespace Lucene.Net.Index
         /*[STAThread]
         public static void Main(string[] args)
         {
-
           bool doFix = false;
           bool doCrossCheckTermVectors = false;
           bool verbose = false;
@@ -2484,5 +2469,4 @@ namespace Lucene.Net.Index
           Environment.Exit(exitCode);
         }*/
     }
-
 }

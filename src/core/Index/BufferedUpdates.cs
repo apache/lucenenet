@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +21,6 @@ namespace Lucene.Net.Index
          * See the License for the specific language governing permissions and
          * limitations under the License.
          */
-
 
     using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
@@ -40,7 +39,6 @@ namespace Lucene.Net.Index
 
     public class BufferedUpdates
     {
-
         /* Rough logic: HashMap has an array[Entry] w/ varying
            load factor (say 2 * POINTER).  Entry is object w/ Term
            key, Integer val, int hash, Entry next
@@ -66,16 +64,16 @@ namespace Lucene.Net.Index
         internal static readonly int BYTES_PER_DEL_QUERY = 5 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + 24;
 
         /* Rough logic: NumericUpdate calculates its actual size,
-         * including the update Term and DV field (String). The 
+         * including the update Term and DV field (String). The
          * per-field map holds a reference to the updated field, and
-         * therefore we only account for the object reference and 
+         * therefore we only account for the object reference and
          * map space itself. this is incremented when we first see
          * an updated field.
-         * 
+         *
          * HashMap has an array[Entry] w/ varying load
-         * factor (say 2*POINTER). Entry is an object w/ String key, 
+         * factor (say 2*POINTER). Entry is an object w/ String key,
          * LinkedHashMap val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).
-         * 
+         *
          * LinkedHashMap (val) is counted as OBJ_HEADER, array[Entry] ref + header, 4*INT, 1*FLOAT,
          * Set (entrySet) (2*OBJ_HEADER + ARRAY_HEADER + 2*POINTER + 4*INT + FLOAT)
          */
@@ -83,26 +81,26 @@ namespace Lucene.Net.Index
 
         /* Rough logic: Incremented when we see another Term for an already updated
          * field.
-         * LinkedHashMap has an array[Entry] w/ varying load factor 
-         * (say 2*POINTER). Entry is an object w/ Term key, NumericUpdate val, 
+         * LinkedHashMap has an array[Entry] w/ varying load factor
+         * (say 2*POINTER). Entry is an object w/ Term key, NumericUpdate val,
          * int hash, Entry next, Entry before, Entry after (OBJ_HEADER + 5*POINTER + INT).
-         * 
+         *
          * Term (key) is counted only as POINTER.
          * NumericUpdate (val) counts its own size and isn't accounted for here.
          */
         internal static readonly int BYTES_PER_NUMERIC_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
 
         /* Rough logic: BinaryUpdate calculates its actual size,
-         * including the update Term and DV field (String). The 
+         * including the update Term and DV field (String). The
          * per-field map holds a reference to the updated field, and
-         * therefore we only account for the object reference and 
+         * therefore we only account for the object reference and
          * map space itself. this is incremented when we first see
          * an updated field.
-         * 
+         *
          * HashMap has an array[Entry] w/ varying load
-         * factor (say 2*POINTER). Entry is an object w/ String key, 
+         * factor (say 2*POINTER). Entry is an object w/ String key,
          * LinkedHashMap val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).
-         * 
+         *
          * LinkedHashMap (val) is counted as OBJ_HEADER, array[Entry] ref + header, 4*INT, 1*FLOAT,
          * Set (entrySet) (2*OBJ_HEADER + ARRAY_HEADER + 2*POINTER + 4*INT + FLOAT)
          */
@@ -110,10 +108,10 @@ namespace Lucene.Net.Index
 
         /* Rough logic: Incremented when we see another Term for an already updated
          * field.
-         * LinkedHashMap has an array[Entry] w/ varying load factor 
-         * (say 2*POINTER). Entry is an object w/ Term key, BinaryUpdate val, 
+         * LinkedHashMap has an array[Entry] w/ varying load factor
+         * (say 2*POINTER). Entry is an object w/ Term key, BinaryUpdate val,
          * int hash, Entry next, Entry before, Entry after (OBJ_HEADER + 5*POINTER + INT).
-         * 
+         *
          * Term (key) is counted only as POINTER.
          * BinaryUpdate (val) counts its own size and isn't accounted for here.
          */
@@ -334,5 +332,4 @@ namespace Lucene.Net.Index
             return Terms.Count > 0 || DocIDs.Count > 0 || Queries.Count > 0 || NumericUpdates.Count > 0 || BinaryUpdates.Count > 0;
         }
     }
-
 }

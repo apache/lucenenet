@@ -1,11 +1,10 @@
+using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,17 +22,15 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
     using Lucene.Net.Document;
     using Lucene.Net.Index;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using Lucene.Net.Util;
+    using NUnit.Framework;
+    using System.IO;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
-    using Lucene.Net.Util;
-    using System.IO;
-    using NUnit.Framework;
+    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 
     /// <summary>
     /// Tests <seealso cref="PhraseQuery"/>.
@@ -44,13 +41,13 @@ namespace Lucene.Net.Search
      * -ea -Drt.seed=AFD1E7E84B35D2B1
      * to get leaked thread errors.
      */
+
     // @ThreadLeaks(linger = 1000, leakedThreadsBelongToSuite = true)
     //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
     //ORIGINAL LINE: @Seed("AFD1E7E84B35D2B1") public class TestPhraseQuery extends LuceneTestCase
     [TestFixture]
     public class TestPhraseQuery : LuceneTestCase
     {
-
         /// <summary>
         /// threshold for comparing floats </summary>
         public const float SCORE_COMP_THRESH = 1e-6f;
@@ -158,7 +155,6 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, hits.Length, "exact match");
             QueryUtils.Check(Random(), Query, Searcher);
 
-
             Query = new PhraseQuery();
             Query.Add(new Term("field", "two"));
             Query.Add(new Term("field", "one"));
@@ -177,7 +173,6 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "in order");
             QueryUtils.Check(Random(), Query, Searcher);
-
 
             // Ensures slop of 1 does not work for phrases out of order;
             // must be at least 2.
@@ -203,7 +198,6 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, hits.Length, "just sloppy enough");
             QueryUtils.Check(Random(), Query, Searcher);
 
-
             Query = new PhraseQuery();
             Query.Slop = 2;
             Query.Add(new Term("field", "three"));
@@ -211,7 +205,6 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "not sloppy enough");
             QueryUtils.Check(Random(), Query, Searcher);
-
         }
 
         /// <summary>
@@ -229,7 +222,6 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, hits.Length, "two total moves");
             QueryUtils.Check(Random(), Query, Searcher);
 
-
             Query = new PhraseQuery();
             Query.Slop = 5; // it takes six moves to match this phrase
             Query.Add(new Term("field", "five"));
@@ -239,12 +231,10 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, hits.Length, "slop of 5 not close enough");
             QueryUtils.Check(Random(), Query, Searcher);
 
-
             Query.Slop = 6;
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "slop of 6 just right");
             QueryUtils.Check(Random(), Query, Searcher);
-
         }
 
         [Test]
@@ -300,7 +290,6 @@ namespace Lucene.Net.Search
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(Random(), phraseQuery, searcher);
 
-
             TermQuery termQuery = new TermQuery(new Term("contents", "foobar"));
             BooleanQuery booleanQuery = new BooleanQuery();
             booleanQuery.Add(termQuery, BooleanClause.Occur.MUST);
@@ -308,7 +297,6 @@ namespace Lucene.Net.Search
             hits = searcher.Search(booleanQuery, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             QueryUtils.Check(Random(), termQuery, searcher);
-
 
             reader.Dispose();
 
@@ -340,7 +328,6 @@ namespace Lucene.Net.Search
             hits = searcher.Search(phraseQuery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
 
-
             booleanQuery = new BooleanQuery();
             booleanQuery.Add(termQuery, BooleanClause.Occur.MUST);
             booleanQuery.Add(phraseQuery, BooleanClause.Occur.MUST);
@@ -353,7 +340,6 @@ namespace Lucene.Net.Search
             hits = searcher.Search(booleanQuery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(Random(), booleanQuery, searcher);
-
 
             reader.Dispose();
             directory.Dispose();
@@ -480,22 +466,20 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "nonexisting phrase with repetitions does not exist in any doc");
             QueryUtils.Check(Random(), Query, Searcher);
-
         }
 
         /// <summary>
         /// Working on a 2 fields like this:
         ///    Field("field", "one two three four five")
         ///    Field("palindrome", "one two three two one")
-        /// Phrase of size 2 occuriong twice, once in order and once in reverse, 
-        /// because doc is a palyndrome, is counted twice. 
-        /// Also, in this case order in query does not matter. 
-        /// Also, when an exact match is found, both sloppy scorer and exact scorer scores the same.   
+        /// Phrase of size 2 occuriong twice, once in order and once in reverse,
+        /// because doc is a palyndrome, is counted twice.
+        /// Also, in this case order in query does not matter.
+        /// Also, when an exact match is found, both sloppy scorer and exact scorer scores the same.
         /// </summary>
         [Test]
         public virtual void TestPalyndrome2()
         {
-
             // search on non palyndrome, find phrase with no slop, using exact phrase scorer
             Query.Slop = 0; // to use exact phrase scorer
             Query.Add(new Term("field", "two"));
@@ -526,7 +510,7 @@ namespace Lucene.Net.Search
             //System.out.println("palindrome: two three: "+score2);
             QueryUtils.Check(Random(), Query, Searcher);
 
-            //commented out for sloppy-phrase efficiency (issue 736) - see SloppyPhraseScorer.phraseFreq(). 
+            //commented out for sloppy-phrase efficiency (issue 736) - see SloppyPhraseScorer.phraseFreq().
             //Assert.IsTrue("ordered scores higher in palindrome",score1+SCORE_COMP_THRESH<score2);
 
             // search reveresed in palyndrome, find it twice
@@ -540,7 +524,7 @@ namespace Lucene.Net.Search
             //System.out.println("palindrome: three two: "+score3);
             QueryUtils.Check(Random(), Query, Searcher);
 
-            //commented out for sloppy-phrase efficiency (issue 736) - see SloppyPhraseScorer.phraseFreq(). 
+            //commented out for sloppy-phrase efficiency (issue 736) - see SloppyPhraseScorer.phraseFreq().
             //Assert.IsTrue("reversed scores higher in palindrome",score1+SCORE_COMP_THRESH<score3);
             //Assert.AreEqual("ordered or reversed does not matter",score2, score3, SCORE_COMP_THRESH);
         }
@@ -549,15 +533,14 @@ namespace Lucene.Net.Search
         /// Working on a 2 fields like this:
         ///    Field("field", "one two three four five")
         ///    Field("palindrome", "one two three two one")
-        /// Phrase of size 3 occuriong twice, once in order and once in reverse, 
-        /// because doc is a palyndrome, is counted twice. 
-        /// Also, in this case order in query does not matter. 
-        /// Also, when an exact match is found, both sloppy scorer and exact scorer scores the same.   
+        /// Phrase of size 3 occuriong twice, once in order and once in reverse,
+        /// because doc is a palyndrome, is counted twice.
+        /// Also, in this case order in query does not matter.
+        /// Also, when an exact match is found, both sloppy scorer and exact scorer scores the same.
         /// </summary>
         [Test]
         public virtual void TestPalyndrome3()
         {
-
             // search on non palyndrome, find phrase with no slop, using exact phrase scorer
             Query.Slop = 0; // to use exact phrase scorer
             Query.Add(new Term("field", "one"));
@@ -597,7 +580,7 @@ namespace Lucene.Net.Search
             //System.out.println("palindrome: one two three: "+score2);
             QueryUtils.Check(Random(), Query, Searcher);
 
-            //commented out for sloppy-phrase efficiency (issue 736) - see SloppyPhraseScorer.phraseFreq(). 
+            //commented out for sloppy-phrase efficiency (issue 736) - see SloppyPhraseScorer.phraseFreq().
             //Assert.IsTrue("ordered scores higher in palindrome",score1+SCORE_COMP_THRESH<score2);
 
             // search reveresed in palyndrome, find it twice
@@ -612,7 +595,7 @@ namespace Lucene.Net.Search
             //System.out.println("palindrome: three two one: "+score3);
             QueryUtils.Check(Random(), Query, Searcher);
 
-            //commented out for sloppy-phrase efficiency (issue 736) - see SloppyPhraseScorer.phraseFreq(). 
+            //commented out for sloppy-phrase efficiency (issue 736) - see SloppyPhraseScorer.phraseFreq().
             //Assert.IsTrue("reversed scores higher in palindrome",score1+SCORE_COMP_THRESH<score3);
             //Assert.AreEqual("ordered or reversed does not matter",score2, score3, SCORE_COMP_THRESH);
         }
@@ -627,6 +610,7 @@ namespace Lucene.Net.Search
         }
 
         /* test that a single term is rewritten to a term query */
+
         [Test]
         public virtual void TestRewrite()
         {
@@ -772,5 +756,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

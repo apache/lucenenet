@@ -1,73 +1,73 @@
 namespace Lucene.Net.Util
 {
+    using Lucene.Net.Search;
+    using Lucene.Net.Support; // for javadocs
+    using System;
+    using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
 
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
-    using DoubleField = Lucene.Net.Document.DoubleField; // javadocs
+    // javadocs
     using FloatField = Lucene.Net.Document.FloatField; // javadocs
     using IntField = Lucene.Net.Document.IntField; // javadocs
     using LongField = Lucene.Net.Document.LongField; // javadocs
-    using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using Lucene.Net.Search;
-    using System;
-    using Lucene.Net.Support; // for javadocs
 
     /// <summary>
     /// this is a helper class to generate prefix-encoded representations for numerical values
     /// and supplies converters to represent float/double values as sortable integers/longs.
-    /// 
+    ///
     /// <p>To quickly execute range queries in Apache Lucene, a range is divided recursively
     /// into multiple intervals for searching: The center of the range is searched only with
     /// the lowest possible precision in the trie, while the boundaries are matched
     /// more exactly. this reduces the number of terms dramatically.
-    /// 
+    ///
     /// <p>this class generates terms to achieve this: First the numerical integer values need to
     /// be converted to bytes. For that integer values (32 bit or 64 bit) are made unsigned
     /// and the bits are converted to ASCII chars with each 7 bit. The resulting byte[] is
     /// sortable like the original integer value (even using UTF-8 sort order). Each value is also
     /// prefixed (in the first char) by the <code>shift</code> value (number of bits removed) used
     /// during encoding.
-    /// 
+    ///
     /// <p>To also index floating point numbers, this class supplies two methods to convert them
     /// to integer values by changing their bit layout: <seealso cref="#doubleToSortableLong"/>,
     /// <seealso cref="#floatToSortableInt"/>. You will have no precision loss by
     /// converting floating point numbers to integers and back (only that the integer form
     /// is not usable). Other data types like dates can easily converted to longs or ints (e.g.
     /// date to long: <seealso cref="java.util.Date#getTime"/>).
-    /// 
+    ///
     /// <p>For easy usage, the trie algorithm is implemented for indexing inside
     /// <seealso cref="NumericTokenStream"/> that can index <code>int</code>, <code>long</code>,
     /// <code>float</code>, and <code>double</code>. For querying,
     /// <seealso cref="NumericRangeQuery"/> and <seealso cref="NumericRangeFilter"/> implement the query part
     /// for the same data types.
-    /// 
+    ///
     /// <p>this class can also be used, to generate lexicographically sortable (according to
     /// <seealso cref="BytesRef#getUTF8SortedAsUTF16Comparator()"/>) representations of numeric data
     /// types for other usages (e.g. sorting).
-    /// 
+    ///
     /// @lucene.internal
     /// @since 2.9, API changed non backwards-compliant in 4.0
     /// </summary>
     public sealed class NumericUtils
     {
-
         private NumericUtils() // no instance!
         {
         }
@@ -160,7 +160,6 @@ namespace Lucene.Net.Util
             }
         }
 
-
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
         /// this is method is used by <seealso cref="NumericTokenStream"/>.
@@ -192,7 +191,6 @@ namespace Lucene.Net.Util
                 sortableBits = (int)((uint)sortableBits >> 7);
             }
         }
-
 
         /// <summary>
         /// Returns the shift value from a prefix encoded {@code long}. </summary>
@@ -412,9 +410,11 @@ namespace Lucene.Net.Util
                 case 64:
                     ((LongRangeBuilder)builder).AddRange(minBound, maxBound, shift);
                     break;
+
                 case 32:
                     ((IntRangeBuilder)builder).AddRange((int)minBound, (int)maxBound, shift);
                     break;
+
                 default:
                     // Should not happen!
                     throw new System.ArgumentException("valSize must be 32 or 64.");
@@ -429,7 +429,6 @@ namespace Lucene.Net.Util
         /// </summary>
         public abstract class LongRangeBuilder
         {
-
             /// <summary>
             /// Overwrite this method, if you like to receive the already prefix encoded range bounds.
             /// You can directly build classical (inclusive) range queries from them.
@@ -450,7 +449,6 @@ namespace Lucene.Net.Util
                 LongToPrefixCodedBytes(max, shift, maxBytes);
                 AddRange(minBytes, maxBytes);
             }
-
         }
 
         /// <summary>
@@ -461,7 +459,6 @@ namespace Lucene.Net.Util
         /// </summary>
         public abstract class IntRangeBuilder
         {
-
             /// <summary>
             /// Overwrite this method, if you like to receive the already prefix encoded range bounds.
             /// You can directly build classical range (inclusive) queries from them.
@@ -482,7 +479,6 @@ namespace Lucene.Net.Util
                 IntToPrefixCodedBytes(max, shift, maxBytes);
                 AddRange(minBytes, maxBytes);
             }
-
         }
 
         /// <summary>
@@ -531,13 +527,10 @@ namespace Lucene.Net.Util
             {
             }
 
-
             protected internal override AcceptStatus Accept(BytesRef term)
             {
                 return NumericUtils.GetPrefixCodedIntShift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
             }
         }
-
     }
-
 }

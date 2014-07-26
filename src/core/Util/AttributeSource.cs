@@ -1,13 +1,12 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,14 +24,13 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
     using System.Runtime.CompilerServices;
 
     /// <summary>
     /// An AttributeSource contains a list of different <seealso cref="Attribute"/>s,
     /// and methods to add and get them. There can only be a single instance
     /// of an attribute in the same AttributeSource instance. this is ensured
-    /// by passing in the actual type of the Attribute (Class&lt;Attribute&gt;) to 
+    /// by passing in the actual type of the Attribute (Class&lt;Attribute&gt;) to
     /// the <seealso cref="#addAttribute(Class)"/>, which then checks if an instance of
     /// that type is already present. If yes, it returns the instance, otherwise
     /// it creates a new instance and returns it.
@@ -127,6 +125,7 @@ namespace Lucene.Net.Util
         // These two maps must always be in sync!!!
         // So they are private, final and read-only from the outside (read-only iterators)
         private readonly GeneralKeyedCollection<Type, AttributeImplItem> Attributes;
+
         private readonly GeneralKeyedCollection<Type, AttributeImplItem> AttributeImpls;
         private readonly State[] CurrentState_Renamed;
 
@@ -177,7 +176,6 @@ namespace Lucene.Net.Util
             }
         }
 
-
         /// <summary>
         /// Returns a new iterator that iterates the attribute classes
         /// in the same order they were added in.
@@ -189,6 +187,7 @@ namespace Lucene.Net.Util
                 return Attributes.Keys.GetEnumerator();
             }
         }
+
         /// <summary>
         /// Returns a new iterator that iterates all unique Attribute implementations.
         /// this iterator may contain less entries that <seealso cref="#getAttributeClassesIterator"/>,
@@ -371,7 +370,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// The caller must pass in a Class&lt;? extends Attribute&gt; value. 
+        /// The caller must pass in a Class&lt;? extends Attribute&gt; value.
         /// Returns true, iff this AttributeSource contains the passed-in Attribute.
         /// </summary>
         public bool HasAttribute<T>() where T : IAttribute
@@ -381,7 +380,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// The caller must pass in a Class&lt;? extends Attribute&gt; value. 
+        /// The caller must pass in a Class&lt;? extends Attribute&gt; value.
         /// Returns the instance of the passed in Attribute contained in this AttributeSource
         /// </summary>
         /// <exception cref="IllegalArgumentException"> if this AttributeSource does not contain the
@@ -458,7 +457,7 @@ namespace Lucene.Net.Util
         /// the targetStream contains an OffsetAttribute, but this state doesn't, then
         /// the value of the OffsetAttribute remains unchanged. It might be desirable to
         /// reset its value to the default, in which case the caller should first
-        /// call <seealso cref="TokenStream#ClearAttributes()"/> on the targetStream.   
+        /// call <seealso cref="TokenStream#ClearAttributes()"/> on the targetStream.
         /// </summary>
         public void RestoreState(State state)
         {
@@ -539,7 +538,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// this method returns the current attribute values as a string in the following format
         /// by calling the <seealso cref="#reflectWith(AttributeReflector)"/> method:
-        /// 
+        ///
         /// <ul>
         /// <li><em>iff {@code prependAttClass=true}:</em> {@code "AttributeClass#key=value,AttributeClass#key=value"}
         /// <li><em>iff {@code prependAttClass=false}:</em> {@code "key=value,key=value"}
@@ -589,7 +588,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// this method is for introspection of attributes, it should simply
         /// add the key/values this AttributeSource holds to the given <seealso cref="AttributeReflector"/>.
-        /// 
+        ///
         /// <p>this method iterates over all Attribute implementations and calls the
         /// corresponding <seealso cref="Attribute#reflectWith"/> method.</p>
         /// </summary>
@@ -639,7 +638,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Copies the contents of this {@code AttributeSource} to the given target {@code AttributeSource}.
-        /// The given instance has to provide all <seealso cref="Attribute"/>s this instance contains. 
+        /// The given instance has to provide all <seealso cref="Attribute"/>s this instance contains.
         /// The actual attribute implementations must be identical in both {@code AttributeSource} instances;
         /// ideally both AttributeSource instances should use the same <seealso cref="AttributeFactory"/>.
         /// You can use this method as a replacement for <seealso cref="#restoreState"/>, if you use
@@ -667,5 +666,4 @@ namespace Lucene.Net.Util
             return this.GetType().Name + '@' + RuntimeHelpers.GetHashCode(this).ToString("x") + " " + ReflectAsString(false);
         }
     }
-
 }

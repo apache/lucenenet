@@ -4,52 +4,51 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using StringField = Lucene.Net.Document.StringField;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MultiReader = Lucene.Net.Index.MultiReader;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using StringField = Lucene.Net.Document.StringField;
     using Term = Lucene.Net.Index.Term;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
 
     /*
      * Very simple tests of sorting.
-     * 
+     *
      * THE RULES:
      * 1. keywords like 'abstract' and 'static' should not appear in this file.
-     * 2. each test method should be self-contained and understandable. 
+     * 2. each test method should be self-contained and understandable.
      * 3. no test methods should share code with other test methods.
      * 4. no testing of things unrelated to sorting.
      * 5. no tracers.
@@ -59,10 +58,10 @@ namespace Lucene.Net.Search
      *        |
      *       \./
      */
+
     [TestFixture]
     public class TestSort : LuceneTestCase
     {
-
         /// <summary>
         /// Tests sorting on type string </summary>
         [Test]
@@ -216,7 +215,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Tests sorting on type string with a missing
-        ///  value sorted first 
+        ///  value sorted first
         /// </summary>
         [Test]
         public virtual void TestStringMissingSortedFirst()
@@ -251,7 +250,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Tests reverse sorting on type string with a missing
-        ///  value sorted first 
+        ///  value sorted first
         /// </summary>
         [Test]
         public virtual void TestStringMissingSortedFirstReverse()
@@ -286,7 +285,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Tests sorting on type string with a missing
-        ///  value sorted last 
+        ///  value sorted last
         /// </summary>
         [Test]
         public virtual void TestStringValMissingSortedLast()
@@ -322,7 +321,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Tests reverse sorting on type string with a missing
-        ///  value sorted last 
+        ///  value sorted last
         /// </summary>
         [Test]
         public virtual void TestStringValMissingSortedLastReverse()
@@ -1471,7 +1470,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// test sorts for a custom int parser that uses a simple char encoding 
+        /// test sorts for a custom int parser that uses a simple char encoding
         /// </summary>
         [Test]
         public virtual void TestCustomIntParser()
@@ -1529,7 +1528,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// test sorts for a custom byte parser that uses a simple char encoding 
+        /// test sorts for a custom byte parser that uses a simple char encoding
         /// </summary>
         public virtual void TestCustomByteParser()
         {
@@ -1586,7 +1585,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// test sorts for a custom short parser that uses a simple char encoding 
+        /// test sorts for a custom short parser that uses a simple char encoding
         /// </summary>
         [Test]
         public virtual void TestCustomShortParser()
@@ -1644,7 +1643,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// test sorts for a custom long parser that uses a simple char encoding 
+        /// test sorts for a custom long parser that uses a simple char encoding
         /// </summary>
         public virtual void TestCustomLongParser()
         {
@@ -1701,7 +1700,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// test sorts for a custom float parser that uses a simple char encoding 
+        /// test sorts for a custom float parser that uses a simple char encoding
         /// </summary>
         public virtual void TestCustomFloatParser()
         {
@@ -1758,7 +1757,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// test sorts for a custom double parser that uses a simple char encoding 
+        /// test sorts for a custom double parser that uses a simple char encoding
         /// </summary>
         [Test]
         public virtual void TestCustomDoubleParser()
@@ -1927,5 +1926,4 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
     }
-
 }

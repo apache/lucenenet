@@ -1,57 +1,54 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.IO;
 using Lucene.Net.Document;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
+    using NUnit.Framework;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
     using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    using Field = Lucene.Net.Document.Field;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
+    using TopDocs = Lucene.Net.Search.TopDocs;
 
     [TestFixture]
     public class TestIndexableField : LuceneTestCase
     {
-
         private class MyField : IndexableField
         {
             private readonly TestIndexableField OuterInstance;
-
 
             internal readonly int Counter;
             internal readonly IndexableFieldType fieldType;
@@ -64,6 +61,7 @@ namespace Lucene.Net.Index
             private class IndexableFieldTypeAnonymousInnerClassHelper : IndexableFieldType
             {
                 private MyField OuterInstance;
+
                 public IndexableFieldTypeAnonymousInnerClassHelper(MyField outerInstance)
                 {
                     OuterInstance = outerInstance;
@@ -209,7 +207,6 @@ namespace Lucene.Net.Index
                         return null;
                     }
                 }
-
             }
 
             public object NumericValue
@@ -233,7 +230,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestArbitraryFields()
         {
-
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 
@@ -345,7 +341,6 @@ namespace Lucene.Net.Index
                             Assert.IsNull(termsEnum.Next());
 
                             // TODO: offsets
-
                         }
                         else
                         {
@@ -447,7 +442,9 @@ namespace Lucene.Net.Index
                     get { return Current; }
                 }
 
-                public void Dispose() { }
+                public void Dispose()
+                {
+                }
 
                 public void Reset()
                 {
@@ -456,5 +453,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

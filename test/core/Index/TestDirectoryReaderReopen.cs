@@ -5,43 +5,42 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestDirectoryReaderReopen : LuceneTestCase
     {
-
         [Test]
         public virtual void TestReopen_Mem()
         {
@@ -70,7 +69,6 @@ namespace Lucene.Net.Index
                 this.Dir1 = dir1;
             }
 
-
             protected internal override void ModifyIndex(int i)
             {
                 TestDirectoryReaderReopen.ModifyIndex(i, Dir1);
@@ -80,7 +78,6 @@ namespace Lucene.Net.Index
             {
                 return DirectoryReader.Open(Dir1);
             }
-
         }
 
         private class TestReopenAnonymousInnerClassHelper2 : TestReopen
@@ -95,7 +92,6 @@ namespace Lucene.Net.Index
                 this.Dir2 = dir2;
             }
 
-
             protected internal override void ModifyIndex(int i)
             {
                 TestDirectoryReaderReopen.ModifyIndex(i, Dir2);
@@ -105,13 +101,12 @@ namespace Lucene.Net.Index
             {
                 return DirectoryReader.Open(Dir2);
             }
-
         }
 
         // LUCENE-1228: IndexWriter.Commit() does not update the index version
         // populate an index in iterations.
         // at the end of every iteration, commit the index and reopen/recreate the reader.
-        // in each iteration verify the work of previous iteration. 
+        // in each iteration verify the work of previous iteration.
         // try this once with reopen once recreate, on both RAMDir and FSDir.
         [Test]
         public virtual void TestCommitReopen()
@@ -120,6 +115,7 @@ namespace Lucene.Net.Index
             DoTestReopenWithCommit(Random(), dir, true);
             dir.Dispose();
         }
+
         [Test]
         public virtual void TestCommitRecreate()
         {
@@ -190,7 +186,6 @@ namespace Lucene.Net.Index
 
         private void PerformDefaultTests(TestReopen test)
         {
-
             DirectoryReader index1 = test.OpenReader();
             DirectoryReader index2 = test.OpenReader();
 
@@ -219,7 +214,6 @@ namespace Lucene.Net.Index
 
             for (int i = 1; i < 4; i++)
             {
-
                 index1.Dispose();
                 couple = RefreshReader(index2, test, i, true);
                 // refresh DirectoryReader
@@ -313,7 +307,6 @@ namespace Lucene.Net.Index
                         Assert.Fail(msg);
                     }
                 }
-
             }
 
             foreach (DirectoryReader readerToClose in readersToClose)
@@ -382,7 +375,6 @@ namespace Lucene.Net.Index
                 this.Index = index;
             }
 
-
             public override void Run()
             {
                 Random rnd = LuceneTestCase.Random();
@@ -424,7 +416,6 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-
         }
 
         private class ReaderThreadTaskAnonymousInnerClassHelper2 : ReaderThreadTask
@@ -474,6 +465,7 @@ namespace Lucene.Net.Index
         internal abstract class ReaderThreadTask
         {
             protected internal volatile bool Stopped;
+
             public virtual void Stop()
             {
                 this.Stopped = true;
@@ -486,7 +478,6 @@ namespace Lucene.Net.Index
         {
             internal ReaderThreadTask Task;
             internal Exception Error;
-
 
             internal ReaderThread(ReaderThreadTask task)
             {
@@ -685,6 +676,7 @@ namespace Lucene.Net.Index
         internal abstract class TestReopen
         {
             protected internal abstract DirectoryReader OpenReader();
+
             protected internal abstract void ModifyIndex(int i);
         }
 
@@ -694,6 +686,7 @@ namespace Lucene.Net.Index
             public override void OnInit<T>(IList<T> commits)
             {
             }
+
             public override void OnCommit<T>(IList<T> commits)
             {
             }
@@ -786,5 +779,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

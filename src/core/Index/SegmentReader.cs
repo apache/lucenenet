@@ -1,46 +1,45 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Support;
+    using Lucene.Net.Util;
+    using Bits = Lucene.Net.Util.Bits;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Codec = Lucene.Net.Codecs.Codec;
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
-    using StoredFieldsReader = Lucene.Net.Codecs.StoredFieldsReader;
-    using TermVectorsReader = Lucene.Net.Codecs.TermVectorsReader;
-    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using FieldCache = Lucene.Net.Search.FieldCache;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Directory = Lucene.Net.Store.Directory;
+    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
+    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+    using FieldCache = Lucene.Net.Search.FieldCache;
     using IOContext = Lucene.Net.Store.IOContext;
-    using Bits = Lucene.Net.Util.Bits;
-    using Lucene.Net.Util;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using Lucene.Net.Support;
-
+    using StoredFieldsReader = Lucene.Net.Codecs.StoredFieldsReader;
+    using TermVectorsReader = Lucene.Net.Codecs.TermVectorsReader;
 
     /// <summary>
-    /// IndexReader implementation over a single segment. 
+    /// IndexReader implementation over a single segment.
     /// <p>
     /// Instances pointing to the same segment (but with different deletes, etc)
     /// may share the same core data.
@@ -48,7 +47,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class SegmentReader : AtomicReader
     {
-
         private readonly SegmentCommitInfo Si;
         private readonly Bits LiveDocs_Renamed;
 
@@ -153,7 +151,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Create new SegmentReader sharing core from a previous
         ///  SegmentReader and loading new live docs from a new
-        ///  deletes file.  Used by openIfChanged. 
+        ///  deletes file.  Used by openIfChanged.
         /// </summary>
         internal SegmentReader(SegmentCommitInfo si, SegmentReader sr)
             : this(si, sr, si.Info.Codec.LiveDocsFormat().ReadLiveDocs(si.Info.Dir, si, IOContext.READONCE), si.Info.DocCount - si.DelCount)
@@ -164,7 +162,7 @@ namespace Lucene.Net.Index
         /// Create new SegmentReader sharing core from a previous
         ///  SegmentReader and using the provided in-memory
         ///  liveDocs.  Used by IndexWriter to provide a new NRT
-        ///  reader 
+        ///  reader
         /// </summary>
         internal SegmentReader(SegmentCommitInfo si, SegmentReader sr, Bits liveDocs, int numDocs)
         {
@@ -234,7 +232,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Reads the most recent <seealso cref="FieldInfos"/> of the given segment info.
-        /// 
+        ///
         /// @lucene.internal
         /// </summary>
         public static FieldInfos ReadFieldInfos(SegmentCommitInfo info)
@@ -336,7 +334,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Expert: retrieve thread-private {@link
         ///  StoredFieldsReader}
-        ///  @lucene.internal 
+        ///  @lucene.internal
         /// </summary>
         public StoredFieldsReader FieldsReader
         {
@@ -374,7 +372,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Expert: retrieve thread-private {@link
         ///  TermVectorsReader}
-        ///  @lucene.internal 
+        ///  @lucene.internal
         /// </summary>
         public TermVectorsReader TermVectorsReader
         {
@@ -467,7 +465,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns term infos index divisor originally passed to
-        ///  <seealso cref="#SegmentReader(SegmentCommitInfo, int, IOContext)"/>. 
+        ///  <seealso cref="#SegmentReader(SegmentCommitInfo, int, IOContext)"/>.
         /// </summary>
         public int TermInfosIndexDivisor
         {
@@ -657,20 +655,20 @@ namespace Lucene.Net.Index
         /// Called when the shared core for this SegmentReader
         /// is closed.
         /// <p>
-        /// this listener is called only once all SegmentReaders 
-        /// sharing the same core are closed.  At this point it 
-        /// is safe for apps to evict this reader from any caches 
-        /// keyed on <seealso cref="#getCoreCacheKey"/>.  this is the same 
-        /// interface that <seealso cref="FieldCache"/> uses, internally, 
+        /// this listener is called only once all SegmentReaders
+        /// sharing the same core are closed.  At this point it
+        /// is safe for apps to evict this reader from any caches
+        /// keyed on <seealso cref="#getCoreCacheKey"/>.  this is the same
+        /// interface that <seealso cref="FieldCache"/> uses, internally,
         /// to evict entries.</p>
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public interface CoreClosedListener
         {
             /// <summary>
             /// Invoked when the shared core of the original {@code
-            ///  SegmentReader} has closed. 
+            ///  SegmentReader} has closed.
             /// </summary>
             void OnClose(object ownerCoreCacheKey);
         }
@@ -747,5 +745,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

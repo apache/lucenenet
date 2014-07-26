@@ -1,51 +1,50 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Support;
+    using Lucene.Net.Util;
+    using System.Globalization;
+    using Allocator = Lucene.Net.Util.ByteBlockPool.Allocator;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements. See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License. You may obtain a copy of the License at
-     *
-     * http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements. See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License. You may obtain a copy of the License at
+         *
+         * http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Codec = Lucene.Net.Codecs.Codec;
-    using DeleteSlice = Lucene.Net.Index.DocumentsWriterDeleteQueue.DeleteSlice;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Directory = Lucene.Net.Store.Directory;
-    using FlushInfo = Lucene.Net.Store.FlushInfo;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
-    using Allocator = Lucene.Net.Util.ByteBlockPool.Allocator;
-    using DirectTrackingAllocator = Lucene.Net.Util.ByteBlockPool.DirectTrackingAllocator;
     using Constants = Lucene.Net.Util.Constants;
     using Counter = Lucene.Net.Util.Counter;
+    using DeleteSlice = Lucene.Net.Index.DocumentsWriterDeleteQueue.DeleteSlice;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectTrackingAllocator = Lucene.Net.Util.ByteBlockPool.DirectTrackingAllocator;
+    using FlushInfo = Lucene.Net.Store.FlushInfo;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using IntBlockPool = Lucene.Net.Util.IntBlockPool;
+    using IOContext = Lucene.Net.Store.IOContext;
     using MutableBits = Lucene.Net.Util.MutableBits;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using System.Globalization;
-    using Lucene.Net.Util;
-    using Lucene.Net.Support;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
     public class DocumentsWriterPerThread
     {
-
         /// <summary>
         /// The IndexingChain must define the <seealso cref="#getChain(DocumentsWriterPerThread)"/> method
         /// which returns the DocConsumer that the DocumentsWriter calls to process the
@@ -55,7 +54,6 @@ namespace Lucene.Net.Index
         {
             public abstract DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread);
         }
-
 
         internal static readonly IndexingChain defaultIndexingChain = new IndexingChainAnonymousInnerClassHelper();
 
@@ -70,12 +68,11 @@ namespace Lucene.Net.Index
             {
             }
 
-
             public override DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread)
             {
                 /*
                 this is the current indexing chain:
-	  
+
                 DocConsumer / DocConsumerPerThread
                   --> code: DocFieldProcessor
                     --> DocFieldConsumer / DocFieldConsumerPerField
@@ -160,7 +157,7 @@ namespace Lucene.Net.Index
         /// Called if we hit an exception at a bad time (when
         ///  updating the index files) and must discard all
         ///  currently buffered docs.  this resets our state,
-        ///  discarding any docs added since last flush. 
+        ///  discarding any docs added since last flush.
         /// </summary>
         internal virtual void Abort(ISet<string> createdFiles)
         {
@@ -192,6 +189,7 @@ namespace Lucene.Net.Index
                 }
             }
         }
+
         private const bool INFO_VERBOSE = false;
         internal readonly Codec Codec;
         internal readonly TrackingDirectoryWrapper Directory;
@@ -201,8 +199,10 @@ namespace Lucene.Net.Index
         internal readonly Counter bytesUsed;
 
         internal SegmentWriteState FlushState;
+
         // Updates for our still-in-RAM (to be flushed next) segment
         internal readonly BufferedUpdates PendingUpdates;
+
         private readonly SegmentInfo SegmentInfo_Renamed; // Current segment we are working on
         internal bool Aborting = false; // True if an abort is pending
         internal bool HasAborted = false; // True if the last exception throws by #updateDocument was aborting
@@ -216,7 +216,6 @@ namespace Lucene.Net.Index
         internal readonly Allocator ByteBlockAllocator;
         internal readonly IntBlockPool.Allocator intBlockAllocator;
         private readonly LiveIndexWriterConfig IndexWriterConfig;
-
 
         public DocumentsWriterPerThread(string segmentName, Directory directory, LiveIndexWriterConfig indexWriterConfig, InfoStream infoStream, DocumentsWriterDeleteQueue deleteQueue, FieldInfos.Builder fieldInfos)
         {
@@ -243,10 +242,9 @@ namespace Lucene.Net.Index
             {
                 infoStream.Message("DWPT", Thread.CurrentThread.Name + " init seg=" + segmentName + " delQueue=" + deleteQueue);
             }
-            // this should be the last call in the ctor 
+            // this should be the last call in the ctor
             // it really sucks that we need to pull this within the ctor and pass this ref to the chain!
             Consumer = indexWriterConfig.IndexingChain.GetChain(this);
-
         }
 
         internal virtual void SetAborting()
@@ -395,13 +393,12 @@ namespace Lucene.Net.Index
                     Debug.Assert(DeleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
                     DeleteSlice.Apply(PendingUpdates, numDocsInRAM - docCount);
                 }
-
             }
             finally
             {
                 if (!allDocsIndexed && !Aborting)
                 {
-                    // the iterator threw an exception that is not aborting 
+                    // the iterator threw an exception that is not aborting
                     // go and mark all docs from this block as deleted
                     int docID = numDocsInRAM - 1;
                     //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -425,7 +422,7 @@ namespace Lucene.Net.Index
              * here we actually finish the document in two steps 1. push the delete into
              * the queue and update our slice. 2. increment the DWPT private document
              * id.
-             * 
+             *
              * the updated slice we get from 1. holds all the deletes that have occurred
              * since we updated the slice the last time.
              */
@@ -488,7 +485,6 @@ namespace Lucene.Net.Index
             }
         }
 
-
         /// <summary>
         /// Prepares this DWPT for flushing. this method will freeze and return the
         /// <seealso cref="DocumentsWriterDeleteQueue"/>s global buffer and apply all pending
@@ -500,7 +496,7 @@ namespace Lucene.Net.Index
             //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
             //ORIGINAL LINE: final FrozenBufferedUpdates globalUpdates = deleteQueue.freezeGlobalBuffer(deleteSlice);
             FrozenBufferedUpdates globalUpdates = DeleteQueue.FreezeGlobalBuffer(DeleteSlice);
-            /* deleteSlice can possibly be null if we have hit non-aborting exceptions during indexing and never succeeded 
+            /* deleteSlice can possibly be null if we have hit non-aborting exceptions during indexing and never succeeded
             adding a document. */
             if (DeleteSlice != null)
             {
@@ -608,6 +604,7 @@ namespace Lucene.Net.Index
         {
             return FilesToDelete;
         }
+
         /// <summary>
         /// Seals the <seealso cref="SegmentInfo"/> for the new flushed segment and persists
         /// the deleted documents <seealso cref="MutableBits"/>.
@@ -625,7 +622,6 @@ namespace Lucene.Net.Index
             bool success = false;
             try
             {
-
                 if (IndexWriterConfig.UseCompoundFile)
                 {
                     CollectionsHelper.AddAll(FilesToDelete, IndexWriter.CreateCompoundFile(InfoStream, Directory, MergeState.CheckAbort.NONE, newSegment.Info, context));
@@ -640,7 +636,7 @@ namespace Lucene.Net.Index
 
                 // TODO: ideally we would freeze newSegment here!!
                 // because any changes after writing the .si will be
-                // lost... 
+                // lost...
 
                 // Must write deleted docs after the CFS so we don't
                 // slurp the del file into CFS:
@@ -706,7 +702,6 @@ namespace Lucene.Net.Index
          * getTerms/getTermsIndex requires <= 32768 */
         public static readonly int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
 
-
         private class IntBlockAllocator : IntBlockPool.Allocator
         {
             internal readonly Counter BytesUsed;
@@ -718,6 +713,7 @@ namespace Lucene.Net.Index
             }
 
             /* Allocate another int[] from the shared pool */
+
             public override int[] IntBlock
             {
                 get
@@ -732,14 +728,11 @@ namespace Lucene.Net.Index
             {
                 BytesUsed.AddAndGet(-(length * (IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT)));
             }
-
         }
 
         public override string ToString()
         {
             return "DocumentsWriterPerThread [pendingDeletes=" + PendingUpdates + ", segment=" + (SegmentInfo_Renamed != null ? SegmentInfo_Renamed.Name : "null") + ", aborting=" + Aborting + ", numDocsInRAM=" + numDocsInRAM + ", deleteQueue=" + DeleteQueue + "]";
         }
-
     }
-
 }

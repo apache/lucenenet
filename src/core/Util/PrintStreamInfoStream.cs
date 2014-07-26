@@ -4,7 +4,6 @@ using System.Threading;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,17 +21,17 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     /// <summary>
     /// InfoStream implementation over a <seealso cref="PrintStream"/>
     /// such as <code>System.out</code>.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public class PrintStreamInfoStream : InfoStream
     {
         // Used for printing messages
         private static int MESSAGE_ID = 0;
+
         protected internal readonly int MessageID;
 
         protected internal readonly TextWriter Stream;
@@ -74,5 +73,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

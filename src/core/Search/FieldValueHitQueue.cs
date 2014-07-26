@@ -2,7 +2,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -34,7 +33,6 @@ namespace Lucene.Net.Search
             internal Entry(int slot, int doc, float score)
                 : base(doc, score)
             {
-
                 this.Slot = slot;
             }
 
@@ -43,7 +41,6 @@ namespace Lucene.Net.Search
                 return "slot:" + Slot + " " + base.ToString();
             }
         }
-
 
         /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
         /// there is just one comparator.
@@ -99,7 +96,6 @@ namespace Lucene.Net.Search
         internal sealed class MultiComparatorsFieldValueHitQueue<T> : FieldValueHitQueue<T>
             where T : FieldValueHitQueue.Entry
         {
-
             public MultiComparatorsFieldValueHitQueue(SortField[] fields, int size)
                 : base(fields, size)
             {
@@ -139,12 +135,11 @@ namespace Lucene.Net.Search
             }
         }
 
-
         /// <summary> Creates a hit queue sorted by the given list of fields.
-        /// 
+        ///
         /// <p/><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length <c>numHits</c>.
-        /// 
+        ///
         /// </summary>
         /// <param name="fields">SortField array we are sorting by in priority order (highest
         /// priority first); cannot be <c>null</c> or empty
@@ -155,7 +150,6 @@ namespace Lucene.Net.Search
         public static FieldValueHitQueue<T> Create<T>(SortField[] fields, int size)
             where T : FieldValueHitQueue.Entry
         {
-
             if (fields.Length == 0)
             {
                 throw new ArgumentException("Sort must contain at least one field");
@@ -176,7 +170,7 @@ namespace Lucene.Net.Search
     /// Expert: A hit queue for sorting by hits by terms in more than one field.
     /// Uses <code>FieldCache.DEFAULT</code> for maintaining
     /// internal term lookup tables.
-    /// 
+    ///
     /// @lucene.experimental
     /// @since 2.9 </summary>
     /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
@@ -184,8 +178,6 @@ namespace Lucene.Net.Search
     public abstract class FieldValueHitQueue<T> : PriorityQueue<T>
         where T : FieldValueHitQueue.Entry
     {
-
-
         // prevent instantiation and extension.
         internal FieldValueHitQueue(SortField[] fields, int size)
             : base(size)
@@ -230,6 +222,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Stores the sort criteria being used. </summary>
         protected internal readonly SortField[] fields;
+
         protected internal readonly FieldComparator[] comparators; // use setComparator to change this array
         protected internal FieldComparator FirstComparator; // this must always be equal to comparators[0]
         protected internal readonly int[] reverseMul;
@@ -268,5 +261,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

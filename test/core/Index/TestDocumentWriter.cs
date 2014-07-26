@@ -2,7 +2,6 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,25 +19,21 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+    using NUnit.Framework;
+    using System.IO;
+    using AttributeSource = Lucene.Net.Util.AttributeSource;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
     using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using AttributeSource = Lucene.Net.Util.AttributeSource;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using StringField = Lucene.Net.Document.StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using System.IO;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestDocumentWriter : LuceneTestCase
@@ -254,7 +249,6 @@ namespace Lucene.Net.Index
                     // index a "synonym" for every token
                     state = CaptureState();
                     return true;
-
                 }
 
                 public override void Reset()
@@ -269,7 +263,6 @@ namespace Lucene.Net.Index
                 internal readonly IPositionIncrementAttribute posIncrAtt;
             }
         }
-
 
         [Test]
         public virtual void TestPreAnalyzedField()
@@ -336,7 +329,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Test adding two fields with the same name, but 
+        /// Test adding two fields with the same name, but
         /// with different term vector setting (LUCENE-766).
         /// </summary>
         [Test]
@@ -413,5 +406,4 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
     }
-
 }

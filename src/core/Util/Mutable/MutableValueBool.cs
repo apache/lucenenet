@@ -14,61 +14,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Lucene.Net.Util.Mutable
 {
+    /// <summary>
+    /// <seealso cref="MutableValue"/> implementation of type
+    /// <code>boolean</code>.
+    /// </summary>
+    public class MutableValueBool : MutableValue
+    {
+        public bool Value;
 
-	/// <summary>
-	/// <seealso cref="MutableValue"/> implementation of type 
-	/// <code>boolean</code>.
-	/// </summary>
-	public class MutableValueBool : MutableValue
-	{
-	  public bool Value;
+        public override object ToObject()
+        {
+            return Exists ? (object)Value : null;
+        }
 
-	  public override object ToObject()
-	  {
-		return Exists ? (object)Value : null;
-	  }
+        public override void Copy(MutableValue source)
+        {
+            MutableValueBool s = (MutableValueBool)source;
+            Value = s.Value;
+            Exists = s.Exists;
+        }
 
-	  public override void Copy(MutableValue source)
-	  {
-		MutableValueBool s = (MutableValueBool) source;
-		Value = s.Value;
-		Exists = s.Exists;
-	  }
+        public override MutableValue Duplicate()
+        {
+            MutableValueBool v = new MutableValueBool();
+            v.Value = this.Value;
+            v.Exists = this.Exists;
+            return v;
+        }
 
-	  public override MutableValue Duplicate()
-	  {
-		MutableValueBool v = new MutableValueBool();
-		v.Value = this.Value;
-		v.Exists = this.Exists;
-		return v;
-	  }
+        public override bool EqualsSameType(object other)
+        {
+            MutableValueBool b = (MutableValueBool)other;
+            return Value == b.Value && Exists == b.Exists;
+        }
 
-	  public override bool EqualsSameType(object other)
-	  {
-		MutableValueBool b = (MutableValueBool)other;
-		return Value == b.Value && Exists == b.Exists;
-	  }
+        public override int CompareSameType(object other)
+        {
+            MutableValueBool b = (MutableValueBool)other;
+            if (Value != b.Value)
+            {
+                return Value ? 1 : 0;
+            }
+            if (Exists == b.Exists)
+            {
+                return 0;
+            }
+            return Exists ? 1 : -1;
+        }
 
-	  public override int CompareSameType(object other)
-	  {
-		MutableValueBool b = (MutableValueBool)other;
-		if (Value != b.Value)
-		{
-			return Value ? 1 : 0;
-		}
-		if (Exists == b.Exists)
-		{
-			return 0;
-		}
-		return Exists ? 1 : -1;
-	  }
-
-	  public override int GetHashCode()
-	  {
-		return Value ? 2 : (Exists ? 1 : 0);
-	  }
-	}
-
+        public override int GetHashCode()
+        {
+            return Value ? 2 : (Exists ? 1 : 0);
+        }
+    }
 }

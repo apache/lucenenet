@@ -1,12 +1,9 @@
-using System;
-using System.Diagnostics;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
-using Lucene.Net.Search;
+using System;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,28 +21,25 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
-    using DoubleField = Lucene.Net.Document.DoubleField; // for javadocs
-    using FloatField = Lucene.Net.Document.FloatField; // for javadocs
-    using IntField = Lucene.Net.Document.IntField; // for javadocs
-    using LongField = Lucene.Net.Document.LongField; // for javadocs
+    // for javadocs
+    // for javadocs
+    // for javadocs
+    // for javadocs
 
     /// <summary>
     /// <b>Expert:</b> this class provides a <seealso cref="TokenStream"/>
     /// for indexing numeric values that can be used by {@link
     /// NumericRangeQuery} or <seealso cref="NumericRangeFilter"/>.
-    /// 
+    ///
     /// <p>Note that for simple usage, <seealso cref="IntField"/>, {@link
     /// LongField}, <seealso cref="FloatField"/> or <seealso cref="DoubleField"/> is
     /// recommended.  These fields disable norms and
     /// term freqs, as they are not usually needed during
     /// searching.  If you need to change these settings, you
     /// should use this class.
-    /// 
+    ///
     /// <p>Here's an example usage, for an <code>int</code> field:
-    /// 
+    ///
     /// <pre class="prettyprint">
     ///  FieldType fieldType = new FieldType(TextField.TYPE_NOT_STORED);
     ///  fieldType.setOmitNorms(true);
@@ -53,10 +47,10 @@ namespace Lucene.Net.Analysis
     ///  Field field = new Field(name, new NumericTokenStream(precisionStep).setIntValue(value), fieldType);
     ///  document.add(field);
     /// </pre>
-    /// 
+    ///
     /// <p>For optimal performance, re-use the TokenStream and Field instance
     /// for more than one document:
-    /// 
+    ///
     /// <pre class="prettyprint">
     ///  NumericTokenStream stream = new NumericTokenStream(precisionStep);
     ///  FieldType fieldType = new FieldType(TextField.TYPE_NOT_STORED);
@@ -65,32 +59,31 @@ namespace Lucene.Net.Analysis
     ///  Field field = new Field(name, stream, fieldType);
     ///  Document document = new Document();
     ///  document.add(field);
-    /// 
+    ///
     ///  for(all documents) {
     ///    stream.setIntValue(value)
     ///    writer.addDocument(document);
     ///  }
     /// </pre>
-    /// 
+    ///
     /// <p>this stream is not intended to be used in analyzers;
     /// it's more for iterating the different precisions during
     /// indexing a specific numeric value.</p>
-    /// 
+    ///
     /// <p><b>NOTE</b>: as token streams are only consumed once
     /// the document is added to the index, if you index more
     /// than one numeric field, use a separate <code>NumericTokenStream</code>
     /// instance for each.</p>
-    /// 
+    ///
     /// <p>See <seealso cref="NumericRangeQuery"/> for more details on the
     /// <a
     /// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
     /// parameter as well as how numeric fields work under the hood.</p>
-    /// 
+    ///
     /// @since 2.9
     /// </summary>
     public sealed class NumericTokenStream : TokenStream
     {
-
         private bool InstanceFieldsInitialized = false;
 
         private void InitializeInstanceFields()
@@ -99,7 +92,6 @@ namespace Lucene.Net.Analysis
             TypeAtt = AddAttribute<ITypeAttribute>();
             PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
         }
-
 
         /// <summary>
         /// The full precision token gets this token type assigned. </summary>
@@ -119,23 +111,24 @@ namespace Lucene.Net.Analysis
             /// <summary>
             /// Returns current shift value, undefined before first token </summary>
             int Shift { get; set; }
+
             /// <summary>
             /// Returns current token's raw value as {@code long} with all <seealso cref="#getShift"/> applied, undefined before first token </summary>
             long RawValue { get; }
+
             /// <summary>
             /// Returns value size in bits (32 for {@code float}, {@code int}; 64 for {@code double}, {@code long}) </summary>
             int ValueSize { get; }
 
             /// <summary>
             /// <em>Don't call this method!</em>
-            /// @lucene.internal 
+            /// @lucene.internal
             /// </summary>
             void Init(long value, int valSize, int precisionStep, int shift);
 
-
             /// <summary>
             /// <em>Don't call this method!</em>
-            /// @lucene.internal 
+            /// @lucene.internal
             /// </summary>
             int IncShift();
         }
@@ -211,6 +204,7 @@ namespace Lucene.Net.Analysis
                     this.Shift_Renamed = value;
                 }
             }
+
             public int IncShift()
             {
                 return (Shift_Renamed += PrecisionStep);
@@ -223,6 +217,7 @@ namespace Lucene.Net.Analysis
                     return Value & ~((1L << Shift_Renamed) - 1L);
                 }
             }
+
             public int ValueSize
             {
                 get
@@ -230,6 +225,7 @@ namespace Lucene.Net.Analysis
                     return ValueSize_Renamed;
                 }
             }
+
             public void Init(long value, int valueSize, int precisionStep, int shift)
             {
                 this.Value = value;
@@ -394,11 +390,11 @@ namespace Lucene.Net.Analysis
 
         // members
         private INumericTermAttribute NumericAtt;
+
         private ITypeAttribute TypeAtt;
         private IPositionIncrementAttribute PosIncrAtt;
 
         private int ValSize = 0; // valSize==0 means not initialized
         private readonly int PrecisionStep_Renamed;
     }
-
 }

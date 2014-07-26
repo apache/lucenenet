@@ -2,32 +2,31 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Compressing
 {
+    using Lucene.Net.Support;
+    using System;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Lucene.Net.Support;
-    using System;
 
     /// <summary>
     /// A compression mode. Tells how much effort should be spent on compression and
@@ -36,7 +35,6 @@ namespace Lucene.Net.Codecs.Compressing
     /// </summary>
     public abstract class CompressionMode
     {
-
         /// <summary>
         /// A compression mode that trades compression ratio for speed. Although the
         /// compression ratio might remain high, compression and decompression are
@@ -50,7 +48,6 @@ namespace Lucene.Net.Codecs.Compressing
             public CompressionModeAnonymousInnerClassHelper()
             {
             }
-
 
             public override Compressor NewCompressor()
             {
@@ -66,7 +63,6 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 return "FAST";
             }
-
         }
 
         /// <summary>
@@ -83,7 +79,6 @@ namespace Lucene.Net.Codecs.Compressing
             {
             }
 
-
             public override Compressor NewCompressor()
             {
                 return new DeflateCompressor(Deflater.BEST_COMPRESSION);
@@ -98,7 +93,6 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 return "HIGH_COMPRESSION";
             }
-
         }
 
         /// <summary>
@@ -115,7 +109,6 @@ namespace Lucene.Net.Codecs.Compressing
             {
             }
 
-
             public override Compressor NewCompressor()
             {
                 return new LZ4HighCompressor();
@@ -130,7 +123,6 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 return "FAST_DECOMPRESSION";
             }
-
         }
 
         /// <summary>
@@ -157,7 +149,6 @@ namespace Lucene.Net.Codecs.Compressing
             {
             }
 
-
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {
                 Debug.Assert(offset + length <= originalLength);
@@ -179,12 +170,10 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 return this;
             }
-
         }
 
         private sealed class LZ4FastCompressor : Compressor
         {
-
             internal readonly LZ4.HashTable Ht;
 
             internal LZ4FastCompressor()
@@ -196,12 +185,10 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 LZ4.Compress(bytes, off, len, @out, Ht);
             }
-
         }
 
         private sealed class LZ4HighCompressor : Compressor
         {
-
             internal readonly LZ4.HCHashTable Ht;
 
             internal LZ4HighCompressor()
@@ -213,12 +200,10 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 LZ4.CompressHC(bytes, off, len, @out, Ht);
             }
-
         }
 
         private sealed class DeflateDecompressor : Decompressor
         {
-
             internal readonly Inflater decompressor;
             internal byte[] Compressed;
 
@@ -281,12 +266,10 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 return new DeflateDecompressor();
             }
-
         }
 
         private class DeflateCompressor : Compressor
         {
-
             internal readonly Deflater Compressor;
             internal byte[] Compressed;
 
@@ -329,9 +312,6 @@ namespace Lucene.Net.Codecs.Compressing
                 @out.WriteVInt(totalCount);
                 @out.WriteBytes(Compressed, totalCount);
             }
-
         }
-
     }
-
 }

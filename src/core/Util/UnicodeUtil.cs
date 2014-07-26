@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +21,6 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     /*
      * Some of this code came from the excellent Unicode
      * conversion examples from:
@@ -34,9 +32,9 @@ namespace Lucene.Net.Util
 
     /*
      * Copyright 2001-2004 Unicode, Inc.
-     * 
+     *
      * Disclaimer
-     * 
+     *
      * this source code is provided as is by Unicode, Inc. No claims are
      * made as to fitness for any particular purpose. No warranties of any
      * kind are expressed or implied. The recipient agrees to determine
@@ -44,9 +42,9 @@ namespace Lucene.Net.Util
      * purchased on magnetic or optical media from Unicode, Inc., the
      * sole remedy for any claim will be exchange of defective media
      * within 90 days of receipt.
-     * 
+     *
      * Limitations on Rights to Redistribute this Code
-     * 
+     *
      * Unicode, Inc. hereby grants the right to freely use the information
      * supplied in this file in the creation of products supporting the
      * Unicode Standard, and to make copies of this file in any form
@@ -94,19 +92,18 @@ namespace Lucene.Net.Util
     /// Class to encode java's UTF16 char[] into UTF8 byte[]
     /// without always allocating a new byte[] as
     /// String.getBytes(StandardCharsets.UTF_8) does.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
 
     public sealed class UnicodeUtil
     {
-
         /// <summary>
         /// A binary term consisting of a number of 0xff bytes, likely to be bigger than other terms
         ///  (e.g. collation keys) one would normally encounter, and definitely bigger than any UTF-8 terms.
         ///  <p>
-        ///  WARNING: this is not a valid UTF8 Term  
-        /// 
+        ///  WARNING: this is not a valid UTF8 Term
+        ///
         /// </summary>
         public static readonly BytesRef BIG_TERM = new BytesRef(new sbyte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }); // TODO this is unrelated here find a better place for it
 
@@ -135,7 +132,6 @@ namespace Lucene.Net.Util
         // TODO: broken if incoming result.offset != 0
         public static void UTF16toUTF8(CharsRef source, int offset, int length, BytesRef result)
         {
-
             int upto = 0;
             int i = offset;
             int end = offset + length;
@@ -150,7 +146,6 @@ namespace Lucene.Net.Util
 
             while (i < end)
             {
-
                 int code = (int)source.CharAt(i++);
 
                 if (code < 0x80)
@@ -279,12 +274,12 @@ namespace Lucene.Net.Util
               //System.out.println("s2 len=" + s2.length());
               //for(int i=0;i<s2.length();i++)
               //  System.out.println("    " + i + ": " + (int) s2.charAt(i));
-	
+
               // If the input string was invalid, then the
               // difference is OK
               if (!validUTF16String(s1))
                 return true;
-	
+
               return false;
             }
             return s1.equals(s2);
@@ -292,7 +287,7 @@ namespace Lucene.Net.Util
             return false;
           }
         }
-	
+
         // Only called from assert
         private static boolean matches(String source, int offset, int length, byte[] result, int upto) {
           try {
@@ -300,19 +295,19 @@ namespace Lucene.Net.Util
             String s2 = new String(result, 0, upto, StandardCharsets.UTF_8);
             if (!s1.equals(s2)) {
               // Allow a difference if s1 is not valid UTF-16
-	
+
               //System.out.println("DIFF: s1 len=" + s1.length());
               //for(int i=0;i<s1.length();i++)
               //  System.out.println("    " + i + ": " + (int) s1.charAt(i));
               //System.out.println("  s2 len=" + s2.length());
               //for(int i=0;i<s2.length();i++)
               //  System.out.println("    " + i + ": " + (int) s2.charAt(i));
-	
+
               // If the input string was invalid, then the
               // difference is OK
               if (!validUTF16String(s1))
                 return true;
-	
+
               return false;
             }
             return s1.equals(s2);
@@ -321,6 +316,7 @@ namespace Lucene.Net.Util
           }
         }
         */
+
         public static bool ValidUTF16String(char[] s)
         {
             int size = s.Length;
@@ -403,6 +399,7 @@ namespace Lucene.Net.Util
         /* Map UTF-8 encoded prefix byte to sequence length.  -1 (0xFF)
          * means illegal prefix.  see RFC 2279 for details */
         internal static readonly int[] Utf8CodeLength;
+
         static UnicodeUtil()
         {
             int v = int.MinValue;
@@ -411,13 +408,13 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the number of code points in this UTF8 sequence.
-        /// 
-        /// <p>this method assumes valid UTF8 input. this method 
-        /// <strong>does not perform</strong> full UTF8 validation, it will check only the 
-        /// first byte of each codepoint (for multi-byte sequences any bytes after 
-        /// the head are skipped).  
+        ///
+        /// <p>this method assumes valid UTF8 input. this method
+        /// <strong>does not perform</strong> full UTF8 validation, it will check only the
+        /// first byte of each codepoint (for multi-byte sequences any bytes after
+        /// the head are skipped).
         /// </summary>
-        /// <exception cref="IllegalArgumentException"> If invalid codepoint header byte occurs or the 
+        /// <exception cref="IllegalArgumentException"> If invalid codepoint header byte occurs or the
         ///    content is prematurely truncated. </exception>
         public static int CodePointCount(BytesRef utf8)
         {
@@ -451,7 +448,7 @@ namespace Lucene.Net.Util
                         pos += 4;
                         continue;
                     }
-                    // fallthrough, consider 5 and 6 byte sequences invalid. 
+                    // fallthrough, consider 5 and 6 byte sequences invalid.
                 }
 
                 // Anything not covered above is invalid UTF8.
@@ -468,12 +465,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// <p>this method assumes valid UTF8 input. this method 
-        /// <strong>does not perform</strong> full UTF8 validation, it will check only the 
-        /// first byte of each codepoint (for multi-byte sequences any bytes after 
-        /// the head are skipped).  
+        /// <p>this method assumes valid UTF8 input. this method
+        /// <strong>does not perform</strong> full UTF8 validation, it will check only the
+        /// first byte of each codepoint (for multi-byte sequences any bytes after
+        /// the head are skipped).
         /// </summary>
-        /// <exception cref="IllegalArgumentException"> If invalid codepoint header byte occurs or the 
+        /// <exception cref="IllegalArgumentException"> If invalid codepoint header byte occurs or the
         ///    content is prematurely truncated. </exception>
         public static void UTF8toUTF32(BytesRef utf8, IntsRef utf32)
         {
@@ -502,14 +499,17 @@ namespace Lucene.Net.Util
                         // 5 useful bits
                         v = bytes[utf8Upto++] & 31;
                         break;
+
                     case 3:
                         // 4 useful bits
                         v = bytes[utf8Upto++] & 15;
                         break;
+
                     case 4:
                         // 3 useful bits
                         v = bytes[utf8Upto++] & 7;
                         break;
+
                     default:
                         throw new System.ArgumentException("invalid utf8");
                 }
@@ -530,18 +530,23 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Shift value for lead surrogate to form a supplementary character. </summary>
         private const int LEAD_SURROGATE_SHIFT_ = 10;
+
         /// <summary>
         /// Mask to retrieve the significant value from a trail surrogate. </summary>
         private const int TRAIL_SURROGATE_MASK_ = 0x3FF;
+
         /// <summary>
         /// Trail surrogate minimum value </summary>
         private const int TRAIL_SURROGATE_MIN_VALUE = 0xDC00;
+
         /// <summary>
         /// Lead surrogate minimum value </summary>
         private const int LEAD_SURROGATE_MIN_VALUE = 0xD800;
+
         /// <summary>
         /// The minimum value for Supplementary code points </summary>
         private const int SUPPLEMENTARY_MIN_VALUE = 0x10000;
+
         /// <summary>
         /// Value that all lead surrogate starts with </summary>
         private static readonly int LEAD_SURROGATE_OFFSET_ = LEAD_SURROGATE_MIN_VALUE - (SUPPLEMENTARY_MIN_VALUE >> LEAD_SURROGATE_SHIFT_);
@@ -643,12 +648,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Interprets the given byte array as UTF-8 and converts to UTF-16. The <seealso cref="CharsRef"/> will be extended if 
+        /// Interprets the given byte array as UTF-8 and converts to UTF-16. The <seealso cref="CharsRef"/> will be extended if
         /// it doesn't provide enough space to hold the worst case of each byte becoming a UTF-16 codepoint.
         /// <p>
         /// NOTE: Full characters are read, even if this reads past the length passed (and
         /// can result in an ArrayOutOfBoundsException if invalid UTF-8 is passed).
-        /// Explicit checks for valid UTF-8 are not performed. 
+        /// Explicit checks for valid UTF-8 are not performed.
         /// </summary>
         // TODO: broken if chars.offset != 0
         public static void UTF8toUTF16(sbyte[] utf8, int offset, int length, CharsRef chars)
@@ -700,7 +705,5 @@ namespace Lucene.Net.Util
         {
             UTF8toUTF16(bytesRef.Bytes, bytesRef.Offset, bytesRef.Length, chars);
         }
-
     }
-
 }

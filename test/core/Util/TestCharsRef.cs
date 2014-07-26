@@ -1,11 +1,10 @@
-using System;
-using System.Text;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Text;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -81,7 +80,6 @@ namespace Lucene.Net.Util
                 @ref.CopyChars(charArray, offset, length);
                 Assert.AreEqual(str, @ref.ToString());
             }
-
         }
 
         // LUCENE-3590, AIOOBE if you append to a charsref with offset != 0
@@ -160,7 +158,6 @@ namespace Lucene.Net.Util
 
         private void DoTestSequence(ICharSequence c)
         {
-
             // slice
             Assert.AreEqual("a", c.SubSequence(0, 1).ToString());
             // mid subsequence
@@ -211,5 +208,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

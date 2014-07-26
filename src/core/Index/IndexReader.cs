@@ -4,32 +4,31 @@ using System.IO;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Support;
+    using System.Runtime.CompilerServices;
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+    using Directory = Lucene.Net.Store.Directory;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Document = Lucene.Net.Document.Document;
     using DocumentStoredFieldVisitor = Lucene.Net.Document.DocumentStoredFieldVisitor;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using Directory = Lucene.Net.Store.Directory;
-    using Bits = Lucene.Net.Util.Bits;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using Lucene.Net.Support;
-    using System.Runtime.CompilerServices;
 
     // javadocs
 
@@ -37,7 +36,7 @@ namespace Lucene.Net.Index
     /// IndexReader is an abstract class, providing an interface for accessing an
     /// index.  Search of an index is done entirely through this abstract interface,
     /// so that any subclass which implements it is searchable.
-    /// 
+    ///
     /// <p>There are two different types of IndexReaders:
     /// <ul>
     ///  <li><seealso cref="AtomicReader"/>: These indexes do not consist of several sub-readers,
@@ -51,18 +50,18 @@ namespace Lucene.Net.Index
     ///  Alternatively, you can mimic an <seealso cref="AtomicReader"/> (with a serious slowdown),
     ///  by wrapping composite readers with <seealso cref="SlowCompositeReaderWrapper"/>.
     /// </ul>
-    /// 
+    ///
     /// <p>IndexReader instances for indexes on disk are usually constructed
     /// with a call to one of the static <code>DirectoryReader.open()</code> methods,
     /// e.g. <seealso cref="DirectoryReader#open(Lucene.Net.Store.Directory)"/>. <seealso cref="DirectoryReader"/> implements
     /// the <seealso cref="CompositeReader"/> interface, it is not possible to directly get postings.
-    /// 
+    ///
     /// <p> For efficiency, in this API documents are often referred to via
     /// <i>document numbers</i>, non-negative integers which each name a unique
     /// document in the index.  These document numbers are ephemeral -- they may change
     /// as documents are added to and deleted from an index.  Clients should thus not
     /// rely on a given document having the same number between sessions.
-    /// 
+    ///
     /// <p>
     /// <a name="thread-safety"></a><p><b>NOTE</b>: {@link
     /// IndexReader} instances are completely thread
@@ -74,7 +73,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class IndexReader : IDisposable
     {
-
         private bool Closed = false;
         private bool ClosedByChild = false;
         private readonly AtomicInteger refCount = new AtomicInteger(1);
@@ -90,7 +88,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// A custom listener that's invoked when the IndexReader
         /// is closed.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public interface ReaderClosedListener
@@ -109,8 +107,8 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Expert: adds a <seealso cref="ReaderClosedListener"/>.  The
         /// provided listener will be invoked when this reader is closed.
-        /// 
-        /// @lucene.experimental 
+        ///
+        /// @lucene.experimental
         /// </summary>
         public void AddReaderClosedListener(ReaderClosedListener listener)
         {
@@ -120,8 +118,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: remove a previously added <seealso cref="ReaderClosedListener"/>.
-        /// 
-        /// @lucene.experimental 
+        ///
+        /// @lucene.experimental
         /// </summary>
         public void RemoveReaderClosedListener(ReaderClosedListener listener)
         {
@@ -135,7 +133,7 @@ namespace Lucene.Net.Index
         /// at the child (this reader) on construction of the parent. When this reader is closed,
         /// it will mark all registered parents as closed, too. The references to parent readers
         /// are weak only, so they can be GCed once they are no longer in use.
-        /// @lucene.experimental 
+        /// @lucene.experimental
         /// </summary>
         public void RegisterParentReader(IndexReader reader)
         {
@@ -186,7 +184,6 @@ namespace Lucene.Net.Index
                         // recurse:
                         target.ReportCloseToParentReaders();
                     }
-
                 }
             }
         }
@@ -331,7 +328,7 @@ namespace Lucene.Net.Index
         /// {@inheritDoc}
         /// <p>For caching purposes, {@code IndexReader} subclasses are not allowed
         /// to implement equals/hashCode, so methods are declared final.
-        /// To lookup instances from caches use <seealso cref="#getCoreCacheKey"/> and 
+        /// To lookup instances from caches use <seealso cref="#getCoreCacheKey"/> and
         /// <seealso cref="#getCombinedCoreAndDeletesKey"/>.
         /// </summary>
         public override sealed bool Equals(object obj)
@@ -343,7 +340,7 @@ namespace Lucene.Net.Index
         /// {@inheritDoc}
         /// <p>For caching purposes, {@code IndexReader} subclasses are not allowed
         /// to implement equals/hashCode, so methods are declared final.
-        /// To lookup instances from caches use <seealso cref="#getCoreCacheKey"/> and 
+        /// To lookup instances from caches use <seealso cref="#getCoreCacheKey"/> and
         /// <seealso cref="#getCombinedCoreAndDeletesKey"/>.
         /// </summary>
         public override sealed int GetHashCode()
@@ -356,7 +353,7 @@ namespace Lucene.Net.Index
         ///  Directory </summary>
         /// <param name="directory"> the index directory </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        /// @deprecated Use <seealso cref="DirectoryReader#open(Directory)"/> 
+        /// @deprecated Use <seealso cref="DirectoryReader#open(Directory)"/>
         [Obsolete("Use <seealso cref=DirectoryReader#open(Lucene.Net.Store.Directory)/>")]
         public static DirectoryReader Open(Directory directory)
         {
@@ -378,7 +375,7 @@ namespace Lucene.Net.Index
         ///  loading a TermInfo.  The default value is 1.  Set this
         ///  to -1 to skip loading the terms index entirely. </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        /// @deprecated Use <seealso cref="DirectoryReader#open(Directory,int)"/> 
+        /// @deprecated Use <seealso cref="DirectoryReader#open(Directory,int)"/>
         [Obsolete("Use <seealso cref=DirectoryReader#open(Lucene.Net.Store.Directory,int)/>")]
         public static DirectoryReader Open(Directory directory, int termInfosIndexDivisor)
         {
@@ -400,9 +397,9 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> if there is a low-level IO error
         /// </exception>
         /// <seealso cref= DirectoryReader#openIfChanged(DirectoryReader,IndexWriter,boolean)
-        /// 
+        ///
         /// @lucene.experimental </seealso>
-        /// @deprecated Use <seealso cref="DirectoryReader#open(IndexWriter,boolean)"/> 
+        /// @deprecated Use <seealso cref="DirectoryReader#open(IndexWriter,boolean)"/>
         [Obsolete("Use <seealso cref=DirectoryReader#open(IndexWriter,boolean)/>")]
         public static DirectoryReader Open(IndexWriter writer, bool applyAllDeletes)
         {
@@ -414,13 +411,12 @@ namespace Lucene.Net.Index
         ///  <seealso cref="IndexCommit"/>. </summary>
         /// <param name="commit"> the commit point to open </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit)"/> 
+        /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit)"/>
         [Obsolete("Use <seealso cref=DirectoryReader#open(IndexCommit)/>")]
         public static DirectoryReader Open(IndexCommit commit)
         {
             return DirectoryReader.Open(commit);
         }
-
 
         /// <summary>
         /// Expert: returns an IndexReader reading the index in the given
@@ -437,7 +433,7 @@ namespace Lucene.Net.Index
         ///  loading a TermInfo.  The default value is 1.  Set this
         ///  to -1 to skip loading the terms index entirely. </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit,int)"/> 
+        /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit,int)"/>
         [Obsolete("Use <seealso cref=DirectoryReader#open(IndexCommit,int)/>")]
         public static DirectoryReader Open(IndexCommit commit, int termInfosIndexDivisor)
         {
@@ -448,7 +444,7 @@ namespace Lucene.Net.Index
         /// Retrieve term vectors for this document, or null if
         ///  term vectors were not indexed.  The returned Fields
         ///  instance acts like a single-document inverted index
-        ///  (the docID will be 0). 
+        ///  (the docID will be 0).
         /// </summary>
         public abstract Fields GetTermVectors(int docID);
 
@@ -456,7 +452,7 @@ namespace Lucene.Net.Index
         /// Retrieve term vector for this document and field, or
         ///  null if term vectors were not indexed.  The returned
         ///  Fields instance acts like a single-document inverted
-        ///  index (the docID will be 0). 
+        ///  index (the docID will be 0).
         /// </summary>
         public Terms GetTermVector(int docID, string field)
         {
@@ -491,7 +487,7 @@ namespace Lucene.Net.Index
         ///  custom processing/loading of each field.  If you
         ///  simply want to load all fields, use {@link
         ///  #document(int)}.  If you want to load a subset, use
-        ///  <seealso cref="DocumentStoredFieldVisitor"/>.  
+        ///  <seealso cref="DocumentStoredFieldVisitor"/>.
         /// </summary>
         public abstract void Document(int docID, StoredFieldVisitor visitor);
 
@@ -505,7 +501,7 @@ namespace Lucene.Net.Index
         /// may yield unspecified results. Usually this is not required, however you
         /// can test if the doc is deleted by checking the {@link
         /// Bits} returned from <seealso cref="MultiFields#getLiveDocs"/>.
-        /// 
+        ///
         /// <b>NOTE:</b> only the content of a field is returned,
         /// if that field was stored during indexing.  Metadata
         /// like boost, omitNorm, IndexOptions, tokenized, etc.,
@@ -537,7 +533,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if any documents have been deleted. Implementers should
         ///  consider overriding this method if <seealso cref="#maxDoc()"/> or <seealso cref="#numDocs()"/>
-        ///  are not constant-time operations. 
+        ///  are not constant-time operations.
         /// </summary>
         public virtual bool HasDeletions()
         {
@@ -575,7 +571,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: Returns the root <seealso cref="IndexReaderContext"/> for this
-        /// <seealso cref="IndexReader"/>'s sub-reader tree. 
+        /// <seealso cref="IndexReader"/>'s sub-reader tree.
         /// <p>
         /// Iff this reader is composed of sub
         /// readers, i.e. this reader being a composite reader, this method returns a
@@ -606,7 +602,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Expert: Returns a key for this IndexReader, so FieldCache/CachingWrapperFilter can find
         /// it again.
-        /// this key must not have equals()/hashCode() methods, so &quot;equals&quot; means &quot;identical&quot;. 
+        /// this key must not have equals()/hashCode() methods, so &quot;equals&quot; means &quot;identical&quot;.
         /// </summary>
         public virtual object CoreCacheKey
         {
@@ -621,7 +617,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Expert: Returns a key for this IndexReader that also includes deletions,
         /// so FieldCache/CachingWrapperFilter can find it again.
-        /// this key must not have equals()/hashCode() methods, so &quot;equals&quot; means &quot;identical&quot;. 
+        /// this key must not have equals()/hashCode() methods, so &quot;equals&quot; means &quot;identical&quot;.
         /// </summary>
         public virtual object CombinedCoreAndDeletesKey
         {
@@ -634,7 +630,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the number of documents containing the 
+        /// Returns the number of documents containing the
         /// <code>term</code>.  this method returns 0 if the term or
         /// field does not exists.  this method does not take into
         /// account deleted documents that have not yet been merged
@@ -674,7 +670,5 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <seealso cref= Terms#getSumTotalTermFreq() </seealso>
         public abstract long GetSumTotalTermFreq(string field);
-
     }
-
 }

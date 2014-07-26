@@ -1,11 +1,9 @@
-using System.Linq;
-using System.Collections.Generic;
 using Lucene.Net.Support;
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,26 +21,23 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
-
     /// <summary>
     /// Methods for manipulating (sorting) collections.
     /// Sort methods work directly on the supplied lists and don't copy to/from arrays
     /// before/after. For medium size collections as used in the Lucene indexer that is
     /// much more efficient.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
 
     public sealed class CollectionUtil
     {
-
         private CollectionUtil() // no instance
         {
         }
+
         private sealed class ListIntroSorter<T> : IntroSorter
         {
-
             internal T pivot;
             internal IList<T> list;
             internal readonly IComparer<T> Comp;
@@ -81,12 +76,10 @@ namespace Lucene.Net.Util
             {
                 return Comp.Compare(pivot, list[j]);
             }
-
         }
 
         private sealed class ListTimSorter<T> : TimSorter
         {
-
             internal IList<T> List;
             internal readonly IComparer<T> Comp;
             internal readonly T[] Tmp;
@@ -143,7 +136,6 @@ namespace Lucene.Net.Util
             {
                 return Comp.Compare(Tmp[i], List[j]);
             }
-
         }
 
         /// <summary>
@@ -209,7 +201,5 @@ namespace Lucene.Net.Util
             }
             TimSort(list, ArrayUtil.naturalComparator<T>());
         }
-
     }
-
 }

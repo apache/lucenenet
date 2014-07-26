@@ -1,19 +1,17 @@
 namespace Lucene.Net.Codecs.Compressing
 {
-
+    using NUnit.Framework;
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using NUnit.Framework;
+    using TextField = Lucene.Net.Document.TextField;
 
     //using Repeat = com.carrotsearch.randomizedtesting.annotations.Repeat;
 
@@ -85,5 +83,4 @@ namespace Lucene.Net.Codecs.Compressing
             dir.Dispose();
         }
     }
-
 }

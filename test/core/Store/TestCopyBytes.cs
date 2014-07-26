@@ -1,12 +1,11 @@
-using System;
-using System.IO;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -30,7 +29,6 @@ namespace Lucene.Net.Store
     [TestFixture]
     public class TestCopyBytes : LuceneTestCase
     {
-
         private sbyte Value(int idx)
         {
             return unchecked((sbyte)((idx % 256) * (1 + (idx / 256))));
@@ -174,7 +172,6 @@ namespace Lucene.Net.Store
             }
             input.Dispose();
             d.Dispose();
-
         }
 
         internal class CopyThread : ThreadClass
@@ -202,5 +199,4 @@ namespace Lucene.Net.Store
             }
         }
     }
-
 }

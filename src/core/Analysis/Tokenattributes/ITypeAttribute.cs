@@ -1,9 +1,7 @@
-using System;
-
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-
     using Lucene.Net.Util;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,14 +19,11 @@ namespace Lucene.Net.Analysis.Tokenattributes
          * limitations under the License.
          */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-
     /// <summary>
-    /// A Token's lexical type. The Default value is "word". 
+    /// A Token's lexical type. The Default value is "word".
     /// </summary>
     public interface ITypeAttribute : IAttribute
     {
-
         /// <summary>
         /// the default type </summary>
 
@@ -42,5 +37,4 @@ namespace Lucene.Net.Analysis.Tokenattributes
     {
         public const string DEFAULT_TYPE = "word";
     }
-
 }

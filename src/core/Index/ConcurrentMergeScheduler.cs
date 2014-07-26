@@ -1,47 +1,45 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Support;
+    using CollectionUtil = Lucene.Net.Util.CollectionUtil;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Directory = Lucene.Net.Store.Directory;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-    using CollectionUtil = Lucene.Net.Util.CollectionUtil;
-    using Lucene.Net.Support;
-
 
     /// <summary>
     /// A <seealso cref="MergeScheduler"/> that runs each merge using a
     ///  separate thread.
-    /// 
+    ///
     ///  <p>Specify the max number of threads that may run at
     ///  once, and the maximum number of simultaneous merges
     ///  with <seealso cref="#setMaxMergesAndThreads"/>.</p>
-    /// 
-    ///  <p>If the number of merges exceeds the max number of threads 
+    ///
+    ///  <p>If the number of merges exceeds the max number of threads
     ///  then the largest merges are paused until one of the smaller
     ///  merges completes.</p>
-    /// 
+    ///
     ///  <p>If more than <seealso cref="#getMaxMergeCount"/> merges are
     ///  requested then this class will forcefully throttle the
     ///  incoming threads by pausing until one more more merges
@@ -49,7 +47,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public class ConcurrentMergeScheduler : MergeScheduler
     {
-
         private int MergeThreadPriority_Renamed = -1;
 
         /// <summary>
@@ -90,13 +87,13 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// How many <seealso cref="MergeThread"/>s have kicked off (this is use
-        ///  to name them). 
+        ///  to name them).
         /// </summary>
         protected internal int MergeThreadCount_Renamed;
 
         /// <summary>
         /// Sole constructor, with all settings set to default
-        ///  values. 
+        ///  values.
         /// </summary>
         public ConcurrentMergeScheduler()
         {
@@ -157,7 +154,7 @@ namespace Lucene.Net.Index
         /// Return the priority that merge threads run at.  By
         ///  default the priority is 1 plus the priority of (ie,
         ///  slightly higher priority than) the first thread that
-        ///  calls merge. 
+        ///  calls merge.
         /// </summary>
         public virtual int MergeThreadPriority
         {
@@ -182,7 +179,6 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
 
         /// <summary>
         /// Sorts <seealso cref="MergeThread"/>s; larger merges come first. </summary>
@@ -216,7 +212,6 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-
                 // Only look at threads that are alive & not in the
                 // process of stopping (ie have an active merge):
                 IList<MergeThread> activeMerges = new List<MergeThread>();
@@ -290,7 +285,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns true if verbosing is enabled. this method is usually used in
         /// conjunction with <seealso cref="#message(String)"/>, like that:
-        /// 
+        ///
         /// <pre class="prettyprint">
         /// if (verbose()) {
         ///   message(&quot;your message&quot;);
@@ -406,7 +401,6 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-
                 //Debug.Assert(!Thread.holdsLock(writer));
 
                 this.Writer = writer;
@@ -432,7 +426,6 @@ namespace Lucene.Net.Index
                 // pending merges, until it's empty:
                 while (true)
                 {
-
                     long startStallTime = 0;
                     while (writer.HasPendingMerges() && MergeThreadCount() >= MaxMergeCount_Renamed)
                     {
@@ -538,12 +531,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Runs a merge thread, which may run one or more merges
-        ///  in sequence. 
+        ///  in sequence.
         /// </summary>
         protected internal class MergeThread : ThreadClass//System.Threading.Thread
         {
             private readonly ConcurrentMergeScheduler OuterInstance;
-
 
             internal IndexWriter TWriter;
             internal MergePolicy.OneMerge StartMerge;
@@ -579,10 +571,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-
             /// <summary>
             /// Return the current merge, or null if this {@code
-            ///  MergeThread} is done. 
+            ///  MergeThread} is done.
             /// </summary>
             public virtual MergePolicy.OneMerge CurrentMerge
             {
@@ -631,14 +622,12 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-
                 // First time through the while loop we do the merge
                 // that we were started with:
                 MergePolicy.OneMerge merge = this.StartMerge;
 
                 try
                 {
-
                     if (OuterInstance.Verbose())
                     {
                         OuterInstance.Message("  merge thread: start");
@@ -679,11 +668,9 @@ namespace Lucene.Net.Index
                     {
                         OuterInstance.Message("  merge thread: done");
                     }
-
                 }
                 catch (Exception exc)
                 {
-
                     // Ignore the exception if it was due to abort:
                     if (!(exc is MergePolicy.MergeAbortedException))
                     {
@@ -711,7 +698,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Called when an exception is hit in a background merge
-        ///  thread 
+        ///  thread
         /// </summary>
         protected internal virtual void HandleMergeException(Exception exc)
         {
@@ -766,5 +753,4 @@ namespace Lucene.Net.Index
             return clone;
         }
     }
-
 }

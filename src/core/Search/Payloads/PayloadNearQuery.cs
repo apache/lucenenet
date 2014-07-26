@@ -3,40 +3,37 @@ using System.Text;
 
 namespace Lucene.Net.Search.Payloads
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using SimScorer = Lucene.Net.Search.Similarities.Similarity.SimScorer;
-    using NearSpansOrdered = Lucene.Net.Search.Spans.NearSpansOrdered;
-    using NearSpansUnordered = Lucene.Net.Search.Spans.NearSpansUnordered;
-    using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
-    using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
-    using SpanScorer = Lucene.Net.Search.Spans.SpanScorer;
-    using SpanWeight = Lucene.Net.Search.Spans.SpanWeight;
-    using Spans = Lucene.Net.Search.Spans.Spans;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using ToStringUtils = Lucene.Net.Util.ToStringUtils;
     using Lucene.Net.Index;
 
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using NearSpansOrdered = Lucene.Net.Search.Spans.NearSpansOrdered;
+    using NearSpansUnordered = Lucene.Net.Search.Spans.NearSpansUnordered;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
+    using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
+    using Spans = Lucene.Net.Search.Spans.Spans;
+    using SpanScorer = Lucene.Net.Search.Spans.SpanScorer;
+    using SpanWeight = Lucene.Net.Search.Spans.SpanWeight;
+    using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
     /// this class is very similar to
@@ -297,11 +294,8 @@ namespace Lucene.Net.Search.Payloads
 
             public override float Score()
             {
-
                 return base.Score() * OuterInstance.Function.DocScore(Doc, OuterInstance.FieldName, PayloadsSeen, PayloadScore);
             }
         }
-
     }
-
 }

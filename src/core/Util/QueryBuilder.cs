@@ -1,42 +1,40 @@
-using System;
-using System.Linq;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Util
 {
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using CachingTokenFilter = Lucene.Net.Analysis.CachingTokenFilter;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using Term = Lucene.Net.Index.Term;
     using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+    using CachingTokenFilter = Lucene.Net.Analysis.CachingTokenFilter;
     using MultiPhraseQuery = Lucene.Net.Search.MultiPhraseQuery;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using Query = Lucene.Net.Search.Query;
+    using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using System.IO;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /// <summary>
     /// Creates queries from the <seealso cref="Analyzer"/> chain.
@@ -50,7 +48,7 @@ namespace Lucene.Net.Util
     /// </pre>
     /// <p>
     /// this can also be used as a subclass for query parsers to make it easier
-    /// to interact with the analysis chain. Factory methods such as {@code newTermQuery} 
+    /// to interact with the analysis chain. Factory methods such as {@code newTermQuery}
     /// are provided so that the generated queries can be customized.
     /// </summary>
     public class QueryBuilder
@@ -84,7 +82,7 @@ namespace Lucene.Net.Util
         /// <param name="field"> field name </param>
         /// <param name="queryText"> text to be passed to the analyzer </param>
         /// <param name="operator"> operator used for clauses between analyzer tokens. </param>
-        /// <returns> {@code TermQuery} or {@code BooleanQuery}, based on the analysis 
+        /// <returns> {@code TermQuery} or {@code BooleanQuery}, based on the analysis
         ///         of {@code queryText} </returns>
         public virtual Query CreateBooleanQuery(string field, string queryText, BooleanClause.Occur @operator)
         {
@@ -127,7 +125,7 @@ namespace Lucene.Net.Util
         /// <param name="field"> field name </param>
         /// <param name="queryText"> text to be passed to the analyzer </param>
         /// <param name="fraction"> of query terms {@code [0..1]} that should match </param>
-        /// <returns> {@code TermQuery} or {@code BooleanQuery}, based on the analysis 
+        /// <returns> {@code TermQuery} or {@code BooleanQuery}, based on the analysis
         ///         of {@code queryText} </returns>
         public virtual Query CreateMinShouldMatchQuery(string field, string queryText, float fraction)
         {
@@ -166,7 +164,6 @@ namespace Lucene.Net.Util
             }
         }
 
-
         /// <summary>
         /// Returns true if position increments are enabled. </summary>
         /// <seealso cref= #setEnablePositionIncrements(boolean) </seealso>
@@ -182,11 +179,10 @@ namespace Lucene.Net.Util
             }
         }
 
-
         /// <summary>
         /// Creates a query from the analysis chain.
         /// <p>
-        /// Expert: this is more useful for subclasses such as queryparsers. 
+        /// Expert: this is more useful for subclasses such as queryparsers.
         /// If using this class directly, just use <seealso cref="#createBooleanQuery(String, String)"/>
         /// and <seealso cref="#createPhraseQuery(String, String)"/> </summary>
         /// <param name="analyzer"> analyzer used for this query </param>
@@ -485,5 +481,4 @@ namespace Lucene.Net.Util
             return new MultiPhraseQuery();
         }
     }
-
 }

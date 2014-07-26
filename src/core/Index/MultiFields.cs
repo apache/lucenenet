@@ -1,32 +1,31 @@
-using System.Linq;
-using System.Diagnostics;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Util;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using Lucene.Net.Util;
 
     /// <summary>
     /// Exposes flex API, merged from flex API of sub-segments.
@@ -34,13 +33,13 @@ namespace Lucene.Net.Index
     /// IndexReader} implementation that consists of sequential
     /// sub-readers (eg <seealso cref="DirectoryReader"/> or {@link
     /// MultiReader}).
-    /// 
+    ///
     /// <p><b>NOTE</b>: for composite readers, you'll get better
     /// performance by gathering the sub readers using
     /// <seealso cref="IndexReader#getContext()"/> to get the
     /// atomic leaves and then operate per-AtomicReader,
     /// instead of using this class.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
 
@@ -53,12 +52,12 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns a single <seealso cref="Fields"/> instance for this
         ///  reader, merging fields/terms/docs/positions on the
-        ///  fly.  this method will return null if the reader 
+        ///  fly.  this method will return null if the reader
         ///  has no postings.
-        /// 
+        ///
         ///  <p><b>NOTE</b>: this is a slow way to access postings.
         ///  It's better to get the sub-readers and iterate through them
-        ///  yourself. 
+        ///  yourself.
         /// </summary>
         public static Fields GetFields(IndexReader reader)
         {
@@ -68,9 +67,11 @@ namespace Lucene.Net.Index
                 case 0:
                     // no fields
                     return null;
+
                 case 1:
                     // already an atomic reader / reader with one leave
                     return leaves[0].AtomicReader.Fields();
+
                 default:
                     IList<Fields> fields = new List<Fields>();
                     IList<ReaderSlice> slices = new List<ReaderSlice>();
@@ -102,13 +103,13 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns a single <seealso cref="Bits"/> instance for this
         ///  reader, merging live Documents on the
-        ///  fly.  this method will return null if the reader 
+        ///  fly.  this method will return null if the reader
         ///  has no deletions.
-        /// 
+        ///
         ///  <p><b>NOTE</b>: this is a very slow way to access live docs.
         ///  For example, each Bits access will require a binary search.
         ///  It's better to get the sub-readers and iterate through them
-        ///  yourself. 
+        ///  yourself.
         /// </summary>
         public static Bits GetLiveDocs(IndexReader reader)
         {
@@ -157,7 +158,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns <seealso cref="DocsEnum"/> for the specified field &
         ///  term.  this will return null if the field or term does
-        ///  not exist. 
+        ///  not exist.
         /// </summary>
         public static DocsEnum GetTermDocsEnum(IndexReader r, Bits liveDocs, string field, BytesRef term)
         {
@@ -205,7 +206,7 @@ namespace Lucene.Net.Index
         ///  their implementation when offsets and/or payloads are not
         ///  required. this will return null if the field or term does not
         ///  exist or positions were not indexed. See {@link
-        ///  TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)}. 
+        ///  TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)}.
         /// </summary>
         public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, Bits liveDocs, string field, BytesRef term, int flags)
         {
@@ -253,7 +254,6 @@ namespace Lucene.Net.Index
                 return result;
             }
 
-
             // Lazy init: first time this field is requested, we
             // create & add to terms:
             IList<Terms> subs2 = new List<Terms>();
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Call this to get the (merged) FieldInfos for a
-        ///  composite reader. 
+        ///  composite reader.
         ///  <p>
         ///  NOTE: the returned field numbers will likely not
         ///  correspond to the actual field numbers in the underlying
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Call this to get the (merged) FieldInfos representing the
-        ///  set of indexed fields <b>only</b> for a composite reader. 
+        ///  set of indexed fields <b>only</b> for a composite reader.
         ///  <p>
         ///  NOTE: the returned field numbers will likely not
         ///  correspond to the actual field numbers in the underlying
@@ -330,6 +330,4 @@ namespace Lucene.Net.Index
             return fields;
         }
     }
-
-
 }

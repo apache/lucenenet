@@ -1,33 +1,32 @@
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Support;
+    using System;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Term = Lucene.Net.Index.Term;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using System;
-    using Lucene.Net.Support;
 
     internal sealed class SloppyPhraseScorer : Scorer
     {
@@ -64,7 +63,7 @@ namespace Lucene.Net.Search
             // convert tps to a list of phrase positions.
             // note: phrase-position differs from term-position in that its position
             // reflects the phrase offset: pp.pos = tp.pos - offset.
-            // this allows to easily identify a matching (exact) phrase 
+            // this allows to easily identify a matching (exact) phrase
             // when all PhrasePositions have exactly the same position.
             if (postings.Length > 0)
             {
@@ -83,20 +82,20 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Score a candidate doc for all slop-valid position-combinations (matches) 
+        /// Score a candidate doc for all slop-valid position-combinations (matches)
         /// encountered while traversing/hopping the PhrasePositions.
-        /// <br> The score contribution of a match depends on the distance: 
+        /// <br> The score contribution of a match depends on the distance:
         /// <br> - highest score for distance=0 (exact match).
         /// <br> - score gets lower as distance gets higher.
-        /// <br>Example: for query "a b"~2, a document "x a b a y" can be scored twice: 
+        /// <br>Example: for query "a b"~2, a document "x a b a y" can be scored twice:
         /// once for "a b" (distance=0), and once for "b a" (distance=2).
-        /// <br>Possibly not all valid combinations are encountered, because for efficiency  
-        /// we always propagate the least PhrasePosition. this allows to base on 
-        /// PriorityQueue and move forward faster. 
+        /// <br>Possibly not all valid combinations are encountered, because for efficiency
+        /// we always propagate the least PhrasePosition. this allows to base on
+        /// PriorityQueue and move forward faster.
         /// As result, for example, document "a b c b a"
-        /// would score differently for queries "a b c"~4 and "c b a"~4, although 
-        /// they really are equivalent. 
-        /// Similarly, for doc "a b c b a f g", query "c b"~2 
+        /// would score differently for queries "a b c"~4 and "c b a"~4, although
+        /// they really are equivalent.
+        /// Similarly, for doc "a b c b a f g", query "c b"~2
         /// would get same score as "g f"~2, although "c b"~2 could be matched twice.
         /// We may want to fix this in the future (currently not, for performance reasons).
         /// </summary>
@@ -164,7 +163,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// pp was just advanced. If that caused a repeater collision, resolve by advancing the lesser
         /// of the two colliding pps. Note that there can only be one collision, as by the initialization
-        /// there were no collisions before pp was advanced.  
+        /// there were no collisions before pp was advanced.
         /// </summary>
         private bool AdvanceRpts(PhrasePositions pp)
         {
@@ -390,10 +389,10 @@ namespace Lucene.Net.Search
         /// The more complex initialization has two parts:<br>
         /// (1) identification of repetition groups.<br>
         /// (2) advancing repeat groups at the start of the doc.<br>
-        /// For (1), a possible solution is to just create a single repetition group, 
-        /// made of all repeating pps. But this would slow down the check for collisions, 
-        /// as all pps would need to be checked. Instead, we compute "connected regions" 
-        /// on the bipartite graph of postings and terms.  
+        /// For (1), a possible solution is to just create a single repetition group,
+        /// made of all repeating pps. But this would slow down the check for collisions,
+        /// as all pps would need to be checked. Instead, we compute "connected regions"
+        /// on the bipartite graph of postings and terms.
         /// </summary>
         private bool InitFirstTime()
         {
@@ -420,8 +419,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// sort each repetition group by (query) offset. 
-        /// Done only once (at first doc) and allows to initialize faster for each doc. 
+        /// sort each repetition group by (query) offset.
+        /// Done only once (at first doc) and allows to initialize faster for each doc.
         /// </summary>
         private void SortRptGroups(List<List<PhrasePositions>> rgs)
         {
@@ -730,5 +729,4 @@ namespace Lucene.Net.Search
             return "scorer(" + weight + ")";
         }
     }
-
 }

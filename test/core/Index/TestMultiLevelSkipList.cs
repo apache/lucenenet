@@ -2,7 +2,6 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,36 +19,33 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-    using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
-    using System.IO;
 
     /// <summary>
     /// this testcase tests whether multi-level skipping is being used
     /// to reduce I/O while skipping through posting lists.
-    /// 
+    ///
     /// Skipping in general is already covered by several other
     /// testcases.
-    /// 
+    ///
     /// </summary>
     [TestFixture]
     public class TestMultiLevelSkipList : LuceneTestCase
     {
-
         internal class CountingRAMDirectory : MockDirectoryWrapper
         {
             private readonly TestMultiLevelSkipList OuterInstance;
@@ -129,17 +125,16 @@ namespace Lucene.Net.Index
         private class PayloadAnalyzer : Analyzer
         {
             internal readonly AtomicInteger PayloadCount = new AtomicInteger(-1);
+
             protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
                 return new TokenStreamComponents(tokenizer, new PayloadFilter(PayloadCount, tokenizer));
             }
-
         }
 
         private class PayloadFilter : TokenFilter
         {
-
             internal IPayloadAttribute PayloadAtt;
             internal AtomicInteger PayloadCount;
 
@@ -159,7 +154,6 @@ namespace Lucene.Net.Index
                 }
                 return hasNext;
             }
-
         }
 
         private int Counter = 0;
@@ -218,8 +212,6 @@ namespace Lucene.Net.Index
             {
                 return new CountingStream(OuterInstance, (IndexInput)this.Input.Clone());
             }
-
         }
     }
-
 }

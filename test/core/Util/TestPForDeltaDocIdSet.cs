@@ -1,10 +1,9 @@
-using System.Collections;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System.Collections;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +23,6 @@ namespace Lucene.Net.Util
 
     public class TestPForDeltaDocIdSet : BaseDocIdSetTestCase<PForDeltaDocIdSet>
     {
-
         public override PForDeltaDocIdSet CopyOf(BitArray bs, int length)
         {
             PForDeltaDocIdSet.Builder builder = (new PForDeltaDocIdSet.Builder()).SetIndexInterval(TestUtil.NextInt(Random(), 1, 20));
@@ -40,7 +38,5 @@ namespace Lucene.Net.Util
             base.AssertEquals(numBits, ds1, ds2);
             Assert.AreEqual(ds1.Cardinality(), ds2.Cardinality());
         }
-
     }
-
 }

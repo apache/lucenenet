@@ -1,13 +1,11 @@
-using System.Text;
+using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
-using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using Lucene.Net.Randomized.Generators;
+using System.Text;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -129,7 +127,5 @@ namespace Lucene.Net.Codecs.Compressing
         {
             Test(new sbyte[] { 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 5 });
         }
-
     }
-
 }

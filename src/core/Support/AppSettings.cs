@@ -25,14 +25,14 @@ using System.Configuration;
 namespace Lucene.Net.Support
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class AppSettings
     {
-        static System.Collections.Specialized.ListDictionary settings = new System.Collections.Specialized.ListDictionary();
+        private static System.Collections.Specialized.ListDictionary settings = new System.Collections.Specialized.ListDictionary();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defValue"></param>
@@ -42,7 +42,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defValue"></param>
@@ -52,7 +52,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defValue"></param>
@@ -62,7 +62,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defValue"></param>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defValue"></param>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defValue"></param>
@@ -118,7 +118,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="defValue"></param>

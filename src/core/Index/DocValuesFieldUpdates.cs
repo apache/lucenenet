@@ -1,13 +1,8 @@
-using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
-
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,12 +22,11 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Holds updates of a single DocValues field, for a set of documents.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class DocValuesFieldUpdates
     {
-
         public enum Type_e
         {
             NUMERIC,
@@ -46,7 +40,6 @@ namespace Lucene.Net.Index
         /// </summary>
         internal interface Iterator
         {
-
             /// <summary>
             /// Returns the next document which has an update, or
             /// <seealso cref="DocIdSetIterator#NO_MORE_DOCS"/> if there are no more documents to
@@ -69,12 +62,10 @@ namespace Lucene.Net.Index
             /// and <seealso cref="#value()"/>.
             /// </summary>
             void Reset();
-
         }
 
         public class Container
         {
-
             internal readonly IDictionary<string, NumericDocValuesFieldUpdates> NumericDVUpdates = new Dictionary<string, NumericDocValuesFieldUpdates>();
             internal readonly IDictionary<string, BinaryDocValuesFieldUpdates> BinaryDVUpdates = new Dictionary<string, BinaryDocValuesFieldUpdates>();
 
@@ -110,10 +101,12 @@ namespace Lucene.Net.Index
                         NumericDocValuesFieldUpdates num;
                         NumericDVUpdates.TryGetValue(field, out num);
                         return num;
+
                     case Type_e.BINARY:
                         BinaryDocValuesFieldUpdates bin;
                         BinaryDVUpdates.TryGetValue(field, out bin);
                         return bin;
+
                     default:
                         throw new System.ArgumentException("unsupported type: " + type);
                 }
@@ -129,12 +122,14 @@ namespace Lucene.Net.Index
                         numericUpdates = new NumericDocValuesFieldUpdates(field, maxDoc);
                         NumericDVUpdates[field] = numericUpdates;
                         return numericUpdates;
+
                     case Type_e.BINARY:
                         BinaryDocValuesFieldUpdates binaryUpdates;
                         Debug.Assert(!BinaryDVUpdates.TryGetValue(field, out binaryUpdates));
                         binaryUpdates = new BinaryDocValuesFieldUpdates(field, maxDoc);
                         BinaryDVUpdates[field] = binaryUpdates;
                         return binaryUpdates;
+
                     default:
                         throw new System.ArgumentException("unsupported type: " + type);
                 }
@@ -178,7 +173,5 @@ namespace Lucene.Net.Index
         /// Returns true if this instance contains any updates. </summary>
         /// <returns> TODO </returns>
         public abstract bool Any();
-
     }
-
 }

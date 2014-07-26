@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.Remoting;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,35 +21,32 @@ namespace Lucene.Net.Search.Spans
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
+    using Lucene.Net.Util;
+    using NUnit.Framework;
+    using System.IO;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
+    using English = Lucene.Net.Util.English;
     using Field = Lucene.Net.Document.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using English = Lucene.Net.Util.English;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Util;
-    using System.IO;
-    using NUnit.Framework;
 
     /// <summary>
     /// Tests basic search capabilities.
-    /// 
+    ///
     /// <p>Uses a collection of 1000 documents, each the english rendition of their
     /// document number.  For example, the document numbered 333 has text "three
     /// hundred thirty three".
-    /// 
+    ///
     /// <p>Tests are each a single query, and its hits are checked to ensure that
     /// all and only the correct documents are returned, thus providing end-to-end
     /// testing of the indexing and search code.
-    /// 
+    ///
     /// </summary>
     [TestFixture]
     public class TestBasics : LuceneTestCase
@@ -396,7 +390,6 @@ namespace Lucene.Net.Search.Spans
 
             Assert.IsTrue(Searcher.Explain(query, 5).Value > 0.0f);
             Assert.IsTrue(Searcher.Explain(query, 599).Value > 0.0f);
-
         }
 
         [Test]
@@ -488,9 +481,7 @@ namespace Lucene.Net.Search.Spans
             payloads.Add(pay4.Bytes);
             query = new SpanNearPayloadCheckQuery(oneThousHunThree, payloads);
             CheckHits(query, new int[] { 1103, 1203, 1303, 1403, 1503, 1603, 1703, 1803, 1903 });
-
         }
-
 
         [Test]
         public virtual void TestSpanOr()
@@ -530,7 +521,6 @@ namespace Lucene.Net.Search.Spans
         [Test]
         public virtual void TestSpanNearOr()
         {
-
             SpanTermQuery t1 = new SpanTermQuery(new Term("field", "six"));
             SpanTermQuery t3 = new SpanTermQuery(new Term("field", "seven"));
 
@@ -548,7 +538,6 @@ namespace Lucene.Net.Search.Spans
         [Test]
         public virtual void TestSpanComplex1()
         {
-
             SpanTermQuery t1 = new SpanTermQuery(new Term("field", "six"));
             SpanTermQuery t2 = new SpanTermQuery(new Term("field", "hundred"));
             SpanNearQuery tt1 = new SpanNearQuery(new SpanQuery[] { t1, t2 }, 0, true);
@@ -612,7 +601,6 @@ namespace Lucene.Net.Search.Spans
                 }
             } while (target > s.Doc());
             return true;
-
         }
 
         private void CheckHits(Query query, int[] results)
@@ -620,5 +608,4 @@ namespace Lucene.Net.Search.Spans
             Search.CheckHits.DoCheckHits(Random(), query, "field", Searcher, results);
         }
     }
-
 }

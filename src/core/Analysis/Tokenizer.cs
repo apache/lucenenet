@@ -1,10 +1,9 @@
 using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,9 +20,6 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using AttributeSource = Lucene.Net.Util.AttributeSource;
-
 
     /// <summary>
     /// A Tokenizer is a TokenStream whose input is a Reader.
@@ -70,7 +66,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// {@inheritDoc}
         /// <p>
-        /// <b>NOTE:</b> 
+        /// <b>NOTE:</b>
         /// The default implementation closes the input Reader, so
         /// be sure to call <code>super.close()</code> when overriding this method.
         /// </summary>
@@ -97,7 +93,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Expert: Set a new reader on the Tokenizer.  Typically, an
         ///  analyzer (in its tokenStream method) will use
-        ///  this to re-use a previously created tokenizer. 
+        ///  this to re-use a previously created tokenizer.
         /// </summary>
         public TextReader Reader
         {
@@ -147,6 +143,4 @@ namespace Lucene.Net.Analysis
             }
         }
     }
-
-
 }

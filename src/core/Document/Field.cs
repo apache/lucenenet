@@ -1,44 +1,37 @@
-using System;
-using System.Text;
-
 namespace Lucene.Net.Document
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using NumericType = Lucene.Net.Document.FieldType.NumericType;
-    using IndexWriter = Lucene.Net.Index.IndexWriter; // javadocs
-    using IndexableField = Lucene.Net.Index.IndexableField;
-    using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using FieldInvertState = Lucene.Net.Index.FieldInvertState;
+    using Lucene.Net.Analysis.Tokenattributes;
     using Lucene.Net.Support; // javadocs
     using System;
     using System.IO;
     using System.Text;
-    using Lucene.Net.Analysis;
-    using Lucene.Net.Analysis.Tokenattributes;
-    using Lucene.Net.Index;
-    using Lucene.Net.Util;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+
+    // javadocs
+    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
+    using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
+    using NumericType = Lucene.Net.Document.FieldType.NumericType;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /// <summary>
     /// Expert: directly create a field for a document.  Most
@@ -47,13 +40,13 @@ namespace Lucene.Net.Document
     /// DoubleField}, <seealso cref="BinaryDocValuesField"/>, {@link
     /// NumericDocValuesField}, <seealso cref="SortedDocValuesField"/>, {@link
     /// StringField}, <seealso cref="TextField"/>, <seealso cref="StoredField"/>.
-    /// 
+    ///
     /// <p/> A field is a section of a Document. Each field has three
     /// parts: name, type and value. Values may be text
     /// (String, Reader or pre-analyzed TokenStream), binary
     /// (byte[]), or numeric (a Number).  Fields are optionally stored in the
     /// index, so that they may be returned with hits on the document.
-    /// 
+    ///
     /// <p/>
     /// NOTE: the field type is an <seealso cref="IndexableFieldType"/>.  Making changes
     /// to the state of the IndexableFieldType will impact any
@@ -62,11 +55,11 @@ namespace Lucene.Net.Document
     /// </summary>
     public class Field : IndexableField
     {
-
         /// <summary>
         /// Field's type
         /// </summary>
         protected internal readonly FieldType Type;
+
         /// <summary>
         /// Field's name
         /// </summary>
@@ -80,7 +73,7 @@ namespace Lucene.Net.Document
         /// Pre-analyzed tokenStream for indexed fields; this is
         /// separate from fieldsData because you are allowed to
         /// have both; eg maybe field has a String value but you
-        /// customize how it's tokenized 
+        /// customize how it's tokenized
         /// </summary>
         protected internal TokenStream TokenStream_Renamed;
 
@@ -186,7 +179,7 @@ namespace Lucene.Net.Document
 
         /// <summary>
         /// Create field with binary value.
-        /// 
+        ///
         /// <p>NOTE: the provided byte[] is not copied so be sure
         /// not to change it until you're done with this field. </summary>
         /// <param name="name"> field name </param>
@@ -202,7 +195,7 @@ namespace Lucene.Net.Document
 
         /// <summary>
         /// Create field with binary value.
-        /// 
+        ///
         /// <p>NOTE: the provided byte[] is not copied so be sure
         /// not to change it until you're done with this field. </summary>
         /// <param name="name"> field name </param>
@@ -220,7 +213,7 @@ namespace Lucene.Net.Document
 
         /// <summary>
         /// Create field with binary value.
-        /// 
+        ///
         /// <p>NOTE: the provided BytesRef is not copied so be sure
         /// not to change it until you're done with this field. </summary>
         /// <param name="name"> field name </param>
@@ -252,7 +245,7 @@ namespace Lucene.Net.Document
         /// <param name="value"> string value </param>
         /// <param name="type"> field type </param>
         /// <exception cref="IllegalArgumentException"> if either the name or value
-        ///         is null, or if the field's type is neither indexed() nor stored(), 
+        ///         is null, or if the field's type is neither indexed() nor stored(),
         ///         or if indexed() is false but storeTermVectors() is true. </exception>
         /// <exception cref="NullPointerException"> if the type is null </exception>
         public Field(string name, string value, FieldType type)
@@ -296,7 +289,7 @@ namespace Lucene.Net.Document
         /// <seealso cref="Document"/> instance is re-used as well. this helps most on small
         /// documents.
         /// </p>
-        /// 
+        ///
         /// <p>
         /// Each Field instance should only be used once within a single
         /// <seealso cref="Document"/> instance. See <a
@@ -330,7 +323,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
         public TextReader ReaderValue
@@ -351,7 +344,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
         public virtual sbyte[] SBytesValue
@@ -373,9 +366,9 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
-        /// 
+        ///
         /// <p>NOTE: the provided BytesRef is not copied so be sure
         /// not to change it until you're done with this field.
         /// </summary>
@@ -396,7 +389,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
         public virtual sbyte ByteValue
@@ -412,7 +405,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
         public virtual short ShortValue
@@ -428,7 +421,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
         public virtual int IntValue
@@ -444,7 +437,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
         public virtual long LongValue
@@ -460,7 +453,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
         public virtual float FloatValue
@@ -476,7 +469,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Expert: change the value of this field. See 
+        /// Expert: change the value of this field. See
         /// <seealso cref="#setStringValue(String)"/>.
         /// </summary>
         public virtual double DoubleValue
@@ -506,7 +499,7 @@ namespace Lucene.Net.Document
                 }
                 if (Type.NumericTypeValue != null)
                 {
-                  throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
+                    throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
                 }
                 this.TokenStream_Renamed = value;
             }
@@ -529,7 +522,7 @@ namespace Lucene.Net.Document
 
         /// <summary>
         /// Sets the boost factor on this field. </summary>
-        /// <exception cref="IllegalArgumentException"> if this field is not indexed, 
+        /// <exception cref="IllegalArgumentException"> if this field is not indexed,
         ///         or if it omits norms. </exception>
         /// <seealso> cref= #boost() </seealso>
         public virtual float Boost
@@ -551,7 +544,6 @@ namespace Lucene.Net.Document
         {
             get
             {
-                
                 string str = FieldsData as string;
                 if (str != null)
                 {
@@ -567,11 +559,8 @@ namespace Lucene.Net.Document
                     return FieldsData;
                 }
 
-
                 return null;
-
             }
-
         }
 
         public BytesRef BinaryValue()
@@ -636,15 +625,19 @@ namespace Lucene.Net.Document
                     case NumericType.INT:
                         nts.SetIntValue(Convert.ToInt32(val));
                         break;
+
                     case NumericType.LONG:
                         nts.SetLongValue(Convert.ToInt64(val));
                         break;
+
                     case NumericType.FLOAT:
                         nts.SetFloatValue(Convert.ToSingle(val));
                         break;
+
                     case NumericType.DOUBLE:
                         nts.SetDoubleValue(Convert.ToDouble(val));
                         break;
+
                     default:
                         throw new Exception("Should never get here");
                 }
@@ -759,7 +752,6 @@ namespace Lucene.Net.Document
         /// Specifies whether and how a field should be stored. </summary>
         public enum Store
         {
-
             /// <summary>
             /// Store the original field value in the index. this is useful for short texts
             /// like a document's title which should be displayed with the results. The
@@ -785,13 +777,13 @@ namespace Lucene.Net.Document
         {
             /// <summary>Do not index the field value. This field can thus not be searched,
             /// but one can still access its contents provided it is
-            /// <see cref="Field.Store">stored</see>. 
+            /// <see cref="Field.Store">stored</see>.
             /// </summary>
             NO,
 
             /// <summary>Index the tokens produced by running the field's
             /// value through an Analyzer.  This is useful for
-            /// common text. 
+            /// common text.
             /// </summary>
             ANALYZED,
 
@@ -814,7 +806,7 @@ namespace Lucene.Net.Document
             /// have no effect.  In other words, for this to have the
             /// above described effect on a field, all instances of
             /// that field must be indexed with NOT_ANALYZED_NO_NORMS
-            /// from the beginning. 
+            /// from the beginning.
             /// </summary>
             NOT_ANALYZED_NO_NORMS,
 
@@ -822,7 +814,7 @@ namespace Lucene.Net.Document
             /// field's value through an Analyzer, and also
             /// separately disable the storing of norms.  See
             /// <see cref="NOT_ANALYZED_NO_NORMS" /> for what norms are
-            /// and why you may want to disable them. 
+            /// and why you may want to disable them.
             /// </summary>
             ANALYZED_NO_NORMS,
         }
@@ -835,26 +827,26 @@ namespace Lucene.Net.Document
             NO,
 
             /// <summary>Store the term vectors of each document. A term vector is a list
-            /// of the document's terms and their number of occurrences in that document. 
+            /// of the document's terms and their number of occurrences in that document.
             /// </summary>
             YES,
 
             /// <summary> Store the term vector + token position information
-            /// 
+            ///
             /// </summary>
             /// <seealso cref="YES">
             /// </seealso>
             WITH_POSITIONS,
 
             /// <summary> Store the term vector + Token offset information
-            /// 
+            ///
             /// </summary>
             /// <seealso cref="YES">
             /// </seealso>
             WITH_OFFSETS,
 
             /// <summary> Store the term vector + Token position and offset information
-            /// 
+            ///
             /// </summary>
             /// <seealso cref="YES">
             /// </seealso>
@@ -877,20 +869,24 @@ namespace Lucene.Net.Document
                     ft.Indexed = true;
                     ft.Tokenized = true;
                     break;
+
                 case Index.ANALYZED_NO_NORMS:
                     ft.Indexed = true;
                     ft.Tokenized = true;
                     ft.OmitNorms = true;
                     break;
+
                 case Index.NOT_ANALYZED:
                     ft.Indexed = true;
                     ft.Tokenized = false;
                     break;
+
                 case Index.NOT_ANALYZED_NO_NORMS:
                     ft.Indexed = true;
                     ft.Tokenized = false;
                     ft.OmitNorms = true;
                     break;
+
                 case Index.NO:
                     break;
             }
@@ -899,17 +895,21 @@ namespace Lucene.Net.Document
             {
                 case TermVector.NO:
                     break;
+
                 case TermVector.YES:
                     ft.StoreTermVectors = true;
                     break;
+
                 case TermVector.WITH_POSITIONS:
                     ft.StoreTermVectors = true;
                     ft.StoreTermVectorPositions = true;
                     break;
+
                 case TermVector.WITH_OFFSETS:
                     ft.StoreTermVectors = true;
                     ft.StoreTermVectorOffsets = true;
                     break;
+
                 case TermVector.WITH_POSITIONS_OFFSETS:
                     ft.StoreTermVectors = true;
                     ft.StoreTermVectorPositions = true;
@@ -977,13 +977,14 @@ namespace Lucene.Net.Document
             {
                 case Field.Store.YES:
                     return true;
+
                 case Field.Store.NO:
                     return false;
+
                 default:
                     throw new ArgumentOutOfRangeException("store", "Invalid value for Field.Store");
             }
         }
-
 
         public static bool IsIndexed(this Field.Index index)
         {
@@ -991,16 +992,17 @@ namespace Lucene.Net.Document
             {
                 case Field.Index.NO:
                     return false;
+
                 case Field.Index.ANALYZED:
                 case Field.Index.NOT_ANALYZED:
                 case Field.Index.NOT_ANALYZED_NO_NORMS:
                 case Field.Index.ANALYZED_NO_NORMS:
                     return true;
+
                 default:
                     throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
             }
         }
-
 
         public static bool IsAnalyzed(this Field.Index index)
         {
@@ -1010,14 +1012,15 @@ namespace Lucene.Net.Document
                 case Field.Index.NOT_ANALYZED:
                 case Field.Index.NOT_ANALYZED_NO_NORMS:
                     return false;
+
                 case Field.Index.ANALYZED:
                 case Field.Index.ANALYZED_NO_NORMS:
                     return true;
+
                 default:
                     throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
             }
         }
-
 
         public static bool OmitNorms(this Field.Index index)
         {
@@ -1026,15 +1029,16 @@ namespace Lucene.Net.Document
                 case Field.Index.ANALYZED:
                 case Field.Index.NOT_ANALYZED:
                     return false;
+
                 case Field.Index.NO:
                 case Field.Index.NOT_ANALYZED_NO_NORMS:
                 case Field.Index.ANALYZED_NO_NORMS:
                     return true;
+
                 default:
                     throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
             }
         }
-
 
         public static bool IsStored(this Field.TermVector tv)
         {
@@ -1042,16 +1046,17 @@ namespace Lucene.Net.Document
             {
                 case Field.TermVector.NO:
                     return false;
+
                 case Field.TermVector.YES:
                 case Field.TermVector.WITH_OFFSETS:
                 case Field.TermVector.WITH_POSITIONS:
                 case Field.TermVector.WITH_POSITIONS_OFFSETS:
                     return true;
+
                 default:
                     throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
             }
         }
-
 
         public static bool WithPositions(this Field.TermVector tv)
         {
@@ -1061,14 +1066,15 @@ namespace Lucene.Net.Document
                 case Field.TermVector.YES:
                 case Field.TermVector.WITH_OFFSETS:
                     return false;
+
                 case Field.TermVector.WITH_POSITIONS:
                 case Field.TermVector.WITH_POSITIONS_OFFSETS:
                     return true;
+
                 default:
                     throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
             }
         }
-
 
         public static bool WithOffsets(this Field.TermVector tv)
         {
@@ -1078,20 +1084,20 @@ namespace Lucene.Net.Document
                 case Field.TermVector.YES:
                 case Field.TermVector.WITH_POSITIONS:
                     return false;
+
                 case Field.TermVector.WITH_OFFSETS:
                 case Field.TermVector.WITH_POSITIONS_OFFSETS:
                     return true;
+
                 default:
                     throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
             }
         }
 
-
         public static Field.Index ToIndex(bool indexed, bool analyed)
         {
             return ToIndex(indexed, analyed, false);
         }
-
 
         public static Field.Index ToIndex(bool indexed, bool analyzed, bool omitNorms)
         {
@@ -1119,7 +1125,6 @@ namespace Lucene.Net.Document
             return Field.Index.NOT_ANALYZED_NO_NORMS;
         }
 
-
         /// <summary>
         /// Get the best representation of a TermVector given the flags.
         /// </summary>
@@ -1146,8 +1151,5 @@ namespace Lucene.Net.Document
             }
             return Field.TermVector.YES;
         }
-
-
     }
-
 }

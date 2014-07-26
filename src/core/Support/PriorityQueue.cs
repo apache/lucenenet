@@ -1,6 +1,6 @@
 ﻿/*
  * This code implements priority queue which uses min-heap as underlying storage
- * 
+ *
  * Copyright (C) 2010 Alexey Kurakin
  * www.avk.name
  * alexey[ at ]kurakin.me
@@ -61,7 +61,7 @@ namespace Lucene.Net.Support
                 HeapifyFromBeginningToEnd(pos);
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Merging
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Support
             return result;
         }
 
-        #endregion
+        #endregion Merging
 
         #region Priority queue operations
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Dequeues element with minimum priority and return its priority and value as <see cref="KeyValuePair{TPriority,TValue}"/> 
+        /// Dequeues element with minimum priority and return its priority and value as <see cref="KeyValuePair{TPriority,TValue}"/>
         /// </summary>
         /// <returns>the dequeued element</returns>
         /// <remarks>
@@ -159,7 +159,7 @@ namespace Lucene.Net.Support
             get { return _baseHeap.Count == 0; }
         }
 
-        #endregion
+        #endregion Priority queue operations
 
         #region Heap operations
 
@@ -180,7 +180,6 @@ namespace Lucene.Net.Support
             HeapifyFromEndToBeginning(_baseHeap.Count - 1);
         }
 
-
         private int HeapifyFromEndToBeginning(int pos)
         {
             if (pos >= _baseHeap.Count) return -1;
@@ -198,7 +197,6 @@ namespace Lucene.Net.Support
             }
             return pos;
         }
-
 
         private void DeleteRoot()
         {
@@ -243,7 +241,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        #endregion
+        #endregion Heap operations
 
         #region ICollection<T> implementation
 
@@ -283,7 +281,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Copies the elements of the priority queue to an Array, starting at a particular Array index. 
+        /// Copies the elements of the priority queue to an Array, starting at a particular Array index.
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from the priority queue. The Array must have zero-based indexing. </param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
@@ -296,7 +294,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Gets a value indicating whether the collection is read-only. 
+        /// Gets a value indicating whether the collection is read-only.
         /// </summary>
         /// <remarks>
         /// For priority queue this property returns <c>false</c>.
@@ -307,7 +305,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Removes the first occurrence of a specific object from the priority queue. 
+        /// Removes the first occurrence of a specific object from the priority queue.
         /// </summary>
         /// <param name="item">The object to remove from the ICollection <(Of <(T >)>). </param>
         /// <returns><c>true</c> if item was successfully removed from the priority queue.
@@ -352,6 +350,6 @@ namespace Lucene.Net.Support
             return this.GetEnumerator();
         }
 
-        #endregion
+        #endregion ICollection<T> implementation
     }
 }

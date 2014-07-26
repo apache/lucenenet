@@ -1,9 +1,8 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +20,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Bits = Lucene.Net.Util.Bits;
 
     using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
@@ -36,7 +34,7 @@ namespace Lucene.Net.Index
     /// APIs on-the-fly, using the static methods in {@link
     /// MultiFields}, <seealso cref="MultiDocValues"/>, by stepping through
     /// the sub-readers to merge fields/terms, appending docs, etc.
-    /// 
+    ///
     /// <p><b>NOTE</b>: this class almost always results in a
     /// performance hit.  If this is important to your use case,
     /// you'll get better performance by gathering the sub readers using
@@ -46,7 +44,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class SlowCompositeReaderWrapper : AtomicReader
     {
-
         private readonly CompositeReader @in;
         private readonly Fields Fields_Renamed;
         private readonly Bits LiveDocs_Renamed;
@@ -288,5 +285,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

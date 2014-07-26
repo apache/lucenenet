@@ -1,7 +1,6 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -22,17 +21,14 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Helper class for loading named SPIs from classpath (e.g. Codec, PostingsFormat).
     /// @lucene.internal
     /// </summary>
     public sealed class NamedSPILoader<S> : IEnumerable<S> where S : NamedSPILoader<S>.NamedSPI
     {
-
         private volatile IDictionary<string, S> Services = CollectionsHelper.EmptyMap<string, S>();
         private readonly Type Clazz;
-
 
         public NamedSPILoader(Type clazz)
         {
@@ -45,11 +41,11 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Reloads the internal SPI list from the given <seealso cref="ClassLoader"/>.
         /// Changes to the service list are visible after the method ends, all
-        /// iterators (<seealso cref="#iterator()"/>,...) stay consistent. 
-        /// 
+        /// iterators (<seealso cref="#iterator()"/>,...) stay consistent.
+        ///
         /// <p><b>NOTE:</b> Only new service providers are added, existing ones are
         /// never removed or replaced.
-        /// 
+        ///
         /// <p><em>this method is expensive and should only be called for discovery
         /// of new service providers on the given classpath/classloader!</em>
         /// </summary>
@@ -67,7 +63,7 @@ namespace Lucene.Net.Util
                         S service = (S)Activator.CreateInstance(c);
                         string name = service.Name;
                         // only add the first one for each name, later services will be ignored
-                        // this allows to place services before others in classpath to make 
+                        // this allows to place services before others in classpath to make
                         // them used instead of others
                         if (!services.ContainsKey(name))
                         {
@@ -146,7 +142,5 @@ namespace Lucene.Net.Util
         {
             string Name { get; }
         }
-
     }
-
 }

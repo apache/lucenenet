@@ -1,45 +1,43 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using Directory = Lucene.Net.Store.Directory;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Util;
+    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharsRef = Lucene.Net.Util.CharsRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Lucene.Net.Util;
 
     [TestFixture]
     public class TestIndexWriterUnicode : LuceneTestCase
     {
-
         internal readonly string[] Utf8Data = new string[] { "ab\udc17cd", "ab\ufffdcd", "\udc17abcd", "\ufffdabcd", "\udc17", "\ufffd", "ab\udc17\udc17cd", "ab\ufffd\ufffdcd", "\udc17\udc17abcd", "\ufffd\ufffdabcd", "\udc17\udc17", "\ufffd\ufffd", "ab\ud917cd", "ab\ufffdcd", "\ud917abcd", "\ufffdabcd", "\ud917", "\ufffd", "ab\ud917\ud917cd", "ab\ufffd\ufffdcd", "\ud917\ud917abcd", "\ufffd\ufffdabcd", "\ud917\ud917", "\ufffd\ufffd", "ab\udc17\ud917cd", "ab\ufffd\ufffdcd", "\udc17\ud917abcd", "\ufffd\ufffdabcd", "\udc17\ud917", "\ufffd\ufffd", "ab\udc17\ud917\udc17\ud917cd", "ab\ufffd\ud917\udc17\ufffdcd", "\udc17\ud917\udc17\ud917abcd", "\ufffd\ud917\udc17\ufffdabcd", "\udc17\ud917\udc17\ud917", "\ufffd\ud917\udc17\ufffd" };
 
         private int NextInt(int lim)
@@ -224,13 +222,11 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestAllUnicodeChars()
         {
-
             BytesRef utf8 = new BytesRef(10);
             CharsRef utf16 = new CharsRef(10);
             char[] chars = new char[2];
             for (int ch = 0; ch < 0x0010FFFF; ch++)
             {
-
                 if (ch == 0xd800)
                 // Skip invalid code points
                 {
@@ -330,7 +326,6 @@ namespace Lucene.Net.Index
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)
             {
-
                 string s;
                 if (rnd.NextBoolean())
                 {
@@ -389,5 +384,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

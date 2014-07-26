@@ -1,15 +1,14 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using Lucene.Net.Util;
-using Lucene.Net.Store;
 using Lucene.Net.Index;
-using Lucene.Net.Util.Packed;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Packed;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,16 +26,12 @@ namespace Lucene.Net.Codecs.Compressing
      * limitations under the License.
      */
 
-
-
-
     /// <summary>
     /// <seealso cref="TermVectorsReader"/> for <seealso cref="CompressingTermVectorsFormat"/>.
     /// @lucene.experimental
     /// </summary>
     public sealed class CompressingTermVectorsReader : TermVectorsReader, IDisposable
     {
-
         private readonly FieldInfos fieldInfos;
         internal readonly CompressingStoredFieldsIndexReader indexReader;
         internal readonly IndexInput vectorsStream;
@@ -287,9 +282,11 @@ namespace Lucene.Net.Codecs.Compressing
                         }
                         flags = f;
                         break;
+
                     case 1:
                         flags = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalFields, CompressingTermVectorsWriter.FLAGS_BITS);
                         break;
+
                     default:
                         throw new Exception();
                 }
@@ -690,7 +687,6 @@ namespace Lucene.Net.Codecs.Compressing
         {
             private readonly CompressingTermVectorsReader OuterInstance;
 
-
             internal readonly int[] FieldNums, FieldFlags, FieldNumOffs, NumTerms, FieldLengths;
             internal readonly int[][] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
             internal readonly BytesRef SuffixBytes, PayloadBytes;
@@ -774,13 +770,11 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 return FieldNumOffs.Length;
             }
-
         }
 
         private class TVTerms : Terms
         {
             private readonly CompressingTermVectorsReader OuterInstance;
-
 
             internal readonly int NumTerms, Flags;
             internal readonly int[] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
@@ -874,12 +868,10 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 return (Flags & CompressingTermVectorsWriter.PAYLOADS) != 0;
             }
-
         }
 
         private class TVTermsEnum : TermsEnum
         {
-
             internal int NumTerms, StartPos, Ord_Renamed;
             internal int[] PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex;
             internal ByteArrayDataInput @in;
@@ -1031,12 +1023,10 @@ namespace Lucene.Net.Codecs.Compressing
                 // TODO: slightly sheisty
                 return (DocsAndPositionsEnum)Docs(liveDocs, reuse, flags);
             }
-
         }
 
         private class TVDocsEnum : DocsAndPositionsEnum
         {
-
             internal Bits LiveDocs;
             internal int Doc = -1;
             internal int TermFreq;
@@ -1222,7 +1212,5 @@ namespace Lucene.Net.Codecs.Compressing
                 CodecUtil.ChecksumEntireFile(vectorsStream);
             }
         }
-
     }
-
 }

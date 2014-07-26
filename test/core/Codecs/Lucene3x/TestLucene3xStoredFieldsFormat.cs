@@ -2,7 +2,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +25,6 @@ namespace Lucene.Net.Codecs.Lucene3x
     [TestFixture]
     public class TestLucene3xStoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
-
         [SetUp]
         public override void SetUp()
         {
@@ -51,5 +49,4 @@ namespace Lucene.Net.Codecs.Lucene3x
             // and merge into newly formed 3.x segments.
         }
     }
-
 }

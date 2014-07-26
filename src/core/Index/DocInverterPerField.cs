@@ -2,29 +2,27 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
     using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
     using IOUtils = Lucene.Net.Util.IOUtils;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /// <summary>
     /// Holds state for inverting all occurrences of a single
@@ -36,7 +34,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class DocInverterPerField : DocFieldConsumerPerField
     {
-
         internal readonly FieldInfo fieldInfo;
         internal readonly InvertedDocConsumerPerField Consumer;
         internal readonly InvertedDocEndConsumerPerField EndConsumer;
@@ -66,14 +63,12 @@ namespace Lucene.Net.Index
 
         public override void ProcessFields(IndexableField[] fields, int count)
         {
-
             FieldState.Reset();
 
             bool doInvert = Consumer.Start(fields, count);
 
             for (int i = 0; i < count; i++)
             {
-
                 IndexableField field = fields[i];
                 IndexableFieldType fieldType = field.FieldType();
 
@@ -190,7 +185,6 @@ namespace Lucene.Net.Index
                                     // new segment:
                                     Consumer.Add();
                                     success = true;
-
                                 }
                                 finally
                                 {
@@ -201,16 +195,14 @@ namespace Lucene.Net.Index
                                 }
                                 FieldState.Length_Renamed++;
                                 FieldState.Position_Renamed++;
-
                             } while (stream.IncrementToken());
                         }
                         // trigger streams to perform end-of-stream operations
                         stream.End();
-                        // TODO: maybe add some safety? then again, its already checked 
+                        // TODO: maybe add some safety? then again, its already checked
                         // when we come back around to the field...
                         FieldState.Position_Renamed += posIncrAttribute.PositionIncrement;
                         FieldState.Offset_Renamed += offsetAttribute.EndOffset();
-
 
                         if (DocState.MaxTermPrefix != null)
                         {
@@ -263,5 +255,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

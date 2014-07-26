@@ -3,44 +3,42 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
-    using DataInput = Lucene.Net.Store.DataInput;
-    using DataOutput = Lucene.Net.Store.DataOutput;
+    using AppendingDeltaPackedLongBuffer = Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Counter = Lucene.Net.Util.Counter;
+    using DataInput = Lucene.Net.Store.DataInput;
+    using DataOutput = Lucene.Net.Store.DataOutput;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using PagedBytes = Lucene.Net.Util.PagedBytes;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using AppendingDeltaPackedLongBuffer = Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
 
     /// <summary>
     /// Buffers up pending byte[] per doc, then flushes when
-    ///  segment flushes. 
+    ///  segment flushes.
     /// </summary>
     internal class BinaryDocValuesWriter : DocValuesWriter
     {
-
         /// <summary>
         /// Maximum length for a binary field. </summary>
         private static readonly int MAX_LENGTH = ArrayUtil.MAX_ARRAY_LENGTH;
@@ -132,6 +130,7 @@ namespace Lucene.Net.Index
             dvConsumer.AddBinaryField(FieldInfo, GetBytesIterator(maxDoc));
             //dvConsumer.AddBinaryField(FieldInfo, new IterableAnonymousInnerClassHelper(this, maxDoc));
         }
+
         /*
 	  private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
 	  {
@@ -154,7 +153,6 @@ namespace Lucene.Net.Index
         internal override void Abort()
         {
         }
-
 
         private IEnumerable<BytesRef> GetBytesIterator(int maxDocParam)
         {
@@ -274,5 +272,4 @@ namespace Lucene.Net.Index
 		}
 	  }*/
     }
-
 }

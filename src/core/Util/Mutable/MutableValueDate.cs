@@ -16,26 +16,26 @@ using System;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Lucene.Net.Util.Mutable
 {
+    /// <summary>
+    /// <seealso cref="MutableValue"/> implementation of type
+    /// <seealso cref="Date"/>.
+    /// </summary>
+    public class MutableValueDate : MutableValueLong
+    {
+        public override object ToObject()
+        {
+            return Exists ? new DateTime(Value) as object : null;
+        }
 
-	/// <summary>
-	/// <seealso cref="MutableValue"/> implementation of type 
-	/// <seealso cref="Date"/>.
-	/// </summary>
-	public class MutableValueDate : MutableValueLong
-	{
-	  public override object ToObject()
-	  {
-		return Exists ? new DateTime(Value) as object : null;
-	  }
-
-	  public override MutableValue Duplicate()
-	  {
-		MutableValueDate v = new MutableValueDate();
-		v.Value = this.Value;
-		v.Exists = this.Exists;
-		return v;
-	  }
-	}
+        public override MutableValue Duplicate()
+        {
+            MutableValueDate v = new MutableValueDate();
+            v.Value = this.Value;
+            v.Exists = this.Exists;
+            return v;
+        }
+    }
 }

@@ -1,45 +1,39 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Text;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 
 namespace Lucene.Net.Analysis
 {
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using PositionLengthAttribute = Lucene.Net.Analysis.Tokenattributes.PositionLengthAttribute;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
     using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
-    using System.IO;
 
     [TestFixture]
     public class TestGraphTokenizers : BaseTokenStreamTestCase
     {
-
         // Makes a graph TokenStream from the string; separate
         // positions with single space, multiple tokens at the same
         // position with /, and add optional position length with
@@ -186,10 +180,8 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestMockGraphTokenFilterBasic()
         {
-
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
@@ -225,7 +217,6 @@ namespace Lucene.Net.Analysis
         {
             for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
@@ -311,7 +302,6 @@ namespace Lucene.Net.Analysis
         {
             for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
@@ -352,7 +342,6 @@ namespace Lucene.Net.Analysis
         {
             for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
@@ -393,7 +382,6 @@ namespace Lucene.Net.Analysis
         {
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
@@ -431,7 +419,6 @@ namespace Lucene.Net.Analysis
         {
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
@@ -476,7 +463,6 @@ namespace Lucene.Net.Analysis
         {
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
@@ -514,7 +500,6 @@ namespace Lucene.Net.Analysis
         {
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
@@ -566,7 +551,6 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestSingleToken()
         {
-
             TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1) });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton expected = BasicAutomata.MakeString("abc");
@@ -632,7 +616,6 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestTwoTokens()
         {
-
             TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("def", 1, 1) });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton expected = Join("abc", "def");
@@ -644,7 +627,6 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestHole()
         {
-
             TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("def", 2, 1) });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
 
@@ -657,7 +639,6 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestOverlappedTokensSausage()
         {
-
             // Two tokens on top of each other (sausage):
             TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("xyz", 0, 1) });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
@@ -670,7 +651,6 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestOverlappedTokensLattice()
         {
-
             TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("xyz", 0, 2), Token("def", 1, 1) });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton a1 = BasicAutomata.MakeString("xyz");
@@ -684,7 +664,6 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestSynOverHole()
         {
-
             TokenStream ts = new CannedTokenStream(new Token[] { Token("a", 1, 1), Token("X", 0, 2), Token("b", 2, 1) });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton a1 = BasicOperations.Union(Join(S2a("a"), SEP_A, HOLE_A), BasicAutomata.MakeString("X"));
@@ -696,7 +675,6 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestSynOverHole2()
         {
-
             TokenStream ts = new CannedTokenStream(new Token[] { Token("xyz", 1, 1), Token("abc", 0, 3), Token("def", 2, 1) });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton expected = BasicOperations.Union(Join(S2a("xyz"), SEP_A, HOLE_A, SEP_A, S2a("def")), BasicAutomata.MakeString("abc"));
@@ -706,7 +684,6 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestOverlappedTokensLattice2()
         {
-
             TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1), Token("xyz", 0, 3), Token("def", 1, 1), Token("ghi", 1, 1) });
             Automaton actual = (new TokenStreamToAutomaton()).ToAutomaton(ts);
             Automaton a1 = BasicAutomata.MakeString("xyz");
@@ -746,5 +723,4 @@ namespace Lucene.Net.Analysis
             Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
         }
     }
-
 }

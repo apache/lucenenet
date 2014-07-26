@@ -1,10 +1,9 @@
-using System;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -33,9 +32,9 @@ namespace Lucene.Net.Util
 
     /*
      * Copyright 2001-2004 Unicode, Inc.
-     * 
+     *
      * Disclaimer
-     * 
+     *
      * this source code is provided as is by Unicode, Inc. No claims are
      * made as to fitness for any particular purpose. No warranties of any
      * kind are expressed or implied. The recipient agrees to determine
@@ -43,9 +42,9 @@ namespace Lucene.Net.Util
      * purchased on magnetic or optical media from Unicode, Inc., the
      * sole remedy for any claim will be exchange of defective media
      * within 90 days of receipt.
-     * 
+     *
      * Limitations on Rights to Redistribute this Code
-     * 
+     *
      * Unicode, Inc. hereby grants the right to freely use the information
      * supplied in this file in the creation of products supporting the
      * Unicode Standard, and to make copies of this file in any form
@@ -245,5 +244,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

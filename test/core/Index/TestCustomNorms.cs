@@ -2,40 +2,39 @@ using System;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using TextField = Lucene.Net.Document.TextField;
-    using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
-    using TermStatistics = Lucene.Net.Search.TermStatistics;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Directory = Lucene.Net.Store.Directory;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using TermStatistics = Lucene.Net.Search.TermStatistics;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestCustomNorms : LuceneTestCase
@@ -46,7 +45,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFloatNorms()
         {
-
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
@@ -124,7 +122,6 @@ namespace Lucene.Net.Index
 
         public class FloatEncodingBoostSimilarity : Similarity
         {
-
             public override long ComputeNorm(FieldInvertState state)
             {
                 return Number.FloatToIntBits(state.Boost);
@@ -141,5 +138,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

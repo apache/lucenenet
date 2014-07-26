@@ -4,7 +4,6 @@ using System.IO;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,18 +21,16 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     /// <summary>
     /// A straightforward implementation of <seealso cref="FSDirectory"/>
     ///  using java.io.RandomAccessFile.  However, this class has
     ///  poor concurrent performance (multiple threads will
     ///  bottleneck) as it synchronizes when multiple threads
     ///  read from the same file.  It's usually better to use
-    ///  <seealso cref="NIOFSDirectory"/> or <seealso cref="MMapDirectory"/> instead. 
+    ///  <seealso cref="NIOFSDirectory"/> or <seealso cref="MMapDirectory"/> instead.
     /// </summary>
     public class SimpleFSDirectory : FSDirectory
     {
-
         /// <summary>
         /// Create a new SimpleFSDirectory for the named location.
         /// </summary>
@@ -91,7 +88,6 @@ namespace Lucene.Net.Store
                 this.Descriptor = descriptor;
             }
 
-
             public override void Dispose(bool disposing)
             {
                 if (disposing)
@@ -120,7 +116,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Reads bytes with <seealso cref="RandomAccessFile#seek(long)"/> followed by
-        /// <seealso cref="RandomAccessFile#read(byte[], int, int)"/>.  
+        /// <seealso cref="RandomAccessFile#read(byte[], int, int)"/>.
         /// </summary>
         public class SimpleFSIndexInput : BufferedIndexInput
         {
@@ -133,12 +129,15 @@ namespace Lucene.Net.Store
             /// <summary>
             /// the file channel we will read from </summary>
             protected internal readonly FileStream File;
+
             /// <summary>
             /// is this instance a clone and hence does not own the file to close it </summary>
             public bool IsClone = false;
+
             /// <summary>
             /// start offset: non-zero in the slice case </summary>
             protected internal readonly long Off;
+
             /// <summary>
             /// end offset (start+length) </summary>
             protected internal readonly long End;
@@ -230,5 +229,4 @@ namespace Lucene.Net.Store
             }
         }
     }
-
 }

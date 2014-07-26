@@ -1,18 +1,27 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using Lucene.Net.Util;
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
 
     /// <summary>
     /// Licensed under the Apache License, Version 2.0 (the "License");
     /// you may not use this file except in compliance with the License.
     /// You may obtain a copy of the License at
-    /// 
+    ///
     ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
+    ///
     /// Unless required by applicable law or agreed to in writing, software
     /// distributed under the License is distributed on an "AS IS" BASIS,
     /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,22 +29,11 @@ namespace Lucene.Net.Index
     /// limitations under the License.
     /// </summary>
 
-
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using Lucene.Net.Util;
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestStressIndexing2 : LuceneTestCase
@@ -56,7 +54,6 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-
             public void Apply(string name)
             {
                 //      if (name.equals("startCommit")) {
@@ -66,7 +63,8 @@ namespace Lucene.Net.Index
                 }
             }
         }
-        //  
+
+        //
         [Test]
         public virtual void TestRandomIWReader()
         {
@@ -147,7 +145,6 @@ namespace Lucene.Net.Index
             }
         }
 
-
         internal static Term IdTerm = new Term("id", "");
         internal IndexingThread[] Threads;
         internal static IComparer<IndexableField> fieldNameComparator = new ComparatorAnonymousInnerClassHelper();
@@ -210,7 +207,7 @@ namespace Lucene.Net.Index
             }
 
             // w.ForceMerge(1);
-            //w.Dispose();    
+            //w.Dispose();
 
             for (int i = 0; i < Threads.Length; i++)
             {
@@ -273,7 +270,6 @@ namespace Lucene.Net.Index
 
             return docs;
         }
-
 
         public static void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
         {
@@ -339,7 +335,6 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
 
         public virtual void VerifyEquals(DirectoryReader r1, DirectoryReader r2, string idField)
         {
@@ -450,7 +445,7 @@ namespace Lucene.Net.Index
 
                 try
                 {
-                    // verify term vectors are equivalent        
+                    // verify term vectors are equivalent
                     VerifyEquals(r1.GetTermVectors(id1), r2.GetTermVectors(id2));
                 }
                 catch (Exception e)
@@ -546,7 +541,6 @@ namespace Lucene.Net.Index
             IEnumerator<string> fields1Enum = fields1.GetEnumerator();
             Fields fields2 = MultiFields.GetFields(r2);
             IEnumerator<string> fields2Enum = fields2.GetEnumerator();
-
 
             string field1 = null, field2 = null;
             TermsEnum termsEnum1 = null;
@@ -928,19 +922,21 @@ namespace Lucene.Net.Index
                 int nFields = NextInt(MaxFields);
                 for (int i = 0; i < nFields; i++)
                 {
-
                     FieldType customType = new FieldType();
                     switch (NextInt(4))
                     {
                         case 0:
                             break;
+
                         case 1:
                             customType.StoreTermVectors = true;
                             break;
+
                         case 2:
                             customType.StoreTermVectors = true;
                             customType.StoreTermVectorPositions = true;
                             break;
+
                         case 3:
                             customType.StoreTermVectors = true;
                             customType.StoreTermVectorOffsets = true;
@@ -955,11 +951,13 @@ namespace Lucene.Net.Index
                             customType.Indexed = true;
                             fields.Add(NewField("f" + NextInt(100), GetString(1), customType));
                             break;
+
                         case 1:
                             customType.Indexed = true;
                             customType.Tokenized = true;
                             fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
                             break;
+
                         case 2:
                             customType.Stored = true;
                             customType.StoreTermVectors = false;
@@ -967,6 +965,7 @@ namespace Lucene.Net.Index
                             customType.StoreTermVectorPositions = false;
                             fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
                             break;
+
                         case 3:
                             customType.Stored = true;
                             customType.Indexed = true;
@@ -1057,5 +1056,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,11 +22,10 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Abstract base class for performing read operations of Lucene's low-level
     /// data types.
-    /// 
+    ///
     /// <p>{@code DataInput} may only be used from one thread, because it is not
     /// thread safe (it keeps internal state like file position). To allow
     /// multithreaded use, every {@code DataInput} instance must be cloned before
@@ -37,7 +35,6 @@ namespace Lucene.Net.Store
     /// </summary>
     public abstract class DataInput : ICloneable
     {
-
         private const int SKIP_BUFFER_SIZE = 1024;
 
         /* this buffer is used to skip over bytes with the default implementation of
@@ -192,7 +189,7 @@ namespace Lucene.Net.Store
         /// <seealso cref= DataOutput#writeLong(long) </seealso>
         public virtual long ReadLong()
         {
-            long halfA = ((long) ReadInt()) << 32;
+            long halfA = ((long)ReadInt()) << 32;
             long halfB = (ReadInt() & 0xFFFFFFFFL);
             long ret = halfA | halfB;
             return ret;
@@ -290,10 +287,10 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns a clone of this stream.
-        /// 
+        ///
         /// <p>Clones of a stream access the same data, and are positioned at the same
         /// point as the stream they were cloned from.
-        /// 
+        ///
         /// <p>Expert: Subclasses must ensure that clones may be positioned at
         /// different points in the input from each other and from the stream they
         /// were cloned from.
@@ -305,7 +302,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Reads a Map&lt;String,String&gt; previously written
-        ///  with <seealso cref="DataOutput#writeStringStringMap(Map)"/>. 
+        ///  with <seealso cref="DataOutput#writeStringStringMap(Map)"/>.
         /// </summary>
         public virtual IDictionary<string, string> ReadStringStringMap()
         {
@@ -323,7 +320,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Reads a Set&lt;String&gt; previously written
-        ///  with <seealso cref="DataOutput#writeStringSet(Set)"/>. 
+        ///  with <seealso cref="DataOutput#writeStringSet(Set)"/>.
         /// </summary>
         public virtual ISet<string> ReadStringSet()
         {
@@ -361,7 +358,5 @@ namespace Lucene.Net.Store
                 skipped += step;
             }
         }
-
     }
-
 }

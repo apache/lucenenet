@@ -1,13 +1,14 @@
+using Apache.NMS.Util;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
+
     /*
              * Licensed to the Apache Software Foundation (ASF) under one or more
              * contributor license agreements. See the NOTICE file distributed with this
@@ -15,16 +16,15 @@ namespace Lucene.Net.Index
              * licenses this file to You under the Apache License, Version 2.0 (the
              * "License"); you may not use this file except in compliance with the License.
              * You may obtain a copy of the License at
-             * 
+             *
              * http://www.apache.org/licenses/LICENSE-2.0
-             * 
+             *
              * Unless required by applicable law or agreed to in writing, software
              * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
              * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
              * License for the specific language governing permissions and limitations under
              * the License.
              */
-
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
@@ -35,7 +35,6 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestDocumentsWriterStallControl : LuceneTestCase
     {
-
         [Test]
         public virtual void TestSimpleStall()
         {
@@ -89,10 +88,8 @@ namespace Lucene.Net.Index
                 {
                     Thread.Sleep(1);
                 }
-
             }
             Join(stallThreads);
-
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
@@ -111,7 +108,6 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-
                 int iters = AtLeast(1000);
                 for (int j = 0; j < iters; j++)
                 {
@@ -145,12 +141,10 @@ namespace Lucene.Net.Index
             for (int i = numReleasers; i < numReleasers + numStallers; i++)
             {
                 threads[i] = new Updater(stop, checkPoint, ctrl, sync, false, exceptions);
-
             }
             for (int i = numReleasers + numStallers; i < numReleasers + numStallers + numWaiters; i++)
             {
                 threads[i] = new Waiter(stop, checkPoint, ctrl, sync, exceptions);
-
             }
 
             Start(threads);
@@ -160,7 +154,6 @@ namespace Lucene.Net.Index
             {
                 if (checkPoint.Get())
                 {
-
                     Assert.IsTrue(sync.UpdateJoin.@await(new TimeSpan(0, 0, 0, 10)), "timed out waiting for update threads - deadlock?");
                     if (exceptions.Count > 0)
                     {
@@ -175,8 +168,6 @@ namespace Lucene.Net.Index
                     if (ctrl.HasBlocked() && ctrl.Healthy)
                     {
                         AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
-
-
                     }
 
                     checkPoint.Set(false);
@@ -190,7 +181,6 @@ namespace Lucene.Net.Index
                     sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
                     checkPoint.Set(true);
                 }
-
             }
             if (!checkPoint.Get())
             {
@@ -204,7 +194,6 @@ namespace Lucene.Net.Index
             stop.Set(true);
             sync.Waiter.countDown();
             sync.LeftCheckpoint.@await();
-
 
             for (int i = 0; i < threads.Length; i++)
             {
@@ -250,7 +239,6 @@ namespace Lucene.Net.Index
                     break;
                 }
             }
-
         }
 
         public class Waiter : ThreadClass
@@ -303,7 +291,6 @@ namespace Lucene.Net.Index
 
         public class Updater : ThreadClass
         {
-
             internal Synchronizer Sync;
             internal DocumentsWriterStallControl Ctrl;
             internal AtomicBoolean CheckPoint;
@@ -326,7 +313,6 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-
                     while (!Stop.Get())
                     {
                         int internalIters = Release && Random().NextBoolean() ? AtLeast(5) : 1;
@@ -362,7 +348,6 @@ namespace Lucene.Net.Index
                 }
                 Sync.UpdateJoin.countDown();
             }
-
         }
 
         public static bool Terminated(ThreadClass[] threads)
@@ -421,7 +406,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Waits for all incoming threads to be in wait()
-        ///  methods. 
+        ///  methods.
         /// </summary>
         public static void AwaitState(ThreadState state, params ThreadClass[] threads)
         {
@@ -473,8 +458,6 @@ namespace Lucene.Net.Index
             {
                 return Waiter.@await(new TimeSpan(0, 0, 0, 10));
             }
-
         }
     }
-
 }

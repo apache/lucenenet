@@ -1,11 +1,10 @@
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +25,6 @@ namespace Lucene.Net.Util.Automaton
     [TestFixture]
     public class TestLevenshteinAutomata : LuceneTestCase
     {
-
         [Test]
         public virtual void TestLev0()
         {
@@ -113,11 +111,13 @@ namespace Lucene.Net.Util.Automaton
                         Assert.IsTrue(BasicOperations.SameLanguage(BasicAutomata.MakeString(s), automata[0]));
                         Assert.IsTrue(BasicOperations.SameLanguage(BasicAutomata.MakeString(s), tautomata[0]));
                         break;
+
                     case 1:
                         // generate a lev1 naively, and check the accepted lang is the same.
                         Assert.IsTrue(BasicOperations.SameLanguage(NaiveLev1(s), automata[1]));
                         Assert.IsTrue(BasicOperations.SameLanguage(NaiveLev1T(s), tautomata[1]));
                         break;
+
                     default:
                         AssertBruteForce(s, automata[n], n);
                         AssertBruteForceT(s, tautomata[n], n);
@@ -310,7 +310,7 @@ namespace Lucene.Net.Util.Automaton
                of the current cost count being calculated).  (Note that the arrays aren't really
                copied anymore, just switched...this is clearly much better than cloning an array
                or doing a System.arraycopy() each time  through the outer loop.)
-	
+
                Effectively, the difference between the two implementations is this one does not
                cause an out of memory condition when calculating the LD over two very large strings.
              */
@@ -332,7 +332,6 @@ namespace Lucene.Net.Util.Automaton
                     return Math.Max(n, m);
                 }
             }
-
 
             // indexes into strings s and t
             int i; // iterates through s
@@ -435,5 +434,4 @@ namespace Lucene.Net.Util.Automaton
             return Math.Abs(d[n][m]);
         }
     }
-
 }

@@ -1,56 +1,53 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-    /// Copyright 2004 The Apache Software Foundation
-    /// 
-    /// Licensed under the Apache License, Version 2.0 (the "License");
-    /// you may not use this file except in compliance with the License.
-    /// You may obtain a copy of the License at
-    /// 
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using TextField = Lucene.Net.Document.TextField;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using Query = Lucene.Net.Search.Query;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using Directory = Lucene.Net.Store.Directory;
-    using FakeIOException = Lucene.Net.Store.MockDirectoryWrapper.FakeIOException;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using FakeIOException = Lucene.Net.Store.MockDirectoryWrapper.FakeIOException;
+    using Field = Lucene.Net.Document.Field;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+        /// Copyright 2004 The Apache Software Foundation
+        ///
+        /// Licensed under the Apache License, Version 2.0 (the "License");
+        /// you may not use this file except in compliance with the License.
+        /// You may obtain a copy of the License at
+        ///
+        ///     http://www.apache.org/licenses/LICENSE-2.0
+        ///
+        /// Unless required by applicable law or agreed to in writing, software
+        /// distributed under the License is distributed on an "AS IS" BASIS,
+        /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        /// See the License for the specific language governing permissions and
+        /// limitations under the License.
+        */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using Query = Lucene.Net.Search.Query;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Document.TextField;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
+    using TopDocs = Lucene.Net.Search.TopDocs;
 
     [TestFixture]
     public class TestIndexWriterReader : LuceneTestCase
     {
-
         private readonly int NumThreads = TEST_NIGHTLY ? 5 : 3;
 
         public static int Count(Term t, IndexReader r)
@@ -97,9 +94,11 @@ namespace Lucene.Net.Index
                         case 2:
                             writer.AddDocument(DocHelper.CreateDocument(i, "x", 1 + Random().Next(5)));
                             break;
+
                         case 3:
                             writer.UpdateDocument(new Term("id", "" + previous), DocHelper.CreateDocument(previous, "x", 1 + Random().Next(5)));
                             break;
+
                         case 4:
                             writer.DeleteDocuments(new Term("id", "" + previous));
                             break;
@@ -610,13 +609,16 @@ namespace Lucene.Net.Index
                         MainWriter.AddIndexes(dirs);
                         MainWriter.ForceMerge(1);
                         break;
+
                     case 1:
                         MainWriter.AddIndexes(dirs);
                         NumaddIndexes.IncrementAndGet();
                         break;
+
                     case 2:
                         MainWriter.AddIndexes(Readers);
                         break;
+
                     case 3:
                         MainWriter.Commit();
                         break;
@@ -693,7 +695,7 @@ namespace Lucene.Net.Index
 
         /*
          * Delete a document by term and return the doc id
-         * 
+         *
          * public static int deleteDocument(Term term, IndexWriter writer) throws
          * IOException { IndexReader reader = writer.GetReader(); TermDocs td =
          * reader.termDocs(term); int doc = -1; //if (td.Next()) { // doc = td.Doc();
@@ -729,6 +731,7 @@ namespace Lucene.Net.Index
         private class MyWarmer : IndexWriter.IndexReaderWarmer
         {
             internal int WarmCount;
+
             public override void Warm(AtomicReader reader)
             {
                 WarmCount++;
@@ -738,7 +741,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestMergeWarmer()
         {
-
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
             // Enroll warmer
             MyWarmer warmer = new MyWarmer();
@@ -1221,6 +1223,7 @@ namespace Lucene.Net.Index
             public override void Dispose()
             {
             }
+
             public override void Message(string component, string message)
             {
                 if ("SMSW".Equals(component))
@@ -1388,7 +1391,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Make sure if all we do is open NRT reader against
-        ///  writer, we don't see merge starvation. 
+        ///  writer, we don't see merge starvation.
         /// </summary>
         [Test]
         public virtual void TestTooManySegments()
@@ -1413,5 +1416,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

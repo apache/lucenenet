@@ -1,9 +1,8 @@
-using System;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +23,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestVirtualMethod : LuceneTestCase
     {
-
         private static readonly VirtualMethod<TestVirtualMethod> PublicTestMethod;
         private static readonly VirtualMethod<TestVirtualMethod> ProtectedTestMethod;
 
@@ -37,6 +35,7 @@ namespace Lucene.Net.Util
         public virtual void PublicTest(string test)
         {
         }
+
         protected virtual void ProtectedTest(int test)
         {
         }
@@ -46,6 +45,7 @@ namespace Lucene.Net.Util
             public override void PublicTest(string test)
             {
             }
+
             protected override void ProtectedTest(int test)
             {
             }
@@ -99,28 +99,28 @@ namespace Lucene.Net.Util
         {
             try
             {
-	            // cast to Class to remove generics:
-	            PublicTestMethod.GetImplementationDistance(typeof(LuceneTestCase));
-	            Assert.Fail("LuceneTestCase is not a subclass and can never override publicTest(String)");
+                // cast to Class to remove generics:
+                PublicTestMethod.GetImplementationDistance(typeof(LuceneTestCase));
+                Assert.Fail("LuceneTestCase is not a subclass and can never override publicTest(String)");
             }
             catch (System.ArgumentException arg)
             {
-	            // pass
+                // pass
             }
 
             try
             {
-	            new VirtualMethod<Type>(typeof(TestVirtualMethod), "bogus");
-	            Assert.Fail("Method bogus() does not exist, so IAE should be thrown");
+                new VirtualMethod<Type>(typeof(TestVirtualMethod), "bogus");
+                Assert.Fail("Method bogus() does not exist, so IAE should be thrown");
             }
             catch (System.ArgumentException arg)
             {
-	            // pass
+                // pass
             }
 
             try
             {
-	            new VirtualMethod<Type>(typeof(TestClass2), "PublicTest", typeof(string));
+                new VirtualMethod<Type>(typeof(TestClass2), "PublicTest", typeof(string));
             }
             catch (System.ArgumentException arg)
             {
@@ -129,16 +129,14 @@ namespace Lucene.Net.Util
 
             try
             {
-	            // try to create a second instance of the same baseClass / method combination
-	            new VirtualMethod<Type>(typeof(TestVirtualMethod), "PublicTest", typeof(string));
-	            Assert.Fail("Violating singleton status succeeded");
+                // try to create a second instance of the same baseClass / method combination
+                new VirtualMethod<Type>(typeof(TestVirtualMethod), "PublicTest", typeof(string));
+                Assert.Fail("Violating singleton status succeeded");
             }
             catch (System.NotSupportedException arg)
             {
-	            // pass
+                // pass
             }
         }
-
     }
-
 }

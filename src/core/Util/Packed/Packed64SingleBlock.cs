@@ -1,13 +1,13 @@
 using System;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
 
 // this file has been automatically generated, DO NOT EDIT
 
 namespace Lucene.Net.Util.Packed
 {
-
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements. See the NOTICE file distributed with this
@@ -25,7 +25,6 @@ namespace Lucene.Net.Util.Packed
          * the License.
          */
 
-
     using DataInput = Lucene.Net.Store.DataInput;
 
     /// <summary>
@@ -35,7 +34,6 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public abstract class Packed64SingleBlock : PackedInts.MutableImpl
     {
-
         public const int MAX_SUPPORTED_BITS_PER_VALUE = 32;
         private static readonly int[] SUPPORTED_BITS_PER_VALUE = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 21, 32 };
 
@@ -245,32 +243,46 @@ namespace Lucene.Net.Util.Packed
             {
                 case 1:
                     return new Packed64SingleBlock1(valueCount);
+
                 case 2:
                     return new Packed64SingleBlock2(valueCount);
+
                 case 3:
                     return new Packed64SingleBlock3(valueCount);
+
                 case 4:
                     return new Packed64SingleBlock4(valueCount);
+
                 case 5:
                     return new Packed64SingleBlock5(valueCount);
+
                 case 6:
                     return new Packed64SingleBlock6(valueCount);
+
                 case 7:
                     return new Packed64SingleBlock7(valueCount);
+
                 case 8:
                     return new Packed64SingleBlock8(valueCount);
+
                 case 9:
                     return new Packed64SingleBlock9(valueCount);
+
                 case 10:
                     return new Packed64SingleBlock10(valueCount);
+
                 case 12:
                     return new Packed64SingleBlock12(valueCount);
+
                 case 16:
                     return new Packed64SingleBlock16(valueCount);
+
                 case 21:
                     return new Packed64SingleBlock21(valueCount);
+
                 case 32:
                     return new Packed64SingleBlock32(valueCount);
+
                 default:
                     throw new System.ArgumentException("Unsupported number of bits per value: " + 32);
             }
@@ -278,7 +290,6 @@ namespace Lucene.Net.Util.Packed
 
         internal class Packed64SingleBlock1 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock1(int valueCount)
                 : base(valueCount, 1)
             {
@@ -299,12 +310,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b << 0;
                 Blocks[o] = (Blocks[o] & ~(1L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock2 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock2(int valueCount)
                 : base(valueCount, 2)
             {
@@ -325,12 +334,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b << 1;
                 Blocks[o] = (Blocks[o] & ~(3L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock3 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock3(int valueCount)
                 : base(valueCount, 3)
             {
@@ -351,12 +358,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b * 3;
                 Blocks[o] = (Blocks[o] & ~(7L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock4 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock4(int valueCount)
                 : base(valueCount, 4)
             {
@@ -377,12 +382,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b << 2;
                 Blocks[o] = (Blocks[o] & ~(15L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock5 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock5(int valueCount)
                 : base(valueCount, 5)
             {
@@ -403,12 +406,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b * 5;
                 Blocks[o] = (Blocks[o] & ~(31L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock6 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock6(int valueCount)
                 : base(valueCount, 6)
             {
@@ -429,12 +430,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b * 6;
                 Blocks[o] = (Blocks[o] & ~(63L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock7 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock7(int valueCount)
                 : base(valueCount, 7)
             {
@@ -455,12 +454,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b * 7;
                 Blocks[o] = (Blocks[o] & ~(127L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock8 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock8(int valueCount)
                 : base(valueCount, 8)
             {
@@ -481,12 +478,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b << 3;
                 Blocks[o] = (Blocks[o] & ~(255L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock9 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock9(int valueCount)
                 : base(valueCount, 9)
             {
@@ -507,12 +502,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b * 9;
                 Blocks[o] = (Blocks[o] & ~(511L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock10 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock10(int valueCount)
                 : base(valueCount, 10)
             {
@@ -533,12 +526,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b * 10;
                 Blocks[o] = (Blocks[o] & ~(1023L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock12 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock12(int valueCount)
                 : base(valueCount, 12)
             {
@@ -559,12 +550,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b * 12;
                 Blocks[o] = (Blocks[o] & ~(4095L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock16 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock16(int valueCount)
                 : base(valueCount, 16)
             {
@@ -585,12 +574,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b << 4;
                 Blocks[o] = (Blocks[o] & ~(65535L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock21 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock21(int valueCount)
                 : base(valueCount, 21)
             {
@@ -611,12 +598,10 @@ namespace Lucene.Net.Util.Packed
                 int shift = b * 21;
                 Blocks[o] = (Blocks[o] & ~(2097151L << shift)) | (value << shift);
             }
-
         }
 
         internal class Packed64SingleBlock32 : Packed64SingleBlock
         {
-
             internal Packed64SingleBlock32(int valueCount)
                 : base(valueCount, 32)
             {
@@ -637,9 +622,6 @@ namespace Lucene.Net.Util.Packed
                 int shift = b << 5;
                 Blocks[o] = (Blocks[o] & ~(4294967295L << shift)) | (value << shift);
             }
-
         }
-
     }
-
 }

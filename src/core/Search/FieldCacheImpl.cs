@@ -1,63 +1,61 @@
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Support;
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using DocsEnum = Lucene.Net.Index.DocsEnum;
     using DocTermOrds = Lucene.Net.Index.DocTermOrds;
     using DocValues = Lucene.Net.Index.DocValues;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using FieldCacheSanityChecker = Lucene.Net.Util.FieldCacheSanityChecker;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using GrowableWriter = Lucene.Net.Util.Packed.GrowableWriter;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PagedBytes = Lucene.Net.Util.PagedBytes;
     using SegmentReader = Lucene.Net.Index.SegmentReader;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using FieldCacheSanityChecker = Lucene.Net.Util.FieldCacheSanityChecker;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using PagedBytes = Lucene.Net.Util.PagedBytes;
-    using GrowableWriter = Lucene.Net.Util.Packed.GrowableWriter;
-    using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
-    using System.IO;
 
     /// <summary>
     /// Expert: The default cache implementation, storing all values in memory.
     /// A WeakHashMap is used for storage.
-    /// 
+    ///
     /// @since   lucene 1.4
     /// </summary>
     internal class FieldCacheImpl : FieldCache
     {
-
         private IDictionary<Type, Cache> Caches;
+
         internal FieldCacheImpl()
         {
             Init();
@@ -90,7 +88,6 @@ namespace Lucene.Net.Search
             lock (this)
             {
                 Init();
-
             }
         }
 
@@ -144,7 +141,8 @@ namespace Lucene.Net.Search
 
         private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.CoreClosedListener
         {
-            FieldCacheImpl OuterInstance;
+            private FieldCacheImpl OuterInstance;
+
             public CoreClosedListenerAnonymousInnerClassHelper(FieldCacheImpl outerInstance)
             {
                 this.OuterInstance = outerInstance;
@@ -161,7 +159,8 @@ namespace Lucene.Net.Search
 
         private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
         {
-            FieldCacheImpl OuterInstance;
+            private FieldCacheImpl OuterInstance;
+
             public ReaderClosedListenerAnonymousInnerClassHelper(FieldCacheImpl outerInstance)
             {
                 this.OuterInstance = outerInstance;
@@ -201,7 +200,6 @@ namespace Lucene.Net.Search
         /// Expert: Internal cache. </summary>
         internal abstract class Cache
         {
-
             internal Cache(FieldCacheImpl wrapper)
             {
                 this.Wrapper = wrapper;
@@ -225,7 +223,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Sets the key to the value for the provided reader;
-            ///  if the key is already set then this doesn't change it. 
+            ///  if the key is already set then this doesn't change it.
             /// </summary>
             public virtual void Put(AtomicReader reader, CacheKey key, object value)
             {
@@ -381,7 +379,6 @@ namespace Lucene.Net.Search
 
         private abstract class Uninvert
         {
-
             public Bits DocsWithField;
 
             public virtual void DoUninvert(AtomicReader reader, string field, bool setDocsWithField)
@@ -438,7 +435,9 @@ namespace Lucene.Net.Search
             }
 
             protected abstract TermsEnum TermsEnum(Terms terms);
+
             protected abstract void VisitTerm(BytesRef term);
+
             protected abstract void VisitDoc(int docID);
         }
 
@@ -548,7 +547,6 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-
                 int maxDoc = reader.MaxDoc();
                 sbyte[] values;
                 FieldCache_Fields.IByteParser parser = (FieldCache_Fields.IByteParser)key.Custom;
@@ -684,7 +682,6 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-
                 int maxDoc = reader.MaxDoc();
                 short[] values;
                 FieldCache_Fields.IShortParser parser = (FieldCache_Fields.IShortParser)key.Custom;
@@ -834,6 +831,7 @@ namespace Lucene.Net.Search
                 this.Writer = array;
                 this.MinValue = minValue;
             }
+
             public GrowableWriter Writer;
             public long MinValue;
         }
@@ -847,7 +845,6 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-
                 FieldCache_Fields.IIntParser parser = (FieldCache_Fields.IIntParser)key.Custom;
                 if (parser == null)
                 {
@@ -1107,7 +1104,6 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-
                 FieldCache_Fields.IFloatParser parser = (FieldCache_Fields.IFloatParser)key.Custom;
                 if (parser == null)
                 {
@@ -1267,7 +1263,6 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-
                 FieldCache_Fields.ILongParser parser = (FieldCache_Fields.ILongParser)key.Custom;
                 if (parser == null)
                 {
@@ -1441,7 +1436,6 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-
                 FieldCache_Fields.IDoubleParser parser = (FieldCache_Fields.IDoubleParser)key.Custom;
                 if (parser == null)
                 {
@@ -1608,7 +1602,6 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
             {
-
                 int maxDoc = reader.MaxDoc();
 
                 Terms terms = reader.Terms(key.Field);
@@ -1779,7 +1772,6 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-
                 // TODO: would be nice to first check if DocTermsIndex
                 // was already cached for this field and then return
                 // that instead, to avoid insanity
@@ -1954,8 +1946,5 @@ namespace Lucene.Net.Search
                 return infoStream;
             }
         }
-
     }
-
-
 }

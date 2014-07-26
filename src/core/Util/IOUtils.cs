@@ -3,11 +3,11 @@ using System.Threading;
 
 namespace Lucene.Net.Util
 {
-
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Text;
+
     /*
                      * Licensed to the Apache Software Foundation (ASF) under one or more
                      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,19 +27,17 @@ namespace Lucene.Net.Util
 
     using Directory = Lucene.Net.Store.Directory;
 
-
     /// <summary>
     /// this class emulates the new Java 7 "Try-With-Resources" statement.
     /// Remove once Lucene is on Java 7.
-    /// @lucene.internal 
+    /// @lucene.internal
     /// </summary>
     public sealed class IOUtils
     {
-
         /// <summary>
         /// UTF-8 <seealso cref="Charset"/> instance to prevent repeated
         /// <seealso cref="Charset#forName(String)"/> lookups </summary>
-        /// @deprecated Use <seealso cref="StandardCharsets#UTF_8"/> instead. 
+        /// @deprecated Use <seealso cref="StandardCharsets#UTF_8"/> instead.
         [Obsolete("Use <seealso cref=StandardCharsets_UTF_8/> instead.")]
         public static readonly Encoding CHARSET_UTF_8 = Encoding.UTF8;
 
@@ -234,7 +232,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Closes all given <tt>IDisposable</tt>s, suppressing all thrown exceptions. </summary>
         /// <seealso cref= #closeWhileHandlingException(IDisposable...) </seealso>
-        public static void CloseWhileHandlingException<T1>(IEnumerable<T1> objects) 
+        public static void CloseWhileHandlingException<T1>(IEnumerable<T1> objects)
             where T1 : IDisposable
         {
             foreach (T1 @object in objects)
@@ -268,11 +266,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Wrapping the given <seealso cref="InputStream"/> in a reader using a <seealso cref="CharsetDecoder"/>.
-        /// Unlike Java's defaults this reader will throw an exception if your it detects 
-        /// the read charset doesn't match the expected <seealso cref="Charset"/>. 
+        /// Unlike Java's defaults this reader will throw an exception if your it detects
+        /// the read charset doesn't match the expected <seealso cref="Charset"/>.
         /// <p>
         /// Decoding readers are useful to load configuration files, stopword lists or synonym files
-        /// to detect character set problems. However, its not recommended to use as a common purpose 
+        /// to detect character set problems. However, its not recommended to use as a common purpose
         /// reader.
         /// </summary>
         /// <param name="stream"> the stream to wrap in a reader </param>
@@ -285,11 +283,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Opens a Reader for the given <seealso cref="File"/> using a <seealso cref="CharsetDecoder"/>.
-        /// Unlike Java's defaults this reader will throw an exception if your it detects 
-        /// the read charset doesn't match the expected <seealso cref="Charset"/>. 
+        /// Unlike Java's defaults this reader will throw an exception if your it detects
+        /// the read charset doesn't match the expected <seealso cref="Charset"/>.
         /// <p>
         /// Decoding readers are useful to load configuration files, stopword lists or synonym files
-        /// to detect character set problems. However, its not recommended to use as a common purpose 
+        /// to detect character set problems. However, its not recommended to use as a common purpose
         /// reader. </summary>
         /// <param name="file"> the file to open a reader on </param>
         /// <param name="charSet"> the expected charset </param>
@@ -304,7 +302,6 @@ namespace Lucene.Net.Util
                 TextReader reader = GetDecodingReader(stream, charSet);
                 success = true;
                 return reader;
-
             }
             finally
             {
@@ -317,11 +314,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Opens a Reader for the given resource using a <seealso cref="CharsetDecoder"/>.
-        /// Unlike Java's defaults this reader will throw an exception if your it detects 
-        /// the read charset doesn't match the expected <seealso cref="Charset"/>. 
+        /// Unlike Java's defaults this reader will throw an exception if your it detects
+        /// the read charset doesn't match the expected <seealso cref="Charset"/>.
         /// <p>
         /// Decoding readers are useful to load configuration files, stopword lists or synonym files
-        /// to detect character set problems. However, its not recommended to use as a common purpose 
+        /// to detect character set problems. However, its not recommended to use as a common purpose
         /// reader. </summary>
         /// <param name="clazz"> the class used to locate the resource </param>
         /// <param name="resource"> the resource name to load </param>
@@ -491,5 +488,4 @@ namespace Lucene.Net.Util
             throw exc;
         }
     }
-
 }

@@ -1,9 +1,8 @@
-using System;
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +19,6 @@ namespace Lucene.Net.Store
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     /// <summary>
     /// Base implementation class for buffered <seealso cref="IndexOutput"/>. </summary>
@@ -171,7 +169,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns size of the used output buffer in bytes.
-        /// 
+        ///
         /// </summary>
         public int BufferSize
         {
@@ -190,5 +188,4 @@ namespace Lucene.Net.Store
             }
         }
     }
-
 }

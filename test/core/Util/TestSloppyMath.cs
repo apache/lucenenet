@@ -1,11 +1,9 @@
-using System;
 using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -35,6 +33,7 @@ namespace Lucene.Net.Util
     {
         // accuracy for cos()
         internal static double COS_DELTA = 1E-15;
+
         // accuracy for asin()
         internal static double ASIN_DELTA = 1E-7;
 
@@ -55,7 +54,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual(Math.Cos(Math.PI / 6), Math.Cos(Math.PI / 6), COS_DELTA);
             Assert.AreEqual(Math.Cos(-Math.PI / 6), Math.Cos(-Math.PI / 6), COS_DELTA);
 
-            // testing purely random longs is inefficent, as for stupid parameters we just 
+            // testing purely random longs is inefficent, as for stupid parameters we just
             // pass thru to Math.cos() instead of doing some huperduper arg reduction
             for (int i = 0; i < 10000; i++)
             {
@@ -128,7 +127,6 @@ namespace Lucene.Net.Util
 
             Assert.AreEqual(8.572, SloppyMath.Haversin(randomLat1, randomLon1, randomLat2, randomLon2), 0.01D);
 
-
             // from solr and ES tests (with their respective epsilons)
             Assert.AreEqual(0, SloppyMath.Haversin(40.7143528, -74.0059731, 40.7143528, -74.0059731), 0D);
             Assert.AreEqual(5.286, SloppyMath.Haversin(40.7143528, -74.0059731, 40.759011, -73.9844722), 0.01D);
@@ -139,5 +137,4 @@ namespace Lucene.Net.Util
             Assert.AreEqual(8.572, SloppyMath.Haversin(40.7143528, -74.0059731, 40.65, -73.95), 0.01D);
         }
     }
-
 }

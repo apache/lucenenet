@@ -1,9 +1,8 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,14 +20,13 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     /// <summary>
     ///  Access to the Field Info file that describes document fields and whether or
     ///  not they are indexed. Each segment has a separate Field Info file. Objects
     ///  of this class are thread-safe for multiple readers, but only one thread can
     ///  be adding documents at a time, with no other reader or writer threads
     ///  accessing this object.
-    /// 
+    ///
     /// </summary>
 
     public sealed class FieldInfo
@@ -36,6 +34,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Field's name </summary>
         public readonly string Name;
+
         /// <summary>
         /// Internal field number </summary>
         public readonly int Number;
@@ -71,21 +70,24 @@ namespace Lucene.Net.Index
             /// </summary>
             // TODO: maybe rename to just DOCS?
             DOCS_ONLY,
+
             /// <summary>
-            /// Only documents and term frequencies are indexed: positions are omitted. 
+            /// Only documents and term frequencies are indexed: positions are omitted.
             /// this enables normal scoring, except Phrase and other positional queries
             /// will throw an exception.
             /// </summary>
             DOCS_AND_FREQS,
+
             /// <summary>
             /// Indexes documents, frequencies and positions.
             /// this is a typical default for full-text search: full scoring is enabled
             /// and positional queries are supported.
             /// </summary>
             DOCS_AND_FREQS_AND_POSITIONS,
+
             /// <summary>
             /// Indexes documents, frequencies, positions and offsets.
-            /// Character offsets are encoded alongside the positions. 
+            /// Character offsets are encoded alongside the positions.
             /// </summary>
             DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS
         }
@@ -101,22 +103,25 @@ namespace Lucene.Net.Index
             /// A per-document Number
             /// </summary>
             NUMERIC,
+
             /// <summary>
             /// A per-document byte[].  Values may be larger than
             /// 32766 bytes, but different codecs may enforce their own limits.
             /// </summary>
             BINARY,
+
             /// <summary>
-            /// A pre-sorted byte[]. Fields with this type only store distinct byte values 
-            /// and store an additional offset pointer per document to dereference the shared 
-            /// byte[]. The stored byte[] is presorted and allows access via document id, 
+            /// A pre-sorted byte[]. Fields with this type only store distinct byte values
+            /// and store an additional offset pointer per document to dereference the shared
+            /// byte[]. The stored byte[] is presorted and allows access via document id,
             /// ordinal and by-value.  Values must be <= 32766 bytes.
             /// </summary>
             SORTED,
+
             /// <summary>
-            /// A pre-sorted Set&lt;byte[]&gt;. Fields with this type only store distinct byte values 
-            /// and store additional offset pointers per document to dereference the shared 
-            /// byte[]s. The stored byte[] is presorted and allows access via document id, 
+            /// A pre-sorted Set&lt;byte[]&gt;. Fields with this type only store distinct byte values
+            /// and store additional offset pointers per document to dereference the shared
+            /// byte[]s. The stored byte[] is presorted and allows access via document id,
             /// ordinal and by-value.  Values must be <= 32766 bytes.
             /// </summary>
             SORTED_SET
@@ -124,7 +129,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sole Constructor.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions_e? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normsType, IDictionary<string, string> attributes)
@@ -261,7 +266,6 @@ namespace Lucene.Net.Index
             return docValueType != null;
         }
 
-
         /// <summary>
         /// Sets the docValues generation of this field. </summary>
         public long DocValuesGen
@@ -275,7 +279,6 @@ namespace Lucene.Net.Index
                 return DvGen;
             }
         }
-
 
         /// <summary>
         /// Returns <seealso cref="DocValuesType_e"/> of the norm. this may be null if the field has no norms.
@@ -379,7 +382,7 @@ namespace Lucene.Net.Index
         /// to store additional metadata, and will be available to the codec
         /// when reading the segment via <seealso cref="#getAttribute(String)"/>
         /// <p>
-        /// If a value already exists for the field, it will be replaced with 
+        /// If a value already exists for the field, it will be replaced with
         /// the new value.
         /// </summary>
         public string PutAttribute(string key, string value)
@@ -408,5 +411,4 @@ namespace Lucene.Net.Index
             return Attributes_Renamed;
         }
     }
-
 }

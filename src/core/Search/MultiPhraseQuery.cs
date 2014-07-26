@@ -1,49 +1,47 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Support;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using SimScorer = Lucene.Net.Search.Similarities.Similarity.SimScorer;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
-    using TermState = Lucene.Net.Index.TermState;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using SimScorer = Lucene.Net.Search.Similarities.Similarity.SimScorer;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Lucene.Net.Util;
+    using TermState = Lucene.Net.Index.TermState;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// MultiPhraseQuery is a generalized version of PhraseQuery, with an added
@@ -52,7 +50,7 @@ namespace Lucene.Net.Search
     /// add(Term) on the term "Microsoft", then find all terms that have "app" as
     /// prefix using IndexReader.terms(Term), and use MultiPhraseQuery.add(Term[]
     /// terms) to add them to the query.
-    /// 
+    ///
     /// </summary>
     public class MultiPhraseQuery : Query
     {
@@ -80,7 +78,6 @@ namespace Lucene.Net.Search
                 return slop;
             }
         }
-
 
         /// <summary>
         /// Add a single term at the next position in the phrase. </summary>
@@ -169,7 +166,6 @@ namespace Lucene.Net.Search
             }
         }
 
-
         private class MultiPhraseWeight : Weight
         {
             private readonly MultiPhraseQuery OuterInstance;
@@ -210,6 +206,7 @@ namespace Lucene.Net.Search
                     return OuterInstance;
                 }
             }
+
             public override float ValueForNormalization
             {
                 get
@@ -441,7 +438,6 @@ namespace Lucene.Net.Search
             return buffer.ToString();
         }
 
-
         /// <summary>
         /// Returns true if <code>o</code> is equal to this. </summary>
         public override bool Equals(object o)
@@ -503,13 +499,11 @@ namespace Lucene.Net.Search
     // TODO: if ever we allow subclassing of the *PhraseScorer
     internal class UnionDocsAndPositionsEnum : DocsAndPositionsEnum
     {
-
         private sealed class DocsQueue : Util.PriorityQueue<DocsAndPositionsEnum>
         {
             internal DocsQueue(ICollection<DocsAndPositionsEnum> docsEnums)
                 : base(docsEnums.Count)
             {
-
                 IEnumerator<DocsAndPositionsEnum> i = docsEnums.GetEnumerator();
                 while (i.MoveNext())
                 {
@@ -715,5 +709,4 @@ namespace Lucene.Net.Search
             return Cost_Renamed;
         }
     }
-
 }

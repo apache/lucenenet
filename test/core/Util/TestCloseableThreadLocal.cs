@@ -66,5 +66,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

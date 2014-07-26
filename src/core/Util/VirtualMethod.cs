@@ -1,11 +1,10 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -45,21 +44,20 @@ namespace Lucene.Net.Util
     /// <pre class="prettyprint">
     ///  final boolean isDeprecatedMethodOverridden =
     ///   oldMethod.getImplementationDistance(this.getClass()) > newMethod.getImplementationDistance(this.getClass());
-    /// 
+    ///
     ///  <em>// alternatively (more readable):</em>
     ///  final boolean isDeprecatedMethodOverridden =
     ///   VirtualMethod.compareImplementationDistance(this.getClass(), oldMethod, newMethod) > 0
-    /// </pre> 
+    /// </pre>
     /// <p><seealso cref="#getImplementationDistance"/> returns the distance of the subclass that overrides this method.
     /// The one with the larger distance should be used preferable.
     /// this way also more complicated method rename scenarios can be handled
     /// (think of 2.9 {@code TokenStream} deprecations).</p>
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public sealed class VirtualMethod<C>
     {
-
         private static readonly ISet<MethodInfo> SingletonSet = new ConcurrentHashSet<MethodInfo>(new HashSet<MethodInfo>());
 
         private readonly Type BaseClass;
@@ -159,7 +157,5 @@ namespace Lucene.Net.Util
         {
             return Convert.ToInt32(m1.GetImplementationDistance(clazz)).CompareTo(m2.GetImplementationDistance(clazz));
         }
-
     }
-
 }

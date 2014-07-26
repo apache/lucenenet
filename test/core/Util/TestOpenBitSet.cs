@@ -1,4 +1,3 @@
-using System.Collections;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,9 +14,11 @@ using System.Collections;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System.Collections;
 
 namespace Lucene.Net.Util
 {
@@ -26,7 +27,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestOpenBitSet : BaseDocIdSetTestCase<OpenBitSet>
     {
-
         public override OpenBitSet CopyOf(BitArray bs, int length)
         {
             OpenBitSet set = new OpenBitSet(length);
@@ -364,7 +364,6 @@ namespace Lucene.Net.Util
             Assert.AreEqual(bs1.GetHashCode(), bs2.GetHashCode());
         }
 
-
         private OpenBitSet MakeOpenBitSet(int[] a)
         {
             OpenBitSet bs = new OpenBitSet();
@@ -433,6 +432,5 @@ namespace Lucene.Net.Util
             bits.FastSet(bit - 1);
             Assert.IsTrue(bits.FastGet(bit - 1));
         }
-
     }
 }

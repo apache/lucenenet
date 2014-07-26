@@ -3,8 +3,8 @@ using System.Text;
 
 namespace Lucene.Net.Search.Spans
 {
-
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -24,87 +24,83 @@ namespace Lucene.Net.Search.Spans
 
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
-	/// <summary>
-	/// Matches spans near the beginning of a field.
-	/// <p/> 
-	/// this class is a simple extension of <seealso cref="SpanPositionRangeQuery"/> in that it assumes the
-	/// start to be zero and only checks the end boundary.
-	/// 
-	/// 
-	///  
-	/// </summary>
-	public class SpanFirstQuery : SpanPositionRangeQuery
-	{
+    /// <summary>
+    /// Matches spans near the beginning of a field.
+    /// <p/>
+    /// this class is a simple extension of <seealso cref="SpanPositionRangeQuery"/> in that it assumes the
+    /// start to be zero and only checks the end boundary.
+    ///
+    ///
+    ///
+    /// </summary>
+    public class SpanFirstQuery : SpanPositionRangeQuery
+    {
+        /// <summary>
+        /// Construct a SpanFirstQuery matching spans in <code>match</code> whose end
+        /// position is less than or equal to <code>end</code>.
+        /// </summary>
+        public SpanFirstQuery(SpanQuery match, int end)
+            : base(match, 0, end)
+        {
+        }
 
-	  /// <summary>
-	  /// Construct a SpanFirstQuery matching spans in <code>match</code> whose end
-	  /// position is less than or equal to <code>end</code>. 
-	  /// </summary>
-	  public SpanFirstQuery(SpanQuery match, int end) : base(match, 0, end)
-	  {
-	  }
+        protected internal override AcceptStatus AcceptPosition(Spans spans)
+        {
+            Debug.Assert(spans.Start() != spans.End(), "start equals end: " + spans.Start());
+            if (spans.Start() >= end)
+            {
+                return AcceptStatus.NO_AND_ADVANCE;
+            }
+            else if (spans.End() <= end)
+            {
+                return AcceptStatus.YES;
+            }
+            else
+            {
+                return AcceptStatus.NO;
+            }
+        }
 
-	  protected internal override AcceptStatus AcceptPosition(Spans spans)
-	  {
-		Debug.Assert(spans.Start() != spans.End(), "start equals end: " + spans.Start());
-		if (spans.Start() >= end)
-		{
-		  return AcceptStatus.NO_AND_ADVANCE;
-		}
-		else if (spans.End() <= end)
-		{
-		  return AcceptStatus.YES;
-		}
-		else
-		{
-		  return AcceptStatus.NO;
-		}
-	  }
+        public override string ToString(string field)
+        {
+            StringBuilder buffer = new StringBuilder();
+            buffer.Append("spanFirst(");
+            buffer.Append(match.ToString(field));
+            buffer.Append(", ");
+            buffer.Append(end);
+            buffer.Append(")");
+            buffer.Append(ToStringUtils.Boost(Boost));
+            return buffer.ToString();
+        }
 
+        public override object Clone()
+        {
+            SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery)match.Clone(), end);
+            spanFirstQuery.Boost = Boost;
+            return spanFirstQuery;
+        }
 
-	  public override string ToString(string field)
-	  {
-		StringBuilder buffer = new StringBuilder();
-		buffer.Append("spanFirst(");
-		buffer.Append(match.ToString(field));
-		buffer.Append(", ");
-		buffer.Append(end);
-		buffer.Append(")");
-		buffer.Append(ToStringUtils.Boost(Boost));
-		return buffer.ToString();
-	  }
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (!(o is SpanFirstQuery))
+            {
+                return false;
+            }
 
-	  public override object Clone()
-	  {
-		SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.Clone(), end);
-		spanFirstQuery.Boost = Boost;
-		return spanFirstQuery;
-	  }
+            SpanFirstQuery other = (SpanFirstQuery)o;
+            return this.end == other.end && this.match.Equals(other.match) && this.Boost == other.Boost;
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (this == o)
-		{
-			return true;
-		}
-		if (!(o is SpanFirstQuery))
-		{
-			return false;
-		}
-
-		SpanFirstQuery other = (SpanFirstQuery)o;
-		return this.end == other.end && this.match.Equals(other.match) && this.Boost == other.Boost;
-	  }
-
-	  public override int GetHashCode()
-	  {
-		int h = match.GetHashCode();
-		h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
-		h ^= Number.FloatToIntBits(Boost) ^ end;
-		return h;
-	  }
-
-
-	}
-
+        public override int GetHashCode()
+        {
+            int h = match.GetHashCode();
+            h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
+            h ^= Number.FloatToIntBits(Boost) ^ end;
+            return h;
+        }
+    }
 }

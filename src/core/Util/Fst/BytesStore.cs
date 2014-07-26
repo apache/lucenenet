@@ -1,10 +1,9 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +21,6 @@ namespace Lucene.Net.Util.Fst
      * limitations under the License.
      */
 
-
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
 
@@ -31,7 +29,6 @@ namespace Lucene.Net.Util.Fst
 
     internal class BytesStore : DataOutput
     {
-
         private readonly List<byte[]> Blocks = new List<byte[]>();
 
         private readonly int BlockSize;
@@ -79,7 +76,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Absolute write byte; you must ensure dest is < max
-        ///  position written so far. 
+        ///  position written so far.
         /// </summary>
         public virtual void WriteByte(int dest, byte b)
         {
@@ -136,7 +133,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Absolute writeBytes without changing the current
         ///  position.  Note: this cannot "grow" the bytes, so you
-        ///  must only call it on already written parts. 
+        ///  must only call it on already written parts.
         /// </summary>
         internal virtual void WriteBytes(long dest, byte[] b, int offset, int len)
         {
@@ -203,7 +200,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Absolute copy bytes self to self, without changing the
         ///  position. Note: this cannot "grow" the bytes, so must
-        ///  only call it on already written parts. 
+        ///  only call it on already written parts.
         /// </summary>
         public virtual void CopyBytes(long src, long dest, int len)
         {
@@ -270,7 +267,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Writes an int at the absolute position without
-        ///  changing the current pointer. 
+        ///  changing the current pointer.
         /// </summary>
         public virtual void WriteInt(long pos, int value)
         {
@@ -361,12 +358,11 @@ namespace Lucene.Net.Util.Fst
             {
                 return ((long)Blocks.Count - 1) * BlockSize + NextWrite;
             }
-
         }
 
         /// <summary>
         /// Pos must be less than the max position written so far!
-        ///  Ie, you cannot "grow" the file with this! 
+        ///  Ie, you cannot "grow" the file with this!
         /// </summary>
         public virtual void Truncate(long newLen)
         {
@@ -498,7 +494,6 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-
             public override bool Reversed()
             {
                 return false;
@@ -578,12 +573,10 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-
             public override bool Reversed()
             {
                 return true;
             }
         }
     }
-
 }

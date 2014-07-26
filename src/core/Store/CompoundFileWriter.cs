@@ -1,40 +1,32 @@
-using System.Diagnostics;
 using System.Collections.Generic;
-using Lucene.Net.Codecs;
-using Lucene.Net.Index;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
-using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace Lucene.Net.Store
 {
+    using Lucene.Net.Support;
+    using System;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using CodecUtil = Lucene.Net.Codecs.CodecUtil;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using System;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Combines multiple files into a single compound file.
@@ -43,16 +35,18 @@ namespace Lucene.Net.Store
     /// @lucene.internal </seealso>
     internal sealed class CompoundFileWriter : IDisposable
     {
-
         private sealed class FileEntry
         {
             /// <summary>
             /// source file </summary>
             internal string File;
+
             internal long Length;
+
             /// <summary>
             /// temporary holder for the start of this file's data section </summary>
             internal long Offset;
+
             /// <summary>
             /// the directory which contains the file. </summary>
             internal Directory Dir;
@@ -66,6 +60,7 @@ namespace Lucene.Net.Store
 
         // versioning for the .cfs file
         internal const string DATA_CODEC = "CompoundFileWriterData";
+
         internal const int VERSION_START = 0;
         internal const int VERSION_CHECKSUM = 1;
         internal const int VERSION_CURRENT = VERSION_CHECKSUM;
@@ -76,8 +71,10 @@ namespace Lucene.Net.Store
         private readonly Directory Directory_Renamed;
         private readonly IDictionary<string, FileEntry> Entries = new Dictionary<string, FileEntry>();
         private readonly ISet<string> SeenIDs = new HashSet<string>();
+
         // all entries that are written to a sep. file but not yet moved into CFS
         private readonly LinkedList<FileEntry> PendingEntries = new LinkedList<FileEntry>();
+
         private bool Closed = false;
         private IndexOutput DataOut;
         private readonly AtomicBoolean OutputTaken = new AtomicBoolean(false);
@@ -103,7 +100,6 @@ namespace Lucene.Net.Store
             Directory_Renamed = dir;
             EntryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
             DataFileName = name;
-
         }
 
         private IndexOutput Output
@@ -362,7 +358,6 @@ namespace Lucene.Net.Store
                 {
                     while (PendingEntries.Count > 0)
                     {
-
                         FileEntry entry = PendingEntries.First();
                         PendingEntries.RemoveFirst(); ;
                         CopyFileEntry(Output, entry);
@@ -418,7 +413,6 @@ namespace Lucene.Net.Store
                 this.Entry = entry;
                 entry.Offset = Offset = @delegate.FilePointer;
                 this.IsSeparate = isSeparate;
-
             }
 
             public override void Flush()
@@ -470,7 +464,6 @@ namespace Lucene.Net.Store
                     Debug.Assert(!Closed);
                     return @delegate.Length - Offset;
                 }
-
             }
 
             public override void WriteByte(byte b)
@@ -495,7 +488,5 @@ namespace Lucene.Net.Store
                 }
             }
         }
-
     }
-
 }

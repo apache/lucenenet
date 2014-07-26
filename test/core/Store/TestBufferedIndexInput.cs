@@ -1,50 +1,47 @@
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using Term = Lucene.Net.Index.Term;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using TermQuery = Lucene.Net.Search.TermQuery;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
     [TestFixture]
     public class TestBufferedIndexInput : LuceneTestCase
     {
-
         private static void WriteBytes(FileInfo aFile, long size)
         {
             Stream ostream = null;
@@ -107,7 +104,6 @@ namespace Lucene.Net.Store
 
         private void RunReadBytes(IndexInput input, int bufferSize, Random r)
         {
-
             int pos = 0;
             // gradually increasing size:
             for (int size = 1; size < bufferSize * 10; size = size + size / 200 + 1)
@@ -231,17 +227,20 @@ namespace Lucene.Net.Store
         {
             internal long Pos;
             internal long Len;
+
             public MyBufferedIndexInput(long len)
                 : base("MyBufferedIndexInput(len=" + len + ")", BufferedIndexInput.BUFFER_SIZE)
             {
                 this.Len = len;
                 this.Pos = 0;
             }
+
             public MyBufferedIndexInput()
                 : this(long.MaxValue)
             {
                 // an infinite file
             }
+
             protected override void ReadInternal(byte[] b, int offset, int length)
             {
                 for (int i = offset; i < offset + length; i++)
@@ -326,7 +325,6 @@ namespace Lucene.Net.Store
 
         private class MockFSDirectory : BaseDirectory
         {
-
             internal IList<IndexInput> AllIndexInputs = new List<IndexInput>();
 
             internal Random Rand;
@@ -376,23 +374,26 @@ namespace Lucene.Net.Store
             {
                 Dir.DeleteFile(name);
             }
+
             public override bool FileExists(string name)
             {
                 return Dir.FileExists(name);
             }
+
             public override string[] ListAll()
             {
                 return Dir.ListAll();
             }
+
             public override void Sync(ICollection<string> names)
             {
                 Dir.Sync(names);
             }
+
             public override long FileLength(string name)
             {
                 return Dir.FileLength(name);
             }
         }
     }
-
 }

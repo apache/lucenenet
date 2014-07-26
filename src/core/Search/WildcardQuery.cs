@@ -3,31 +3,30 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using Term = Lucene.Net.Index.Term;
-    using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Support;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
     using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
-    using Lucene.Net.Support;
 
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Term = Lucene.Net.Index.Term;
+    using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
     /// Implements the wildcard search query. Supported wildcards are <code>*</code>, which
@@ -37,7 +36,7 @@ namespace Lucene.Net.Search
     /// Note this query can be slow, as it
     /// needs to iterate over many terms. In order to prevent extremely slow WildcardQueries,
     /// a Wildcard term should not start with the wildcard <code>*</code>
-    /// 
+    ///
     /// <p>this query uses the {@link
     /// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
     /// rewrite method.
@@ -58,7 +57,7 @@ namespace Lucene.Net.Search
         public const char WILDCARD_ESCAPE = '\\';
 
         /// <summary>
-        /// Constructs a query for terms matching <code>term</code>. 
+        /// Constructs a query for terms matching <code>term</code>.
         /// </summary>
         public WildcardQuery(Term term)
             : base(term, ToAutomaton(term))
@@ -84,9 +83,11 @@ namespace Lucene.Net.Search
                     case WILDCARD_STRING:
                         automata.Add(BasicAutomata.MakeAnyString());
                         break;
+
                     case WILDCARD_CHAR:
                         automata.Add(BasicAutomata.MakeAnyChar());
                         break;
+
                     case WILDCARD_ESCAPE:
                         // add the next codepoint instead, if it exists
                         if (i + length < wildcardText.Length)
@@ -133,5 +134,4 @@ namespace Lucene.Net.Search
             return buffer.ToString();
         }
     }
-
 }

@@ -1,12 +1,10 @@
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,11 +22,9 @@ namespace Lucene.Net.Util.Automaton
      * limitations under the License.
      */
 
-
     [TestFixture]
     public class TestCompiledAutomaton : LuceneTestCase
     {
-
         private CompiledAutomaton Build(params string[] strings)
         {
             List<BytesRef> terms = new List<BytesRef>();
@@ -143,5 +139,4 @@ namespace Lucene.Net.Util.Automaton
             TestFloor(c, "zzz", "goo");
         }
     }
-
 }

@@ -2,7 +2,6 @@ using System;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,11 +24,10 @@ namespace Lucene.Net.Store
     /// <summary>
     /// DataInput backed by a byte array.
     /// <b>WARNING:</b> this class omits all low-level checks.
-    /// @lucene.experimental 
+    /// @lucene.experimental
     /// </summary>
     public sealed class ByteArrayDataInput : DataInput
     {
-
         private byte[] Bytes;
 
         private int Pos;
@@ -74,7 +72,6 @@ namespace Lucene.Net.Store
             }
         }
 
-
         public void Reset(byte[] bytes, int offset, int len)
         {
             this.Bytes = bytes;
@@ -116,7 +113,6 @@ namespace Lucene.Net.Store
 
         public override int ReadVInt()
         {
-
             // .NET Port: going back to original style code instead of Java code below due to sbyte/byte diff
             /*byte b = Bytes[Pos++];
             int i = b & 0x7F;
@@ -163,7 +159,6 @@ namespace Lucene.Net.Store
 
         public override long ReadVLong()
         {
-
             // .NET Port: going back to old style code
             /*byte b = Bytes[Pos++];
             long i = b & 0x7F;
@@ -244,5 +239,4 @@ namespace Lucene.Net.Store
             Pos += len;
         }
     }
-
 }

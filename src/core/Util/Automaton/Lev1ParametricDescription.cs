@@ -2,129 +2,129 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Automaton
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    // The following code was generated with the moman/finenight pkg
+    // this package is available under the MIT License, see NOTICE.txt
+    // for more details.
 
-	// The following code was generated with the moman/finenight pkg
-	// this package is available under the MIT License, see NOTICE.txt
-	// for more details.
+    using ParametricDescription = Lucene.Net.Util.Automaton.LevenshteinAutomata.ParametricDescription;
 
-	using ParametricDescription = Lucene.Net.Util.Automaton.LevenshteinAutomata.ParametricDescription;
+    /// <summary>
+    /// Parametric description for generating a Levenshtein automaton of degree 1 </summary>
+    internal class Lev1ParametricDescription : ParametricDescription
+    {
+        internal override int Transition(int absState, int position, int vector)
+        {
+            // null absState should never be passed in
+            Debug.Assert(absState != -1);
 
-	/// <summary>
-	/// Parametric description for generating a Levenshtein automaton of degree 1 </summary>
-	internal class Lev1ParametricDescription : ParametricDescription
-	{
+            // decode absState -> state, offset
+            int state = absState / (w + 1);
+            int offset = absState % (w + 1);
+            Debug.Assert(offset >= 0);
 
-	  internal override int Transition(int absState, int position, int vector)
-	  {
-		// null absState should never be passed in
-		Debug.Assert(absState != -1);
+            if (position == w)
+            {
+                if (state < 2)
+                {
+                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                    //ORIGINAL LINE: final int loc = vector * 2 + state;
+                    int loc = vector * 2 + state;
+                    offset += Unpack(OffsetIncrs0, loc, 1);
+                    state = Unpack(ToStates0, loc, 2) - 1;
+                }
+            }
+            else if (position == w - 1)
+            {
+                if (state < 3)
+                {
+                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                    //ORIGINAL LINE: final int loc = vector * 3 + state;
+                    int loc = vector * 3 + state;
+                    offset += Unpack(OffsetIncrs1, loc, 1);
+                    state = Unpack(ToStates1, loc, 2) - 1;
+                }
+            }
+            else if (position == w - 2)
+            {
+                if (state < 5)
+                {
+                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                    //ORIGINAL LINE: final int loc = vector * 5 + state;
+                    int loc = vector * 5 + state;
+                    offset += Unpack(OffsetIncrs2, loc, 2);
+                    state = Unpack(ToStates2, loc, 3) - 1;
+                }
+            }
+            else
+            {
+                if (state < 5)
+                {
+                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                    //ORIGINAL LINE: final int loc = vector * 5 + state;
+                    int loc = vector * 5 + state;
+                    offset += Unpack(OffsetIncrs3, loc, 2);
+                    state = Unpack(ToStates3, loc, 3) - 1;
+                }
+            }
 
-		// decode absState -> state, offset
-		int state = absState / (w + 1);
-		int offset = absState % (w + 1);
-		Debug.Assert(offset >= 0);
+            if (state == -1)
+            {
+                // null state
+                return -1;
+            }
+            else
+            {
+                // translate back to abs
+                return state * (w + 1) + offset;
+            }
+        }
 
-		if (position == w)
-		{
-		  if (state < 2)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int loc = vector * 2 + state;
-			int loc = vector * 2 + state;
-			offset += Unpack(OffsetIncrs0, loc, 1);
-			state = Unpack(ToStates0, loc, 2) - 1;
-		  }
-		}
-		else if (position == w - 1)
-		{
-		  if (state < 3)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int loc = vector * 3 + state;
-			int loc = vector * 3 + state;
-			offset += Unpack(OffsetIncrs1, loc, 1);
-			state = Unpack(ToStates1, loc, 2) - 1;
-		  }
-		}
-		else if (position == w - 2)
-		{
-		  if (state < 5)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int loc = vector * 5 + state;
-			int loc = vector * 5 + state;
-			offset += Unpack(OffsetIncrs2, loc, 2);
-			state = Unpack(ToStates2, loc, 3) - 1;
-		  }
-		}
-		else
-		{
-		  if (state < 5)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int loc = vector * 5 + state;
-			int loc = vector * 5 + state;
-			offset += Unpack(OffsetIncrs3, loc, 2);
-			state = Unpack(ToStates3, loc, 3) - 1;
-		  }
-		}
+        // 1 vectors; 2 states per vector; array length = 2
+        private static readonly long[] ToStates0 = new long[] { 0x2L }; //2 bits per value
 
-		if (state == -1)
-		{
-		  // null state
-		  return -1;
-		}
-		else
-		{
-		  // translate back to abs
-		  return state * (w + 1) + offset;
-		}
-	  }
+        private static readonly long[] OffsetIncrs0 = new long[] { 0x0L }; //1 bits per value
 
-	  // 1 vectors; 2 states per vector; array length = 2
-	  private static readonly long[] ToStates0 = new long[] {0x2L}; //2 bits per value
-	  private static readonly long[] OffsetIncrs0 = new long[] {0x0L}; //1 bits per value
+        // 2 vectors; 3 states per vector; array length = 6
+        private static readonly long[] ToStates1 = new long[] { 0xa43L }; //2 bits per value
 
-	  // 2 vectors; 3 states per vector; array length = 6
-	  private static readonly long[] ToStates1 = new long[] {0xa43L}; //2 bits per value
-	  private static readonly long[] OffsetIncrs1 = new long[] {0x38L}; //1 bits per value
+        private static readonly long[] OffsetIncrs1 = new long[] { 0x38L }; //1 bits per value
 
-	  // 4 vectors; 5 states per vector; array length = 20
-	  private static readonly long[] ToStates2 = new long[] {0x69a292450428003L}; //3 bits per value
-	  private static readonly long[] OffsetIncrs2 = new long[] {0x5555588000L}; //2 bits per value
+        // 4 vectors; 5 states per vector; array length = 20
+        private static readonly long[] ToStates2 = new long[] { 0x69a292450428003L }; //3 bits per value
 
-	  // 8 vectors; 5 states per vector; array length = 40
-	  private static readonly long[] ToStates3 = new long[] {0x1690a82152018003L,0xb1a2d346448a49L}; //3 bits per value
-	  private static readonly long[] OffsetIncrs3 = new long[] {0x555555b8220f0000L,0x5555L}; //2 bits per value
+        private static readonly long[] OffsetIncrs2 = new long[] { 0x5555588000L }; //2 bits per value
 
-	  // state map
-	  //   0 -> [(0, 0)]
-	  //   1 -> [(0, 1)]
-	  //   2 -> [(0, 1), (1, 1)]
-	  //   3 -> [(0, 1), (2, 1)]
-	  //   4 -> [(0, 1), (1, 1), (2, 1)]
+        // 8 vectors; 5 states per vector; array length = 40
+        private static readonly long[] ToStates3 = new long[] { 0x1690a82152018003L, 0xb1a2d346448a49L }; //3 bits per value
 
+        private static readonly long[] OffsetIncrs3 = new long[] { 0x555555b8220f0000L, 0x5555L }; //2 bits per value
 
-	  public Lev1ParametricDescription(int w) : base(w, 1, new int[] {0,1,0,-1,-1})
-	  {
-	  }
-	}
-
+        // state map
+        //   0 -> [(0, 0)]
+        //   1 -> [(0, 1)]
+        //   2 -> [(0, 1), (1, 1)]
+        //   3 -> [(0, 1), (2, 1)]
+        //   4 -> [(0, 1), (1, 1), (2, 1)]
+        public Lev1ParametricDescription(int w)
+            : base(w, 1, new int[] { 0, 1, 0, -1, -1 })
+        {
+        }
+    }
 }

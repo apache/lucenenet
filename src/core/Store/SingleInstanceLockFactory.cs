@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +19,6 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Implements <seealso cref="LockFactory"/> for a single in-process instance,
     /// meaning all locking will take place through this one instance.
@@ -33,7 +31,6 @@ namespace Lucene.Net.Store
 
     public class SingleInstanceLockFactory : LockFactory
     {
-
         private HashSet<string> Locks = new HashSet<string>();
 
         public override Lock MakeLock(string lockName)
@@ -58,7 +55,6 @@ namespace Lucene.Net.Store
 
     internal class SingleInstanceLock : Lock
     {
-
         internal string LockName;
         private HashSet<string> Locks;
 
@@ -100,5 +96,4 @@ namespace Lucene.Net.Store
             return base.ToString() + ": " + LockName;
         }
     }
-
 }

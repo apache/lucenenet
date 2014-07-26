@@ -1,8 +1,8 @@
 namespace Lucene.Net.Store
 {
-
     using System.Collections.Generic;
     using System.IO;
+
     /*
                  * Licensed to the Apache Software Foundation (ASF) under one or more
                  * contributor license agreements.  See the NOTICE file distributed with
@@ -20,9 +20,6 @@ namespace Lucene.Net.Store
                  * limitations under the License.
                  */
 
-
-    using IOUtils = Lucene.Net.Util.IOUtils;
-
     /// <summary>
     /// <p>Implements <seealso cref="LockFactory"/> using native OS file
     /// locks.  Note that because this LockFactory relies on
@@ -35,17 +32,17 @@ namespace Lucene.Net.Store
     /// recommended that you try <seealso cref="SimpleFSLockFactory"/>
     /// first and work around the one limitation that a lock file
     /// could be left when the JVM exits abnormally.</p>
-    /// 
+    ///
     /// <p>The primary benefit of <seealso cref="NativeFSLockFactory"/> is
     /// that locks (not the lock file itsself) will be properly
     /// removed (by the OS) if the JVM has an abnormal exit.</p>
-    /// 
+    ///
     /// <p>Note that, unlike <seealso cref="SimpleFSLockFactory"/>, the existence of
     /// leftover lock files in the filesystem is fine because the OS
     /// will free the locks held against these files even though the
     /// files still remain. Lucene will never actively remove the lock
     /// files, so although you see them, the index may not be locked.</p>
-    /// 
+    ///
     /// <p>Special care needs to be taken if you change the locking
     /// implementation: First be certain that no writer is in fact
     /// writing to the index otherwise you can easily corrupt
@@ -53,7 +50,7 @@ namespace Lucene.Net.Store
     /// instances and clean up all leftover lock files before starting
     /// the new configuration for the first time. Different implementations
     /// can not work together!</p>
-    /// 
+    ///
     /// <p>If you suspect that this or any other LockFactory is
     /// not working properly in your environment, you can easily
     /// test it by using <seealso cref="VerifyingLockFactory"/>, {@link
@@ -63,7 +60,6 @@ namespace Lucene.Net.Store
 
     public class NativeFSLockFactory : FSLockFactory
     {
-
         /// <summary>
         /// Create a NativeFSLockFactory instance, with null (unset)
         /// lock directory. When you pass this factory to a <seealso cref="FSDirectory"/>
@@ -152,7 +148,6 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-
                 if (LockExists())
                 {
                     // Our instance is already locked:
@@ -185,7 +180,6 @@ namespace Lucene.Net.Store
                 string canonicalPath = Path.FullName;
 
                 bool markedHeld = false;
-
 
                 try
                 {
@@ -319,11 +313,7 @@ namespace Lucene.Net.Store
                 return LockExists();
             }
 
-
-
             /*
-
-
 
               Channel = FileChannel.open(Path.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
               bool success = false;
@@ -467,5 +457,4 @@ namespace Lucene.Net.Store
             return "NativeFSLock@" + Path;
         }
     }
-
 }

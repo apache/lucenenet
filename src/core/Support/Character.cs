@@ -48,7 +48,7 @@ namespace Lucene.Net.Support
         public static int MIN_SUPPLEMENTARY_CODE_POINT = 0x010000;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="digit"></param>
         /// <param name="radix"></param>
@@ -84,7 +84,7 @@ namespace Lucene.Net.Support
 
         public static char[] ToChars(int codePoint)
         {
-            // .NET Port: we don't have to do anything funky with surrogates here. chars are always UTF-16.           
+            // .NET Port: we don't have to do anything funky with surrogates here. chars are always UTF-16.
             return new[] { (char)codePoint };
         }
 

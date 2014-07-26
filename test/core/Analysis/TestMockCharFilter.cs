@@ -1,10 +1,8 @@
-using System.IO;
 using NUnit.Framework;
+using System.IO;
 
 namespace Lucene.Net.Analysis
 {
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,10 +19,10 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     [TestFixture]
     public class TestMockCharFilter : BaseTokenStreamTestCase
     {
-
         [Test]
         public virtual void Test()
         {
@@ -46,7 +44,6 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-
             protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
@@ -59,5 +56,4 @@ namespace Lucene.Net.Analysis
             }
         }
     }
-
 }

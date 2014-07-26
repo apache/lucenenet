@@ -1,10 +1,9 @@
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -57,5 +56,4 @@ namespace Lucene.Net.Util
             Assert.IsTrue(comp.Compare("3.0", Convert.ToString(int.MinValue)) > 0);
         }
     }
-
 }

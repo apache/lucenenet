@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System;
 using System.Linq;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,18 +20,16 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
-
     /// <summary>
     /// Expert: A Directory instance that switches files between
     /// two other Directory instances.
-    /// 
+    ///
     /// <p>Files with the specified extensions are placed in the
     /// primary directory; others are placed in the secondary
     /// directory.  The provided Set must not change once passed
     /// to this class, and must allow multiple threads to call
     /// contains at once.</p>
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
 
@@ -104,7 +100,6 @@ namespace Lucene.Net.Store
                     files.Add(f);
                 }
             }
-
             catch (NoSuchDirectoryException e)
             {
                 exc = e;
@@ -218,5 +213,4 @@ namespace Lucene.Net.Store
             return GetDirectory(name).CreateSlicer(name, context);
         }
     }
-
 }

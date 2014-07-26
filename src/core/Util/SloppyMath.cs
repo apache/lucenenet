@@ -3,7 +3,6 @@ using System;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -28,7 +27,7 @@ namespace Lucene.Net.Util
      *
      * Developed at SunSoft, a Sun Microsystems, Inc. business.
      * Permission to use, copy, modify, and distribute this
-     * software is freely granted, provided that this notice 
+     * software is freely granted, provided that this notice
      * is preserved.
      * =============================================================================
      */
@@ -37,7 +36,6 @@ namespace Lucene.Net.Util
     /// Math functions that trade off accuracy for speed. </summary>
     public class SloppyMath
     {
-
         /// <summary>
         /// Returns the distance in kilometers between two points
         /// specified in decimal degrees (latitude/longitude). </summary>
@@ -58,7 +56,6 @@ namespace Lucene.Net.Util
             double diameter = EarthDiameter(avgLat);
 
             return diameter * Asin(Math.Min(1, Math.Sqrt(h)));
-
         }
 
         /// <summary>
@@ -97,7 +94,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the arc sine of a value.
         /// <p>
-        /// The returned angle is in the range <i>-pi</i>/2 through <i>pi</i>/2. 
+        /// The returned angle is in the range <i>-pi</i>/2 through <i>pi</i>/2.
         /// Error is around 1E-7.
         /// <p>
         /// Special cases:
@@ -170,6 +167,7 @@ namespace Lucene.Net.Util
 
         // cos/asin
         private const double ONE_DIV_F2 = 1 / 2.0;
+
         private const double ONE_DIV_F3 = 1 / 6.0;
         private const double ONE_DIV_F4 = 1 / 24.0;
 
@@ -275,11 +273,9 @@ namespace Lucene.Net.Util
                 AsinDer4DivF4Tab[i] = ((5 + 2 * x * (2 + x * (5 - 2 * x))) * oneMinusXSqInv3_5) * ONE_DIV_F4;
             }
 
-
             // WGS84 earth-ellipsoid major (a) and minor (b) radius
             const double a = 6378137; // [m]
             const double b = 6356752.31420; // [m]
-
             double a2 = a * a;
             double b2 = b * b;
 
@@ -299,5 +295,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

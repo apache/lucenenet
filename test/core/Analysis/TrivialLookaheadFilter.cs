@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using Lucene.Net.Analysis.Tokenattributes;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,19 +20,14 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-
     /// <summary>
     /// Simple example of a filter that seems to show some problems with LookaheadTokenFilter.
     /// </summary>
     public sealed class TrivialLookaheadFilter : LookaheadTokenFilter<TestPosition>
     {
-
         private readonly ICharTermAttribute TermAtt;
         private readonly IPositionIncrementAttribute PosIncAtt;
         private readonly IOffsetAttribute OffsetAtt;
-
 
         private int InsertUpto;
 
@@ -91,20 +85,17 @@ namespace Lucene.Net.Analysis
             {
                 if (PeekToken())
                 {
-
                     string term = new string(TermAtt.Buffer(), 0, TermAtt.Length);
                     facts.Add(term + "-huh?");
                     if (".".Equals(term))
                     {
                         haveSentence = true;
                     }
-
                 }
                 else
                 {
                     haveSentence = true;
                 }
-
             } while (!haveSentence);
 
             // attach the (now disambiguated) analyzed tokens to the positions.
@@ -115,5 +106,4 @@ namespace Lucene.Net.Analysis
             }
         }
     }
-
 }

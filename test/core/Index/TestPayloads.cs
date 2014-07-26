@@ -1,13 +1,11 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,29 +23,26 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using Lucene.Net.Support;
+    using Lucene.Net.Util;
+    using NUnit.Framework;
+    using System.IO;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using TextField = Lucene.Net.Document.TextField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Bits = Lucene.Net.Util.Bits;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Util;
-    using System.IO;
-    using Lucene.Net.Support;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestPayloads : LuceneTestCase
     {
-
         // Simple tests to test the payloads
         [Test]
         public virtual void TestPayload()
@@ -61,7 +56,6 @@ namespace Lucene.Net.Index
             {
                 Assert.AreEqual(payload.Bytes[i + payload.Offset], clone.Bytes[i + clone.Offset]);
             }
-
         }
 
         // Tests whether the DocumentWriter and SegmentMerger correctly enable the
@@ -80,7 +74,7 @@ namespace Lucene.Net.Index
             // even if only some term positions have payloads
             d.Add(NewTextField("f2", "this field has payloads in all docs", Field.Store.NO));
             d.Add(NewTextField("f2", "this field has payloads in all docs NO PAYLOAD", Field.Store.NO));
-            // this field is used to verify if the SegmentMerger enables payloads for a field if it has payloads 
+            // this field is used to verify if the SegmentMerger enables payloads for a field if it has payloads
             // enabled in only some documents
             d.Add(NewTextField("f3", "this field has payloads in some docs", Field.Store.NO));
             // only add payload data for field f2
@@ -157,7 +151,6 @@ namespace Lucene.Net.Index
             }
             string content = sb.ToString();
 
-
             int payloadDataLength = numTerms * numDocs * 2 + numTerms * numDocs * (numDocs - 1) / 2;
             sbyte[] payloadData = GenerateRandomData(payloadDataLength);
 
@@ -176,7 +169,7 @@ namespace Lucene.Net.Index
             // make sure we create more than one segment to test merging
             writer.Commit();
 
-            // now we make sure to have different payload lengths next at the next skip point        
+            // now we make sure to have different payload lengths next at the next skip point
             for (int i = 0; i < numDocs; i++)
             {
                 analyzer = new PayloadAnalyzer(fieldName, payloadData, offset, i);
@@ -187,7 +180,6 @@ namespace Lucene.Net.Index
             writer.ForceMerge(1);
             // flush
             writer.Dispose();
-
 
             /*
              * Verify the index
@@ -252,7 +244,6 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, payload.Length, "Wrong payload length.");
             Assert.AreEqual(payload.Bytes[payload.Offset], payloadData[5 * numTerms]);
 
-
             /*
              * Test different lengths at skip points
              */
@@ -284,7 +275,6 @@ namespace Lucene.Net.Index
             analyzer.SetPayloadData(fieldName, payloadData, 100, 1500);
             writer.AddDocument(d);
 
-
             writer.ForceMerge(1);
             // flush
             writer.Dispose();
@@ -301,7 +291,6 @@ namespace Lucene.Net.Index
 
             AssertByteArrayEquals(portion, bref.Bytes, bref.Offset, bref.Length);
             reader.Dispose();
-
         }
 
         internal static readonly Encoding Utf8 = IOUtils.CHARSET_UTF_8;
@@ -342,7 +331,6 @@ namespace Lucene.Net.Index
             return terms;
         }
 
-
         internal virtual void AssertByteArrayEquals(sbyte[] b1, sbyte[] b2)
         {
             if (b1.Length != b2.Length)
@@ -374,7 +362,6 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
 
         /// <summary>
         /// this Analyzer uses an WhitespaceTokenizer and PayloadFilter.
@@ -422,7 +409,6 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
 
         /// <summary>
         /// this Filter adds payloads to the tokens.
@@ -603,7 +589,6 @@ namespace Lucene.Net.Index
             {
                 Pool.Release(Payload);
             }
-
         }
 
         private class ByteArrayPool
@@ -740,7 +725,5 @@ namespace Lucene.Net.Index
             reader.Dispose();
             dir.Dispose();
         }
-
     }
-
 }

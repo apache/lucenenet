@@ -1,7 +1,7 @@
 namespace Lucene.Net.Search
 {
-
     using Lucene.Net.Util; // javadocs only
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -19,32 +19,30 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-    using AttributeSource = Lucene.Net.Util.AttributeSource; // javadocs only
+    // javadocs only
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using Terms = Lucene.Net.Index.Terms;
 
-	/// <summary>
-	/// Add this <seealso cref="Attribute"/> to a fresh <seealso cref="AttributeSource"/> before calling
-	/// <seealso cref="MultiTermQuery#getTermsEnum(Terms,AttributeSource)"/>.
-	/// <seealso cref="FuzzyQuery"/> is using this to control its internal behaviour
-	/// to only return competitive terms.
-	/// <p><b>Please note:</b> this attribute is intended to be added by the <seealso cref="MultiTermQuery.RewriteMethod"/>
-	/// to an empty <seealso cref="AttributeSource"/> that is shared for all segments
-	/// during query rewrite. this attribute source is passed to all segment enums
-	/// on <seealso cref="MultiTermQuery#getTermsEnum(Terms,AttributeSource)"/>.
-	/// <seealso cref="TopTermsRewrite"/> uses this attribute to
-	/// inform all enums about the current boost, that is not competitive.
-	/// @lucene.internal
-	/// </summary>
-	public interface IMaxNonCompetitiveBoostAttribute : IAttribute
-	{
-	  /// <summary>
-	  /// this is the maximum boost that would not be competitive. </summary>
-	  float MaxNonCompetitiveBoost {set;get;}
-	  /// <summary>
-	  /// this is the term or <code>null</code> of the term that triggered the boost change. </summary>
-	  BytesRef CompetitiveTerm {set;get;}
-	}
+    /// <summary>
+    /// Add this <seealso cref="Attribute"/> to a fresh <seealso cref="AttributeSource"/> before calling
+    /// <seealso cref="MultiTermQuery#getTermsEnum(Terms,AttributeSource)"/>.
+    /// <seealso cref="FuzzyQuery"/> is using this to control its internal behaviour
+    /// to only return competitive terms.
+    /// <p><b>Please note:</b> this attribute is intended to be added by the <seealso cref="MultiTermQuery.RewriteMethod"/>
+    /// to an empty <seealso cref="AttributeSource"/> that is shared for all segments
+    /// during query rewrite. this attribute source is passed to all segment enums
+    /// on <seealso cref="MultiTermQuery#getTermsEnum(Terms,AttributeSource)"/>.
+    /// <seealso cref="TopTermsRewrite"/> uses this attribute to
+    /// inform all enums about the current boost, that is not competitive.
+    /// @lucene.internal
+    /// </summary>
+    public interface IMaxNonCompetitiveBoostAttribute : IAttribute
+    {
+        /// <summary>
+        /// this is the maximum boost that would not be competitive. </summary>
+        float MaxNonCompetitiveBoost { set; get; }
 
+        /// <summary>
+        /// this is the term or <code>null</code> of the term that triggered the boost change. </summary>
+        BytesRef CompetitiveTerm { set; get; }
+    }
 }

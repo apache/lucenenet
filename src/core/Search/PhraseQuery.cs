@@ -1,52 +1,51 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Support;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using SimScorer = Lucene.Net.Search.Similarities.Similarity.SimScorer;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
-    using TermState = Lucene.Net.Index.TermState;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using SimScorer = Lucene.Net.Search.Similarities.Similarity.SimScorer;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using Bits = Lucene.Net.Util.Bits;
+    using TermState = Lucene.Net.Index.TermState;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// A Query that matches documents containing a particular sequence of terms.
     /// A PhraseQuery is built by QueryParser for input like <code>"new york"</code>.
-    /// 
+    ///
     /// <p>this query may be combined with other terms or queries with a <seealso cref="BooleanQuery"/>.
     /// </summary>
     public class PhraseQuery : Query
@@ -67,16 +66,16 @@ namespace Lucene.Net.Search
         /// Sets the number of other words permitted between words in query phrase.
         ///  If zero, then this is an exact phrase search.  For larger values this works
         ///  like a <code>WITHIN</code> or <code>NEAR</code> operator.
-        /// 
+        ///
         ///  <p>The slop is in fact an edit-distance, where the units correspond to
         ///  moves of terms in the query phrase out of position.  For example, to switch
         ///  the order of two words requires two moves (the first move places the words
         ///  atop one another), so to permit re-orderings of phrases, the slop must be
         ///  at least two.
-        /// 
+        ///
         ///  <p>More exact matches are scored higher than sloppier matches, thus search
         ///  results are sorted by exactness.
-        /// 
+        ///
         ///  <p>The slop is zero by default, requiring exact matches.
         /// </summary>
         public virtual int Slop
@@ -115,7 +114,7 @@ namespace Lucene.Net.Search
         /// The relative position of the term within the phrase is specified explicitly.
         /// this allows e.g. phrases with more than one term at the same position
         /// or phrases with gaps (e.g. in connection with stopwords).
-        /// 
+        ///
         /// </summary>
         public virtual void Add(Term term, int position)
         {
@@ -295,6 +294,7 @@ namespace Lucene.Net.Search
 
             internal readonly Similarity Similarity;
             internal readonly Similarity.SimWeight Stats;
+
             [NonSerialized]
             internal TermContext[] States;
 
@@ -318,6 +318,7 @@ namespace Lucene.Net.Search
             {
                 return "weight(" + OuterInstance + ")";
             }
+
             public override Query Query
             {
                 get
@@ -325,6 +326,7 @@ namespace Lucene.Net.Search
                     return OuterInstance;
                 }
             }
+
             public override float ValueForNormalization
             {
                 get
@@ -517,7 +519,5 @@ namespace Lucene.Net.Search
         {
             return Number.FloatToIntBits(Boost) ^ Slop_Renamed ^ Terms_Renamed.GetHashCode() ^ Positions_Renamed.GetHashCode();
         }
-
     }
-
 }

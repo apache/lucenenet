@@ -1,52 +1,47 @@
+using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Search.Spans
 {
+    using NUnit.Framework;
+    using System.IO;
 
     /*
-    /// Copyright 2004 The Apache Software Foundation
-    /// 
-    /// Licensed under the Apache License, Version 2.0 (the "License");
-    /// you may not use this file except in compliance with the License.
-    /// You may obtain a copy of the License at
-    /// 
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    */
-
+        /// Copyright 2004 The Apache Software Foundation
+        ///
+        /// Licensed under the Apache License, Version 2.0 (the "License");
+        /// you may not use this file except in compliance with the License.
+        /// You may obtain a copy of the License at
+        ///
+        ///     http://www.apache.org/licenses/LICENSE-2.0
+        ///
+        /// Unless required by applicable law or agreed to in writing, software
+        /// distributed under the License is distributed on an "AS IS" BASIS,
+        /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        /// See the License for the specific language governing permissions and
+        /// limitations under the License.
+        */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using TextField = Lucene.Net.Document.TextField;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using Term = Lucene.Net.Index.Term;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using PayloadHelper = Lucene.Net.Search.Payloads.PayloadHelper;
     using PayloadSpanUtil = Lucene.Net.Search.Payloads.PayloadSpanUtil;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
-    using Lucene.Net.Util;
-    using System.IO;
+    using Term = Lucene.Net.Index.Term;
+    using TextField = Lucene.Net.Document.TextField;
+    using TokenFilter = Lucene.Net.Analysis.TokenFilter;
+    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     [TestFixture]
     public class TestPayloadSpans : LuceneTestCase
@@ -85,7 +80,6 @@ namespace Lucene.Net.Search.Spans
         [Test]
         public virtual void TestSpanFirst()
         {
-
             SpanQuery match;
             SpanFirstQuery sfq;
             match = new SpanTermQuery(new Term(PayloadHelper.FIELD, "one"));
@@ -103,7 +97,6 @@ namespace Lucene.Net.Search.Spans
             match = new SpanNearQuery(clauses, 0, false);
             sfq = new SpanFirstQuery(match, 2);
             CheckSpans(MultiSpansWrapper.Wrap(IndexReader.Context, sfq), 100, 2, 1, 1);
-
         }
 
         [Test]
@@ -115,8 +108,6 @@ namespace Lucene.Net.Search.Spans
             SpanQuery spq = new SpanNearQuery(clauses, 5, true);
             SpanNotQuery snq = new SpanNotQuery(spq, new SpanTermQuery(new Term(PayloadHelper.FIELD, "two")));
 
-
-
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(Similarity));
 
@@ -125,7 +116,6 @@ namespace Lucene.Net.Search.Spans
             writer.AddDocument(doc);
             IndexReader reader = writer.Reader;
             writer.Dispose();
-
 
             CheckSpans(MultiSpansWrapper.Wrap(reader.Context, snq), 1, new int[] { 2 });
             reader.Dispose();
@@ -143,7 +133,6 @@ namespace Lucene.Net.Search.Spans
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             CheckSpans(spans, 0, null);
 
-
             SpanQuery[] clauses = new SpanQuery[3];
             clauses[0] = new SpanTermQuery(new Term(PayloadHelper.FIELD, "rr"));
             clauses[1] = new SpanTermQuery(new Term(PayloadHelper.FIELD, "yy"));
@@ -153,7 +142,6 @@ namespace Lucene.Net.Search.Spans
             spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, spanNearQuery);
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             CheckSpans(spans, 2, new int[] { 3, 3 });
-
 
             clauses[0] = new SpanTermQuery(new Term(PayloadHelper.FIELD, "xx"));
             clauses[1] = new SpanTermQuery(new Term(PayloadHelper.FIELD, "rr"));
@@ -384,7 +372,6 @@ namespace Lucene.Net.Search.Spans
                 {
                     Console.WriteLine("match:" + payload);
                 }
-
             }
             Assert.IsTrue(payloadSet.Contains("a:Noise:10"));
             Assert.IsTrue(payloadSet.Contains("k:Noise:11"));
@@ -447,9 +434,7 @@ namespace Lucene.Net.Search.Spans
                     {
                         Assert.IsTrue(thePayload.Length == expectedPayloadLength, "payload[0] Size: " + thePayload.Length + " is not: " + expectedPayloadLength);
                         Assert.IsTrue(thePayload[0] == expectedFirstByte, thePayload[0] + " does not equal: " + expectedFirstByte);
-
                     }
-
                 }
                 seen++;
             }
@@ -524,7 +509,6 @@ namespace Lucene.Net.Search.Spans
                 this.OuterInstance = outerInstance;
             }
 
-
             protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
@@ -596,7 +580,6 @@ namespace Lucene.Net.Search.Spans
                 this.OuterInstance = outerInstance;
             }
 
-
             protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
@@ -604,5 +587,4 @@ namespace Lucene.Net.Search.Spans
             }
         }
     }
-
 }

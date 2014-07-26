@@ -1,7 +1,7 @@
 using System;
+
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,12 +23,12 @@ namespace Lucene.Net.Util
     /// A PriorityQueue maintains a partial ordering of its elements such that the
     /// least element can always be found in constant time.  Put()'s and pop()'s
     /// require log(size) time.
-    /// 
+    ///
     /// <p><b>NOTE</b>: this class will pre-allocate a full array of
     /// length <code>maxSize+1</code> if instantiated via the
     /// <seealso cref="#PriorityQueue(int,boolean)"/> constructor with
     /// <code>prepopulate</code> set to <code>true</code>.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public abstract class PriorityQueue<T>
@@ -101,36 +101,36 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this method can be overridden by extending classes to return a sentinel
-        /// object which will be used by the <seealso cref="PriorityQueue#PriorityQueue(int,boolean)"/> 
+        /// object which will be used by the <seealso cref="PriorityQueue#PriorityQueue(int,boolean)"/>
         /// constructor to fill the queue, so that the code which uses that queue can always
         /// assume it's full and only change the top without attempting to insert any new
         /// object.<br>
-        /// 
+        ///
         /// Those sentinel values should always compare worse than any non-sentinel
         /// value (i.e., <seealso cref="#lessThan"/> should always favor the
         /// non-sentinel values).<br>
-        /// 
+        ///
         /// By default, this method returns false, which means the queue will not be
         /// filled with sentinel values. Otherwise, the value returned will be used to
         /// pre-populate the queue. Adds sentinel values to the queue.<br>
-        /// 
+        ///
         /// If this method is extended to return a non-null value, then the following
         /// usage pattern is recommended:
-        /// 
+        ///
         /// <pre class="prettyprint">
         /// // extends getSentinelObject() to return a non-null value.
         /// PriorityQueue&lt;MyObject&gt; pq = new MyQueue&lt;MyObject&gt;(numHits);
         /// // save the 'top' element, which is guaranteed to not be null.
         /// MyObject pqTop = pq.top();
         /// &lt;...&gt;
-        /// // now in order to add a new element, which is 'better' than top (after 
+        /// // now in order to add a new element, which is 'better' than top (after
         /// // you've verified it is better), it is as simple as:
         /// pqTop.change().
         /// pqTop = pq.updateTop();
         /// </pre>
-        /// 
+        ///
         /// <b>NOTE:</b> if this method returns a non-null value, it will be called by
-        /// the <seealso cref="PriorityQueue#PriorityQueue(int,boolean)"/> constructor 
+        /// the <seealso cref="PriorityQueue#PriorityQueue(int,boolean)"/> constructor
         /// <seealso cref="#size()"/> times, relying on a new object to be returned and will not
         /// check if it's null again. Therefore you should ensure any call to this
         /// method creates a new instance and behaves consistently, e.g., it cannot
@@ -202,7 +202,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Removes and returns the least element of the PriorityQueue in log(size)
-        ///  time. 
+        ///  time.
         /// </summary>
         public T Pop()
         {
@@ -224,14 +224,14 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Should be called when the Object at top changes values. Still log(n) worst
         /// case, but it's at least twice as fast to
-        /// 
+        ///
         /// <pre class="prettyprint">
         /// pq.top().change();
         /// pq.updateTop();
         /// </pre>
-        /// 
+        ///
         /// instead of
-        /// 
+        ///
         /// <pre class="prettyprint">
         /// o = pq.pop();
         /// o.change();
@@ -313,5 +313,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

@@ -22,14 +22,13 @@ namespace Lucene.Net.Search.Payloads
     /// the cumulative effects of payload scores for a document.
     /// </summary>
     /// <seealso cref= Lucene.Net.Search.Payloads.PayloadTermQuery for more information
-    /// 
+    ///
     /// @lucene.experimental this class and its derivations are experimental and subject to
     ///               change
-    /// 
+    ///
     ///  </seealso>
     public abstract class PayloadFunction
     {
-
         /// <summary>
         /// Calculate the score up to this point for this doc and field </summary>
         /// <param name="docId"> The current doc </param>
@@ -64,7 +63,5 @@ namespace Lucene.Net.Search.Payloads
         public override abstract int GetHashCode();
 
         public override abstract bool Equals(object o);
-
     }
-
 }

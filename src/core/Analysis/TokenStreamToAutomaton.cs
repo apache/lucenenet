@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
+using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,9 +22,6 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using PositionLengthAttribute = Lucene.Net.Analysis.Tokenattributes.PositionLengthAttribute;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using State = Lucene.Net.Util.Automaton.State;
     using Transition = Lucene.Net.Util.Automaton.Transition;
@@ -34,17 +30,18 @@ namespace Lucene.Net.Analysis
 
     /// <summary>
     /// Consumes a TokenStream and creates an <seealso cref="Automaton"/>
-    ///  where the transition labels are UTF8 bytes (or Unicode 
+    ///  where the transition labels are UTF8 bytes (or Unicode
     ///  code points if unicodeArcs is true) from the {@link
     ///  TermToBytesRefAttribute}.  Between tokens we insert
     ///  POS_SEP and for holes we insert HOLE.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public class TokenStreamToAutomaton
     {
         //backing variables
         private bool preservePositionIncrements;
+
         private bool unicodeArcs;
 
         /// <summary>
@@ -65,8 +62,8 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Whether to make transition labels Unicode code points instead of UTF8 bytes, 
-        ///  <code>false</code> by default 
+        /// Whether to make transition labels Unicode code points instead of UTF8 bytes,
+        ///  <code>false</code> by default
         /// </summary>
         public virtual bool UnicodeArcs
         {
@@ -110,7 +107,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Subclass & implement this if you need to change the
         ///  token (such as escaping certain bytes) before it's
-        ///  turned into a graph. 
+        ///  turned into a graph.
         /// </summary>
         protected internal virtual BytesRef ChangeToken(BytesRef @in)
         {
@@ -129,8 +126,8 @@ namespace Lucene.Net.Analysis
         /// Pulls the graph (including {@link
         ///  PositionLengthAttribute}) from the provided {@link
         ///  TokenStream}, and creates the corresponding
-        ///  automaton where arcs are bytes (or Unicode code points 
-        ///  if unicodeArcs = true) from each term. 
+        ///  automaton where arcs are bytes (or Unicode code points
+        ///  if unicodeArcs = true) from each term.
         /// </summary>
         public virtual Automaton ToAutomaton(TokenStream @in)
         {
@@ -165,7 +162,6 @@ namespace Lucene.Net.Analysis
 
                 if (posInc > 0)
                 {
-
                     // New node:
                     pos += posInc;
 
@@ -337,5 +333,4 @@ namespace Lucene.Net.Analysis
             }
         }
     }
-
 }

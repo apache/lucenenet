@@ -19,43 +19,41 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using DataInput = Lucene.Net.Store.DataInput;
 
-	using DataInput = Lucene.Net.Store.DataInput;
+    /// <summary>
+    /// this exception is thrown when Lucene detects
+    /// an index that is newer than this Lucene version.
+    /// </summary>
+    public class IndexFormatTooNewException : CorruptIndexException
+    {
+        /// <summary>
+        /// Creates an {@code IndexFormatTooNewException}
+        /// </summary>
+        ///  <param name="resourceDesc"> describes the file that was too old </param>
+        ///  <param name="version"> the version of the file that was too old </param>
+        ///  <param name="minVersion"> the minimum version accepted </param>
+        ///  <param name="maxVersion"> the maxium version accepted
+        ///
+        /// @lucene.internal  </param>
+        public IndexFormatTooNewException(string resourceDesc, int version, int minVersion, int maxVersion)
+            : base("Format version is not supported (resource: " + resourceDesc + "): " + version + " (needs to be between " + minVersion + " and " + maxVersion + ")")
+        {
+            Debug.Assert(resourceDesc != null);
+        }
 
-	/// <summary>
-	/// this exception is thrown when Lucene detects
-	/// an index that is newer than this Lucene version.
-	/// </summary>
-	public class IndexFormatTooNewException : CorruptIndexException
-	{
-
-	  /// <summary>
-	  /// Creates an {@code IndexFormatTooNewException}
-	  /// </summary>
-	  ///  <param name="resourceDesc"> describes the file that was too old </param>
-	  ///  <param name="version"> the version of the file that was too old </param>
-	  ///  <param name="minVersion"> the minimum version accepted </param>
-	  ///  <param name="maxVersion"> the maxium version accepted
-	  /// 
-	  /// @lucene.internal  </param>
-	  public IndexFormatTooNewException(string resourceDesc, int version, int minVersion, int maxVersion) : base("Format version is not supported (resource: " + resourceDesc + "): " + version + " (needs to be between " + minVersion + " and " + maxVersion + ")")
-	  {
-		Debug.Assert(resourceDesc != null);
-	  }
-
-	  /// <summary>
-	  /// Creates an {@code IndexFormatTooNewException}
-	  /// </summary>
-	  ///  <param name="in"> the open file that's too old </param>
-	  ///  <param name="version"> the version of the file that was too old </param>
-	  ///  <param name="minVersion"> the minimum version accepted </param>
-	  ///  <param name="maxVersion"> the maxium version accepted
-	  /// 
-	  /// @lucene.internal  </param>
-	  public IndexFormatTooNewException(DataInput @in, int version, int minVersion, int maxVersion) : this(@in.ToString(), version, minVersion, maxVersion)
-	  {
-	  }
-
-	}
-
+        /// <summary>
+        /// Creates an {@code IndexFormatTooNewException}
+        /// </summary>
+        ///  <param name="in"> the open file that's too old </param>
+        ///  <param name="version"> the version of the file that was too old </param>
+        ///  <param name="minVersion"> the minimum version accepted </param>
+        ///  <param name="maxVersion"> the maxium version accepted
+        ///
+        /// @lucene.internal  </param>
+        public IndexFormatTooNewException(DataInput @in, int version, int minVersion, int maxVersion)
+            : this(@in.ToString(), version, minVersion, maxVersion)
+        {
+        }
+    }
 }

@@ -1,37 +1,35 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
-using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
+    using System;
+    using System.IO;
+    using System.Text.RegularExpressions;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using Directory = Lucene.Net.Store.Directory;
-    using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
     using CollectionUtil = Lucene.Net.Util.CollectionUtil;
+    using Directory = Lucene.Net.Store.Directory;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    using System;
-    using System.Text.RegularExpressions;
-    using System.IO;
+    using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
 
     /*
      * this class keeps track of each SegmentInfos instance that
@@ -72,7 +70,6 @@ namespace Lucene.Net.Index
 
     internal sealed class IndexFileDeleter : IDisposable
     {
-
         /* Files that we tried to delete but failed (likely
          * because they are open and we are running on Windows),
          * so we will retry them again later: */
@@ -106,7 +103,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Change to true to see details of reference counts when
-        ///  infoStream is enabled 
+        ///  infoStream is enabled
         /// </summary>
         public static bool VERBOSE_REF_COUNTS = false;
 
@@ -165,13 +162,11 @@ namespace Lucene.Net.Index
                     if (!fileName.EndsWith("write.lock") && !fileName.Equals(IndexFileNames.SEGMENTS_GEN)
                         && (r.IsMatch(fileName) || fileName.StartsWith(IndexFileNames.SEGMENTS)))
                     {
-
                         // Add this file to refCounts with initial count 0:
                         GetRefCount(fileName);
 
                         if (fileName.StartsWith(IndexFileNames.SEGMENTS))
                         {
-
                             // this is a commit (segments or segments_N), and
                             // it's valid (<= the max gen).  Load it, then
                             // incref all files it refers to:
@@ -319,12 +314,10 @@ namespace Lucene.Net.Index
         /// </summary>
         private void DeleteCommits()
         {
-
             int size = CommitsToDelete.Count;
 
             if (size > 0)
             {
-
                 // First decref all files that had been referred to by
                 // the now-deleted commits:
                 for (int i = 0; i < size; i++)
@@ -483,19 +476,19 @@ namespace Lucene.Net.Index
         /// <summary>
         /// For definition of "check point" see IndexWriter comments:
         /// "Clarification: Check Points (and commits)".
-        /// 
+        ///
         /// Writer calls this when it has made a "consistent
         /// change" to the index, meaning new files are written to
         /// the index and the in-memory SegmentInfos have been
         /// modified to point to those files.
-        /// 
+        ///
         /// this may or may not be a commit (segments_N may or may
         /// not have been written).
-        /// 
+        ///
         /// We simply incref the files referenced by the new
         /// SegmentInfos and decref the files we had previously
         /// seen (if any).
-        /// 
+        ///
         /// If this is a commit, we also call the policy to give it
         /// a chance to remove other commits.  If any commits are
         /// removed, we decref their files as well.
@@ -658,7 +651,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Deletes the specified files, but only if they are new
-        ///  (have not yet been incref'd). 
+        ///  (have not yet been incref'd).
         /// </summary>
         internal void DeleteNewFiles(ICollection<string> files)
         {
@@ -723,10 +716,11 @@ namespace Lucene.Net.Index
         /// </summary>
         private sealed class RefCount
         {
-
             // fileName used only for better assert error messages
             internal readonly string FileName;
+
             internal bool InitDone;
+
             internal RefCount(string fileName)
             {
                 this.FileName = fileName;
@@ -763,7 +757,6 @@ namespace Lucene.Net.Index
 
         private sealed class CommitPoint : IndexCommit
         {
-
             internal ICollection<string> Files;
             internal string SegmentsFileName_Renamed;
             internal bool Deleted_Renamed;
@@ -859,5 +852,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

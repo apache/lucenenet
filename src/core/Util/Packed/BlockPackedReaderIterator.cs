@@ -1,11 +1,10 @@
-using Lucene.Net.Store;
 using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -32,7 +31,6 @@ namespace Lucene.Net.Util.Packed
     /// @lucene.internal </seealso>
     public sealed class BlockPackedReaderIterator
     {
-
         internal static long ZigZagDecode(long n)
         {
             return (((long)((ulong)n >> 1)) ^ -(n & 1));
@@ -121,7 +119,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Reset the current reader to wrap a stream of <code>valueCount</code>
-        /// values contained in <code>in</code>. The block size remains unchanged. 
+        /// values contained in <code>in</code>. The block size remains unchanged.
         /// </summary>
         public void Reset(DataInput @in, long valueCount)
         {
@@ -296,7 +294,5 @@ namespace Lucene.Net.Util.Packed
         {
             return Ord_Renamed;
         }
-
     }
-
 }

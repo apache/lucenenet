@@ -38,8 +38,8 @@ namespace Lucene.Net.Support
                     //SHA256 SHA384 SHA512 etc.
                     return SHA1.Create();
                 }
-            return MD5.Create();
+                return MD5.Create();
+            }
         }
     }
-}
 }

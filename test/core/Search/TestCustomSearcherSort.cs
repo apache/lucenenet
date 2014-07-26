@@ -5,16 +5,17 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
+    using NUnit.Framework;
 
     /// <summary>
     /// Copyright 2005 The Apache Software Foundation
-    /// 
+    ///
     /// Licensed under the Apache License, Version 2.0 (the "License");
     /// you may not use this file except in compliance with the License.
     /// You may obtain a copy of the License at
-    /// 
+    ///
     ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
+    ///
     /// Unless required by applicable law or agreed to in writing, software
     /// distributed under the License is distributed on an "AS IS" BASIS,
     /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,26 +23,24 @@ namespace Lucene.Net.Search
     /// limitations under the License.
     /// </summary>
 
-
     using DateTools = Lucene.Net.Document.DateTools;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
 
     /// <summary>
     /// Unit test for sorting code. </summary>
     [TestFixture]
     public class TestCustomSearcherSort : LuceneTestCase
     {
-
         private Directory Index = null;
         private IndexReader Reader;
         private Query Query = null;
+
         // reduced from 20000 to 2000 to speed up test...
         private int INDEX_SIZE;
 
@@ -245,6 +244,7 @@ namespace Lucene.Net.Search
             }
 
             internal Random Random;
+
             // we use the default Locale/TZ since LuceneTestCase randomizes it
             internal DateTime @base = new DateTime(1970, 1, 1, new GregorianCalendar());
 
@@ -253,10 +253,9 @@ namespace Lucene.Net.Search
             {
                 get
                 {
-                    return DateTools.TimeToString((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) + Random.Next() - int.MinValue, DateTools.Resolution.DAY);
+                    return DateTools.TimeToString((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + Random.Next() - int.MinValue, DateTools.Resolution.DAY);
                 }
             }
         }
     }
-
 }

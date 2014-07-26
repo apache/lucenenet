@@ -1,6 +1,5 @@
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -18,10 +17,10 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using AtomicReader = Lucene.Net.Index.AtomicReader; // javadocs
+    // javadocs
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IndexReaderContext = Lucene.Net.Index.IndexReaderContext; // javadocs
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+
+    // javadocs
     using Bits = Lucene.Net.Util.Bits;
 
     /// <summary>
@@ -36,7 +35,7 @@ namespace Lucene.Net.Search
     /// Since <seealso cref="Weight"/> creates <seealso cref="Scorer"/> instances for a given
     /// <seealso cref="AtomicReaderContext"/> (<seealso cref="#scorer(AtomicReaderContext, Bits)"/>)
     /// callers must maintain the relationship between the searcher's top-level
-    /// <seealso cref="IndexReaderContext"/> and the context used to create a <seealso cref="Scorer"/>. 
+    /// <seealso cref="IndexReaderContext"/> and the context used to create a <seealso cref="Scorer"/>.
     /// <p>
     /// A <code>Weight</code> is used in the following way:
     /// <ol>
@@ -51,12 +50,11 @@ namespace Lucene.Net.Search
     /// <li>A <code>Scorer</code> is constructed by
     /// <seealso cref="#scorer(AtomicReaderContext, Bits)"/>.
     /// </ol>
-    /// 
+    ///
     /// @since 2.9
     /// </summary>
     public abstract class Weight
     {
-
         /// <summary>
         /// An explanation of the score computation for the named document.
         /// </summary>
@@ -128,7 +126,6 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
         {
-
             Scorer scorer = Scorer(context, acceptDocs);
             if (scorer == null)
             {
@@ -217,5 +214,4 @@ namespace Lucene.Net.Search
             return false;
         }
     }
-
 }

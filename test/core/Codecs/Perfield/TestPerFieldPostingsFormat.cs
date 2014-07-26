@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Perfield
 {
-
-    using Lucene.Net.Support;
     using NUnit.Framework;
+
     /*
              * Licensed to the Apache Software Foundation (ASF) under one or more
              * contributor license agreements.  See the NOTICE file distributed with
@@ -23,32 +22,28 @@ namespace Lucene.Net.Codecs.Perfield
              * limitations under the License.
              */
 
-
     using BasePostingsFormatTestCase = Lucene.Net.Index.BasePostingsFormatTestCase;
     using RandomCodec = Lucene.Net.Index.RandomCodec;
 
-	/// <summary>
-	/// Basic tests of PerFieldPostingsFormat
-	/// </summary>
+    /// <summary>
+    /// Basic tests of PerFieldPostingsFormat
+    /// </summary>
     [TestFixture]
     public class TestPerFieldPostingsFormat : BasePostingsFormatTestCase
-	{
+    {
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return new RandomCodec(new Random(Random().Next()), new HashSet<string>());
+            }
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return new RandomCodec(new Random(Random().Next()), new HashSet<string>());
-		  }
-	  }
-
-	  [Test]
-      public override void TestMergeStability()
-	  {
-		  //LUCENE TO-DO
-          AssumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
-	  }
-
-	}
-
+        [Test]
+        public override void TestMergeStability()
+        {
+            //LUCENE TO-DO
+            AssumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
+        }
+    }
 }

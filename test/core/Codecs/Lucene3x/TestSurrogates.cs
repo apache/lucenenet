@@ -1,31 +1,30 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
+    using Lucene.Net.Analysis;
+    using Lucene.Net.Document;
+    using Lucene.Net.Index;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Lucene.Net.Store;
-    using Lucene.Net.Document;
-    using Lucene.Net.Analysis;
-    using Lucene.Net.Index;
     using Lucene.Net.Util;
     using NUnit.Framework;
 
@@ -121,7 +120,6 @@ namespace Lucene.Net.Codecs.Lucene3x
         // single straight enum
         private void DoTestStraightEnum(IList<Term> fieldTerms, IndexReader reader, int uniqueTermCount)
         {
-
             if (VERBOSE)
             {
                 Console.WriteLine("\nTEST: top now enum reader=" + reader);
@@ -172,7 +170,6 @@ namespace Lucene.Net.Codecs.Lucene3x
         // from there
         private void DoTestSeekExists(Random r, IList<Term> fieldTerms, IndexReader reader)
         {
-
             IDictionary<string, TermsEnum> tes = new Dictionary<string, TermsEnum>();
 
             // Test random seek to existing term, then enum:
@@ -184,7 +181,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             int num = AtLeast(100);
             for (int iter = 0; iter < num; iter++)
             {
-
                 // pick random field+term
                 int spot = r.Next(fieldTerms.Count);
                 Term term = fieldTerms[spot];
@@ -247,7 +243,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private void DoTestSeekDoesNotExist(Random r, int numField, IList<Term> fieldTerms, Term[] fieldTermsArray, IndexReader reader)
         {
-
             IDictionary<string, TermsEnum> tes = new Dictionary<string, TermsEnum>();
 
             if (VERBOSE)
@@ -259,7 +254,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                 int num = AtLeast(100);
                 for (int iter = 0; iter < num; iter++)
                 {
-
                     // seek to random spot
                     string field = String.Intern("f" + r.Next(numField));
                     Term tx = new Term(field, GetRandomString(r));
@@ -335,7 +329,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                                     Assert.AreEqual(term.Bytes(), t);
                                 }
                             }
-
                         }
                     }
                 }
@@ -416,5 +409,4 @@ namespace Lucene.Net.Codecs.Lucene3x
             dir.Dispose();
         }
     }
-
 }

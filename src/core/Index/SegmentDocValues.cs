@@ -1,20 +1,17 @@
 using System;
-using System.Globalization;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace Lucene.Net.Index
 {
-
-
+    using Lucene.Net.Support;
+    using Lucene.Net.Util;
+    using Directory = Lucene.Net.Store.Directory;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
-    using Directory = Lucene.Net.Store.Directory;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using Lucene.Net.Util;
-    using Lucene.Net.Support;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -39,7 +36,6 @@ namespace Lucene.Net.Index
     /// </summary>
     internal sealed class SegmentDocValues
     {
-
         private readonly IDictionary<long?, RefCount<DocValuesProducer>> GenDVProducers = new Dictionary<long?, RefCount<DocValuesProducer>>();
 
         private RefCount<DocValuesProducer> NewDocValuesProducer(SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, long? gen, IList<FieldInfo> infos, int termsIndexDivisor)
@@ -59,7 +55,6 @@ namespace Lucene.Net.Index
 
         private class RefCountHelper : RefCount<DocValuesProducer>
         {
-
             private readonly SegmentDocValues OuterInstance;
             private long? Gen;
 
@@ -103,7 +98,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Decrement the reference count of the given <seealso cref="DocValuesProducer"/>
-        /// generations. 
+        /// generations.
         /// </summary>
         internal void DecRef(IList<long?> dvProducersGens)
         {
@@ -133,7 +128,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal void Release() { }
+        internal void Release()
+        {
+        }
     }
-
 }

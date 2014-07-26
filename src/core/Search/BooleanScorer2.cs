@@ -1,9 +1,8 @@
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,10 +20,7 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using BooleanWeight = Lucene.Net.Search.BooleanQuery.BooleanWeight;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
     /* See the description in BooleanScorer.java, comparing
      * BooleanScorer & BooleanScorer2 */
@@ -37,7 +33,6 @@ namespace Lucene.Net.Search
     /// </summary>
     internal class BooleanScorer2 : Scorer
     {
-
         private readonly IList<Scorer> RequiredScorers;
         private readonly IList<Scorer> OptionalScorers;
         private readonly IList<Scorer> ProhibitedScorers;
@@ -83,7 +78,7 @@ namespace Lucene.Net.Search
         /// <param name="weight">
         ///          The BooleanWeight to be used. </param>
         /// <param name="disableCoord">
-        ///          If this parameter is true, coordination level matching 
+        ///          If this parameter is true, coordination level matching
         ///          (<seealso cref="Similarity#coord(int, int)"/>) is not used. </param>
         /// <param name="minNrShouldMatch">
         ///          The minimum number of optional added scorers that should match
@@ -120,6 +115,7 @@ namespace Lucene.Net.Search
 
             internal Scorer Scorer;
             internal int LastScoredDoc = -1;
+
             // Save the score of lastScoredDoc, so that we don't compute it more than
             // once in score().
             internal float LastDocScore = float.NaN;
@@ -216,7 +212,7 @@ namespace Lucene.Net.Search
             public override float Score()
             {
                 OuterInstance.coordinator.NrMatchers += base.NrMatchers;
-                return base.Score();
+                return (float)base.score;
             }
         }
 
@@ -243,9 +239,11 @@ namespace Lucene.Net.Search
             }
 
             private int lastScoredDoc;
+
             // Save the score of lastScoredDoc, so that we don't compute it more than
             // once in score().
             private float lastDocScore;
+
             public override float Score()
             {
                 int doc = OuterInstance.DocID();
@@ -390,5 +388,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

@@ -1,33 +1,32 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Codec = Lucene.Net.Codecs.Codec;
+    using Counter = Lucene.Net.Util.Counter;
     using FieldInfosWriter = Lucene.Net.Codecs.FieldInfosWriter;
     using IOContext = Lucene.Net.Store.IOContext;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using Counter = Lucene.Net.Util.Counter;
 
     /// <summary>
     /// this is a DocConsumer that gathers all fields under the
@@ -39,17 +38,18 @@ namespace Lucene.Net.Index
 
     internal sealed class DocFieldProcessor : DocConsumer
     {
-
         internal readonly DocFieldConsumer Consumer;
         internal readonly StoredFieldsConsumer StoredConsumer;
         internal readonly Codec Codec;
 
         // Holds all fields seen in current doc
         internal DocFieldProcessorPerField[] fields = new DocFieldProcessorPerField[1];
+
         internal int FieldCount;
 
         // Hash table for all fields ever seen
         internal DocFieldProcessorPerField[] FieldHash = new DocFieldProcessorPerField[2];
+
         internal int HashMask = 1;
         internal int TotalFieldCount;
 
@@ -69,7 +69,6 @@ namespace Lucene.Net.Index
 
         public override void Flush(SegmentWriteState state)
         {
-
             IDictionary<string, DocFieldConsumerPerField> childFields = new Dictionary<string, DocFieldConsumerPerField>();
             ICollection<DocFieldConsumerPerField> fields = Fields();
             foreach (DocFieldConsumerPerField f in fields)
@@ -195,7 +194,6 @@ namespace Lucene.Net.Index
 
         public override void ProcessDocument(FieldInfos.Builder fieldInfos)
         {
-
             Consumer.StartDocument();
             StoredConsumer.StartDocument();
 
@@ -222,7 +220,6 @@ namespace Lucene.Net.Index
 
                 if (fp == null)
                 {
-
                     // TODO FI: we need to genericize the "flags" that a
                     // field holds, and, how these flags are merged; it
                     // needs to be more "pluggable" such that if I want
@@ -250,7 +247,6 @@ namespace Lucene.Net.Index
 
                 if (thisFieldGen != fp.LastGen)
                 {
-
                     // First time we're seeing this field for this doc
                     fp.FieldCount = 0;
 

@@ -1,41 +1,37 @@
+using Apache.NMS.Util;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
     using AssertingDocValuesFormat = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat;
+    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using Lucene40RWCodec = Lucene.Net.Codecs.Lucene40.Lucene40RWCodec;
     using Lucene41RWCodec = Lucene.Net.Codecs.Lucene41.Lucene41RWCodec;
     using Lucene42RWCodec = Lucene.Net.Codecs.Lucene42.Lucene42RWCodec;
     using Lucene45DocValuesFormat = Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat;
     using Lucene45RWCodec = Lucene.Net.Codecs.Lucene45.Lucene45RWCodec;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
-    using Document = Lucene.Net.Document.Document;
-    using Store = Lucene.Net.Document.Field.Store;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
     using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
     using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
+    using Store = Lucene.Net.Document.Field.Store;
     using StringField = Lucene.Net.Document.StringField;
-    using Directory = Lucene.Net.Store.Directory;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
-    using System.IO;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -59,7 +55,6 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestBinaryDocValuesUpdates : LuceneTestCase
     {
-
         internal static long GetValue(BinaryDocValues bdv, int idx, BytesRef scratch)
         {
             bdv.Get(idx, scratch);
@@ -1741,7 +1736,5 @@ namespace Lucene.Net.Index
 
             dir.Dispose();
         }
-
     }
-
 }

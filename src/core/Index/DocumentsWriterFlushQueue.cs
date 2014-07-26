@@ -1,40 +1,41 @@
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements. See the NOTICE file distributed with this
-     * work for additional information regarding copyright ownership. The ASF
-     * licenses this file to You under the Apache License, Version 2.0 (the
-     * "License"); you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     * 
-     * http://www.apache.org/licenses/LICENSE-2.0
-     * 
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-     * License for the specific language governing permissions and limitations under
-     * the License.
-     */
-
-    using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
     using Lucene.Net.Support;
 
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements. See the NOTICE file distributed with this
+         * work for additional information regarding copyright ownership. The ASF
+         * licenses this file to You under the Apache License, Version 2.0 (the
+         * "License"); you may not use this file except in compliance with the License.
+         * You may obtain a copy of the License at
+         *
+         * http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+         * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+         * License for the specific language governing permissions and limitations under
+         * the License.
+         */
+
+    using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
 
     /// <summary>
-    /// @lucene.internal 
+    /// @lucene.internal
     /// </summary>
     internal class DocumentsWriterFlushQueue
     {
         private readonly LinkedList<FlushTicket> Queue = new LinkedList<FlushTicket>();
+
         // we track tickets separately since count must be present even before the ticket is
         // constructed ie. queue.size would not reflect it.
         private readonly AtomicInteger TicketCount_Renamed = new AtomicInteger();
+
         private readonly ReentrantLock PurgeLock = new ReentrantLock();
 
         internal virtual void AddDeletes(DocumentsWriterDeleteQueue deleteQueue)
@@ -146,10 +147,9 @@ namespace Lucene.Net.Index
                          * if we block on publish -> lock IW -> lock BufferedDeletes we don't block
                          * concurrent segment flushes just because they want to append to the queue.
                          * the downside is that we need to force a purge on fullFlush since ther could
-                         * be a ticket still in the queue. 
+                         * be a ticket still in the queue.
                          */
                         head.Publish(writer);
-
                     }
                     finally
                     {
@@ -233,6 +233,7 @@ namespace Lucene.Net.Index
             }
 
             protected internal abstract void Publish(IndexWriter writer);
+
             protected internal abstract bool CanPublish();
 
             /// <summary>
@@ -286,11 +287,11 @@ namespace Lucene.Net.Index
 
         internal sealed class GlobalDeletesTicket : FlushTicket
         {
-
             protected internal GlobalDeletesTicket(FrozenBufferedUpdates frozenUpdates)
                 : base(frozenUpdates)
             {
             }
+
             protected internal override void Publish(IndexWriter writer)
             {
                 Debug.Assert(!Published, "ticket was already publised - can not publish twice");

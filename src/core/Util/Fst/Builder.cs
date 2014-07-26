@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -34,17 +33,17 @@ namespace Lucene.Net.Util.Fst
     /// on-the-fly into a compact serialized format byte array, which can
     /// be saved to / loaded from a Directory or used directly
     /// for traversal.  The FST is always finite (no cycles).
-    /// 
+    ///
     /// <p>NOTE: The algorithm is described at
     /// http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698</p>
-    /// 
+    ///
     /// <p>The parameterized type T is the output type.  See the
     /// subclasses of <seealso cref="Outputs"/>.
-    /// 
+    ///
     /// <p>FSTs larger than 2.1GB are now possible (as of Lucene
     /// 4.2).  FSTs containing more than 2.1B nodes are also now
     /// possible, however they cannot be packed.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
 
@@ -72,6 +71,7 @@ namespace Lucene.Net.Util.Fst
 
         // for packing
         private readonly bool DoPackFST;
+
         private readonly float AcceptableOverheadRatio;
 
         // NOTE: cutting this over to ArrayList instead loses ~6%
@@ -82,7 +82,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Expert: this is invoked by Builder whenever a suffix
-        ///  is serialized. 
+        ///  is serialized.
         /// </summary>
         public abstract class FreezeTail<S>
         {
@@ -106,24 +106,24 @@ namespace Lucene.Net.Util.Fst
         /// Instantiates an FST/FSA builder with all the possible tuning and construction
         /// tweaks. Read parameter documentation carefully.
         /// </summary>
-        /// <param name="inputType"> 
+        /// <param name="inputType">
         ///    The input type (transition labels). Can be anything from <seealso cref="INPUT_TYPE"/>
-        ///    enumeration. Shorter types will consume less memory. Strings (character sequences) are 
-        ///    represented as <seealso cref="INPUT_TYPE#BYTE4"/> (full unicode codepoints). 
+        ///    enumeration. Shorter types will consume less memory. Strings (character sequences) are
+        ///    represented as <seealso cref="INPUT_TYPE#BYTE4"/> (full unicode codepoints).
         /// </param>
         /// <param name="minSuffixCount1">
         ///    If pruning the input graph during construction, this threshold is used for telling
         ///    if a node is kept or pruned. If transition_count(node) &gt;= minSuffixCount1, the node
-        ///    is kept. 
+        ///    is kept.
         /// </param>
         /// <param name="minSuffixCount2">
-        ///    (Note: only Mike McCandless knows what this one is really doing...) 
+        ///    (Note: only Mike McCandless knows what this one is really doing...)
         /// </param>
-        /// <param name="doShareSuffix"> 
+        /// <param name="doShareSuffix">
         ///    If <code>true</code>, the shared suffixes will be compacted into unique paths.
         ///    this requires an additional RAM-intensive hash map for lookups in memory. Setting this parameter to
         ///    <code>false</code> creates a single suffix path for all input sequences. this will result in a larger
-        ///    FST, but requires substantially less memory and CPU during building.  
+        ///    FST, but requires substantially less memory and CPU during building.
         /// </param>
         /// <param name="doShareNonSingletonNodes">
         ///    Only used if doShareSuffix is true.  Set this to
@@ -244,7 +244,6 @@ namespace Lucene.Net.Util.Fst
                 int downTo = Math.Max(1, prefixLenPlus1);
                 for (int idx = LastInput.Length; idx >= downTo; idx--)
                 {
-
                     bool doPrune = false;
                     bool doCompile = false;
 
@@ -262,7 +261,7 @@ namespace Lucene.Net.Util.Fst
                         if (parent.InputCount < MinSuffixCount2 || (MinSuffixCount2 == 1 && parent.InputCount == 1 && idx > 1))
                         {
                             // my parent, about to be compiled, doesn't make the cut, so
-                            // I'm definitely pruned 
+                            // I'm definitely pruned
 
                             // if minSuffixCount2 is 1, we keep only up
                             // until the 'distinguished edge', ie we keep only the
@@ -276,7 +275,7 @@ namespace Lucene.Net.Util.Fst
                         else
                         {
                             // my parent, about to be compiled, does make the cut, so
-                            // I'm definitely not pruned 
+                            // I'm definitely not pruned
                             doPrune = false;
                         }
                         doCompile = true;
@@ -309,7 +308,6 @@ namespace Lucene.Net.Util.Fst
                     }
                     else
                     {
-
                         if (MinSuffixCount2 != 0)
                         {
                             CompileAllTargets(node, LastInput.Length - idx);
@@ -365,7 +363,7 @@ namespace Lucene.Net.Util.Fst
         ///  output is not.  So if your outputs are changeable (eg
         ///  <seealso cref="ByteSequenceOutputs"/> or {@link
         ///  IntSequenceOutputs}) then you cannot reuse across
-        ///  calls. 
+        ///  calls.
         /// </summary>
         public virtual void Add(IntsRef input, T output)
         {
@@ -510,11 +508,10 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Returns final FST.  NOTE: this will return null if
-        ///  nothing is accepted by the FST. 
+        ///  nothing is accepted by the FST.
         /// </summary>
         public virtual FST<T> Finish()
         {
-
             UnCompiledNode<T> root = Frontier[0];
 
             // minimize nodes in the last word's suffix
@@ -598,6 +595,7 @@ namespace Lucene.Net.Util.Fst
         public sealed class CompiledNode : Node
         {
             public long Node;
+
             public bool Compiled
             {
                 get
@@ -614,11 +612,13 @@ namespace Lucene.Net.Util.Fst
             internal readonly Builder<S> Owner;
             public int NumArcs;
             public Arc<S>[] Arcs;
+
             // TODO: instead of recording isFinal/output on the
             // node, maybe we should use -1 arc to mean "end" (like
             // we do when reading the FST).  Would simplify much
             // code here...
             public S Output;
+
             public bool IsFinal;
             public long InputCount;
 
@@ -654,7 +654,7 @@ namespace Lucene.Net.Util.Fst
                 Output = Owner.NO_OUTPUT;
                 InputCount = 0;
 
-                // We don't clear the depth here because it never changes 
+                // We don't clear the depth here because it never changes
                 // for nodes on the frontier (even when reused).
             }
 
@@ -670,7 +670,7 @@ namespace Lucene.Net.Util.Fst
                 Debug.Assert(label >= 0);
                 if (NumArcs != 0)
                 {
-                    Debug.Assert(label > Arcs[NumArcs - 1].Label, "arc[-1].Label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);                    
+                    Debug.Assert(label > Arcs[NumArcs - 1].Label, "arc[-1].Label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
                 }
                 if (NumArcs == Arcs.Length)
                 {
@@ -736,5 +736,4 @@ namespace Lucene.Net.Util.Fst
             }
         }
     }
-
 }

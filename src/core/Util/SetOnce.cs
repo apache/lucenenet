@@ -3,7 +3,6 @@ using System.Threading;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,12 +26,11 @@ namespace Lucene.Net.Util
     /// and retrieve it many times. If <seealso cref="#set(Object)"/> is called more than once,
     /// <seealso cref="AlreadySetException"/> is thrown and the operation
     /// will fail.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public sealed class SetOnce<T> : ICloneable
     {
-
         /// <summary>
         /// Thrown when <seealso cref="SetOnce#set(Object)"/> is called more than once. </summary>
         public sealed class AlreadySetException : InvalidOperationException
@@ -94,7 +92,5 @@ namespace Lucene.Net.Util
         {
             return Obj == null ? new SetOnce<T>() : new SetOnce<T>(Obj);
         }
-
     }
-
 }

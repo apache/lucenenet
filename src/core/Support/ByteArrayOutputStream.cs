@@ -8,13 +8,11 @@ namespace Lucene.Net.Support
     {
         public ByteArrayOutputStream()
         {
-            
         }
-    
+
         public ByteArrayOutputStream(int size)
             : base(size)
         {
-
         }
 
         public override string ToString()
@@ -22,5 +20,4 @@ namespace Lucene.Net.Support
             return Encoding.UTF8.GetString(this.ToArray());
         }
     }
-
 }

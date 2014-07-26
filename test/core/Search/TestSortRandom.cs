@@ -1,54 +1,52 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Index;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
     using StoredField = Lucene.Net.Document.StoredField;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
-    using Directory = Lucene.Net.Store.Directory;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Lucene.Net.Index;
 
     /// <summary>
     /// random sorting tests </summary>
     [TestFixture]
     public class TestSortRandom : LuceneTestCase
     {
-
         [Test]
         public virtual void TestRandomStringSort()
         {
@@ -112,7 +110,6 @@ namespace Lucene.Net.Search
                     }
                     doc.Add(NewStringField("string", s, Field.Store.NO));
                     docValues.Add(br);
-
                 }
                 else
                 {
@@ -365,5 +362,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

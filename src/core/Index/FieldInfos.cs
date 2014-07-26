@@ -1,13 +1,10 @@
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
-using Lucene.Net.Support;
-using Lucene.Net.Util.Fst;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +21,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
     using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
@@ -204,9 +200,9 @@ namespace Lucene.Net.Index
 
         public sealed class FieldNumbers
         {
-
             internal readonly IDictionary<int?, string> NumberToName;
             internal readonly IDictionary<string, int?> NameToNumber;
+
             // We use this to enforce that a given field never
             // changes DV type, even across segments / IndexWriter
             // sessions:
@@ -347,7 +343,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Creates a new instance with the given <seealso cref="FieldNumbers"/>. 
+            /// Creates a new instance with the given <seealso cref="FieldNumbers"/>.
             /// </summary>
             internal Builder(FieldNumbers globalFieldNumbers)
             {
@@ -368,7 +364,7 @@ namespace Lucene.Net.Index
             ///  booleans nor docValuesType; the indexer chain
             ///  (TermVectorsConsumerPerField, DocFieldProcessor) must
             ///  set these fields when they succeed in consuming
-            ///  the document 
+            ///  the document
             /// </summary>
             public FieldInfo AddOrUpdate(string name, IndexableFieldType fieldType)
             {
@@ -408,7 +404,7 @@ namespace Lucene.Net.Index
                         if (updateGlobal)
                         {
                             // must also update docValuesType map so it's
-                            // aware of this field's DocValueType 
+                            // aware of this field's DocValueType
                             GlobalFieldNumbers.SetDocValuesType(fi.Number, name, docValues);
                         }
                     }
@@ -440,5 +436,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

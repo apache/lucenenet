@@ -3,37 +3,36 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
 
     [TestFixture]
     public class TestPerSegmentDeletes : LuceneTestCase
@@ -117,43 +116,43 @@ namespace Lucene.Net.Index
             /// Assert.IsTrue(writer.numRamDocs() > 0);
             /// // delete from the ram buffer
             /// writer.DeleteDocuments(new Term("id", Integer.toString(13)));
-            /// 
+            ///
             /// Term id3 = new Term("id", Integer.toString(3));
-            /// 
+            ///
             /// // delete from the 1st segment
             /// writer.DeleteDocuments(id3);
-            /// 
+            ///
             /// Assert.IsTrue(writer.numRamDocs() > 0);
-            /// 
+            ///
             /// //System.out
             /// //    .println("segdels1:" + writer.docWriter.deletesToString());
-            /// 
+            ///
             /// //Assert.IsTrue(writer.docWriter.segmentDeletes.Size() > 0);
-            /// 
+            ///
             /// // we cause a merge to happen
             /// fsmp.doMerge = true;
             /// fsmp.start = 0;
             /// fsmp.Length = 2;
             /// System.out.println("maybeMerge "+writer.SegmentInfos);
-            /// 
+            ///
             /// SegmentInfo info0 = writer.SegmentInfos.Info(0);
             /// SegmentInfo info1 = writer.SegmentInfos.Info(1);
-            /// 
+            ///
             /// writer.MaybeMerge();
             /// System.out.println("maybeMerge after "+writer.SegmentInfos);
             /// // there should be docs in RAM
             /// Assert.IsTrue(writer.numRamDocs() > 0);
-            /// 
+            ///
             /// // assert we've merged the 1 and 2 segments
             /// // and still have a segment leftover == 2
             /// Assert.AreEqual(2, writer.SegmentInfos.Size());
             /// Assert.IsFalse(segThere(info0, writer.SegmentInfos));
             /// Assert.IsFalse(segThere(info1, writer.SegmentInfos));
-            /// 
+            ///
             /// //System.out.println("segdels2:" + writer.docWriter.deletesToString());
-            /// 
+            ///
             /// //Assert.IsTrue(writer.docWriter.segmentDeletes.Size() > 0);
-            /// 
+            ///
             /// IndexReader r = writer.GetReader();
             /// IndexReader r1 = r.getSequentialSubReaders()[0];
             /// printDelDocs(r1.GetLiveDocs());
@@ -162,9 +161,9 @@ namespace Lucene.Net.Index
             /// // there shouldn't be any docs for id:3
             /// Assert.IsTrue(docs == null);
             /// r.Dispose();
-            /// 
+            ///
             /// part2(writer, fsmp);
-            /// 
+            ///
             */
             // System.out.println("segdels2:"+writer.docWriter.segmentDeletes.toString());
             //System.out.println("close");
@@ -181,7 +180,7 @@ namespace Lucene.Net.Index
         ///  }
         ///  return false;
         /// }
-        /// 
+        ///
         /// </summary>
         internal virtual void Part2(IndexWriter writer, RangeMergePolicy fsmp)
         {
@@ -286,6 +285,7 @@ namespace Lucene.Net.Index
             public override void Dispose()
             {
             }
+
             public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
             {
                 MergeSpecification ms = new MergeSpecification();
@@ -315,5 +315,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

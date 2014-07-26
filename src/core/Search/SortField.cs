@@ -1,11 +1,10 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,85 +22,82 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     using BytesRef = Lucene.Net.Util.BytesRef;
     using StringHelper = Lucene.Net.Util.StringHelper;
 
     /// <summary>
     /// Stores information about how to sort documents by terms in an individual
     /// field.  Fields must be indexed in order to sort by them.
-    /// 
+    ///
     /// <p>Created: Feb 11, 2004 1:25:29 PM
-    /// 
+    ///
     /// @since   lucene 1.4 </summary>
     /// <seealso cref= Sort </seealso>
     public class SortField
     {
-
         /// <summary>
         /// Specifies the type of the terms to be sorted, or special types such as CUSTOM
         /// </summary>
         public enum Type_e
         {
-
             /// <summary>
             /// Sort by document score (relevance).  Sort values are Float and higher
-            /// values are at the front. 
+            /// values are at the front.
             /// </summary>
             SCORE,
 
             /// <summary>
             /// Sort by document number (index order).  Sort values are Integer and lower
-            /// values are at the front. 
+            /// values are at the front.
             /// </summary>
             DOC,
 
             /// <summary>
             /// Sort using term values as Strings.  Sort values are String and lower
-            /// values are at the front. 
+            /// values are at the front.
             /// </summary>
             STRING,
 
             /// <summary>
             /// Sort using term values as encoded Integers.  Sort values are Integer and
-            /// lower values are at the front. 
+            /// lower values are at the front.
             /// </summary>
             INT,
 
             /// <summary>
             /// Sort using term values as encoded Floats.  Sort values are Float and
-            /// lower values are at the front. 
+            /// lower values are at the front.
             /// </summary>
             FLOAT,
 
             /// <summary>
             /// Sort using term values as encoded Longs.  Sort values are Long and
-            /// lower values are at the front. 
+            /// lower values are at the front.
             /// </summary>
             LONG,
 
             /// <summary>
             /// Sort using term values as encoded Doubles.  Sort values are Double and
-            /// lower values are at the front. 
+            /// lower values are at the front.
             /// </summary>
             DOUBLE,
 
             /// <summary>
             /// Sort using term values as encoded Shorts.  Sort values are Short and
-            /// lower values are at the front. 
+            /// lower values are at the front.
             /// </summary>
             [System.Obsolete]
             SHORT,
 
             /// <summary>
             /// Sort using a custom Comparator.  Sort values are any Comparable and
-            /// sorting is done according to natural order. 
+            /// sorting is done according to natural order.
             /// </summary>
             CUSTOM,
 
             /// <summary>
             /// Sort using term values as encoded Bytes.  Sort values are Byte and
-            /// lower values are at the front. 
+            /// lower values are at the front.
             /// </summary>
             [System.Obsolete]
             BYTE,
@@ -110,7 +106,7 @@ namespace Lucene.Net.Search
             /// Sort using term values as Strings, but comparing by
             /// value (using String.compareTo) for all comparisons.
             /// this is typically slower than <seealso cref="#STRING"/>, which
-            /// uses ordinals to do the sorting. 
+            /// uses ordinals to do the sorting.
             /// </summary>
             STRING_VAL,
 
@@ -120,7 +116,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Force rewriting of SortField using <seealso cref="SortField#rewrite(IndexSearcher)"/>
-            /// before it can be used for sorting 
+            /// before it can be used for sorting
             /// </summary>
             REWRITEABLE
         }
@@ -231,7 +227,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Pass this to <seealso cref="#setMissingValue"/> to have missing
-        ///  string values sort first. 
+        ///  string values sort first.
         /// </summary>
         public static readonly object STRING_FIRST = new ObjectAnonymousInnerClassHelper();
 
@@ -249,7 +245,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Pass this to <seealso cref="#setMissingValue"/> to have missing
-        ///  string values sort last. 
+        ///  string values sort last.
         /// </summary>
         public static readonly object STRING_LAST = new ObjectAnonymousInnerClassHelper2();
 
@@ -457,7 +453,7 @@ namespace Lucene.Net.Search
         /// Returns true if <code>o</code> is equal to this.  If a
         ///  <seealso cref="FieldComparatorSource"/> or {@link
         ///  FieldCache.Parser} was provided, it must properly
-        ///  implement equals (unless a singleton is always used). 
+        ///  implement equals (unless a singleton is always used).
         /// </summary>
         public override bool Equals(object o)
         {
@@ -478,7 +474,7 @@ namespace Lucene.Net.Search
         ///  <seealso cref="FieldComparatorSource"/> or {@link
         ///  FieldCache.Parser} was provided, it must properly
         ///  implement hashCode (unless a singleton is always
-        ///  used). 
+        ///  used).
         /// </summary>
         public override int GetHashCode()
         {
@@ -508,11 +504,10 @@ namespace Lucene.Net.Search
             }
         }
 
-
         /// <summary>
         /// Returns the <seealso cref="FieldComparator"/> to use for
         /// sorting.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         /// <param name="numHits"> number of top hits the queue will store </param>
@@ -523,7 +518,6 @@ namespace Lucene.Net.Search
         /// <returns> <seealso cref="FieldComparator"/> to use when sorting </returns>
         public virtual FieldComparator GetComparator(int numHits, int sortPos)
         {
-
             switch (type)
             {
                 case Type_e.SCORE:
@@ -590,5 +584,4 @@ namespace Lucene.Net.Search
             return type == Type_e.SCORE;
         }
     }
-
 }

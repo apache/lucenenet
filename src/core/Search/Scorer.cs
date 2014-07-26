@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,12 +19,11 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     using DocsEnum = Lucene.Net.Index.DocsEnum;
 
     /// <summary>
     /// Expert: Common scoring functionality for different types of queries.
-    /// 
+    ///
     /// <p>
     /// A <code>Scorer</code> iterates over documents matching a
     /// query in increasing order of doc Id.
@@ -34,7 +32,7 @@ namespace Lucene.Net.Search
     /// Document scores are computed using a given <code>Similarity</code>
     /// implementation.
     /// </p>
-    /// 
+    ///
     /// <p><b>NOTE</b>: The values Float.Nan,
     /// Float.NEGATIVE_INFINITY and Float.POSITIVE_INFINITY are
     /// not valid scores.  Certain collectors (eg {@link
@@ -78,7 +76,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns child sub-scorers
-        /// @lucene.experimental 
+        /// @lucene.experimental
         /// </summary>
         public virtual ICollection<ChildScorer> Children
         {
@@ -90,8 +88,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// A child Scorer and its relationship to its parent.
-        /// the meaning of the relationship depends upon the parent query. 
-        /// @lucene.experimental 
+        /// the meaning of the relationship depends upon the parent query.
+        /// @lucene.experimental
         /// </summary>
         public class ChildScorer
         {
@@ -100,6 +98,7 @@ namespace Lucene.Net.Search
             /// itself also have children).
             /// </summary>
             public readonly Scorer Child;
+
             /// <summary>
             /// An arbitrary string relating this scorer to the parent.
             /// </summary>
@@ -108,8 +107,8 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Creates a new ChildScorer node with the specified relationship.
             /// <p>
-            /// The relationship can be any be any string that makes sense to 
-            /// the parent Scorer. 
+            /// The relationship can be any be any string that makes sense to
+            /// the parent Scorer.
             /// </summary>
             public ChildScorer(Scorer child, string relationship)
             {
@@ -118,5 +117,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

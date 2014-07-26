@@ -1,11 +1,10 @@
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Codecs.Perfield
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,26 +22,24 @@ namespace Lucene.Net.Codecs.Perfield
      * limitations under the License.
      */
 
-
     using FieldInfo = Lucene.Net.Index.FieldInfo;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
     using Terms = Lucene.Net.Index.Terms;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Enables per field postings support.
     /// <p>
-    /// Note, when extending this class, the name (<seealso cref="#getName"/>) is 
+    /// Note, when extending this class, the name (<seealso cref="#getName"/>) is
     /// written into the index. In order for the field to be read, the
     /// name must resolve to your implementation via <seealso cref="#forName(String)"/>.
-    /// this method uses Java's 
+    /// this method uses Java's
     /// <seealso cref="ServiceLoader Service Provider Interface"/> to resolve format names.
     /// <p>
-    /// Files written by each posting format have an additional suffix containing the 
-    /// format name. For example, in a per-field configuration instead of <tt>_1.prx</tt> 
+    /// Files written by each posting format have an additional suffix containing the
+    /// format name. For example, in a per-field configuration instead of <tt>_1.prx</tt>
     /// filenames would look like <tt>_1_Lucene40_0.prx</tt>. </summary>
     /// <seealso cref= ServiceLoader
     /// @lucene.experimental </seealso>
@@ -55,16 +52,15 @@ namespace Lucene.Net.Codecs.Perfield
 
         /// <summary>
         /// <seealso cref="FieldInfo"/> attribute name used to store the
-        ///  format name for each field. 
+        ///  format name for each field.
         /// </summary>
         public static readonly string PER_FIELD_FORMAT_KEY = typeof(PerFieldPostingsFormat).Name + ".format";
 
         /// <summary>
         /// <seealso cref="FieldInfo"/> attribute name used to store the
-        ///  segment suffix name for each field. 
+        ///  segment suffix name for each field.
         /// </summary>
         public static readonly string PER_FIELD_SUFFIX_KEY = typeof(PerFieldPostingsFormat).Name + ".suffix";
-
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -92,7 +88,6 @@ namespace Lucene.Net.Codecs.Perfield
         private class FieldsWriter : FieldsConsumer
         {
             private readonly PerFieldPostingsFormat OuterInstance;
-
 
             internal readonly IDictionary<PostingsFormat, FieldsConsumerAndSuffix> Formats = new Dictionary<PostingsFormat, FieldsConsumerAndSuffix>();
             internal readonly IDictionary<string, int> Suffixes = new Dictionary<string, int>();
@@ -192,7 +187,6 @@ namespace Lucene.Net.Codecs.Perfield
         {
             private readonly PerFieldPostingsFormat OuterInstance;
 
-
             internal readonly IDictionary<string, FieldsProducer> Fields = new SortedDictionary<string, FieldsProducer>();
             internal readonly IDictionary<string, FieldsProducer> Formats = new Dictionary<string, FieldsProducer>();
 
@@ -285,13 +279,12 @@ namespace Lucene.Net.Codecs.Perfield
         }
 
         /// <summary>
-        /// Returns the postings format that should be used for writing 
+        /// Returns the postings format that should be used for writing
         /// new segments of <code>field</code>.
         /// <p>
         /// The field to format mapping is written to the index, so
-        /// this method is only invoked when writing, not when reading. 
+        /// this method is only invoked when writing, not when reading.
         /// </summary>
         public abstract PostingsFormat GetPostingsFormatForField(string field);
     }
-
 }

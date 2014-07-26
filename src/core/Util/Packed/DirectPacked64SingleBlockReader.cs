@@ -1,7 +1,7 @@
 namespace Lucene.Net.Util.Packed
 {
-
     using System;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,50 +21,49 @@ namespace Lucene.Net.Util.Packed
 
     using IndexInput = Lucene.Net.Store.IndexInput;
 
-	internal sealed class DirectPacked64SingleBlockReader : PackedInts.ReaderImpl
-	{
+    internal sealed class DirectPacked64SingleBlockReader : PackedInts.ReaderImpl
+    {
+        private readonly IndexInput @in;
+        private readonly long StartPointer;
+        private readonly int ValuesPerBlock;
+        private readonly long Mask;
 
-	  private readonly IndexInput @in;
-	  private readonly long StartPointer;
-	  private readonly int ValuesPerBlock;
-	  private readonly long Mask;
+        internal DirectPacked64SingleBlockReader(int bitsPerValue, int valueCount, IndexInput @in)
+            : base(valueCount, bitsPerValue)
+        {
+            this.@in = @in;
+            StartPointer = @in.FilePointer;
+            ValuesPerBlock = 64 / bitsPerValue;
+            Mask = ~(~0L << bitsPerValue);
+        }
 
-	  internal DirectPacked64SingleBlockReader(int bitsPerValue, int valueCount, IndexInput @in) : base(valueCount, bitsPerValue)
-	  {
-		this.@in = @in;
-		StartPointer = @in.FilePointer;
-		ValuesPerBlock = 64 / bitsPerValue;
-		Mask = ~(~0L << bitsPerValue);
-	  }
+        public override long Get(int index)
+        {
+            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+            //ORIGINAL LINE: final int blockOffset = index / valuesPerBlock;
+            int blockOffset = index / ValuesPerBlock;
+            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+            //ORIGINAL LINE: final long skip = ((long) blockOffset) << 3;
+            long skip = ((long)blockOffset) << 3;
+            try
+            {
+                @in.Seek(StartPointer + skip);
 
-	  public override long Get(int index)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int blockOffset = index / valuesPerBlock;
-		int blockOffset = index / ValuesPerBlock;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long skip = ((long) blockOffset) << 3;
-		long skip = ((long) blockOffset) << 3;
-		try
-		{
-		  @in.Seek(StartPointer + skip);
+                long block = @in.ReadLong();
+                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                //ORIGINAL LINE: final int offsetInBlock = index % valuesPerBlock;
+                int offsetInBlock = index % ValuesPerBlock;
+                return ((long)((ulong)block >> (offsetInBlock * bitsPerValue))) & Mask;
+            }
+            catch (System.IO.IOException e)
+            {
+                throw new InvalidOperationException("failed", e);
+            }
+        }
 
-		  long block = @in.ReadLong();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offsetInBlock = index % valuesPerBlock;
-		  int offsetInBlock = index % ValuesPerBlock;
-		  return ((long)((ulong)block >> (offsetInBlock * bitsPerValue))) & Mask;
-		}
-		catch (System.IO.IOException e)
-		{
-		  throw new InvalidOperationException("failed", e);
-		}
-	  }
-
-	  public override long RamBytesUsed()
-	  {
-		return 0;
-	  }
-	}
-
+        public override long RamBytesUsed()
+        {
+            return 0;
+        }
+    }
 }

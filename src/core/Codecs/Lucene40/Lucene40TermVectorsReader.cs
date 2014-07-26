@@ -1,27 +1,30 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
+    using Lucene.Net.Support;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
@@ -29,16 +32,12 @@ namespace Lucene.Net.Codecs.Lucene40
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using Fields = Lucene.Net.Index.Fields;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Lucene 4.0 Term Vectors reader.
@@ -48,7 +47,6 @@ namespace Lucene.Net.Codecs.Lucene40
     /// <seealso cref= Lucene40TermVectorsFormat </seealso>
     public class Lucene40TermVectorsReader : TermVectorsReader, IDisposable
     {
-
         internal const sbyte STORE_POSITIONS_WITH_TERMVECTOR = 0x1;
 
         internal const sbyte STORE_OFFSET_WITH_TERMVECTOR = 0x2;
@@ -87,7 +85,6 @@ namespace Lucene.Net.Codecs.Lucene40
         private IndexInput Tvf;
         private int Size_Renamed;
         private int NumTotalDocs;
-
 
         /// <summary>
         /// Used by clone. </summary>
@@ -186,11 +183,10 @@ namespace Lucene.Net.Codecs.Lucene40
         ///  startDocID.  this is used for bulk copying when
         ///  merging segments, if the field numbers are
         ///  congruent.  Once this returns, the tvf & tvd streams
-        ///  are seeked to the startDocID. 
+        ///  are seeked to the startDocID.
         /// </summary>
         internal void RawDocs(int[] tvdLengths, int[] tvfLengths, int startDocID, int numDocs)
         {
-
             if (Tvx == null)
             {
                 CollectionsHelper.Fill(tvdLengths, 0);
@@ -239,7 +235,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 IOUtils.Close(Tvx, Tvd, Tvf);
         }
 
-        /// 
+        ///
         /// <returns> The number of documents in the reader </returns>
         internal virtual int Size()
         {
@@ -463,6 +459,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             // one shared byte[] for any term's payloads
             internal int[] PayloadOffsets;
+
             internal int LastPayloadLength;
             internal sbyte[] PayloadData;
 
@@ -639,7 +636,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
-
                 if (!StorePositions && !StoreOffsets)
                 {
                     return null;
@@ -899,6 +895,4 @@ namespace Lucene.Net.Codecs.Lucene40
         {
         }
     }
-
-
 }

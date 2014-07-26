@@ -1,135 +1,132 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using CollectionUtil = Lucene.Net.Util.CollectionUtil;
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-
-	using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using CollectionUtil = Lucene.Net.Util.CollectionUtil;
-	using IOUtils = Lucene.Net.Util.IOUtils;
+    using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
+    using IOUtils = Lucene.Net.Util.IOUtils;
 
     public sealed class FreqProxTermsWriter : TermsHashConsumer
-	{
+    {
+        public override void Abort()
+        // TODO: would be nice to factor out more of this, eg the
+        // FreqProxFieldMergeState, and code to visit all Fields
+        // under the same FieldInfo together, up into TermsHash*.
+        // Other writers would presumably share alot of this...
+        {
+        }
 
-      public override void Abort()
-	  // TODO: would be nice to factor out more of this, eg the
-	  // FreqProxFieldMergeState, and code to visit all Fields
-	  // under the same FieldInfo together, up into TermsHash*.
-	  // Other writers would presumably share alot of this...
-	  {
-	  }
-	  public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
-	  {
+        public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
+        {
+            // Gather all FieldData's that have postings, across all
+            // ThreadStates
+            IList<FreqProxTermsWriterPerField> allFields = new List<FreqProxTermsWriterPerField>();
 
-		// Gather all FieldData's that have postings, across all
-		// ThreadStates
-		IList<FreqProxTermsWriterPerField> allFields = new List<FreqProxTermsWriterPerField>();
+            foreach (TermsHashConsumerPerField f in fieldsToFlush.Values)
+            {
+                FreqProxTermsWriterPerField perField = (FreqProxTermsWriterPerField)f;
+                if (perField.TermsHashPerField.BytesHash.Size() > 0)
+                {
+                    allFields.Add(perField);
+                }
+            }
 
-		foreach (TermsHashConsumerPerField f in fieldsToFlush.Values)
-		{
-		  FreqProxTermsWriterPerField perField = (FreqProxTermsWriterPerField) f;
-		  if (perField.TermsHashPerField.BytesHash.Size() > 0)
-		  {
-			allFields.Add(perField);
-		  }
-		}
+            int numAllFields = allFields.Count;
 
-		int numAllFields = allFields.Count;
+            // Sort by field name
+            CollectionUtil.IntroSort(allFields);
 
-		// Sort by field name
-		CollectionUtil.IntroSort(allFields);
+            FieldsConsumer consumer = state.SegmentInfo.Codec.PostingsFormat().FieldsConsumer(state);
 
-		FieldsConsumer consumer = state.SegmentInfo.Codec.PostingsFormat().FieldsConsumer(state);
+            bool success = false;
 
-		bool success = false;
+            try
+            {
+                TermsHash termsHash = null;
 
-		try
-		{
-		  TermsHash termsHash = null;
+                /*
+              Current writer chain:
+                FieldsConsumer
+                  -> IMPL: FormatPostingsTermsDictWriter
+                    -> TermsConsumer
+                      -> IMPL: FormatPostingsTermsDictWriter.TermsWriter
+                        -> DocsConsumer
+                          -> IMPL: FormatPostingsDocsWriter
+                            -> PositionsConsumer
+                              -> IMPL: FormatPostingsPositionsWriter
+                 */
 
-		  /*
-		Current writer chain:
-		  FieldsConsumer
-		    -> IMPL: FormatPostingsTermsDictWriter
-		      -> TermsConsumer
-		        -> IMPL: FormatPostingsTermsDictWriter.TermsWriter
-		          -> DocsConsumer
-		            -> IMPL: FormatPostingsDocsWriter
-		              -> PositionsConsumer
-		                -> IMPL: FormatPostingsPositionsWriter
-		   */
+                for (int fieldNumber = 0; fieldNumber < numAllFields; fieldNumber++)
+                {
+                    FieldInfo fieldInfo = allFields[fieldNumber].fieldInfo;
 
-		  for (int fieldNumber = 0; fieldNumber < numAllFields; fieldNumber++)
-		  {
-			FieldInfo fieldInfo = allFields[fieldNumber].fieldInfo;
+                    FreqProxTermsWriterPerField fieldWriter = allFields[fieldNumber];
 
-			FreqProxTermsWriterPerField fieldWriter = allFields[fieldNumber];
+                    // If this field has postings then add them to the
+                    // segment
+                    fieldWriter.Flush(fieldInfo.Name, consumer, state);
 
-			// If this field has postings then add them to the
-			// segment
-			fieldWriter.Flush(fieldInfo.Name, consumer, state);
+                    TermsHashPerField perField = fieldWriter.TermsHashPerField;
+                    Debug.Assert(termsHash == null || termsHash == perField.TermsHash);
+                    termsHash = perField.TermsHash;
+                    int numPostings = perField.BytesHash.Size();
+                    perField.Reset();
+                    perField.ShrinkHash(numPostings);
+                    fieldWriter.Reset();
+                }
 
-			TermsHashPerField perField = fieldWriter.TermsHashPerField;
-			Debug.Assert(termsHash == null || termsHash == perField.TermsHash);
-			termsHash = perField.TermsHash;
-			int numPostings = perField.BytesHash.Size();
-			perField.Reset();
-			perField.ShrinkHash(numPostings);
-			fieldWriter.Reset();
-		  }
+                if (termsHash != null)
+                {
+                    termsHash.Reset();
+                }
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Close(consumer);
+                }
+                else
+                {
+                    IOUtils.CloseWhileHandlingException(consumer);
+                }
+            }
+        }
 
-		  if (termsHash != null)
-		  {
-			termsHash.Reset();
-		  }
-		  success = true;
-		}
-		finally
-		{
-		  if (success)
-		  {
-			IOUtils.Close(consumer);
-		  }
-		  else
-		  {
-			IOUtils.CloseWhileHandlingException(consumer);
-		  }
-		}
-	  }
+        internal BytesRef Payload;
 
-	  internal BytesRef Payload;
+        public override TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo)
+        {
+            return new FreqProxTermsWriterPerField(termsHashPerField, this, fieldInfo);
+        }
 
-	  public override TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo)
-	  {
-		return new FreqProxTermsWriterPerField(termsHashPerField, this, fieldInfo);
-	  }
+        public override void FinishDocument(TermsHash termsHash)
+        {
+        }
 
-      public override void FinishDocument(TermsHash termsHash)
-	  {
-	  }
-
-      public override void StartDocument()
-	  {
-	  }
-	}
-
+        public override void StartDocument()
+        {
+        }
+    }
 }

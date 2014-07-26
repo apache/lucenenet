@@ -1,51 +1,49 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Codecs;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Support;
+    using Lucene.Net.Util;
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Codec = Lucene.Net.Codecs.Codec;
+    using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
+    using CoreClosedListener = Lucene.Net.Index.SegmentReader.CoreClosedListener;
+    using Directory = Lucene.Net.Store.Directory;
     using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
     using StoredFieldsReader = Lucene.Net.Codecs.StoredFieldsReader;
     using TermVectorsReader = Lucene.Net.Codecs.TermVectorsReader;
-    using CoreClosedListener = Lucene.Net.Index.SegmentReader.CoreClosedListener;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using Lucene.Net.Util;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using Lucene.Net.Support;
-
 
     /// <summary>
     /// Holds core readers that are shared (unchanged) when
-    /// SegmentReader is cloned or reopened 
+    /// SegmentReader is cloned or reopened
     /// </summary>
     public sealed class SegmentCoreReaders
     {
-
         // Counts how many other readers share the core objects
         // (freqStream, proxStream, tis, etc.) of this reader;
         // when coreRef drops to 0, these core objects may be
@@ -72,6 +70,7 @@ namespace Lucene.Net.Index
         private class AnonymousFieldsReaderLocal : IDisposableThreadLocal<StoredFieldsReader>
         {
             private readonly SegmentCoreReaders OuterInstance;
+
             public AnonymousFieldsReaderLocal(SegmentCoreReaders outerInstance)
             {
                 OuterInstance = outerInstance;
@@ -88,6 +87,7 @@ namespace Lucene.Net.Index
         private class AnonymousTermVectorsLocal : IDisposableThreadLocal<TermVectorsReader>
         {
             private readonly SegmentCoreReaders OuterInstance;
+
             public AnonymousTermVectorsLocal(SegmentCoreReaders outerInstance)
             {
                 OuterInstance = outerInstance;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
                 // Ask codec for its Fields
                 Fields = format.FieldsProducer(segmentReadState);
                 Debug.Assert(Fields != null);
-                // ask codec for its Norms: 
+                // ask codec for its Norms:
                 // TODO: since we don't write any norms file if there are no norms,
                 // kinda jaky to assume the codec handles the case of no norms file at all gracefully?!
 
@@ -172,9 +172,7 @@ namespace Lucene.Net.Index
                 }
                 catch (System.AccessViolationException ave)
                 {
-                    
                 }
-                
 
                 //FieldsReaderOrig = si.Info.Codec.StoredFieldsFormat().FieldsReader(cfsDir, si.Info, fieldInfos, context);
 
@@ -228,7 +226,7 @@ namespace Lucene.Net.Index
             object ret;
             NumericDocValues norms;
             normFields.TryGetValue(fi.Name, out ret);
-            norms = (NumericDocValues) ret;
+            norms = (NumericDocValues)ret;
             if (norms == null)
             {
                 norms = NormsProducer.GetNumeric(fi);
@@ -272,7 +270,6 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception)
                     {
-
                     }
                 }
                 IOUtils.ReThrowUnchecked(th);
@@ -296,5 +293,4 @@ namespace Lucene.Net.Index
             return ((NormsProducer != null) ? NormsProducer.RamBytesUsed() : 0) + ((Fields != null) ? Fields.RamBytesUsed() : 0) + ((FieldsReaderOrig != null) ? FieldsReaderOrig.RamBytesUsed() : 0) + ((TermVectorsReaderOrig != null) ? TermVectorsReaderOrig.RamBytesUsed() : 0);
         }
     }
-
 }

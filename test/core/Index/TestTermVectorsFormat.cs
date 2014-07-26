@@ -1,10 +1,9 @@
-using Lucene.Net.Util;
 using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
-
     using System.Collections.Generic;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -22,46 +21,42 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-
     using Codec = Lucene.Net.Codecs.Codec;
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
 
-	/// <summary>
-	/// Tests with the default randomized codec. Not really redundant with
-	/// other specific instantiations since we want to test some test-only impls
-	/// like Asserting, as well as make it easy to write a codec and pass -Dtests.codec
-	/// </summary>
-	[TestFixture]
+    /// <summary>
+    /// Tests with the default randomized codec. Not really redundant with
+    /// other specific instantiations since we want to test some test-only impls
+    /// like Asserting, as well as make it easy to write a codec and pass -Dtests.codec
+    /// </summary>
+    [TestFixture]
     public class TestTermVectorsFormat : BaseTermVectorsFormatTestCase
-	{
+    {
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return Codec.Default;
+            }
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return Codec.Default;
-		  }
-	  }
+        protected internal override IEnumerable<Options> ValidOptions()
+        {
+            if (Codec is Lucene3xCodec)
+            {
+                // payloads are not supported on vectors in 3.x indexes
+                return ValidOptions(Options.NONE, Options.POSITIONS_AND_OFFSETS);
+            }
+            else
+            {
+                return base.ValidOptions();
+            }
+        }
 
-	  protected internal override IEnumerable<Options> ValidOptions()
-	  {
-		if (Codec is Lucene3xCodec)
-		{
-		  // payloads are not supported on vectors in 3.x indexes
-		  return ValidOptions(Options.NONE, Options.POSITIONS_AND_OFFSETS);
-		}
-		else
-		{
-		  return base.ValidOptions();
-		}
-	  }
-
-      [Test]
-      public override void TestMergeStability()
-	  {
-		AssumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
-	  }
-
-	}
-
+        [Test]
+        public override void TestMergeStability()
+        {
+            AssumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
+        }
+    }
 }

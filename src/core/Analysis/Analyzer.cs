@@ -1,13 +1,10 @@
-using System;
-using System.IO;
-using System.Diagnostics;
-using System.Collections.Generic;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -54,7 +51,7 @@ namespace Lucene.Net.Analysis
     ///   <li><a href="{@docRoot}/../analyzers-common/overview-summary.html">Common</a>:
     ///       Analyzers for indexing content in different languages and domains.
     ///   <li><a href="{@docRoot}/../analyzers-icu/overview-summary.html">ICU</a>:
-    ///       Exposes functionality from ICU to Apache Lucene. 
+    ///       Exposes functionality from ICU to Apache Lucene.
     ///   <li><a href="{@docRoot}/../analyzers-kuromoji/overview-summary.html">Kuromoji</a>:
     ///       Morphological analyzer for Japanese text.
     ///   <li><a href="{@docRoot}/../analyzers-morfologik/overview-summary.html">Morfologik</a>:
@@ -65,13 +62,12 @@ namespace Lucene.Net.Analysis
     ///       Analyzer for Simplified Chinese, which indexes words.
     ///   <li><a href="{@docRoot}/../analyzers-stempel/overview-summary.html">Stempel</a>:
     ///       Algorithmic Stemmer for the Polish Language.
-    ///   <li><a href="{@docRoot}/../analyzers-uima/overview-summary.html">UIMA</a>: 
-    ///       Analysis integration with Apache UIMA. 
+    ///   <li><a href="{@docRoot}/../analyzers-uima/overview-summary.html">UIMA</a>:
+    ///       Analysis integration with Apache UIMA.
     /// </ul>
     /// </summary>
     public abstract class Analyzer : IDisposable
     {
-
         private readonly ReuseStrategy ReuseStrategy_Renamed;
 
         // non final as it gets nulled if closed; pkg private for access by ReuseStrategy's final helper methods:
@@ -79,7 +75,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Create a new Analyzer, reusing the same set of components per-thread
-        /// across calls to <seealso cref="#tokenStream(String, Reader)"/>. 
+        /// across calls to <seealso cref="#tokenStream(String, Reader)"/>.
         /// </summary>
         public Analyzer()
             : this(GLOBAL_REUSE_STRATEGY)
@@ -90,7 +86,7 @@ namespace Lucene.Net.Analysis
         /// Expert: create a new Analyzer with a custom <seealso cref="ReuseStrategy"/>.
         /// <p>
         /// NOTE: if you just want to reuse on a per-field basis, its easier to
-        /// use a subclass of <seealso cref="AnalyzerWrapper"/> such as 
+        /// use a subclass of <seealso cref="AnalyzerWrapper"/> such as
         /// <a href="{@docRoot}/../analyzers-common/Lucene.Net.Analysis/miscellaneous/PerFieldAnalyzerWrapper.html">
         /// PerFieldAnalyerWrapper</a> instead.
         /// </summary>
@@ -120,7 +116,7 @@ namespace Lucene.Net.Analysis
         /// method will reuse the previously stored components after resetting them
         /// through <seealso cref="TokenStreamComponents#setReader(Reader)"/>.
         /// <p>
-        /// <b>NOTE:</b> After calling this method, the consumer must follow the 
+        /// <b>NOTE:</b> After calling this method, the consumer must follow the
         /// workflow described in <seealso cref="TokenStream"/> to properly consume its contents.
         /// See the <seealso cref="Lucene.Net.Analysis Analysis package documentation"/> for
         /// some examples demonstrating this.
@@ -228,6 +224,7 @@ namespace Lucene.Net.Analysis
             /// Original source of the tokens.
             /// </summary>
             protected internal readonly Tokenizer Source;
+
             /// <summary>
             /// Sink tokenstream, such as the outer tokenfilter decorating
             /// the chain. this can be the source if there are no filters.
@@ -310,7 +307,6 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public abstract class ReuseStrategy
         {
-
             /// <summary>
             /// Sole constructor. (For invocation by subclass constructors, typically implicit.) </summary>
             public ReuseStrategy()
@@ -364,7 +360,6 @@ namespace Lucene.Net.Analysis
                 }
                 analyzer.StoredValue.Set(storedValue);
             }
-
         }
 
         /// <summary>
@@ -377,16 +372,17 @@ namespace Lucene.Net.Analysis
         /// Implementation of <seealso cref="ReuseStrategy"/> that reuses the same components for
         /// every field. </summary>
         /// @deprecated this implementation class will be hidden in Lucene 5.0.
-        ///   Use <seealso cref="Analyzer#GLOBAL_REUSE_STRATEGY"/> instead! 
+        ///   Use <seealso cref="Analyzer#GLOBAL_REUSE_STRATEGY"/> instead!
         [Obsolete("this implementation class will be hidden in Lucene 5.0.")]
         public sealed class GlobalReuseStrategy : ReuseStrategy
         /// <summary>
         /// Sole constructor. (For invocation by subclass constructors, typically implicit.) </summary>
-        /// @deprecated Don't create instances of this class, use <seealso cref="Analyzer#GLOBAL_REUSE_STRATEGY"/>  
+        /// @deprecated Don't create instances of this class, use <seealso cref="Analyzer#GLOBAL_REUSE_STRATEGY"/>
         {
             public GlobalReuseStrategy()
             {
             }
+
             public override TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName)
             {
                 return (TokenStreamComponents)GetStoredValue(analyzer);
@@ -408,16 +404,17 @@ namespace Lucene.Net.Analysis
         /// Implementation of <seealso cref="ReuseStrategy"/> that reuses components per-field by
         /// maintaining a Map of TokenStreamComponent per field name. </summary>
         /// @deprecated this implementation class will be hidden in Lucene 5.0.
-        ///   Use <seealso cref="Analyzer#PER_FIELD_REUSE_STRATEGY"/> instead! 
+        ///   Use <seealso cref="Analyzer#PER_FIELD_REUSE_STRATEGY"/> instead!
         [Obsolete("this implementation class will be hidden in Lucene 5.0.")]
         public class PerFieldReuseStrategy : ReuseStrategy
         /// <summary>
         /// Sole constructor. (For invocation by subclass constructors, typically implicit.) </summary>
-        /// @deprecated Don't create instances of this class, use <seealso cref="Analyzer#PER_FIELD_REUSE_STRATEGY"/>  
+        /// @deprecated Don't create instances of this class, use <seealso cref="Analyzer#PER_FIELD_REUSE_STRATEGY"/>
         {
             public PerFieldReuseStrategy()
             {
             }
+
             public override TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName)
             {
                 IDictionary<string, TokenStreamComponents> componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
@@ -441,7 +438,5 @@ namespace Lucene.Net.Analysis
                 componentsPerField[fieldName] = components;
             }
         }
-
     }
-
 }

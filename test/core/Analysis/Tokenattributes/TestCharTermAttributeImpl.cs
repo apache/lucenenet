@@ -3,29 +3,29 @@ using System.Text;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
 
     [TestFixture]
     public class TestCharTermAttributeImpl : LuceneTestCase
@@ -147,9 +147,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
         {
             CharTermAttribute t = new CharTermAttribute();
             t.Append("foobar");
-            TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>() 
+            TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>()
             {
-                    { typeof(ICharTermAttribute).Name + "#term", "foobar" }, 
+                    { typeof(ICharTermAttribute).Name + "#term", "foobar" },
                     { typeof(ITermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar") }
             });
         }
@@ -272,6 +272,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
             {
                 return LongTestString[i];
             }
+
             public int Length
             {
                 get
@@ -279,10 +280,12 @@ namespace Lucene.Net.Analysis.Tokenattributes
                     return LongTestString.Length;
                 }
             }
+
             public ICharSequence SubSequence(int start, int end)
             {
                 return new StringCharSequenceWrapper(LongTestString.Substring(start, end));
             }
+
             public override string ToString()
             {
                 return LongTestString;
@@ -353,7 +356,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         }
 
         /*
-	  
+
         // test speed of the dynamic instanceof checks in append(ICharSequence),
         // to find the best max length for the generic while (start<end) loop:
         public void testAppendPerf() {
@@ -378,7 +381,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
               public String toString() { return testString; }
             };
           }
-	
+
           Random rnd = newRandom();
           long startTime = System.currentTimeMillis();
           for (int i=0; i<100000000; i++) {
@@ -387,9 +390,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
           long endTime = System.currentTimeMillis();
           System.out.println("Time: " + (endTime-startTime)/1000.0 + " s");
         }
-	  
+
         */
-
     }
-
 }

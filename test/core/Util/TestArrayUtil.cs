@@ -1,11 +1,10 @@
-using System;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +25,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestArrayUtil : LuceneTestCase
     {
-
         // Ensure ArrayUtil.getNextSize gives linear amortized cost of realloc/copy
         [Test]
         public virtual void TestGrowth()
@@ -134,7 +132,6 @@ namespace Lucene.Net.Util
                 Console.Write(e.StackTrace);
                 Assert.IsTrue(false);
             }
-
         }
 
         [Test]
@@ -350,7 +347,5 @@ namespace Lucene.Net.Util
             ArrayUtil.IntroSort(a, ReverseOrder);
             ArrayUtil.TimSort(a, ReverseOrder);
         }
-
     }
-
 }

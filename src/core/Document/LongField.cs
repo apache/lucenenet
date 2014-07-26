@@ -2,7 +2,6 @@ using System;
 
 namespace Lucene.Net.Document
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,29 +19,29 @@ namespace Lucene.Net.Document
      * limitations under the License.
      */
 
-    using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream; // javadocs
+    // javadocs
     using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using FieldCache = Lucene.Net.Search.FieldCache; // javadocs
-    using Lucene.Net.Search; // javadocs
-    using NumericUtils = Lucene.Net.Util.NumericUtils;
+
+    // javadocs
+    // javadocs
 
     /// <summary>
     /// <p>
     /// Field that indexes <code>long</code> values
     /// for efficient range filtering and sorting. Here's an example usage:
-    /// 
+    ///
     /// <pre class="prettyprint">
     /// document.add(new LongField(name, 6L, Field.Store.NO));
     /// </pre>
-    /// 
+    ///
     /// For optimal performance, re-use the <code>LongField</code> and
     /// <seealso cref="Document"/> instance for more than one document:
-    /// 
+    ///
     /// <pre class="prettyprint">
     ///  LongField field = new LongField(name, 0L, Field.Store.NO);
     ///  Document document = new Document();
     ///  document.add(field);
-    /// 
+    ///
     ///  for(all documents) {
     ///    ...
     ///    field.setLongValue(value)
@@ -50,10 +49,10 @@ namespace Lucene.Net.Document
     ///    ...
     ///  }
     /// </pre>
-    /// 
+    ///
     /// See also <seealso cref="IntField"/>, <seealso cref="FloatField"/>, {@link
     /// DoubleField}.
-    /// 
+    ///
     /// Any type that can be converted to long can also be
     /// indexed.  For example, date/time values represented by a
     /// <seealso cref="java.util.Date"/> can be translated into a long
@@ -63,27 +62,27 @@ namespace Lucene.Net.Document
     /// <seealso cref="java.util.Date#getTime"/> or using the separate getters
     /// (for year, month, etc.) to construct an <code>int</code> or
     /// <code>long</code> value.</p>
-    /// 
+    ///
     /// <p>To perform range querying or filtering against a
     /// <code>LongField</code>, use <seealso cref="NumericRangeQuery"/> or {@link
     /// NumericRangeFilter}.  To sort according to a
     /// <code>LongField</code>, use the normal numeric sort types, eg
-    /// <seealso cref="Lucene.Net.Search.SortField.Type#LONG"/>. <code>LongField</code> 
+    /// <seealso cref="Lucene.Net.Search.SortField.Type#LONG"/>. <code>LongField</code>
     /// values can also be loaded directly from <seealso cref="FieldCache"/>.</p>
-    /// 
+    ///
     /// <p>You may add the same field name as an <code>LongField</code> to
     /// the same document more than once.  Range querying and
     /// filtering will be the logical OR of all values; so a range query
     /// will hit all documents that have at least one value in
     /// the range. However sort behavior is not defined.  If you need to sort,
     /// you should separately index a single-valued <code>LongField</code>.</p>
-    /// 
+    ///
     /// <p>A <code>LongField</code> will consume somewhat more disk space
     /// in the index than an ordinary single-valued field.
     /// However, for a typical index that includes substantial
     /// textual content per document, this increase will likely
     /// be in the noise. </p>
-    /// 
+    ///
     /// <p>Within Lucene, each numeric value is indexed as a
     /// <em>trie</em> structure, where each term is logically
     /// assigned to larger and larger pre-defined brackets (which
@@ -104,34 +103,34 @@ namespace Lucene.Net.Document
     /// If the cardinality is &lt; 100, it is fair
     /// to use <seealso cref="Integer#MAX_VALUE"/>, which produces one
     /// term per value.
-    /// 
+    ///
     /// <p>For more information on the internals of numeric trie
     /// indexing, including the <a
     /// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
     /// configuration, see <seealso cref="NumericRangeQuery"/>. The format of
     /// indexed values is described in <seealso cref="NumericUtils"/>.
-    /// 
+    ///
     /// <p>If you only need to sort by numeric value, and never
     /// run range querying/filtering, you can index using a
     /// <code>precisionStep</code> of <seealso cref="Integer#MAX_VALUE"/>.
     /// this will minimize disk space consumed. </p>
-    /// 
+    ///
     /// <p>More advanced users can instead use {@link
     /// NumericTokenStream} directly, when indexing numbers. this
     /// class is a wrapper around this token stream type for
     /// easier, more intuitive usage.</p>
-    /// 
+    ///
     /// @since 2.9
     /// </summary>
 
     public sealed class LongField : Field
     {
-
         /// <summary>
         /// Type for a LongField that is not stored:
         /// normalization factors, frequencies, and positions are omitted.
         /// </summary>
         public static readonly FieldType TYPE_NOT_STORED = new FieldType();
+
         static LongField()
         {
             TYPE_NOT_STORED.Indexed = true;
@@ -188,5 +187,4 @@ namespace Lucene.Net.Document
             FieldsData = Convert.ToInt64(value);
         }
     }
-
 }

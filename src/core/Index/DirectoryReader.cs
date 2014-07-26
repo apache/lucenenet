@@ -1,46 +1,45 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-
-    using SearcherManager = Lucene.Net.Search.SearcherManager; // javadocs
+    // javadocs
     using Directory = Lucene.Net.Store.Directory;
     using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
-    using System.IO;
 
     /// <summary>
     /// DirectoryReader is an implementation of <seealso cref="CompositeReader"/>
-    /// that can read indexes in a <seealso cref="Directory"/>. 
-    /// 
+    /// that can read indexes in a <seealso cref="Directory"/>.
+    ///
     /// <p>DirectoryReader instances are usually constructed with a call to
     /// one of the static <code>open()</code> methods, e.g. {@link
     /// #open(Directory)}.
-    /// 
+    ///
     /// <p> For efficiency, in this API documents are often referred to via
     /// <i>document numbers</i>, non-negative integers which each name a unique
     /// document in the index.  These document numbers are ephemeral -- they may change
     /// as documents are added to and deleted from an index.  Clients should thus not
     /// rely on a given document having the same number between sessions.
-    /// 
+    ///
     /// <p>
     /// <a name="thread-safety"></a><p><b>NOTE</b>: {@link
     /// IndexReader} instances are completely thread
@@ -52,7 +51,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class DirectoryReader : BaseCompositeReader<AtomicReader>
     {
-
         /// <summary>
         /// Default termInfosIndexDivisor. </summary>
         public const int DEFAULT_TERMS_INDEX_DIVISOR = 1;
@@ -110,7 +108,7 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> if there is a low-level IO error
         /// </exception>
         /// <seealso cref= #openIfChanged(DirectoryReader,IndexWriter,boolean)
-        /// 
+        ///
         /// @lucene.experimental </seealso>
         public static DirectoryReader Open(IndexWriter writer, bool applyAllDeletes)
         {
@@ -157,12 +155,12 @@ namespace Lucene.Net.Index
         /// type of reader as the previous one, ie an NRT reader
         /// will open a new NRT reader, a MultiReader will open a
         /// new MultiReader,  etc.
-        /// 
+        ///
         /// <p>this method is typically far less costly than opening a
         /// fully new <code>DirectoryReader</code> as it shares
         /// resources (for example sub-readers) with the provided
         /// <code>DirectoryReader</code>, when possible.
-        /// 
+        ///
         /// <p>The provided reader is not closed (you are responsible
         /// for doing so); if a new reader is returned you also
         /// must eventually close it.  Be sure to never close a
@@ -200,12 +198,12 @@ namespace Lucene.Net.Index
         /// IndexReader searching both committed and uncommitted
         /// changes from the writer; else, return null (though, the
         /// current implementation never returns null).
-        /// 
+        ///
         /// <p>this provides "near real-time" searching, in that
         /// changes made during an <seealso cref="IndexWriter"/> session can be
         /// quickly made available for searching without closing
         /// the writer nor calling <seealso cref="IndexWriter#commit"/>.
-        /// 
+        ///
         /// <p>It's <i>near</i> real-time because there is no hard
         /// guarantee on how quickly you can get a new reader after
         /// making changes with IndexWriter.  You'll have to
@@ -213,24 +211,24 @@ namespace Lucene.Net.Index
         /// fast enough.  As this is a new and experimental
         /// feature, please report back on your findings so we can
         /// learn, improve and iterate.</p>
-        /// 
+        ///
         /// <p>The very first time this method is called, this
         /// writer instance will make every effort to pool the
         /// readers that it opens for doing merges, applying
         /// deletes, etc.  this means additional resources (RAM,
         /// file descriptors, CPU time) will be consumed.</p>
-        /// 
+        ///
         /// <p>For lower latency on reopening a reader, you should
         /// call <seealso cref="IndexWriterConfig#setMergedSegmentWarmer"/> to
         /// pre-warm a newly merged segment before it's committed
         /// to the index.  this is important for minimizing
         /// index-to-search delay after a large merge.  </p>
-        /// 
+        ///
         /// <p>If an addIndexes* call is running in another thread,
         /// then this reader will only search those segments from
         /// the foreign index that have been successfully copied
         /// over, so far.</p>
-        /// 
+        ///
         /// <p><b>NOTE</b>: Once the writer is closed, any
         /// outstanding readers may continue to be used.  However,
         /// if you attempt to reopen any of those readers, you'll
@@ -251,7 +249,7 @@ namespace Lucene.Net.Index
         /// gain some performance by passing false.
         /// </param>
         /// <exception cref="IOException"> if there is a low-level IO error
-        /// 
+        ///
         /// @lucene.experimental </exception>
         public static DirectoryReader OpenIfChanged(DirectoryReader oldReader, IndexWriter writer, bool applyAllDeletes)
         {
@@ -274,7 +272,7 @@ namespace Lucene.Net.Index
         ///  progress while this method is running, that commit
         ///  may or may not be returned.
         /// </summary>
-        ///  <returns> a sorted list of <seealso cref="IndexCommit"/>s, from oldest 
+        ///  <returns> a sorted list of <seealso cref="IndexCommit"/>s, from oldest
         ///  to latest.  </returns>
         public static IList<IndexCommit> ListCommits(Directory dir)
         {
@@ -290,12 +288,10 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < files.Length; i++)
             {
-
                 string fileName = files[i];
 
                 if (fileName.StartsWith(IndexFileNames.SEGMENTS) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && SegmentInfos.GenerationFromSegmentsFileName(fileName) < currentGen)
                 {
-
                     SegmentInfos sis = new SegmentInfos();
                     try
                     {
@@ -430,7 +426,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Version number when this IndexReader was opened.
-        /// 
+        ///
         /// <p>this method
         /// returns the version recorded in the commit that the
         /// reader opened.  this version is advanced every time
@@ -441,12 +437,12 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Check whether any new changes have occurred to the
         /// index since this reader was opened.
-        /// 
-        /// <p>If this reader was created by calling <seealso cref="#open"/>,  
-        /// then this method checks if any further commits 
-        /// (see <seealso cref="IndexWriter#commit"/>) have occurred in the 
+        ///
+        /// <p>If this reader was created by calling <seealso cref="#open"/>,
+        /// then this method checks if any further commits
+        /// (see <seealso cref="IndexWriter#commit"/>) have occurred in the
         /// directory.</p>
-        /// 
+        ///
         /// <p>If instead this reader is a near real-time reader
         /// (ie, obtained by a call to {@link
         /// DirectoryReader#open(IndexWriter,boolean)}, or by calling <seealso cref="#openIfChanged"/>
@@ -455,7 +451,7 @@ namespace Lucene.Net.Index
         /// uncommitted changes have taken place via the writer.
         /// Note that even if the writer has only performed
         /// merging, this method will still return false.</p>
-        /// 
+        ///
         /// <p>In any event, if this returns false, you should call
         /// <seealso cref="#openIfChanged"/> to get a new reader that sees the
         /// changes.</p>
@@ -469,7 +465,5 @@ namespace Lucene.Net.Index
         /// @lucene.experimental
         /// </summary>
         public abstract IndexCommit IndexCommit { get; }
-
     }
-
 }

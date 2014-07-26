@@ -5,49 +5,47 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using StoredField = Lucene.Net.Document.StoredField;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using Directory = Lucene.Net.Store.Directory;
-    using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using StoredField = Lucene.Net.Document.StoredField;
+    using StringField = Lucene.Net.Document.StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestDirectoryReader : LuceneTestCase
     {
-
         [Test]
         public virtual void TestDocument()
         {
@@ -304,7 +302,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(notIndexedFieldNames.Contains("unindexed"));
             Assert.IsTrue(notIndexedFieldNames.Contains("unindexed2"));
 
-            // verify index term vector fields  
+            // verify index term vector fields
             Assert.AreEqual(4, tvFieldNames.Count, tvFieldNames.ToString()); // 4 field has term vector only
             Assert.IsTrue(tvFieldNames.Contains("termvector"));
 
@@ -362,7 +360,6 @@ namespace Lucene.Net.Index
             Assert.AreEqual(expected, count, msg + ", count mismatch");
         }
 
-
         [Test]
         public virtual void TestBinaryFields()
         {
@@ -400,7 +397,6 @@ namespace Lucene.Net.Index
             }
             reader.Dispose();
             // force merge
-
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMergePolicy(NewLogMergePolicy()));
             writer.ForceMerge(1);
@@ -674,7 +670,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestGetIndexCommit()
         {
-
             Directory d = NewDirectory();
 
             // set up writer
@@ -758,7 +753,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestNoDupCommitFileNames()
         {
-
             Directory dir = NewDirectory();
 
             IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
@@ -1228,7 +1222,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        /// @deprecated just to ensure IndexReader static methods work 
+        /// @deprecated just to ensure IndexReader static methods work
         [Obsolete("just to ensure IndexReader static methods work")]
         [Test]
         public virtual void TestBackwards()
@@ -1300,5 +1294,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

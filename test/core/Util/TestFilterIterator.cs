@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,16 +14,17 @@ using System.Collections.Generic;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-
     [TestFixture]
     public class TestFilterIterator : LuceneTestCase
     {
-
         private static readonly SortedSet<string> Set = new SortedSet<string>(Arrays.AsList("a", "b", "c"));
 
         private static void AssertNoMore<T1>(IEnumerator<T1> it)
@@ -249,7 +248,5 @@ namespace Lucene.Net.Util
                 return true;
             }
         }
-
     }
-
 }

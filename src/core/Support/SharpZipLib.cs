@@ -25,7 +25,7 @@ namespace Lucene.Net.Support
 {
     public class SharpZipLib
     {
-        static System.Reflection.Assembly asm = null;
+        private static System.Reflection.Assembly asm = null;
 
         static SharpZipLib()
         {

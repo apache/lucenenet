@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,31 +21,29 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Simple concurrent LRU cache, using a "double barrel"
     /// approach where two ConcurrentHashMaps record entries.
-    /// 
+    ///
     /// <p>At any given time, one hash is primary and the other
     /// is secondary.  <seealso cref="#get"/> first checks primary, and if
     /// that's a miss, checks secondary.  If secondary has the
     /// entry, it's promoted to primary (<b>NOTE</b>: the key is
     /// cloned at this point).  Once primary is full, the
     /// secondary is cleared and the two are swapped.</p>
-    /// 
+    ///
     /// <p>this is not as space efficient as other possible
     /// concurrent approaches (see LUCENE-2075): to achieve
     /// perfect LRU(N) it requires 2*N storage.  But, this
     /// approach is relatively simple and seems in practice to
     /// not grow unbounded in size when under hideously high
     /// load.</p>
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
 
     public sealed class DoubleBarrelLRUCache<K, V> where K : DoubleBarrelLRUCache.CloneableKey
     {
-
         /// <summary>
         /// Object providing clone(); the key class must subclass this. </summary>
         public abstract class CloneableKey
@@ -56,8 +53,10 @@ namespace Lucene.Net.Util
 
         private readonly IDictionary<K, V> Cache1;
         private readonly IDictionary<K, V> Cache2;
+
         //private readonly AtomicInteger Countdown;
         private int Countdown;
+
         private volatile bool Swapped;
         private readonly int MaxSize;
 
@@ -150,5 +149,4 @@ namespace Lucene.Net.Util
             public abstract CloneableKey Clone();
         }
     }
-
 }

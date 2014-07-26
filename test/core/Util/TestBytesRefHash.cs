@@ -1,13 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,13 +24,11 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     using MaxBytesLengthExceededException = Lucene.Net.Util.BytesRefHash.MaxBytesLengthExceededException;
 
     [TestFixture]
     public class TestBytesRefHash : LuceneTestCase
     {
-
         internal BytesRefHash Hash;
         internal ByteBlockPool Pool;
 
@@ -57,7 +54,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test method for <seealso cref="Lucene.Net.Util.BytesRefHash#size()"/>.
         /// </summary>
-        [Test]        
+        [Test]
         public virtual void TestSize()
         {
             BytesRef @ref = new BytesRef();
@@ -229,7 +226,6 @@ namespace Lucene.Net.Util
                 Hash.Clear();
                 Assert.AreEqual(0, Hash.Size());
                 Hash.Reinit();
-
             }
         }
 
@@ -327,7 +323,7 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        [ExpectedException(typeof (MaxBytesLengthExceededException))]
+        [ExpectedException(typeof(MaxBytesLengthExceededException))]
         public virtual void TestLargeValue()
         {
             int[] sizes = new int[] { Random().Next(5), ByteBlockPool.BYTE_BLOCK_SIZE - 33 + Random().Next(31), ByteBlockPool.BYTE_BLOCK_SIZE - 1 + Random().Next(37) };
@@ -434,8 +430,5 @@ namespace Lucene.Net.Util
                 Assert.IsTrue(key < count, "key: " + key + " count: " + count + " string: " + @string);
             }
         }
-
-
     }
-
 }

@@ -1,9 +1,8 @@
-using System;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +23,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestRollingBuffer : LuceneTestCase
     {
-
         private class Position : RollingBuffer.Resettable
         {
             public int Pos;
@@ -38,12 +36,10 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void Test()
         {
-
             RollingBuffer<Position> buffer = new RollingBufferAnonymousInnerClassHelper(this);
 
             for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
             {
-
                 int freeBeforePos = 0;
                 int maxPos = AtLeast(10000);
                 FixedBitSet posSet = new FixedBitSet(maxPos + 1000);
@@ -95,7 +91,7 @@ namespace Lucene.Net.Util
             private readonly TestRollingBuffer OuterInstance;
 
             public RollingBufferAnonymousInnerClassHelper(TestRollingBuffer outerInstance)
-                :base(NewInstanceFunc)
+                : base(NewInstanceFunc)
             {
                 this.OuterInstance = outerInstance;
             }
@@ -115,5 +111,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

@@ -1,57 +1,55 @@
+using Apache.NMS.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
-using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using StringField = Lucene.Net.Document.StringField;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+    using StringField = Lucene.Net.Document.StringField;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using System.IO;
-    using Lucene.Net.Support;
 
     [TestFixture]
     public class TestIndexWriterDelete : LuceneTestCase
     {
-
         // test the simple case
         [Test]
         public virtual void TestSimpleCase()
@@ -103,7 +101,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestNonRAMDelete()
         {
-
             Directory dir = NewDirectory();
             IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
             int id = 0;
@@ -330,7 +327,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-
         [Test]
         public virtual void TestDeleteAllNoDeadLock()
         {
@@ -467,7 +463,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-
         // test deleteAll() w/ near real-time reader
         [Test]
         public virtual void TestDeleteAllNRT()
@@ -498,7 +493,6 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, reader.NumDocs());
             reader.Dispose();
 
-
             // Roll it back
             modifier.Rollback();
             modifier.Dispose();
@@ -510,7 +504,6 @@ namespace Lucene.Net.Index
 
             dir.Dispose();
         }
-
 
         private void UpdateDoc(IndexWriter modifier, int id, int value)
         {
@@ -524,7 +517,6 @@ namespace Lucene.Net.Index
             }
             modifier.UpdateDocument(new Term("id", Convert.ToString(id)), doc);
         }
-
 
         private void AddDoc(IndexWriter modifier, int id, int value)
         {
@@ -566,7 +558,6 @@ namespace Lucene.Net.Index
         /// </summary>
         private void DoTestOperationsOnDiskFull(bool updates)
         {
-
             Term searchTerm = new Term("content", "aaa");
             int START_COUNT = 157;
             int END_COUNT = 144;
@@ -816,7 +807,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestErrorAfterApplyDeletes()
         {
-
             MockDirectoryWrapper.Failure failure = new FailureAnonymousInnerClassHelper(this);
 
             // create a couple of files
@@ -944,6 +934,7 @@ namespace Lucene.Net.Index
             internal bool sawMaybe;
             internal bool failed;
             internal Thread thread;
+
             public override MockDirectoryWrapper.Failure Reset()
             {
                 thread = Thread.CurrentThread;
@@ -951,6 +942,7 @@ namespace Lucene.Net.Index
                 failed = false;
                 return this;
             }
+
             public override void Eval(MockDirectoryWrapper dir)
             {
                 if (Thread.CurrentThread != thread)
@@ -960,7 +952,6 @@ namespace Lucene.Net.Index
                 }
                 if (sawMaybe && !failed)
                 {
-
                     bool seen = false;
                     var trace = new StackTrace();
                     foreach (var frame in trace.GetFrames())
@@ -987,7 +978,6 @@ namespace Lucene.Net.Index
                 }
                 if (!failed)
                 {
-
                     var trace = new StackTrace();
                     foreach (var frame in trace.GetFrames())
                     {
@@ -1013,7 +1003,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestErrorInDocsWriterAdd()
         {
-
             MockDirectoryWrapper.Failure failure = new FailureAnonymousInnerClassHelper2(this);
 
             // create a couple of files
@@ -1068,11 +1057,13 @@ namespace Lucene.Net.Index
             }
 
             internal bool failed;
+
             public override MockDirectoryWrapper.Failure Reset()
             {
                 failed = false;
                 return this;
             }
+
             public override void Eval(MockDirectoryWrapper dir)
             {
                 if (!failed)
@@ -1426,7 +1417,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTryDeleteDocument()
         {
-
             Directory d = NewDirectory();
 
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1453,5 +1443,4 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
     }
-
 }

@@ -1,9 +1,8 @@
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,25 +20,20 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+    using NUnit.Framework;
+    using System.IO;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
-    using TermVectorsReader = Lucene.Net.Codecs.TermVectorsReader;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TermVectorsReader = Lucene.Net.Codecs.TermVectorsReader;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Support;
-    using System.IO;
-    using NUnit.Framework;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestTermVectorsReader : LuceneTestCase
@@ -63,6 +57,7 @@ namespace Lucene.Net.Index
 
         //Must be lexicographically sorted, will do in setup, versus trying to maintain here
         private string[] TestFields = new string[] { "f1", "f2", "f3", "f4" };
+
         private bool[] TestFieldsStorePos = new bool[] { true, false, true, false };
         private bool[] TestFieldsStoreOff = new bool[] { true, false, false, true };
         private string[] TestTerms = new string[] { "this", "is", "a", "test" };
@@ -85,6 +80,7 @@ namespace Lucene.Net.Index
             internal int Pos;
             internal int StartOffset;
             internal int EndOffset;
+
             public virtual int CompareTo(TestToken other)
             {
                 return Pos - other.Pos;
@@ -483,5 +479,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

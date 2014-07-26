@@ -1,40 +1,39 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
+    using Lucene.Net.Util;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using FieldInfos = Lucene.Net.Index.FieldInfos;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using IndexInput = Lucene.Net.Store.IndexInput;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using Term = Lucene.Net.Index.Term;
-    using FieldInfos = Lucene.Net.Index.FieldInfos;
-    using Lucene.Net.Util;
 
     /// <summary>
     /// @lucene.experimental </summary>
-    /// @deprecated (4.0) 
+    /// @deprecated (4.0)
     [Obsolete("(4.0)")]
     internal sealed class TermBuffer : ICloneable
     {
-
         private string Field;
         private Term Term; // cached
 
@@ -149,5 +148,4 @@ namespace Lucene.Net.Codecs.Lucene3x
             return clone;
         }
     }
-
 }

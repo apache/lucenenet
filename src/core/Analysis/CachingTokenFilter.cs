@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -20,17 +19,16 @@ namespace Lucene.Net.Analysis
          * limitations under the License.
          */
 
-
     using AttributeSource = Lucene.Net.Util.AttributeSource;
 
     /// <summary>
     /// this class can be used if the token attributes of a TokenStream
     /// are intended to be consumed more than once. It caches
     /// all token attribute states locally in a List.
-    /// 
+    ///
     /// <P>CachingTokenFilter implements the optional method
     /// <seealso cref="TokenStream#reset()"/>, which repositions the
-    /// stream to the first Token. 
+    /// stream to the first Token.
     /// </summary>
     public sealed class CachingTokenFilter : TokenFilter
     {
@@ -101,7 +99,5 @@ namespace Lucene.Net.Analysis
             Input.End();
             FinalState = CaptureState();
         }
-
     }
-
 }

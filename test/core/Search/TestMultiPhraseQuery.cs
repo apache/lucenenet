@@ -1,58 +1,55 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Search
 {
+    using NUnit.Framework;
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
-    using Token = Lucene.Net.Analysis.Token;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MultiFields = Lucene.Net.Index.MultiFields;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Directory = Lucene.Net.Store.Directory;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
+    using TextField = Lucene.Net.Document.TextField;
+    using Token = Lucene.Net.Analysis.Token;
 
     /// <summary>
     /// this class tests the MultiPhraseQuery class.
-    /// 
-    /// 
+    ///
+    ///
     /// </summary>
     [TestFixture]
     public class TestMultiPhraseQuery : LuceneTestCase
     {
-
         [Test]
         public virtual void TestPhrasePrefix()
         {
@@ -469,7 +466,7 @@ namespace Lucene.Net.Search
         private static readonly Token[][] INCR_0_QUERY_TOKENS_AND_OR_NO_MATCHN = new Token[][] { new Token[] { MakeToken("x", 1) }, new Token[] { MakeToken("a", 1), MakeToken("1", 0) }, new Token[] { MakeToken("x", 2) }, new Token[] { MakeToken("b", 2), MakeToken("1", 0) }, new Token[] { MakeToken("c", 3) } };
 
         /// <summary>
-        /// using query parser, MPQ will be created, and will not be strict about having all query terms 
+        /// using query parser, MPQ will be created, and will not be strict about having all query terms
         /// in each position - one of each position is sufficient (OR logic)
         /// </summary>
         [Test]
@@ -623,7 +620,5 @@ namespace Lucene.Net.Search
                 // expected exception
             }
         }
-
     }
-
 }

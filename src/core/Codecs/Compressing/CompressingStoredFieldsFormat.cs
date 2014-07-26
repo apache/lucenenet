@@ -1,30 +1,27 @@
 namespace Lucene.Net.Codecs.Compressing
 {
+    using Directory = Lucene.Net.Store.Directory;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-    using Lucene40StoredFieldsFormat = Lucene.Net.Codecs.Lucene40.Lucene40StoredFieldsFormat;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
-    using MergePolicy = Lucene.Net.Index.MergePolicy;
-    using SegmentInfo = Lucene.Net.Index.SegmentInfo;
-    using Directory = Lucene.Net.Store.Directory;
     using IOContext = Lucene.Net.Store.IOContext;
-
+    using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
     /// A <seealso cref="StoredFieldsFormat"/> that is very similar to
@@ -42,14 +39,13 @@ namespace Lucene.Net.Codecs.Compressing
     /// </summary>
     public class CompressingStoredFieldsFormat : StoredFieldsFormat
     {
-
         private readonly string FormatName;
         private readonly string SegmentSuffix;
         private readonly CompressionMode CompressionMode;
         private readonly int ChunkSize;
 
         /// <summary>
-        /// Create a new <seealso cref="CompressingStoredFieldsFormat"/> with an empty segment 
+        /// Create a new <seealso cref="CompressingStoredFieldsFormat"/> with an empty segment
         /// suffix.
         /// </summary>
         /// <seealso cref= CompressingStoredFieldsFormat#CompressingStoredFieldsFormat(String, String, CompressionMode, int) </seealso>
@@ -65,7 +61,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// in the file formats to perform
         /// <seealso cref="CodecUtil#checkHeader(Lucene.Net.Store.DataInput, String, int, int) codec header checks"/>.
         /// <p>
-        /// <code>segmentSuffix</code> is the segment suffix. this suffix is added to 
+        /// <code>segmentSuffix</code> is the segment suffix. this suffix is added to
         /// the result file name only if it's not the empty string.
         /// <p>
         /// The <code>compressionMode</code> parameter allows you to choose between
@@ -100,7 +96,6 @@ namespace Lucene.Net.Codecs.Compressing
                 throw new System.ArgumentException("chunkSize must be >= 1");
             }
             this.ChunkSize = chunkSize;
-
         }
 
         public override StoredFieldsReader FieldsReader(Directory directory, SegmentInfo si, FieldInfos fn, IOContext context)
@@ -117,7 +112,5 @@ namespace Lucene.Net.Codecs.Compressing
         {
             return this.GetType().Name + "(compressionMode=" + CompressionMode + ", chunkSize=" + ChunkSize + ")";
         }
-
     }
-
 }

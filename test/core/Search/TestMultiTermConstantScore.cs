@@ -2,42 +2,41 @@ using System;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using NUnit.Framework;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IndexReader = Lucene.Net.Index.IndexReader;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Directory = Lucene.Net.Store.Directory;
-    using NUnit.Framework;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestMultiTermConstantScore : BaseTestRangeFilter
     {
-
         /// <summary>
         /// threshold for comparing floats </summary>
         public const float SCORE_COMP_THRESH = 1e-6f;
@@ -293,6 +292,7 @@ namespace Lucene.Net.Search
 
             private int @base;
             private Scorer scorer;
+
             public override Scorer Scorer
             {
                 set
@@ -300,10 +300,12 @@ namespace Lucene.Net.Search
                     this.scorer = value;
                 }
             }
+
             public override void Collect(int doc)
             {
                 Assert.AreEqual(1.0f, scorer.Score(), SCORE_COMP_THRESH, "score for doc " + (doc + @base) + " was not correct");
             }
+
             public override AtomicReaderContext NextReader
             {
                 set
@@ -311,6 +313,7 @@ namespace Lucene.Net.Search
                     @base = value.DocBase;
                 }
             }
+
             public override bool AcceptsDocsOutOfOrder()
             {
                 return true;
@@ -545,5 +548,4 @@ namespace Lucene.Net.Search
             AssertEquals("max,nul,T,T", 1, result.Length);
         }
     }
-
 }

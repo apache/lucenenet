@@ -1,6 +1,5 @@
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,16 +19,15 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// A Scorer for OR like queries, counterpart of <code>ConjunctionScorer</code>.
-    /// this Scorer implements <seealso cref="Scorer#advance(int)"/> and uses advance() on the given Scorers. 
+    /// this Scorer implements <seealso cref="Scorer#advance(int)"/> and uses advance() on the given Scorers.
     /// </summary>
     internal class DisjunctionSumScorer : DisjunctionScorer
     {
-
         /// <summary>
         /// The number of subscorers that provide the current match. </summary>
         protected internal int NrMatchers = -1;
 
-        protected internal double Score_Renamed = float.NaN;
+        protected internal double score = float.NaN;
         private readonly float[] Coord;
 
         /// <summary>
@@ -40,7 +38,6 @@ namespace Lucene.Net.Search
         internal DisjunctionSumScorer(Weight weight, Scorer[] subScorers, float[] coord)
             : base(weight, subScorers)
         {
-
             if (NumScorers <= 1)
             {
                 throw new System.ArgumentException("There must be at least 2 subScorers");
@@ -54,7 +51,7 @@ namespace Lucene.Net.Search
             Doc = sub.DocID();
             if (Doc != NO_MORE_DOCS)
             {
-                Score_Renamed = sub.Score();
+                score = sub.Score();
                 NrMatchers = 1;
                 CountMatches(1);
                 CountMatches(2);
@@ -63,14 +60,14 @@ namespace Lucene.Net.Search
 
         // TODO: this currently scores, but so did the previous impl
         // TODO: remove recursion.
-        // TODO: if we separate scoring, out of here, 
+        // TODO: if we separate scoring, out of here,
         // then change freq() to just always compute it from scratch
         private void CountMatches(int root)
         {
             if (root < NumScorers && SubScorers[root].DocID() == Doc)
             {
                 NrMatchers++;
-                Score_Renamed += SubScorers[root].Score();
+                score += SubScorers[root].Score();
                 CountMatches((root << 1) + 1);
                 CountMatches((root << 1) + 2);
             }
@@ -82,7 +79,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public override float Score()
         {
-            return (float)Score_Renamed * Coord[NrMatchers];
+            return (float)score * Coord[NrMatchers];
         }
 
         public override int Freq()
@@ -90,5 +87,4 @@ namespace Lucene.Net.Search
             return NrMatchers;
         }
     }
-
 }

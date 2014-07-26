@@ -1,36 +1,35 @@
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using QueryAndLimit = Lucene.Net.Index.BufferedUpdatesStream.QueryAndLimit;
+    using Lucene.Net.Support;
+    using System;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
     using Query = Lucene.Net.Search.Query;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using QueryAndLimit = Lucene.Net.Index.BufferedUpdatesStream.QueryAndLimit;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using Lucene.Net.Support;
-    using System;
 
     /// <summary>
     /// Holds buffered deletes and updates by term or query, once pushed. Pushed
@@ -40,16 +39,17 @@ namespace Lucene.Net.Index
     /// </summary>
     public class FrozenBufferedUpdates
     {
-
         /* Query we often undercount (say 24 bytes), plus int. */
         internal static readonly int BYTES_PER_DEL_QUERY = RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_INT + 24;
 
         // Terms, in sorted order:
         internal readonly PrefixCodedTerms Terms;
+
         internal int termCount; // just for debugging
 
         // Parallel array of deleted query, and the docIDUpto for each
         internal readonly Query[] Queries;
+
         internal readonly int?[] QueryLimits;
 
         // numeric DV update term and their updates
@@ -63,8 +63,7 @@ namespace Lucene.Net.Index
         private long Gen = -1; // assigned by BufferedDeletesStream once pushed
         internal readonly bool IsSegmentPrivate; // set to true iff this frozen packet represents
         // a segment private deletes. in that case is should
-        // only have Queries 
-
+        // only have Queries
 
         public FrozenBufferedUpdates(BufferedUpdates deletes, bool isSegmentPrivate)
         {
@@ -93,7 +92,7 @@ namespace Lucene.Net.Index
             // TODO if a Term affects multiple fields, we could keep the updates key'd by Term
             // so that it maps to all fields it affects, sorted by their docUpto, and traverse
             // that Term only once, applying the update to all fields that still need to be
-            // updated. 
+            // updated.
             IList<NumericDocValuesUpdate> allNumericUpdates = new List<NumericDocValuesUpdate>();
             int numericUpdatesSize = 0;
             foreach (/*Linked*/HashMap<Term, NumericDocValuesUpdate> numericUpdates in deletes.NumericUpdates.Values)
@@ -109,7 +108,7 @@ namespace Lucene.Net.Index
             // TODO if a Term affects multiple fields, we could keep the updates key'd by Term
             // so that it maps to all fields it affects, sorted by their docUpto, and traverse
             // that Term only once, applying the update to all fields that still need to be
-            // updated. 
+            // updated.
             IList<BinaryDocValuesUpdate> allBinaryUpdates = new List<BinaryDocValuesUpdate>();
             int binaryUpdatesSize = 0;
             foreach (/*Linked*/HashMap<Term, BinaryDocValuesUpdate> binaryUpdates in deletes.BinaryUpdates.Values)
@@ -213,6 +212,7 @@ namespace Lucene.Net.Index
                     }
                     return false;
                 }
+
                 public virtual QueryAndLimit Current
                 {
                     get
@@ -231,7 +231,9 @@ namespace Lucene.Net.Index
                     throw new NotImplementedException();
                 }
 
-                public void Dispose() { }
+                public void Dispose()
+                {
+                }
             }
         }
 
@@ -270,5 +272,4 @@ namespace Lucene.Net.Index
             return Queries.Clone();
         }
     }
-
 }

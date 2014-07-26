@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -147,7 +146,6 @@ namespace Lucene.Net.Util.Automaton
             int ITER2 = AtLeast(100);
             for (int i = 0; i < ITER1; i++)
             {
-
                 RegExp re = new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExp.NONE);
                 Automaton a = re.ToAutomaton();
                 Assert.IsFalse(BasicOperations.IsEmpty(a));
@@ -179,5 +177,4 @@ namespace Lucene.Net.Util.Automaton
             }
         }
     }
-
 }

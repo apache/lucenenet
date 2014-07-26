@@ -1,7 +1,7 @@
 namespace Lucene.Net.Search
 {
-
     using NUnit.Framework;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -23,109 +23,103 @@ namespace Lucene.Net.Search
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     [TestFixture]
-	public class MultiCollectorTest : LuceneTestCase
-	{
+    public class MultiCollectorTest : LuceneTestCase
+    {
+        private class DummyCollector : Collector
+        {
+            internal bool AcceptsDocsOutOfOrderCalled = false;
+            internal bool CollectCalled = false;
+            internal bool SetNextReaderCalled = false;
+            internal bool SetScorerCalled = false;
 
-	  private class DummyCollector : Collector
-	  {
+            public override bool AcceptsDocsOutOfOrder()
+            {
+                AcceptsDocsOutOfOrderCalled = true;
+                return true;
+            }
 
-		internal bool AcceptsDocsOutOfOrderCalled = false;
-		internal bool CollectCalled = false;
-		internal bool SetNextReaderCalled = false;
-		internal bool SetScorerCalled = false;
+            public override void Collect(int doc)
+            {
+                CollectCalled = true;
+            }
 
-		public override bool AcceptsDocsOutOfOrder()
-		{
-		  AcceptsDocsOutOfOrderCalled = true;
-		  return true;
-		}
+            public override AtomicReaderContext NextReader
+            {
+                set
+                {
+                    SetNextReaderCalled = true;
+                }
+            }
 
-		public override void Collect(int doc)
-		{
-		  CollectCalled = true;
-		}
+            public override Scorer Scorer
+            {
+                set
+                {
+                    SetScorerCalled = true;
+                }
+            }
+        }
 
-		public override AtomicReaderContext NextReader
-		{
-			set
-			{
-			  SetNextReaderCalled = true;
-			}
-		}
+        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+        //ORIGINAL LINE: @Test public void testNullCollectors() throws Exception
+        [Test]
+        public virtual void TestNullCollectors()
+        {
+            // Tests that the collector rejects all null collectors.
+            try
+            {
+                MultiCollector.Wrap(null, null);
+                Assert.Fail("only null collectors should not be supported");
+            }
+            catch (System.ArgumentException e)
+            {
+                // expected
+            }
 
-		public override Scorer Scorer
-		{
-			set
-			{
-			  SetScorerCalled = true;
-			}
-		}
+            // Tests that the collector handles some null collectors well. If it
+            // doesn't, an NPE would be thrown.
+            Collector c = MultiCollector.Wrap(new DummyCollector(), null, new DummyCollector());
+            Assert.IsTrue(c is MultiCollector);
+            Assert.IsTrue(c.AcceptsDocsOutOfOrder());
+            c.Collect(1);
+            c.NextReader = null;
+            c.Scorer = null;
+        }
 
-	  }
+        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+        //ORIGINAL LINE: @Test public void testSingleCollector() throws Exception
+        [Test]
+        public virtual void TestSingleCollector()
+        {
+            // Tests that if a single Collector is input, it is returned (and not MultiCollector).
+            DummyCollector dc = new DummyCollector();
+            Assert.AreSame(dc, MultiCollector.Wrap(dc));
+            Assert.AreSame(dc, MultiCollector.Wrap(dc, null));
+        }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testNullCollectors() throws Exception
-      [Test]
-      public virtual void TestNullCollectors()
-	  {
-		// Tests that the collector rejects all null collectors.
-		try
-		{
-		  MultiCollector.Wrap(null, null);
-		  Assert.Fail("only null collectors should not be supported");
-		}
-		catch (System.ArgumentException e)
-		{
-		  // expected
-		}
+        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+        //ORIGINAL LINE: @Test public void testCollector() throws Exception
+        [Test]
+        public virtual void TestCollector()
+        {
+            // Tests that the collector delegates calls to input collectors properly.
 
-		// Tests that the collector handles some null collectors well. If it
-		// doesn't, an NPE would be thrown.
-		Collector c = MultiCollector.Wrap(new DummyCollector(), null, new DummyCollector());
-		Assert.IsTrue(c is MultiCollector);
-		Assert.IsTrue(c.AcceptsDocsOutOfOrder());
-		c.Collect(1);
-		c.NextReader = null;
-		c.Scorer = null;
-	  }
+            // Tests that the collector handles some null collectors well. If it
+            // doesn't, an NPE would be thrown.
+            DummyCollector[] dcs = new DummyCollector[] { new DummyCollector(), new DummyCollector() };
+            Collector c = MultiCollector.Wrap(dcs);
+            Assert.IsTrue(c.AcceptsDocsOutOfOrder());
+            c.Collect(1);
+            c.NextReader = null;
+            c.Scorer = null;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSingleCollector() throws Exception
-      [Test]
-      public virtual void TestSingleCollector()
-	  {
-		// Tests that if a single Collector is input, it is returned (and not MultiCollector).
-		DummyCollector dc = new DummyCollector();
-		Assert.AreSame(dc, MultiCollector.Wrap(dc));
-		Assert.AreSame(dc, MultiCollector.Wrap(dc, null));
-	  }
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testCollector() throws Exception
-      [Test]
-      public virtual void TestCollector()
-	  {
-		// Tests that the collector delegates calls to input collectors properly.
-
-		// Tests that the collector handles some null collectors well. If it
-		// doesn't, an NPE would be thrown.
-		DummyCollector[] dcs = new DummyCollector[] {new DummyCollector(), new DummyCollector()};
-		Collector c = MultiCollector.Wrap(dcs);
-		Assert.IsTrue(c.AcceptsDocsOutOfOrder());
-		c.Collect(1);
-		c.NextReader = null;
-		c.Scorer = null;
-
-		foreach (DummyCollector dc in dcs)
-		{
-		  Assert.IsTrue(dc.AcceptsDocsOutOfOrderCalled);
-		  Assert.IsTrue(dc.CollectCalled);
-		  Assert.IsTrue(dc.SetNextReaderCalled);
-		  Assert.IsTrue(dc.SetScorerCalled);
-		}
-
-	  }
-
-	}
-
+            foreach (DummyCollector dc in dcs)
+            {
+                Assert.IsTrue(dc.AcceptsDocsOutOfOrderCalled);
+                Assert.IsTrue(dc.CollectCalled);
+                Assert.IsTrue(dc.SetNextReaderCalled);
+                Assert.IsTrue(dc.SetScorerCalled);
+            }
+        }
+    }
 }

@@ -1,48 +1,46 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using DataInput = Lucene.Net.Store.DataInput;
+    using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using Fields = Lucene.Net.Index.Fields;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using MergeState = Lucene.Net.Index.MergeState;
     using SegmentReader = Lucene.Net.Index.SegmentReader;
-    using DataInput = Lucene.Net.Store.DataInput;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
     using StringHelper = Lucene.Net.Util.StringHelper;
 
     //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
     //import static Lucene.Net.Codecs.Lucene40.Lucene40TermVectorsReader.*;
-
 
     // TODO: make a new 4.0 TV format that encodes better
     //   - use startOffset (not endOffset) as base for delta on
@@ -153,6 +151,7 @@ namespace Lucene.Net.Codecs.Lucene40
         // NOTE: we override addProx, so we don't need to buffer when indexing.
         // we also don't buffer during bulk merges.
         private int[] OffsetStartBuffer = new int[10];
+
         private int[] OffsetEndBuffer = new int[10];
         private BytesRef PayloadData = new BytesRef(10);
         private int BufferedIndex = 0;
@@ -394,7 +393,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Maximum number of contiguous documents to bulk-copy
-        ///    when merging term vectors 
+        ///    when merging term vectors
         /// </summary>
         private const int MAX_RAW_MERGE_DOCS = 4192;
 
@@ -513,7 +512,6 @@ namespace Lucene.Net.Codecs.Lucene40
                 IOUtils.Close(Tvx, Tvd, Tvf);
                 Tvx = Tvd = Tvf = null;
             }
-
         }
 
         public override IComparer<BytesRef> Comparator
@@ -524,5 +522,4 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
     }
-
 }

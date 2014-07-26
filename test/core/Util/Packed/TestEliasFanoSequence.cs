@@ -1,10 +1,9 @@
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util.Packed
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,7 +24,6 @@ namespace Lucene.Net.Util.Packed
     [TestFixture]
     public class TestEliasFanoSequence : LuceneTestCase
     {
-
         private static EliasFanoEncoder MakeEncoder(long[] values, long indexInterval)
         {
             long upperBound = -1L;

@@ -1,6 +1,5 @@
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -39,8 +38,8 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// {@inheritDoc}
-        /// <p> 
-        /// <b>NOTE:</b> 
+        /// <p>
+        /// <b>NOTE:</b>
         /// The default implementation chains the call to the input TokenStream, so
         /// be sure to call <code>super.end()</code> first when overriding this method.
         /// </summary>
@@ -52,7 +51,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// {@inheritDoc}
         /// <p>
-        /// <b>NOTE:</b> 
+        /// <b>NOTE:</b>
         /// The default implementation chains the call to the input TokenStream, so
         /// be sure to call <code>super.close()</code> when overriding this method.
         /// </summary>
@@ -64,7 +63,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// {@inheritDoc}
         /// <p>
-        /// <b>NOTE:</b> 
+        /// <b>NOTE:</b>
         /// The default implementation chains the call to the input TokenStream, so
         /// be sure to call <code>super.reset()</code> when overriding this method.
         /// </summary>
@@ -73,5 +72,4 @@ namespace Lucene.Net.Analysis
             Input.Reset();
         }
     }
-
 }

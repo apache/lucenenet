@@ -1,31 +1,31 @@
 namespace Lucene.Net.Search.Spans
 {
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
 
     /// <summary>
     /// Tests for <seealso cref="SpanMultiTermQueryWrapper"/>, wrapping a few MultiTermQueries.
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Spans
         [Test]
         public virtual void TestNoSuchMultiTermsInNear()
         {
-            //test to make sure non existent multiterms aren't throwing null pointer exceptions  
+            //test to make sure non existent multiterms aren't throwing null pointer exceptions
             FuzzyQuery fuzzyNoSuch = new FuzzyQuery(new Term("field", "noSuch"), 1, 0, 1, false);
             SpanQuery spanNoSuch = new SpanMultiTermQueryWrapper<MultiTermQuery>(fuzzyNoSuch);
             SpanQuery term = new SpanTermQuery(new Term("field", "brown"));
@@ -142,13 +142,12 @@ namespace Lucene.Net.Search.Spans
             //test double noSuch
             near = new SpanNearQuery(new SpanQuery[] { spanPrfxNoSuch, spanPrfxNoSuch }, 1, true);
             Assert.AreEqual(0, Searcher.Search(near, 10).TotalHits);
-
         }
 
         [Test]
         public virtual void TestNoSuchMultiTermsInNotNear()
         {
-            //test to make sure non existent multiterms aren't throwing non-matching field exceptions  
+            //test to make sure non existent multiterms aren't throwing non-matching field exceptions
             FuzzyQuery fuzzyNoSuch = new FuzzyQuery(new Term("field", "noSuch"), 1, 0, 1, false);
             SpanQuery spanNoSuch = new SpanMultiTermQueryWrapper<MultiTermQuery>(fuzzyNoSuch);
             SpanQuery term = new SpanTermQuery(new Term("field", "brown"));
@@ -177,13 +176,12 @@ namespace Lucene.Net.Search.Spans
             SpanQuery spanPrfxNoSuch = new SpanMultiTermQueryWrapper<MultiTermQuery>(prfxNoSuch);
             notNear = new SpanNotQuery(term, spanPrfxNoSuch, 1, 1);
             Assert.AreEqual(1, Searcher.Search(notNear, 10).TotalHits);
-
         }
 
         [Test]
         public virtual void TestNoSuchMultiTermsInOr()
         {
-            //test to make sure non existent multiterms aren't throwing null pointer exceptions  
+            //test to make sure non existent multiterms aren't throwing null pointer exceptions
             FuzzyQuery fuzzyNoSuch = new FuzzyQuery(new Term("field", "noSuch"), 1, 0, 1, false);
             SpanQuery spanNoSuch = new SpanMultiTermQueryWrapper<MultiTermQuery>(fuzzyNoSuch);
             SpanQuery term = new SpanTermQuery(new Term("field", "brown"));
@@ -193,7 +191,6 @@ namespace Lucene.Net.Search.Spans
             //flip
             near = new SpanOrQuery(new SpanQuery[] { spanNoSuch, term });
             Assert.AreEqual(1, Searcher.Search(near, 10).TotalHits);
-
 
             WildcardQuery wcNoSuch = new WildcardQuery(new Term("field", "noSuch*"));
             SpanQuery spanWCNoSuch = new SpanMultiTermQueryWrapper<MultiTermQuery>(wcNoSuch);
@@ -215,14 +212,12 @@ namespace Lucene.Net.Search.Spans
 
             near = new SpanOrQuery(new SpanQuery[] { spanPrfxNoSuch, spanPrfxNoSuch });
             Assert.AreEqual(0, Searcher.Search(near, 10).TotalHits);
-
         }
-
 
         [Test]
         public virtual void TestNoSuchMultiTermsInSpanFirst()
         {
-            //this hasn't been a problem  
+            //this hasn't been a problem
             FuzzyQuery fuzzyNoSuch = new FuzzyQuery(new Term("field", "noSuch"), 1, 0, 1, false);
             SpanQuery spanNoSuch = new SpanMultiTermQueryWrapper<MultiTermQuery>(fuzzyNoSuch);
             SpanQuery spanFirst = new SpanFirstQuery(spanNoSuch, 10);
@@ -245,5 +240,4 @@ namespace Lucene.Net.Search.Spans
             Assert.AreEqual(0, Searcher.Search(spanFirst, 10).TotalHits);
         }
     }
-
 }

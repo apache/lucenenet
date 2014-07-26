@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     using Util = Lucene.Net.Util.Fst.Util;
 
     /*
@@ -59,5 +58,4 @@ namespace Lucene.Net.Util.Automaton
             Assert.IsTrue(strings.Contains(duck));
         }
     }
-
 }

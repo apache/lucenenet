@@ -3,58 +3,55 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using Fields = Lucene.Net.Index.Fields;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using IOContext = Lucene.Net.Store.IOContext;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using MultiFields = Lucene.Net.Index.MultiFields;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SegmentReader = Lucene.Net.Index.SegmentReader;
     using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
+    using TopDocs = Lucene.Net.Search.TopDocs;
 
     [TestFixture]
     public class TestTermInfosReaderIndex : LuceneTestCase
     {
-
         private static int NUMBER_OF_DOCUMENTS;
         private static int NUMBER_OF_FIELDS;
         private static TermInfosReaderIndex Index;
@@ -86,7 +83,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             // NOTE: turn off compound file, this test will open some index files directly.
             mp.NoCFSRatio = 0.0;
             config.SetMergePolicy(mp);
-
 
             Populate(Directory, config);
 
@@ -229,5 +225,4 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
     }
-
 }

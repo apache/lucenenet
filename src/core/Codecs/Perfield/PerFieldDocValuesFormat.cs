@@ -1,53 +1,52 @@
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Codecs.Perfield
 {
+    using Lucene.Net.Support;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Enables per field docvalues support.
     /// <p>
-    /// Note, when extending this class, the name (<seealso cref="#getName"/>) is 
+    /// Note, when extending this class, the name (<seealso cref="#getName"/>) is
     /// written into the index. In order for the field to be read, the
     /// name must resolve to your implementation via <seealso cref="#forName(String)"/>.
-    /// this method uses Java's 
+    /// this method uses Java's
     /// <seealso cref="ServiceLoader Service Provider Interface"/> to resolve format names.
     /// <p>
-    /// Files written by each docvalues format have an additional suffix containing the 
-    /// format name. For example, in a per-field configuration instead of <tt>_1.dat</tt> 
+    /// Files written by each docvalues format have an additional suffix containing the
+    /// format name. For example, in a per-field configuration instead of <tt>_1.dat</tt>
     /// filenames would look like <tt>_1_Lucene40_0.dat</tt>. </summary>
     /// <seealso cref= ServiceLoader
     /// @lucene.experimental </seealso>
@@ -60,16 +59,15 @@ namespace Lucene.Net.Codecs.Perfield
 
         /// <summary>
         /// <seealso cref="FieldInfo"/> attribute name used to store the
-        ///  format name for each field. 
+        ///  format name for each field.
         /// </summary>
         public static readonly string PER_FIELD_FORMAT_KEY = typeof(PerFieldDocValuesFormat).Name + ".format";
 
         /// <summary>
         /// <seealso cref="FieldInfo"/> attribute name used to store the
-        ///  segment suffix name for each field. 
+        ///  segment suffix name for each field.
         /// </summary>
         public static readonly string PER_FIELD_SUFFIX_KEY = typeof(PerFieldDocValuesFormat).Name + ".suffix";
-
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -97,7 +95,6 @@ namespace Lucene.Net.Codecs.Perfield
         private class FieldsWriter : DocValuesConsumer
         {
             private readonly PerFieldDocValuesFormat OuterInstance;
-
 
             internal readonly IDictionary<DocValuesFormat, ConsumerAndSuffix> Formats = new Dictionary<DocValuesFormat, ConsumerAndSuffix>();
             internal readonly IDictionary<string, int> Suffixes = new Dictionary<string, int>();
@@ -240,7 +237,6 @@ namespace Lucene.Net.Codecs.Perfield
         private class FieldsReader : DocValuesProducer
         {
             private readonly PerFieldDocValuesFormat OuterInstance;
-
 
             internal readonly IDictionary<string, DocValuesProducer> Fields = new SortedDictionary<string, DocValuesProducer>();
             internal readonly IDictionary<string, DocValuesProducer> Formats = new Dictionary<string, DocValuesProducer>();
@@ -394,13 +390,12 @@ namespace Lucene.Net.Codecs.Perfield
         }
 
         /// <summary>
-        /// Returns the doc values format that should be used for writing 
+        /// Returns the doc values format that should be used for writing
         /// new segments of <code>field</code>.
         /// <p>
         /// The field to format mapping is written to the index, so
-        /// this method is only invoked when writing, not when reading. 
+        /// this method is only invoked when writing, not when reading.
         /// </summary>
         public abstract DocValuesFormat GetDocValuesFormatForField(string field);
     }
-
 }

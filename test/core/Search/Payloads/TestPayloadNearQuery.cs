@@ -1,5 +1,5 @@
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
 
 namespace Lucene.Net.Search.Payloads
 {
@@ -21,23 +21,22 @@ namespace Lucene.Net.Search.Payloads
      */
 
     using Lucene.Net.Analysis;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
+    using NUnit.Framework;
+    using System.IO;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
+    using English = Lucene.Net.Util.English;
     using Field = Lucene.Net.Document.Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
-    using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
-    using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using English = Lucene.Net.Util.English;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using System.IO;
-    using NUnit.Framework;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
+    using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
+    using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
+    using Term = Lucene.Net.Index.Term;
 
     [TestFixture]
     public class TestPayloadNearQuery : LuceneTestCase
@@ -181,7 +180,6 @@ namespace Lucene.Net.Search.Payloads
             }
         }
 
-
         [Test]
         public virtual void TestPayloadNear()
         {
@@ -228,6 +226,7 @@ namespace Lucene.Net.Search.Payloads
                 Assert.AreEqual(3f, explain.Value, hits.ScoreDocs[j].Score + " explain value does not equal: " + 3);
             }
         }
+
         [Test]
         public virtual void TestMaxFunction()
         {
@@ -250,6 +249,7 @@ namespace Lucene.Net.Search.Payloads
                 Assert.AreEqual(4f, explain.Value, hits.ScoreDocs[j].Score + " explain value does not equal: " + 4);
             }
         }
+
         [Test]
         public virtual void TestMinFunction()
         {
@@ -272,6 +272,7 @@ namespace Lucene.Net.Search.Payloads
                 Assert.AreEqual(2f, explain.Value, hits.ScoreDocs[j].Score + " explain value does not equal: " + 2);
             }
         }
+
         private SpanQuery[] Clauses
         {
             get
@@ -285,6 +286,7 @@ namespace Lucene.Net.Search.Payloads
                 return clauses;
             }
         }
+
         private SpanNearQuery SpanNearQuery(string fieldName, string words)
         {
             string[] wordList = words.Split("[\\s]+".ToCharArray());
@@ -339,7 +341,6 @@ namespace Lucene.Net.Search.Payloads
 
         internal class BoostingSimilarity : DefaultSimilarity
         {
-
             public override float QueryNorm(float sumOfSquaredWeights)
             {
                 return 1.0f;
@@ -381,5 +382,4 @@ namespace Lucene.Net.Search.Payloads
             }
         }
     }
-
 }

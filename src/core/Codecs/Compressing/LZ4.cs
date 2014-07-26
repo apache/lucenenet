@@ -3,8 +3,8 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -22,20 +22,18 @@ namespace Lucene.Net.Codecs.Compressing
          * limitations under the License.
          */
 
-
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
 
     /// <summary>
     /// LZ4 compression and decompression routines.
-    /// 
+    ///
     /// http://code.google.com/p/lz4/
     /// http://fastcompression.blogspot.fr/p/lz4.html
     /// </summary>
     public sealed class LZ4
     {
-
         private LZ4()
         {
         }
@@ -47,7 +45,6 @@ namespace Lucene.Net.Codecs.Compressing
         internal const int HASH_LOG_HC = 15; // log size of the dictionary for compressHC
         internal static readonly int HASH_TABLE_SIZE_HC = 1 << HASH_LOG_HC;
         internal static readonly int OPTIMAL_ML = 0x0F + 4 - 1; // match length that doesn't require an additional byte
-
 
         private static int Hash(int i, int hashBits)
         {
@@ -235,7 +232,6 @@ namespace Lucene.Net.Codecs.Compressing
                     hashTable.Clear();
                 }
             }
-
         }
 
         /// <summary>
@@ -245,7 +241,6 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public static void Compress(sbyte[] bytes, int off, int len, DataOutput @out, HashTable ht)
         {
-
             int @base = off;
             int end = off + len;
 
@@ -253,7 +248,6 @@ namespace Lucene.Net.Codecs.Compressing
 
             if (len > LAST_LITERALS + MIN_MATCH)
             {
-
                 int limit = end - LAST_LITERALS;
                 int matchLimit = limit - MIN_MATCH;
                 ht.Reset(len);
@@ -472,7 +466,6 @@ namespace Lucene.Net.Codecs.Compressing
 
                 return match.Len > minLen;
             }
-
         }
 
         /// <summary>
@@ -486,7 +479,6 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public static void CompressHC(sbyte[] src, int srcOff, int srcLen, DataOutput @out, HCHashTable ht)
         {
-
             int srcEnd = srcOff + srcLen;
             int matchLimit = srcEnd - LAST_LITERALS;
             int mfLimit = matchLimit - MIN_MATCH;
@@ -643,7 +635,5 @@ namespace Lucene.Net.Codecs.Compressing
 
             EncodeLastLiterals(src, anchor, srcEnd - anchor, @out);
         }
-
     }
-
 }

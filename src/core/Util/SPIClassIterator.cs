@@ -1,12 +1,9 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Threading;
 using System.Reflection;
 
 namespace Lucene.Net.Util
 {
-
     //LUCENE TO-DO Whole file
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,16 +22,15 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
-	/// <summary>
-	/// Helper class for loading SPI classes from classpath (META-INF files).
-	/// this is a light impl of <seealso cref="java.util.ServiceLoader"/> but is guaranteed to
-	/// be bug-free regarding classpath order and does not instantiate or initialize
-	/// the classes found.
-	/// 
-	/// @lucene.internal
-	/// </summary>
-    /// 
+    /// <summary>
+    /// Helper class for loading SPI classes from classpath (META-INF files).
+    /// this is a light impl of <seealso cref="java.util.ServiceLoader"/> but is guaranteed to
+    /// be bug-free regarding classpath order and does not instantiate or initialize
+    /// the classes found.
+    ///
+    /// @lucene.internal
+    /// </summary>
+    ///
 
     public class SPIClassIterator<S> : IEnumerable<Type>
     {
@@ -72,7 +68,7 @@ namespace Lucene.Net.Util
                 }
 
                 foreach (var assemblyName in loadedAssembly.GetReferencedAssemblies())
-                {                    
+                {
                     try
                     {
                         var assembly = Assembly.Load(assemblyName);
@@ -114,154 +110,150 @@ namespace Lucene.Net.Util
         }
     }
 
-
-
-	/* Being Re-written
+    /* Being Re-written
     public sealed class SPIClassIterator<S> : IEnumerator<Type>
-	{
-	  private const string META_INF_SERVICES = "META-INF/services/";
+    {
+      private const string META_INF_SERVICES = "META-INF/services/";
 
-	  private readonly Type Clazz;
-	  private readonly ClassLoader Loader;
-	  private readonly IEnumerator<URL> ProfilesEnum;
-	  private IEnumerator<string> LinesIterator;
+      private readonly Type Clazz;
+      private readonly ClassLoader Loader;
+      private readonly IEnumerator<URL> ProfilesEnum;
+      private IEnumerator<string> LinesIterator;
 
-	  public static SPIClassIterator<S> Get<S>(Type clazz)
-	  {
-		return new SPIClassIterator<S>(clazz, Thread.CurrentThread.ContextClassLoader);
-	  }
+      public static SPIClassIterator<S> Get<S>(Type clazz)
+      {
+        return new SPIClassIterator<S>(clazz, Thread.CurrentThread.ContextClassLoader);
+      }
 
-	  public static SPIClassIterator<S> Get<S>(Type clazz, ClassLoader loader)
-	  {
-		return new SPIClassIterator<S>(clazz, loader);
-	  }
+      public static SPIClassIterator<S> Get<S>(Type clazz, ClassLoader loader)
+      {
+        return new SPIClassIterator<S>(clazz, loader);
+      }
 
-	  /// <summary>
-	  /// Utility method to check if some class loader is a (grand-)parent of or the same as another one.
-	  /// this means the child will be able to load all classes from the parent, too. 
-	  /// </summary>
-	  public static bool IsParentClassLoader(ClassLoader parent, ClassLoader child)
-	  {
-		while (child != null)
-		{
-		  if (child == parent)
-		  {
-			return true;
-		  }
-		  child = child.Parent;
-		}
-		return false;
-	  }
+      /// <summary>
+      /// Utility method to check if some class loader is a (grand-)parent of or the same as another one.
+      /// this means the child will be able to load all classes from the parent, too.
+      /// </summary>
+      public static bool IsParentClassLoader(ClassLoader parent, ClassLoader child)
+      {
+        while (child != null)
+        {
+          if (child == parent)
+          {
+            return true;
+          }
+          child = child.Parent;
+        }
+        return false;
+      }
 
-	  private SPIClassIterator(Type clazz, ClassLoader loader)
-	  {
-		this.Clazz = clazz;
-		try
-		{
-		  string fullName = META_INF_SERVICES + clazz.Name;
-		  this.ProfilesEnum = (loader == null) ? ClassLoader.getSystemResources(fullName) : loader.getResources(fullName);
-		}
-		catch (System.IO.IOException ioe)
-		{
-		  throw new ServiceConfigurationError("Error loading SPI profiles for type " + clazz.Name + " from classpath", ioe);
-		}
-		this.Loader = (loader == null) ? ClassLoader.SystemClassLoader : loader;
-		this.LinesIterator = Collections.emptySet<string>().GetEnumerator();
-	  }
+      private SPIClassIterator(Type clazz, ClassLoader loader)
+      {
+        this.Clazz = clazz;
+        try
+        {
+          string fullName = META_INF_SERVICES + clazz.Name;
+          this.ProfilesEnum = (loader == null) ? ClassLoader.getSystemResources(fullName) : loader.getResources(fullName);
+        }
+        catch (System.IO.IOException ioe)
+        {
+          throw new ServiceConfigurationError("Error loading SPI profiles for type " + clazz.Name + " from classpath", ioe);
+        }
+        this.Loader = (loader == null) ? ClassLoader.SystemClassLoader : loader;
+        this.LinesIterator = Collections.emptySet<string>().GetEnumerator();
+      }
 
-	  private bool LoadNextProfile()
-	  {
-		List<string> lines = null;
-		while (ProfilesEnum.MoveNext())
-		{
-		  if (lines != null)
-		  {
-			lines.Clear();
-		  }
-		  else
-		  {
-			lines = new List<string>();
-		  }
-		  URL url = ProfilesEnum.Current;
-		  try
-		  {
-			InputStream @in = url.openStream();
-			System.IO.IOException priorE = null;
-			try
-			{
-			  BufferedReader reader = new BufferedReader(new InputStreamReader(@in, IOUtils.CHARSET_UTF_8));
-			  string line;
-			  while ((line = reader.readLine()) != null)
-			  {
-				int pos = line.IndexOf('#');
-				if (pos >= 0)
-				{
-				  line = line.Substring(0, pos);
-				}
-				line = line.Trim();
-				if (line.Length > 0)
-				{
-				  lines.Add(line);
-				}
-			  }
-			}
-			catch (System.IO.IOException ioe)
-			{
-			  priorE = ioe;
-			}
-			finally
-			{
-			  IOUtils.CloseWhileHandlingException(priorE, @in);
-			}
-		  }
-		  catch (System.IO.IOException ioe)
-		  {
-			throw new ServiceConfigurationError("Error loading SPI class list from URL: " + url, ioe);
-		  }
-		  if (lines.Count > 0)
-		  {
-			this.LinesIterator = lines.GetEnumerator();
-			return true;
-		  }
-		}
-		return false;
-	  }
+      private bool LoadNextProfile()
+      {
+        List<string> lines = null;
+        while (ProfilesEnum.MoveNext())
+        {
+          if (lines != null)
+          {
+            lines.Clear();
+          }
+          else
+          {
+            lines = new List<string>();
+          }
+          URL url = ProfilesEnum.Current;
+          try
+          {
+            InputStream @in = url.openStream();
+            System.IO.IOException priorE = null;
+            try
+            {
+              BufferedReader reader = new BufferedReader(new InputStreamReader(@in, IOUtils.CHARSET_UTF_8));
+              string line;
+              while ((line = reader.readLine()) != null)
+              {
+                int pos = line.IndexOf('#');
+                if (pos >= 0)
+                {
+                  line = line.Substring(0, pos);
+                }
+                line = line.Trim();
+                if (line.Length > 0)
+                {
+                  lines.Add(line);
+                }
+              }
+            }
+            catch (System.IO.IOException ioe)
+            {
+              priorE = ioe;
+            }
+            finally
+            {
+              IOUtils.CloseWhileHandlingException(priorE, @in);
+            }
+          }
+          catch (System.IO.IOException ioe)
+          {
+            throw new ServiceConfigurationError("Error loading SPI class list from URL: " + url, ioe);
+          }
+          if (lines.Count > 0)
+          {
+            this.LinesIterator = lines.GetEnumerator();
+            return true;
+          }
+        }
+        return false;
+      }
 
-	  public override bool HasNext()
-	  {
+      public override bool HasNext()
+      {
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		return LinesIterator.hasNext() || LoadNextProfile();
-	  }
+        return LinesIterator.hasNext() || LoadNextProfile();
+      }
 
-	  public override Type Next()
-	  {
-		// hasNext() implicitely loads the next profile, so it is essential to call this here!
-		if (!HasNext())
-		{
-		  throw new NoSuchElementException();
-		}
+      public override Type Next()
+      {
+        // hasNext() implicitely loads the next profile, so it is essential to call this here!
+        if (!HasNext())
+        {
+          throw new NoSuchElementException();
+        }
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Debug.Assert(LinesIterator.hasNext());
+        Debug.Assert(LinesIterator.hasNext());
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final String c = linesIterator.next();
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		string c = LinesIterator.next();
-		try
-		{
-		  // don't initialize the class (pass false as 2nd parameter):
-		  return Type.GetType(c, false, Loader).asSubclass(Clazz);
-		}
-		catch (ClassNotFoundException cnfe)
-		{
-		  throw new ServiceConfigurationError(string.format(Locale.ROOT, "A SPI class of type %s with classname %s does not exist, " + "please fix the file '%s%1$s' in your classpath.", Clazz.Name, c, META_INF_SERVICES));
-		}
-	  }
+        string c = LinesIterator.next();
+        try
+        {
+          // don't initialize the class (pass false as 2nd parameter):
+          return Type.GetType(c, false, Loader).asSubclass(Clazz);
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+          throw new ServiceConfigurationError(string.format(Locale.ROOT, "A SPI class of type %s with classname %s does not exist, " + "please fix the file '%s%1$s' in your classpath.", Clazz.Name, c, META_INF_SERVICES));
+        }
+      }
 
-	  public override void Remove()
-	  {
-		throw new System.NotSupportedException();
-	  }
-
-	}*/
-
+      public override void Remove()
+      {
+        throw new System.NotSupportedException();
+      }
+    }*/
 }

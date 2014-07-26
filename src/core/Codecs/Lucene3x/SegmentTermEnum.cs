@@ -3,34 +3,33 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
+    using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using IndexFormatTooNewException = Lucene.Net.Index.IndexFormatTooNewException;
+    using IndexFormatTooOldException = Lucene.Net.Index.IndexFormatTooOldException;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using IndexInput = Lucene.Net.Store.IndexInput;
-    using FieldInfos = Lucene.Net.Index.FieldInfos;
     using Term = Lucene.Net.Index.Term;
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using IndexFormatTooOldException = Lucene.Net.Index.IndexFormatTooOldException;
-    using IndexFormatTooNewException = Lucene.Net.Index.IndexFormatTooNewException;
 
     /// @deprecated (4.0) No longer used with flex indexing, except for
-    /// reading old segments 
-    /// @lucene.experimental  
+    /// reading old segments
+    /// @lucene.experimental
 
     [Obsolete]
     public sealed class SegmentTermEnum : ICloneable, IDisposable
@@ -176,12 +175,13 @@ namespace Lucene.Net.Codecs.Lucene3x
             return true;
         }
 
-        /* Optimized scan, without allocating new terms. 
+        /* Optimized scan, without allocating new terms.
          *  Return number of invocations to next().
          *
          * NOTE: LUCENE-3183: if you pass Term("", "") here then this
          * will incorrectly return before positioning the enum,
          * and position will be -1; caller must detect this. */
+
         internal int ScanTo(Term term)
         {
             ScanBuffer.Set(term);
@@ -246,6 +246,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /* Returns the freqPointer from the current TermInfo in the enumeration.
           Initially invalid, valid after next() called for the first time.*/
+
         internal long FreqPointer()
         {
             return TermInfo_Renamed.FreqPointer;
@@ -253,6 +254,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /* Returns the proxPointer from the current TermInfo in the enumeration.
           Initially invalid, valid after next() called for the first time.*/
+
         internal long ProxPointer()
         {
             return TermInfo_Renamed.ProxPointer;
@@ -265,5 +267,4 @@ namespace Lucene.Net.Codecs.Lucene3x
             Input.Dispose();
         }
     }
-
 }

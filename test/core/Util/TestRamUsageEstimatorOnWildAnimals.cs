@@ -2,7 +2,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +20,7 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Check large and special graphs. 
+    /// Check large and special graphs.
     /// </summary>
     [TestFixture]
     public class TestRamUsageEstimatorOnWildAnimals : LuceneTestCase
@@ -64,5 +63,4 @@ namespace Lucene.Net.Util
             }
         }
     }
-
 }

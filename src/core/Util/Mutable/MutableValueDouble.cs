@@ -14,69 +14,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Lucene.Net.Support;
+
 using System;
+
 namespace Lucene.Net.Util.Mutable
 {
+    /// <summary>
+    /// <seealso cref="MutableValue"/> implementation of type
+    /// <code>double</code>.
+    /// </summary>
+    public class MutableValueDouble : MutableValue
+    {
+        public double Value;
 
-	/// <summary>
-	/// <seealso cref="MutableValue"/> implementation of type 
-	/// <code>double</code>.
-	/// </summary>
-	public class MutableValueDouble : MutableValue
-	{
-	  public double Value;
+        public override object ToObject()
+        {
+            return Exists ? (object)Value : null;
+        }
 
-	  public override object ToObject()
-	  {
-		return Exists ? (object)Value : null;
-	  }
+        public override void Copy(MutableValue source)
+        {
+            MutableValueDouble s = (MutableValueDouble)source;
+            Value = s.Value;
+            Exists = s.Exists;
+        }
 
-	  public override void Copy(MutableValue source)
-	  {
-		MutableValueDouble s = (MutableValueDouble) source;
-		Value = s.Value;
-		Exists = s.Exists;
-	  }
+        public override MutableValue Duplicate()
+        {
+            MutableValueDouble v = new MutableValueDouble();
+            v.Value = this.Value;
+            v.Exists = this.Exists;
+            return v;
+        }
 
-	  public override MutableValue Duplicate()
-	  {
-		MutableValueDouble v = new MutableValueDouble();
-		v.Value = this.Value;
-		v.Exists = this.Exists;
-		return v;
-	  }
+        public override bool EqualsSameType(object other)
+        {
+            MutableValueDouble b = (MutableValueDouble)other;
+            return Value == b.Value && Exists == b.Exists;
+        }
 
-	  public override bool EqualsSameType(object other)
-	  {
-		MutableValueDouble b = (MutableValueDouble)other;
-		return Value == b.Value && Exists == b.Exists;
-	  }
+        public override int CompareSameType(object other)
+        {
+            MutableValueDouble b = (MutableValueDouble)other;
+            int c = Value.CompareTo(b.Value);
+            if (c != 0)
+            {
+                return c;
+            }
+            if (!Exists)
+            {
+                return -1;
+            }
+            if (!b.Exists)
+            {
+                return 1;
+            }
+            return 0;
+        }
 
-	  public override int CompareSameType(object other)
-	  {
-		MutableValueDouble b = (MutableValueDouble)other;
-		int c = Value.CompareTo(b.Value);
-		if (c != 0)
-		{
-			return c;
-		}
-		if (!Exists)
-		{
-			return -1;
-		}
-		if (!b.Exists)
-		{
-			return 1;
-		}
-		return 0;
-	  }
-
-	  public override int GetHashCode()
-	  {
-		long x = BitConverter.DoubleToInt64Bits(Value);
-		return (int)x + (int)((long)((ulong)x >> 32));
-	  }
-	}
-
+        public override int GetHashCode()
+        {
+            long x = BitConverter.DoubleToInt64Bits(Value);
+            return (int)x + (int)((long)((ulong)x >> 32));
+        }
+    }
 }

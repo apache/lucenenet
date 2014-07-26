@@ -1,36 +1,35 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Support;
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using InfoStream = Lucene.Net.Util.InfoStream;
+    using IOContext = Lucene.Net.Store.IOContext;
     using Query = Lucene.Net.Search.Query;
     using QueryWrapperFilter = Lucene.Net.Search.QueryWrapperFilter;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using InfoStream = Lucene.Net.Util.InfoStream;
-    using Lucene.Net.Support;
 
     /* Tracks the stream of {@link BufferedDeletes}.
      * When DocumentsWriterPerThread flushes, its buffered
@@ -49,7 +48,6 @@ namespace Lucene.Net.Index
 
     public class BufferedUpdatesStream
     {
-
         // TODO: maybe linked list?
         private readonly IList<FrozenBufferedUpdates> Updates = new List<FrozenBufferedUpdates>();
 
@@ -128,7 +126,6 @@ namespace Lucene.Net.Index
 
         public class ApplyDeletesResult
         {
-
             // True if any actual deletes took place:
             public readonly bool AnyDeletes;
 
@@ -176,7 +173,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Resolves the buffered deleted Term/Query/docIDs, into
         ///  actual deleted docIDs in the liveDocs MutableBits for
-        ///  each SegmentReader. 
+        ///  each SegmentReader.
         /// </summary>
         public virtual ApplyDeletesResult ApplyDeletesAndUpdates(IndexWriter.ReaderPool readerPool, IList<SegmentCommitInfo> infos)
         {
@@ -312,13 +309,12 @@ namespace Lucene.Net.Index
 
                         /*
                          * Since we are on a segment private del packet we must not
-                         * update the coalescedDeletes here! We can simply advance to the 
+                         * update the coalescedDeletes here! We can simply advance to the
                          * next packet and seginfo.
                          */
                         delIDX--;
                         infosIDX--;
                         info.BufferedDeletesGen = gen;
-
                     }
                     else
                     {
@@ -400,6 +396,7 @@ namespace Lucene.Net.Index
         /* Removes any BufferedDeletes that we no longer need to
          * store because all segments in the index have had the
          * deletes applied. */
+
         public virtual void Prune(SegmentInfos segmentInfos)
         {
             lock (this)
@@ -642,6 +639,7 @@ namespace Lucene.Net.Index
         {
             public readonly Query Query;
             public readonly int? Limit;
+
             public QueryAndLimit(Query query, int? limit)
             {
                 this.Query = query;
@@ -718,5 +716,4 @@ namespace Lucene.Net.Index
             return true;
         }
     }
-
 }

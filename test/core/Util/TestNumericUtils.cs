@@ -1,12 +1,11 @@
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Randomized.Generators;
-using NUnit.Framework;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
-
     /// <summary>
     /// Licensed to the Apache Software Foundation (ASF) under one or more
     /// contributor license agreements.  See the NOTICE file distributed with
@@ -14,9 +13,9 @@ namespace Lucene.Net.Util
     /// The ASF licenses this file to You under the Apache License, Version 2.0
     /// (the "License"); you may not use this file except in compliance with
     /// the License.  You may obtain a copy of the License at
-    /// 
+    ///
     ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
+    ///
     /// Unless required by applicable law or agreed to in writing, software
     /// distributed under the License is distributed on an "AS IS" BASIS,
     /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +26,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestNumericUtils : LuceneTestCase
     {
-
         [Test]
         public virtual void TestLongConversionAndOrdering()
         {
@@ -364,9 +362,11 @@ namespace Lucene.Net.Util
                 case 0:
                     val = 1L << (random.Next(63)); //  patterns like 0x000000100000 (-1 yields patterns like 0x0000fff)
                     break;
+
                 case 1:
                     val = -1L << (random.Next(63)); // patterns like 0xfffff00000
                     break;
+
                 default:
                     val = random.NextLong();
                     break;
@@ -532,7 +532,5 @@ namespace Lucene.Net.Util
             // a 0-length range should reproduce the range itself
             AssertIntRangeSplit(9500, 9500, 4, false, Arrays.AsList(unchecked((int)0x8000251c), unchecked((int)0x8000251c)), Arrays.AsList(0));
         }
-
     }
-
 }

@@ -2,7 +2,6 @@ using System.IO;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +19,6 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Subclasses of CharFilter can be chained to filter a Reader
     /// They can be used as <seealso cref="java.io.Reader"/> with additional offset
@@ -31,18 +29,18 @@ namespace Lucene.Net.Analysis
     /// transforming the input in some way from <seealso cref="#input"/>, and <seealso cref="#correct(int)"/>
     /// to adjust the offsets to match the originals.
     /// <p>
-    /// You can optionally provide more efficient implementations of additional methods 
+    /// You can optionally provide more efficient implementations of additional methods
     /// like <seealso cref="#read()"/>, <seealso cref="#read(char[])"/>, <seealso cref="#read(java.nio.CharBuffer)"/>,
     /// but this is not required.
     /// <p>
-    /// For examples and integration with <seealso cref="Analyzer"/>, see the 
+    /// For examples and integration with <seealso cref="Analyzer"/>, see the
     /// <seealso cref="Lucene.Net.Analysis Analysis package documentation"/>.
     /// </summary>
     // the way java.io.FilterReader should work!
     public abstract class CharFilter : TextReader
     {
         /// <summary>
-        /// The underlying character-input stream. 
+        /// The underlying character-input stream.
         /// </summary>
         public readonly TextReader Input;
 
@@ -57,7 +55,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Closes the underlying input stream.
         /// <p>
-        /// <b>NOTE:</b> 
+        /// <b>NOTE:</b>
         /// The default implementation closes the input Reader, so
         /// be sure to call <code>super.close()</code> when overriding this method.
         /// </summary>
@@ -83,5 +81,4 @@ namespace Lucene.Net.Analysis
             return (Input is CharFilter) ? ((CharFilter)Input).CorrectOffset(corrected) : corrected;
         }
     }
-
 }

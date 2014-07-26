@@ -1,46 +1,44 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
+    using System;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using BytesRef = Lucene.Net.Util.BytesRef;
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
-    using System;
 
     /// <summary>
     /// Abstract base class for performing write operations of Lucene's low-level
     /// data types.
-    /// 
+    ///
     /// <p>{@code DataOutput} may only be used from one thread, because it is not
     /// thread safe (it keeps internal state like file position).
     /// </summary>
     public abstract class DataOutput
     {
-
         /// <summary>
         /// Writes a single byte.
         /// <p>
-        /// The most primitive data type is an eight-bit byte. Files are 
-        /// accessed as sequences of bytes. All other data types are defined 
+        /// The most primitive data type is an eight-bit byte. Files are
+        /// accessed as sequences of bytes. All other data types are defined
         /// as sequences of bytes, so file formats are byte-order independent.
         /// </summary>
         /// <seealso cref= IndexInput#readByte() </seealso>
@@ -297,7 +295,7 @@ namespace Lucene.Net.Store
         /// Writes a String map.
         /// <p>
         /// First the size is written as an <seealso cref="#writeInt(int) Int32"/>,
-        /// followed by each key-value pair written as two consecutive 
+        /// followed by each key-value pair written as two consecutive
         /// <seealso cref="#writeString(String) String"/>s.
         /// </summary>
         /// <param name="map"> Input map. May be null (equivalent to an empty map) </param>
@@ -342,5 +340,4 @@ namespace Lucene.Net.Store
             }
         }
     }
-
 }

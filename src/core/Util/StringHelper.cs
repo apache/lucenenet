@@ -1,10 +1,9 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,15 +21,13 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Methods for manipulating strings.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public abstract class StringHelper
     {
-
         /// <summary>
         /// Compares two <seealso cref="BytesRef"/>, element by element, and returns the
         /// number of elements common to both arrays.
@@ -184,6 +181,7 @@ namespace Lucene.Net.Util
 
         //Singleton-esque member. Only created once
         private static int good_fast_hash_seed;
+
         public static int GOOD_FAST_HASH_SEED
         {
             get
@@ -208,7 +206,6 @@ namespace Lucene.Net.Util
                     }
                 }
                 return good_fast_hash_seed;
-
             }
         }
 
@@ -218,7 +215,6 @@ namespace Lucene.Net.Util
         /// </summary>
         public static int Murmurhash3_x86_32(sbyte[] data, int offset, int len, int seed)
         {
-
             const int c1 = unchecked((int)0xcc9e2d51);
             const int c2 = 0x1b873593;
 
@@ -278,5 +274,4 @@ namespace Lucene.Net.Util
             return Murmurhash3_x86_32(bytes.Bytes, bytes.Offset, bytes.Length, seed);
         }
     }
-
 }

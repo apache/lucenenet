@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Lucene.Net.Support
 {
     public class AtomicInteger
     {
         private int value;
+
         public AtomicInteger()
             : this(0)
         {
         }
 
-        public AtomicInteger(int value_) {
+        public AtomicInteger(int value_)
+        {
             Interlocked.Exchange(ref value, value_);
         }
 
-        public int IncrementAndGet() 
+        public int IncrementAndGet()
         {
             return Interlocked.Increment(ref value);
         }

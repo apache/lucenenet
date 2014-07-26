@@ -1,6 +1,5 @@
 namespace Lucene.Net.Codecs.Compressing
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,7 +24,6 @@ namespace Lucene.Net.Codecs.Compressing
     /// </summary>
     public abstract class Compressor
     {
-
         /// <summary>
         /// Sole constructor, typically called from sub-classes. </summary>
         protected internal Compressor()
@@ -38,7 +36,5 @@ namespace Lucene.Net.Codecs.Compressing
         /// will know when to stop decompressing bytes from the stream.
         /// </summary>
         public abstract void Compress(sbyte[] bytes, int off, int len, DataOutput @out);
-
     }
-
 }

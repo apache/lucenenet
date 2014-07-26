@@ -1,14 +1,10 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using System.Linq;
-using System.Text;
+using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -51,9 +47,9 @@ namespace Lucene.Net.Store
         private int CurBufIndex;
 
         private ByteBuffer CurBuf; // redundant for speed: buffers[curBufIndex]
-
         private bool IsClone = false;
         private readonly WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper> Clones;
+
         private class BoolRefWrapper
         {
             // .NET port: this is needed as bool is not a reference type
@@ -317,9 +313,9 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Returns a sliced view from a set of already-existing buffers: 
+        /// Returns a sliced view from a set of already-existing buffers:
         ///  the last buffer's limit() will be correct, but
-        ///  you must deal with offset separately (the first buffer will not be adjusted) 
+        ///  you must deal with offset separately (the first buffer will not be adjusted)
         /// </summary>
         private ByteBuffer[] BuildSlice(ByteBuffer[] buffers, long offset, long length)
         {
@@ -409,5 +405,4 @@ namespace Lucene.Net.Store
             }
         }
     }
-
 }

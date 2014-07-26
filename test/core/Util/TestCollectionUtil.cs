@@ -1,12 +1,11 @@
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestCollectionUtil : LuceneTestCase
     {
-
         private CollectionsHelper.ReverseComparer<int> ReverseOrder = new CollectionsHelper.ReverseComparer<int>();
 
         private List<int> CreateRandomList(int maxSize)
@@ -114,7 +112,5 @@ namespace Lucene.Net.Util
             CollectionUtil.IntroSort(list, ReverseOrder);
             CollectionUtil.TimSort(list, ReverseOrder);
         }
-
     }
-
 }

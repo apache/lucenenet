@@ -25,12 +25,12 @@ using System.Globalization;
 namespace Lucene.Net.Support
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class Single
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="s"></param>
         /// <param name="style"></param>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="s"></param>
         /// <param name="provider"></param>
@@ -59,7 +59,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="s"></param>
         /// <param name="style"></param>
@@ -73,7 +73,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
@@ -98,7 +98,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
@@ -108,7 +108,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="f"></param>
         /// <param name="format"></param>

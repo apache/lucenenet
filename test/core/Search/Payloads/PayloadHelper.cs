@@ -1,10 +1,9 @@
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Search.Payloads
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,30 +22,27 @@ namespace Lucene.Net.Search.Payloads
      */
 
     using Lucene.Net.Analysis;
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using TextField = Lucene.Net.Document.TextField;
+    using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using English = Lucene.Net.Util.English;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Document.Document;
+    using English = Lucene.Net.Util.English;
+    using Field = Lucene.Net.Document.Field;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using System.IO;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using TextField = Lucene.Net.Document.TextField;
 
-
-    /// 
-    /// 
-    /// 
+    ///
+    ///
+    ///
     public class PayloadHelper
     {
-
         private sbyte[] PayloadField = new sbyte[] { 1 };
         private sbyte[] PayloadMultiField1 = new sbyte[] { 2 };
         private sbyte[] PayloadMultiField2 = new sbyte[] { 4 };
@@ -59,7 +55,6 @@ namespace Lucene.Net.Search.Payloads
         public sealed class PayloadAnalyzer : Analyzer
         {
             private readonly PayloadHelper OuterInstance;
-
 
             public PayloadAnalyzer(PayloadHelper outerInstance)
                 : base(PER_FIELD_REUSE_STRATEGY)
@@ -92,7 +87,6 @@ namespace Lucene.Net.Search.Payloads
 
             public override bool IncrementToken()
             {
-
                 if (Input.IncrementToken())
                 {
                     if (FieldName.Equals(FIELD))
@@ -160,5 +154,4 @@ namespace Lucene.Net.Search.Payloads
             Reader.Dispose();
         }
     }
-
 }

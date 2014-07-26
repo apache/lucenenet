@@ -31,13 +31,16 @@ namespace Lucene.Net.Support
         private HashMap<WeakKey<TKey>, TValue> _hm;
         private int _gcCollections = 0;
 
-        public WeakDictionary(int initialCapacity) : this(initialCapacity, Enumerable.Empty<KeyValuePair<TKey, TValue>>())
+        public WeakDictionary(int initialCapacity)
+            : this(initialCapacity, Enumerable.Empty<KeyValuePair<TKey, TValue>>())
         { }
 
-        public WeakDictionary() : this(32, Enumerable.Empty<KeyValuePair<TKey, TValue>>())
+        public WeakDictionary()
+            : this(32, Enumerable.Empty<KeyValuePair<TKey, TValue>>())
         { }
 
-        public WeakDictionary(IEnumerable<KeyValuePair<TKey, TValue>> otherDictionary) : this(32, otherDictionary)
+        public WeakDictionary(IEnumerable<KeyValuePair<TKey, TValue>> otherDictionary)
+            : this(32, otherDictionary)
         { }
 
         private WeakDictionary(int initialCapacity, IEnumerable<KeyValuePair<TKey, TValue>> otherDict)
@@ -86,7 +89,7 @@ namespace Lucene.Net.Support
         void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
         {
             CleanIfNeeded();
-            ((ICollection<KeyValuePair<WeakKey<TKey>, TValue>>) _hm).Add(
+            ((ICollection<KeyValuePair<WeakKey<TKey>, TValue>>)_hm).Add(
                 new KeyValuePair<WeakKey<TKey>, TValue>(new WeakKey<TKey>(item.Key), item.Value));
         }
 
@@ -176,7 +179,8 @@ namespace Lucene.Net.Support
         }
 
         #region KeyCollection
-        class KeyCollection : ICollection<TKey>
+
+        private class KeyCollection : ICollection<TKey>
         {
             private readonly HashMap<WeakKey<TKey>, TValue> _internalDict;
 
@@ -214,6 +218,7 @@ namespace Lucene.Net.Support
             }
 
             #region Explicit Interface Definitions
+
             bool ICollection<TKey>.Contains(TKey item)
             {
                 throw new NotSupportedException();
@@ -233,20 +238,21 @@ namespace Lucene.Net.Support
             {
                 throw new NotSupportedException();
             }
-            #endregion
-        }
-        #endregion
 
+            #endregion Explicit Interface Definitions
+        }
+
+        #endregion KeyCollection
 
         /// <summary>
-        /// A weak reference wrapper for the hashtable keys. Whenever a key\value pair 
+        /// A weak reference wrapper for the hashtable keys. Whenever a key\value pair
         /// is added to the hashtable, the key is wrapped using a WeakKey. WeakKey saves the
         /// value of the original object hashcode for fast comparison.
         /// </summary>
-        class WeakKey<T>
+        private class WeakKey<T>
         {
-            WeakReference reference;
-            int hashCode;
+            private WeakReference reference;
+            private int hashCode;
 
             public WeakKey(T key)
             {

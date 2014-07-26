@@ -3,8 +3,8 @@ using System.Diagnostics;
 namespace Lucene.Net.Store
 {
     using Lucene.Net.Support;
-    using System;
     using System.Collections.Generic;
+
     /*
                  * Licensed to the Apache Software Foundation (ASF) under one or more
                  * contributor license agreements.  See the NOTICE file distributed with
@@ -22,9 +22,7 @@ namespace Lucene.Net.Store
                  * limitations under the License.
                  */
 
-    using Context_e = Lucene.Net.Store.IOContext.Context_e;
-
-    /// 
+    ///
     /// <summary>
     /// A <seealso cref="Directory"/> wrapper that allows <seealso cref="IndexOutput"/> rate limiting using
     /// <seealso cref="IOContext.Context IO context"/> specific <seealso cref="RateLimiter rate limiters"/>.
@@ -33,7 +31,6 @@ namespace Lucene.Net.Store
     /// @lucene.experimental </seealso>
     public sealed class RateLimitedDirectoryWrapper : FilterDirectory
     {
-
         // we need to be volatile here to make sure we see all the values that are set
         // / modified concurrently
         //private volatile RateLimiter[] ContextRateLimiters = new RateLimiter[Enum.GetValues(typeof(IOContext.Context_e)).Length];
@@ -78,7 +75,7 @@ namespace Lucene.Net.Store
         /// Sets the maximum (approx) MB/sec allowed by all write IO performed by
         /// <seealso cref="IndexOutput"/> created with the given <seealso cref="IOContext.Context"/>. Pass
         /// <code>null</code> to have no limit.
-        /// 
+        ///
         /// <p>
         /// <b>NOTE</b>: For already created <seealso cref="IndexOutput"/> instances there is no
         /// guarantee this new rate will apply to them; it will only be guaranteed to
@@ -124,7 +121,7 @@ namespace Lucene.Net.Store
         /// Sets the rate limiter to be used to limit (approx) MB/sec allowed by all IO
         /// performed with the given <seealso cref="IOContext.Context context"/>. Pass <code>null</code> to
         /// have no limit.
-        /// 
+        ///
         /// <p>
         /// Passing an instance of rate limiter compared to setting it using
         /// <seealso cref="#setMaxWriteMBPerSec(Double, IOContext.Context)"/>
@@ -133,7 +130,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <exception cref="IllegalArgumentException">
         ///           if context is <code>null</code> </exception>
-        /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed           
+        /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
         public void SetRateLimiter(RateLimiter mergeWriteRateLimiter, IOContext.Context_e context)
         {
@@ -162,7 +159,5 @@ namespace Lucene.Net.Store
             RateLimiter limiter = GetRateLimiter(context);
             return limiter == null ? 0 : limiter.MbPerSec;
         }
-
     }
-
 }

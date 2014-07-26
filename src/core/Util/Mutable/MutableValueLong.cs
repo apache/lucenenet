@@ -14,67 +14,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Lucene.Net.Util.Mutable
 {
+    /// <summary>
+    /// <seealso cref="MutableValue"/> implementation of type
+    /// <code>long</code>.
+    /// </summary>
+    public class MutableValueLong : MutableValue
+    {
+        public long Value;
 
-	/// <summary>
-	/// <seealso cref="MutableValue"/> implementation of type 
-	/// <code>long</code>.
-	/// </summary>
-	public class MutableValueLong : MutableValue
-	{
-	  public long Value;
+        public override object ToObject()
+        {
+            return Exists ? (object)Value : null;
+        }
 
-	  public override object ToObject()
-	  {
-		return Exists ? (object)Value : null;
-	  }
+        public override void Copy(MutableValue source)
+        {
+            MutableValueLong s = (MutableValueLong)source;
+            Exists = s.Exists;
+            Value = s.Value;
+        }
 
-	  public override void Copy(MutableValue source)
-	  {
-		MutableValueLong s = (MutableValueLong) source;
-		Exists = s.Exists;
-		Value = s.Value;
-	  }
+        public override MutableValue Duplicate()
+        {
+            MutableValueLong v = new MutableValueLong();
+            v.Value = this.Value;
+            v.Exists = this.Exists;
+            return v;
+        }
 
-	  public override MutableValue Duplicate()
-	  {
-		MutableValueLong v = new MutableValueLong();
-		v.Value = this.Value;
-		v.Exists = this.Exists;
-		return v;
-	  }
+        public override bool EqualsSameType(object other)
+        {
+            MutableValueLong b = (MutableValueLong)other;
+            return Value == b.Value && Exists == b.Exists;
+        }
 
-	  public override bool EqualsSameType(object other)
-	  {
-		MutableValueLong b = (MutableValueLong)other;
-		return Value == b.Value && Exists == b.Exists;
-	  }
+        public override int CompareSameType(object other)
+        {
+            MutableValueLong b = (MutableValueLong)other;
+            long bv = b.Value;
+            if (Value < bv)
+            {
+                return -1;
+            }
+            if (Value > bv)
+            {
+                return 1;
+            }
+            if (Exists == b.Exists)
+            {
+                return 0;
+            }
+            return Exists ? 1 : -1;
+        }
 
-	  public override int CompareSameType(object other)
-	  {
-		MutableValueLong b = (MutableValueLong)other;
-		long bv = b.Value;
-		if (Value < bv)
-		{
-			return -1;
-		}
-		if (Value > bv)
-		{
-			return 1;
-		}
-		if (Exists == b.Exists)
-		{
-			return 0;
-		}
-		return Exists ? 1 : -1;
-	  }
-
-
-	  public override int GetHashCode()
-	  {
-		return (int)Value + (int)(Value >> 32);
-	  }
-	}
-
+        public override int GetHashCode()
+        {
+            return (int)Value + (int)(Value >> 32);
+        }
+    }
 }

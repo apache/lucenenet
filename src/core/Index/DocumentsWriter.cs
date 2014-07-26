@@ -1,48 +1,47 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using SegmentFlushTicket = Lucene.Net.Index.DocumentsWriterFlushQueue.SegmentFlushTicket;
-    using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
-    using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
-    using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
-    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
-    using Event = Lucene.Net.Index.IndexWriter.Event;
-    using Query = Lucene.Net.Search.Query;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using InfoStream = Lucene.Net.Util.InfoStream;
     using Lucene.Net.Support;
     using System.Collections.Concurrent;
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using Event = Lucene.Net.Index.IndexWriter.Event;
+    using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
+    using InfoStream = Lucene.Net.Util.InfoStream;
+    using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
+    using Query = Lucene.Net.Search.Query;
+    using SegmentFlushTicket = Lucene.Net.Index.DocumentsWriterFlushQueue.SegmentFlushTicket;
+    using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 
     /// <summary>
     /// this class accepts multiple added documents and directly
     /// writes segment files.
-    /// 
+    ///
     /// Each added document is passed to the <seealso cref="DocConsumer"/>,
     /// which in turn processes the document and interacts with
     /// other consumers in the indexing chain.  Certain
@@ -51,18 +50,18 @@ namespace Lucene.Net.Index
     /// immediately write bytes to the "doc store" files (ie,
     /// they do not consume RAM per document, except while they
     /// are processing the document).
-    /// 
+    ///
     /// Other consumers, eg <seealso cref="FreqProxTermsWriter"/> and
     /// <seealso cref="NormsConsumer"/>, buffer bytes in RAM and flush only
     /// when a new segment is produced.
-    /// 
+    ///
     /// Once we have used our allowed RAM buffer, or the number
     /// of added docs is large enough (in the case we are
     /// flushing by doc count instead of RAM usage), we create a
     /// real segment and flush it to the Directory.
-    /// 
+    ///
     /// Threads:
-    /// 
+    ///
     /// Multiple threads are allowed into addDocument at once.
     /// There is an initial synchronized call to getThreadState
     /// which allocates a ThreadState for this thread.  The same
@@ -74,15 +73,15 @@ namespace Lucene.Net.Index
     /// synchronization (most of the "heavy lifting" is in this
     /// call).  Finally the synchronized "finishDocument" is
     /// called to flush changes to the directory.
-    /// 
+    ///
     /// When flush is called by IndexWriter we forcefully idle
     /// all threads and flush only once they are all idle.  this
     /// means you can call flush with a given thread even while
     /// other threads are actively adding/deleting documents.
-    /// 
-    /// 
+    ///
+    ///
     /// Exceptions:
-    /// 
+    ///
     /// Because this class directly updates in-memory posting
     /// lists, and flushes stored fields and term vectors
     /// directly to files in the directory, there are certain
@@ -93,7 +92,7 @@ namespace Lucene.Net.Index
     /// can corrupt that posting list.  We call such exceptions
     /// "aborting exceptions".  In these cases we must call
     /// abort() to discard all docs added since the last flush.
-    /// 
+    ///
     /// All other exceptions ("non-aborting exceptions") can
     /// still partially update the index structures.  These
     /// updates are consistent, but, they represent only a part
@@ -116,6 +115,7 @@ namespace Lucene.Net.Index
 
         // TODO: cut over to BytesRefHash in BufferedDeletes
         internal volatile DocumentsWriterDeleteQueue DeleteQueue = new DocumentsWriterDeleteQueue();
+
         private readonly DocumentsWriterFlushQueue TicketQueue = new DocumentsWriterFlushQueue();
         /*
          * we preserve changes during a full flush since IW might not checkout before
@@ -130,7 +130,6 @@ namespace Lucene.Net.Index
         internal readonly DocumentsWriterFlushControl FlushControl;
         private readonly IndexWriter Writer;
         private readonly ConcurrentQueue<Event> Events;
-
 
         internal DocumentsWriter(IndexWriter writer, LiveIndexWriterConfig config, Directory directory)
         {
@@ -224,7 +223,6 @@ namespace Lucene.Net.Index
             }
         }
 
-
         /// <summary>
         /// Returns how many docs are currently buffered in RAM. </summary>
         internal int NumDocs
@@ -247,7 +245,7 @@ namespace Lucene.Net.Index
         /// Called if we hit an exception at a bad time (when
         ///  updating the index files) and must discard all
         ///  currently buffered docs.  this resets our state,
-        ///  discarding any docs added since last flush. 
+        ///  discarding any docs added since last flush.
         /// </summary>
         internal void Abort(IndexWriter writer)
         {
@@ -405,7 +403,7 @@ namespace Lucene.Net.Index
              * changes are either in a DWPT or in the deleteQueue.
              * yet if we currently flush deletes and / or dwpt there
              * could be a window where all changes are in the ticket queue
-             * before they are published to the IW. ie we need to check if the 
+             * before they are published to the IW. ie we need to check if the
              * ticket queue has any tickets.
              */
             return NumDocsInRAM.Get() != 0 || AnyDeletions() || TicketQueue.HasTickets() || PendingChangesInCurrentFullFlush;
@@ -555,7 +553,6 @@ namespace Lucene.Net.Index
 
         internal bool UpdateDocument(IEnumerable<IndexableField> doc, Analyzer analyzer, Term delTerm)
         {
-
             bool hasEvents = PreUpdate();
 
             ThreadState perThread = FlushControl.ObtainAndLock();
@@ -618,7 +615,7 @@ namespace Lucene.Net.Index
                      * deletes it is buffering. The reason for this is that the global
                      * deletes mark a certain point in time where we took a DWPT out of
                      * rotation and freeze the global deletes.
-                     * 
+                     *
                      * Example: A flush 'A' starts and freezes the global deletes, then
                      * flush 'B' starts and freezes all deletes occurred since 'A' has
                      * started. if 'B' finishes before 'A' we need to wait until 'A' is done
@@ -740,6 +737,7 @@ namespace Lucene.Net.Index
          * two stage operation; the caller must ensure (in try/finally) that finishFlush
          * is called after this method, to release the flush lock in DWFlushControl
          */
+
         internal bool FlushAllThreads(IndexWriter indexWriter)
         {
             DocumentsWriterDeleteQueue flushingDeleteQueue;
@@ -809,14 +807,12 @@ namespace Lucene.Net.Index
                     HashSet<string> newFilesSet = new HashSet<string>();
                     FlushControl.AbortFullFlushes(newFilesSet);
                     PutEvent(new DeleteNewFilesEvent(newFilesSet));
-
                 }
             }
             finally
             {
                 PendingChangesInCurrentFullFlush = false;
             }
-
         }
 
         public LiveIndexWriterConfig Config
@@ -836,6 +832,7 @@ namespace Lucene.Net.Index
         {
             internal static readonly Event INSTANCE = new ApplyDeletesEvent();
             internal int InstCount = 0;
+
             internal ApplyDeletesEvent()
             {
                 Debug.Assert(InstCount == 0);
@@ -852,6 +849,7 @@ namespace Lucene.Net.Index
         {
             internal static readonly Event INSTANCE = new MergePendingEvent();
             internal int InstCount = 0;
+
             internal MergePendingEvent()
             {
                 Debug.Assert(InstCount == 0);
@@ -868,6 +866,7 @@ namespace Lucene.Net.Index
         {
             internal static readonly Event INSTANCE = new ForcedPurgeEvent();
             internal int InstCount = 0;
+
             internal ForcedPurgeEvent()
             {
                 Debug.Assert(InstCount == 0);
@@ -915,5 +914,4 @@ namespace Lucene.Net.Index
             return Events;
         }
     }
-
 }

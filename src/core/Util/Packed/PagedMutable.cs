@@ -2,7 +2,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -30,7 +29,6 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public sealed class PagedMutable : AbstractPagedMutable<PagedMutable>
     {
-
         internal readonly PackedInts.Format Format;
 
         /// <summary>
@@ -72,7 +70,5 @@ namespace Lucene.Net.Util.Packed
         {
             return base.BaseRamBytesUsed() + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
         }
-
     }
-
 }

@@ -1,10 +1,9 @@
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -33,13 +32,12 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Acts like forever growing T[], but internally uses a
     ///  circular buffer to reuse instances of T.
-    /// 
-    ///  @lucene.internal 
+    ///
+    ///  @lucene.internal
     /// </summary>
     public abstract class RollingBuffer<T>
         where T : RollingBuffer.Resettable
     {
-
         private T[] Buffer = new T[8];
 
         // Next array index to write to:
@@ -107,7 +105,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Get T instance for this absolute position;
         ///  this is allowed to be arbitrarily far "in the
-        ///  future" but cannot be before the last freeBefore. 
+        ///  future" but cannot be before the last freeBefore.
         /// </summary>
         public virtual T Get(int pos)
         {
@@ -142,7 +140,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the maximum position looked up, or -1 if no
-        ///  position has been looked up sinc reset/init.  
+        ///  position has been looked up sinc reset/init.
         /// </summary>
         public virtual int MaxPos
         {
@@ -175,5 +173,4 @@ namespace Lucene.Net.Util
             Count -= toFree;
         }
     }
-
 }

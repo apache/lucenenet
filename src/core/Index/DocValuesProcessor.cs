@@ -1,42 +1,41 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Counter = Lucene.Net.Util.Counter;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Counter = Lucene.Net.Util.Counter;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     internal sealed class DocValuesProcessor : StoredFieldsConsumer
     {
-
         // TODO: somewhat wasteful we also keep a map here; would
         // be more efficient if we could "reuse" the map/hash
         // lookup DocFieldProcessor already did "above"
         private readonly IDictionary<string, DocValuesWriter> Writers = new Dictionary<string, DocValuesWriter>();
+
         private readonly Counter BytesUsed;
 
         public DocValuesProcessor(Counter bytesUsed)
@@ -236,5 +235,4 @@ namespace Lucene.Net.Index
             Writers.Clear();
         }
     }
-
 }

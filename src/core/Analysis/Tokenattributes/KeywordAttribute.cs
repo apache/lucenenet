@@ -1,6 +1,5 @@
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -73,8 +72,5 @@ namespace Lucene.Net.Analysis.Tokenattributes
                 Keyword_Renamed = value;
             }
         }
-
-
     }
-
 }

@@ -1,4 +1,3 @@
-using System.Collections;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,17 +14,17 @@ using System.Collections;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System.Collections;
 
 namespace Lucene.Net.Util
 {
-
     [TestFixture]
     public class TestLongBitSet : LuceneTestCase
     {
-
         internal virtual void DoGet(BitArray a, LongBitSet b)
         {
             long max = b.Length();
@@ -302,7 +301,6 @@ namespace Lucene.Net.Util
                     words[i] = Random().NextLong();
                 }
                 bs = new LongBitSet(words, numBits);
-
             }
             else
             {
@@ -339,7 +337,6 @@ namespace Lucene.Net.Util
             CheckPrevSetBitArray(new int[] { 0 }, 1);
             CheckPrevSetBitArray(new int[] { 0, 2 }, 3);
         }
-
 
         private void CheckNextSetBitArray(int[] a, int numBits)
         {
@@ -389,7 +386,5 @@ namespace Lucene.Net.Util
             Assert.IsTrue(bits.Get(1));
             Assert.IsFalse(newBits.Get(1));
         }
-
     }
-
 }

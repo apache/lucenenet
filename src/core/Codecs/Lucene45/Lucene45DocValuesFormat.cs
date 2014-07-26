@@ -1,6 +1,5 @@
 namespace Lucene.Net.Codecs.Lucene45
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,13 +19,6 @@ namespace Lucene.Net.Codecs.Lucene45
 
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
-    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using DataOutput = Lucene.Net.Store.DataOutput;
-    using SmallFloat = Lucene.Net.Util.SmallFloat;
-    using Lucene.Net.Util.Fst;
-    using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
-    using MonotonicBlockPackedWriter = Lucene.Net.Util.Packed.MonotonicBlockPackedWriter;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
 
     /// <summary>
     /// Lucene 4.5 DocValues format.
@@ -36,13 +28,13 @@ namespace Lucene.Net.Codecs.Lucene45
     /// <seealso cref="DocValuesType#NUMERIC NUMERIC"/>:
     /// <ul>
     ///    <li>Delta-compressed: per-document integers written in blocks of 16k. For each block
-    ///        the minimum value in that block is encoded, and each entry is a delta from that 
-    ///        minimum value. Each block of deltas is compressed with bitpacking. For more 
+    ///        the minimum value in that block is encoded, and each entry is a delta from that
+    ///        minimum value. Each block of deltas is compressed with bitpacking. For more
     ///        information, see <seealso cref="BlockPackedWriter"/>.
     ///    <li>Table-compressed: when the number of unique values is very small (&lt; 256), and
-    ///        when there are unused "gaps" in the range of values used (such as <seealso cref="SmallFloat"/>), 
-    ///        a lookup table is written instead. Each per-document entry is instead the ordinal 
-    ///        to this table, and those ordinals are compressed with bitpacking (<seealso cref="PackedInts"/>). 
+    ///        when there are unused "gaps" in the range of values used (such as <seealso cref="SmallFloat"/>),
+    ///        a lookup table is written instead. Each per-document entry is instead the ordinal
+    ///        to this table, and those ordinals are compressed with bitpacking (<seealso cref="PackedInts"/>).
     ///    <li>GCD-compressed: when all numbers share a common divisor, such as dates, the greatest
     ///        common denominator (GCD) is computed, and quotients are stored using Delta-compressed Numerics.
     /// </ul>
@@ -50,28 +42,28 @@ namespace Lucene.Net.Codecs.Lucene45
     /// <seealso cref="DocValuesType#BINARY BINARY"/>:
     /// <ul>
     ///    <li>Fixed-width Binary: one large concatenated byte[] is written, along with the fixed length.
-    ///        Each document's value can be addressed directly with multiplication ({@code docID * length}). 
-    ///    <li>Variable-width Binary: one large concatenated byte[] is written, along with end addresses 
+    ///        Each document's value can be addressed directly with multiplication ({@code docID * length}).
+    ///    <li>Variable-width Binary: one large concatenated byte[] is written, along with end addresses
     ///        for each document. The addresses are written in blocks of 16k, with the current absolute
-    ///        start for the block, and the average (expected) delta per entry. For each document the 
+    ///        start for the block, and the average (expected) delta per entry. For each document the
     ///        deviation from the delta (actual - expected) is written.
     ///    <li>Prefix-compressed Binary: values are written in chunks of 16, with the first value written
     ///        completely and other values sharing prefixes. chunk addresses are written in blocks of 16k,
-    ///        with the current absolute start for the block, and the average (expected) delta per entry. 
+    ///        with the current absolute start for the block, and the average (expected) delta per entry.
     ///        For each chunk the deviation from the delta (actual - expected) is written.
     /// </ul>
     /// <p>
     /// <seealso cref="DocValuesType#SORTED SORTED"/>:
     /// <ul>
-    ///    <li>Sorted: a mapping of ordinals to deduplicated terms is written as Prefix-Compressed Binary, 
+    ///    <li>Sorted: a mapping of ordinals to deduplicated terms is written as Prefix-Compressed Binary,
     ///        along with the per-document ordinals written using one of the numeric strategies above.
     /// </ul>
     /// <p>
     /// <seealso cref="DocValuesType#SORTED_SET SORTED_SET"/>:
     /// <ul>
-    ///    <li>SortedSet: a mapping of ordinals to deduplicated terms is written as Prefix-Compressed Binary, 
-    ///        an ordinal list and per-document index into this list are written using the numeric strategies 
-    ///        above. 
+    ///    <li>SortedSet: a mapping of ordinals to deduplicated terms is written as Prefix-Compressed Binary,
+    ///        an ordinal list and per-document index into this list are written using the numeric strategies
+    ///        above.
     /// </ul>
     /// <p>
     /// Files:
@@ -82,7 +74,7 @@ namespace Lucene.Net.Codecs.Lucene45
     /// <ol>
     ///   <li><a name="dvm" id="dvm"></a>
     ///   <p>The DocValues metadata or .dvm file.</p>
-    ///   <p>For DocValues field, this stores metadata, such as the offset into the 
+    ///   <p>For DocValues field, this stores metadata, such as the offset into the
     ///      DocValues data (.dvd)</p>
     ///   <p>DocValues metadata (.dvm) --&gt; Header,&lt;Entry&gt;<sup>NumFields</sup>,Footer</p>
     ///   <ul>
@@ -116,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene45
     ///   <p>NumericType indicates how Numeric values will be compressed:
     ///      <ul>
     ///         <li>0 --&gt; delta-compressed. For each block of 16k integers, every integer is delta-encoded
-    ///             from the minimum value within the block. 
+    ///             from the minimum value within the block.
     ///         <li>1 --&gt, gcd-compressed. When all integers share a common divisor, only quotients are stored
     ///             using blocks of delta-encoded ints.
     ///         <li>2 --&gt; table-compressed. When the number of unique numeric values is small and it would save space,
@@ -124,7 +116,7 @@ namespace Lucene.Net.Codecs.Lucene45
     ///      </ul>
     ///   <p>BinaryType indicates how Binary values will be stored:
     ///      <ul>
-    ///         <li>0 --&gt; fixed-width. All values have the same length, addressing by multiplication. 
+    ///         <li>0 --&gt; fixed-width. All values have the same length, addressing by multiplication.
     ///         <li>1 --&gt, variable-width. An address for each value is stored.
     ///         <li>2 --&gt; prefix-compressed. An address to the start of every interval'th value is stored.
     ///      </ul>
@@ -158,7 +150,6 @@ namespace Lucene.Net.Codecs.Lucene45
     /// </summary>
     public sealed class Lucene45DocValuesFormat : DocValuesFormat
     {
-
         /// <summary>
         /// Sole Constructor </summary>
         public Lucene45DocValuesFormat()
@@ -189,5 +180,4 @@ namespace Lucene.Net.Codecs.Lucene45
         internal const sbyte SORTED = 2;
         internal const sbyte SORTED_SET = 3;
     }
-
 }

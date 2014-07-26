@@ -1,7 +1,5 @@
 namespace Lucene.Net.Codecs.Lucene3x
 {
-
-    using NUnit.Framework;
     using BasePostingsFormatTestCase = Lucene.Net.Index.BasePostingsFormatTestCase;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -44,5 +42,4 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
     }
-
 }

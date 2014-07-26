@@ -1,4 +1,3 @@
-using System;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,29 +14,28 @@ using System;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
-
-
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IOContext = Lucene.Net.Store.IOContext;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 
     [TestFixture]
     public class TestPagedBytes : LuceneTestCase
     {
-
         // Writes random byte/s to "normal" file in dir, then
         // copies into PagedBytes and verifies with
-        // PagedBytes.Reader: 
+        // PagedBytes.Reader:
         [Test]
         public virtual void TestDataInputOutput()
         {
@@ -114,7 +112,7 @@ namespace Lucene.Net.Util
 
         // Writes random byte/s into PagedBytes via
         // .getDataOutput(), then verifies with
-        // PagedBytes.getDataInput(): 
+        // PagedBytes.getDataInput():
         [Test]
         public virtual void TestDataInputOutput2()
         {
@@ -179,7 +177,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Test]        
+        [Test]
         public virtual void TestOverflow() // memory hole
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
@@ -219,7 +217,5 @@ namespace Lucene.Net.Util
             @in.Dispose();
             dir.Dispose();
         }
-
     }
-
 }

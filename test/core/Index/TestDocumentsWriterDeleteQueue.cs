@@ -1,37 +1,36 @@
+using Apache.NMS.Util;
+using Lucene.Net.Search;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using Apache.NMS.Util;
-using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements. See the NOTICE file distributed with this
-     * work for additional information regarding copyright ownership. The ASF
-     * licenses this file to You under the Apache License, Version 2.0 (the
-     * "License"); you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     * 
-     * http://www.apache.org/licenses/LICENSE-2.0
-     * 
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-     * License for the specific language governing permissions and limitations under
-     * the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements. See the NOTICE file distributed with this
+         * work for additional information regarding copyright ownership. The ASF
+         * licenses this file to You under the Apache License, Version 2.0 (the
+         * "License"); you may not use this file except in compliance with the License.
+         * You may obtain a copy of the License at
+         *
+         * http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+         * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+         * License for the specific language governing permissions and limitations under
+         * the License.
+         */
 
     using DeleteSlice = Lucene.Net.Index.DocumentsWriterDeleteQueue.DeleteSlice;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Unit test for <seealso cref="DocumentsWriterDeleteQueue"/>
@@ -39,7 +38,6 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestDocumentsWriterDeleteQueue : LuceneTestCase
     {
-
         [Test]
         public virtual void TestUpdateDelteSlices()
         {
@@ -134,7 +132,6 @@ namespace Lucene.Net.Index
                     Assert.IsFalse(queue.AnyChanges());
                 }
             }
-
         }
 
         [Test]
@@ -256,7 +253,6 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
             Assert.AreEqual(uniqueValues.Count, frozenSet.Count);
             Assert.AreEqual(uniqueValues, frozenSet);
-
         }
 
         private class UpdateThread : ThreadClass
@@ -298,7 +294,5 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
     }
-
 }

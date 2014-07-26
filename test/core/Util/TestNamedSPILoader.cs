@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-
     using Codec = Lucene.Net.Codecs.Codec;
 
     /*
@@ -28,7 +27,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestNamedSPILoader : LuceneTestCase
     {
-
         [Test]
         public virtual void TestLookup()
         {
@@ -57,5 +55,4 @@ namespace Lucene.Net.Util
             Assert.IsTrue(codecs.Contains("Lucene46"));
         }
     }
-
 }

@@ -5,7 +5,6 @@ using System.IO;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements. See the NOTICE file distributed with this
@@ -13,16 +12,15 @@ namespace Lucene.Net.Store
      * licenses this file to You under the Apache License, Version 2.0 (the
      * "License"); you may not use this file except in compliance with the License.
      * You may obtain a copy of the License at
-     * 
+     *
      * http://www.apache.org/licenses/LICENSE-2.0
-     * 
+     *
      * Unless required by applicable law or agreed to in writing, software
      * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
      * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
      * License for the specific language governing permissions and limitations under
      * the License.
      */
-
 
     /// <summary>
     /// An <seealso cref="FSDirectory"/> implementation that uses java.nio's FileChannel's
@@ -51,7 +49,6 @@ namespace Lucene.Net.Store
     /// </summary>
     public class NIOFSDirectory : FSDirectory
     {
-
         /// <summary>
         /// Create a new NIOFSDirectory for the named location.
         /// </summary>
@@ -114,7 +111,6 @@ namespace Lucene.Net.Store
                 this.Descriptor = descriptor;
             }
 
-
             public override void Dispose(bool disposing)
             {
                 if (disposing)
@@ -154,12 +150,15 @@ namespace Lucene.Net.Store
             /// <summary>
             /// the file channel we will read from </summary>
             protected internal readonly FileStream Channel;
+
             /// <summary>
             /// is this instance a clone and hence does not own the file to close it </summary>
             internal bool IsClone = false;
+
             /// <summary>
             /// start offset: non-zero in the slice case </summary>
             protected internal readonly long Off;
+
             /// <summary>
             /// end offset (start+length) </summary>
             protected internal readonly long End;
@@ -272,5 +271,4 @@ namespace Lucene.Net.Store
             }
         }
     }
-
 }

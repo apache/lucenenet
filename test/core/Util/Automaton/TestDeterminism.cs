@@ -2,7 +2,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,6 @@ namespace Lucene.Net.Util.Automaton
     [TestFixture]
     public class TestDeterminism : LuceneTestCase
     {
-
         /// <summary>
         /// test a bunch of random regular expressions </summary>
         [Test]
@@ -50,7 +48,7 @@ namespace Lucene.Net.Util.Automaton
             for (int i = 0; i < num; i++)
             {
                 Automaton a = AutomatonTestUtil.RandomAutomaton(Random());
-                Automaton b = (Automaton) a.Clone();
+                Automaton b = (Automaton)a.Clone();
                 AutomatonTestUtil.DeterminizeSimple(a);
                 b.Deterministic = false; // force det
                 b.Determinize();
@@ -91,5 +89,4 @@ namespace Lucene.Net.Util.Automaton
             }
         }
     }
-
 }

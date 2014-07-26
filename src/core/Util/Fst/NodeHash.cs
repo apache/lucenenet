@@ -2,7 +2,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +25,6 @@ namespace Lucene.Net.Util.Fst
     // Used to dedup states (lookup already-frozen states)
     internal sealed class NodeHash<T>
     {
-
         private PagedGrowableWriter Table;
         private long Count;
         private long Mask;
@@ -202,5 +200,4 @@ namespace Lucene.Net.Util.Fst
             }
         }
     }
-
 }

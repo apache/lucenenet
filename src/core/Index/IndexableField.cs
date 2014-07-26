@@ -1,30 +1,30 @@
 namespace Lucene.Net.Index
 {
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity; // javadocs
-    using Similarity = Lucene.Net.Search.Similarities.Similarity; // javadocs
+
+    // javadocs
+    // javadocs
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using System.IO;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     // TODO: how to handle versioning here...?
 
@@ -33,20 +33,19 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Represents a single field for indexing.  IndexWriter
     ///  consumes Iterable&lt;IndexableField&gt; as a document.
-    /// 
-    ///  @lucene.experimental 
+    ///
+    ///  @lucene.experimental
     /// </summary>
 
     public interface IndexableField
     {
-
         /// <summary>
         /// Field name </summary>
         string Name();
 
         /// <summary>
         /// <seealso cref="IndexableFieldType"/> describing the properties
-        /// of this field. 
+        /// of this field.
         /// </summary>
         IndexableFieldType FieldType();
 
@@ -55,9 +54,9 @@ namespace Lucene.Net.Index
         /// <p>
         /// Only fields can have an index-time boost, if you want to simulate
         /// a "document boost", then you must pre-multiply it across all the
-        /// relevant fields yourself. 
+        /// relevant fields yourself.
         /// <p>The boost is used to compute the norm factor for the field.  By
-        /// default, in the <seealso cref="Similarity#computeNorm(FieldInvertState)"/> method, 
+        /// default, in the <seealso cref="Similarity#computeNorm(FieldInvertState)"/> method,
         /// the boost value is multiplied by the length normalization factor and then
         /// rounded by <seealso cref="DefaultSimilarity#encodeNormValue(float)"/> before it is stored in the
         /// index.  One should attempt to ensure that this product does not overflow
@@ -97,5 +96,4 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> Can be thrown while creating the TokenStream </exception>
         TokenStream GetTokenStream(Analyzer analyzer);
     }
-
 }

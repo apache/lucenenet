@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Support;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,10 +22,9 @@ namespace Lucene.Net.Util.Automaton
      * limitations under the License.
      */
 
-
     /// <summary>
-    /// Builds a minimal, deterministic <seealso cref="Automaton"/> that accepts a set of 
-    /// strings. The algorithm requires sorted input data, but is very fast 
+    /// Builds a minimal, deterministic <seealso cref="Automaton"/> that accepts a set of
+    /// strings. The algorithm requires sorted input data, but is very fast
     /// (nearly linear with the input size).
     /// </summary>
     /// <seealso cref= #build(Collection) </seealso>
@@ -38,7 +36,6 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public sealed class State
         {
-
             /// <summary>
             /// An empty set of labels. </summary>
             internal static readonly int[] NO_LABELS = new int[0];
@@ -368,5 +365,4 @@ namespace Lucene.Net.Util.Automaton
             state.Is_final = true;
         }
     }
-
 }

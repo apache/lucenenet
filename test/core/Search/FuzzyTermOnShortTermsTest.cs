@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Lucene.Net.Search
 {
-
-
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
     using System.IO;
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Term = Lucene.Net.Index.Term;
+    using TestUtil = Lucene.Net.Util.TestUtil;
+    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
 
     [TestFixture]
     public class FuzzyTermOnShortTermsTest : LuceneTestCase
@@ -52,7 +50,7 @@ namespace Lucene.Net.Search
             CountHits(a, new string[] { "abcde" }, new FuzzyQuery(new Term(FIELD, "abc"), 2), 1);
             CountHits(a, new string[] { "abc" }, new FuzzyQuery(new Term(FIELD, "abcde"), 2), 1);
 
-            //these don't      
+            //these don't
             CountHits(a, new string[] { "ab" }, new FuzzyQuery(new Term(FIELD, "a"), 1), 0);
             CountHits(a, new string[] { "a" }, new FuzzyQuery(new Term(FIELD, "ab"), 1), 0);
 
@@ -95,6 +93,7 @@ namespace Lucene.Net.Search
                 return new TokenStreamComponents(tokenizer, tokenizer);
             }
         }
+
         public static Directory GetDirectory(Analyzer analyzer, string[] vals)
         {
             Directory directory = NewDirectory();
@@ -105,11 +104,9 @@ namespace Lucene.Net.Search
                 Document d = new Document();
                 d.Add(NewTextField(FIELD, s, Field.Store.YES));
                 writer.AddDocument(d);
-
             }
             writer.Dispose();
             return directory;
         }
     }
-
 }

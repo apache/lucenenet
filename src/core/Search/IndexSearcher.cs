@@ -1,51 +1,49 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Index; // javadocs
+    using Lucene.Net.Support;
+    using System.Threading.Tasks;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Document = Lucene.Net.Document.Document;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader; // javadocs
+
+    // javadocs
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using MultiFields = Lucene.Net.Index.MultiFields;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
+    using MultiFields = Lucene.Net.Index.MultiFields;
+    using NIOFSDirectory = Lucene.Net.Store.NIOFSDirectory; // javadoc
     using ReaderUtil = Lucene.Net.Index.ReaderUtil;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using StoredFieldVisitor = Lucene.Net.Index.StoredFieldVisitor;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
     using Terms = Lucene.Net.Index.Terms;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using NIOFSDirectory = Lucene.Net.Store.NIOFSDirectory; // javadoc
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using System.Threading.Tasks;
-    using Lucene.Net.Support;
-    using Lucene.Net.Index; // javadocs
 
     /// <summary>
     /// Implements search over a single IndexReader.
-    /// 
+    ///
     /// <p>Applications usually need only call the inherited
     /// <seealso cref="#search(Query,int)"/>
     /// or <seealso cref="#search(Query,Filter,int)"/> methods. For
@@ -61,7 +59,7 @@ namespace Lucene.Net.Search
     /// reader (<seealso cref="DirectoryReader#open(IndexWriter,boolean)"/>).
     /// Once you have a new <seealso cref="IndexReader"/>, it's relatively
     /// cheap to create a new IndexSearcher from it.
-    /// 
+    ///
     /// <a name="thread-safety"></a><p><b>NOTE</b>: <code>{@link
     /// IndexSearcher}</code> instances are completely
     /// thread safe, meaning multiple threads can call any of its
@@ -77,7 +75,9 @@ namespace Lucene.Net.Search
         // NOTE: these members might change in incompatible ways
         // in the next release
         protected internal readonly IndexReaderContext ReaderContext;
+
         protected internal readonly IList<AtomicReaderContext> LeafContexts;
+
         /// <summary>
         /// used with executor - each slice holds a set of leafs executed within one thread </summary>
         protected internal readonly LeafSlice[] LeafSlices;
@@ -124,8 +124,8 @@ namespace Lucene.Net.Search
         ///  Thread.interrupt under-the-hood which can silently
         ///  close file descriptors (see <a
         ///  href="https://issues.apache.org/jira/browse/LUCENE-2239">LUCENE-2239</a>).
-        /// 
-        /// @lucene.experimental 
+        ///
+        /// @lucene.experimental
         /// </summary>
         public IndexSearcher(IndexReader r, TaskScheduler executor)
             : this(r.Context, executor)
@@ -183,7 +183,6 @@ namespace Lucene.Net.Search
             return slices;
         }
 
-
         /// <summary>
         /// Return the <seealso cref="IndexReader"/> this searches. </summary>
         public virtual IndexReader IndexReader
@@ -218,7 +217,7 @@ namespace Lucene.Net.Search
             return Reader.Document(docID, fieldsToLoad);
         }
 
-        /// @deprecated Use <seealso cref="#doc(int, Set)"/> instead. 
+        /// @deprecated Use <seealso cref="#doc(int, Set)"/> instead.
         [Obsolete("Use <seealso cref=#doc(int, java.util.Set)/> instead.")]
         public Document Document(int docID, ISet<string> fieldsToLoad)
         {
@@ -227,7 +226,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Set the Similarity implementation used by this IndexSearcher.
-        /// 
+        ///
         /// </summary>
         public virtual Similarity Similarity
         {
@@ -241,7 +240,6 @@ namespace Lucene.Net.Search
             }
         }
 
-
         /// <summary>
         /// @lucene.internal </summary>
         protected internal virtual Query WrapFilter(Query query, Filter filter)
@@ -251,14 +249,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Finds the top <code>n</code>
-        /// hits for <code>query</code> where all results are after a previous 
+        /// hits for <code>query</code> where all results are after a previous
         /// result (<code>after</code>).
         /// <p>
         /// By passing the bottom result from a previous page as <code>after</code>,
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n)
         {
@@ -274,7 +272,7 @@ namespace Lucene.Net.Search
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n)
         {
@@ -285,19 +283,18 @@ namespace Lucene.Net.Search
         /// Finds the top <code>n</code>
         /// hits for <code>query</code>.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs Search(Query query, int n)
         {
             return Search(query, null, n);
         }
 
-
         /// <summary>
         /// Finds the top <code>n</code>
         /// hits for <code>query</code>, applying <code>filter</code> if non-null.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs Search(Query query, Filter filter, int n)
         {
@@ -306,14 +303,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Lower-level search API.
-        /// 
+        ///
         /// <p><seealso cref="Collector#collect(int)"/> is called for every matching
         /// document.
         /// </summary>
         /// <param name="query"> to match documents </param>
         /// <param name="filter"> if non-null, used to permit documents to be collected. </param>
         /// <param name="results"> to receive hits </param>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual void Search(Query query, Filter filter, Collector results)
         {
@@ -322,10 +319,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Lower-level search API.
-        /// 
+        ///
         /// <p><seealso cref="Collector#collect(int)"/> is called for every matching document.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual void Search(Query query, Collector results)
         {
@@ -337,12 +334,12 @@ namespace Lucene.Net.Search
         /// the top <code>n</code> hits for <code>query</code>, applying
         /// <code>filter</code> if non-null, and sorting the hits by the criteria in
         /// <code>sort</code>.
-        /// 
+        ///
         /// <p>NOTE: this does not compute scores by default; use
         /// <seealso cref="IndexSearcher#search(Query,Filter,int,Sort,boolean,boolean)"/> to
         /// control scoring.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
         {
@@ -361,7 +358,7 @@ namespace Lucene.Net.Search
         /// <code>true</code> then the maximum score over all
         /// collected hits will be computed.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
@@ -377,7 +374,7 @@ namespace Lucene.Net.Search
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort)
         {
@@ -404,14 +401,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Finds the top <code>n</code>
-        /// hits for <code>query</code> where all results are after a previous 
+        /// hits for <code>query</code> where all results are after a previous
         /// result (<code>after</code>).
         /// <p>
         /// By passing the bottom result from a previous page as <code>after</code>,
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n, Sort sort)
         {
@@ -426,7 +423,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Finds the top <code>n</code>
-        /// hits for <code>query</code> where all results are after a previous 
+        /// hits for <code>query</code> where all results are after a previous
         /// result (<code>after</code>), allowing control over
         /// whether hit scores and max score should be computed.
         /// <p>
@@ -438,7 +435,7 @@ namespace Lucene.Net.Search
         /// <code>true</code> then the maximum score over all
         /// collected hits will be computed.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
@@ -454,10 +451,10 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Expert: Low-level search implementation.  Finds the top <code>n</code>
         /// hits for <code>query</code>, applying <code>filter</code> if non-null.
-        /// 
+        ///
         /// <p>Applications should usually call <seealso cref="IndexSearcher#search(Query,int)"/> or
         /// <seealso cref="IndexSearcher#search(Query,Filter,int)"/> instead. </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected internal virtual TopDocs Search(Weight weight, ScoreDoc after, int nDocs)
         {
@@ -511,10 +508,10 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Expert: Low-level search implementation.  Finds the top <code>n</code>
         /// hits for <code>query</code>.
-        /// 
+        ///
         /// <p>Applications should usually call <seealso cref="IndexSearcher#search(Query,int)"/> or
         /// <seealso cref="IndexSearcher#search(Query,Filter,int)"/> instead. </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected internal virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc after, int nDocs)
         {
@@ -536,11 +533,11 @@ namespace Lucene.Net.Search
         /// score should be computed.  Finds
         /// the top <code>n</code> hits for <code>query</code> and sorting the hits
         /// by the criteria in <code>sort</code>.
-        /// 
+        ///
         /// <p>Applications should usually call {@link
         /// IndexSearcher#search(Query,Filter,int,Sort)} instead.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected internal virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore)
         {
@@ -554,7 +551,6 @@ namespace Lucene.Net.Search
         /// </summary>
         protected internal virtual TopFieldDocs Search(Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
-
             if (sort == null)
             {
                 throw new System.NullReferenceException("Sort must not be null");
@@ -599,7 +595,6 @@ namespace Lucene.Net.Search
             }
         }
 
-
         /// <summary>
         /// Just like <seealso cref="#search(Weight, int, Sort, boolean, boolean)"/>, but you choose
         /// whether or not the fields in the returned <seealso cref="FieldDoc"/> instances should
@@ -622,25 +617,24 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Lower-level search API.
-        /// 
+        ///
         /// <p>
         /// <seealso cref="Collector#collect(int)"/> is called for every document. <br>
-        /// 
+        ///
         /// <p>
         /// NOTE: this method executes the searches on all given leaves exclusively.
         /// To search across all the searchers leaves use <seealso cref="#leafContexts"/>.
         /// </summary>
-        /// <param name="leaves"> 
+        /// <param name="leaves">
         ///          the searchers leaves to execute the searches on </param>
         /// <param name="weight">
         ///          to match documents </param>
         /// <param name="collector">
         ///          to receive hits </param>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected internal virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
         {
-
             // TODO: should we make this
             // threaded...?  the Collector could be sync'd?
             // always use single thread:
@@ -674,7 +668,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: called to re-write queries into primitive queries. </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual Query Rewrite(Query original)
         {
@@ -689,7 +683,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns an Explanation that describes how <code>doc</code> scored against
         /// <code>query</code>.
-        /// 
+        ///
         /// <p>this is intended to be used in developing Similarity implementations,
         /// and, for good performance, should not be displayed with every hit.
         /// Computing an explanation is as expensive as executing the query over the
@@ -704,13 +698,13 @@ namespace Lucene.Net.Search
         /// Expert: low-level implementation method
         /// Returns an Explanation that describes how <code>doc</code> scored against
         /// <code>weight</code>.
-        /// 
+        ///
         /// <p>this is intended to be used in developing Similarity implementations,
         /// and, for good performance, should not be displayed with every hit.
         /// Computing an explanation is as expensive as executing the query over the
         /// entire index.
         /// <p>Applications should call <seealso cref="IndexSearcher#explain(Query, int)"/>. </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed 
+        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected internal virtual Explanation Explain(Weight weight, int doc)
         {
@@ -746,6 +740,7 @@ namespace Lucene.Net.Search
         /// Returns this searchers the top-level <seealso cref="IndexReaderContext"/>. </summary>
         /// <seealso cref= IndexReader#getContext() </seealso>
         /* sugar for #getReader().getTopReaderContext() */
+
         public virtual IndexReaderContext TopReaderContext
         {
             get
@@ -755,11 +750,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A thread subclass for searching a single searchable 
+        /// A thread subclass for searching a single searchable
         /// </summary>
         private sealed class SearcherCallableNoSort : ICallable<TopDocs>
         {
-
             internal readonly ReentrantLock @lock;
             internal readonly IndexSearcher Searcher;
             internal readonly Weight Weight;
@@ -783,7 +777,7 @@ namespace Lucene.Net.Search
             {
                 TopDocs docs = Searcher.Search(Arrays.AsList(Slice.Leaves), Weight, After, NDocs);
                 ScoreDoc[] scoreDocs = docs.ScoreDocs;
-                //it would be so nice if we had a thread-safe insert 
+                //it would be so nice if we had a thread-safe insert
                 @lock.Lock();
                 try
                 {
@@ -804,13 +798,11 @@ namespace Lucene.Net.Search
             }
         }
 
-
         /// <summary>
-        /// A thread subclass for searching a single searchable 
+        /// A thread subclass for searching a single searchable
         /// </summary>
         private sealed class SearcherCallableWithSort : ICallable<TopFieldDocs>
         {
-
             internal readonly ReentrantLock @lock;
             internal readonly IndexSearcher Searcher;
             internal readonly Weight Weight;
@@ -981,7 +973,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// A class holding a subset of the <seealso cref="IndexSearcher"/>s leaf contexts to be
         /// executed within a single thread.
-        /// 
+        ///
         /// @lucene.experimental
         /// </summary>
         public class LeafSlice
@@ -1001,7 +993,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <seealso cref="TermStatistics"/> for a term.
-        /// 
+        ///
         /// this can be overridden for example, to return a term's statistics
         /// across a distributed collection.
         /// @lucene.experimental
@@ -1013,7 +1005,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <seealso cref="CollectionStatistics"/> for a field.
-        /// 
+        ///
         /// this can be overridden for example, to return a field's statistics
         /// across a distributed collection.
         /// @lucene.experimental
@@ -1042,5 +1034,4 @@ namespace Lucene.Net.Search
             return new CollectionStatistics(field, Reader.MaxDoc(), docCount, sumTotalTermFreq, sumDocFreq);
         }
     }
-
 }

@@ -2,34 +2,33 @@ using System;
 
 namespace Lucene.Net.Index
 {
+    using NUnit.Framework;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Document = Lucene.Net.Document.Document;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TimeUnits = Lucene.Net.Util.TimeUnits;
-    using NUnit.Framework;
+    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
+
     /*using Ignore = org.junit.Ignore;
     using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;*/
 
@@ -39,7 +38,6 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class Test2BSortedDocValues : LuceneTestCase
     {
-
         // indexes Integer.MAX_VALUE docs with a fixed binary field
         [Test]
         public virtual void TestFixedSorted()
@@ -162,5 +160,4 @@ namespace Lucene.Net.Index
 
         // TODO: variable
     }
-
 }

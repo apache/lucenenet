@@ -2,8 +2,8 @@ using System;
 
 namespace Lucene.Net.Util
 {
-
     using System.IO;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,20 +21,17 @@ namespace Lucene.Net.Util
          * limitations under the License.
          */
 
-
     using Directory = Lucene.Net.Store.Directory;
     using FSDirectory = Lucene.Net.Store.FSDirectory;
 
     /// <summary>
-    /// Class containing some useful methods used by command line tools 
-    /// 
+    /// Class containing some useful methods used by command line tools
+    ///
     /// </summary>
     public sealed class CommandLineUtil
     {
-
         private CommandLineUtil()
         {
-
         }
 
         /// <summary>
@@ -116,7 +113,5 @@ namespace Lucene.Net.Util
             //Constructor<?> ctor = clazz.GetConstructor(typeof(File));
             return (FSDirectory)Activator.CreateInstance(clazz, dir);
         }
-
     }
-
 }

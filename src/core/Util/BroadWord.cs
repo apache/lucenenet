@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -36,7 +35,6 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class BroadWord
     {
-
         // TBD: test smaller8 and smaller16 separately.
         private BroadWord() // no instance
         {
@@ -135,6 +133,7 @@ namespace Lucene.Net.Util
         ///  The suffix _L indicates the long implementation.
         /// </summary>
         public const long L8_L = 0x0101010101010101L;
+
         public const long L9_L = unchecked((long)0x8040201008040201L);
         public const long L16_L = 0x0001000100010001L;
 
@@ -144,6 +143,7 @@ namespace Lucene.Net.Util
         ///  The suffix _L indicates the long implementation.
         /// </summary>
         public static readonly long H8_L = L8_L << 7;
+
         public static readonly long H16_L = L16_L << 15;
 
         /// <summary>
@@ -164,7 +164,5 @@ namespace Lucene.Net.Util
             int res = (r > 0) ? 72 : s;
             return res;
         }
-
     }
-
 }

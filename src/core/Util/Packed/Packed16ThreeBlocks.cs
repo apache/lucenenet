@@ -5,8 +5,8 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -25,7 +25,6 @@ namespace Lucene.Net.Util.Packed
          */
 
     using DataInput = Lucene.Net.Store.DataInput;
-
 
     /// <summary>
     /// Packs integers into 3 shorts (48 bits per value).
@@ -135,5 +134,4 @@ namespace Lucene.Net.Util.Packed
             return this.GetType().Name + "(bitsPerValue=" + bitsPerValue + ", size=" + Size() + ", elements.length=" + Blocks.Length + ")";
         }
     }
-
 }

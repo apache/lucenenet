@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -20,7 +20,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     /// <summary>
     /// A Scorer for queries with a required part and an optional part.
     /// Delays skipTo() on the optional part until a score() is needed.
@@ -34,6 +33,7 @@ namespace Lucene.Net.Search
         /// These are set to null as soon as their next() or skipTo() returns false.
         /// </summary>
         private Scorer ReqScorer;
+
         private Scorer OptScorer;
 
         /// <summary>
@@ -112,6 +112,4 @@ namespace Lucene.Net.Search
             return ReqScorer.Cost();
         }
     }
-
-
 }

@@ -1,10 +1,9 @@
-using System.Diagnostics;
-using System.Collections;
 using Lucene.Net.Support;
+using System.Collections;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,12 +21,10 @@ namespace Lucene.Net.Util.Packed
      * limitations under the License.
      */
 
-
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     public class TestEliasFanoDocIdSet : BaseDocIdSetTestCase<EliasFanoDocIdSet>
     {
-
         public override EliasFanoDocIdSet CopyOf(BitArray bs, int numBits)
         {
             EliasFanoDocIdSet set = new EliasFanoDocIdSet(bs.Cardinality(), numBits - 1);
@@ -78,6 +75,5 @@ namespace Lucene.Net.Util.Packed
                 return SlowAdvance(target);
             }
         }
-
     }
 }

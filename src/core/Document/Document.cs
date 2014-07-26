@@ -1,46 +1,42 @@
-using System.Collections.Generic;
-using System.Text;
-
 namespace Lucene.Net.Document
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Text;
+
+    // for javadoc
+    // for javadoc
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-    using IndexReader = Lucene.Net.Index.IndexReader; // for javadoc
+    // for javadoc
     using IndexableField = Lucene.Net.Index.IndexableField;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher; // for javadoc
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc; // for javadoc
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using System.Collections.Generic;
-    using Lucene.Net.Util;
-    using Lucene.Net.Index;
-    using System.Text;
-    using System.Collections;
 
     /// <summary>
     /// Documents are the unit of indexing and search.
-    /// 
+    ///
     /// A Document is a set of fields.  Each field has a name and a textual value.
     /// A field may be <seealso cref="Lucene.Net.Index.IndexableFieldType#stored() stored"/> with the document, in which
     /// case it is returned with search hits on the document.  Thus each document
     /// should typically contain one or more stored fields which uniquely identify
     /// it.
-    /// 
+    ///
     /// <p>Note that fields which are <i>not</i> <seealso cref="Lucene.Net.Index.IndexableFieldType#stored() stored"/> are
     /// <i>not</i> available in documents retrieved from the index, e.g. with {@link
     /// ScoreDoc#doc} or <seealso cref="IndexReader#document(int)"/>.
@@ -48,7 +44,6 @@ namespace Lucene.Net.Document
 
     public sealed class Document : IEnumerable<IndexableField>
     {
-
         private readonly List<IndexableField> Fields_Renamed = new List<IndexableField>();
 
         /// <summary>
@@ -71,7 +66,7 @@ namespace Lucene.Net.Document
         /// <p>Adds a field to a document.  Several fields may be added with
         /// the same name.  In this case, if the fields are indexed, their text is
         /// treated as though appended for the purposes of search.</p>
-        /// <p> Note that add like the removeField(s) methods only makes sense 
+        /// <p> Note that add like the removeField(s) methods only makes sense
         /// prior to adding a document to an index. These methods cannot
         /// be used to change the content of an existing index! In order to achieve this,
         /// a document has to be deleted from an index and a new changed version of that
@@ -86,7 +81,7 @@ namespace Lucene.Net.Document
         /// <p>Removes field with the specified name from the document.
         /// If multiple fields exist with this name, this method removes the first field that has been added.
         /// If there is no field with the specified name, the document remains unchanged.</p>
-        /// <p> Note that the removeField(s) methods like the add method only make sense 
+        /// <p> Note that the removeField(s) methods like the add method only make sense
         /// prior to adding a document to an index. These methods cannot
         /// be used to change the content of an existing index! In order to achieve this,
         /// a document has to be deleted from an index and a new changed version of that
@@ -109,7 +104,7 @@ namespace Lucene.Net.Document
         /// <summary>
         /// <p>Removes all fields with the given name from the document.
         /// If there is no field with the specified name, the document remains unchanged.</p>
-        /// <p> Note that the removeField(s) methods like the add method only make sense 
+        /// <p> Note that the removeField(s) methods like the add method only make sense
         /// prior to adding a document to an index. These methods cannot
         /// be used to change the content of an existing index! In order to achieve this,
         /// a document has to be deleted from an index and a new changed version of that
@@ -127,7 +122,6 @@ namespace Lucene.Net.Document
                 }
             }
         }
-
 
         /// <summary>
         /// Returns an array of byte arrays for of the fields that have the name specified
@@ -304,5 +298,4 @@ namespace Lucene.Net.Document
             return buffer.ToString();
         }
     }
-
 }

@@ -1,11 +1,10 @@
+using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.Text;
-using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,7 +22,7 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    /// @deprecated Remove when IndexableBinaryStringTools is removed. 
+    /// @deprecated Remove when IndexableBinaryStringTools is removed.
     [Obsolete("Remove when IndexableBinaryStringTools is removed.")]
     [TestFixture]
     public class TestIndexableBinaryStringTools : LuceneTestCase
@@ -206,5 +205,4 @@ namespace Lucene.Net.Util
             return buf.ToString();
         }
     }
-
 }

@@ -2,39 +2,38 @@ using System;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using System.IO;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using ByteArrayDataOutput = Lucene.Net.Store.ByteArrayDataOutput;
     using DataInput = Lucene.Net.Store.DataInput;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using NUnit.Framework;
-    using System.IO;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
     public class TestIndexInput : LuceneTestCase
     {
-
         internal static readonly sbyte[] READ_TEST_BYTES = new sbyte[] { unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0xFF), 0x7F, unchecked((sbyte)0x80), unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0x81), unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x07, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x0F, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x07, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x7F, 0x06, (sbyte)'L', (sbyte)'u', (sbyte)'c', (sbyte)'e', (sbyte)'n', (sbyte)'e', 0x02, unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), 0x0A, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), (sbyte)'n', (sbyte)'e', 0x03, unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), 0x0C, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), (sbyte)'n', (sbyte)'e', 0x04, unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), 0x08, unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x85), unchecked((sbyte)0xA0), 0x0E, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x85), unchecked((sbyte)0xA0), (sbyte)'n', (sbyte)'e', 0x01, 0x00, 0x08, (sbyte)'L', (sbyte)'u', 0x00, (sbyte)'c', (sbyte)'e', 0x00, (sbyte)'n', (sbyte)'e', unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x17, (sbyte)0x01, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x01 };
 
         internal static readonly int COUNT = RANDOM_MULTIPLIER * 65536;
@@ -186,7 +185,5 @@ namespace Lucene.Net.Index
             @is = new ByteArrayDataInput(RANDOM_TEST_BYTES);
             CheckRandomReads(@is);
         }
-
     }
-
 }

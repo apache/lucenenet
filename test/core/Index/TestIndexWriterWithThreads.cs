@@ -1,53 +1,51 @@
+using Apache.NMS.Util;
 using System;
 using System.Diagnostics;
 using System.Threading;
-using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using TextField = Lucene.Net.Document.TextField;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Directory = Lucene.Net.Store.Directory;
-    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LineFileDocs = Lucene.Net.Util.LineFileDocs;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     //using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
     using System.IO;
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using LineFileDocs = Lucene.Net.Util.LineFileDocs;
+    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Document.TextField;
+    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// MultiThreaded IndexWriter tests
@@ -57,12 +55,10 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterWithThreads : LuceneTestCase
     {
-
         // Used by test cases below
         private class IndexerThread : ThreadClass
         {
             private readonly TestIndexWriterWithThreads OuterInstance;
-
 
             internal bool DiskFull;
             internal Exception Error;
@@ -80,7 +76,6 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-
                 Document doc = new Document();
                 FieldType customType = new FieldType(TextField.TYPE_STORED);
                 customType.StoreTermVectors = true;
@@ -158,7 +153,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestImmediateDiskFullWithThreads()
         {
-
             int NUM_THREADS = 3;
             int numIterations = TEST_NIGHTLY ? 10 : 3;
             for (int iter = 0; iter < numIterations; iter++)
@@ -199,7 +193,6 @@ namespace Lucene.Net.Index
                 dir.Dispose();
             }
         }
-
 
         // LUCENE-1130: make sure we can close() even while
         // threads are trying to add documents.  Strictly
@@ -289,7 +282,6 @@ namespace Lucene.Net.Index
         // failure to trigger an IOException
         public virtual void _testMultipleThreadsFailure(MockDirectoryWrapper.Failure failure)
         {
-
             int NUM_THREADS = 3;
 
             for (int iter = 0; iter < 2; iter++)
@@ -402,16 +394,17 @@ namespace Lucene.Net.Index
         private class FailOnlyOnAbortOrFlush : MockDirectoryWrapper.Failure
         {
             internal bool OnlyOnce;
+
             public FailOnlyOnAbortOrFlush(bool onlyOnce)
             {
                 this.OnlyOnce = onlyOnce;
             }
+
             public override void Eval(MockDirectoryWrapper dir)
             {
-
                 // Since we throw exc during abort, eg when IW is
                 // attempting to delete files, we will leave
-                // leftovers: 
+                // leftovers:
                 dir.AssertNoUnrefencedFilesOnClose = false;
 
                 if (DoFail)
@@ -456,8 +449,6 @@ namespace Lucene.Net.Index
             }
         }
 
-
-
         // LUCENE-1130: make sure initial IOException, and then 2nd
         // IOException during rollback(), is OK:
         [Test]
@@ -494,10 +485,12 @@ namespace Lucene.Net.Index
         private class FailOnlyInWriteSegment : MockDirectoryWrapper.Failure
         {
             internal bool OnlyOnce;
+
             public FailOnlyInWriteSegment(bool onlyOnce)
             {
                 this.OnlyOnce = onlyOnce;
             }
+
             public override void Eval(MockDirectoryWrapper dir)
             {
                 if (DoFail)
@@ -549,7 +542,7 @@ namespace Lucene.Net.Index
             _testMultipleThreadsFailure(new FailOnlyInWriteSegment(true));
         }
 
-        //  LUCENE-3365: Test adding two documents with the same field from two different IndexWriters 
+        //  LUCENE-3365: Test adding two documents with the same field from two different IndexWriters
         //  that we attempt to open at the same time.  As long as the first IndexWriter completes
         //  and closes before the second IndexWriter time's out trying to get the Lock,
         //  we should see both documents
@@ -727,6 +720,7 @@ namespace Lucene.Net.Index
                                     RollbackLock.Unlock();
                                 }
                                 break;
+
                             case 1:
                                 CommitLock.@Lock();
                                 if (VERBOSE)
@@ -754,6 +748,7 @@ namespace Lucene.Net.Index
                                     CommitLock.Unlock();
                                 }
                                 break;
+
                             case 2:
                                 if (VERBOSE)
                                 {
@@ -787,5 +782,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

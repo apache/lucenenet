@@ -1,9 +1,7 @@
-using NUnit.Framework;
-
 namespace Lucene.Net.Codecs.Lucene3x
 {
-
     using System.Collections.Generic;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,13 +19,11 @@ namespace Lucene.Net.Codecs.Lucene3x
          * limitations under the License.
          */
 
-
     using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     public class TestLucene3xTermVectorsFormat : BaseTermVectorsFormatTestCase
     {
-
         public override void SetUp()
         {
             LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
@@ -46,7 +42,5 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             return ValidOptions(Options.NONE, Options.POSITIONS_AND_OFFSETS);
         }
-
     }
-
 }

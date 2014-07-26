@@ -5,7 +5,6 @@ using System.Threading;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,7 +22,6 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Java's builtin ThreadLocal has a serious flaw:
     ///  it can take an arbitrarily long amount of time to
@@ -32,31 +30,30 @@ namespace Lucene.Net.Util
     ///  this is because there is single, master map stored for
     ///  each thread, which all ThreadLocals share, and that
     ///  master map only periodically purges "stale" entries.
-    /// 
+    ///
     ///  While not technically a memory leak, because eventually
     ///  the memory will be reclaimed, it can take a long time
     ///  and you can easily hit OutOfMemoryError because from the
     ///  GC's standpoint the stale entries are not reclaimable.
-    /// 
+    ///
     ///  this class works around that, by only enrolling
     ///  WeakReference values into the ThreadLocal, and
     ///  separately holding a hard reference to each stored
     ///  value.  When you call <seealso cref="#close"/>, these hard
     ///  references are cleared and then GC is freely able to
     ///  reclaim space by objects stored in it.
-    /// 
+    ///
     ///  We can not rely on <seealso cref="ThreadLocal#remove()"/> as it
     ///  only removes the value for the caller thread, whereas
     ///  <seealso cref="#close"/> takes care of all
     ///  threads.  You should not call <seealso cref="#close"/> until all
     ///  threads are done using the instance.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
 
     public class IDisposableThreadLocal<T> : IDisposable
     {
-
         private ThreadLocal<WeakReference> t = new ThreadLocal<WeakReference>();
 
         // Use a WeakHashMap so that if a Thread exits and is
@@ -103,7 +100,6 @@ namespace Lucene.Net.Util
 
         public virtual void Set(T @object)
         {
-
             t.Value = new WeakReference(@object);
 
             lock (HardRefs)
@@ -131,7 +127,7 @@ namespace Lucene.Net.Util
                 List<Thread> Removed = new List<Thread>();
                 try
                 {
-                    for (IEnumerator<Thread> it = HardRefs.Keys.GetEnumerator(); it.MoveNext();)
+                    for (IEnumerator<Thread> it = HardRefs.Keys.GetEnumerator(); it.MoveNext(); )
                     {
                         Thread t = it.Current;
                         if (!t.IsAlive)
@@ -178,5 +174,4 @@ namespace Lucene.Net.Util
             t = null;
         }
     }
-
 }

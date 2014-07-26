@@ -4,6 +4,7 @@ using System.Text;
 namespace Lucene.Net.Search.Spans
 {
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -23,112 +24,111 @@ namespace Lucene.Net.Search.Spans
 
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
+    /// <summary>
+    /// Only return those matches that have a specific payload at
+    /// the given position.
+    /// <p/>
+    ///
+    /// </summary>
+    public class SpanNearPayloadCheckQuery : SpanPositionCheckQuery
+    {
+        protected internal readonly ICollection<sbyte[]> PayloadToMatch;
 
+        /// <param name="match">          The underlying <seealso cref="SpanQuery"/> to check </param>
+        /// <param name="payloadToMatch"> The <seealso cref="java.util.Collection"/> of payloads to match </param>
+        public SpanNearPayloadCheckQuery(SpanNearQuery match, ICollection<sbyte[]> payloadToMatch)
+            : base(match)
+        {
+            this.PayloadToMatch = payloadToMatch;
+        }
 
-	/// <summary>
-	/// Only return those matches that have a specific payload at
-	/// the given position.
-	/// <p/>
-	/// 
-	/// </summary>
-	public class SpanNearPayloadCheckQuery : SpanPositionCheckQuery
-	{
-	  protected internal readonly ICollection<sbyte[]> PayloadToMatch;
+        protected internal override AcceptStatus AcceptPosition(Spans spans)
+        {
+            bool result = spans.PayloadAvailable;
+            if (result == true)
+            {
+                ICollection<sbyte[]> candidate = spans.Payload;
+                if (candidate.Count == PayloadToMatch.Count)
+                {
+                    //TODO: check the byte arrays are the same
+                    //hmm, can't rely on order here
+                    int matches = 0;
+                    foreach (sbyte[] candBytes in candidate)
+                    {
+                        //Unfortunately, we can't rely on order, so we need to compare all
+                        foreach (sbyte[] payBytes in PayloadToMatch)
+                        {
+                            if (Arrays.Equals(candBytes, payBytes) == true)
+                            {
+                                matches++;
+                                break;
+                            }
+                        }
+                    }
+                    if (matches == PayloadToMatch.Count)
+                    {
+                        //we've verified all the bytes
+                        return AcceptStatus.YES;
+                    }
+                    else
+                    {
+                        return AcceptStatus.NO;
+                    }
+                }
+                else
+                {
+                    return AcceptStatus.NO;
+                }
+            }
+            return AcceptStatus.NO;
+        }
 
-	  /// <param name="match">          The underlying <seealso cref="SpanQuery"/> to check </param>
-	  /// <param name="payloadToMatch"> The <seealso cref="java.util.Collection"/> of payloads to match </param>
-	  public SpanNearPayloadCheckQuery(SpanNearQuery match, ICollection<sbyte[]> payloadToMatch) : base(match)
-	  {
-		this.PayloadToMatch = payloadToMatch;
-	  }
+        public override string ToString(string field)
+        {
+            StringBuilder buffer = new StringBuilder();
+            buffer.Append("spanPayCheck(");
+            buffer.Append(match.ToString(field));
+            buffer.Append(", payloadRef: ");
+            foreach (sbyte[] bytes in PayloadToMatch)
+            {
+                ToStringUtils.ByteArray(buffer, bytes);
+                buffer.Append(';');
+            }
+            buffer.Append(")");
+            buffer.Append(ToStringUtils.Boost(Boost));
+            return buffer.ToString();
+        }
 
-	  protected internal override AcceptStatus AcceptPosition(Spans spans)
-	  {
-		bool result = spans.PayloadAvailable;
-		if (result == true)
-		{
-		  ICollection<sbyte[]> candidate = spans.Payload;
-		  if (candidate.Count == PayloadToMatch.Count)
-		  {
-			//TODO: check the byte arrays are the same
-			//hmm, can't rely on order here
-			int matches = 0;
-			foreach (sbyte[] candBytes in candidate)
-			{
-			  //Unfortunately, we can't rely on order, so we need to compare all
-			  foreach (sbyte[] payBytes in PayloadToMatch)
-			  {
-				if (Arrays.Equals(candBytes, payBytes) == true)
-				{
-				  matches++;
-				  break;
-				}
-			  }
-			}
-			if (matches == PayloadToMatch.Count)
-			{
-			  //we've verified all the bytes
-			  return AcceptStatus.YES;
-			}
-			else
-			{
-			  return AcceptStatus.NO;
-			}
-		  }
-		  else
-		  {
-			return AcceptStatus.NO;
-		  }
-		}
-		return AcceptStatus.NO;
-	  }
+        public override object Clone()
+        {
+            SpanNearPayloadCheckQuery result = new SpanNearPayloadCheckQuery((SpanNearQuery)match.Clone(), PayloadToMatch);
+            result.Boost = Boost;
+            return result;
+        }
 
-	  public override string ToString(string field)
-	  {
-		StringBuilder buffer = new StringBuilder();
-		buffer.Append("spanPayCheck(");
-		buffer.Append(match.ToString(field));
-		buffer.Append(", payloadRef: ");
-		foreach (sbyte[] bytes in PayloadToMatch)
-		{
-		  ToStringUtils.ByteArray(buffer, bytes);
-		  buffer.Append(';');
-		}
-		buffer.Append(")");
-		buffer.Append(ToStringUtils.Boost(Boost));
-		return buffer.ToString();
-	  }
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (!(o is SpanNearPayloadCheckQuery))
+            {
+                return false;
+            }
 
-	  public override object Clone()
-	  {
-		SpanNearPayloadCheckQuery result = new SpanNearPayloadCheckQuery((SpanNearQuery) match.Clone(), PayloadToMatch);
-		result.Boost = Boost;
-		return result;
-	  }
+            SpanNearPayloadCheckQuery other = (SpanNearPayloadCheckQuery)o;
+            return this.PayloadToMatch.Equals(other.PayloadToMatch) && this.match.Equals(other.match) && this.Boost == other.Boost;
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (this == o)
-		{
-			return true;
-		}
-		if (!(o is SpanNearPayloadCheckQuery))
-		{
-			return false;
-		}
-
-		SpanNearPayloadCheckQuery other = (SpanNearPayloadCheckQuery) o;
-		return this.PayloadToMatch.Equals(other.PayloadToMatch) && this.match.Equals(other.match) && this.Boost == other.Boost;
-	  }
-
-	  public override int GetHashCode()
-	  {
-		int h = match.GetHashCode();
-		h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
-		//TODO: is this right?
-		h ^= PayloadToMatch.GetHashCode();
-		h ^= Number.FloatToIntBits(Boost);
-		return h;
-	  }
-	}
+        public override int GetHashCode()
+        {
+            int h = match.GetHashCode();
+            h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
+            //TODO: is this right?
+            h ^= PayloadToMatch.GetHashCode();
+            h ^= Number.FloatToIntBits(Boost);
+            return h;
+        }
+    }
 }

@@ -1,6 +1,5 @@
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,10 +22,9 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class NumericDocValues
     {
-
         /// <summary>
-        /// Sole constructor. (For invocation by subclass 
-        /// constructors, typically implicit.) 
+        /// Sole constructor. (For invocation by subclass
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal NumericDocValues()
         {
@@ -38,5 +36,4 @@ namespace Lucene.Net.Index
         /// <returns> numeric value </returns>
         public abstract long Get(int docID);
     }
-
 }

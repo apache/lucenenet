@@ -3,10 +3,10 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
-
     using Lucene.Net.Support;
     using System.IO;
     using System.IO.MemoryMappedFiles;
+
     /*
                  * Licensed to the Apache Software Foundation (ASF) under one or more
                  * contributor license agreements.  See the NOTICE file distributed with
@@ -24,15 +24,13 @@ namespace Lucene.Net.Store
                  * limitations under the License.
                  */
 
-
-
     using Constants = Lucene.Net.Util.Constants;
 
     /// <summary>
     /// File-based <seealso cref="Directory"/> implementation that uses
     ///  mmap for reading, and {@link
     ///  FSDirectory.FSIndexOutput} for writing.
-    /// 
+    ///
     /// <p><b>NOTE</b>: memory mapping uses up a portion of the
     /// virtual memory address space in your process equal to the
     /// size of the file being mapped.  Before using this class,
@@ -43,13 +41,13 @@ namespace Lucene.Net.Store
     /// if you have problems with mmap failing because of fragmented
     /// address space. If you get an OutOfMemoryException, it is recommended
     /// to reduce the chunk size, until it works.
-    /// 
+    ///
     /// <p>Due to <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038">
     /// this bug</a> in Sun's JRE, MMapDirectory's <seealso cref="IndexInput#close"/>
     /// is unable to close the underlying OS file handle.  Only when GC
     /// finally collects the underlying objects, which could be quite
     /// some time later, will the file handle be closed.
-    /// 
+    ///
     /// <p>this will consume additional transient disk usage: on Windows,
     /// attempts to delete or overwrite the files will result in an
     /// exception; on other platforms, which typically have a &quot;delete on
@@ -58,7 +56,7 @@ namespace Lucene.Net.Store
     /// limitation is not a problem (e.g. if you have plenty of disk space,
     /// and you don't rely on overwriting files on Windows) but it's still
     /// an important limitation to be aware of.
-    /// 
+    ///
     /// <p>this class supplies the workaround mentioned in the bug report
     /// (see <seealso cref="#setUseUnmap"/>), which may fail on
     /// non-Sun JVMs. It forcefully unmaps the buffer on close by using
@@ -70,16 +68,18 @@ namespace Lucene.Net.Store
     /// indirectly from a thread while it's interrupted can close the
     /// underlying channel immediately if at the same time the thread is
     /// blocked on IO. The channel will remain closed and subsequent access
-    /// to <seealso cref="MMapDirectory"/> will throw a <seealso cref="ClosedChannelException"/>. 
+    /// to <seealso cref="MMapDirectory"/> will throw a <seealso cref="ClosedChannelException"/>.
     /// </p>
     /// </summary>
     public class MMapDirectory : FSDirectory
     {
         private bool UseUnmapHack = UNMAP_SUPPORTED;
+
         /// <summary>
         /// Default max chunk size. </summary>
         /// <seealso cref= #MMapDirectory(File, LockFactory, int) </seealso>
         public static readonly int DEFAULT_MAX_BUFF = Constants.JRE_IS_64BIT ? (1 << 30) : (1 << 28);
+
         internal readonly int ChunkSizePower;
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Create a new MMapDirectory for the named location, specifying the 
+        /// Create a new MMapDirectory for the named location, specifying the
         /// maximum chunk size used for memory mapping.
         /// </summary>
         /// <param name="path"> the path of the directory </param>
@@ -115,10 +115,10 @@ namespace Lucene.Net.Store
         /// 64 bit JVMs and 256 MiBytes for 32 bit JVMs) used for memory mapping.
         /// <p>
         /// Especially on 32 bit platform, the address space can be very fragmented,
-        /// so large index files cannot be mapped. Using a lower chunk size makes 
-        /// the directory implementation a little bit slower (as the correct chunk 
-        /// may be resolved on lots of seeks) but the chance is higher that mmap 
-        /// does not fail. On 64 bit Java platforms, this parameter should always 
+        /// so large index files cannot be mapped. Using a lower chunk size makes
+        /// the directory implementation a little bit slower (as the correct chunk
+        /// may be resolved on lots of seeks) but the chance is higher that mmap
+        /// does not fail. On 64 bit Java platforms, this parameter should always
         /// be {@code 1 << 30}, as the address space is big enough.
         /// <p>
         /// <b>Please note:</b> The chunk size is always rounded down to a power of 2. </param>
@@ -138,6 +138,7 @@ namespace Lucene.Net.Store
         /// <code>true</code>, if this platform supports unmapping mmapped files.
         /// </summary>
         public static readonly bool UNMAP_SUPPORTED;
+
         /*static MMapDirectory()
         {
             bool v;
@@ -181,7 +182,6 @@ namespace Lucene.Net.Store
             }
         }
 
-
         /// <summary>
         /// Returns the current mmap chunk size. </summary>
         /// <seealso cref= #MMapDirectory(File, LockFactory, int) </seealso>
@@ -204,8 +204,6 @@ namespace Lucene.Net.Store
 
             return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file.ToString() + "\")", c);
         }
-
-
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
@@ -253,7 +251,6 @@ namespace Lucene.Net.Store
 
         public sealed class MMapIndexInput : ByteBufferIndexInput
         {
-
             internal readonly bool UseUnmapHack;
             internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
             internal MMapDirectory outerInstance;
@@ -271,7 +268,6 @@ namespace Lucene.Net.Store
 
             public override sealed void Dispose()
             {
-
                 if (null != this.memoryMappedFile)
                 {
                     this.memoryMappedFile.Dispose();
@@ -307,6 +303,7 @@ namespace Lucene.Net.Store
                 }
               }*/
             }
+
             /*
           private class PrivilegedExceptionActionAnonymousInnerClassHelper : PrivilegedExceptionAction<Void>
           {
@@ -350,7 +347,7 @@ namespace Lucene.Net.Store
 
             /*
              public static MemoryMappedFile CreateFromFile(FileStream fileStream, String mapName, Int64 capacity,
-                                                        MemoryMappedFileAccess access, MemoryMappedFileSecurity memoryMappedFileSecurity, 
+                                                        MemoryMappedFileAccess access, MemoryMappedFileSecurity memoryMappedFileSecurity,
                                                         HandleInheritability inheritability, bool leaveOpen)
              */
 
@@ -361,7 +358,7 @@ namespace Lucene.Net.Store
             for (int bufNr = 0; bufNr < nrBuffers; bufNr++)
             {
                 int bufSize = (int)((length > (bufferStart + chunkSize)) ? chunkSize : (length - bufferStart));
-                //LUCENE TO-DO 
+                //LUCENE TO-DO
                 buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor(offset + bufferStart, bufSize), -1, 0, bufSize, bufSize);
                 //buffers[bufNr] = fc.Map(FileStream.MapMode.READ_ONLY, offset + bufferStart, bufSize);
                 bufferStart += bufSize;
@@ -369,8 +366,5 @@ namespace Lucene.Net.Store
 
             return buffers;
         }
-
-
     }
-
 }

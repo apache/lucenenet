@@ -2,7 +2,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -33,5 +32,4 @@ namespace Lucene.Net.Util
             Assert.AreEqual(0x2c628cd0, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("You want weapons? We're in a library! Books! The best weapons in the world!"), 3476));
         }
     }
-
 }

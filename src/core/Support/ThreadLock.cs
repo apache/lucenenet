@@ -30,11 +30,12 @@ namespace Lucene.Net.Support
     public abstract class ThreadLock
     {
         public abstract void Enter(object obj);
+
         public abstract void Exit(object obj);
 
         private static readonly ThreadLock _nullLock = new NullThreadLock();
         private static readonly ThreadLock _monitorLock = new MonitorThreadLock();
-        
+
         /// <summary>
         /// A ThreadLock class that actually does no locking
         /// Used in ParallelMultiSearcher/MultiSearcher

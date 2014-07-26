@@ -1,6 +1,5 @@
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,12 +23,11 @@ namespace Lucene.Net.Search
     ///  queries that have a more optimized means of scoring
     ///  across a range of documents need to override this.
     ///  Otherwise, a default implementation is wrapped around
-    ///  the <seealso cref="Scorer"/> returned by <seealso cref="Weight#scorer"/>. 
+    ///  the <seealso cref="Scorer"/> returned by <seealso cref="Weight#scorer"/>.
     /// </summary>
 
     public abstract class BulkScorer
     {
-
         /// <summary>
         /// Scores and collects all matching documents. </summary>
         /// <param name="collector"> The collector to which all matching documents are passed. </param>
@@ -46,5 +44,4 @@ namespace Lucene.Net.Search
         /// <returns> true if more matching documents may remain. </returns>
         public abstract bool Score(Collector collector, int max);
     }
-
 }

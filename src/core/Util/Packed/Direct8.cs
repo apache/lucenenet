@@ -5,8 +5,8 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -25,7 +25,6 @@ namespace Lucene.Net.Util.Packed
          */
 
     using DataInput = Lucene.Net.Store.DataInput;
-
 
     /// <summary>
     /// Direct wrapping of 8-bits values to a backing array.
@@ -120,5 +119,4 @@ namespace Lucene.Net.Util.Packed
             Arrays.Fill(Values, fromIndex, toIndex, (sbyte)val);
         }
     }
-
 }

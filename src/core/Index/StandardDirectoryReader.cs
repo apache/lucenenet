@@ -1,12 +1,11 @@
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +23,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using IOContext = Lucene.Net.Store.IOContext;
@@ -32,7 +30,6 @@ namespace Lucene.Net.Index
 
     public sealed class StandardDirectoryReader : DirectoryReader
     {
-
         private readonly IndexWriter Writer;
         private readonly SegmentInfos SegmentInfos;
         private readonly int TermInfosIndexDivisor;
@@ -164,7 +161,7 @@ namespace Lucene.Net.Index
                         catch (Exception th)
                         {
                             // ignore any exception that is thrown here to not mask any original
-                            // exception. 
+                            // exception.
                         }
                     }
                 }
@@ -175,7 +172,6 @@ namespace Lucene.Net.Index
         /// this constructor is only used for <seealso cref="#doOpenIfChanged(SegmentInfos)"/> </summary>
         private static DirectoryReader Open(Directory directory, SegmentInfos infos, IList<AtomicReader> oldReaders, int termInfosIndexDivisor)
         {
-
             // we put the old SegmentReaders in a map, that allows us
             // to lookup a reader using its segment name
             IDictionary<string, int?> segmentReaders = new Dictionary<string, int?>();
@@ -219,7 +215,6 @@ namespace Lucene.Net.Index
                     SegmentReader newReader;
                     if (newReaders[i] == null || infos.Info(i).Info.UseCompoundFile != newReaders[i].SegmentInfo.Info.UseCompoundFile)
                     {
-
                         // this is a new reader; in case we hit an exception we can close it safely
                         newReader = new SegmentReader(infos.Info(i), termInfosIndexDivisor, IOContext.READ);
                         readerShared[i] = false;
@@ -383,7 +378,6 @@ namespace Lucene.Net.Index
 
         private DirectoryReader DoOpenNoWriter(IndexCommit commit)
         {
-
             if (commit == null)
             {
                 if (Current)
@@ -602,5 +596,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

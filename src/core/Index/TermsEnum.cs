@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
     using System;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +21,6 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -34,27 +33,28 @@ namespace Lucene.Net.Index
     /// #docFreq}), <seealso cref="DocsEnum"/> or {@link
     /// DocsAndPositionsEnum} for the current term ({@link
     /// #docs}.
-    /// 
+    ///
     /// <p>Term enumerations are always ordered by
     /// <seealso cref="#getComparator"/>.  Each term in the enumeration is
     /// greater than the one before it.</p>
-    /// 
+    ///
     /// <p>The TermsEnum is unpositioned when you first obtain it
     /// and you must first successfully call <seealso cref="#next"/> or one
     /// of the <code>seek</code> methods.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
     public abstract class TermsEnum : IBytesRefIterator
     {
         public abstract IComparer<BytesRef> Comparator { get; }
+
         public abstract BytesRef Next();
 
         private AttributeSource Atts = null;
 
         /// <summary>
-        /// Sole constructor. (For invocation by subclass 
-        ///  constructors, typically implicit.) 
+        /// Sole constructor. (For invocation by subclass
+        ///  constructors, typically implicit.)
         /// </summary>
         protected internal TermsEnum()
         {
@@ -78,9 +78,11 @@ namespace Lucene.Net.Index
             /// <summary>
             /// The term was not found, and the end of iteration was hit. </summary>
             END,
+
             /// <summary>
             /// The precise term was found. </summary>
             FOUND,
+
             /// <summary>
             /// A different term was found after the requested term </summary>
             NOT_FOUND
@@ -90,7 +92,7 @@ namespace Lucene.Net.Index
         /// Attempts to seek to the exact term, returning
         ///  true if the term is found.  If this returns false, the
         ///  enum is unpositioned.  For some codecs, seekExact may
-        ///  be substantially faster than <seealso cref="#seekCeil"/>. 
+        ///  be substantially faster than <seealso cref="#seekCeil"/>.
         /// </summary>
         public virtual bool SeekExact(BytesRef text)
         {
@@ -103,7 +105,7 @@ namespace Lucene.Net.Index
         ///  indicate whether exact term was found, a different
         ///  term was found, or EOF was hit.  The target term may
         ///  be before or after the current term.  If this returns
-        ///  SeekStatus.END, the enum is unpositioned. 
+        ///  SeekStatus.END, the enum is unpositioned.
         /// </summary>
         public abstract SeekStatus SeekCeil(BytesRef text);
 
@@ -111,7 +113,7 @@ namespace Lucene.Net.Index
         /// Seeks to the specified term by ordinal (position) as
         ///  previously returned by <seealso cref="#ord"/>.  The target ord
         ///  may be before or after the current ord, and must be
-        ///  within bounds. 
+        ///  within bounds.
         /// </summary>
         public abstract void SeekExact(long ord);
 
@@ -121,8 +123,8 @@ namespace Lucene.Net.Index
         /// use this method. Low-level implementations may position the TermsEnum
         /// without re-seeking the term dictionary.
         /// <p>
-        /// Seeking by <seealso cref="TermState"/> should only be used iff the state was obtained 
-        /// from the same <seealso cref="TermsEnum"/> instance. 
+        /// Seeking by <seealso cref="TermState"/> should only be used iff the state was obtained
+        /// from the same <seealso cref="TermsEnum"/> instance.
         /// <p>
         /// NOTE: Using this method with an incompatible <seealso cref="TermState"/> might leave
         /// this <seealso cref="TermsEnum"/> in undefined state. On a segment level
@@ -146,7 +148,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns current term. Do not call this when the enum
-        ///  is unpositioned. 
+        ///  is unpositioned.
         /// </summary>
         public abstract BytesRef Term();
 
@@ -154,7 +156,7 @@ namespace Lucene.Net.Index
         /// Returns ordinal position for current term.  this is an
         ///  optional method (the codec may throw {@link
         ///  UnsupportedOperationException}).  Do not call this
-        ///  when the enum is unpositioned. 
+        ///  when the enum is unpositioned.
         /// </summary>
         public abstract long Ord();
 
@@ -171,7 +173,7 @@ namespace Lucene.Net.Index
         ///  doc that has this term).  this will be -1 if the
         ///  codec doesn't support this measure.  Note that, like
         ///  other term measures, this measure does not take
-        ///  deleted documents into account. 
+        ///  deleted documents into account.
         /// </summary>
         public abstract long TotalTermFreq();
 
@@ -229,7 +231,7 @@ namespace Lucene.Net.Index
         ///  be returned </param>
         ///  <param name="reuse"> pass a prior DocsAndPositionsEnum for possible reuse </param>
         ///  <param name="flags"> specifies which optional per-position values you
-        ///         require; see <seealso cref="DocsAndPositionsEnum#FLAG_OFFSETS"/> and 
+        ///         require; see <seealso cref="DocsAndPositionsEnum#FLAG_OFFSETS"/> and
         ///         <seealso cref="DocsAndPositionsEnum#FLAG_PAYLOADS"/>.  </param>
         public abstract DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags);
 
@@ -283,9 +285,11 @@ namespace Lucene.Net.Index
             {
                 return SeekStatus.END;
             }
+
             public override void SeekExact(long ord)
             {
             }
+
             public override BytesRef Term()
             {
                 throw new InvalidOperationException("this method should never be called");
@@ -348,5 +352,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

@@ -2,50 +2,49 @@ using System;
 
 namespace Lucene.Net.Codecs.Perfield
 {
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
 
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     /*using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
-    using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
-    using SimpleTextPostingsFormat = Lucene.Net.Codecs.simpletext.SimpleTextPostingsFormat;*/
+        using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
+        using SimpleTextPostingsFormat = Lucene.Net.Codecs.simpletext.SimpleTextPostingsFormat;*/
+
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using LogDocMergePolicy = Lucene.Net.Index.LogDocMergePolicy;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Randomized.Generators;
+    using TextField = Lucene.Net.Document.TextField;
+    using TopDocs = Lucene.Net.Search.TopDocs;
 
     //TODO: would be better in this test to pull termsenums and instanceof or something?
     // this way we can verify PFPF is doing the right thing.
@@ -53,7 +52,6 @@ namespace Lucene.Net.Codecs.Perfield
     [TestFixture]
     public class TestPerFieldPostingsFormat2 : LuceneTestCase
     {
-
         private IndexWriter NewWriter(Directory dir, IndexWriterConfig conf)
         {
             LogDocMergePolicy logByteSizeMergePolicy = new LogDocMergePolicy();
@@ -205,7 +203,6 @@ namespace Lucene.Net.Codecs.Perfield
             TopDocs search = searcher.Search(new TermQuery(t), num + 10);
             Assert.AreEqual(num, search.TotalHits);
             reader.Dispose();
-
         }
 
         /*public class MockCodec : Lucene46Codec
@@ -252,6 +249,7 @@ namespace Lucene.Net.Codecs.Perfield
         /*
          * Test per field codec support - adding fields with random codecs
          */
+
         [Test]
         public virtual void TestStressPerFieldCodec()
         {
@@ -379,5 +377,4 @@ namespace Lucene.Net.Codecs.Perfield
             dir.Dispose(); // checkindex
         }
     }
-
 }

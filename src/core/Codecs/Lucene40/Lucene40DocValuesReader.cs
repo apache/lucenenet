@@ -3,49 +3,48 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
+    using Lucene.Net.Support;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PagedBytes = Lucene.Net.Util.PagedBytes;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
-    using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
-    using Directory = Lucene.Net.Store.Directory;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using PagedBytes = Lucene.Net.Util.PagedBytes;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Reads the 4.0 format of norms/docvalues
     /// @lucene.experimental </summary>
-    /// @deprecated Only for reading old 4.0 and 4.1 segments 
+    /// @deprecated Only for reading old 4.0 and 4.1 segments
     [Obsolete("Only for reading old 4.0 and 4.1 segments")]
     internal sealed class Lucene40DocValuesReader : DocValuesProducer
     {
@@ -56,6 +55,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         // ram instances we have already loaded
         private readonly IDictionary<int, NumericDocValues> NumericInstances = new Dictionary<int, NumericDocValues>();
+
         private readonly IDictionary<int, BinaryDocValues> BinaryInstances = new Dictionary<int, BinaryDocValues>();
         private readonly IDictionary<int, SortedDocValues> SortedInstances = new Dictionary<int, SortedDocValues>();
 
@@ -944,5 +944,4 @@ namespace Lucene.Net.Codecs.Lucene40
         {
         }
     }
-
 }

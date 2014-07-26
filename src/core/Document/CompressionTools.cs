@@ -1,31 +1,28 @@
 namespace Lucene.Net.Document
 {
-
-    using System.IO;
-    using System.IO.Compression;
     using Lucene.Net.Support;
-    using Lucene.Net.Util;
+    using System;
+
     /*
-             * Licensed to the Apache Software Foundation (ASF) under one or more
-             * contributor license agreements.  See the NOTICE file distributed with
-             * this work for additional information regarding copyright ownership.
-             * The ASF licenses this file to You under the Apache License, Version 2.0
-             * (the "License"); you may not use this file except in compliance with
-             * the License.  You may obtain a copy of the License at
-             *
-             *     http://www.apache.org/licenses/LICENSE-2.0
-             *
-             * Unless required by applicable law or agreed to in writing, software
-             * distributed under the License is distributed on an "AS IS" BASIS,
-             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-             * See the License for the specific language governing permissions and
-             * limitations under the License.
-             */
+                 * Licensed to the Apache Software Foundation (ASF) under one or more
+                 * contributor license agreements.  See the NOTICE file distributed with
+                 * this work for additional information regarding copyright ownership.
+                 * The ASF licenses this file to You under the Apache License, Version 2.0
+                 * (the "License"); you may not use this file except in compliance with
+                 * the License.  You may obtain a copy of the License at
+                 *
+                 *     http://www.apache.org/licenses/LICENSE-2.0
+                 *
+                 * Unless required by applicable law or agreed to in writing, software
+                 * distributed under the License is distributed on an "AS IS" BASIS,
+                 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                 * See the License for the specific language governing permissions and
+                 * limitations under the License.
+                 */
 
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharsRef = Lucene.Net.Util.CharsRef;
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
-    using System;
 
     /// <summary>
     /// Simple utility class providing static methods to
@@ -36,7 +33,6 @@ namespace Lucene.Net.Document
 
     public class CompressionTools
     {
-
         // Export only static methods
         private CompressionTools()
         {
@@ -45,11 +41,10 @@ namespace Lucene.Net.Document
         /// <summary>
         /// Compresses the specified byte range using the
         ///  specified compressionLevel (constants are defined in
-        ///  java.util.zip.Deflater). 
+        ///  java.util.zip.Deflater).
         /// </summary>
         public static byte[] Compress(sbyte[] value, int offset, int length, int compressionLevel)
         {
-
             /* Create an expandable byte array to hold the compressed data.
              * You cannot use an array that's the same size as the orginal because
              * there is no guarantee that the compressed data will be smaller than
@@ -103,7 +98,7 @@ namespace Lucene.Net.Document
         /// <summary>
         /// Compresses the String value using the specified
         ///  compressionLevel (constants are defined in
-        ///  java.util.zip.Deflater). 
+        ///  java.util.zip.Deflater).
         /// </summary>
         public static byte[] CompressString(string value, int compressionLevel)
         {
@@ -114,7 +109,7 @@ namespace Lucene.Net.Document
 
         /// <summary>
         /// Decompress the byte array previously returned by
-        ///  compress (referenced by the provided BytesRef) 
+        ///  compress (referenced by the provided BytesRef)
         /// </summary>
         public static byte[] Decompress(BytesRef bytes)
         {
@@ -123,7 +118,7 @@ namespace Lucene.Net.Document
 
         /// <summary>
         /// Decompress the byte array previously returned by
-        ///  compress 
+        ///  compress
         /// </summary>
         public static byte[] Decompress(sbyte[] value)
         {
@@ -132,7 +127,7 @@ namespace Lucene.Net.Document
 
         /// <summary>
         /// Decompress the byte array previously returned by
-        ///  compress 
+        ///  compress
         /// </summary>
         public static byte[] Decompress(sbyte[] value, int offset, int length)
         {
@@ -162,7 +157,7 @@ namespace Lucene.Net.Document
 
         /// <summary>
         /// Decompress the byte array previously returned by
-        ///  compressString back into a String 
+        ///  compressString back into a String
         /// </summary>
         public static string DecompressString(sbyte[] value)
         {
@@ -171,7 +166,7 @@ namespace Lucene.Net.Document
 
         /// <summary>
         /// Decompress the byte array previously returned by
-        ///  compressString back into a String 
+        ///  compressString back into a String
         /// </summary>
         public static string DecompressString(sbyte[] value, int offset, int length)
         {
@@ -182,13 +177,12 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Decompress the byte array (referenced by the provided BytesRef) 
-        ///  previously returned by compressString back into a String 
+        /// Decompress the byte array (referenced by the provided BytesRef)
+        ///  previously returned by compressString back into a String
         /// </summary>
         public static string DecompressString(BytesRef bytes)
         {
             return DecompressString(bytes.Bytes, bytes.Offset, bytes.Length);
         }
     }
-
 }

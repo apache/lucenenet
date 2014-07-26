@@ -4,56 +4,55 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using Codec = Lucene.Net.Codecs.Codec;
-    using FilterCodec = Lucene.Net.Codecs.FilterCodec;
-    using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+
     //using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using PhraseQuery = Lucene.Net.Search.PhraseQuery;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Directory = Lucene.Net.Store.Directory;
-    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using FilterCodec = Lucene.Net.Codecs.FilterCodec;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
+    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+    using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using StringField = Lucene.Net.Document.StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
-    using System.IO;
+    using TextField = Lucene.Net.Document.TextField;
 
     [TestFixture]
     public class TestAddIndexes : LuceneTestCase
     {
-
         [Test]
         public virtual void TestSimpleCase()
         {
@@ -577,7 +576,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestHangOnClose()
         {
-
             Directory dir = NewDirectory();
             LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy();
             lmp.NoCFSRatio = 0.0;
@@ -633,7 +631,6 @@ namespace Lucene.Net.Index
         {
             private readonly TestAddIndexes OuterInstance;
 
-
             internal Directory Dir, Dir2;
             internal const int NUM_INIT_DOCS = 17;
             internal IndexWriter Writer2;
@@ -660,7 +657,6 @@ namespace Lucene.Net.Index
                 Writer2 = new IndexWriter(Dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
                 Writer2.Commit();
 
-
                 Readers = new IndexReader[NUM_COPY];
                 for (int i = 0; i < NUM_COPY; i++)
                 {
@@ -670,7 +666,6 @@ namespace Lucene.Net.Index
 
             internal virtual void LaunchThreads(int numIter)
             {
-
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
                     Threads[i] = new ThreadAnonymousInnerClassHelper(this, numIter);
@@ -698,7 +693,6 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-
                         Directory[] dirs = new Directory[OuterInstance.NUM_COPY];
                         for (int k = 0; k < OuterInstance.NUM_COPY; k++)
                         {
@@ -748,6 +742,7 @@ namespace Lucene.Net.Index
             }
 
             internal abstract void DoBody(int j, Directory[] dirs);
+
             internal abstract void Handle(Exception t);
         }
 
@@ -782,6 +777,7 @@ namespace Lucene.Net.Index
                         Writer2.AddIndexes(dirs);
                         Writer2.ForceMerge(1);
                         break;
+
                     case 1:
                         if (VERBOSE)
                         {
@@ -789,6 +785,7 @@ namespace Lucene.Net.Index
                         }
                         Writer2.AddIndexes(dirs);
                         break;
+
                     case 2:
                         if (VERBOSE)
                         {
@@ -796,6 +793,7 @@ namespace Lucene.Net.Index
                         }
                         Writer2.AddIndexes(Readers);
                         break;
+
                     case 3:
                         if (VERBOSE)
                         {
@@ -804,6 +802,7 @@ namespace Lucene.Net.Index
                         Writer2.AddIndexes(dirs);
                         Writer2.MaybeMerge();
                         break;
+
                     case 4:
                         if (VERBOSE)
                         {
@@ -820,7 +819,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestAddIndexesWithThreads()
         {
-
             int NUM_ITER = TEST_NIGHTLY ? 15 : 5;
             const int NUM_COPY = 3;
             CommitAndAddIndexes c = new CommitAndAddIndexes(this, NUM_COPY);
@@ -912,6 +910,7 @@ namespace Lucene.Net.Index
                         Writer2.AddIndexes(dirs);
                         Writer2.ForceMerge(1);
                         break;
+
                     case 1:
                         if (VERBOSE)
                         {
@@ -919,6 +918,7 @@ namespace Lucene.Net.Index
                         }
                         Writer2.AddIndexes(dirs);
                         break;
+
                     case 2:
                         if (VERBOSE)
                         {
@@ -926,6 +926,7 @@ namespace Lucene.Net.Index
                         }
                         Writer2.AddIndexes(Readers);
                         break;
+
                     case 3:
                         if (VERBOSE)
                         {
@@ -933,6 +934,7 @@ namespace Lucene.Net.Index
                         }
                         Writer2.ForceMerge(1);
                         break;
+
                     case 4:
                         if (VERBOSE)
                         {
@@ -978,7 +980,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestAddIndexesWithCloseNoWait()
         {
-
             const int NUM_COPY = 50;
             CommitAndAddIndexes3 c = new CommitAndAddIndexes3(this, NUM_COPY);
             c.LaunchThreads(-1);
@@ -1007,7 +1008,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestAddIndexesWithRollback()
         {
-
             int NUM_COPY = TEST_NIGHTLY ? 50 : 5;
             CommitAndAddIndexes3 c = new CommitAndAddIndexes3(this, NUM_COPY);
             c.LaunchThreads(-1);
@@ -1067,7 +1067,6 @@ namespace Lucene.Net.Index
             {
                 dir.Dispose();
             }
-
         }
 
         // just like addDocs but with ID, starting from docStart
@@ -1131,6 +1130,7 @@ namespace Lucene.Net.Index
         {
             //internal readonly PostingsFormat SimpleTextFormat;
             internal readonly PostingsFormat DefaultFormat;
+
             //internal readonly PostingsFormat MockSepFormat;
 
             public CustomPerFieldCodec()
@@ -1142,7 +1142,6 @@ namespace Lucene.Net.Index
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-
                 return DefaultFormat;
                 /*if (field.Equals("id"))
                 {
@@ -1158,7 +1157,6 @@ namespace Lucene.Net.Index
                 }*/
             }
         }
-
 
         // LUCENE-2790: tests that the non CFS files were deleted by addIndexes
         [Test]
@@ -1203,8 +1201,9 @@ namespace Lucene.Net.Index
         }
 
         /*
-         * simple test that ensures we getting expected exceptions 
+         * simple test that ensures we getting expected exceptions
          */
+
         [Test]
         public virtual void TestAddIndexMissingCodec()
         {
@@ -1353,7 +1352,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Make sure an open IndexWriter on an incoming Directory
-        ///  causes a LockObtainFailedException 
+        ///  causes a LockObtainFailedException
         /// </summary>
         [Test]
         public virtual void TestLocksBlock()
@@ -1382,5 +1381,4 @@ namespace Lucene.Net.Index
             IOUtils.Close(w1, w2, src, dest);
         }
     }
-
 }

@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,18 +21,16 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-
     using Directory = Lucene.Net.Store.Directory;
 
     /// <summary>
     /// Embeds a [read-only] SegmentInfo and adds per-commit
     ///  fields.
-    /// 
-    ///  @lucene.experimental 
+    ///
+    ///  @lucene.experimental
     /// </summary>
     public class SegmentCommitInfo
     {
-
         /// <summary>
         /// The <seealso cref="SegmentInfo"/> that we wrap. </summary>
         public readonly SegmentInfo Info;
@@ -130,7 +128,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Called if there was an exception while writing
         ///  deletes, so that we don't try to write to the same
-        ///  file more than once. 
+        ///  file more than once.
         /// </summary>
         internal virtual void AdvanceNextWriteDelGen()
         {
@@ -157,9 +155,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns total size in bytes of all files for this
-        ///  segment. 
+        ///  segment.
         /// <p><b>NOTE:</b> this value is not correct for 3.0 segments
-        /// that have shared docstores. To get the correct value, upgrade! 
+        /// that have shared docstores. To get the correct value, upgrade!
         /// </summary>
         public virtual long SizeInBytes()
         {
@@ -215,10 +213,9 @@ namespace Lucene.Net.Index
             }
         }
 
-
         /// <summary>
-        /// Returns true if there are any deletions for the 
-        /// segment at this commit. 
+        /// Returns true if there are any deletions for the
+        /// segment at this commit.
         /// </summary>
         public virtual bool HasDeletions()
         {
@@ -267,7 +264,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns generation number of the live docs file 
+        /// Returns generation number of the live docs file
         /// or -1 if there are no deletes yet.
         /// </summary>
         public virtual long DelGen
@@ -296,7 +293,6 @@ namespace Lucene.Net.Index
                 this.DelCount_Renamed = value;
             }
         }
-
 
         /// <summary>
         /// Returns a description of this segment. </summary>
@@ -338,5 +334,4 @@ namespace Lucene.Net.Index
             return other;
         }
     }
-
 }

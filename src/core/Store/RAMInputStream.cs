@@ -3,7 +3,6 @@ using System.IO;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,11 +20,10 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     /// <summary>
-    /// A memory-resident <seealso cref="IndexInput"/> implementation. 
-    ///  
-    ///  @lucene.internal 
+    /// A memory-resident <seealso cref="IndexInput"/> implementation.
+    ///
+    ///  @lucene.internal
     /// </summary>
     public class RAMInputStream : IndexInput, ICloneable
     {
@@ -140,5 +138,4 @@ namespace Lucene.Net.Store
             BufferPosition = (int)(pos % BUFFER_SIZE);
         }
     }
-
 }

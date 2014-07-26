@@ -2,7 +2,6 @@ using System;
 
 namespace Lucene.Net.Codecs.Lucene45
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -38,7 +37,7 @@ namespace Lucene.Net.Codecs.Lucene45
     /// </summary>
     /// <seealso cref= Lucene.Net.Codecs.Lucene45 package documentation for file format details.
     /// @lucene.experimental </seealso>
-    /// @deprecated Only for reading old 4.3-4.5 segments 
+    /// @deprecated Only for reading old 4.3-4.5 segments
     // NOTE: if we make largish changes in a minor release, easier to just make Lucene46Codec or whatever
     // if they are backwards compatible or smallish we can probably do the backwards in the postingsreader
     // (it writes a minor version, etc).
@@ -56,6 +55,7 @@ namespace Lucene.Net.Codecs.Lucene45
         private class PerFieldPostingsFormatAnonymousInnerClassHelper : PerFieldPostingsFormat
         {
             private readonly Lucene45Codec OuterInstance;
+
             public PerFieldPostingsFormatAnonymousInnerClassHelper(Lucene45Codec outerInstance)
             {
                 this.OuterInstance = outerInstance;
@@ -67,12 +67,12 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-
         private readonly DocValuesFormat docValuesFormat;
 
         private class PerFieldDocValuesFormatAnonymousInnerClassHelper : PerFieldDocValuesFormat
         {
             private readonly Lucene45Codec OuterInstance;
+
             public PerFieldDocValuesFormatAnonymousInnerClassHelper(Lucene45Codec outerInstance)
             {
                 this.OuterInstance = outerInstance;
@@ -124,9 +124,9 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         /// <summary>
-        /// Returns the postings format that should be used for writing 
+        /// Returns the postings format that should be used for writing
         ///  new segments of <code>field</code>.
-        ///  
+        ///
         ///  The default implementation always returns "Lucene41"
         /// </summary>
         public virtual PostingsFormat GetPostingsFormatForField(string field)
@@ -135,9 +135,9 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         /// <summary>
-        /// Returns the docvalues format that should be used for writing 
+        /// Returns the docvalues format that should be used for writing
         ///  new segments of <code>field</code>.
-        ///  
+        ///
         ///  The default implementation always returns "Lucene45"
         /// </summary>
         public virtual DocValuesFormat GetDocValuesFormatForField(string field)
@@ -160,5 +160,4 @@ namespace Lucene.Net.Codecs.Lucene45
             return NormsFormat_Renamed;
         }
     }
-
 }

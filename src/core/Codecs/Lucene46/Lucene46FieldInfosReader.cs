@@ -2,46 +2,42 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene46
 {
+    using Lucene.Net.Support;
+    using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
+    using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Lucene 4.6 FieldInfos reader.
-    /// 
+    ///
     /// @lucene.experimental </summary>
     /// <seealso cref= Lucene46FieldInfosFormat </seealso>
     internal sealed class Lucene46FieldInfosReader : FieldInfosReader
     {
-
         /// <summary>
         /// Sole constructor. </summary>
         public Lucene46FieldInfosReader()
@@ -155,5 +151,4 @@ namespace Lucene.Net.Codecs.Lucene46
             }
         }
     }
-
 }

@@ -1,7 +1,7 @@
 namespace Lucene.Net.Codecs.Lucene3x
 {
-
     using NUnit.Framework;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// <summary>
     /// Test that the SPI magic is returning "PreFlexRWCodec" for Lucene3x
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     [TestFixture]
@@ -36,5 +36,4 @@ namespace Lucene.Net.Codecs.Lucene3x
             Assert.IsTrue(codec is PreFlexRWCodec);
         }
     }
-
 }

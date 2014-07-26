@@ -2,27 +2,27 @@ using System.Collections;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Util;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
-    using Lucene.Net.Util;
 
     /// <summary>
     /// A <seealso cref="Collector"/> that sorts by <seealso cref="SortField"/> using
@@ -30,12 +30,11 @@ namespace Lucene.Net.Search
     /// <p/>
     /// See the <seealso cref="#create(Lucene.Net.Search.Sort, int, boolean, boolean, boolean, boolean)"/> method
     /// for instantiating a TopFieldCollector.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public abstract class TopFieldCollector : TopDocsCollector<Entry>
     {
-
         // TODO: one optimization we could do is to pre-fill
         // the queue with sentinel value that guaranteed to
         // always compare lower than a real hit; this would
@@ -45,9 +44,9 @@ namespace Lucene.Net.Search
          * Implements a TopFieldCollector over one SortField criteria, without
          * tracking document scores and maxScore.
          */
+
         private class OneComparatorNonScoringCollector : TopFieldCollector
         {
-
             internal FieldComparator comparator;
             internal readonly int ReverseMul;
             internal readonly FieldValueHitQueue<Entry> Queue;
@@ -116,7 +115,6 @@ namespace Lucene.Net.Search
                     comparator.Scorer = value;
                 }
             }
-
         }
 
         /*
@@ -124,9 +122,9 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore, and assumes out of orderness in doc
          * Ids collection.
          */
+
         private class OutOfOrderOneComparatorNonScoringCollector : OneComparatorNonScoringCollector
         {
-
             public OutOfOrderOneComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
@@ -167,16 +165,15 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-
         }
 
         /*
          * Implements a TopFieldCollector over one SortField criteria, while tracking
          * document scores but no maxScore.
          */
+
         private class OneComparatorScoringNoMaxScoreCollector : OneComparatorNonScoringCollector
         {
-
             internal Scorer Scorer_Renamed;
 
             public OneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -237,7 +234,6 @@ namespace Lucene.Net.Search
                     comparator.Scorer = value;
                 }
             }
-
         }
 
         /*
@@ -245,9 +241,9 @@ namespace Lucene.Net.Search
          * document scores but no maxScore, and assumes out of orderness in doc Ids
          * collection.
          */
+
         private class OutOfOrderOneComparatorScoringNoMaxScoreCollector : OneComparatorScoringNoMaxScoreCollector
         {
-
             public OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
@@ -294,16 +290,15 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-
         }
 
         /*
          * Implements a TopFieldCollector over one SortField criteria, with tracking
          * document scores and maxScore.
          */
+
         private class OneComparatorScoringMaxScoreCollector : OneComparatorNonScoringCollector
         {
-
             internal Scorer scorer;
 
             public OneComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -355,7 +350,6 @@ namespace Lucene.Net.Search
                         comparator.Bottom = Bottom.Slot;
                     }
                 }
-
             }
 
             public override Scorer Scorer
@@ -373,9 +367,9 @@ namespace Lucene.Net.Search
          * document scores and maxScore, and assumes out of orderness in doc Ids
          * collection.
          */
+
         private class OutOfOrderOneComparatorScoringMaxScoreCollector : OneComparatorScoringMaxScoreCollector
         {
-
             public OutOfOrderOneComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
@@ -421,19 +415,19 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-
         }
 
         /*
          * Implements a TopFieldCollector over multiple SortField criteria, without
          * tracking document scores and maxScore.
          */
+
         private class MultiComparatorNonScoringCollector : TopFieldCollector
         {
-
             internal readonly FieldComparator[] comparators;
             internal readonly int[] ReverseMul;
             internal readonly FieldValueHitQueue<Entry> Queue;
+
             public MultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
@@ -540,9 +534,9 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore, and assumes out of orderness in doc
          * Ids collection.
          */
+
         private class OutOfOrderMultiComparatorNonScoringCollector : MultiComparatorNonScoringCollector
         {
-
             public OutOfOrderMultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
@@ -616,16 +610,15 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-
         }
 
         /*
          * Implements a TopFieldCollector over multiple SortField criteria, with
          * tracking document scores and maxScore.
          */
+
         private class MultiComparatorScoringMaxScoreCollector : MultiComparatorNonScoringCollector
         {
-
             internal Scorer Scorer_Renamed;
 
             public MultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -723,9 +716,9 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore, and assumes out of orderness in doc
          * Ids collection.
          */
+
         private sealed class OutOfOrderMultiComparatorScoringMaxScoreCollector : MultiComparatorScoringMaxScoreCollector
         {
-
             public OutOfOrderMultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
@@ -804,16 +797,15 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-
         }
 
         /*
          * Implements a TopFieldCollector over multiple SortField criteria, with
          * tracking document scores and maxScore.
          */
+
         private class MultiComparatorScoringNoMaxScoreCollector : MultiComparatorNonScoringCollector
         {
-
             internal Scorer Scorer_Renamed;
 
             public MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -909,9 +901,9 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore, and assumes out of orderness in doc
          * Ids collection.
          */
+
         private sealed class OutOfOrderMultiComparatorScoringNoMaxScoreCollector : MultiComparatorScoringNoMaxScoreCollector
         {
-
             public OutOfOrderMultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
                 : base(queue, numHits, fillFields)
             {
@@ -999,15 +991,14 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-
         }
 
         /*
          * Implements a TopFieldCollector when after != null.
          */
+
         private sealed class PagingFieldCollector : TopFieldCollector
         {
-
             internal Scorer Scorer_Renamed;
             internal int CollectedHits;
             internal readonly FieldComparator[] comparators;
@@ -1234,7 +1225,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Creates a new <seealso cref="TopFieldCollector"/> from the given
         /// arguments.
-        /// 
+        ///
         /// <p><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length
         /// <code>numHits</code>.
@@ -1274,7 +1265,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Creates a new <seealso cref="TopFieldCollector"/> from the given
         /// arguments.
-        /// 
+        ///
         /// <p><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length
         /// <code>numHits</code>.
@@ -1310,7 +1301,6 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public static TopFieldCollector Create(Sort sort, int numHits, FieldDoc after, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
         {
-
             if (sort.fields.Length == 0)
             {
                 throw new System.ArgumentException("Sort must contain at least one field");
@@ -1448,7 +1438,7 @@ namespace Lucene.Net.Search
                 MaxScore = float.NaN;
             }
 
-            // If this is a maxScoring tracking collector and there were no results, 
+            // If this is a maxScoring tracking collector and there were no results,
             return new TopFieldDocs(TotalHits_Renamed, results, ((FieldValueHitQueue<Entry>)Pq).Fields, MaxScore);
         }
 
@@ -1457,5 +1447,4 @@ namespace Lucene.Net.Search
             return false;
         }
     }
-
 }

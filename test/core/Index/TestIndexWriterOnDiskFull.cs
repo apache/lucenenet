@@ -3,42 +3,41 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using LiveDocsFormat = Lucene.Net.Codecs.LiveDocsFormat;
+    using NUnit.Framework;
+    using System.IO;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using TextField = Lucene.Net.Document.TextField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using System.IO;
+    using TextField = Lucene.Net.Document.TextField;
 
     /// <summary>
     /// Tests for IndexWriter when the disk runs out of space
@@ -46,16 +45,15 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterOnDiskFull : LuceneTestCase
     {
-
         /*
          * Make sure IndexWriter cleans up on hitting a disk
          * full exception in addDocument.
          * TODO: how to do this on windows with FSDirectory?
          */
+
         [Test]
         public virtual void TestAddDocumentOnDiskFull()
         {
-
             for (int pass = 0; pass < 2; pass++)
             {
                 if (VERBOSE)
@@ -178,6 +176,7 @@ namespace Lucene.Net.Index
         either all or none of the incoming documents were in
         fact added.
          */
+
         [Test]
         public virtual void TestAddIndexOnDiskFull()
         {
@@ -258,7 +257,6 @@ namespace Lucene.Net.Index
 
             for (int iter = 0; iter < 3; iter++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
@@ -369,7 +367,6 @@ namespace Lucene.Net.Index
 
                         try
                         {
-
                             if (0 == method)
                             {
                                 if (VERBOSE)
@@ -417,7 +414,6 @@ namespace Lucene.Net.Index
                             {
                                 done = true;
                             }
-
                         }
                         catch (IOException e)
                         {
@@ -700,5 +696,4 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
     }
-
 }

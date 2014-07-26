@@ -1,12 +1,5 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Store;
-
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -35,7 +28,7 @@ namespace Lucene.Net.Util
     /// <seealso cref= #sort(File, File)
     /// @lucene.experimental
     /// @lucene.internal </seealso>
-    
+
     //LUCENE PORT NOTE: Marked as experimental and does not port well so it was left out
     /*public sealed class OfflineSorter
     {
@@ -94,7 +87,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Creates a <seealso cref="BufferSize"/> in MB. The given 
+            /// Creates a <seealso cref="BufferSize"/> in MB. The given
             /// values must be &gt; 0 and &lt; 2048.
             /// </summary>
             public static BufferSize Megabytes(long mb)
@@ -104,9 +97,9 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Approximately half of the currently available free heap, but no less
-            /// than <seealso cref="#ABSOLUTE_MIN_SORT_BUFFER_SIZE"/>. However if current heap allocation 
-            /// is insufficient or if there is a large portion of unallocated heap-space available 
-            /// for sorting consult with max allowed heap size. 
+            /// than <seealso cref="#ABSOLUTE_MIN_SORT_BUFFER_SIZE"/>. However if current heap allocation
+            /// is insufficient or if there is a large portion of unallocated heap-space available
+            /// for sorting consult with max allowed heap size.
             /// </summary>
             public static BufferSize Automatic()
             {
@@ -129,7 +122,7 @@ namespace Lucene.Net.Util
                     }
                     else
                     {
-                        //heap seems smallish lets be conservative fall back to the free/2 
+                        //heap seems smallish lets be conservative fall back to the free/2
                         sortBufferByteSize = Math.Max(ABSOLUTE_MIN_SORT_BUFFER_SIZE, sortBufferByteSize);
                     }
                 }
@@ -266,7 +259,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Sort input to output, explicit hint for the buffer size. The amount of allocated
-        /// memory may deviate from the hint (may be smaller or larger).  
+        /// memory may deviate from the hint (may be smaller or larger).
         /// </summary>
         public SortInfo Sort(FileInfo input, FileInfo output)
         {
@@ -461,7 +454,7 @@ namespace Lucene.Net.Util
                 }
 
                 // Unix utility sort() uses ordered array of files to pick the next line from, updating
-                // it as it reads new lines. The PQ used here is a more elegant solution and has 
+                // it as it reads new lines. The PQ used here is a more elegant solution and has
                 // a nicer theoretical complexity bound :) The entire sorting process is I/O bound anyway
                 // so it shouldn't make much of a difference (didn't check).
                 FileAndTop top;
@@ -525,7 +518,7 @@ namespace Lucene.Net.Util
                 scratch.Length = scratch.Bytes.Length;
                 Buffer.Append(scratch);
                 // Account for the created objects.
-                // (buffer slots do not account to buffer size.) 
+                // (buffer slots do not account to buffer size.)
                 if (RamBufferSize.Bytes < BufferBytesUsed.Get())
                 {
                     break;
@@ -709,5 +702,4 @@ namespace Lucene.Net.Util
             }
         }
     }*/
-
 }

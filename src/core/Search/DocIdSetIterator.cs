@@ -2,7 +2,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -29,7 +28,6 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class DocIdSetIterator
     {
-
         /// <summary>
         /// An empty {@code DocIdSetIterator} instance </summary>
         public static DocIdSetIterator Empty()
@@ -57,6 +55,7 @@ namespace Lucene.Net.Search
             {
                 return exhausted ? NO_MORE_DOCS : -1;
             }
+
             public override int NextDoc()
             {
                 Debug.Assert(!exhausted);
@@ -85,7 +84,7 @@ namespace Lucene.Net.Search
         /// <li>Otherwise it should return the doc ID it is currently on.
         /// </ul>
         /// <p>
-        /// 
+        ///
         /// @since 2.9
         /// </summary>
         public abstract int DocID();
@@ -94,18 +93,18 @@ namespace Lucene.Net.Search
         /// Advances to the next document in the set and returns the doc it is
         /// currently on, or <seealso cref="#NO_MORE_DOCS"/> if there are no more docs in the
         /// set.<br>
-        /// 
+        ///
         /// <b>NOTE:</b> after the iterator has exhausted you should not call this
         /// method, as it may result in unpredicted behavior.
-        /// 
+        ///
         /// @since 2.9
         /// </summary>
         public abstract int NextDoc();
 
         /// <summary>
-        /// Advances to the first beyond the current whose document number is greater 
-        /// than or equal to <i>target</i>, and returns the document number itself. 
-        /// Exhausts the iterator and returns <seealso cref="#NO_MORE_DOCS"/> if <i>target</i> 
+        /// Advances to the first beyond the current whose document number is greater
+        /// than or equal to <i>target</i>, and returns the document number itself.
+        /// Exhausts the iterator and returns <seealso cref="#NO_MORE_DOCS"/> if <i>target</i>
         /// is greater than the highest document number in the set.
         /// <p>
         /// The behavior of this method is <b>undefined</b> when called with
@@ -113,7 +112,7 @@ namespace Lucene.Net.Search
         /// Both cases may result in unpredicted behavior.
         /// <p>
         /// When <code> target &gt; current</code> it behaves as if written:
-        /// 
+        ///
         /// <pre class="prettyprint">
         /// int advance(int target) {
         ///   int doc;
@@ -122,7 +121,7 @@ namespace Lucene.Net.Search
         ///   return doc;
         /// }
         /// </pre>
-        /// 
+        ///
         /// Some implementations are considerably more efficient than that.
         /// <p>
         /// <b>NOTE:</b> this method may be called with <seealso cref="#NO_MORE_DOCS"/> for
@@ -130,14 +129,14 @@ namespace Lucene.Net.Search
         /// determine that it should exhaust, it is recommended that you check for that
         /// value in each call to this method.
         /// <p>
-        ///  
+        ///
         /// @since 2.9
         /// </summary>
         public abstract int Advance(int target);
 
         /// <summary>
         /// Slow (linear) implementation of <seealso cref="#advance"/> relying on
-        ///  <seealso cref="#nextDoc()"/> to advance beyond the target position. 
+        ///  <seealso cref="#nextDoc()"/> to advance beyond the target position.
         /// </summary>
         protected internal int SlowAdvance(int target)
         {
@@ -159,5 +158,4 @@ namespace Lucene.Net.Search
         /// </summary>
         public abstract long Cost();
     }
-
 }

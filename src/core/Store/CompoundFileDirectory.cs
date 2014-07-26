@@ -1,42 +1,36 @@
-using System.Diagnostics;
 using System.Collections.Generic;
-using Lucene.Net.Codecs;
-using Lucene.Net.Index;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
-using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Store
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using Codec = Lucene.Net.Codecs.Codec; // javadocs
-    using CodecUtil = Lucene.Net.Codecs.CodecUtil;
-    using LiveDocsFormat = Lucene.Net.Codecs.LiveDocsFormat; // javadocs
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using IOUtils = Lucene.Net.Util.IOUtils;
     using Lucene.Net.Support;
     using System;
 
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    // javadocs
+    using CodecUtil = Lucene.Net.Codecs.CodecUtil;
+
+    // javadocs
+    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
     /// Class for accessing a compound stream.
@@ -44,16 +38,16 @@ namespace Lucene.Net.Store
     /// Directory methods that would normally modify data throw an exception.
     /// <p>
     /// All files belonging to a segment have the same name with varying extensions.
-    /// The extensions correspond to the different file formats used by the <seealso cref="Codec"/>. 
-    /// When using the Compound File format these files are collapsed into a 
-    /// single <tt>.cfs</tt> file (except for the <seealso cref="LiveDocsFormat"/>, with a 
+    /// The extensions correspond to the different file formats used by the <seealso cref="Codec"/>.
+    /// When using the Compound File format these files are collapsed into a
+    /// single <tt>.cfs</tt> file (except for the <seealso cref="LiveDocsFormat"/>, with a
     /// corresponding <tt>.cfe</tt> file indexing its sub-files.
     /// <p>
     /// Files:
     /// <ul>
-    ///    <li><tt>.cfs</tt>: An optional "virtual" file consisting of all the other 
+    ///    <li><tt>.cfs</tt>: An optional "virtual" file consisting of all the other
     ///    index files for systems that frequently run out of file handles.
-    ///    <li><tt>.cfe</tt>: The "virtual" compound file's entry table holding all 
+    ///    <li><tt>.cfe</tt>: The "virtual" compound file's entry table holding all
     ///    entries in the corresponding .cfs file.
     /// </ul>
     /// <p>Description:</p>
@@ -70,17 +64,16 @@ namespace Lucene.Net.Store
     /// </ul>
     /// <p>Notes:</p>
     /// <ul>
-    ///   <li>FileCount indicates how many files are contained in this compound file. 
-    ///       The entry table that follows has that many entries. 
+    ///   <li>FileCount indicates how many files are contained in this compound file.
+    ///       The entry table that follows has that many entries.
     ///   <li>Each directory entry contains a long pointer to the start of this file's data
     ///       section, the files length, and a String with that file's name.
     /// </ul>
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public sealed class CompoundFileDirectory : BaseDirectory
     {
-
         /// <summary>
         /// Offset/Length for a slice inside of a compound file </summary>
         public sealed class FileEntry
@@ -177,7 +170,7 @@ namespace Lucene.Net.Store
                     {
                         FileEntry fileEntry = new FileEntry();
                         string id = entriesStream.ReadString();
-                        
+
                         //If the key was already present
                         if (mapping.ContainsKey(id))
                         {
@@ -477,5 +470,4 @@ namespace Lucene.Net.Store
             return "CompoundFileDirectory(file=\"" + FileName + "\" in dir=" + Directory_Renamed + ")";
         }
     }
-
 }

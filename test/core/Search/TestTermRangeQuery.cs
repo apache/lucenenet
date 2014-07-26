@@ -2,7 +2,6 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,27 +19,24 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using MultiFields = Lucene.Net.Index.MultiFields;
-    using Terms = Lucene.Net.Index.Terms;
-    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
     using System.Collections.Generic;
     using System.IO;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MultiFields = Lucene.Net.Index.MultiFields;
+    using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using Terms = Lucene.Net.Index.Terms;
 
     [TestFixture]
     public class TestTermRangeQuery : LuceneTestCase
     {
-
         private int DocCount = 0;
         private Directory Dir;
 
@@ -136,7 +132,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// this test should not be here, but it tests the fuzzy query rewrite mode (TOP_TERMS_SCORING_BOOLEAN_REWRITE)
-        /// with constant score and checks, that only the lower end of terms is put into the range 
+        /// with constant score and checks, that only the lower end of terms is put into the range
         /// </summary>
         [Test]
         public virtual void TestTopTermsRewrite()
@@ -224,7 +220,6 @@ namespace Lucene.Net.Search
 
         private class SingleCharAnalyzer : Analyzer
         {
-
             private class SingleCharTokenizer : Tokenizer
             {
                 internal char[] Buffer = new char[1];
@@ -376,5 +371,4 @@ namespace Lucene.Net.Search
             reader.Dispose();
         }
     }
-
 }

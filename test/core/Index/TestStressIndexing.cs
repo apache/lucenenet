@@ -3,31 +3,31 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Document;
+    using Lucene.Net.Search;
+    using Lucene.Net.Store;
+    using Lucene.Net.Support;
 
     /*
-    /// Copyright 2004 The Apache Software Foundation
-    /// 
-    /// Licensed under the Apache License, Version 2.0 (the "License");
-    /// you may not use this file except in compliance with the License.
-    /// You may obtain a copy of the License at
-    /// 
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    */
+        /// Copyright 2004 The Apache Software Foundation
+        ///
+        /// Licensed under the Apache License, Version 2.0 (the "License");
+        /// you may not use this file except in compliance with the License.
+        /// You may obtain a copy of the License at
+        ///
+        ///     http://www.apache.org/licenses/LICENSE-2.0
+        ///
+        /// Unless required by applicable law or agreed to in writing, software
+        /// distributed under the License is distributed on an "AS IS" BASIS,
+        /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        /// See the License for the specific language governing permissions and
+        /// limitations under the License.
+        */
 
     using Lucene.Net.Util;
-    using Lucene.Net.Store;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Lucene.Net.Document;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using Lucene.Net.Search;
-    using Lucene.Net.Support;
     using NUnit.Framework;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 
     [TestFixture]
     public class TestStressIndexing : LuceneTestCase
@@ -147,6 +147,7 @@ namespace Lucene.Net.Index
           Run one indexer and 2 searchers against single index as
           stress test.
         */
+
         public virtual void RunStressTest(Directory directory, MergeScheduler mergeScheduler)
         {
             IndexWriter modifier = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(10).SetMergeScheduler(mergeScheduler));
@@ -154,7 +155,6 @@ namespace Lucene.Net.Index
 
             TimedThread[] threads = new TimedThread[4];
             int numThread = 0;
-
 
             // One modifier that writes 10 docs then removes 5, over
             // and over:
@@ -197,6 +197,7 @@ namespace Lucene.Net.Index
           Run above stress test against RAMDirectory and then
           FSDirectory.
         */
+
         [Test]
         public virtual void TestStressIndexAndSearching()
         {
@@ -211,5 +212,4 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
     }
-
 }

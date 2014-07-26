@@ -3,320 +3,319 @@ using System.Text;
 
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-
-	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-	using Attribute = Lucene.Net.Util.Attribute;
-	using IAttributeReflector = Lucene.Net.Util.IAttributeReflector;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-	using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
     using Lucene.Net.Support;
 
-	/// <summary>
-	/// Default implementation of <seealso cref="CharTermAttribute"/>. </summary>
-	public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute
-	{
-	  private static int MIN_BUFFER_SIZE = 10;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	  private char[] TermBuffer = CreateBuffer(MIN_BUFFER_SIZE);
-	  private int TermLength = 0;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using Attribute = Lucene.Net.Util.Attribute;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using IAttributeReflector = Lucene.Net.Util.IAttributeReflector;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
-	  /// <summary>
-	  /// Initialize this attribute with empty term text </summary>
-      public CharTermAttribute()
-	  {
-	  }
+    /// <summary>
+    /// Default implementation of <seealso cref="CharTermAttribute"/>. </summary>
+    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute
+    {
+        private static int MIN_BUFFER_SIZE = 10;
 
-	  public void CopyBuffer(char[] buffer, int offset, int length)
-	  {
-          GrowTermBuffer(length);
-          Array.Copy(buffer, offset, TermBuffer, 0, length);
-          TermLength = length;
-	  }
+        private char[] TermBuffer = CreateBuffer(MIN_BUFFER_SIZE);
+        private int TermLength = 0;
 
-	  public char[] Buffer()
-	  {
-		return TermBuffer;
-	  }
+        /// <summary>
+        /// Initialize this attribute with empty term text </summary>
+        public CharTermAttribute()
+        {
+        }
 
-	  public char[] ResizeBuffer(int newSize)
-	  {
-		if (TermBuffer.Length < newSize)
-		{
-		  // Not big enough; create a new array with slight
-		  // over allocation and preserve content
-		  char[] newCharBuffer = new char[ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR)];
-		  Array.Copy(TermBuffer, 0, newCharBuffer, 0, TermBuffer.Length);
-		  TermBuffer = newCharBuffer;
-		}
-		return TermBuffer;
-	  }
+        public void CopyBuffer(char[] buffer, int offset, int length)
+        {
+            GrowTermBuffer(length);
+            Array.Copy(buffer, offset, TermBuffer, 0, length);
+            TermLength = length;
+        }
 
-	  private void GrowTermBuffer(int newSize)
-	  {
-		if (TermBuffer.Length < newSize)
-		{
-		  // Not big enough; create a new array with slight
-		  // over allocation:
-		  TermBuffer = new char[ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR)];
-		}
-	  }
+        public char[] Buffer()
+        {
+            return TermBuffer;
+        }
 
-      public int Length
-      {
-          get { return this.TermLength; }
-          set { this.SetLength(value); }
-      }
+        public char[] ResizeBuffer(int newSize)
+        {
+            if (TermBuffer.Length < newSize)
+            {
+                // Not big enough; create a new array with slight
+                // over allocation and preserve content
+                char[] newCharBuffer = new char[ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR)];
+                Array.Copy(TermBuffer, 0, newCharBuffer, 0, TermBuffer.Length);
+                TermBuffer = newCharBuffer;
+            }
+            return TermBuffer;
+        }
 
-	  public ICharTermAttribute SetLength(int length)
-	  {
-		if (length > TermBuffer.Length)
-		{
-		  throw new System.ArgumentException("length " + length + " exceeds the size of the termBuffer (" + TermBuffer.Length + ")");
-		}
-		TermLength = length;
-		return this;
-	  }
+        private void GrowTermBuffer(int newSize)
+        {
+            if (TermBuffer.Length < newSize)
+            {
+                // Not big enough; create a new array with slight
+                // over allocation:
+                TermBuffer = new char[ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR)];
+            }
+        }
 
-	  public ICharTermAttribute SetEmpty()
-	  {
-		TermLength = 0;
-		return this;
-	  }
+        public int Length
+        {
+            get { return this.TermLength; }
+            set { this.SetLength(value); }
+        }
 
-	  // *** TermToBytesRefAttribute interface ***
-	  private BytesRef Bytes = new BytesRef(MIN_BUFFER_SIZE);
+        public ICharTermAttribute SetLength(int length)
+        {
+            if (length > TermBuffer.Length)
+            {
+                throw new System.ArgumentException("length " + length + " exceeds the size of the termBuffer (" + TermBuffer.Length + ")");
+            }
+            TermLength = length;
+            return this;
+        }
 
-	  public virtual void FillBytesRef()
-	  {
-		UnicodeUtil.UTF16toUTF8(TermBuffer, 0, TermLength, Bytes);
-	  }
+        public ICharTermAttribute SetEmpty()
+        {
+            TermLength = 0;
+            return this;
+        }
 
-	  public BytesRef BytesRef
-	  {
-		  get
-		  {
-			return Bytes;
-		  }
-	  }
+        // *** TermToBytesRefAttribute interface ***
+        private BytesRef Bytes = new BytesRef(MIN_BUFFER_SIZE);
 
-	  // *** CharSequence interface ***
+        public virtual void FillBytesRef()
+        {
+            UnicodeUtil.UTF16toUTF8(TermBuffer, 0, TermLength, Bytes);
+        }
 
-	  public char CharAt(int index)
-	  {
-		if (index >= TermLength)
-		{
-		  throw new System.IndexOutOfRangeException();
-		}
-		return TermBuffer[index];
-	  }
-      
-	  public ICharSequence SubSequence(int start, int end)
-	  {
-		if (start > TermLength || end > TermLength)
-		{
-		  throw new System.IndexOutOfRangeException();
-		}
-		return new StringCharSequenceWrapper(new string(TermBuffer, start, end - start));
-	  }
-	  // *** Appendable interface ***
+        public BytesRef BytesRef
+        {
+            get
+            {
+                return Bytes;
+            }
+        }
 
-	  public ICharTermAttribute Append(string csq, int start, int end)
-	  {
-          if (csq == null)
-              return AppendNull();
+        // *** CharSequence interface ***
 
-          int len = end - start;
-          csq.CopyTo(start, InternalResizeBuffer(TermLength + len), TermLength, len);
-          Length += len;
+        public char CharAt(int index)
+        {
+            if (index >= TermLength)
+            {
+                throw new System.IndexOutOfRangeException();
+            }
+            return TermBuffer[index];
+        }
 
-          return this;
-	  }
+        public ICharSequence SubSequence(int start, int end)
+        {
+            if (start > TermLength || end > TermLength)
+            {
+                throw new System.IndexOutOfRangeException();
+            }
+            return new StringCharSequenceWrapper(new string(TermBuffer, start, end - start));
+        }
 
-      public ICharTermAttribute Append(char c)
-	  {
-		ResizeBuffer(TermLength + 1)[TermLength++] = c;
-		return this;
-	  }
+        // *** Appendable interface ***
 
-      public ICharTermAttribute Append(string s)
-	  {
-          return Append(s, 0, s == null ? 0 : s.Length);
-	  }
+        public ICharTermAttribute Append(string csq, int start, int end)
+        {
+            if (csq == null)
+                return AppendNull();
 
-      public ICharTermAttribute Append(StringBuilder s)
-	  {
-		if (s == null) // needed for Appendable compliance
-		{
-		  return AppendNull();
-		}
+            int len = end - start;
+            csq.CopyTo(start, InternalResizeBuffer(TermLength + len), TermLength, len);
+            Length += len;
 
-        return Append(s.ToString());
-	  }
+            return this;
+        }
 
-      public ICharTermAttribute Append(ICharTermAttribute ta)
-	  {
-		if (ta == null) // needed for Appendable compliance
-		{
-		  return AppendNull();
-		}
-		int len = ta.Length;
-		Array.Copy(ta.Buffer(), 0, ResizeBuffer(TermLength + len), TermLength, len);
-		TermLength += len;
-		return this;
-	  }
+        public ICharTermAttribute Append(char c)
+        {
+            ResizeBuffer(TermLength + 1)[TermLength++] = c;
+            return this;
+        }
 
-      public ICharTermAttribute Append(ICharSequence csq)
-      {
-          if (csq == null)
-              return AppendNull();
+        public ICharTermAttribute Append(string s)
+        {
+            return Append(s, 0, s == null ? 0 : s.Length);
+        }
 
-          return Append(csq, 0, csq.Length);
-      }
+        public ICharTermAttribute Append(StringBuilder s)
+        {
+            if (s == null) // needed for Appendable compliance
+            {
+                return AppendNull();
+            }
 
-      public ICharTermAttribute Append(ICharSequence csq, int start, int end)
-      {
-          if (csq == null)
-              csq = new StringCharSequenceWrapper("null");
+            return Append(s.ToString());
+        }
 
-          int len = end - start, csqlen = csq.Length;
+        public ICharTermAttribute Append(ICharTermAttribute ta)
+        {
+            if (ta == null) // needed for Appendable compliance
+            {
+                return AppendNull();
+            }
+            int len = ta.Length;
+            Array.Copy(ta.Buffer(), 0, ResizeBuffer(TermLength + len), TermLength, len);
+            TermLength += len;
+            return this;
+        }
 
-          if (len < 0 || start > csqlen || end > csqlen)
-              throw new IndexOutOfRangeException();
+        public ICharTermAttribute Append(ICharSequence csq)
+        {
+            if (csq == null)
+                return AppendNull();
 
-          if (len == 0)
-              return this;
+            return Append(csq, 0, csq.Length);
+        }
 
-          ResizeBuffer(TermLength + len);
+        public ICharTermAttribute Append(ICharSequence csq, int start, int end)
+        {
+            if (csq == null)
+                csq = new StringCharSequenceWrapper("null");
 
-          while (start < end)
-              TermBuffer[TermLength++] = csq.CharAt(start++);
+            int len = end - start, csqlen = csq.Length;
 
-          return this;
-      }
+            if (len < 0 || start > csqlen || end > csqlen)
+                throw new IndexOutOfRangeException();
 
-      private char[] InternalResizeBuffer(int length)
-      {
-          if (TermBuffer.Length < length)
-          {
-              char[] newBuffer = CreateBuffer(length);
-              Array.Copy(TermBuffer, 0, newBuffer, 0, TermBuffer.Length);
-              this.TermBuffer = newBuffer;
-          }
+            if (len == 0)
+                return this;
 
-          return TermBuffer;
-      }
+            ResizeBuffer(TermLength + len);
 
-      private static char[] CreateBuffer(int length)
-      {
-          return new char[ArrayUtil.Oversize(length, RamUsageEstimator.NUM_BYTES_CHAR)];
-      }
+            while (start < end)
+                TermBuffer[TermLength++] = csq.CharAt(start++);
 
-	  private CharTermAttribute AppendNull()
-	  {
-		ResizeBuffer(TermLength + 4);
-		TermBuffer[TermLength++] = 'n';
-		TermBuffer[TermLength++] = 'u';
-		TermBuffer[TermLength++] = 'l';
-		TermBuffer[TermLength++] = 'l';
-		return this;
-	  }
+            return this;
+        }
 
-	  // *** Attribute ***
+        private char[] InternalResizeBuffer(int length)
+        {
+            if (TermBuffer.Length < length)
+            {
+                char[] newBuffer = CreateBuffer(length);
+                Array.Copy(TermBuffer, 0, newBuffer, 0, TermBuffer.Length);
+                this.TermBuffer = newBuffer;
+            }
 
-	  public override int GetHashCode()
-	  {
-		int code = TermLength;
-		code = code * 31 + ArrayUtil.GetHashCode(TermBuffer, 0, TermLength);
-		return code;
-	  }
+            return TermBuffer;
+        }
 
-	  public override void Clear()
-	  {
-		TermLength = 0;
-	  }
+        private static char[] CreateBuffer(int length)
+        {
+            return new char[ArrayUtil.Oversize(length, RamUsageEstimator.NUM_BYTES_CHAR)];
+        }
 
-      public override object Clone()
-	  {
-          CharTermAttribute t = (CharTermAttribute)base.Clone();
-		// Do a deep clone
-		t.TermBuffer = new char[this.TermLength];
-		Array.Copy(this.TermBuffer, 0, t.TermBuffer, 0, this.TermLength);
-		t.Bytes = BytesRef.DeepCopyOf(Bytes);
-		return t;
-	  }
+        private CharTermAttribute AppendNull()
+        {
+            ResizeBuffer(TermLength + 4);
+            TermBuffer[TermLength++] = 'n';
+            TermBuffer[TermLength++] = 'u';
+            TermBuffer[TermLength++] = 'l';
+            TermBuffer[TermLength++] = 'l';
+            return this;
+        }
 
-	  public override bool Equals(object other)
-	  {
-		if (other == this)
-		{
-		  return true;
-		}
+        // *** Attribute ***
 
-        if (other is CharTermAttribute)
-		{
-            CharTermAttribute o = ((CharTermAttribute)other);
-		  if (TermLength != o.TermLength)
-		  {
-			return false;
-		  }
-		  for (int i = 0;i < TermLength;i++)
-		  {
-			if (TermBuffer[i] != o.TermBuffer[i])
-			{
-			  return false;
-			}
-		  }
-		  return true;
-		}
+        public override int GetHashCode()
+        {
+            int code = TermLength;
+            code = code * 31 + ArrayUtil.GetHashCode(TermBuffer, 0, TermLength);
+            return code;
+        }
 
-		return false;
-	  }
+        public override void Clear()
+        {
+            TermLength = 0;
+        }
 
-	  /// <summary>
-	  /// Returns solely the term text as specified by the
-	  /// <seealso cref="CharSequence"/> interface.
-	  /// <p>this method changed the behavior with Lucene 3.1,
-	  /// before it returned a String representation of the whole
-	  /// term with all attributes.
-	  /// this affects especially the
-	  /// <seealso cref="Lucene.Net.Analysis.Token"/> subclass.
-	  /// </summary>
-	  public override string ToString()
-	  {
-		return new string(TermBuffer, 0, TermLength);
-	  }
+        public override object Clone()
+        {
+            CharTermAttribute t = (CharTermAttribute)base.Clone();
+            // Do a deep clone
+            t.TermBuffer = new char[this.TermLength];
+            Array.Copy(this.TermBuffer, 0, t.TermBuffer, 0, this.TermLength);
+            t.Bytes = BytesRef.DeepCopyOf(Bytes);
+            return t;
+        }
 
-	  public override void ReflectWith(IAttributeReflector reflector)
-	  {
-		reflector.Reflect(typeof(ICharTermAttribute), "term", ToString());
-		FillBytesRef();
-		reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
-	  }
+        public override bool Equals(object other)
+        {
+            if (other == this)
+            {
+                return true;
+            }
 
-	  public override void CopyTo(Attribute target)
-	  {
-		CharTermAttribute t = (CharTermAttribute) target;
-		t.CopyBuffer(TermBuffer, 0, TermLength);
-	  }
+            if (other is CharTermAttribute)
+            {
+                CharTermAttribute o = ((CharTermAttribute)other);
+                if (TermLength != o.TermLength)
+                {
+                    return false;
+                }
+                for (int i = 0; i < TermLength; i++)
+                {
+                    if (TermBuffer[i] != o.TermBuffer[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
 
-	}
+            return false;
+        }
 
+        /// <summary>
+        /// Returns solely the term text as specified by the
+        /// <seealso cref="CharSequence"/> interface.
+        /// <p>this method changed the behavior with Lucene 3.1,
+        /// before it returned a String representation of the whole
+        /// term with all attributes.
+        /// this affects especially the
+        /// <seealso cref="Lucene.Net.Analysis.Token"/> subclass.
+        /// </summary>
+        public override string ToString()
+        {
+            return new string(TermBuffer, 0, TermLength);
+        }
+
+        public override void ReflectWith(IAttributeReflector reflector)
+        {
+            reflector.Reflect(typeof(ICharTermAttribute), "term", ToString());
+            FillBytesRef();
+            reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
+        }
+
+        public override void CopyTo(Attribute target)
+        {
+            CharTermAttribute t = (CharTermAttribute)target;
+            t.CopyBuffer(TermBuffer, 0, TermLength);
+        }
+    }
 }

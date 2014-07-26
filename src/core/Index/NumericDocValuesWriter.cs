@@ -2,131 +2,128 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-
-
-	using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
-	using Counter = Lucene.Net.Util.Counter;
-	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-	using AppendingDeltaPackedLongBuffer = Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer;
-	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
     using Lucene.Net.Util.Packed;
+    using AppendingDeltaPackedLongBuffer = Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer;
+    using Counter = Lucene.Net.Util.Counter;
 
-	/// <summary>
-	/// Buffers up pending long per doc, then flushes when
-	///  segment flushes. 
-	/// </summary>
-	internal class NumericDocValuesWriter : DocValuesWriter
-	{
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	  private const long MISSING = 0L;
+    using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
-	  private AppendingDeltaPackedLongBuffer Pending;
-	  private readonly Counter IwBytesUsed;
-	  private long BytesUsed;
-	  private FixedBitSet DocsWithField;
-	  private readonly FieldInfo FieldInfo;
+    /// <summary>
+    /// Buffers up pending long per doc, then flushes when
+    ///  segment flushes.
+    /// </summary>
+    internal class NumericDocValuesWriter : DocValuesWriter
+    {
+        private const long MISSING = 0L;
 
-	  public NumericDocValuesWriter(FieldInfo fieldInfo, Counter iwBytesUsed, bool trackDocsWithField)
-	  {
-		Pending = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
-		DocsWithField = trackDocsWithField ? new FixedBitSet(64) : null;
-		BytesUsed = Pending.RamBytesUsed() + DocsWithFieldBytesUsed();
-		this.FieldInfo = fieldInfo;
-		this.IwBytesUsed = iwBytesUsed;
-		iwBytesUsed.AddAndGet(BytesUsed);
-	  }
+        private AppendingDeltaPackedLongBuffer Pending;
+        private readonly Counter IwBytesUsed;
+        private long BytesUsed;
+        private FixedBitSet DocsWithField;
+        private readonly FieldInfo FieldInfo;
 
-	  public virtual void AddValue(int docID, long value)
-	  {
-		if (docID < Pending.Size())
-		{
-		  throw new System.ArgumentException("DocValuesField \"" + FieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
-		}
+        public NumericDocValuesWriter(FieldInfo fieldInfo, Counter iwBytesUsed, bool trackDocsWithField)
+        {
+            Pending = new AppendingDeltaPackedLongBuffer(PackedInts.COMPACT);
+            DocsWithField = trackDocsWithField ? new FixedBitSet(64) : null;
+            BytesUsed = Pending.RamBytesUsed() + DocsWithFieldBytesUsed();
+            this.FieldInfo = fieldInfo;
+            this.IwBytesUsed = iwBytesUsed;
+            iwBytesUsed.AddAndGet(BytesUsed);
+        }
 
-		// Fill in any holes:
-		for (int i = (int)Pending.Size(); i < docID; ++i)
-		{
-		  Pending.Add(MISSING);
-		}
+        public virtual void AddValue(int docID, long value)
+        {
+            if (docID < Pending.Size())
+            {
+                throw new System.ArgumentException("DocValuesField \"" + FieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
+            }
 
-		Pending.Add(value);
-		if (DocsWithField != null)
-		{
-		  DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, docID);
-		  DocsWithField.Set(docID);
-		}
+            // Fill in any holes:
+            for (int i = (int)Pending.Size(); i < docID; ++i)
+            {
+                Pending.Add(MISSING);
+            }
 
-		UpdateBytesUsed();
-	  }
+            Pending.Add(value);
+            if (DocsWithField != null)
+            {
+                DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, docID);
+                DocsWithField.Set(docID);
+            }
 
-	  private long DocsWithFieldBytesUsed()
-	  {
-		// size of the long[] + some overhead
-		return DocsWithField == null ? 0 : RamUsageEstimator.SizeOf(DocsWithField.Bits) + 64;
-	  }
+            UpdateBytesUsed();
+        }
 
-	  private void UpdateBytesUsed()
-	  {
-		long newBytesUsed = Pending.RamBytesUsed() + DocsWithFieldBytesUsed();
-		IwBytesUsed.AddAndGet(newBytesUsed - BytesUsed);
-		BytesUsed = newBytesUsed;
-	  }
+        private long DocsWithFieldBytesUsed()
+        {
+            // size of the long[] + some overhead
+            return DocsWithField == null ? 0 : RamUsageEstimator.SizeOf(DocsWithField.Bits) + 64;
+        }
 
-	  internal override void Finish(int maxDoc)
-	  {
-	  }
+        private void UpdateBytesUsed()
+        {
+            long newBytesUsed = Pending.RamBytesUsed() + DocsWithFieldBytesUsed();
+            IwBytesUsed.AddAndGet(newBytesUsed - BytesUsed);
+            BytesUsed = newBytesUsed;
+        }
 
-      internal override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
-	  {
+        internal override void Finish(int maxDoc)
+        {
+        }
 
-		int maxDoc = state.SegmentInfo.DocCount;
+        internal override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
+        {
+            int maxDoc = state.SegmentInfo.DocCount;
 
-		dvConsumer.AddNumericField(FieldInfo, GetNumericIterator(maxDoc));
-	  }
+            dvConsumer.AddNumericField(FieldInfo, GetNumericIterator(maxDoc));
+        }
 
-      private IEnumerable<long> GetNumericIterator(int maxDoc)
-      {
-          // .NET Port: using yield return instead of custom iterator type. Much less code.
+        private IEnumerable<long> GetNumericIterator(int maxDoc)
+        {
+            // .NET Port: using yield return instead of custom iterator type. Much less code.
 
-          AbstractAppendingLongBuffer.Iterator iter = Pending.GetIterator();
-          int size = (int)Pending.Size();
-          int upto = 0;
+            AbstractAppendingLongBuffer.Iterator iter = Pending.GetIterator();
+            int size = (int)Pending.Size();
+            int upto = 0;
 
-          while (upto < maxDoc)
-          {
-              long value;
-              if (upto < size)
-              {
-                  value = iter.Next();
-              }
-              else
-              {
-                  value = 0;
-              }
-              upto++;
-              // TODO: make reusable Number
-              yield return value;
-          }
-      }
+            while (upto < maxDoc)
+            {
+                long value;
+                if (upto < size)
+                {
+                    value = iter.Next();
+                }
+                else
+                {
+                    value = 0;
+                }
+                upto++;
+                // TODO: make reusable Number
+                yield return value;
+            }
+        }
+
         /*
 	  private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
 	  {
@@ -146,9 +143,10 @@ namespace Lucene.Net.Index
 		  }
 	  }*/
 
-      internal override void Abort()
-	  {
-	  }
+        internal override void Abort()
+        {
+        }
+
         /*
 	  // iterates over the values we have in ram
 	  private class NumericIterator : IEnumerator<Number>
@@ -217,6 +215,5 @@ namespace Lucene.Net.Index
 		  throw new System.NotSupportedException();
 		}
 	  }*/
-	}
-
+    }
 }

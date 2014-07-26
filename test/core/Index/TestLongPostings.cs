@@ -1,53 +1,51 @@
+using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Diagnostics;
-using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using TextField = Lucene.Net.Document.TextField;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using TestUtil = Lucene.Net.Util.TestUtil;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
     using System.IO;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Document.TextField;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
     //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestLongPostings extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestLongPostings : LuceneTestCase
     {
-
         // Produces a realistic unicode random string that
         // survives MockAnalyzer unchanged:
         private string GetRandomTerm(string other)
@@ -186,7 +184,6 @@ namespace Lucene.Net.Index
             int num = AtLeast(1000);
             for (int iter = 0; iter < num; iter++)
             {
-
                 string term;
                 bool doS1;
                 if (Random().NextBoolean())
@@ -434,7 +431,6 @@ namespace Lucene.Net.Index
             int num = AtLeast(1000);
             for (int iter = 0; iter < num; iter++)
             {
-
                 string term;
                 bool doS1;
                 if (Random().NextBoolean())
@@ -570,5 +566,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

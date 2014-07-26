@@ -1,50 +1,48 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using Lucene.Net.Support;
+    using Lucene.Net.Util.Fst;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using ByteSequenceOutputs = Lucene.Net.Util.Fst.ByteSequenceOutputs;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
-    using DataOutput = Lucene.Net.Store.DataOutput;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
     using IntsRef = Lucene.Net.Util.IntsRef;
-    using Lucene.Net.Util.Fst;
-    using ByteSequenceOutputs = Lucene.Net.Util.Fst.ByteSequenceOutputs;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using NoOutputs = Lucene.Net.Util.Fst.NoOutputs;
-    using Util = Lucene.Net.Util.Fst.Util;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
+    using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
+    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
+    using Util = Lucene.Net.Util.Fst.Util;
 
     /*
       TODO:
-	  
+
         - Currently there is a one-to-one mapping of indexed
           term to term block, but we could decouple the two, ie,
           put more terms into the index than there are blocks.
@@ -52,7 +50,7 @@ namespace Lucene.Net.Codecs
           to avoid seeking more often and could make PK/FuzzyQ
           faster if the additional indexed terms could store
           the offset into the terms block.
-	
+
         - The blocks are not written in true depth-first
           order, meaning if you just next() the file pointer will
           sometimes jump backwards.  For example, block foo* will
@@ -61,7 +59,7 @@ namespace Lucene.Net.Codecs
           not hot, since OSs anticipate sequential file access.  We
           could fix the writer to re-order the blocks as a 2nd
           pass.
-	
+
         - Each block encodes the term suffixes packed
           sequentially using a separate vInt per term, which is
           1) wasteful and 2) slow (must linear scan to find a
@@ -87,22 +85,22 @@ namespace Lucene.Net.Codecs
     /// <p>
     /// <a name="Termdictionary" id="Termdictionary"></a>
     /// <h3>Term Dictionary</h3>
-    /// 
+    ///
     /// <p>The .tim file contains the list of terms in each
     /// field along with per-term statistics (such as docfreq)
     /// and per-term metadata (typically pointers to the postings list
     /// for that term in the inverted index).
     /// </p>
-    /// 
+    ///
     /// <p>The .tim is arranged in blocks: with blocks containing
     /// a variable number of entries (by default 25-48), where
     /// each entry is either a term or a reference to a
     /// sub-block.</p>
-    /// 
+    ///
     /// <p>NOTE: The term dictionary can plug into different postings implementations:
-    /// the postings writer/reader are actually responsible for encoding 
+    /// the postings writer/reader are actually responsible for encoding
     /// and decoding the Postings Metadata and Term Metadata sections.</p>
-    /// 
+    ///
     /// <ul>
     ///    <li>TermsDict (.tim) --&gt; Header, <i>PostingsHeader</i>, NodeBlock<sup>NumBlocks</sup>,
     ///                               FieldSummary, DirOffset, Footer</li>
@@ -116,7 +114,7 @@ namespace Lucene.Net.Codecs
     ///    <li>DirOffset --&gt; <seealso cref="DataOutput#writeLong Uint64"/></li>
     ///    <li>EntryCount,SuffixLength,StatsLength,DocFreq,MetaLength,NumFields,
     ///        FieldNumber,RootCodeLength,DocCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    ///    <li>TotalTermFreq,NumTerms,SumTotalTermFreq,SumDocFreq --&gt; 
+    ///    <li>TotalTermFreq,NumTerms,SumTotalTermFreq,SumDocFreq --&gt;
     ///        <seealso cref="DataOutput#writeVLong VLong"/></li>
     ///    <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
     /// </ul>
@@ -135,14 +133,14 @@ namespace Lucene.Net.Codecs
     ///        the entire field.</li>
     ///    <li>DocCount is the number of documents that have at least one posting for this field.</li>
     ///    <li>PostingsHeader and TermMetadata are plugged into by the specific postings implementation:
-    ///        these contain arbitrary per-file data (such as parameters or versioning information) 
+    ///        these contain arbitrary per-file data (such as parameters or versioning information)
     ///        and per-term data (such as pointers to inverted files).</li>
     ///    <li>For inner nodes of the tree, every entry will steal one bit to mark whether it points
     ///        to child nodes(sub-block). If so, the corresponding TermStats and TermMetaData are omitted </li>
     /// </ul>
     /// <a name="Termindex" id="Termindex"></a>
     /// <h3>Term Index</h3>
-    /// <p>The .tip file contains an index into the term dictionary, so that it can be 
+    /// <p>The .tip file contains an index into the term dictionary, so that it can be
     /// accessed randomly.  The index is also used to determine
     /// when a given term cannot exist on disk (in the .tim file), saving a disk seek.</p>
     /// <ul>
@@ -177,18 +175,17 @@ namespace Lucene.Net.Codecs
     /// @lucene.experimental </seealso>
     public class BlockTreeTermsWriter : FieldsConsumer
     {
-
         /// <summary>
         /// Suggested default value for the {@code
         ///  minItemsInBlock} parameter to {@link
-        ///  #BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)}. 
+        ///  #BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)}.
         /// </summary>
         public const int DEFAULT_MIN_BLOCK_SIZE = 25;
 
         /// <summary>
         /// Suggested default value for the {@code
         ///  maxItemsInBlock} parameter to {@link
-        ///  #BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)}. 
+        ///  #BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)}.
         /// </summary>
         public const int DEFAULT_MAX_BLOCK_SIZE = 48;
 
@@ -203,6 +200,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Extension of terms file </summary>
         internal const string TERMS_EXTENSION = "tim";
+
         internal const string TERMS_CODEC_NAME = "BLOCK_TREE_TERMS_DICT";
 
         /// <summary>
@@ -228,6 +226,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Extension of terms index file </summary>
         internal const string TERMS_INDEX_EXTENSION = "tip";
+
         internal const string TERMS_INDEX_CODEC_NAME = "BLOCK_TREE_TERMS_INDEX";
 
         private readonly IndexOutput @out;
@@ -272,7 +271,7 @@ namespace Lucene.Net.Codecs
         /// Create a new writer.  The number of items (terms or
         ///  sub-blocks) per block will aim to be between
         ///  minItemsPerBlock and maxItemsPerBlock, though in some
-        ///  cases the blocks may be smaller than the min. 
+        ///  cases the blocks may be smaller than the min.
         /// </summary>
         public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock)
         {
@@ -385,6 +384,7 @@ namespace Lucene.Net.Codecs
         private sealed class PendingTerm : PendingEntry
         {
             public readonly BytesRef Term;
+
             // stats + metadata
             public readonly BlockTermState State;
 
@@ -430,7 +430,6 @@ namespace Lucene.Net.Codecs
 
             public void CompileIndex(IList<PendingBlock> floorBlocks, RAMOutputStream scratchBytes)
             {
-
                 Debug.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor=" + IsFloor + " floorBlocks=" + floorBlocks);
 
                 Debug.Assert(scratchBytes.FilePointer == 0);
@@ -532,6 +531,7 @@ namespace Lucene.Net.Codecs
             // Used only to partition terms into the block tree; we
             // don't pull an FST from this builder:
             internal readonly NoOutputs NoOutputs;
+
             internal readonly Builder<object> BlockBuilder;
 
             // PendingTerm or PendingBlock:
@@ -543,6 +543,7 @@ namespace Lucene.Net.Codecs
             // Re-used when segmenting a too-large block into floor
             // blocks:
             internal int[] SubBytes = new int[10];
+
             internal int[] SubTermCounts = new int[10];
             internal int[] SubTermCountSums = new int[10];
             internal int[] SubSubCounts = new int[10];
@@ -559,10 +560,8 @@ namespace Lucene.Net.Codecs
                     this.OuterInstance = outerInstance;
                 }
 
-
                 public override void Freeze(Builder<object>.UnCompiledNode<object>[] frontier, int prefixLenPlus1, IntsRef lastInput)
                 {
-
                     //if (DEBUG) System.out.println("  freeze prefixLenPlus1=" + prefixLenPlus1);
 
                     for (int idx = lastInput.Length; idx >= prefixLenPlus1; idx--)
@@ -667,7 +666,6 @@ namespace Lucene.Net.Codecs
 
                     foreach (PendingEntry ent in slice)
                     {
-
                         // First byte in the suffix of this term
                         int suffixLeadLabel;
                         if (ent.IsTerm)
@@ -873,10 +871,9 @@ namespace Lucene.Net.Codecs
             }
 
             // Writes all entries in the pending slice as a single
-            // block: 
+            // block:
             private PendingBlock WriteBlock(IntsRef prevTerm, int prefixLength, int indexPrefixLength, int startBackwards, int length, int futureTermCount, bool isFloor, int floorLeadByte, bool isLastInFloor)
             {
-
                 Debug.Assert(length > 0);
 
                 int start = Pending.Count - startBackwards;
@@ -1136,7 +1133,6 @@ namespace Lucene.Net.Codecs
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-
                 Debug.Assert(stats.DocFreq > 0);
                 //if (DEBUG) System.out.println("BTTW.finishTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment + " df=" + stats.docFreq);
 
@@ -1199,11 +1195,9 @@ namespace Lucene.Net.Codecs
 
         public override void Dispose()
         {
-
             System.IO.IOException ioe = null;
             try
             {
-
                 long dirStart = @out.FilePointer;
                 long indexDirStart = IndexOut.FilePointer;
 
@@ -1240,5 +1234,4 @@ namespace Lucene.Net.Codecs
             }
         }
     }
-
 }

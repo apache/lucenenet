@@ -1,48 +1,44 @@
+using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Reflection;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using FieldInfosFormat = Lucene.Net.Codecs.FieldInfosFormat;
-    using StoredFieldsFormat = Lucene.Net.Codecs.StoredFieldsFormat;
-    using Document = Lucene.Net.Document.Document;
-    using Store = Lucene.Net.Document.Field.Store;
-    using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Directory = Lucene.Net.Store.Directory;
-    using InfoStream = Lucene.Net.Util.InfoStream;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     //using AlreadySetException = Lucene.Net.Util.SetOnce.AlreadySetException;
     using NUnit.Framework;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+    using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using InfoStream = Lucene.Net.Util.InfoStream;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using Store = Lucene.Net.Document.Field.Store;
 
     [TestFixture]
     public class TestIndexWriterConfig : LuceneTestCase
     {
-
         private sealed class MySimilarity : DefaultSimilarity
         {
             // Does not implement anything - used only for type checking on IndexWriterConfig.
@@ -133,7 +129,7 @@ namespace Lucene.Net.Index
                 if (m.Name.StartsWith("set") && !m.IsStatic)
                 {
                     allSetters.Add(m.Name);
-                    // setters overridden from LiveIndexWriterConfig are returned twice, once with 
+                    // setters overridden from LiveIndexWriterConfig are returned twice, once with
                     // IndexWriterConfig return type and second with LiveIndexWriterConfig. The ones
                     // from LiveIndexWriterConfig are marked 'synthetic', so just collect them and
                     // assert in the end that we also received them from IWC.
@@ -143,7 +139,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {*/
-                        Assert.AreEqual(typeof(IndexWriterConfig), m.ReturnType, "method " + m.Name + " does not return IndexWriterConfig");
+                    Assert.AreEqual(typeof(IndexWriterConfig), m.ReturnType, "method " + m.Name + " does not return IndexWriterConfig");
                     //}
                 }
             }
@@ -322,7 +318,7 @@ namespace Lucene.Net.Index
                 // ok
             }
 
-            // Test Similarity: 
+            // Test Similarity:
             // we shouldnt assert what the default is, just that its not null.
             Assert.IsTrue(IndexSearcher.DefaultSimilarity == conf.Similarity);
             conf.SetSimilarity(new MySimilarity());
@@ -493,7 +489,5 @@ namespace Lucene.Net.Index
             w.Dispose();
             dir.Dispose();
         }
-
     }
-
 }

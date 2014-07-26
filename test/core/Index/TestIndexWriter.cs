@@ -1,12 +1,11 @@
+using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,67 +23,65 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using Codec = Lucene.Net.Codecs.Codec;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using Lucene.Net.Util;
+    using NUnit.Framework;
+    using System.Diagnostics;
+    using System.IO;
+    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+    using Automaton = Lucene.Net.Util.Automaton.Automaton;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
+    using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
+
     //using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
     using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
+    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using Constants = Lucene.Net.Util.Constants;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
+    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldType = Lucene.Net.Document.FieldType;
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lock = Lucene.Net.Store.Lock;
+    using LockFactory = Lucene.Net.Store.LockFactory;
+    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using NoLockFactory = Lucene.Net.Store.NoLockFactory;
     using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+    using SimpleFSLockFactory = Lucene.Net.Store.SimpleFSLockFactory;
+    using SingleInstanceLockFactory = Lucene.Net.Store.SingleInstanceLockFactory;
     using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
     using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
     using StoredField = Lucene.Net.Document.StoredField;
     using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
-    using PhraseQuery = Lucene.Net.Search.PhraseQuery;
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using Lock = Lucene.Net.Store.Lock;
-    using LockFactory = Lucene.Net.Store.LockFactory;
-    using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using NoLockFactory = Lucene.Net.Store.NoLockFactory;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using SimpleFSLockFactory = Lucene.Net.Store.SimpleFSLockFactory;
-    using SingleInstanceLockFactory = Lucene.Net.Store.SingleInstanceLockFactory;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Constants = Lucene.Net.Util.Constants;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Document.TextField;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-    using Automaton = Lucene.Net.Util.Automaton.Automaton;
-    using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
-    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
-    using System.IO;
-    using System.Diagnostics;
-    using Lucene.Net.Util;
 
     [TestFixture]
     public class TestIndexWriter : LuceneTestCase
     {
-
         private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
+
         public virtual void TestDocCount()
         {
             Directory dir = NewDirectory();
@@ -162,8 +159,6 @@ namespace Lucene.Net.Index
             doc.Add(NewField("id", "" + index, StoredTextType));
             writer.AddDocument(doc);
         }
-
-
 
         public static void AssertNoUnreferencedFiles(Directory dir, string message)
         {
@@ -655,13 +650,14 @@ namespace Lucene.Net.Index
         public class MyRAMDirectory : MockDirectoryWrapper
         {
             private LockFactory myLockFactory;
+
             public MyRAMDirectory(Directory @delegate)
                 : base(Random(), @delegate)
             {
-
                 LockFactory = null;
                 myLockFactory = new SingleInstanceLockFactory();
             }
+
             public Lock makeLock(string name)
             {
                 return myLockFactory.MakeLock(name);
@@ -746,8 +742,6 @@ namespace Lucene.Net.Index
             reader.Dispose();
             dir.Dispose();
         }
-
-
 
         /// <summary>
         /// Test that no NullPointerException will be raised,
@@ -942,7 +936,6 @@ namespace Lucene.Net.Index
 
         private sealed class MockIndexWriter : IndexWriter
         {
-
             public MockIndexWriter(Directory dir, IndexWriterConfig conf)
                 : base(dir, conf)
             {
@@ -961,7 +954,6 @@ namespace Lucene.Net.Index
                 BeforeWasCalled = true;
             }
         }
-
 
         // LUCENE-1222
         [Test]
@@ -1194,7 +1186,6 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-
                         while (!Finish)
                         {
                             if (w != null)
@@ -1468,7 +1459,6 @@ namespace Lucene.Net.Index
             Assert.IsFalse(t2.Failed);
         }
 
-
         [Test]
         public virtual void TestIndexStoreCombos()
         {
@@ -1529,7 +1519,6 @@ namespace Lucene.Net.Index
             Assert.AreEqual("value", ir.Document(1).Get("string"));
             Assert.AreEqual("value", ir.Document(2).Get("string"));
 
-
             // test that the terms were indexed.
             Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc1field1"), null, null, DocsEnum.FLAG_NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc2field1"), null, null, DocsEnum.FLAG_NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
@@ -1540,7 +1529,6 @@ namespace Lucene.Net.Index
 
             ir.Dispose();
             dir.Dispose();
-
         }
 
         [Test]
@@ -1835,7 +1823,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestNoUnwantedTVFiles()
         {
-
             Directory dir = NewDirectory();
             IndexWriter indexWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.01).SetMergePolicy(NewLogMergePolicy()));
             indexWriter.Config.MergePolicy.NoCFSRatio = 0.0;
@@ -2042,7 +2029,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDeleteAllNRTLeftoverFiles()
         {
-
             Directory d = new MockDirectoryWrapper(Random(), new RAMDirectory());
             IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             Document doc = new Document();
@@ -2485,7 +2471,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual("value1", r.IndexCommit.UserData["key"]);
             r.Dispose();
 
-            // now should commit the second commitData - there was a bug where 
+            // now should commit the second commitData - there was a bug where
             // IndexWriter.finishCommit overrode the second commitData
             writer.Commit();
             r = DirectoryReader.Open(dir);
@@ -2603,6 +2589,7 @@ namespace Lucene.Net.Index
             {
                 return GetEnumerator();
             }
+
             /*
           private class IteratorAnonymousInnerClassHelper : IEnumerator<IEnumerable<IndexableField>>
           {
@@ -2615,9 +2602,6 @@ namespace Lucene.Net.Index
                   this.OuterInstance = outerInstance;
                   this.DocIter = docIter;
               }
-
-
-
 
               public virtual bool HasNext()
               {
@@ -2639,10 +2623,7 @@ namespace Lucene.Net.Index
               {
                   throw new System.NotSupportedException();
               }
-
-
           }*/
-
         }
 
         // LUCENE-2727/LUCENE-2812/LUCENE-4738:
@@ -2840,7 +2821,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestClosingNRTReaderDoesNotCorruptYourIndex()
         {
-
             // Windows disallows deleting & overwriting files still
             // open for reading:
             AssumeFalse("this test can't run on Windows", Constants.WINDOWS);
@@ -2882,5 +2862,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

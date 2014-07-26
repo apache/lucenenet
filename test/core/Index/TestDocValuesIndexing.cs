@@ -1,53 +1,48 @@
-using System;
-using System.Linq;
-using System.Threading;
 using Apache.NMS.Util;
+using System;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using Store = Lucene.Net.Document.Field.Store;
+    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
     using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
     using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
     using StringField = Lucene.Net.Document.StringField;
     using TextField = Lucene.Net.Document.TextField;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using Directory = Lucene.Net.Store.Directory;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
 
-    /// 
+    ///
     /// <summary>
     /// Tests DocValues integration into IndexWriter
-    /// 
+    ///
     /// </summary>
     //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
     //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestDocValuesIndexing extends Lucene.Net.Util.LuceneTestCase
@@ -941,7 +936,5 @@ namespace Lucene.Net.Index
 
             dir.Dispose();
         }
-
     }
-
 }

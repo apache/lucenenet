@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestWAH8DocIdSet : BaseDocIdSetTestCase<WAH8DocIdSet>
     {
-
         public override WAH8DocIdSet CopyOf(BitArray bs, int length)
         {
             int indexInterval = TestUtil.NextInt(Random(), 8, 256);
@@ -123,7 +121,5 @@ namespace Lucene.Net.Util
             }
             AssertEquals(numBits, expected, union);
         }
-
     }
-
 }

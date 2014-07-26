@@ -1,11 +1,10 @@
-using System.Collections.Generic;
-using System.Text;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,8 +21,6 @@ namespace Lucene.Net.Util.Automaton
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-
 
     /// <summary>
     /// Not thorough, but tries to test determinism correctness
@@ -71,5 +68,4 @@ namespace Lucene.Net.Util.Automaton
             }
         }
     }
-
 }

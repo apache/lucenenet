@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,22 +20,21 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
-    using System.IO;
 
     [TestFixture]
     public class TestIndexWriterCommit : LuceneTestCase
@@ -47,6 +44,7 @@ namespace Lucene.Net.Index
          * add a bunch of docs, making sure reader does not see
          * these docs until writer is closed.
          */
+
         [Test]
         public virtual void TestCommitOnClose()
         {
@@ -103,6 +101,7 @@ namespace Lucene.Net.Index
          * nothing was added.  Then verify we can open the index
          * and add docs to it.
          */
+
         [Test]
         public virtual void TestCommitOnCloseAbort()
         {
@@ -187,6 +186,7 @@ namespace Lucene.Net.Index
          * file.  We check this by using MockDirectoryWrapper to
          * measure max temp disk space used.
          */
+
         [Test]
         public virtual void TestCommitOnCloseDiskUsage()
         {
@@ -282,12 +282,12 @@ namespace Lucene.Net.Index
             }
         }
 
-
         /*
          * Verify that calling forceMerge when writer is open for
          * "commit on close" works correctly both for rollback()
          * and close().
          */
+
         [Test]
         public virtual void TestCommitOnCloseForceMerge()
         {
@@ -736,5 +736,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

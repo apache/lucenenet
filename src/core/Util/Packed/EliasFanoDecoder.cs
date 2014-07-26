@@ -21,8 +21,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-
-
     /// <summary>
     /// A decoder for an <seealso cref="EliasFanoEncoder"/>.
     /// @lucene.internal
@@ -69,7 +67,6 @@ namespace Lucene.Net.Util.Packed
         {
             return NumEncoded_Renamed;
         }
-
 
         /// <summary>
         /// The current decoding index.
@@ -145,7 +142,6 @@ namespace Lucene.Net.Util.Packed
 
         private long CurHighLong;
 
-
         /* The implementation of forward decoding and backward decoding is done by the following method pairs.
          *
          * toBeforeSequence - toAfterSequence
@@ -159,7 +155,6 @@ namespace Lucene.Net.Util.Packed
          */
 
         /* Forward decoding section */
-
 
         /// <summary>
         /// Set the decoding index to just before the first encoded value.
@@ -288,8 +283,6 @@ namespace Lucene.Net.Util.Packed
             return true;
         }
 
-
-
         /// <summary>
         /// Given a target value, advance the decoding index to the first bigger or equal value
         /// and return it if it is available. Otherwise return <seealso cref="#NO_MORE_VALUES"/>.
@@ -416,7 +409,6 @@ namespace Lucene.Net.Util.Packed
             return currentValue;
         }
 
-
         /* Backward decoding section */
 
         /// <summary>
@@ -495,7 +487,6 @@ namespace Lucene.Net.Util.Packed
             return CombineHighLowValues(highValue, CurrentLowValue());
         }
 
-
         /// <summary>
         /// setBitForIndex and efIndex have just been decremented, scan backward to the high set bit
         ///  of at most a given high value
@@ -564,6 +555,4 @@ namespace Lucene.Net.Util.Packed
             return currentValue;
         }
     }
-
-
 }

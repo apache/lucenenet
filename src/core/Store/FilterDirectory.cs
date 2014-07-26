@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +19,6 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Directory implementation that delegates calls to another directory.
     ///  this class can be used to add limitations on top of an existing
@@ -30,11 +28,10 @@ namespace Lucene.Net.Store
     ///  <seealso cref="Directory"/> implementation, you should consider extending directly
     ///  <seealso cref="Directory"/> or <seealso cref="BaseDirectory"/> rather than try to reuse
     ///  functionality of existing <seealso cref="Directory"/>s by extending this class.
-    ///  @lucene.internal 
+    ///  @lucene.internal
     /// </summary>
     public class FilterDirectory : Directory
     {
-
         protected internal readonly Directory @in;
 
         /// <summary>
@@ -124,13 +121,10 @@ namespace Lucene.Net.Store
             }
         }
 
-
         public override string ToString()
         {
             return this.GetType().Name + "(" + @in.ToString() + ")";
         }
-
-
 
         //All of the following methods are here for TestFilterDirectory
         public override ChecksumIndexInput OpenChecksumInput(string name, IOContext context)
@@ -167,7 +161,5 @@ namespace Lucene.Net.Store
         {
             get { return base.IsOpen; }
         }
-
     }
-
 }

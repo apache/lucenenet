@@ -1,39 +1,39 @@
-using System;
 using Lucene.Net.Store;
+using System;
 
 namespace Lucene.Net.Index
 {
+    using NUnit.Framework;
+    using System.IO;
+    using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
+    using Directory = Lucene.Net.Store.Directory;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using SimpleFSDirectory = Lucene.Net.Store.SimpleFSDirectory;
+    using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using SimpleFSDirectory = Lucene.Net.Store.SimpleFSDirectory;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using System.IO;
 
     [TestFixture]
     public class TestCompoundFile : LuceneTestCase
@@ -85,7 +85,6 @@ namespace Lucene.Net.Index
             os.Dispose();
         }
 
-
         private void AssertSameStreams(string msg, IndexInput expected, IndexInput test)
         {
             Assert.IsNotNull(expected, msg + " null expected");
@@ -107,7 +106,6 @@ namespace Lucene.Net.Index
             }
         }
 
-
         private void AssertSameStreams(string msg, IndexInput expected, IndexInput actual, long seekTo)
         {
             if (seekTo >= 0 && seekTo < expected.Length())
@@ -117,8 +115,6 @@ namespace Lucene.Net.Index
                 AssertSameStreams(msg + ", seek(mid)", expected, actual);
             }
         }
-
-
 
         private void AssertSameSeekBehavior(string msg, IndexInput expected, IndexInput actual)
         {
@@ -147,7 +143,6 @@ namespace Lucene.Net.Index
             AssertSameStreams(msg + ", seek(end+1)", expected, actual, point);
         }
 
-
         private void AssertEqualArrays(string msg, sbyte[] expected, sbyte[] test, int start, int len)
         {
             Assert.IsNotNull(expected, msg + " null expected");
@@ -159,11 +154,9 @@ namespace Lucene.Net.Index
             }
         }
 
-
         // ===========================================================
         //  Tests of the basic CompoundFile functionality
         // ===========================================================
-
 
         /// <summary>
         /// this test creates compound file based on a single file.
@@ -192,10 +185,9 @@ namespace Lucene.Net.Index
             }
         }
 
-
         /// <summary>
         /// this test creates compound file based on two files.
-        /// 
+        ///
         /// </summary>
         [Test]
         public virtual void TestTwoFiles()
@@ -278,7 +270,6 @@ namespace Lucene.Net.Index
             csr.Dispose();
         }
 
-
         /// <summary>
         /// Setup a larger compound file with a number of components, each of
         ///  which is a sequential file (so that we can easily tell that we are
@@ -296,7 +287,6 @@ namespace Lucene.Net.Index
             }
             cw.Dispose();
         }
-
 
         [Test]
         public virtual void TestReadAfterClose()
@@ -380,7 +370,6 @@ namespace Lucene.Net.Index
             two.Seek(0);
             AssertSameStreams("basic clone two/2", expected, two);
 
-
             // Now close the compound reader
             cr.Dispose();
 
@@ -388,7 +377,6 @@ namespace Lucene.Net.Index
             expected.Seek(0);
             two.Seek(0);
             //assertSameStreams("basic clone two/3", expected, two);
-
 
             // Now close the second clone
             two.Dispose();
@@ -398,7 +386,6 @@ namespace Lucene.Net.Index
 
             expected.Dispose();
         }
-
 
         /// <summary>
         /// this test opens two files from a compound stream and verifies that
@@ -564,7 +551,6 @@ namespace Lucene.Net.Index
             cr.Dispose();
         }
 
-
         [Test]
         public virtual void TestFileNotFound()
         {
@@ -576,7 +562,6 @@ namespace Lucene.Net.Index
             {
                 cr.OpenInput("bogus", NewIOContext(Random()));
                 Assert.Fail("File not found");
-
             }
             catch (IOException e)
             {
@@ -586,7 +571,6 @@ namespace Lucene.Net.Index
 
             cr.Dispose();
         }
-
 
         [Test]
         public virtual void TestReadPastEOF()
@@ -651,7 +635,6 @@ namespace Lucene.Net.Index
             {
                 os.Dispose();
             }
-
         }
 
         [Test]
@@ -675,7 +658,6 @@ namespace Lucene.Net.Index
 
             newDir.Dispose();
         }
-
 
         [Test]
         public virtual void TestAppend()
@@ -712,7 +694,6 @@ namespace Lucene.Net.Index
                 }
 
                 openInput.Dispose();
-
             }
             IndexInput expected = Dir.OpenInput("d1", NewIOContext(Random()));
             IndexInput actual = csr.OpenInput("d1", NewIOContext(Random()));
@@ -818,7 +799,6 @@ namespace Lucene.Net.Index
             csw.Dispose();
 
             newDir.Dispose();
-
         }
 
         // Make sure we don't somehow use more than 1 descriptor
@@ -826,7 +806,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestManySubFiles()
         {
-
             Directory d = NewFSDirectory(CreateTempDir("CFSManySubFiles"));
             int FILE_COUNT = AtLeast(500);
 
@@ -924,5 +903,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

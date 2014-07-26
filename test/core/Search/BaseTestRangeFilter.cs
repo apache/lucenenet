@@ -3,40 +3,38 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
 
     [TestFixture]
     public class BaseTestRangeFilter : LuceneTestCase
     {
-
         public const bool F = false;
         public const bool T = true;
 
@@ -136,7 +134,6 @@ namespace Lucene.Net.Search
 
             while (true)
             {
-
                 int minCount = 0;
                 int maxCount = 0;
 
@@ -187,7 +184,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestPad()
         {
-
             int[] tests = new int[] { -9999999, -99560, -100, -3, -1, 0, 3, 9, 10, 1000, 999999999 };
             for (int i = 0; i < tests.Length - 1; i++)
             {
@@ -199,9 +195,6 @@ namespace Lucene.Net.Search
                 Assert.AreEqual(aa.Length, bb.Length, "i=" + i + ": length of " + label);
                 Assert.IsTrue(aa.CompareTo(bb) < 0, "i=" + i + ": compare less than " + label);
             }
-
         }
-
     }
-
 }

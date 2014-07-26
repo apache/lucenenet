@@ -3,89 +3,97 @@ using System.Text;
 
 namespace Lucene.Net.Index
 {
+    using NUnit.Framework;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
     using Collector = Lucene.Net.Search.Collector;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
     using Explanation = Lucene.Net.Search.Explanation;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using Scorer = Lucene.Net.Search.Scorer;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TermStatistics = Lucene.Net.Search.TermStatistics;
+    using TextField = Lucene.Net.Document.TextField;
     using TFIDFSimilarity = Lucene.Net.Search.Similarities.TFIDFSimilarity;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
 
     [TestFixture]
     public class TestOmitTf : LuceneTestCase
     {
-
         public class SimpleSimilarity : TFIDFSimilarity
         {
             public override float DecodeNormValue(long norm)
             {
                 return norm;
             }
+
             public override long EncodeNormValue(float f)
             {
                 return (long)f;
             }
+
             public override float QueryNorm(float sumOfSquaredWeights)
             {
                 return 1.0f;
             }
+
             public override float Coord(int overlap, int maxOverlap)
             {
                 return 1.0f;
             }
+
             public override float LengthNorm(FieldInvertState state)
             {
                 return state.Boost;
             }
+
             public override float Tf(float freq)
             {
                 return freq;
             }
+
             public override float SloppyFreq(int distance)
             {
                 return 2.0f;
             }
+
             public override float Idf(long docFreq, long numDocs)
             {
                 return 1.0f;
             }
+
             public override Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics[] termStats)
             {
                 return new Explanation(1.0f, "Inexplicable");
             }
+
             public override float ScorePayload(int doc, int start, int end, BytesRef payload)
             {
                 return 1.0f;
@@ -202,7 +210,7 @@ namespace Lucene.Net.Index
 
         // Make sure first adding docs that do not omitTermFreqAndPositions for
         // field X, then adding docs that do omitTermFreqAndPositions for that same
-        // field, 
+        // field,
         [Test]
         public virtual void TestMixedRAM()
         {
@@ -298,7 +306,7 @@ namespace Lucene.Net.Index
             ram.Dispose();
         }
 
-        // Test scores with one field with Term Freqs and one without, otherwise with equal content 
+        // Test scores with one field with Term Freqs and one without, otherwise with equal content
         [Test]
         public virtual void TestBasic()
         {
@@ -368,22 +376,14 @@ namespace Lucene.Net.Index
             searcher.Search(q1, new CountingHitCollectorAnonymousInnerClassHelper(this));
             //System.out.println(CountingHitCollector.getCount());
 
-
             searcher.Search(q2, new CountingHitCollectorAnonymousInnerClassHelper2(this));
             //System.out.println(CountingHitCollector.getCount());
-
-
-
-
 
             searcher.Search(q3, new CountingHitCollectorAnonymousInnerClassHelper3(this));
             //System.out.println(CountingHitCollector.getCount());
 
-
             searcher.Search(q4, new CountingHitCollectorAnonymousInnerClassHelper4(this));
             //System.out.println(CountingHitCollector.getCount());
-
-
 
             BooleanQuery bq = new BooleanQuery();
             bq.Add(q1, Occur.MUST);
@@ -406,6 +406,7 @@ namespace Lucene.Net.Index
             }
 
             private Scorer scorer;
+
             public override sealed Scorer Scorer
             {
                 set
@@ -413,6 +414,7 @@ namespace Lucene.Net.Index
                     this.scorer = value;
                 }
             }
+
             public override sealed void Collect(int doc)
             {
                 //System.out.println("Q1: Doc=" + doc + " score=" + score);
@@ -432,6 +434,7 @@ namespace Lucene.Net.Index
             }
 
             private Scorer scorer;
+
             public override sealed Scorer Scorer
             {
                 set
@@ -439,6 +442,7 @@ namespace Lucene.Net.Index
                     this.scorer = value;
                 }
             }
+
             public override sealed void Collect(int doc)
             {
                 //System.out.println("Q2: Doc=" + doc + " score=" + score);
@@ -458,6 +462,7 @@ namespace Lucene.Net.Index
             }
 
             private Scorer scorer;
+
             public override sealed Scorer Scorer
             {
                 set
@@ -465,6 +470,7 @@ namespace Lucene.Net.Index
                     this.scorer = value;
                 }
             }
+
             public override sealed void Collect(int doc)
             {
                 //System.out.println("Q1: Doc=" + doc + " score=" + score);
@@ -485,6 +491,7 @@ namespace Lucene.Net.Index
             }
 
             private Scorer scorer;
+
             public override sealed Scorer Scorer
             {
                 set
@@ -492,6 +499,7 @@ namespace Lucene.Net.Index
                     this.scorer = value;
                 }
             }
+
             public override sealed void Collect(int doc)
             {
                 float score = scorer.Score();
@@ -523,17 +531,20 @@ namespace Lucene.Net.Index
             internal static int Count_Renamed = 0;
             internal static int Sum_Renamed = 0;
             internal int DocBase = -1;
+
             internal CountingHitCollector()
             {
                 Count_Renamed = 0;
                 Sum_Renamed = 0;
             }
+
             public override Scorer Scorer
             {
                 set
                 {
                 }
             }
+
             public override void Collect(int doc)
             {
                 Count_Renamed++;
@@ -547,6 +558,7 @@ namespace Lucene.Net.Index
                     return Count_Renamed;
                 }
             }
+
             public static int Sum
             {
                 get
@@ -562,6 +574,7 @@ namespace Lucene.Net.Index
                     DocBase = value.DocBase;
                 }
             }
+
             public override bool AcceptsDocsOutOfOrder()
             {
                 return true;
@@ -590,5 +603,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

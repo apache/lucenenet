@@ -3,42 +3,41 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
+    using English = Lucene.Net.Util.English;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using StringField = Lucene.Net.Document.StringField;
-    using Directory = Lucene.Net.Store.Directory;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using English = Lucene.Net.Util.English;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using System.IO;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
+    using StringField = Lucene.Net.Document.StringField;
 
     [TestFixture]
     public class TestTransactions : LuceneTestCase
     {
-
         private static volatile bool DoFail;
 
         private class RandomFailure : MockDirectoryWrapper.Failure
@@ -128,7 +127,6 @@ namespace Lucene.Net.Index
 
             public override void DoWork()
             {
-
                 IndexWriter writer1 = new IndexWriter(Dir1, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(3)).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(2)));
                 ((ConcurrentMergeScheduler)writer1.Config.MergeScheduler).SetSuppressExceptions();
 
@@ -315,5 +313,4 @@ namespace Lucene.Net.Index
             dir2.Dispose();
         }
     }
-
 }

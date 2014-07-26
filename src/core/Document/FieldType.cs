@@ -1,44 +1,39 @@
-using System.Text;
-
 namespace Lucene.Net.Document
 {
+    using Lucene.Net.Index;
+    using System;
+    using System.Text;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-    using Analyzer = Lucene.Net.Analysis.Analyzer; // javadocs
+    // javadocs
     using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
     using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
-    using Lucene.Net.Search; // javadocs
+    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+
+    // javadocs
     using NumericUtils = Lucene.Net.Util.NumericUtils;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Lucene.Net.Util;
-    using Lucene.Net.Index;
 
     /// <summary>
     /// Describes the properties of a field.
     /// </summary>
     public class FieldType : IndexableFieldType
     {
-
         /// <summary>
         /// Data type of the numeric value
         /// @since 3.2
@@ -48,12 +43,15 @@ namespace Lucene.Net.Document
             /// <summary>
             /// 32-bit integer numeric type </summary>
             INT,
+
             /// <summary>
             /// 64-bit long numeric type </summary>
             LONG,
+
             /// <summary>
             /// 32-bit float numeric type </summary>
             FLOAT,
+
             /// <summary>
             /// 64-bit double numeric type </summary>
             DOUBLE
@@ -153,7 +151,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Set to <code>true</code> to tokenize this field's contents via the 
+        /// Set to <code>true</code> to tokenize this field's contents via the
         /// configured <seealso cref="Analyzer"/>. </summary>
         /// <param name="value"> true if this field should be tokenized. </param>
         /// <exception cref="IllegalStateException"> if this FieldType is frozen against
@@ -173,7 +171,7 @@ namespace Lucene.Net.Document
         }
 
         /// <summary>
-        /// Set to <code>true</code> if this field's indexed form should be also stored 
+        /// Set to <code>true</code> if this field's indexed form should be also stored
         /// into term vectors. </summary>
         /// <param name="value"> true if this field should store term vectors. </param>
         /// <exception cref="IllegalStateException"> if this FieldType is frozen against
@@ -249,7 +247,6 @@ namespace Lucene.Net.Document
                 this.StoreTermVectorPayloads_Renamed = value;
             }
         }
-
 
         /// <summary>
         /// Set to <code>true</code> to omit normalization values for the field. </summary>

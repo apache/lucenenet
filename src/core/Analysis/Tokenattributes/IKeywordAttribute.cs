@@ -1,7 +1,7 @@
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-
     using Lucene.Net.Util;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -19,27 +19,22 @@ namespace Lucene.Net.Analysis.Tokenattributes
          * limitations under the License.
          */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-
-	/// <summary>
-	/// this attribute can be used to mark a token as a keyword. Keyword aware
-	/// <seealso cref="TokenStream"/>s can decide to modify a token based on the return value
-	/// of <seealso cref="#isKeyword()"/> if the token is modified. Stemming filters for
-	/// instance can use this attribute to conditionally skip a term if
-	/// <seealso cref="#isKeyword()"/> returns <code>true</code>.
-	/// </summary>
-	public interface IKeywordAttribute : IAttribute
-	{
-
-	  /// <summary>
-	  /// Returns <code>true</code> if the current token is a keyword, otherwise
-	  /// <code>false</code>
-	  /// </summary>
-	  /// <returns> <code>true</code> if the current token is a keyword, otherwise
-	  ///         <code>false</code> </returns>
-	  /// <seealso cref= #setKeyword(boolean) </seealso>
-	  bool Keyword {get;set;}
-
-	}
-
+    /// <summary>
+    /// this attribute can be used to mark a token as a keyword. Keyword aware
+    /// <seealso cref="TokenStream"/>s can decide to modify a token based on the return value
+    /// of <seealso cref="#isKeyword()"/> if the token is modified. Stemming filters for
+    /// instance can use this attribute to conditionally skip a term if
+    /// <seealso cref="#isKeyword()"/> returns <code>true</code>.
+    /// </summary>
+    public interface IKeywordAttribute : IAttribute
+    {
+        /// <summary>
+        /// Returns <code>true</code> if the current token is a keyword, otherwise
+        /// <code>false</code>
+        /// </summary>
+        /// <returns> <code>true</code> if the current token is a keyword, otherwise
+        ///         <code>false</code> </returns>
+        /// <seealso cref= #setKeyword(boolean) </seealso>
+        bool Keyword { get; set; }
+    }
 }

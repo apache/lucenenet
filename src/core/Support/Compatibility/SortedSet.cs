@@ -1,13 +1,13 @@
-﻿/* 
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,16 +32,15 @@ namespace System.Collections.Generic
         {
             _list = new SortedList<T, byte>(comparer);
         }
-        
-        public T Min { get { return (_list.Count) >= 1 ? _list.Keys[0] : default(T); } }
-        
-        public T Max { get { return (_list.Count) >= 1 ? _list.Keys[_list.Count - 1] : default(T); } }
 
+        public T Min { get { return (_list.Count) >= 1 ? _list.Keys[0] : default(T); } }
+
+        public T Max { get { return (_list.Count) >= 1 ? _list.Keys[_list.Count - 1] : default(T); } }
 
         /// <summary>
         /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </summary>
-        /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only. 
+        /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         ///                 </exception>
         public void Clear()
         {
@@ -91,7 +90,7 @@ namespace System.Collections.Generic
             get { return _list.Count; }
         }
 
-        #region Explicit Interface Implementations
+#region Explicit Interface Implementations
 
         void ICollection<T>.Add(T item)
         {
@@ -128,9 +127,9 @@ namespace System.Collections.Generic
             get { return Count; }
         }
 
-        #endregion
+        #endregion Explicit Interface Implementations
 
-        #region ISet<T> Implementation
+#region ISet<T> Implementation
 
         void ISet<T>.ExceptWith(IEnumerable<T> other)
         {
@@ -180,7 +179,7 @@ namespace System.Collections.Generic
             throw new NotImplementedException();
         }
 
-        #endregion
+        #endregion ISet<T> Implementation
     }
 }
 

@@ -2,42 +2,41 @@ using System;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using Term = Lucene.Net.Index.Term;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
     /// Test BooleanQuery2 against BooleanQuery by overriding the standard query parser.
@@ -291,7 +290,6 @@ namespace Lucene.Net.Search
             BooleanQuery q1 = null;
             try
             {
-
                 // increase number of iterations for more complete testing
                 int num = AtLeast(20);
                 for (int i = 0; i < num; i++)
@@ -333,7 +331,6 @@ namespace Lucene.Net.Search
                     TopDocs hits4 = BigSearcher.Search(q3, 1);
                     Assert.AreEqual(MulFactor * collector.TotalHits + NUM_EXTRA_DOCS / 2, hits4.TotalHits);
                 }
-
             }
             catch (Exception)
             {
@@ -344,7 +341,6 @@ namespace Lucene.Net.Search
 
             // System.out.println("Total hits:"+tot);
         }
-
 
         // used to set properties or change every BooleanQuery
         // generated from randBoolQuery.
@@ -419,8 +415,5 @@ namespace Lucene.Net.Search
             }
             return current;
         }
-
-
     }
-
 }

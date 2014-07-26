@@ -1,42 +1,41 @@
 namespace Lucene.Net.Search
 {
+    using NUnit.Framework;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using DoubleDocValuesField = Lucene.Net.Document.DoubleDocValuesField;
     using Field = Lucene.Net.Document.Field;
     using FloatDocValuesField = Lucene.Net.Document.FloatDocValuesField;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-    using NUnit.Framework;
+    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
 
     /// <summary>
     /// Tests basic sorting on docvalues fields.
     /// These are mostly like TestSort's tests, except each test
-    /// indexes the field up-front as docvalues, and checks no fieldcaches were made 
+    /// indexes the field up-front as docvalues, and checks no fieldcaches were made
     /// </summary>
     //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
     //ORIGINAL LINE: @SuppressCodecs({"Lucene3x", "Appending", "Lucene40", "Lucene41", "Lucene42"}) public class TestSortDocValues extends Lucene.Net.Util.LuceneTestCase

@@ -4,64 +4,64 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	using DoubleField = Lucene.Net.Document.DoubleField; // for javadocs
-	using FloatField = Lucene.Net.Document.FloatField; // for javadocs
-	using IntField = Lucene.Net.Document.IntField; // for javadocs
-	using LongField = Lucene.Net.Document.LongField; // for javadocs
-	using AtomicReader = Lucene.Net.Index.AtomicReader; // for javadocs
-	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using SortedDocValues = Lucene.Net.Index.SortedDocValues;
-	using Bits = Lucene.Net.Util.Bits;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using NumericUtils = Lucene.Net.Util.NumericUtils;
+    // for javadocs
+    // for javadocs
+    // for javadocs
+    // for javadocs
+    using AtomicReader = Lucene.Net.Index.AtomicReader; // for javadocs
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using NumericUtils = Lucene.Net.Util.NumericUtils;
+    using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 
-	/// <summary>
-	/// A range filter built on top of a cached single term field (in <seealso cref="FieldCache"/>).
-	/// 
-	/// <p>{@code FieldCacheRangeFilter} builds a single cache for the field the first time it is used.
-	/// Each subsequent {@code FieldCacheRangeFilter} on the same field then reuses this cache,
-	/// even if the range itself changes. 
-	/// 
-	/// <p>this means that {@code FieldCacheRangeFilter} is much faster (sometimes more than 100x as fast) 
-	/// as building a <seealso cref="TermRangeFilter"/>, if using a <seealso cref="#newStringRange"/>.
-	/// However, if the range never changes it is slower (around 2x as slow) than building
-	/// a CachingWrapperFilter on top of a single <seealso cref="TermRangeFilter"/>.
-	/// 
-	/// For numeric data types, this filter may be significantly faster than <seealso cref="NumericRangeFilter"/>.
-	/// Furthermore, it does not need the numeric values encoded
-	/// by <seealso cref="IntField"/>, <seealso cref="FloatField"/>, {@link
-	/// LongField} or <seealso cref="DoubleField"/>. But
-	/// it has the problem that it only works with exact one value/document (see below).
-	/// 
-	/// <p>As with all <seealso cref="FieldCache"/> based functionality, {@code FieldCacheRangeFilter} is only valid for 
-	/// fields which exact one term for each document (except for <seealso cref="#newStringRange"/>
-	/// where 0 terms are also allowed). Due to a restriction of <seealso cref="FieldCache"/>, for numeric ranges
-	/// all terms that do not have a numeric value, 0 is assumed.
-	/// 
-	/// <p>Thus it works on dates, prices and other single value fields but will not work on
-	/// regular text fields. It is preferable to use a <code>NOT_ANALYZED</code> field to ensure that
-	/// there is only a single term. 
-	/// 
-	/// <p>this class does not have an constructor, use one of the static factory methods available,
-	/// that create a correct instance for different data types supported by <seealso cref="FieldCache"/>.
-	/// </summary>
+    /// <summary>
+    /// A range filter built on top of a cached single term field (in <seealso cref="FieldCache"/>).
+    ///
+    /// <p>{@code FieldCacheRangeFilter} builds a single cache for the field the first time it is used.
+    /// Each subsequent {@code FieldCacheRangeFilter} on the same field then reuses this cache,
+    /// even if the range itself changes.
+    ///
+    /// <p>this means that {@code FieldCacheRangeFilter} is much faster (sometimes more than 100x as fast)
+    /// as building a <seealso cref="TermRangeFilter"/>, if using a <seealso cref="#newStringRange"/>.
+    /// However, if the range never changes it is slower (around 2x as slow) than building
+    /// a CachingWrapperFilter on top of a single <seealso cref="TermRangeFilter"/>.
+    ///
+    /// For numeric data types, this filter may be significantly faster than <seealso cref="NumericRangeFilter"/>.
+    /// Furthermore, it does not need the numeric values encoded
+    /// by <seealso cref="IntField"/>, <seealso cref="FloatField"/>, {@link
+    /// LongField} or <seealso cref="DoubleField"/>. But
+    /// it has the problem that it only works with exact one value/document (see below).
+    ///
+    /// <p>As with all <seealso cref="FieldCache"/> based functionality, {@code FieldCacheRangeFilter} is only valid for
+    /// fields which exact one term for each document (except for <seealso cref="#newStringRange"/>
+    /// where 0 terms are also allowed). Due to a restriction of <seealso cref="FieldCache"/>, for numeric ranges
+    /// all terms that do not have a numeric value, 0 is assumed.
+    ///
+    /// <p>Thus it works on dates, prices and other single value fields but will not work on
+    /// regular text fields. It is preferable to use a <code>NOT_ANALYZED</code> field to ensure that
+    /// there is only a single term.
+    ///
+    /// <p>this class does not have an constructor, use one of the static factory methods available,
+    /// that create a correct instance for different data types supported by <seealso cref="FieldCache"/>.
+    /// </summary>
 
     public static class FieldCacheRangeFilter
     {
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
             }
 
             internal AnonymousStringFieldCacheRangeFilter(string field, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
-                :base(field, null, lowerVal, upperVal, includeLower, includeUpper)
+                : base(field, null, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
 
@@ -149,8 +149,6 @@ namespace Lucene.Net.Search
 
                 return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
             }
-
-
         }
 
         [Serializable]
@@ -178,7 +176,7 @@ namespace Lucene.Net.Search
             }
 
             internal AnonymousBytesRefFieldCacheRangeFilter(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
-                :base(field, null, lowerVal, upperVal, includeLower, includeUpper)
+                : base(field, null, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
 
@@ -236,8 +234,6 @@ namespace Lucene.Net.Search
                 //assert inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0;
                 return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
             }
-
-
         }
 
         [Serializable]
@@ -268,7 +264,6 @@ namespace Lucene.Net.Search
                 : base(field, parser, lowerVal, upperVal, includeLower, includeUpper)
             {
             }
-
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
@@ -790,28 +785,29 @@ namespace Lucene.Net.Search
         }
     }
 
-	public abstract class FieldCacheRangeFilter<T> : Filter
-	{
-	  internal readonly string field;
-	  internal readonly FieldCache_Fields.IParser parser;
-	  internal readonly T lowerVal;
-	  internal readonly T upperVal;
-	  internal readonly bool includeLower;
-	  internal readonly bool includeUpper;
+    public abstract class FieldCacheRangeFilter<T> : Filter
+    {
+        internal readonly string field;
+        internal readonly FieldCache_Fields.IParser parser;
+        internal readonly T lowerVal;
+        internal readonly T upperVal;
+        internal readonly bool includeLower;
+        internal readonly bool includeUpper;
 
-      protected internal FieldCacheRangeFilter(string field, FieldCache_Fields.IParser parser, T lowerVal, T upperVal, bool includeLower, bool includeUpper)
-	  {
-		this.field = field;
-		this.parser = parser;
-		this.lowerVal = lowerVal;
-		this.upperVal = upperVal;
-		this.includeLower = includeLower;
-		this.includeUpper = includeUpper;
-	  }
+        protected internal FieldCacheRangeFilter(string field, FieldCache_Fields.IParser parser, T lowerVal, T upperVal, bool includeLower, bool includeUpper)
+        {
+            this.field = field;
+            this.parser = parser;
+            this.lowerVal = lowerVal;
+            this.upperVal = upperVal;
+            this.includeLower = includeLower;
+            this.includeUpper = includeUpper;
+        }
 
-	  /// <summary>
-	  /// this method is implemented for each data type </summary>
-	  public override abstract DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs);
+        /// <summary>
+        /// this method is implemented for each data type </summary>
+        public override abstract DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs);
+
         /*
 	  /// <summary>
 	  /// Creates a string range filter using <seealso cref="FieldCache#getTermsIndex"/>. this works with all
@@ -1665,107 +1661,106 @@ namespace Lucene.Net.Search
 		  }
 	  }*/
 
-	  public override sealed string ToString()
-	  {
-		StringBuilder sb = (new StringBuilder(field)).Append(":");
-		return sb.Append(includeLower ? '[' : '{').Append((lowerVal == null) ? "*" : lowerVal.ToString()).Append(" TO ").Append((upperVal == null) ? "*" : upperVal.ToString()).Append(includeUpper ? ']' : '}').ToString();
-	  }
+        public override sealed string ToString()
+        {
+            StringBuilder sb = (new StringBuilder(field)).Append(":");
+            return sb.Append(includeLower ? '[' : '{').Append((lowerVal == null) ? "*" : lowerVal.ToString()).Append(" TO ").Append((upperVal == null) ? "*" : upperVal.ToString()).Append(includeUpper ? ']' : '}').ToString();
+        }
 
-	  public override sealed bool Equals(object o)
-	  {
-		if (this == o)
-		{
-			return true;
-		}
-		if (!(o is FieldCacheRangeFilter<T>))
-		{
-			return false;
-		}
-		FieldCacheRangeFilter<T> other = (FieldCacheRangeFilter<T>) o;
+        public override sealed bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (!(o is FieldCacheRangeFilter<T>))
+            {
+                return false;
+            }
+            FieldCacheRangeFilter<T> other = (FieldCacheRangeFilter<T>)o;
 
-		if (!this.field.Equals(other.field) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
-		{
-			return false;
-		}
-		if (this.lowerVal != null ?!this.lowerVal.Equals(other.lowerVal) : other.lowerVal != null)
-		{
-			return false;
-		}
-		if (this.upperVal != null ?!this.upperVal.Equals(other.upperVal) : other.upperVal != null)
-		{
-			return false;
-		}
-		if (this.parser != null ?!this.parser.Equals(other.parser) : other.parser != null)
-		{
-			return false;
-		}
-		return true;
-	  }
+            if (!this.field.Equals(other.field) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
+            {
+                return false;
+            }
+            if (this.lowerVal != null ? !this.lowerVal.Equals(other.lowerVal) : other.lowerVal != null)
+            {
+                return false;
+            }
+            if (this.upperVal != null ? !this.upperVal.Equals(other.upperVal) : other.upperVal != null)
+            {
+                return false;
+            }
+            if (this.parser != null ? !this.parser.Equals(other.parser) : other.parser != null)
+            {
+                return false;
+            }
+            return true;
+        }
 
-	  public override sealed int GetHashCode()
-	  {
-		int h = field.GetHashCode();
-        h ^= (lowerVal != null) ? lowerVal.GetHashCode() : 550356204;
-		h = (h << 1) | ((int)((uint)h >> 31)); // rotate to distinguish lower from upper
-        h ^= (upperVal != null) ? upperVal.GetHashCode() : -1674416163;
-        h ^= (parser != null) ? parser.GetHashCode() : -1572457324;
-		h ^= (includeLower ? 1549299360 : -365038026) ^ (includeUpper ? 1721088258 : 1948649653);
-		return h;
-	  }
+        public override sealed int GetHashCode()
+        {
+            int h = field.GetHashCode();
+            h ^= (lowerVal != null) ? lowerVal.GetHashCode() : 550356204;
+            h = (h << 1) | ((int)((uint)h >> 31)); // rotate to distinguish lower from upper
+            h ^= (upperVal != null) ? upperVal.GetHashCode() : -1674416163;
+            h ^= (parser != null) ? parser.GetHashCode() : -1572457324;
+            h ^= (includeLower ? 1549299360 : -365038026) ^ (includeUpper ? 1721088258 : 1948649653);
+            return h;
+        }
 
-	  /// <summary>
-	  /// Returns the field name for this filter </summary>
-	  public virtual string Field
-	  {
-		  get
-		  {
-			  return field;
-		  }
-	  }
+        /// <summary>
+        /// Returns the field name for this filter </summary>
+        public virtual string Field
+        {
+            get
+            {
+                return field;
+            }
+        }
 
-	  /// <summary>
-	  /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
-	  public virtual bool IncludesLower
-	  {
-		  get { return includeLower; }
-	  }
+        /// <summary>
+        /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
+        public virtual bool IncludesLower
+        {
+            get { return includeLower; }
+        }
 
-	  /// <summary>
-	  /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
-	  public virtual bool IncludesUpper
-	  {
-          get { return includeUpper; }
-	  }
+        /// <summary>
+        /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
+        public virtual bool IncludesUpper
+        {
+            get { return includeUpper; }
+        }
 
-	  /// <summary>
-	  /// Returns the lower value of this range filter </summary>
-	  public virtual T LowerVal
-	  {
-		  get
-		  {
-			  return lowerVal;
-		  }
-	  }
+        /// <summary>
+        /// Returns the lower value of this range filter </summary>
+        public virtual T LowerVal
+        {
+            get
+            {
+                return lowerVal;
+            }
+        }
 
-	  /// <summary>
-	  /// Returns the upper value of this range filter </summary>
-	  public virtual T UpperVal
-	  {
-		  get
-		  {
-			  return upperVal;
-		  }
-	  }
+        /// <summary>
+        /// Returns the upper value of this range filter </summary>
+        public virtual T UpperVal
+        {
+            get
+            {
+                return upperVal;
+            }
+        }
 
-	  /// <summary>
-	  /// Returns the current numeric parser ({@code null} for {@code T} is {@code String}} </summary>
-      public virtual FieldCache_Fields.IParser Parser
-	  {
-		  get
-		  {
-			  return parser;
-		  }
-	  }
-	}
-
+        /// <summary>
+        /// Returns the current numeric parser ({@code null} for {@code T} is {@code String}} </summary>
+        public virtual FieldCache_Fields.IParser Parser
+        {
+            get
+            {
+                return parser;
+            }
+        }
+    }
 }

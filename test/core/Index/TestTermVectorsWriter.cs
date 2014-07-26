@@ -1,43 +1,43 @@
 namespace Lucene.Net.Index
 {
+    using NUnit.Framework;
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using CachingTokenFilter = Lucene.Net.Analysis.CachingTokenFilter;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenFilter = Lucene.Net.Analysis.MockTokenFilter;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
-    using System.IO;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using MockTokenFilter = Lucene.Net.Analysis.MockTokenFilter;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using StringField = Lucene.Net.Document.StringField;
+    using TextField = Lucene.Net.Document.TextField;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /// <summary>
     /// tests for writing term vectors </summary>
@@ -395,7 +395,6 @@ namespace Lucene.Net.Index
             Assert.AreEqual(6, dpEnum.StartOffset());
             Assert.AreEqual(12, dpEnum.EndOffset());
 
-
             r.Dispose();
             dir.Dispose();
         }
@@ -404,7 +403,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTermVectorCorruption()
         {
-
             Directory dir = NewDirectory();
             for (int iter = 0; iter < 2; iter++)
             {
@@ -598,5 +596,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

@@ -1,6 +1,5 @@
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -18,10 +17,8 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     public class TestIntroSorter : BaseSortTestCase
     {
-
         public TestIntroSorter()
             : base(false)
         {
@@ -37,5 +34,4 @@ namespace Lucene.Net.Util
             throw new System.NotImplementedException();
         }
     }
-
 }

@@ -3,43 +3,42 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
+    using Lucene.Net.Support;
+    using System.Collections.Generic;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using CodecUtil = Lucene.Net.Codecs.CodecUtil;
-    using NumericDocValues = Lucene.Net.Index.NumericDocValues;
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
     using IndexInput = Lucene.Net.Store.IndexInput;
-    using System.Collections.Generic;
-    using Lucene.Net.Support;
+    using NumericDocValues = Lucene.Net.Index.NumericDocValues;
 
     /// <summary>
     /// Simplistic compression for array of unsigned long values.
     /// Each value is >= 0 and <= a specified maximum value.  The
     /// values are stored as packed ints, with each value
     /// consuming a fixed number of bits.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public class PackedInts
     {
-
         /// <summary>
         /// At most 700% memory overhead, always select a direct implementation.
         /// </summary>
@@ -87,7 +86,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// A format to write packed ints.
-        /// 
+        ///
         /// @lucene.internal
         /// </summary>
         //public enum Format
@@ -160,7 +159,6 @@ namespace Lucene.Net.Util.Packed
             {
                 internal PACKED(this Format instance, 0)
                 {
-
                   public long outerInstance.ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
                   {
                     if (packedIntsVersion < VERSION_BYTE_ALIGNED)
@@ -172,11 +170,9 @@ namespace Lucene.Net.Util.Packed
                       return (long) Math.Ceiling((double) valueCount * bitsPerValue / 8);
                     }
                   }
-
                 },
                 outerInstance.PACKED_SINGLE_BLOCK(this Format instance, 1)
                 {
-
                   public int outerInstance.LongCount(int packedIntsVersion, int valueCount, int bitsPerValue)
                   {
         //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -201,7 +197,6 @@ namespace Lucene.Net.Util.Packed
                     int overhead = 64 % bitsPerValue;
                     return (float) overhead / valuesPerBlock;
                   }
-
                 }
                 public static int outerInstance.Id //Tangible note: extension parameterthis Format instance
                 {
@@ -360,7 +355,6 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-
         /// <summary>
         /// Simple class that holds a format and a number of bits per value.
         /// </summary>
@@ -368,6 +362,7 @@ namespace Lucene.Net.Util.Packed
         {
             public readonly Format format;
             public readonly int bitsPerValue;
+
             public FormatAndBits(Format format, int bitsPerValue)
             {
                 this.format = format;
@@ -463,7 +458,6 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public interface Decoder
         {
-
             /// <summary>
             /// The minimum number of long blocks to encode in a single iteration, when
             /// using long encoding.
@@ -535,7 +529,6 @@ namespace Lucene.Net.Util.Packed
             /// <param name="valuesOffset"> the offset where to start writing values </param>
             /// <param name="iterations">   controls how much data to decode </param>
             void Decode(sbyte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
-
         }
 
         /// <summary>
@@ -543,7 +536,6 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public interface Encoder
         {
-
             /// <summary>
             /// The minimum number of long blocks to encode in a single iteration, when
             /// using long encoding.
@@ -615,7 +607,6 @@ namespace Lucene.Net.Util.Packed
             /// <param name="valuesOffset"> the offset where to start reading values </param>
             /// <param name="iterations">   controls how much data to encode </param>
             void Encode(int[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations);
-
         }
 
         /// <summary>
@@ -624,7 +615,6 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public abstract class Reader : NumericDocValues
         {
-
             /// <summary>
             /// Bulk get: read at least one and at most <code>len</code> longs starting
             /// from <code>index</code> into <code>arr[off:off+len]</code> and return
@@ -685,7 +675,6 @@ namespace Lucene.Net.Util.Packed
             {
                 return false;
             }
-
         }
 
         /// <summary>
@@ -696,17 +685,21 @@ namespace Lucene.Net.Util.Packed
             /// <summary>
             /// Returns next value </summary>
             long Next();
+
             /// <summary>
             /// Returns at least 1 and at most <code>count</code> next values,
-            /// the returned ref MUST NOT be modified 
+            /// the returned ref MUST NOT be modified
             /// </summary>
             LongsRef Next(int count);
+
             /// <summary>
             /// Returns number of bits per value </summary>
             int BitsPerValue { get; }
+
             /// <summary>
             /// Returns number of values </summary>
             int Size();
+
             /// <summary>
             /// Returns the current position </summary>
             int Ord();
@@ -714,7 +707,6 @@ namespace Lucene.Net.Util.Packed
 
         internal abstract class ReaderIteratorImpl : ReaderIterator
         {
-
             protected internal readonly DataInput @in;
             protected internal readonly int bitsPerValue;
             protected internal readonly int valueCount;
@@ -760,7 +752,6 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public abstract class Mutable : Reader
         {
-
             /// <summary>
             /// Set the value at the given index in the array. </summary>
             /// <param name="index"> where the value should be positioned. </param>
@@ -834,7 +825,6 @@ namespace Lucene.Net.Util.Packed
                     return Format.PACKED;
                 }
             }
-
         }
 
         /// <summary>
@@ -867,12 +857,10 @@ namespace Lucene.Net.Util.Packed
             {
                 return valueCount;
             }
-
         }
 
         public abstract class MutableImpl : Mutable
         {
-
             protected internal readonly int valueCount;
             protected internal readonly int bitsPerValue;
 
@@ -895,14 +883,12 @@ namespace Lucene.Net.Util.Packed
             {
                 return valueCount;
             }
-
         }
 
         /// <summary>
         /// A <seealso cref="Reader"/> which has all its values equal to 0 (bitsPerValue = 0). </summary>
         public sealed class NullReader : Reader
         {
-
             internal readonly int valueCount;
 
             /// <summary>
@@ -943,7 +929,6 @@ namespace Lucene.Net.Util.Packed
             {
                 return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT);
             }
-
         }
 
         /// <summary>
@@ -1055,18 +1040,23 @@ namespace Lucene.Net.Util.Packed
                 {
                     case 8:
                         return new Direct8(version, @in, valueCount);
+
                     case 16:
                         return new Direct16(version, @in, valueCount);
+
                     case 32:
                         return new Direct32(version, @in, valueCount);
+
                     case 64:
                         return new Direct64(version, @in, valueCount);
+
                     case 24:
                         if (valueCount <= Packed8ThreeBlocks.MAX_SIZE)
                         {
                             return new Packed8ThreeBlocks(version, @in, valueCount);
                         }
                         break;
+
                     case 48:
                         if (valueCount <= Packed16ThreeBlocks.MAX_SIZE)
                         {
@@ -1252,9 +1242,9 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Expert: Construct a direct <seealso cref="Reader"/> from an <seealso cref="IndexInput"/> 
-        /// without reading metadata at the beginning of the stream. this method is 
-        /// useful to restore data when metadata has been previously read using 
+        /// Expert: Construct a direct <seealso cref="Reader"/> from an <seealso cref="IndexInput"/>
+        /// without reading metadata at the beginning of the stream. this method is
+        /// useful to restore data when metadata has been previously read using
         /// <seealso cref="#readHeader(DataInput)"/>.
         /// </summary>
         /// <param name="in">           the stream to read data from, positioned at the beginning of the packed values </param>
@@ -1317,7 +1307,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Same as <seealso cref="#getMutable(int, int, float)"/> with a pre-computed number
         ///  of bits per value and format.
-        ///  @lucene.internal 
+        ///  @lucene.internal
         /// </summary>
         public static Mutable GetMutable(int valueCount, int bitsPerValue, PackedInts.Format format)
         {
@@ -1333,18 +1323,23 @@ namespace Lucene.Net.Util.Packed
                 {
                     case 8:
                         return new Direct8(valueCount);
+
                     case 16:
                         return new Direct16(valueCount);
+
                     case 32:
                         return new Direct32(valueCount);
+
                     case 64:
                         return new Direct64(valueCount);
+
                     case 24:
                         if (valueCount <= Packed8ThreeBlocks.MAX_SIZE)
                         {
                             return new Packed8ThreeBlocks(valueCount);
                         }
                         break;
+
                     case 48:
                         if (valueCount <= Packed16ThreeBlocks.MAX_SIZE)
                         {
@@ -1533,7 +1528,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Expert: reads only the metadata from a stream. this is useful to later
-        /// restore a stream or open a direct reader via 
+        /// restore a stream or open a direct reader via
         /// <seealso cref="#getReaderNoHeader(DataInput, Header)"/>
         /// or <seealso cref="#getDirectReaderNoHeader(IndexInput, Header)"/>. </summary>
         /// <param name="in"> the stream to read data </param>
@@ -1555,7 +1550,6 @@ namespace Lucene.Net.Util.Packed
         /// Header identifying the structure of a packed integer array. </summary>
         public class Header
         {
-
             internal readonly Format format;
             internal readonly int valueCount;
             internal readonly int bitsPerValue;
@@ -1572,7 +1566,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Check that the block size is a power of 2, in the right bounds, and return
-        ///  its log in base 2. 
+        ///  its log in base 2.
         /// </summary>
         internal static int CheckBlockSize(int blockSize, int minBlockSize, int maxBlockSize)
         {
@@ -1589,7 +1583,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Return the number of blocks required to store <code>size</code> values on
-        ///  <code>blockSize</code>. 
+        ///  <code>blockSize</code>.
         /// </summary>
         internal static int NumBlocks(long size, int blockSize)
         {
@@ -1600,7 +1594,5 @@ namespace Lucene.Net.Util.Packed
             }
             return numBlocks;
         }
-
     }
-
 }

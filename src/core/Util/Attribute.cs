@@ -1,13 +1,13 @@
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,8 +23,7 @@ using System.Text;
 
 namespace Lucene.Net.Util
 {
-
-    /// <summary> Base class for Attributes that can be added to a 
+    /// <summary> Base class for Attributes that can be added to a
     /// <see cref="Lucene.Net.Util.AttributeSource" />.
     /// <p/>
     /// Attributes are used to add data in a dynamic, yet type-safe way to a source
@@ -33,14 +32,14 @@ namespace Lucene.Net.Util
     [Serializable]
     public abstract class Attribute : ICloneable, IAttribute
     {
-        /// <summary> Clears the values in this Attribute and resets it to its 
+        /// <summary> Clears the values in this Attribute and resets it to its
         /// default value. If this implementation implements more than one Attribute interface
         /// it clears all.
         /// </summary>
         public abstract void Clear();
 
         /// <summary>
-        /// This is equivalent to the anonymous class in the java version of ReflectWithString 
+        /// This is equivalent to the anonymous class in the java version of ReflectWithString
         /// </summary>
         private class StringBuilderAttributeReflector : IAttributeReflector
         {
@@ -118,13 +117,13 @@ namespace Lucene.Net.Util
 
         /// <summary> The default implementation of this method accesses all declared
         /// fields of this object and prints the values in the following syntax:
-        /// 
+        ///
         /// <code>
         /// public String toString() {
         /// return "start=" + startOffset + ",end=" + endOffset;
         /// }
         /// </code>
-        /// 
+        ///
         /// This method may be overridden by subclasses.
         /// </summary>
         public override System.String ToString()
@@ -171,7 +170,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public abstract void CopyTo(Attribute target);
 
-        /// <summary> Shallow clone. Subclasses must override this if they 
+        /// <summary> Shallow clone. Subclasses must override this if they
         /// need to clone any members deeply,
         /// </summary>
         public virtual System.Object Clone()

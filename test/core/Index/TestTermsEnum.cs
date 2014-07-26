@@ -1,54 +1,50 @@
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using IntField = Lucene.Net.Document.IntField;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LineFileDocs = Lucene.Net.Util.LineFileDocs;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using Automaton = Lucene.Net.Util.Automaton.Automaton;
-    using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
-    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+    using Automaton = Lucene.Net.Util.Automaton.Automaton;
+    using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
+    using IntField = Lucene.Net.Document.IntField;
+    using LineFileDocs = Lucene.Net.Util.LineFileDocs;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
     //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
     //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestTermsEnum extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestTermsEnum : LuceneTestCase
     {
-
         [Test]
         public virtual void Test()
         {
@@ -113,7 +109,6 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-
                     BytesRef target;
                     string exists;
                     if (Random().NextBoolean())
@@ -234,7 +229,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestIntersectRandom()
         {
-
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 
@@ -290,7 +284,6 @@ namespace Lucene.Net.Index
 
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {
-
                 // TODO: can we also test infinite As here...?
 
                 // From the random terms, pick some ratio and compile an
@@ -511,7 +504,6 @@ namespace Lucene.Net.Index
 
             // Found, rewind:
             Assert.AreEqual(1, DocFreq(r, "aa0"));
-
 
             // First term in block:
             Assert.AreEqual(1, DocFreq(r, "bb0"));
@@ -757,7 +749,6 @@ namespace Lucene.Net.Index
 
             for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
             {
-
                 BytesRef t;
                 int loc;
                 TermState termState;
@@ -941,6 +932,7 @@ namespace Lucene.Net.Index
             r.Dispose();
             dir.Dispose();
         }
+
         [Test]
         public virtual void TestIntersectStartTerm()
         {
@@ -984,7 +976,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(3, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
             Assert.IsNull(te.Next());
 
-            // should fail to find ceil label on second arc, rewind 
+            // should fail to find ceil label on second arc, rewind
             te = terms.Intersect(ca, new BytesRef("add"));
             Assert.AreEqual("bcd", te.Next().Utf8ToString());
             Assert.AreEqual(3, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
@@ -1014,7 +1006,7 @@ namespace Lucene.Net.Index
 
             doc = new Document();
             // add empty string to both documents, so that singletonDocID == -1.
-            // For a FST-based term dict, we'll expect to see the first arc is 
+            // For a FST-based term dict, we'll expect to see the first arc is
             // flaged with HAS_FINAL_OUTPUT
             doc.Add(NewStringField("field", "abc", Field.Store.NO));
             doc.Add(NewStringField("field", "", Field.Store.NO));
@@ -1058,5 +1050,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

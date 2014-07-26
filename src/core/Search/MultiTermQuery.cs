@@ -1,43 +1,43 @@
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Support;
+    using AttributeSource = Lucene.Net.Util.AttributeSource;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-    using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum; // javadocs
+    // javadocs
     using IndexReader = Lucene.Net.Index.IndexReader;
     using SingleTermsEnum = Lucene.Net.Index.SingleTermsEnum; // javadocs
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using AttributeSource = Lucene.Net.Util.AttributeSource;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// An abstract <seealso cref="Query"/> that matches documents
     /// containing a subset of terms provided by a {@link
     /// FilteredTermsEnum} enumeration.
-    /// 
+    ///
     /// <p>this query cannot be used directly; you must subclass
     /// it and define <seealso cref="#getTermsEnum(Terms,AttributeSource)"/> to provide a {@link
     /// FilteredTermsEnum} that iterates through the terms to be
     /// matched.
-    /// 
+    ///
     /// <p><b>NOTE</b>: if <seealso cref="#setRewriteMethod"/> is either
     /// <seealso cref="#CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE"/> or {@link
     /// #SCORING_BOOLEAN_QUERY_REWRITE}, you may encounter a
@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
     /// BooleanQuery#getMaxClauseCount()}.  Setting {@link
     /// #setRewriteMethod} to <seealso cref="#CONSTANT_SCORE_FILTER_REWRITE"/>
     /// prevents this.
-    /// 
+    ///
     /// <p>The recommended rewrite method is {@link
     /// #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}: it doesn't spend CPU
     /// computing unhelpful scores, and it tries to pick the most
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
     /// <seealso cref="TopTermsScoringBooleanQueryRewrite"/> which uses
     /// a priority queue to only collect competitive terms
     /// and not hit this limitation.
-    /// 
+    ///
     /// Note that org.apache.lucene.queryparser.classic.QueryParser produces
     /// MultiTermQueries using {@link
     /// #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} by default.
@@ -71,6 +71,7 @@ namespace Lucene.Net.Search
         public abstract class RewriteMethod
         {
             public abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
+
             /// <summary>
             /// Returns the <seealso cref="MultiTermQuery"/>s <seealso cref="TermsEnum"/> </summary>
             /// <seealso cref= MultiTermQuery#getTermsEnum(Terms, AttributeSource) </seealso>
@@ -85,7 +86,7 @@ namespace Lucene.Net.Search
         ///  by visiting each term in sequence and marking all docs
         ///  for that term.  Matching documents are assigned a
         ///  constant score equal to the query's boost.
-        /// 
+        ///
         ///  <p> this method is faster than the BooleanQuery
         ///  rewrite methods when the number of matched terms or
         ///  matched documents is non-trivial. Also, it will never
@@ -117,7 +118,7 @@ namespace Lucene.Net.Search
         ///  meaningless to the user, and require non-trivial CPU
         ///  to compute, so it's almost always better to use {@link
         ///  #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} instead.
-        /// 
+        ///
         ///  <p><b>NOTE</b>: this rewrite method will hit {@link
         ///  BooleanQuery.TooManyClauses} if the number of terms
         ///  exceeds <seealso cref="BooleanQuery#getMaxClauseCount"/>.
@@ -130,7 +131,7 @@ namespace Lucene.Net.Search
         ///  scores are not computed.  Instead, each matching
         ///  document receives a constant score equal to the
         ///  query's boost.
-        /// 
+        ///
         ///  <p><b>NOTE</b>: this rewrite method will hit {@link
         ///  BooleanQuery.TooManyClauses} if the number of terms
         ///  exceeds <seealso cref="BooleanQuery#getMaxClauseCount"/>.
@@ -142,7 +143,7 @@ namespace Lucene.Net.Search
         /// A rewrite method that first translates each term into
         /// <seealso cref="BooleanClause.Occur#SHOULD"/> clause in a BooleanQuery, and keeps the
         /// scores as computed by the query.
-        /// 
+        ///
         /// <p>
         /// this rewrite method only uses the top scoring terms so it will not overflow
         /// the boolean max clause count. It is the default rewrite method for
@@ -151,13 +152,12 @@ namespace Lucene.Net.Search
         /// <seealso cref= #setRewriteMethod </seealso>
         public sealed class TopTermsScoringBooleanQueryRewrite : TopTermsRewrite<BooleanQuery>
         {
-
             /// <summary>
-            /// Create a TopTermsScoringBooleanQueryRewrite for 
+            /// Create a TopTermsScoringBooleanQueryRewrite for
             /// at most <code>size</code> terms.
             /// <p>
-            /// NOTE: if <seealso cref="BooleanQuery#getMaxClauseCount"/> is smaller than 
-            /// <code>size</code>, then it will be used instead. 
+            /// NOTE: if <seealso cref="BooleanQuery#getMaxClauseCount"/> is smaller than
+            /// <code>size</code>, then it will be used instead.
             /// </summary>
             public TopTermsScoringBooleanQueryRewrite(int size)
                 : base(size)
@@ -199,13 +199,12 @@ namespace Lucene.Net.Search
         /// <seealso cref= #setRewriteMethod </seealso>
         public sealed class TopTermsBoostOnlyBooleanQueryRewrite : TopTermsRewrite<BooleanQuery>
         {
-
             /// <summary>
-            /// Create a TopTermsBoostOnlyBooleanQueryRewrite for 
+            /// Create a TopTermsBoostOnlyBooleanQueryRewrite for
             /// at most <code>size</code> terms.
             /// <p>
-            /// NOTE: if <seealso cref="BooleanQuery#getMaxClauseCount"/> is smaller than 
-            /// <code>size</code>, then it will be used instead. 
+            /// NOTE: if <seealso cref="BooleanQuery#getMaxClauseCount"/> is smaller than
+            /// <code>size</code>, then it will be used instead.
             /// </summary>
             public TopTermsBoostOnlyBooleanQueryRewrite(int size)
                 : base(size)
@@ -261,7 +260,7 @@ namespace Lucene.Net.Search
         ///  ConstantScoreAutoRewrite#DEFAULT_DOC_COUNT_PERCENT}.
         ///  Note that you cannot alter the configuration of this
         ///  instance; you'll need to create a private instance
-        ///  instead. 
+        ///  instead.
         /// </summary>
         public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = new ConstantScoreAutoRewriteAnonymousInnerClassHelper();
 
@@ -344,6 +343,7 @@ namespace Lucene.Net.Search
         {
             return rewriteMethod.Rewrite(reader, this);
         }
+
         /*
               /// <seealso cref= #setRewriteMethod </seealso>
               public virtual RewriteMethod RewriteMethod
@@ -358,6 +358,7 @@ namespace Lucene.Net.Search
                   }
               }
                 */
+
         public virtual RewriteMethod GetRewriteMethod()
         {
             return rewriteMethod;
@@ -367,7 +368,6 @@ namespace Lucene.Net.Search
         {
             rewriteMethod = value;
         }
-
 
         public override int GetHashCode()
         {
@@ -407,7 +407,5 @@ namespace Lucene.Net.Search
             }
             return (other.field == null ? field == null : other.field.Equals(field));
         }
-
     }
-
 }

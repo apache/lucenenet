@@ -2,8 +2,6 @@ using System;
 
 namespace Lucene.Net.Index
 {
-
-    using Lucene.Net.Support;
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,16 +19,15 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
     ///  A Term represents a word from text.  this is the unit of search.  It is
     ///  composed of two elements, the text of the word, as a string, and the name of
     ///  the field that the text occurred in.
-    /// 
+    ///
     ///  Note that terms may represent more than words from text fields, but also
-    ///  things like dates, email addresses, urls, etc.  
+    ///  things like dates, email addresses, urls, etc.
     /// </summary>
 
     public sealed class Term : IComparable<Term>, IEquatable<Term>
@@ -41,8 +38,8 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Constructs a Term with the given field and bytes.
         /// <p>Note that a null field or null bytes value results in undefined
-        /// behavior for most Lucene APIs that accept a Term parameter. 
-        /// 
+        /// behavior for most Lucene APIs that accept a Term parameter.
+        ///
         /// <p>WARNING: the provided BytesRef is not copied, but used directly.
         /// Therefore the bytes should not be modified after construction, for
         /// example, you should clone a copy by <seealso cref="BytesRef#deepCopyOf"/>
@@ -57,7 +54,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Constructs a Term with the given field and text.
         /// <p>Note that a null field or null text value results in undefined
-        /// behavior for most Lucene APIs that accept a Term parameter. 
+        /// behavior for most Lucene APIs that accept a Term parameter.
         /// </summary>
         public Term(string fld, string text)
             : this(fld, new BytesRef(text))
@@ -77,7 +74,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the field of this term.   The field indicates
-        ///  the part of a document which this term came from. 
+        ///  the part of a document which this term came from.
         /// </summary>
         public string Field()
         {
@@ -87,7 +84,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the text of this term.  In the case of words, this is simply the
         ///  text of the word.  In the case of dates and other types, this is an
-        ///  encoding of the object as a string.  
+        ///  encoding of the object as a string.
         /// </summary>
         public string Text()
         {
@@ -96,7 +93,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns human-readable form of the term text. If the term is not unicode,
-        /// the raw bytes will be printed instead. 
+        /// the raw bytes will be printed instead.
         /// </summary>
         public static string ToString(BytesRef termText)
         {
@@ -147,7 +144,7 @@ namespace Lucene.Net.Index
         /// Compares two terms, returning a negative integer if this
         ///  term belongs before the argument, zero if this term is equal to the
         ///  argument, and a positive integer if this term belongs after the argument.
-        /// 
+        ///
         ///  The ordering of terms is first by field, then by text.
         /// </summary>
         public int CompareTo(Term other)
@@ -163,7 +160,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Resets the field and text of a Term. 
+        /// Resets the field and text of a Term.
         /// <p>WARNING: the provided BytesRef is not copied, but used directly.
         /// Therefore the bytes should not be modified after construction, for
         /// example, you should clone a copy rather than pass reused bytes from
@@ -216,5 +213,4 @@ namespace Lucene.Net.Index
             return Field_Renamed + ":" + Text();
         }
     }
-
 }

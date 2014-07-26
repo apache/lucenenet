@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
     using NUnit.Framework;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,14 +21,12 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-
     using Directory = Lucene.Net.Store.Directory;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     [TestFixture]
     public class TestIndexCommit : LuceneTestCase
     {
-
         [Test]
         public virtual void TestEqualsHashCode()
         {
@@ -63,6 +61,7 @@ namespace Lucene.Net.Index
                     return "a";
                 }
             }
+
             public override Directory Directory
             {
                 get
@@ -70,6 +69,7 @@ namespace Lucene.Net.Index
                     return Dir;
                 }
             }
+
             public override ICollection<string> FileNames
             {
                 get
@@ -77,9 +77,11 @@ namespace Lucene.Net.Index
                     return null;
                 }
             }
+
             public override void Delete()
             {
             }
+
             public override long Generation
             {
                 get
@@ -87,6 +89,7 @@ namespace Lucene.Net.Index
                     return 0;
                 }
             }
+
             public override IDictionary<string, string> UserData
             {
                 get
@@ -94,6 +97,7 @@ namespace Lucene.Net.Index
                     return null;
                 }
             }
+
             public override bool Deleted
             {
                 get
@@ -101,6 +105,7 @@ namespace Lucene.Net.Index
                     return false;
                 }
             }
+
             public override int SegmentCount
             {
                 get
@@ -129,6 +134,7 @@ namespace Lucene.Net.Index
                     return "b";
                 }
             }
+
             public override Directory Directory
             {
                 get
@@ -136,6 +142,7 @@ namespace Lucene.Net.Index
                     return Dir;
                 }
             }
+
             public override ICollection<string> FileNames
             {
                 get
@@ -143,9 +150,11 @@ namespace Lucene.Net.Index
                     return null;
                 }
             }
+
             public override void Delete()
             {
             }
+
             public override long Generation
             {
                 get
@@ -153,6 +162,7 @@ namespace Lucene.Net.Index
                     return 0;
                 }
             }
+
             public override IDictionary<string, string> UserData
             {
                 get
@@ -160,6 +170,7 @@ namespace Lucene.Net.Index
                     return null;
                 }
             }
+
             public override bool Deleted
             {
                 get
@@ -167,6 +178,7 @@ namespace Lucene.Net.Index
                     return false;
                 }
             }
+
             public override int SegmentCount
             {
                 get
@@ -176,5 +188,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

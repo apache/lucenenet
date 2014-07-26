@@ -26,19 +26,24 @@ namespace Lucene.Net.Support
 {
     public class Inflater
     {
-        delegate void SetInputDelegate(byte[] buffer);
-        delegate bool GetIsFinishedDelegate();
-        delegate int InflateDelegate(byte[] buffer);
-        delegate void ResetDelegate();
-        delegate void SetInputDelegate3(byte[] buffer, int index, int count);
-        delegate int InflateDelegate3(byte[] buffer, int offset, int count);
+        private delegate void SetInputDelegate(byte[] buffer);
 
-        SetInputDelegate setInputMethod;
-        GetIsFinishedDelegate getIsFinishedMethod;
-        InflateDelegate inflateMethod;
-        ResetDelegate resetMethod;
-        SetInputDelegate3 setInput3Method;
-        InflateDelegate3 inflate3Method;
+        private delegate bool GetIsFinishedDelegate();
+
+        private delegate int InflateDelegate(byte[] buffer);
+
+        private delegate void ResetDelegate();
+
+        private delegate void SetInputDelegate3(byte[] buffer, int index, int count);
+
+        private delegate int InflateDelegate3(byte[] buffer, int offset, int count);
+
+        private SetInputDelegate setInputMethod;
+        private GetIsFinishedDelegate getIsFinishedMethod;
+        private InflateDelegate inflateMethod;
+        private ResetDelegate resetMethod;
+        private SetInputDelegate3 setInput3Method;
+        private InflateDelegate3 inflate3Method;
 
         internal Inflater(object inflaterInstance)
         {
@@ -98,7 +103,7 @@ namespace Lucene.Net.Support
         public int Inflate(byte[] buffer, int offset, int count)
         {
             //LUCENE TODO: brute-force converting for now to eliminate TypeMismatchError
-            byte[] byteBuffer = buffer.Select(b => (byte) b).ToArray();
+            byte[] byteBuffer = buffer.Select(b => (byte)b).ToArray();
             return inflate3Method(byteBuffer, offset, count);
         }
 

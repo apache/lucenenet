@@ -1,52 +1,48 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Document = Lucene.Net.Document.Document;
-    using TextField = Lucene.Net.Document.TextField;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
-    using Constants = Lucene.Net.Util.Constants;
-    using InfoStream = Lucene.Net.Util.InfoStream;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
     using System.IO;
-    using Lucene.Net.Util;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using Constants = Lucene.Net.Util.Constants;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Document.Document;
+    using InfoStream = Lucene.Net.Util.InfoStream;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+    using TextField = Lucene.Net.Document.TextField;
+    using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
     /// <summary>
     /// JUnit adaptation of an older test case DocTest. </summary>
     [TestFixture]
     public class TestDoc : LuceneTestCase
     {
-
         private DirectoryInfo WorkDir;
         private DirectoryInfo IndexDir;
         private LinkedList<FileInfo> Files;
@@ -93,7 +89,6 @@ namespace Lucene.Net.Index
                 pw = new StreamWriter(f.FullName);
                 pw.WriteLine(text);
                 return f;
-
             }
             finally
             {
@@ -108,11 +103,10 @@ namespace Lucene.Net.Index
             }
         }
 
-
         /// <summary>
         /// this test executes a number of merges and compares the contents of
         ///  the segments created when using compound file or not using one.
-        /// 
+        ///
         ///  TODO: the original test used to print the segment contents to System.out
         ///        for visual validation. To have the same effect, a new method
         ///        checkSegment(String name, ...) should be created that would
@@ -210,7 +204,6 @@ namespace Lucene.Net.Index
             return writer.NewestSegment();
         }
 
-
         private SegmentCommitInfo Merge(Directory dir, SegmentCommitInfo si1, SegmentCommitInfo si2, string merged, bool useCompoundFile)
         {
             IOContext context = NewIOContext(Random());
@@ -242,7 +235,6 @@ namespace Lucene.Net.Index
             return new SegmentCommitInfo(info, 0, -1L, -1L);
         }
 
-
         private void PrintSegment(StreamWriter @out, SegmentCommitInfo si)
         {
             SegmentReader reader = new SegmentReader(si, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
@@ -260,7 +252,6 @@ namespace Lucene.Net.Index
                 TermsEnum tis = terms.Iterator(null);
                 while (tis.Next() != null)
                 {
-
                     @out.Write("  term=" + field + ":" + tis.Term());
                     @out.WriteLine("    DF=" + tis.DocFreq());
 
@@ -283,5 +274,4 @@ namespace Lucene.Net.Index
             reader.Dispose();
         }
     }
-
 }

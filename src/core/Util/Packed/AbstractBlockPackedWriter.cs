@@ -2,9 +2,9 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-
     using Lucene.Net.Support;
     using System;
+
     /*
     * Licensed to the Apache Software Foundation (ASF) under one or more
     * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +26,6 @@ namespace Lucene.Net.Util.Packed
 
     public abstract class AbstractBlockPackedWriter
     {
-
         internal const int MIN_BLOCK_SIZE = 64;
         internal static readonly int MAX_BLOCK_SIZE = 1 << (30 - 3);
         internal static readonly int MIN_VALUE_EQUALS_0 = 1 << 0;
@@ -118,7 +117,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Flush all buffered data to disk. this instance is not usable anymore
         ///  after this method has been called until <seealso cref="#reset(DataOutput)"/> has
-        ///  been called. 
+        ///  been called.
         /// </summary>
         public virtual void Finish()
         {
@@ -164,7 +163,5 @@ namespace Lucene.Net.Util.Packed
             int blockCount = (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, Off, bitsRequired);
             @out.WriteBytes(Blocks, blockCount);
         }
-
     }
-
 }

@@ -3,74 +3,73 @@ using System.Text;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Util;
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Codec = Lucene.Net.Codecs.Codec;
     using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
     using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
-    using Lucene.Net.Util;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using Version = Lucene.Net.Util.Version;
-    using System.IO;
 
     /// <summary>
     /// Holds all the configuration that is used to create an <seealso cref="IndexWriter"/>.
     /// Once <seealso cref="IndexWriter"/> has been created with this object, changes to this
     /// object will not affect the <seealso cref="IndexWriter"/> instance. For that, use
     /// <seealso cref="LiveIndexWriterConfig"/> that is returned from <seealso cref="IndexWriter#getConfig()"/>.
-    /// 
+    ///
     /// <p>
     /// All setter methods return <seealso cref="IndexWriterConfig"/> to allow chaining
     /// settings conveniently, for example:
-    /// 
+    ///
     /// <pre class="prettyprint">
     /// IndexWriterConfig conf = new IndexWriterConfig(analyzer);
     /// conf.setter1().setter2();
     /// </pre>
     /// </summary>
     /// <seealso cref= IndexWriter#getConfig()
-    /// 
+    ///
     /// @since 3.1 </seealso>
     public sealed class IndexWriterConfig : LiveIndexWriterConfig, ICloneable
     {
-
         /// <summary>
         /// Specifies the open mode for <seealso cref="IndexWriter"/>.
         /// </summary>
         public enum OpenMode_e
         {
             /// <summary>
-            /// Creates a new index or overwrites an existing one. 
+            /// Creates a new index or overwrites an existing one.
             /// </summary>
             CREATE,
 
             /// <summary>
-            /// Opens an existing index. 
+            /// Opens an existing index.
             /// </summary>
             APPEND,
 
             /// <summary>
             /// Creates a new index if one does not exist,
-            /// otherwise it opens the index and documents will be appended. 
+            /// otherwise it opens the index and documents will be appended.
             /// </summary>
             CREATE_OR_APPEND
         }
@@ -119,21 +118,21 @@ namespace Lucene.Net.Index
         /// The maximum number of simultaneous threads that may be
         ///  indexing documents at once in IndexWriter; if more
         ///  than this many threads arrive they will wait for
-        ///  others to finish. Default value is 8. 
+        ///  others to finish. Default value is 8.
         /// </summary>
         public const int DEFAULT_MAX_THREAD_STATES = 8;
 
         /// <summary>
         /// Default value for compound file system for newly written segments
-        ///  (set to <code>true</code>). For batch indexing with very large 
-        ///  ram buffers use <code>false</code> 
+        ///  (set to <code>true</code>). For batch indexing with very large
+        ///  ram buffers use <code>false</code>
         /// </summary>
         public const bool DEFAULT_USE_COMPOUND_FILE_SYSTEM = true;
 
         /// <summary>
         /// Default value for calling <seealso cref="AtomicReader#checkIntegrity()"/> before
         ///  merging segments (set to <code>false</code>). You can set this
-        ///  to <code>true</code> for additional safety. 
+        ///  to <code>true</code> for additional safety.
         /// </summary>
         public const bool DEFAULT_CHECK_INTEGRITY_AT_MERGE = false;
 
@@ -152,7 +151,6 @@ namespace Lucene.Net.Index
                 return WRITE_LOCK_TIMEOUT;
             }
         }
-
 
         // indicates whether this config instance is already attached to a writer.
         // not final so that it can be cloned properly.
@@ -217,8 +215,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Specifies <seealso cref="OpenMode"/> of the index.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetOpenMode(OpenMode_e? openMode)
         {
@@ -251,8 +249,8 @@ namespace Lucene.Net.Index
         /// Lucene's "point in time" search normally relies on.
         /// <p>
         /// <b>NOTE:</b> the deletion policy cannot be null.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetIndexDeletionPolicy(IndexDeletionPolicy deletionPolicy)
         {
@@ -275,8 +273,8 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Expert: allows to open a certain commit point. The default is null which
         /// opens the latest commit point.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetIndexCommit(IndexCommit commit)
         {
@@ -296,8 +294,8 @@ namespace Lucene.Net.Index
         /// Expert: set the <seealso cref="Similarity"/> implementation used by this IndexWriter.
         /// <p>
         /// <b>NOTE:</b> the similarity cannot be null.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetSimilarity(Similarity similarity)
         {
@@ -322,8 +320,8 @@ namespace Lucene.Net.Index
         /// <seealso cref="ConcurrentMergeScheduler"/>.
         /// <p>
         /// <b>NOTE:</b> the merge scheduler cannot be null.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetMergeScheduler(MergeScheduler mergeScheduler)
         {
@@ -347,8 +345,8 @@ namespace Lucene.Net.Index
         /// Sets the maximum time to wait for a write lock (in milliseconds) for this
         /// instance. You can change the default value for all instances by calling
         /// <seealso cref="#setDefaultWriteLockTimeout(long)"/>.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetWriteLockTimeout(long writeLockTimeout)
         {
@@ -369,8 +367,8 @@ namespace Lucene.Net.Index
         /// segments in the index. Its role is to select which merges to do, if any,
         /// and return a <seealso cref="MergePolicy.MergeSpecification"/> describing the merges.
         /// It also selects merges to do for forceMerge.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetMergePolicy(MergePolicy mergePolicy)
         {
@@ -384,7 +382,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Set the <seealso cref="Codec"/>.
-        /// 
+        ///
         /// <p>
         /// Only takes effect when IndexWriter is first created.
         /// </summary>
@@ -453,8 +451,8 @@ namespace Lucene.Net.Index
         /// at once in IndexWriter. Values &lt; 1 are invalid and if passed
         /// <code>maxThreadStates</code> will be set to
         /// <seealso cref="#DEFAULT_MAX_THREAD_STATES"/>.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetMaxThreadStates(int maxThreadStates)
         {
@@ -486,8 +484,8 @@ namespace Lucene.Net.Index
         ///  near-real-time reader.  NOTE: if you set this to
         ///  false, IndexWriter will still pool readers once
         ///  <seealso cref="DirectoryReader#open(IndexWriter, boolean)"/> is called.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetReaderPooling(bool readerPooling)
         {
@@ -505,8 +503,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: sets the <seealso cref="DocConsumer"/> chain to be used to process documents.
-        /// 
-        /// <p>Only takes effect when IndexWriter is first created. 
+        ///
+        /// <p>Only takes effect when IndexWriter is first created.
         /// </summary>
         public IndexWriterConfig SetIndexingChain(IndexingChain indexingChain)
         {
@@ -646,7 +644,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Information about merges, deletes and a
         /// message when maxFieldLength is reached will be printed
-        /// to this. Must not be null, but <seealso cref="InfoStream#NO_OUTPUT"/> 
+        /// to this. Must not be null, but <seealso cref="InfoStream#NO_OUTPUT"/>
         /// may be used to supress output.
         /// </summary>
         public IndexWriterConfig SetInfoStream(InfoStream infoStream)
@@ -712,7 +710,5 @@ namespace Lucene.Net.Index
             sb.Append("writer=").Append(Writer).Append("\n");
             return sb.ToString();
         }
-
     }
-
 }

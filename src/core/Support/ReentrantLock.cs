@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Lucene.Net.Support
 {
@@ -13,7 +9,6 @@ namespace Lucene.Net.Support
 
         // .NET Port: Estimated monitor queue length
         private int _queueLength = 0;
-
 
         // .NET Port: mimic ReentrantLock -- Monitor is re-entrant
         public void Lock()

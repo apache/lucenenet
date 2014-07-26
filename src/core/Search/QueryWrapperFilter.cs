@@ -1,7 +1,5 @@
 namespace Lucene.Net.Search
 {
-
-    using Lucene.Net.Index;
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -24,11 +22,11 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Constrains search results to only match those which also match a provided
-    /// query.  
-    /// 
+    /// query.
+    ///
     /// <p> this could be used, for example, with a <seealso cref="NumericRangeQuery"/> on a suitably
     /// formatted date field to implement date filtering.  One could re-use a single
-    /// CachingWrapperFilter(QueryWrapperFilter) that matches, e.g., only documents modified 
+    /// CachingWrapperFilter(QueryWrapperFilter) that matches, e.g., only documents modified
     /// within the last week.  this would only need to be reconstructed once per day.
     /// </summary>
     public class QueryWrapperFilter : Filter
@@ -86,6 +84,7 @@ namespace Lucene.Net.Search
             {
                 return Weight.Scorer(PrivateContext, AcceptDocs);
             }
+
             public override bool Cacheable
             {
                 get
@@ -114,5 +113,4 @@ namespace Lucene.Net.Search
             return Query_Renamed.GetHashCode() ^ unchecked((int)0x923F64B9);
         }
     }
-
 }

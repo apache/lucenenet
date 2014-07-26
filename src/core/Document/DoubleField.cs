@@ -1,8 +1,5 @@
-using System;
-
 namespace Lucene.Net.Document
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,34 +17,29 @@ namespace Lucene.Net.Document
      * limitations under the License.
      */
 
-    using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream; // javadocs
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using FieldCache = Lucene.Net.Search.FieldCache; // javadocs
-    using Lucene.Net.Search; // javadocs
-    using NumericUtils = Lucene.Net.Util.NumericUtils;
+    // javadocs
+    // javadocs
+    // javadocs
     using Lucene.Net.Index;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     /// <summary>
     /// <p>
     /// Field that indexes <code>double</code> values
     /// for efficient range filtering and sorting. Here's an example usage:
-    /// 
+    ///
     /// <pre class="prettyprint">
     /// document.add(new DoubleField(name, 6.0, Field.Store.NO));
     /// </pre>
-    /// 
+    ///
     /// For optimal performance, re-use the <code>DoubleField</code> and
     /// <seealso cref="Document"/> instance for more than one document:
-    /// 
+    ///
     /// <pre class="prettyprint">
     ///  DoubleField field = new DoubleField(name, 0.0, Field.Store.NO);
     ///  Document document = new Document();
     ///  document.add(field);
-    /// 
+    ///
     ///  for(all documents) {
     ///    ...
     ///    field.setDoubleValue(value)
@@ -55,30 +47,30 @@ namespace Lucene.Net.Document
     ///    ...
     ///  }
     /// </pre>
-    /// 
+    ///
     /// See also <seealso cref="IntField"/>, <seealso cref="LongField"/>, {@link
     /// FloatField}.
-    /// 
+    ///
     /// <p>To perform range querying or filtering against a
     /// <code>DoubleField</code>, use <seealso cref="NumericRangeQuery"/> or {@link
     /// NumericRangeFilter}.  To sort according to a
     /// <code>DoubleField</code>, use the normal numeric sort types, eg
-    /// <seealso cref="Lucene.Net.Search.SortField.Type#DOUBLE"/>. <code>DoubleField</code> 
+    /// <seealso cref="Lucene.Net.Search.SortField.Type#DOUBLE"/>. <code>DoubleField</code>
     /// values can also be loaded directly from <seealso cref="FieldCache"/>.</p>
-    /// 
+    ///
     /// <p>You may add the same field name as an <code>DoubleField</code> to
     /// the same document more than once.  Range querying and
     /// filtering will be the logical OR of all values; so a range query
     /// will hit all documents that have at least one value in
     /// the range. However sort behavior is not defined.  If you need to sort,
     /// you should separately index a single-valued <code>DoubleField</code>.</p>
-    /// 
+    ///
     /// <p>A <code>DoubleField</code> will consume somewhat more disk space
     /// in the index than an ordinary single-valued field.
     /// However, for a typical index that includes substantial
     /// textual content per document, this increase will likely
     /// be in the noise. </p>
-    /// 
+    ///
     /// <p>Within Lucene, each numeric value is indexed as a
     /// <em>trie</em> structure, where each term is logically
     /// assigned to larger and larger pre-defined brackets (which
@@ -99,29 +91,28 @@ namespace Lucene.Net.Document
     /// If the cardinality is &lt; 100, it is fair
     /// to use <seealso cref="Integer#MAX_VALUE"/>, which produces one
     /// term per value.
-    /// 
+    ///
     /// <p>For more information on the internals of numeric trie
     /// indexing, including the <a
     /// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
     /// configuration, see <seealso cref="NumericRangeQuery"/>. The format of
     /// indexed values is described in <seealso cref="NumericUtils"/>.
-    /// 
+    ///
     /// <p>If you only need to sort by numeric value, and never
     /// run range querying/filtering, you can index using a
     /// <code>precisionStep</code> of <seealso cref="Integer#MAX_VALUE"/>.
     /// this will minimize disk space consumed. </p>
-    /// 
+    ///
     /// <p>More advanced users can instead use {@link
     /// NumericTokenStream} directly, when indexing numbers. this
     /// class is a wrapper around this token stream type for
     /// easier, more intuitive usage.</p>
-    /// 
+    ///
     /// @since 2.9
     /// </summary>
 
     public sealed class DoubleField : Field
     {
-
         /// <summary>
         /// Type for a DoubleField that is not stored:
         /// normalization factors, frequencies, and positions are omitted.
@@ -185,5 +176,4 @@ namespace Lucene.Net.Document
             FieldsData = Convert.ToDouble(value);
         }
     }
-
 }

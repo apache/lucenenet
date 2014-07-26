@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Support
 {
@@ -25,7 +23,7 @@ namespace Lucene.Net.Support
         public static IList<T> SubList<T>(this IList<T> list, int fromIndex, int toIndex)
         {
             // .NET Port: This is to mimic Java's List.subList method, which has a different usage
-            // than .NETs' List.GetRange. subList's parameters are indices, GetRange's parameters are a 
+            // than .NETs' List.GetRange. subList's parameters are indices, GetRange's parameters are a
             // starting index and a count. So we would need to do some light index math to translate this into
             // GetRange. This will be a safer extension method to use when translating java code
             // as there will be no question as to how to change it into GetRange. Also, subList returns

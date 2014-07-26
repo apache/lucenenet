@@ -1,53 +1,52 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Compressing
 {
+    using Lucene.Net.Support;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using FieldInfos = Lucene.Net.Index.FieldInfos;
-    using Fields = Lucene.Net.Index.Fields;
-    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using MergeState = Lucene.Net.Index.MergeState;
-    using SegmentInfo = Lucene.Net.Index.SegmentInfo;
-    using SegmentReader = Lucene.Net.Index.SegmentReader;
+    using Bits = Lucene.Net.Util.Bits;
+    using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
     using BufferedChecksumIndexInput = Lucene.Net.Store.BufferedChecksumIndexInput;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
     using DataInput = Lucene.Net.Store.DataInput;
     using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
+    using FieldInfo = Lucene.Net.Index.FieldInfo;
+    using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using Fields = Lucene.Net.Index.Fields;
+    using GrowableByteArrayDataOutput = Lucene.Net.Util.GrowableByteArrayDataOutput;
+    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using GrowableByteArrayDataOutput = Lucene.Net.Util.GrowableByteArrayDataOutput;
+    using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using StringHelper = Lucene.Net.Util.StringHelper;
-    using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
+    using MergeState = Lucene.Net.Index.MergeState;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
+    using SegmentInfo = Lucene.Net.Index.SegmentInfo;
+    using SegmentReader = Lucene.Net.Index.SegmentReader;
+    using StringHelper = Lucene.Net.Util.StringHelper;
 
     /// <summary>
     /// <seealso cref="TermVectorsWriter"/> for <seealso cref="CompressingTermVectorsFormat"/>.
@@ -55,7 +54,6 @@ namespace Lucene.Net.Codecs.Compressing
     /// </summary>
     public sealed class CompressingTermVectorsWriter : TermVectorsWriter
     {
-
         // hard limit on the maximum number of documents per chunk
         internal const int MAX_DOCUMENTS_PER_CHUNK = 128;
 
@@ -95,6 +93,7 @@ namespace Lucene.Net.Codecs.Compressing
             internal readonly int NumFields;
             internal readonly LinkedList<FieldData> Fields;
             internal readonly int PosStart, OffStart, PayStart;
+
             internal DocData(CompressingTermVectorsWriter OuterInstance, int numFields, int posStart, int offStart, int payStart)
             {
                 this.OuterInstance = OuterInstance;
@@ -104,6 +103,7 @@ namespace Lucene.Net.Codecs.Compressing
                 this.OffStart = offStart;
                 this.PayStart = payStart;
             }
+
             internal virtual FieldData AddField(int fieldNum, int numTerms, bool positions, bool offsets, bool payloads)
             {
                 FieldData field;
@@ -164,6 +164,7 @@ namespace Lucene.Net.Codecs.Compressing
             internal readonly int PosStart, OffStart, PayStart;
             internal int TotalPositions;
             internal int Ord;
+
             internal FieldData(CompressingTermVectorsWriter OuterInstance, int fieldNum, int numTerms, bool positions, bool offsets, bool payloads, int posStart, int offStart, int payStart)
             {
                 this.OuterInstance = OuterInstance;
@@ -182,6 +183,7 @@ namespace Lucene.Net.Codecs.Compressing
                 TotalPositions = 0;
                 Ord = 0;
             }
+
             internal virtual void AddTerm(int freq, int prefixLength, int suffixLength)
             {
                 Freqs[Ord] = freq;
@@ -189,6 +191,7 @@ namespace Lucene.Net.Codecs.Compressing
                 SuffixLengths[Ord] = suffixLength;
                 ++Ord;
             }
+
             internal virtual void AddPosition(int position, int startOffset, int length, int payloadLength)
             {
                 if (HasPositions)
@@ -301,7 +304,6 @@ namespace Lucene.Net.Codecs.Compressing
                     IndexWriter = null;
                 }
             }
-
         }
 
         public override void Abort()
@@ -1004,7 +1006,5 @@ namespace Lucene.Net.Codecs.Compressing
             }
             return doc;
         }
-
     }
-
 }

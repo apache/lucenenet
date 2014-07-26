@@ -1,11 +1,10 @@
+using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,43 +22,36 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis;
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using NUnit.Framework;
+    using System.IO;
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using TextField = Lucene.Net.Document.TextField;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using MultiFields = Lucene.Net.Index.MultiFields;
-    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MultiFields = Lucene.Net.Index.MultiFields;
+    using MultiSpansWrapper = Lucene.Net.Search.Spans.MultiSpansWrapper;
+    using PayloadSpanUtil = Lucene.Net.Search.Payloads.PayloadSpanUtil;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
-    using Term = Lucene.Net.Index.Term;
-    using Directory = Lucene.Net.Store.Directory;
-    using PayloadSpanUtil = Lucene.Net.Search.Payloads.PayloadSpanUtil;
-    using MultiSpansWrapper = Lucene.Net.Search.Spans.MultiSpansWrapper;
     using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
     using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
     using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
-    using Spans = Lucene.Net.Search.Spans.Spans;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using NUnit.Framework;
-    using System.IO;
-    using Lucene.Net.Util;
+    using Term = Lucene.Net.Index.Term;
+    using TextField = Lucene.Net.Document.TextField;
 
     /// <summary>
     /// Term position unit test.
-    /// 
-    /// 
+    ///
+    ///
     /// </summary>
     [TestFixture]
     public class TestPositionIncrement : LuceneTestCase
     {
-
         internal const bool VERBOSE = false;
 
         [Test]
@@ -73,7 +65,6 @@ namespace Lucene.Net.Search
             writer.AddDocument(d);
             IndexReader reader = writer.Reader;
             writer.Dispose();
-
 
             IndexSearcher searcher = NewSearcher(reader);
 
@@ -122,15 +113,15 @@ namespace Lucene.Net.Search
             hits = searcher.Search(q, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
 
-            // phrase query would find it when correct positions are specified. 
+            // phrase query would find it when correct positions are specified.
             q = new PhraseQuery();
             q.Add(new Term("field", "3"), 0);
             q.Add(new Term("field", "4"), 0);
             hits = searcher.Search(q, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
 
-            // phrase query should fail for non existing searched term 
-            // even if there exist another searched terms in the same searched position. 
+            // phrase query should fail for non existing searched term
+            // even if there exist another searched terms in the same searched position.
             q = new PhraseQuery();
             q.Add(new Term("field", "3"), 0);
             q.Add(new Term("field", "9"), 0);
@@ -138,7 +129,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, hits.Length);
 
             // multi-phrase query should succed for non existing searched term
-            // because there exist another searched terms in the same searched position. 
+            // because there exist another searched terms in the same searched position.
             MultiPhraseQuery mq = new MultiPhraseQuery();
             mq.Add(new Term[] { new Term("field", "3"), new Term("field", "9") }, 0);
             hits = searcher.Search(mq, null, 1000).ScoreDocs;
@@ -204,6 +195,7 @@ namespace Lucene.Net.Search
 
                 // TODO: use CannedTokenStream
                 private readonly string[] TOKENS;
+
                 private readonly int[] INCREMENTS;
                 private int i;
 
@@ -326,5 +318,4 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
     }
-
 }

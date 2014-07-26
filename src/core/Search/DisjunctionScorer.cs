@@ -1,9 +1,8 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +20,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Base class for Scorers that score disjunctions.
     /// Currently this just provides helper methods to manage the heap.
@@ -29,9 +27,11 @@ namespace Lucene.Net.Search
     internal abstract class DisjunctionScorer : Scorer
     {
         protected internal readonly Scorer[] SubScorers;
+
         /// <summary>
         /// The document number of the current match. </summary>
         protected internal int Doc = -1;
+
         protected internal int NumScorers;
 
         protected internal DisjunctionScorer(Weight weight, Scorer[] subScorers)
@@ -211,5 +211,4 @@ namespace Lucene.Net.Search
         // TODO: make this less horrible
         protected internal abstract void AfterNext();
     }
-
 }

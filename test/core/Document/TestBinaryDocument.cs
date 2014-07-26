@@ -1,19 +1,16 @@
-using System.Text;
 using Lucene.Net.Support;
-using Lucene.Net.Util;
+using System.Text;
 
 namespace Lucene.Net.Document
 {
-
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexableField = Lucene.Net.Index.IndexableField;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
     using System;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using IndexableField = Lucene.Net.Index.IndexableField;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -38,7 +35,6 @@ namespace Lucene.Net.Document
     [TestFixture]
     public class TestBinaryDocument : LuceneTestCase
     {
-
         internal string BinaryValStored = "this text will be stored as a byte array in the index";
         internal string BinaryValCompressed = "this text will be also stored and compressed as a byte array in the index";
 
@@ -127,5 +123,4 @@ namespace Lucene.Net.Document
             dir.Dispose();
         }
     }
-
 }

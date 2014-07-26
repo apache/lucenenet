@@ -3,8 +3,8 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
-
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +21,6 @@ namespace Lucene.Net.Util.Packed
          * See the License for the specific language governing permissions and
          * limitations under the License.
          */
-
 
     using DataInput = Lucene.Net.Store.DataInput;
 
@@ -42,7 +41,7 @@ namespace Lucene.Net.Util.Packed
     /// and masks, which also proved to be a bit slower than calculating the shifts
     /// and masks on the fly.
     /// See https://issues.apache.org/jira/browse/LUCENE-4062 for details.
-    /// 
+    ///
     /// </summary>
     public class Packed64 : PackedInts.MutableImpl
     {
@@ -54,10 +53,12 @@ namespace Lucene.Net.Util.Packed
         /// Values are stores contiguously in the blocks array.
         /// </summary>
         private readonly long[] Blocks;
+
         /// <summary>
         /// A right-aligned mask of width BitsPerValue used by <seealso cref="#get(int)"/>.
         /// </summary>
         private readonly long MaskRight;
+
         /// <summary>
         /// Optimization: Saves one lookup in <seealso cref="#get(int)"/>.
         /// </summary>
@@ -76,7 +77,7 @@ namespace Lucene.Net.Util.Packed
             this.Blocks = new long[longCount];
             //            MaskRight = ~0L << (int)((uint)(BLOCK_SIZE - bitsPerValue) >> (BLOCK_SIZE - bitsPerValue));    //original
             //            MaskRight = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);          //mod
-            
+
             /*var a = ~0L << (int)((uint)(BLOCK_SIZE - bitsPerValue) >> (BLOCK_SIZE - bitsPerValue));    //original
             var b = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);          //mod
             Debug.Assert(a == b, "a: " + a, ", b: " + b);*/
@@ -129,7 +130,7 @@ namespace Lucene.Net.Util.Packed
             // The abstract index in a bit stream
             long majorBitPos = (long)index * bitsPerValue;
             // The index in the backing long-array
-            int elementPos = (int) (((ulong) majorBitPos) >> BLOCK_BITS);
+            int elementPos = (int)(((ulong)majorBitPos) >> BLOCK_BITS);
             //int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS));
             // The number of value-bits in the second long
             long endBits = (majorBitPos & MOD_MASK) + BpvMinusBlockSize;
@@ -376,5 +377,4 @@ namespace Lucene.Net.Util.Packed
             Arrays.Fill(Blocks, 0L);
         }
     }
-
 }

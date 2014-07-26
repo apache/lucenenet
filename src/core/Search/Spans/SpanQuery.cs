@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,11 +19,10 @@ namespace Lucene.Net.Search.Spans
      * limitations under the License.
      */
 
-
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
-    using Bits = Lucene.Net.Util.Bits;
 
     /// <summary>
     /// Base class for span-based queries. </summary>
@@ -32,7 +30,7 @@ namespace Lucene.Net.Search.Spans
     {
         /// <summary>
         /// Expert: Returns the matches for this query in an index.  Used internally
-        /// to search for spans. 
+        /// to search for spans.
         /// </summary>
         public abstract Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts);
 
@@ -47,7 +45,5 @@ namespace Lucene.Net.Search.Spans
         {
             return new SpanWeight(this, searcher);
         }
-
     }
-
 }

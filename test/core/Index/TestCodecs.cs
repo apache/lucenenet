@@ -1,63 +1,61 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
+    using Constants = Lucene.Net.Util.Constants;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+
+    //using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
+    using Document = Lucene.Net.Document.Document;
+    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
-    using PostingsConsumer = Lucene.Net.Codecs.PostingsConsumer;
-    using TermStats = Lucene.Net.Codecs.TermStats;
-    using TermsConsumer = Lucene.Net.Codecs.TermsConsumer;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using InfoStream = Lucene.Net.Util.InfoStream;
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
     using Lucene40RWCodec = Lucene.Net.Codecs.Lucene40.Lucene40RWCodec;
     using Lucene41RWCodec = Lucene.Net.Codecs.Lucene41.Lucene41RWCodec;
     using Lucene42RWCodec = Lucene.Net.Codecs.Lucene42.Lucene42RWCodec;
-    //using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
-    using Document = Lucene.Net.Document.Document;
-    using Store = Lucene.Net.Document.Field.Store;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+    using OpenBitSet = Lucene.Net.Util.OpenBitSet;
+    using PostingsConsumer = Lucene.Net.Codecs.PostingsConsumer;
     using Query = Lucene.Net.Search.Query;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using Directory = Lucene.Net.Store.Directory;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Constants = Lucene.Net.Util.Constants;
-    using InfoStream = Lucene.Net.Util.InfoStream;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using OpenBitSet = Lucene.Net.Util.OpenBitSet;
+    using Store = Lucene.Net.Document.Field.Store;
+    using StringField = Lucene.Net.Document.StringField;
+    using TermsConsumer = Lucene.Net.Codecs.TermsConsumer;
+    using TermStats = Lucene.Net.Codecs.TermStats;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
 
     // TODO: test multiple codecs here?
 
@@ -138,47 +136,54 @@ namespace Lucene.Net.Index
                     this.OmitTF = omitTF;
                 }
 
-
                 public bool Indexed
                 {
                     get { return true; }
                     set { }
                 }
+
                 public bool Stored
                 {
                     get { return false; }
                     set { }
                 }
+
                 public bool Tokenized
                 {
                     get { return false; }
                     set { }
                 }
+
                 public bool StoreTermVectors
                 {
                     get { return false; }
                     set { }
                 }
+
                 public bool StoreTermVectorOffsets
                 {
                     get { return false; }
                     set { }
                 }
+
                 public bool StoreTermVectorPositions
                 {
                     get { return false; }
                     set { }
                 }
+
                 public bool StoreTermVectorPayloads
                 {
                     get { return false; }
                     set { }
                 }
+
                 public bool OmitNorms
                 {
                     get { return false; }
                     set { }
                 }
+
                 public IndexOptions_e? IndexOptionsValue
                 {
                     get { return OmitTF ? IndexOptions_e.DOCS_ONLY : IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS; }
@@ -306,7 +311,6 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < numTerms; i++)
             {
-
                 // Make term text
                 string text2;
                 while (true)
@@ -623,7 +627,6 @@ namespace Lucene.Net.Index
 
             public virtual void _run()
             {
-
                 for (int iter = 0; iter < NUM_TEST_ITER; iter++)
                 {
                     FieldData field = Fields[Random().Next(Fields.Length)];
@@ -825,7 +828,6 @@ namespace Lucene.Net.Index
                             }
                         }
                         upto++;
-
                     } while (termsEnum.Next() != null);
 
                     Assert.AreEqual(upto, field.Terms.Length);
@@ -835,7 +837,6 @@ namespace Lucene.Net.Index
 
         private void Write(FieldInfos fieldInfos, Directory dir, FieldData[] fields, bool allowPreFlex)
         {
-
             int termIndexInterval = TestUtil.NextInt(Random(), 13, 27);
             Codec codec = Codec.Default;
             SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
@@ -919,7 +920,5 @@ namespace Lucene.Net.Index
 
             dir.Dispose();
         }
-
     }
-
 }

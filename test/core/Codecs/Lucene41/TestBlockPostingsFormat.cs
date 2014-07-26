@@ -1,7 +1,5 @@
 namespace Lucene.Net.Codecs.Lucene41
 {
-
-    using NUnit.Framework;
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -37,5 +35,4 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
     }
-
 }

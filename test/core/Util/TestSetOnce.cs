@@ -1,11 +1,9 @@
-using System;
-using System.Threading;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +24,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestSetOnce : LuceneTestCase
     {
-
         private sealed class SetOnceThread : ThreadClass
         {
             internal SetOnce<int?> Set;
@@ -74,7 +71,7 @@ namespace Lucene.Net.Util
             set.Set(new int?(7));
         }
 
-       [Test]
+        [Test]
         public virtual void TestSetOnce_mem()
         {
             SetOnce<int?> set = new SetOnce<int?>();
@@ -114,7 +111,5 @@ namespace Lucene.Net.Util
                 }
             }
         }
-
     }
-
 }

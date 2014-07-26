@@ -1,9 +1,9 @@
 /*
  * dk.brics.automaton
- * 
+ *
  * Copyright (c) 2001-2009 Anders Moeller
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -14,7 +14,7 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- * 
+ *
  * this SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -29,23 +29,20 @@
 
 namespace Lucene.Net.Util.Automaton
 {
-
-	/// <summary>
-	/// Automaton provider for <code>RegExp.</code>
-	/// <seealso cref="RegExp#toAutomaton(AutomatonProvider)"/>
-	/// 
-	/// @lucene.experimental
-	/// </summary>
-	public interface AutomatonProvider
-	{
-
-	  /// <summary>
-	  /// Returns automaton of the given name.
-	  /// </summary>
-	  /// <param name="name"> automaton name </param>
-	  /// <returns> automaton </returns>
-	  /// <exception cref="IOException"> if errors occur </exception>
-	  Automaton GetAutomaton(string name);
-	}
-
+    /// <summary>
+    /// Automaton provider for <code>RegExp.</code>
+    /// <seealso cref="RegExp#toAutomaton(AutomatonProvider)"/>
+    ///
+    /// @lucene.experimental
+    /// </summary>
+    public interface AutomatonProvider
+    {
+        /// <summary>
+        /// Returns automaton of the given name.
+        /// </summary>
+        /// <param name="name"> automaton name </param>
+        /// <returns> automaton </returns>
+        /// <exception cref="IOException"> if errors occur </exception>
+        Automaton GetAutomaton(string name);
+    }
 }

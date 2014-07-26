@@ -1,9 +1,8 @@
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,22 +20,21 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Base class for implementing <seealso cref="CompositeReader"/>s based on an array
     /// of sub-readers. The implementing class has to add code for
     /// correctly refcounting and closing the sub-readers.
-    /// 
+    ///
     /// <p>User code will most likely use <seealso cref="MultiReader"/> to build a
     /// composite reader on a set of sub-readers (like several
     /// <seealso cref="DirectoryReader"/>s).
-    /// 
+    ///
     /// <p> For efficiency, in this API documents are often referred to via
     /// <i>document numbers</i>, non-negative integers which each name a unique
     /// document in the index.  These document numbers are ephemeral -- they may change
     /// as documents are added to and deleted from an index.  Clients should thus not
     /// rely on a given document having the same number between sessions.
-    /// 
+    ///
     /// <p><a name="thread-safety"></a><p><b>NOTE</b>: {@link
     /// IndexReader} instances are completely thread
     /// safe, meaning multiple threads can call any of its methods,
@@ -56,7 +54,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// List view solely for <seealso cref="#getSequentialSubReaders()"/>,
-        /// for effectiveness the array is used internally. 
+        /// for effectiveness the array is used internally.
         /// </summary>
         private readonly IList<R> SubReadersList;
 
@@ -65,7 +63,7 @@ namespace Lucene.Net.Index
         /// <param name="subReaders"> the wrapped sub-readers. this array is returned by
         /// <seealso cref="#getSequentialSubReaders"/> and used to resolve the correct
         /// subreader for docID-based methods. <b>Please note:</b> this array is <b>not</b>
-        /// cloned and not protected for modification, the subclass is responsible 
+        /// cloned and not protected for modification, the subclass is responsible
         /// to do this. </param>
         protected internal BaseCompositeReader(R[] subReaders)
         {
@@ -218,5 +216,4 @@ namespace Lucene.Net.Index
             return SubReadersList.Cast<IndexReader>().ToList();
         }
     }
-
 }

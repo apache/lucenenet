@@ -1,18 +1,17 @@
+using Lucene.Net.Support;
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
-using Lucene.Net.Support;
 
 /*
  * dk.brics.automaton
- * 
+ *
  * Copyright (c) 2001-2009 Anders Moeller
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -23,7 +22,7 @@ using Lucene.Net.Support;
  *    documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- * 
+ *
  * this SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -38,9 +37,6 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Automaton
 {
-
-
-
     /// <summary>
     /// Finite-state automaton with regular expression operations.
     /// <p>
@@ -63,20 +59,19 @@ namespace Lucene.Net.Util.Automaton
     /// <seealso cref="#restoreInvariant()"/> and <seealso cref="#setDeterministic(boolean)"/> methods
     /// should be used afterwards to restore representation invariants that are
     /// assumed by the built-in automata operations.
-    /// 
+    ///
     /// <p>
     /// <p>
-    /// Note: this class has internal mutable state and is not thread safe. It is 
+    /// Note: this class has internal mutable state and is not thread safe. It is
     /// the caller's responsibility to ensure any necessary synchronization if you
     /// wish to use the same Automaton from multiple threads. In general it is instead
-    /// recommended to use a <seealso cref="RunAutomaton"/> for multithreaded matching: it is immutable, 
-    /// thread safe, and much faster.  
+    /// recommended to use a <seealso cref="RunAutomaton"/> for multithreaded matching: it is immutable,
+    /// thread safe, and much faster.
     /// </p>
     /// @lucene.experimental
     /// </summary>
     public class Automaton : ICloneable
     {
-
         /// <summary>
         /// Minimize using Hopcroft's O(n log n) algorithm. this is regarded as one of
         /// the most generally efficient algorithms that exist.
@@ -275,7 +270,6 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-
         /// <summary>
         /// Associates extra information with this automaton.
         /// </summary>
@@ -291,7 +285,6 @@ namespace Lucene.Net.Util.Automaton
                 return info;
             }
         }
-
 
         // cached
         private State[] NumberedStates_Renamed;
@@ -351,7 +344,6 @@ namespace Lucene.Net.Util.Automaton
                 SetNumberedStates(value, value.Length);
             }
         }
-
 
         public virtual void SetNumberedStates(State[] states, int count)
         {
@@ -823,7 +815,6 @@ namespace Lucene.Net.Util.Automaton
             }
             a.ClearNumberedStates();
             return a;
-
         }
 
         /// <summary>
@@ -967,5 +958,4 @@ namespace Lucene.Net.Util.Automaton
             return a;
         }
     }
-
 }

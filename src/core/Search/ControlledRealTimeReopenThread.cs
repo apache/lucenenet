@@ -3,29 +3,28 @@ using System.Threading;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Support;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-    using Lucene.Net.Support;
+    using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
 
     /// <summary>
     /// Utility class that runs a thread to manage periodicc
@@ -39,8 +38,8 @@ namespace Lucene.Net.Search
     ///  that change to be visible.  Note that this will only
     ///  scale well if most searches do not need to wait for a
     ///  specific index generation.
-    /// 
-    /// @lucene.experimental 
+    ///
+    /// @lucene.experimental
     /// </summary>
 
     public class ControlledRealTimeReopenThread<T> : ThreadClass, IDisposable
@@ -257,7 +256,6 @@ namespace Lucene.Net.Search
             //System.out.println("reopen: start");
             while (!Finish)
             {
-
                 // TODO: try to guestimate how long reopen might
                 // take based on past data?
 
@@ -265,7 +263,6 @@ namespace Lucene.Net.Search
                 // next reopen:
                 while (!Finish)
                 {
-
                     // Need lock before finding out if has waiting
                     ReopenLock.Lock();
                     try
@@ -317,5 +314,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

@@ -4,35 +4,34 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using Directory = Lucene.Net.Store.Directory;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using TextField = Lucene.Net.Document.TextField;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-    using NUnit.Framework;
-    using Lucene.Net.Support;
 
     //
     // this was developed for Lucene In Action,
@@ -110,7 +109,7 @@ namespace Lucene.Net.Index
                 }
             }
         }
-        
+
         [Ignore]
         [Test]
         public virtual void TestSnapshotDeletionPolicy_Mem()
@@ -256,7 +255,6 @@ namespace Lucene.Net.Index
 
         private void CopyFiles(Directory dir, IndexCommit cp)
         {
-
             // While we hold the snapshot, and nomatter how long
             // we take to do the backup, the IndexWriter will
             // never delete the files in the snapshot:
@@ -308,7 +306,6 @@ namespace Lucene.Net.Index
                 input.Dispose();
             }
         }
-
 
         [Test]
         public virtual void TestBasicSnapshots()
@@ -510,5 +507,4 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
     }
-
 }

@@ -4,47 +4,46 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using NUnit.Framework;
+    using System.IO;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
-    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using Query = Lucene.Net.Search.Query;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using System.IO;
 
     /*
       Verify we can read the pre-2.1 file format, do searches
       against it, and add documents to it.
     */
+
     [TestFixture]
     public class TestDeletionPolicy : LuceneTestCase
     {
-
         private void VerifyCommitOrder<T>(IList<T> commits)
             where T : IndexCommit
         {
@@ -84,6 +83,7 @@ namespace Lucene.Net.Index
                 OuterInstance.VerifyCommitOrder(commits);
                 NumOnInit++;
             }
+
             public override void OnCommit<T>(IList<T> commits)
             {
                 IndexCommit lastCommit = commits[commits.Count - 1];
@@ -93,7 +93,6 @@ namespace Lucene.Net.Index
                 OuterInstance.VerifyCommitOrder(commits);
                 NumOnCommit++;
             }
-
         }
 
         /// <summary>
@@ -111,6 +110,7 @@ namespace Lucene.Net.Index
 
             internal int NumOnInit;
             internal int NumOnCommit;
+
             public override void OnInit<T>(IList<T> commits)
             {
                 OuterInstance.VerifyCommitOrder(commits);
@@ -122,6 +122,7 @@ namespace Lucene.Net.Index
                     Assert.IsTrue(commit.Deleted);
                 }
             }
+
             public override void OnCommit<T>(IList<T> commits)
             {
                 OuterInstance.VerifyCommitOrder(commits);
@@ -176,7 +177,6 @@ namespace Lucene.Net.Index
             internal virtual void DoDeletes<T>(IList<T> commits, bool isCommit)
                 where T : IndexCommit
             {
-
                 // Assert that we really are only called for each new
                 // commit:
                 if (isCommit)
@@ -207,10 +207,10 @@ namespace Lucene.Net.Index
          * Delete a commit only when it has been obsoleted by N
          * seconds.
          */
+
         internal class ExpirationTimeDeletionPolicy : IndexDeletionPolicy
         {
             private readonly TestDeletionPolicy OuterInstance;
-
 
             internal Directory Dir;
             internal double ExpirationTimeSeconds;
@@ -257,11 +257,11 @@ namespace Lucene.Net.Index
         /*
          * Test "by time expiration" deletion policy:
          */
+
         [Ignore]
         [Test]
         public virtual void TestExpirationTimeDeletionPolicy()
         {
-
             const double SECONDS = 2.0;
 
             Directory dir = NewDirectory();
@@ -347,12 +347,12 @@ namespace Lucene.Net.Index
         /*
          * Test a silly deletion policy that keeps all commits around.
          */
+
         [Test]
         public virtual void TestKeepAllDeletionPolicy()
         {
             for (int pass = 0; pass < 2; pass++)
             {
-
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: cycle pass=" + pass);
@@ -444,6 +444,7 @@ namespace Lucene.Net.Index
         /* Uses KeepAllDeletionPolicy to keep all commits around,
          * then, opens a new IndexWriter on a previous commit
          * point. */
+
         [Test]
         public virtual void TestOpenPriorSnapshot()
         {
@@ -543,17 +544,16 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-
         /* Test keeping NO commit points.  this is a viable and
          * useful case eg where you want to build a big index and
          * you know there are no readers.
          */
+
         [Test]
         public virtual void TestKeepNoneOnInitDeletionPolicy()
         {
             for (int pass = 0; pass < 2; pass++)
             {
-
                 bool useCompoundFile = (pass % 2) != 0;
 
                 Directory dir = NewDirectory();
@@ -594,6 +594,7 @@ namespace Lucene.Net.Index
         /*
          * Test a deletion policy that keeps last N commits.
          */
+
         [Test]
         public virtual void TestKeepLastNDeletionPolicy()
         {
@@ -601,7 +602,6 @@ namespace Lucene.Net.Index
 
             for (int pass = 0; pass < 2; pass++)
             {
-
                 bool useCompoundFile = (pass % 2) != 0;
 
                 Directory dir = NewDirectory();
@@ -663,15 +663,14 @@ namespace Lucene.Net.Index
          * Test a deletion policy that keeps last N commits
          * around, through creates.
          */
+
         [Test]
         public virtual void TestKeepLastNDeletionPolicyWithCreates()
         {
-
             const int N = 10;
 
             for (int pass = 0; pass < 2; pass++)
             {
-
                 bool useCompoundFile = (pass % 2) != 0;
 
                 Directory dir = NewDirectory();
@@ -686,7 +685,6 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < N + 1; i++)
                 {
-
                     conf = (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetIndexDeletionPolicy(policy).SetMaxBufferedDocs(10);
                     mp = conf.MergePolicy;
                     mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
@@ -796,5 +794,4 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
     }
-
 }

@@ -1,9 +1,8 @@
-using System;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,7 +23,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestPriorityQueue : LuceneTestCase
     {
-
         private class IntegerQueue : PriorityQueue<int?>
         {
             public IntegerQueue(int count)
@@ -126,7 +124,5 @@ namespace Lucene.Net.Util
             Assert.AreEqual(size, pq.Size());
             Assert.AreEqual((int?)2, pq.Top());
         }
-
     }
-
 }

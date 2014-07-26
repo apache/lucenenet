@@ -3,57 +3,55 @@ using System.Globalization;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Index;
+    using NUnit.Framework;
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Document.Document;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Field = Lucene.Net.Document.Field;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
+    using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
-    using FieldInvertState = Lucene.Net.Index.FieldInvertState;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
     using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
     using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using NUnit.Framework;
-    using Lucene.Net.Index;
-
+    using Term = Lucene.Net.Index.Term;
+    using TextField = Lucene.Net.Document.TextField;
 
     /// <summary>
     /// Test of the DisjunctionMaxQuery.
-    /// 
+    ///
     /// </summary>
     [TestFixture]
     public class TestDisjunctionMaxQuery : LuceneTestCase
     {
-
         /// <summary>
         /// threshold for comparing floats </summary>
         public static readonly float SCORE_COMP_THRESH = 0.0000f;
@@ -61,7 +59,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Similarity to eliminate tf, idf and lengthNorm effects to isolate test
         /// case.
-        /// 
+        ///
         /// <p>
         /// same as TestRankingSimilarity in TestRanking.zip from
         /// http://issues.apache.org/jira/browse/LUCENE-323
@@ -69,7 +67,6 @@ namespace Lucene.Net.Search
         /// </summary>
         private class TestSimilarity : DefaultSimilarity
         {
-
             public TestSimilarity()
             {
             }
@@ -104,6 +101,7 @@ namespace Lucene.Net.Search
         public IndexSearcher s;
 
         private static readonly FieldType NonAnalyzedType = new FieldType(TextField.TYPE_STORED);
+
         static TestDisjunctionMaxQuery()
         {
             NonAnalyzedType.Tokenized = false;
@@ -216,7 +214,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSimpleEqualScores1()
         {
-
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
             q.Add(Tq("hed", "albino"));
             q.Add(Tq("hed", "elephant"));
@@ -239,13 +236,11 @@ namespace Lucene.Net.Search
                 PrintHits("testSimpleEqualScores1", h, s);
                 throw e;
             }
-
         }
 
         [Test]
         public virtual void TestSimpleEqualScores2()
         {
-
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
@@ -267,13 +262,11 @@ namespace Lucene.Net.Search
                 PrintHits("testSimpleEqualScores2", h, s);
                 throw e;
             }
-
         }
 
         [Test]
         public virtual void TestSimpleEqualScores3()
         {
-
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
             q.Add(Tq("hed", "albino"));
             q.Add(Tq("hed", "elephant"));
@@ -297,13 +290,11 @@ namespace Lucene.Net.Search
                 PrintHits("testSimpleEqualScores3", h, s);
                 throw e;
             }
-
         }
 
         [Test]
         public virtual void TestSimpleTiebreaker()
         {
-
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.01f);
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
@@ -331,7 +322,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestBooleanRequiredEqualScores()
         {
-
             BooleanQuery q = new BooleanQuery();
             {
                 DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
@@ -339,7 +329,6 @@ namespace Lucene.Net.Search
                 q1.Add(Tq("dek", "albino"));
                 q.Add(q1, BooleanClause.Occur.MUST); // true,false);
                 QueryUtils.Check(Random(), q1, s);
-
             }
             {
                 DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
@@ -372,7 +361,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestBooleanOptionalNoTiebreaker()
         {
-
             BooleanQuery q = new BooleanQuery();
             {
                 DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
@@ -412,7 +400,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestBooleanOptionalWithTiebreaker()
         {
-
             BooleanQuery q = new BooleanQuery();
             {
                 DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
@@ -432,7 +419,6 @@ namespace Lucene.Net.Search
 
             try
             {
-
                 Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
 
                 float score0 = h[0].Score;
@@ -453,20 +439,17 @@ namespace Lucene.Net.Search
 
                 Assert.AreEqual("d1", doc3, "wrong fourth");
                 Assert.IsTrue(score2 > score3, "d1 does not have worse score then d3: " + score2 + " >? " + score3);
-
             }
             catch (Exception e)
             {
                 PrintHits("testBooleanOptionalWithTiebreaker", h, s);
                 throw e;
             }
-
         }
 
         [Test]
         public virtual void TestBooleanOptionalWithTiebreakerAndBoost()
         {
-
             BooleanQuery q = new BooleanQuery();
             {
                 DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
@@ -486,7 +469,6 @@ namespace Lucene.Net.Search
 
             try
             {
-
                 Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
 
                 float score0 = h[0].Score;
@@ -507,7 +489,6 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(score0 > score1, "d4 does not have a better score then d3: " + score0 + " >? " + score1);
                 Assert.IsTrue(score1 > score2, "d3 does not have a better score then d2: " + score1 + " >? " + score2);
                 Assert.IsTrue(score2 > score3, "d3 does not have a better score then d1: " + score2 + " >? " + score3);
-
             }
             catch (Exception e)
             {
@@ -570,7 +551,6 @@ namespace Lucene.Net.Search
 
         protected internal virtual void PrintHits(string test, ScoreDoc[] h, IndexSearcher searcher)
         {
-
             Console.Error.WriteLine("------- " + test + " -------");
 
             //DecimalFormat f = new DecimalFormat("0.000000000", DecimalFormatSymbols.getInstance(Locale.ROOT));
@@ -586,5 +566,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

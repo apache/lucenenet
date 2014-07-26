@@ -1,15 +1,11 @@
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 using Lucene.Net.Support;
-using System;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Threading;
 using Lucene.Net.Support.Compatibility;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,20 +23,18 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
-
     /// <summary>
     /// A memory-resident <seealso cref="Directory"/> implementation.  Locking
     /// implementation is by default the <seealso cref="SingleInstanceLockFactory"/>
     /// but can be changed with <seealso cref="#setLockFactory"/>.
-    /// 
+    ///
     /// <p><b>Warning:</b> this class is not intended to work with huge
     /// indexes. Everything beyond several hundred megabytes will waste
     /// resources (GC cycles), because it uses an internal buffer size
     /// of 1024 bytes, producing millions of {@code byte[1024]} arrays.
     /// this class is optimized for small memory-resident indexes.
     /// It also has bad concurrency on multithreaded environments.
-    /// 
+    ///
     /// <p>It is recommended to materialize large indexes on disk and use
     /// <seealso cref="MMapDirectory"/>, which is a high-performance directory
     /// implementation working directly on the file system cache of the
@@ -53,7 +47,7 @@ namespace Lucene.Net.Store
 
         // *****
         // Lock acquisition sequence:  RAMDirectory, then RAMFile
-        // ***** 
+        // *****
 
         /// <summary>
         /// Constructs an empty <seealso cref="Directory"/>. </summary>
@@ -95,19 +89,19 @@ namespace Lucene.Net.Store
         /// Creates a new <code>RAMDirectory</code> instance from a different
         /// <code>Directory</code> implementation.  this can be used to load
         /// a disk-based index into memory.
-        /// 
+        ///
         /// <p><b>Warning:</b> this class is not intended to work with huge
         /// indexes. Everything beyond several hundred megabytes will waste
         /// resources (GC cycles), because it uses an internal buffer size
         /// of 1024 bytes, producing millions of {@code byte[1024]} arrays.
         /// this class is optimized for small memory-resident indexes.
         /// It also has bad concurrency on multithreaded environments.
-        /// 
+        ///
         /// <p>For disk-based indexes it is recommended to use
         /// <seealso cref="MMapDirectory"/>, which is a high-performance directory
         /// implementation working directly on the file system cache of the
         /// operating system, so copying data to Java heap space is not useful.
-        /// 
+        ///
         /// <p>Note that the resulting <code>RAMDirectory</code> instance is fully
         /// independent from the original <code>Directory</code> (it is a
         /// complete copy).  Any subsequent changes to the
@@ -260,7 +254,5 @@ namespace Lucene.Net.Store
             IsOpen = false;
             FileMap.Clear();
         }
-
     }
-
 }

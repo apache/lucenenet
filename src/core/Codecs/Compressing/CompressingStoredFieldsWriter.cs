@@ -10,6 +10,7 @@ using System.Diagnostics;
 namespace Lucene.Net.Codecs.Compressing
 {
     using Document = Lucene.Net.Document.Document;
+
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -33,7 +34,6 @@ namespace Lucene.Net.Codecs.Compressing
     /// </summary>
     public sealed class CompressingStoredFieldsWriter : StoredFieldsWriter
     {
-
         // hard limit on the maximum number of documents per chunk
         internal const int MAX_DOCUMENTS_PER_CHUNK = 128;
 
@@ -132,7 +132,6 @@ namespace Lucene.Net.Codecs.Compressing
                     IndexWriter = null;
                 }
             }
-
         }
 
         public override void StartDocument(int numStoredFields)
@@ -312,7 +311,6 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                 }
 
-                
                 @string = null;
                 bytes = null;
             }
@@ -553,7 +551,5 @@ namespace Lucene.Net.Codecs.Compressing
             }
             return doc;
         }
-
     }
-
 }

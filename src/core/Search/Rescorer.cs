@@ -1,6 +1,5 @@
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,18 +24,17 @@ namespace Lucene.Net.Search
     /// first-pass query across the entire index, collecting the
     /// top few hundred hits perhaps, and then use this class to
     /// mix in a more costly second pass scoring.
-    /// 
+    ///
     /// <p>See {@link
     /// QueryRescorer#rescore(IndexSearcher,TopDocs,Query,double,int)}
     /// for a simple static method to call to rescore using a 2nd
     /// pass <seealso cref="Query"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
 
     public abstract class Rescorer
     {
-
         /// <summary>
         /// Rescore an initial first-pass <seealso cref="TopDocs"/>.
         /// </summary>
@@ -55,5 +53,4 @@ namespace Lucene.Net.Search
         /// </summary>
         public abstract Explanation Explain(IndexSearcher searcher, Explanation firstPassExplanation, int docID);
     }
-
 }

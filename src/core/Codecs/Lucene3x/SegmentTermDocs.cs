@@ -3,296 +3,295 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
+    using Bits = Lucene.Net.Util.Bits;
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using FieldInfo = Lucene.Net.Index.FieldInfo;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-	using FieldInfos = Lucene.Net.Index.FieldInfos;
-	using Term = Lucene.Net.Index.Term;
-	using IndexInput = Lucene.Net.Store.IndexInput;
-	using Bits = Lucene.Net.Util.Bits;
+    using FieldInfo = Lucene.Net.Index.FieldInfo;
+    using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using Term = Lucene.Net.Index.Term;
 
-	/// @deprecated (4.0)
-	///  @lucene.experimental  
-	[Obsolete("(4.0)")]
-	internal class SegmentTermDocs
-	{
-	  //protected SegmentReader parent;
-	  private readonly FieldInfos FieldInfos;
-	  private readonly TermInfosReader Tis;
-	  protected internal Bits LiveDocs_Renamed;
-	  protected internal IndexInput FreqStream;
-	  protected internal int Count;
-	  protected internal int Df;
-	  internal int Doc_Renamed = 0;
-	  internal int Freq_Renamed;
+    /// @deprecated (4.0)
+    ///  @lucene.experimental
+    [Obsolete("(4.0)")]
+    internal class SegmentTermDocs
+    {
+        //protected SegmentReader parent;
+        private readonly FieldInfos FieldInfos;
 
-	  private int SkipInterval;
-	  private int MaxSkipLevels;
-	  private Lucene3xSkipListReader SkipListReader;
+        private readonly TermInfosReader Tis;
+        protected internal Bits LiveDocs_Renamed;
+        protected internal IndexInput FreqStream;
+        protected internal int Count;
+        protected internal int Df;
+        internal int Doc_Renamed = 0;
+        internal int Freq_Renamed;
 
-	  private long FreqBasePointer;
-	  private long ProxBasePointer;
+        private int SkipInterval;
+        private int MaxSkipLevels;
+        private Lucene3xSkipListReader SkipListReader;
 
-	  private long SkipPointer;
-	  private bool HaveSkipped;
+        private long FreqBasePointer;
+        private long ProxBasePointer;
 
-	  protected internal bool CurrentFieldStoresPayloads;
-	  protected internal FieldInfo.IndexOptions_e? IndexOptions;
+        private long SkipPointer;
+        private bool HaveSkipped;
 
-	  public SegmentTermDocs(IndexInput freqStream, TermInfosReader tis, FieldInfos fieldInfos)
-	  {
-		this.FreqStream = (IndexInput)freqStream.Clone();
-		this.Tis = tis;
-		this.FieldInfos = fieldInfos;
-		SkipInterval = tis.SkipInterval;
-		MaxSkipLevels = tis.MaxSkipLevels;
-	  }
+        protected internal bool CurrentFieldStoresPayloads;
+        protected internal FieldInfo.IndexOptions_e? IndexOptions;
 
-	  public virtual void Seek(Term term)
-	  {
-		TermInfo ti = Tis.Get(term);
-		Seek(ti, term);
-	  }
+        public SegmentTermDocs(IndexInput freqStream, TermInfosReader tis, FieldInfos fieldInfos)
+        {
+            this.FreqStream = (IndexInput)freqStream.Clone();
+            this.Tis = tis;
+            this.FieldInfos = fieldInfos;
+            SkipInterval = tis.SkipInterval;
+            MaxSkipLevels = tis.MaxSkipLevels;
+        }
 
-	  public virtual Bits LiveDocs
-	  {
-		  set
-		  {
-			this.LiveDocs_Renamed = value;
-		  }
-	  }
+        public virtual void Seek(Term term)
+        {
+            TermInfo ti = Tis.Get(term);
+            Seek(ti, term);
+        }
 
-	  public virtual void Seek(SegmentTermEnum segmentTermEnum)
-	  {
-		TermInfo ti;
-		Term term;
+        public virtual Bits LiveDocs
+        {
+            set
+            {
+                this.LiveDocs_Renamed = value;
+            }
+        }
 
-		// use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
-		if (segmentTermEnum.FieldInfos == FieldInfos) // optimized case
-		{
-		  term = segmentTermEnum.Term();
-		  ti = segmentTermEnum.TermInfo();
-		} // punt case
-		else
-		{
-		  term = segmentTermEnum.Term();
-		  ti = Tis.Get(term);
-		}
+        public virtual void Seek(SegmentTermEnum segmentTermEnum)
+        {
+            TermInfo ti;
+            Term term;
 
-		Seek(ti, term);
-	  }
+            // use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
+            if (segmentTermEnum.FieldInfos == FieldInfos) // optimized case
+            {
+                term = segmentTermEnum.Term();
+                ti = segmentTermEnum.TermInfo();
+            } // punt case
+            else
+            {
+                term = segmentTermEnum.Term();
+                ti = Tis.Get(term);
+            }
 
-	  internal virtual void Seek(TermInfo ti, Term term)
-	  {
-		Count = 0;
-		FieldInfo fi = FieldInfos.FieldInfo(term.Field());
-		this.IndexOptions = (fi != null) ? fi.IndexOptions : FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
-		CurrentFieldStoresPayloads = (fi != null) ? fi.HasPayloads() : false;
-		if (ti == null)
-		{
-		  Df = 0;
-		}
-		else
-		{
-		  Df = ti.DocFreq;
-		  Doc_Renamed = 0;
-		  FreqBasePointer = ti.FreqPointer;
-		  ProxBasePointer = ti.ProxPointer;
-		  SkipPointer = FreqBasePointer + ti.SkipOffset;
-		  FreqStream.Seek(FreqBasePointer);
-		  HaveSkipped = false;
-		}
-	  }
+            Seek(ti, term);
+        }
 
-	  public virtual void Close()
-	  {
-		FreqStream.Dispose();
-		if (SkipListReader != null)
-		{
-		  SkipListReader.Dispose();
-		}
-	  }
+        internal virtual void Seek(TermInfo ti, Term term)
+        {
+            Count = 0;
+            FieldInfo fi = FieldInfos.FieldInfo(term.Field());
+            this.IndexOptions = (fi != null) ? fi.IndexOptions : FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+            CurrentFieldStoresPayloads = (fi != null) ? fi.HasPayloads() : false;
+            if (ti == null)
+            {
+                Df = 0;
+            }
+            else
+            {
+                Df = ti.DocFreq;
+                Doc_Renamed = 0;
+                FreqBasePointer = ti.FreqPointer;
+                ProxBasePointer = ti.ProxPointer;
+                SkipPointer = FreqBasePointer + ti.SkipOffset;
+                FreqStream.Seek(FreqBasePointer);
+                HaveSkipped = false;
+            }
+        }
 
-	  public int Doc()
-	  {
-		  return Doc_Renamed;
-	  }
-	  public int Freq()
-	  {
-		return Freq_Renamed;
-	  }
+        public virtual void Close()
+        {
+            FreqStream.Dispose();
+            if (SkipListReader != null)
+            {
+                SkipListReader.Dispose();
+            }
+        }
 
-	  protected internal virtual void SkippingDoc()
-	  {
-	  }
+        public int Doc()
+        {
+            return Doc_Renamed;
+        }
 
-	  public virtual bool Next()
-	  {
-		while (true)
-		{
-		  if (Count == Df)
-		  {
-			return false;
-		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCode = freqStream.readVInt();
-		  int docCode = FreqStream.ReadVInt();
+        public int Freq()
+        {
+            return Freq_Renamed;
+        }
 
-		  if (IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
-		  {
-			Doc_Renamed += docCode;
-		  }
-		  else
-		  {
-			Doc_Renamed += (int)((uint)docCode >> 1); // shift off low bit
-			if ((docCode & 1) != 0) // if low bit is set
-			{
-			  Freq_Renamed = 1; // freq is one
-			}
-			else
-			{
-			  Freq_Renamed = FreqStream.ReadVInt(); // else read freq
-			  Debug.Assert(Freq_Renamed != 1);
-			}
-		  }
+        protected internal virtual void SkippingDoc()
+        {
+        }
 
-		  Count++;
+        public virtual bool Next()
+        {
+            while (true)
+            {
+                if (Count == Df)
+                {
+                    return false;
+                }
+                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                //ORIGINAL LINE: final int docCode = freqStream.readVInt();
+                int docCode = FreqStream.ReadVInt();
 
-		  if (LiveDocs_Renamed == null || LiveDocs_Renamed.Get(Doc_Renamed))
-		  {
-			break;
-		  }
-		  SkippingDoc();
-		}
-		return true;
-	  }
+                if (IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
+                {
+                    Doc_Renamed += docCode;
+                }
+                else
+                {
+                    Doc_Renamed += (int)((uint)docCode >> 1); // shift off low bit
+                    if ((docCode & 1) != 0) // if low bit is set
+                    {
+                        Freq_Renamed = 1; // freq is one
+                    }
+                    else
+                    {
+                        Freq_Renamed = FreqStream.ReadVInt(); // else read freq
+                        Debug.Assert(Freq_Renamed != 1);
+                    }
+                }
 
-	  /// <summary>
-	  /// Optimized implementation. </summary>
-	  public virtual int Read(int[] docs, int[] freqs)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = docs.length;
-		int length = docs.Length;
-		if (IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
-		{
-		  return ReadNoTf(docs, freqs, length);
-		}
-		else
-		{
-		  int i = 0;
-		  while (i < length && Count < Df)
-		  {
-			// manually inlined call to next() for speed
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCode = freqStream.readVInt();
-			int docCode = FreqStream.ReadVInt();
-			Doc_Renamed += (int)((uint)docCode >> 1); // shift off low bit
-			if ((docCode & 1) != 0) // if low bit is set
-			{
-			  Freq_Renamed = 1; // freq is one
-			}
-			else
-			{
-			  Freq_Renamed = FreqStream.ReadVInt(); // else read freq
-			}
-			Count++;
+                Count++;
 
-			if (LiveDocs_Renamed == null || LiveDocs_Renamed.Get(Doc_Renamed))
-			{
-			  docs[i] = Doc_Renamed;
-			  freqs[i] = Freq_Renamed;
-			  ++i;
-			}
-		  }
-		  return i;
-		}
-	  }
+                if (LiveDocs_Renamed == null || LiveDocs_Renamed.Get(Doc_Renamed))
+                {
+                    break;
+                }
+                SkippingDoc();
+            }
+            return true;
+        }
 
-	  private int ReadNoTf(int[] docs, int[] freqs, int length)
-	  {
-		int i = 0;
-		while (i < length && Count < Df)
-		{
-		  // manually inlined call to next() for speed
-		  Doc_Renamed += FreqStream.ReadVInt();
-		  Count++;
+        /// <summary>
+        /// Optimized implementation. </summary>
+        public virtual int Read(int[] docs, int[] freqs)
+        {
+            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+            //ORIGINAL LINE: final int length = docs.length;
+            int length = docs.Length;
+            if (IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
+            {
+                return ReadNoTf(docs, freqs, length);
+            }
+            else
+            {
+                int i = 0;
+                while (i < length && Count < Df)
+                {
+                    // manually inlined call to next() for speed
+                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                    //ORIGINAL LINE: final int docCode = freqStream.readVInt();
+                    int docCode = FreqStream.ReadVInt();
+                    Doc_Renamed += (int)((uint)docCode >> 1); // shift off low bit
+                    if ((docCode & 1) != 0) // if low bit is set
+                    {
+                        Freq_Renamed = 1; // freq is one
+                    }
+                    else
+                    {
+                        Freq_Renamed = FreqStream.ReadVInt(); // else read freq
+                    }
+                    Count++;
 
-		  if (LiveDocs_Renamed == null || LiveDocs_Renamed.Get(Doc_Renamed))
-		  {
-			docs[i] = Doc_Renamed;
-			// Hardware freq to 1 when term freqs were not
-			// stored in the index
-			freqs[i] = 1;
-			++i;
-		  }
-		}
-		return i;
-	  }
+                    if (LiveDocs_Renamed == null || LiveDocs_Renamed.Get(Doc_Renamed))
+                    {
+                        docs[i] = Doc_Renamed;
+                        freqs[i] = Freq_Renamed;
+                        ++i;
+                    }
+                }
+                return i;
+            }
+        }
 
+        private int ReadNoTf(int[] docs, int[] freqs, int length)
+        {
+            int i = 0;
+            while (i < length && Count < Df)
+            {
+                // manually inlined call to next() for speed
+                Doc_Renamed += FreqStream.ReadVInt();
+                Count++;
 
-	  /// <summary>
-	  /// Overridden by SegmentTermPositions to skip in prox stream. </summary>
-	  protected internal virtual void SkipProx(long proxPointer, int payloadLength)
-	  {
-	  }
+                if (LiveDocs_Renamed == null || LiveDocs_Renamed.Get(Doc_Renamed))
+                {
+                    docs[i] = Doc_Renamed;
+                    // Hardware freq to 1 when term freqs were not
+                    // stored in the index
+                    freqs[i] = 1;
+                    ++i;
+                }
+            }
+            return i;
+        }
 
-	  /// <summary>
-	  /// Optimized implementation. </summary>
-	  public virtual bool SkipTo(int target)
-	  {
-		// don't skip if the target is close (within skipInterval docs away)
-		if ((target - SkipInterval) >= Doc_Renamed && Df >= SkipInterval) // optimized case
-		{
-		  if (SkipListReader == null)
-		  {
-			SkipListReader = new Lucene3xSkipListReader((IndexInput)FreqStream.Clone(), MaxSkipLevels, SkipInterval); // lazily clone
-		  }
+        /// <summary>
+        /// Overridden by SegmentTermPositions to skip in prox stream. </summary>
+        protected internal virtual void SkipProx(long proxPointer, int payloadLength)
+        {
+        }
 
-		  if (!HaveSkipped) // lazily initialize skip stream
-		  {
-			SkipListReader.Init(SkipPointer, FreqBasePointer, ProxBasePointer, Df, CurrentFieldStoresPayloads);
-			HaveSkipped = true;
-		  }
+        /// <summary>
+        /// Optimized implementation. </summary>
+        public virtual bool SkipTo(int target)
+        {
+            // don't skip if the target is close (within skipInterval docs away)
+            if ((target - SkipInterval) >= Doc_Renamed && Df >= SkipInterval) // optimized case
+            {
+                if (SkipListReader == null)
+                {
+                    SkipListReader = new Lucene3xSkipListReader((IndexInput)FreqStream.Clone(), MaxSkipLevels, SkipInterval); // lazily clone
+                }
 
-		  int newCount = SkipListReader.SkipTo(target);
-		  if (newCount > Count)
-		  {
-			FreqStream.Seek(SkipListReader.FreqPointer);
-			SkipProx(SkipListReader.ProxPointer, SkipListReader.PayloadLength);
+                if (!HaveSkipped) // lazily initialize skip stream
+                {
+                    SkipListReader.Init(SkipPointer, FreqBasePointer, ProxBasePointer, Df, CurrentFieldStoresPayloads);
+                    HaveSkipped = true;
+                }
 
-			Doc_Renamed = SkipListReader.Doc;
-			Count = newCount;
-		  }
-		}
+                int newCount = SkipListReader.SkipTo(target);
+                if (newCount > Count)
+                {
+                    FreqStream.Seek(SkipListReader.FreqPointer);
+                    SkipProx(SkipListReader.ProxPointer, SkipListReader.PayloadLength);
 
-		// done skipping, now just scan
-		do
-		{
-		  if (!Next())
-		  {
-			return false;
-		  }
-		} while (target > Doc_Renamed);
-		return true;
-	  }
-	}
+                    Doc_Renamed = SkipListReader.Doc;
+                    Count = newCount;
+                }
+            }
 
+            // done skipping, now just scan
+            do
+            {
+                if (!Next())
+                {
+                    return false;
+                }
+            } while (target > Doc_Renamed);
+            return true;
+        }
+    }
 }

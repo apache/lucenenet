@@ -1,29 +1,28 @@
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using System;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Directory = Lucene.Net.Store.Directory;
-    using System;
 
     /// <summary>
     /// An <seealso cref="IndexDeletionPolicy"/> that wraps any other
@@ -34,20 +33,19 @@ namespace Lucene.Net.Index
     /// <seealso cref="IndexDeletionPolicy"/>, this gives you the freedom to continue using
     /// whatever <seealso cref="IndexDeletionPolicy"/> you would normally want to use with your
     /// index.
-    /// 
+    ///
     /// <p>
     /// this class maintains all snapshots in-memory, and so the information is not
     /// persisted and not protected against system failures. If persistence is
     /// important, you can use <seealso cref="PersistentSnapshotDeletionPolicy"/>.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public class SnapshotDeletionPolicy : IndexDeletionPolicy
     {
-
         /// <summary>
         /// Records how many snapshots are held against each
-        ///  commit generation 
+        ///  commit generation
         /// </summary>
         protected internal IDictionary<long, int> RefCounts = new Dictionary<long, int>();
 
@@ -69,7 +67,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sole constructor, taking the incoming {@link
-        ///  IndexDeletionPolicy} to wrap. 
+        ///  IndexDeletionPolicy} to wrap.
         /// </summary>
         public SnapshotDeletionPolicy(IndexDeletionPolicy primary)
         {
@@ -173,7 +171,7 @@ namespace Lucene.Net.Index
         /// from deletion (as long as this <seealso cref="IndexDeletionPolicy"/> is used). The
         /// snapshot can be removed by calling <seealso cref="#release(IndexCommit)"/> followed
         /// by a call to <seealso cref="IndexWriter#deleteUnusedFiles()"/>.
-        /// 
+        ///
         /// <p>
         /// <b>NOTE:</b> while the snapshot is held, the files it references will not
         /// be deleted, which will consume additional disk space in your index. If you
@@ -239,7 +237,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Retrieve an <seealso cref="IndexCommit"/> from its generation;
         ///  returns null if this IndexCommit is not currently
-        ///  snapshotted  
+        ///  snapshotted
         /// </summary>
         public virtual IndexCommit GetIndexCommit(long gen)
         {
@@ -264,7 +262,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Wraps each <seealso cref="IndexCommit"/> as a {@link
-        ///  SnapshotCommitPoint}. 
+        ///  SnapshotCommitPoint}.
         /// </summary>
         private IList<IndexCommit> WrapCommits<T>(IList<T> commits)
             where T : IndexCommit
@@ -279,12 +277,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Wraps a provided <seealso cref="IndexCommit"/> and prevents it
-        ///  from being deleted. 
+        ///  from being deleted.
         /// </summary>
         private class SnapshotCommitPoint : IndexCommit
         {
             private readonly SnapshotDeletionPolicy OuterInstance;
-
 
             /// <summary>
             /// The <seealso cref="IndexCommit"/> we are preventing from deletion. </summary>
@@ -292,7 +289,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Creates a {@code SnapshotCommitPoint} wrapping the provided
-            ///  <seealso cref="IndexCommit"/>. 
+            ///  <seealso cref="IndexCommit"/>.
             /// </summary>
             protected internal SnapshotCommitPoint(SnapshotDeletionPolicy outerInstance, IndexCommit cp)
             {
@@ -375,5 +372,4 @@ namespace Lucene.Net.Index
             }
         }
     }
-
 }

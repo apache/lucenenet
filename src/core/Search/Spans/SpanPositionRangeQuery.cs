@@ -4,6 +4,7 @@ using System.Text;
 namespace Lucene.Net.Search.Spans
 {
     using Lucene.Net.Support;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -21,103 +22,99 @@ namespace Lucene.Net.Search.Spans
          * limitations under the License.
          */
 
-
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
+    /// <summary>
+    /// Checks to see if the <seealso cref="#getMatch()"/> lies between a start and end position
+    /// </summary>
+    /// <seealso cref= Lucene.Net.Search.Spans.SpanFirstQuery for a derivation that is optimized for the case where start position is 0 </seealso>
+    public class SpanPositionRangeQuery : SpanPositionCheckQuery
+    {
+        protected internal int start = 0;
+        protected internal int end;
 
-	/// <summary>
-	/// Checks to see if the <seealso cref="#getMatch()"/> lies between a start and end position
-	/// </summary>
-	/// <seealso cref= Lucene.Net.Search.Spans.SpanFirstQuery for a derivation that is optimized for the case where start position is 0 </seealso>
-	public class SpanPositionRangeQuery : SpanPositionCheckQuery
-	{
-	  protected internal int start = 0;
-	  protected internal int end;
+        public SpanPositionRangeQuery(SpanQuery match, int start, int end)
+            : base(match)
+        {
+            this.start = start;
+            this.end = end;
+        }
 
-	  public SpanPositionRangeQuery(SpanQuery match, int start, int end) : base(match)
-	  {
-		this.start = start;
-		this.end = end;
-	  }
+        protected internal override AcceptStatus AcceptPosition(Spans spans)
+        {
+            Debug.Assert(spans.Start() != spans.End());
+            if (spans.Start() >= end)
+            {
+                return AcceptStatus.NO_AND_ADVANCE;
+            }
+            else if (spans.Start() >= start && spans.End() <= end)
+            {
+                return AcceptStatus.YES;
+            }
+            else
+            {
+                return AcceptStatus.NO;
+            }
+        }
 
+        /// <returns> The minimum position permitted in a match </returns>
+        public virtual int Start
+        {
+            get
+            {
+                return start;
+            }
+        }
 
-	  protected internal override AcceptStatus AcceptPosition(Spans spans)
-	  {
-		Debug.Assert(spans.Start() != spans.End());
-		if (spans.Start() >= end)
-		{
-		  return AcceptStatus.NO_AND_ADVANCE;
-		}
-		else if (spans.Start() >= start && spans.End() <= end)
-		{
-		  return AcceptStatus.YES;
-		}
-		else
-		{
-		  return AcceptStatus.NO;
-		}
-	  }
+        /// <returns> the maximum end position permitted in a match. </returns>
+        public virtual int End
+        {
+            get
+            {
+                return end;
+            }
+        }
 
+        public override string ToString(string field)
+        {
+            StringBuilder buffer = new StringBuilder();
+            buffer.Append("spanPosRange(");
+            buffer.Append(match.ToString(field));
+            buffer.Append(", ").Append(start).Append(", ");
+            buffer.Append(end);
+            buffer.Append(")");
+            buffer.Append(ToStringUtils.Boost(Boost));
+            return buffer.ToString();
+        }
 
-	  /// <returns> The minimum position permitted in a match </returns>
-	  public virtual int Start
-	  {
-		  get
-		  {
-			return start;
-		  }
-	  }
+        public override object Clone()
+        {
+            SpanPositionRangeQuery result = new SpanPositionRangeQuery((SpanQuery)match.Clone(), start, end);
+            result.Boost = Boost;
+            return result;
+        }
 
-	  /// <returns> the maximum end position permitted in a match. </returns>
-	  public virtual int End
-	  {
-		  get
-		  {
-			return end;
-		  }
-	  }
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (!(o is SpanPositionRangeQuery))
+            {
+                return false;
+            }
 
-	  public override string ToString(string field)
-	  {
-		StringBuilder buffer = new StringBuilder();
-		buffer.Append("spanPosRange(");
-		buffer.Append(match.ToString(field));
-		buffer.Append(", ").Append(start).Append(", ");
-		buffer.Append(end);
-		buffer.Append(")");
-		buffer.Append(ToStringUtils.Boost(Boost));
-		return buffer.ToString();
-	  }
+            SpanPositionRangeQuery other = (SpanPositionRangeQuery)o;
+            return this.end == other.end && this.start == other.start && this.match.Equals(other.match) && this.Boost == other.Boost;
+        }
 
-	  public override object Clone()
-	  {
-		SpanPositionRangeQuery result = new SpanPositionRangeQuery((SpanQuery) match.Clone(), start, end);
-		result.Boost = Boost;
-		return result;
-	  }
-
-	  public override bool Equals(object o)
-	  {
-		if (this == o)
-		{
-			return true;
-		}
-		if (!(o is SpanPositionRangeQuery))
-		{
-			return false;
-		}
-
-		SpanPositionRangeQuery other = (SpanPositionRangeQuery)o;
-		return this.end == other.end && this.start == other.start && this.match.Equals(other.match) && this.Boost == other.Boost;
-	  }
-
-	  public override int GetHashCode()
-	  {
-		int h = match.GetHashCode();
-		h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
-		h ^= Number.FloatToIntBits(Boost) ^ end ^ start;
-		return h;
-	  }
-
-	}
+        public override int GetHashCode()
+        {
+            int h = match.GetHashCode();
+            h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
+            h ^= Number.FloatToIntBits(Boost) ^ end ^ start;
+            return h;
+        }
+    }
 }

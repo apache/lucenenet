@@ -1,46 +1,44 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
     using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-    using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using PostingsConsumer = Lucene.Net.Codecs.PostingsConsumer;
-    using TermStats = Lucene.Net.Codecs.TermStats;
-    using TermsConsumer = Lucene.Net.Codecs.TermsConsumer;
-    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using TermsConsumer = Lucene.Net.Codecs.TermsConsumer;
+    using TermStats = Lucene.Net.Codecs.TermStats;
 
     // TODO: break into separate freq and prox writers as
     // codecs; make separate container (tii/tis/skip/*) that can
     // be configured as any number of files 1..N
     public sealed class FreqProxTermsWriterPerField : TermsHashConsumerPerField, IComparable<FreqProxTermsWriterPerField>
     {
-
         internal readonly FreqProxTermsWriter Parent;
         internal readonly TermsHashPerField TermsHashPerField;
         internal readonly FieldInfo fieldInfo;
@@ -90,6 +88,7 @@ namespace Lucene.Net.Index
         internal override void SkippingLongTerm()
         {
         }
+
         public int CompareTo(FreqProxTermsWriterPerField other)
         {
             return fieldInfo.Name.CompareTo(other.fieldInfo.Name);
@@ -232,7 +231,6 @@ namespace Lucene.Net.Index
 
         internal override void AddTerm(int termID)
         {
-
             Debug.Assert(DocState.TestPoint("FreqProxTermsWriterPerField.addTerm start"));
 
             FreqProxPostingsArray postings = (FreqProxPostingsArray)TermsHashPerField.PostingsArray;
@@ -398,9 +396,9 @@ namespace Lucene.Net.Index
         /* Walk through all unique text tokens (Posting
          * instances) found in this field and serialize them
          * into a single RAM segment. */
+
         internal void Flush(string fieldName, FieldsConsumer consumer, SegmentWriteState state)
         {
-
             if (!fieldInfo.Indexed)
             {
                 return; // nothing to flush, don't bother the codec with the unindexed field
@@ -621,7 +619,6 @@ namespace Lucene.Net.Index
 
                                 if ((code & 1) != 0)
                                 {
-
                                     // this position has a payload
                                     //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
                                     //ORIGINAL LINE: final int payloadLength = prox.readVInt();
@@ -640,7 +637,6 @@ namespace Lucene.Net.Index
                                     prox.ReadBytes(Payload.Bytes, 0, payloadLength);
                                     Payload.Length = payloadLength;
                                     thisPayload = Payload;
-
                                 }
                                 else
                                 {
@@ -686,5 +682,4 @@ namespace Lucene.Net.Index
             termsConsumer.Finish(writeTermFreq ? sumTotalTermFreq : -1, sumDocFreq, visitedDocs.Cardinality());
         }
     }
-
 }

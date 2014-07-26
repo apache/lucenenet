@@ -1,16 +1,16 @@
+using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
-using Lucene.Net.Support;
 
 /*
  * dk.brics.automaton
- * 
+ *
  * Copyright (c) 2001-2009 Anders Moeller
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -21,7 +21,7 @@ using Lucene.Net.Support;
  *    documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- * 
+ *
  * this SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -36,17 +36,13 @@ using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Automaton
 {
-
-
-
     /// <summary>
     /// Basic automata operations.
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
     public sealed class BasicOperations
     {
-
         private BasicOperations()
         {
         }
@@ -452,7 +448,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns true if these two automata accept exactly the
         ///  same language.  this is a costly computation!  Note
         ///  also that a1 and a2 will be determinized as a side
-        ///  effect. 
+        ///  effect.
         /// </summary>
         public static bool SameLanguage(Automaton a1, Automaton a2)
         {
@@ -652,6 +648,7 @@ namespace Lucene.Net.Util.Automaton
             internal int Point;
             internal readonly TransitionList Ends = new TransitionList();
             internal readonly TransitionList Starts = new TransitionList();
+
             public int CompareTo(PointTransitions other)
             {
                 return Point - other.Point;
@@ -821,8 +818,6 @@ namespace Lucene.Net.Util.Automaton
             // like SortedMap<Integer,Integer>
             SortedIntSet statesSet = new SortedIntSet(5);
 
-
-
             //THIS IS INFINITE LOOPING
             while (worklist.Count > 0)
             {
@@ -853,7 +848,6 @@ namespace Lucene.Net.Util.Automaton
                 State r = s.State;
                 for (int i = 0; i < points.Count; i++)
                 {
-
                     int point = points.Points[i].Point;
 
                     if (statesSet.Upto > 0)
@@ -1121,5 +1115,4 @@ namespace Lucene.Net.Util.Automaton
             }
         }
     }
-
 }

@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,12 +25,11 @@ namespace Lucene.Net.Util
     /// BitSet of fixed length (numBits), backed by accessible (<seealso cref="#getBits"/>)
     /// long[], accessed with a long index. Use it only if you intend to store more
     /// than 2.1B bits, otherwise you should use <seealso cref="FixedBitSet"/>.
-    /// 
+    ///
     /// @lucene.internal
     /// </summary>
     public sealed class LongBitSet
     {
-
         private readonly long[] Bits_Renamed;
         private readonly long NumBits;
         private readonly int NumWords;
@@ -40,7 +38,7 @@ namespace Lucene.Net.Util
         /// If the given <seealso cref="LongBitSet"/> is large enough to hold
         /// {@code numBits}, returns the given bits, otherwise returns a new
         /// <seealso cref="LongBitSet"/> which can hold the requested number of bits.
-        /// 
+        ///
         /// <p>
         /// <b>NOTE:</b> the returned bitset reuses the underlying {@code long[]} of
         /// the given {@code bits} if possible. Also, calling <seealso cref="#length()"/> on the
@@ -114,7 +112,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns number of set bits.  NOTE: this visits every
         ///  long in the backing bits array, and the result is not
-        ///  internally cached! 
+        ///  internally cached!
         /// </summary>
         public long Cardinality()
         {
@@ -451,5 +449,4 @@ namespace Lucene.Net.Util
             return (int)((h >> 32) ^ h) + unchecked((int)0x98761234);
         }
     }
-
 }

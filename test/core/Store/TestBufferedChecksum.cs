@@ -3,7 +3,6 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,13 +20,11 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     [TestFixture]
     public class TestBufferedChecksum : LuceneTestCase
     {
-
         [Test]
         public virtual void TestSimple()
         {
@@ -56,17 +53,20 @@ namespace Lucene.Net.Store
                         c1.Update(bytes, 0, bytes.Length);
                         c2.Update(bytes, 0, bytes.Length);
                         break;
+
                     case 1:
                         // update(int)
                         int b = Random().Next(256);
                         c1.Update(b);
                         c2.Update(b);
                         break;
+
                     case 2:
                         // reset()
                         c1.Reset();
                         c2.Reset();
                         break;
+
                     case 3:
                         // getValue()
                         Assert.AreEqual(c1.Value, c2.Value);
@@ -76,5 +76,4 @@ namespace Lucene.Net.Store
             Assert.AreEqual(c1.Value, c2.Value);
         }
     }
-
 }

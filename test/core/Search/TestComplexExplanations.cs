@@ -2,28 +2,28 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Search.Spans;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Occur = Lucene.Net.Search.BooleanClause.Occur;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Term = Lucene.Net.Index.Term;
-    using Occur = Lucene.Net.Search.BooleanClause.Occur;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Lucene.Net.Search.Spans;
 
     /// <summary>
     /// TestExplanations subclass that builds up super crazy complex queries
@@ -33,7 +33,6 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestComplexExplanations : TestExplanations
     {
-
         /// <summary>
         /// Override the Similarity used in our searcher with one that plays
         /// nice with boosts of 0.0
@@ -52,7 +51,7 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-        // must be static for weight serialization tests 
+        // must be static for weight serialization tests
         private static DefaultSimilarity CreateQnorm1Similarity()
         {
             return new DefaultSimilarityAnonymousInnerClassHelper();
@@ -70,11 +69,9 @@ namespace Lucene.Net.Search
             }
         }
 
-
         [Test]
         public virtual void Test1()
         {
-
             BooleanQuery q = new BooleanQuery();
 
             PhraseQuery phraseQuery = new PhraseQuery();
@@ -132,7 +129,6 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void Test2()
         {
-
             BooleanQuery q = new BooleanQuery();
 
             PhraseQuery phraseQuery = new PhraseQuery();
@@ -189,7 +185,6 @@ namespace Lucene.Net.Search
         }
 
         // :TODO: we really need more crazy complex cases.
-
 
         // //////////////////////////////////////////////////////////////////
 
@@ -273,6 +268,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ13()
         {
@@ -285,6 +281,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ18()
         {
@@ -297,6 +294,7 @@ namespace Lucene.Net.Search
 
             Qtest(query, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ21()
         {
@@ -307,6 +305,7 @@ namespace Lucene.Net.Search
 
             Bqtest(query, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestBQ22()
         {
@@ -327,6 +326,7 @@ namespace Lucene.Net.Search
             q.Boost = 0;
             Bqtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestST6()
         {
@@ -342,6 +342,7 @@ namespace Lucene.Net.Search
             q.Boost = 0;
             Bqtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSF7()
         {
@@ -357,6 +358,7 @@ namespace Lucene.Net.Search
             q.Boost = 0;
             Bqtest(q, new int[] { 0, 1, 2, 3 });
         }
+
         [Test]
         public virtual void TestSNot6()
         {
@@ -374,6 +376,7 @@ namespace Lucene.Net.Search
             SpanQuery q = Snot(f, St("xx"));
             Qtest(q, new int[] { 0, 1, 3 });
         }
+
         [Test]
         public virtual void TestSNot9()
         {
@@ -383,7 +386,5 @@ namespace Lucene.Net.Search
             SpanQuery q = Snot(Snear("w1", "w3", 10, true), t);
             Qtest(q, new int[] { 0, 1, 3 });
         }
-
     }
-
 }

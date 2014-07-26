@@ -1,7 +1,7 @@
 namespace Lucene.Net.Analysis.Tokenattributes
 {
-
     using Lucene.Net.Util;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -19,45 +19,41 @@ namespace Lucene.Net.Analysis.Tokenattributes
          * limitations under the License.
          */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-
-	/// <summary>
-	/// Determines the position of this token
-	/// relative to the previous Token in a TokenStream, used in phrase
-	/// searching.
-	/// 
-	/// <p>The default value is one.
-	/// 
-	/// <p>Some common uses for this are:<ul>
-	/// 
-	/// <li>Set it to zero to put multiple terms in the same position.  this is
-	/// useful if, e.g., a word has multiple stems.  Searches for phrases
-	/// including either stem will match.  In this case, all but the first stem's
-	/// increment should be set to zero: the increment of the first instance
-	/// should be one.  Repeating a token with an increment of zero can also be
-	/// used to boost the scores of matches on that token.
-	/// 
-	/// <li>Set it to values greater than one to inhibit exact phrase matches.
-	/// If, for example, one does not want phrases to match across removed stop
-	/// words, then one could build a stop word filter that removes stop words and
-	/// also sets the increment to the number of stop words removed before each
-	/// non-stop word.  Then exact phrase queries will only match when the terms
-	/// occur with no intervening stop words.
-	/// 
-	/// </ul>
-	/// </summary>
-	/// <seealso cref= Lucene.Net.Index.DocsAndPositionsEnum </seealso>
-	public interface IPositionIncrementAttribute : IAttribute
-	{
-	  /// <summary>
-	  /// Set the position increment. The default value is one.
-	  /// </summary>
-	  /// <param name="positionIncrement"> the distance from the prior term </param>
-	  /// <exception cref="IllegalArgumentException"> if <code>positionIncrement</code> 
-	  ///         is negative. </exception>
-	  /// <seealso cref= #getPositionIncrement() </seealso>
-	  int PositionIncrement {set;get;}
-
-	}
-
+    /// <summary>
+    /// Determines the position of this token
+    /// relative to the previous Token in a TokenStream, used in phrase
+    /// searching.
+    ///
+    /// <p>The default value is one.
+    ///
+    /// <p>Some common uses for this are:<ul>
+    ///
+    /// <li>Set it to zero to put multiple terms in the same position.  this is
+    /// useful if, e.g., a word has multiple stems.  Searches for phrases
+    /// including either stem will match.  In this case, all but the first stem's
+    /// increment should be set to zero: the increment of the first instance
+    /// should be one.  Repeating a token with an increment of zero can also be
+    /// used to boost the scores of matches on that token.
+    ///
+    /// <li>Set it to values greater than one to inhibit exact phrase matches.
+    /// If, for example, one does not want phrases to match across removed stop
+    /// words, then one could build a stop word filter that removes stop words and
+    /// also sets the increment to the number of stop words removed before each
+    /// non-stop word.  Then exact phrase queries will only match when the terms
+    /// occur with no intervening stop words.
+    ///
+    /// </ul>
+    /// </summary>
+    /// <seealso cref= Lucene.Net.Index.DocsAndPositionsEnum </seealso>
+    public interface IPositionIncrementAttribute : IAttribute
+    {
+        /// <summary>
+        /// Set the position increment. The default value is one.
+        /// </summary>
+        /// <param name="positionIncrement"> the distance from the prior term </param>
+        /// <exception cref="IllegalArgumentException"> if <code>positionIncrement</code>
+        ///         is negative. </exception>
+        /// <seealso cref= #getPositionIncrement() </seealso>
+        int PositionIncrement { set; get; }
+    }
 }

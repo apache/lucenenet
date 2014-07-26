@@ -5,7 +5,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
-
     /// <summary>
     /// Licensed to the Apache Software Foundation (ASF) under one or more
     /// contributor license agreements.  See the NOTICE file distributed with
@@ -13,9 +12,9 @@ namespace Lucene.Net.Util
     /// The ASF licenses this file to You under the Apache License, Version 2.0
     /// (the "License"); you may not use this file except in compliance with
     /// the License.  You may obtain a copy of the License at
-    /// 
+    ///
     ///     http://www.apache.org/licenses/LICENSE-2.0
-    /// 
+    ///
     /// Unless required by applicable law or agreed to in writing, software
     /// distributed under the License is distributed on an "AS IS" BASIS,
     /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +25,6 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestDoubleBarrelLRUCache : LuceneTestCase
     {
-
         private void TestCache(DoubleBarrelLRUCache<CloneableInteger, object> cache, int n)
         {
             object dummy = new object();
@@ -136,6 +134,7 @@ namespace Lucene.Net.Util
         }
 
         internal long TotMiss, TotHit;
+
         internal virtual void AddResults(long miss, long hit)
         {
             TotMiss += miss;
@@ -221,8 +220,5 @@ namespace Lucene.Net.Util
                 return new CloneableInteger(Value);
             }
         }
-
-
     }
-
 }

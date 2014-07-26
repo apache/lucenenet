@@ -1,11 +1,9 @@
-using System.Linq;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Support;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +20,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     /// <summary>
     /// <seealso cref="IndexReaderContext"/> for <seealso cref="CompositeReader"/> instance.
@@ -72,7 +69,6 @@ namespace Lucene.Net.Index
             Debug.Assert(leaves != null);
             return leaves;
         }
-
 
         public override IList<IndexReaderContext> Children()
         {
@@ -136,6 +132,5 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
     }
 }

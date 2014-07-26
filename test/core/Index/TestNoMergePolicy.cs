@@ -1,10 +1,9 @@
 using System.Reflection;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-
     using NUnit.Framework;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -22,13 +21,11 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     [TestFixture]
     public class TestNoMergePolicy : LuceneTestCase
     {
-
         [Test]
         public virtual void TestNoMergePolicy_Mem()
         {
@@ -80,7 +77,5 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
     }
-
 }

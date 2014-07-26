@@ -1,6 +1,5 @@
 namespace Lucene.Net.Codecs.Lucene42
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -18,13 +17,8 @@ namespace Lucene.Net.Codecs.Lucene42
      * limitations under the License.
      */
 
-    using CompressingStoredFieldsIndexWriter = Lucene.Net.Codecs.Compressing.CompressingStoredFieldsIndexWriter;
     using CompressingTermVectorsFormat = Lucene.Net.Codecs.Compressing.CompressingTermVectorsFormat;
     using CompressionMode = Lucene.Net.Codecs.Compressing.CompressionMode;
-    using Lucene41StoredFieldsFormat = Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat;
-    using DataOutput = Lucene.Net.Store.DataOutput;
-    using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
 
     /// <summary>
     /// Lucene 4.2 <seealso cref="TermVectorsFormat term vectors format"/>.
@@ -123,14 +117,11 @@ namespace Lucene.Net.Codecs.Lucene42
     /// </summary>
     public sealed class Lucene42TermVectorsFormat : CompressingTermVectorsFormat
     {
-
         /// <summary>
         /// Sole constructor. </summary>
         public Lucene42TermVectorsFormat()
             : base("Lucene41StoredFields", "", CompressionMode.FAST, 1 << 12)
         {
         }
-
     }
-
 }

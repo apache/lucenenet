@@ -1,10 +1,9 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -32,15 +31,15 @@ namespace Lucene.Net.Util
     /// the next slice and then write the address of the new
     /// slice into the last 4 bytes of the previous slice (the
     /// "forwarding address").
-    /// 
+    ///
     /// Each slice is filled with 0's initially, and we mark
     /// the end with a non-zero byte.  this way the methods
     /// that are writing into the slice don't need to record
     /// its length and instead allocate a new slice once they
-    /// hit a non-zero byte. 
-    /// 
+    /// hit a non-zero byte.
+    ///
     /// @lucene.internal
-    /// 
+    ///
     /// </summary>
     public sealed class ByteBlockPool
     {
@@ -50,7 +49,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Abstract class for allocating and freeing byte
-        ///  blocks. 
+        ///  blocks.
         /// </summary>
         public abstract class Allocator
         {
@@ -82,7 +81,6 @@ namespace Lucene.Net.Util
         /// A simple <seealso cref="Allocator"/> that never recycles. </summary>
         public sealed class DirectAllocator : Allocator
         {
-
             public DirectAllocator()
                 : this(BYTE_BLOCK_SIZE)
             {
@@ -100,7 +98,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// A simple <seealso cref="Allocator"/> that never recycles, but
-        ///  tracks how much total RAM is in use. 
+        ///  tracks how much total RAM is in use.
         /// </summary>
         public class DirectTrackingAllocator : Allocator
         {
@@ -145,6 +143,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// index into the buffers array pointing to the current buffer used as the head </summary>
         private int BufferUpto = -1; // Which buffer we are upto
+
         /// <summary>
         /// Where we are in head buffer </summary>
         public int ByteUpto = BYTE_BLOCK_SIZE;
@@ -152,6 +151,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Current head buffer </summary>
         public sbyte[] Buffer;
+
         /// <summary>
         /// Current head offset </summary>
         public int ByteOffset = -BYTE_BLOCK_SIZE;
@@ -177,10 +177,10 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Expert: Resets the pool to its initial state reusing the first buffer. Calling
         /// <seealso cref="ByteBlockPool#nextBuffer()"/> is not needed after reset. </summary>
-        /// <param name="zeroFillBuffers"> if <code>true</code> the buffers are filled with <tt>0</tt>. 
+        /// <param name="zeroFillBuffers"> if <code>true</code> the buffers are filled with <tt>0</tt>.
         ///        this should be set to <code>true</code> if this pool is used with slices. </param>
         /// <param name="reuseFirst"> if <code>true</code> the first buffer will be reused and calling
-        ///        <seealso cref="ByteBlockPool#nextBuffer()"/> is not needed after reset iff the 
+        ///        <seealso cref="ByteBlockPool#nextBuffer()"/> is not needed after reset iff the
         ///        block pool was used before ie. <seealso cref="ByteBlockPool#nextBuffer()"/> was called before. </param>
         public void Reset(bool zeroFillBuffers, bool reuseFirst)
         {
@@ -223,6 +223,7 @@ namespace Lucene.Net.Util
                 }
             }
         }
+
         /// <summary>
         /// Advances the pool to its next buffer. this method should be called once
         /// after the constructor to initialize the pool. In contrast to the
@@ -282,12 +283,11 @@ namespace Lucene.Net.Util
         public static readonly int FIRST_LEVEL_SIZE = LEVEL_SIZE_ARRAY[0];
 
         /// <summary>
-        /// Creates a new byte slice with the given starting size and 
+        /// Creates a new byte slice with the given starting size and
         /// returns the slices offset in the pool.
         /// </summary>
         public int AllocSlice(sbyte[] slice, int upto)
         {
-
             int level = slice[upto] & 0xF;
             int newLevel = NEXT_LEVEL_ARRAY[level];
             int newSize = LEVEL_SIZE_ARRAY[newLevel];
@@ -378,7 +378,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Reads bytes bytes out of the pool starting at the given offset with the given  
+        /// Reads bytes bytes out of the pool starting at the given offset with the given
         /// length into the given byte array at offset <tt>off</tt>.
         /// <p>Note: this method allows to copy across block boundaries.</p>
         /// </summary>
@@ -414,6 +414,4 @@ namespace Lucene.Net.Util
             } while (true);
         }
     }
-
-
 }
