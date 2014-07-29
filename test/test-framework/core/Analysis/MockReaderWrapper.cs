@@ -1,11 +1,10 @@
 using System;
 using System.Diagnostics;
-using System.Text;
 
 namespace Lucene.Net.Analysis
 {
-
     using System.IO;
+
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -23,17 +22,15 @@ namespace Lucene.Net.Analysis
          * limitations under the License.
          */
 
-
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
     /// Wraps a Reader, and can throw random or fixed
-    ///  exceptions, and spoon feed read chars. 
+    ///  exceptions, and spoon feed read chars.
     /// </summary>
 
     public class MockReaderWrapper : StringReader
     {
-
         private readonly StringReader @in;
         private readonly Random Random;
 
@@ -121,5 +118,4 @@ namespace Lucene.Net.Analysis
             return (t is Exception) && "fake exception now!".Equals(t.Message);
         }
     }
-
 }

@@ -70,8 +70,6 @@ namespace Lucene.Net.Index
                 {
                     // We cannot merge sub-readers that have
                     // different TermComps
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final java.util.Comparator<Lucene.Net.Util.BytesRef> subTermComp = subs[i].getComparator();
                     IComparer<BytesRef> subTermComp = subs[i].Comparator;
                     if (subTermComp != null && !subTermComp.Equals(_termComp))
                     {
@@ -93,13 +91,9 @@ namespace Lucene.Net.Index
 
         public override TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.List<MultiTermsEnum.TermsEnumIndex> termsEnums = new java.util.ArrayList<>();
             IList<MultiTermsEnum.TermsEnumIndex> termsEnums = new List<MultiTermsEnum.TermsEnumIndex>();
             for (int i = 0; i < Subs.Length; i++)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final TermsEnum termsEnum = subs[i].intersect(compiled, startTerm);
                 TermsEnum termsEnum = Subs[i].Intersect(compiled, startTerm);
                 if (termsEnum != null)
                 {
@@ -119,13 +113,9 @@ namespace Lucene.Net.Index
 
         public override TermsEnum Iterator(TermsEnum reuse)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.List<MultiTermsEnum.TermsEnumIndex> termsEnums = new java.util.ArrayList<>();
             IList<MultiTermsEnum.TermsEnumIndex> termsEnums = new List<MultiTermsEnum.TermsEnumIndex>();
             for (int i = 0; i < Subs.Length; i++)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final TermsEnum termsEnum = subs[i].iterator(null);
                 TermsEnum termsEnum = Subs[i].Iterator(null);
                 if (termsEnum != null)
                 {
@@ -155,8 +145,6 @@ namespace Lucene.Net.Index
                 long sum = 0;
                 foreach (Terms terms in Subs)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final long v = terms.getSumTotalTermFreq();
                     long v = terms.SumTotalTermFreq;
                     if (v == -1)
                     {
@@ -175,8 +163,6 @@ namespace Lucene.Net.Index
                 long sum = 0;
                 foreach (Terms terms in Subs)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final long v = terms.getSumDocFreq();
                     long v = terms.SumDocFreq;
                     if (v == -1)
                     {
@@ -195,8 +181,6 @@ namespace Lucene.Net.Index
                 int sum = 0;
                 foreach (Terms terms in Subs)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int v = terms.getDocCount();
                     int v = terms.DocCount;
                     if (v == -1)
                     {

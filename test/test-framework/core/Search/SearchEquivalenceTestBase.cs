@@ -4,48 +4,47 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using Directory = Lucene.Net.Store.Directory;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
-    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
+    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using StringField = Lucene.Net.Document.StringField;
+    using Term = Lucene.Net.Index.Term;
+    using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Document.TextField;
 
     /// <summary>
     /// Simple base class for checking search equivalence.
     /// Extend it, and write tests that create <seealso cref="#randomTerm()"/>s
-    /// (all terms are single characters a-z), and use 
-    /// <seealso cref="#assertSameSet(Query, Query)"/> and 
+    /// (all terms are single characters a-z), and use
+    /// <seealso cref="#assertSameSet(Query, Query)"/> and
     /// <seealso cref="#assertSubsetOf(Query, Query)"/>
     /// </summary>
     public abstract class SearchEquivalenceTestBase : LuceneTestCase
@@ -185,7 +184,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Asserts that the documents returned by <code>q1</code>
         /// are a subset of those returned by <code>q2</code>.
-        /// 
+        ///
         /// Both queries will be filtered by <code>filter</code>
         /// </summary>
         protected internal virtual void AssertSubsetOf(Query q1, Query q2, Filter filter)
@@ -217,5 +216,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-
 }

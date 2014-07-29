@@ -146,8 +146,6 @@ namespace Lucene.Net.Util
 
                 if (BufferUpto > 0 || !reuseFirst)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int offset = reuseFirst ? 1 : 0;
                     int offset = reuseFirst ? 1 : 0;
                     // Recycle all but the first buffer
                     allocator.RecycleIntBlocks(Buffers, offset, 1 + BufferUpto);
@@ -203,8 +201,6 @@ namespace Lucene.Net.Util
                 Debug.Assert(AssertSliceBuffer(Buffer));
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int upto = intUpto;
             int upto = IntUpto;
             IntUpto += size;
             Buffer[IntUpto - 1] = 1;
@@ -244,14 +240,8 @@ namespace Lucene.Net.Util
         /// </summary>
         private int AllocSlice(int[] slice, int sliceOffset)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int level = slice[sliceOffset];
             int level = slice[sliceOffset];
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int newLevel = NEXT_LEVEL_ARRAY[level-1];
             int newLevel = NEXT_LEVEL_ARRAY[level - 1];
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int newSize = LEVEL_SIZE_ARRAY[newLevel];
             int newSize = LEVEL_SIZE_ARRAY[newLevel];
             // Maybe allocate another block
             if (IntUpto > INT_BLOCK_SIZE - newSize)
@@ -260,11 +250,7 @@ namespace Lucene.Net.Util
                 Debug.Assert(AssertSliceBuffer(Buffer));
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int newUpto = intUpto;
             int newUpto = IntUpto;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int offset = newUpto + intOffset;
             int offset = newUpto + IntOffset;
             IntUpto += newSize;
             // Write forwarding address at end of last slice:
@@ -377,8 +363,6 @@ namespace Lucene.Net.Util
                 Buffer = Pool.Buffers[BufferUpto];
                 Upto = startOffset & INT_BLOCK_MASK;
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int firstSize = IntBlockPool.LEVEL_SIZE_ARRAY[0];
                 int firstSize = IntBlockPool.LEVEL_SIZE_ARRAY[0];
                 if (startOffset + firstSize >= endOffset)
                 {
@@ -419,12 +403,8 @@ namespace Lucene.Net.Util
             internal void NextSlice()
             {
                 // Skip to our next slice
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int nextIndex = buffer[limit];
                 int nextIndex = Buffer[Limit];
                 Level = NEXT_LEVEL_ARRAY[Level - 1];
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int newSize = LEVEL_SIZE_ARRAY[level];
                 int newSize = LEVEL_SIZE_ARRAY[Level];
 
                 BufferUpto = nextIndex / INT_BLOCK_SIZE;

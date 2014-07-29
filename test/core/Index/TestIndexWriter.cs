@@ -654,11 +654,11 @@ namespace Lucene.Net.Index
             public MyRAMDirectory(Directory @delegate)
                 : base(Random(), @delegate)
             {
-                LockFactory = null;
+                LockFactory_Renamed = null;
                 myLockFactory = new SingleInstanceLockFactory();
             }
 
-            public Lock makeLock(string name)
+            public override Lock MakeLock(string name)
             {
                 return myLockFactory.MakeLock(name);
             }
@@ -2482,8 +2482,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testGetCommitData() throws Exception
         [Test]
         public virtual void TestGetCommitData()
         {
@@ -2605,7 +2603,6 @@ namespace Lucene.Net.Index
 
               public virtual bool HasNext()
               {
-  //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
                 return DocIter.hasNext();
               }
 
@@ -2615,7 +2612,6 @@ namespace Lucene.Net.Index
                 {
                   throw new Exception("boom");
                 }
-  //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
                 return DocIter.Next();
               }
 

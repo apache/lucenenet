@@ -91,8 +91,6 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         protected internal virtual float AvgFieldLength(CollectionStatistics collectionStats)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long sumTotalTermFreq = collectionStats.sumTotalTermFreq();
             long sumTotalTermFreq = collectionStats.SumTotalTermFreq();
             if (sumTotalTermFreq <= 0)
             {
@@ -162,8 +160,6 @@ namespace Lucene.Net.Search.Similarities
 
         public override sealed long ComputeNorm(FieldInvertState state)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numTerms = discountOverlaps ? state.getLength() - state.getNumOverlap() : state.getLength();
             int numTerms = DiscountOverlaps_Renamed ? state.Length - state.NumOverlap : state.Length;
             return EncodeNormValue(state.Boost, numTerms);
         }
@@ -191,14 +187,8 @@ namespace Lucene.Net.Search.Similarities
         ///           and an explanation for the term. </returns>
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics termStats)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long df = termStats.docFreq();
             long df = termStats.DocFreq();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long max = collectionStats.maxDoc();
             long max = collectionStats.MaxDoc();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final float idf = idf(df, max);
             float idf = Idf(df, max);
             return new Explanation(idf, "idf(docFreq=" + df + ", maxDocs=" + max + ")");
         }
@@ -217,21 +207,13 @@ namespace Lucene.Net.Search.Similarities
         ///         for each term. </returns>
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics[] termStats)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long max = collectionStats.maxDoc();
             long max = collectionStats.MaxDoc();
             float idf = 0.0f;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Lucene.Net.Search.Explanation exp = new Lucene.Net.Search.Explanation();
             Explanation exp = new Explanation();
             exp.Description = "idf(), sum of:";
             foreach (TermStatistics stat in termStats)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long df = stat.docFreq();
                 long df = stat.DocFreq();
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final float termIdf = idf(df, max);
                 float termIdf = Idf(df, max);
                 exp.AddDetail(new Explanation(termIdf, "idf(docFreq=" + df + ", maxDocs=" + max + ")"));
                 idf += termIdf;
@@ -348,8 +330,6 @@ namespace Lucene.Net.Search.Similarities
                 get
                 {
                     // we return a TF-IDF like normalization to be nice, but we don't actually normalize ourselves.
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final float queryWeight = idf.getValue() * queryBoost;
                     float queryWeight = Idf.Value * QueryBoost;
                     return queryWeight * queryWeight;
                 }

@@ -2,7 +2,6 @@ using System.Text;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,7 +25,6 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class English
     {
-
         private English() // no instance
         {
         }
@@ -100,24 +98,31 @@ namespace Lucene.Net.Util
                     case 9:
                         result.Append("ninety");
                         break;
+
                     case 8:
                         result.Append("eighty");
                         break;
+
                     case 7:
                         result.Append("seventy");
                         break;
+
                     case 6:
                         result.Append("sixty");
                         break;
+
                     case 5:
                         result.Append("fifty");
                         break;
+
                     case 4:
                         result.Append("forty");
                         break;
+
                     case 3:
                         result.Append("thirty");
                         break;
+
                     case 2:
                         result.Append("twenty");
                         break;
@@ -137,66 +142,84 @@ namespace Lucene.Net.Util
                 case 19:
                     result.Append("nineteen ");
                     break;
+
                 case 18:
                     result.Append("eighteen ");
                     break;
+
                 case 17:
                     result.Append("seventeen ");
                     break;
+
                 case 16:
                     result.Append("sixteen ");
                     break;
+
                 case 15:
                     result.Append("fifteen ");
                     break;
+
                 case 14:
                     result.Append("fourteen ");
                     break;
+
                 case 13:
                     result.Append("thirteen ");
                     break;
+
                 case 12:
                     result.Append("twelve ");
                     break;
+
                 case 11:
                     result.Append("eleven ");
                     break;
+
                 case 10:
                     result.Append("ten ");
                     break;
+
                 case 9:
                     result.Append("nine ");
                     break;
+
                 case 8:
                     result.Append("eight ");
                     break;
+
                 case 7:
                     result.Append("seven ");
                     break;
+
                 case 6:
                     result.Append("six ");
                     break;
+
                 case 5:
                     result.Append("five ");
                     break;
+
                 case 4:
                     result.Append("four ");
                     break;
+
                 case 3:
                     result.Append("three ");
                     break;
+
                 case 2:
                     result.Append("two ");
                     break;
+
                 case 1:
                     result.Append("one ");
                     break;
+
                 case 0:
                     result.Append("");
                     break;
             }
         }
-
 
         public static string IntToEnglish(int i)
         {
@@ -210,5 +233,4 @@ namespace Lucene.Net.Util
             LongToEnglish(i, result);
         }
     }
-
 }

@@ -34,9 +34,6 @@ namespace Lucene.Net.Codecs.Lucene40
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
     using StoredFieldVisitor = Lucene.Net.Index.StoredFieldVisitor;
 
-    //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-    //import static Lucene.Net.Codecs.Lucene40.Lucene40StoredFieldsWriter.*;
-
     /// <summary>
     /// Class responsible for access to stored document fields.
     /// <p/>

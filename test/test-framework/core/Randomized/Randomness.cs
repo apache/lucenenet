@@ -1,13 +1,13 @@
-﻿/* 
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,17 +15,15 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Randomized
 {
     /// <summary>
-    ///  Per-thread, per-lifecycle state randomness defined as an initial seed and 
+    ///  Per-thread, per-lifecycle state randomness defined as an initial seed and
     ///  the current Random instance for that context.
     /// </summary>
     /// <remarks>
@@ -40,7 +38,6 @@ namespace Lucene.Net.Randomized
     {
         private List<ISeedDecorator> decorators;
 
-
         public Random Random
         {
             get { return this.SingleThreadedRandom; }
@@ -51,31 +48,26 @@ namespace Lucene.Net.Randomized
         public int Seed { get; protected set; }
 
         public Randomness(ThreadClass owner, int seed, params ISeedDecorator[] decorators)
-            :this(owner, seed, decorators.ToList())
+            : this(owner, seed, decorators.ToList())
         {
-         
         }
-
 
         public Randomness(int seed, params ISeedDecorator[] decorators)
             : this(ThreadClass.Current(), seed, decorators)
         {
-
         }
 
         protected Randomness(ThreadClass owner, int seed, List<ISeedDecorator> decorators)
         {
             this.Seed = seed;
             this.decorators = decorators.ToList();
-            
+
             var decoratedSeed = Decorate(seed, this.decorators);
 
-            this.SingleThreadedRandom = new SingleThreadedRandom(owner, 
+            this.SingleThreadedRandom = new SingleThreadedRandom(owner,
                                  new Random(decoratedSeed)
                             );
         }
-
-
 
         public Randomness Clone(ThreadClass newOwner)
         {
@@ -94,8 +86,6 @@ namespace Lucene.Net.Randomized
 
             return result;
         }
-
-
 
         public void Dispose()
         {

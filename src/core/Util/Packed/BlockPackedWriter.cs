@@ -75,11 +75,7 @@ namespace Lucene.Net.Util.Packed
                 max = Math.Max(Values[i], max);
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long delta = max - min;
             long delta = max - min;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int bitsRequired = delta < 0 ? 64 : delta == 0L ? 0 : PackedInts.bitsRequired(delta);
             int bitsRequired = delta < 0 ? 64 : delta == 0L ? 0 : PackedInts.BitsRequired(delta);
             if (bitsRequired == 64)
             {
@@ -92,8 +88,6 @@ namespace Lucene.Net.Util.Packed
                 min = Math.Max(0L, max - PackedInts.MaxValue(bitsRequired));
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int token = (bitsRequired << BPV_SHIFT) | (min == 0 ? MIN_VALUE_EQUALS_0 : 0);
             int token = (bitsRequired << BPV_SHIFT) | (min == 0 ? MIN_VALUE_EQUALS_0 : 0);
             @out.WriteByte((sbyte)token);
 

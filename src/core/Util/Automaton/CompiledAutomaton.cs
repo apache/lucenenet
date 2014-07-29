@@ -225,8 +225,6 @@ namespace Lucene.Net.Util.Automaton
             Debug.Assert(maxTransition != null);
 
             // Append floorLabel
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int floorLabel;
             int floorLabel;
             if (maxTransition.Max_Renamed > leadLabel - 1)
             {
@@ -335,8 +333,6 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.List<Integer> stack = new java.util.ArrayList<>();
             IList<int> stack = new List<int>();
 
             int idx = 0;

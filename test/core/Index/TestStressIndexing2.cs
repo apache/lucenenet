@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
@@ -15,7 +16,7 @@ namespace Lucene.Net.Index
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
 
-    /// <summary>
+    /*
     /// Licensed under the Apache License, Version 2.0 (the "License");
     /// you may not use this file except in compliance with the License.
     /// You may obtain a copy of the License at
@@ -27,10 +28,9 @@ namespace Lucene.Net.Index
     /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     /// See the License for the specific language governing permissions and
     /// limitations under the License.
-    /// </summary>
+    */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TextField = Lucene.Net.Document.TextField;
@@ -688,7 +688,7 @@ namespace Lucene.Net.Index
                 {
                     string s1 = f1.StringValue;
                     string s2 = f2.StringValue;
-                    Assert.AreEqual(ff1 + " : " + ff2, s1, s2);
+                    Assert.AreEqual(s1, s2, ff1 + " : " + ff2);
                 }
             }
         }
@@ -745,8 +745,8 @@ namespace Lucene.Net.Index
                         int freq1 = dpEnum1.Freq();
                         int freq2 = dpEnum2.Freq();
                         Assert.AreEqual(freq1, freq2);
-                        OffsetAttribute offsetAtt1 = dpEnum1.Attributes().HasAttribute<OffsetAttribute>() ? dpEnum1.Attributes().GetAttribute<OffsetAttribute>() : null;
-                        OffsetAttribute offsetAtt2 = dpEnum2.Attributes().HasAttribute<OffsetAttribute>() ? dpEnum2.Attributes().GetAttribute<OffsetAttribute>() : null;
+                        IOffsetAttribute offsetAtt1 = dpEnum1.Attributes().HasAttribute<IOffsetAttribute>() ? dpEnum1.Attributes().GetAttribute<IOffsetAttribute>() : null;
+                        IOffsetAttribute offsetAtt2 = dpEnum2.Attributes().HasAttribute<IOffsetAttribute>() ? dpEnum2.Attributes().GetAttribute<IOffsetAttribute>() : null;
 
                         if (offsetAtt1 != null)
                         {

@@ -1,52 +1,51 @@
-using System;
-using System.Linq;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Threading;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NoDeletionPolicy = Lucene.Net.Index.NoDeletionPolicy;
     using SegmentInfos = Lucene.Net.Index.SegmentInfos;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using ThrottledIndexOutput = Lucene.Net.Util.ThrottledIndexOutput;
-    using Lucene.Net.Support;
-    using System.IO;
-    using Lucene.Net.Randomized.Generators;
 
     /// <summary>
     /// this is a Directory Wrapper that adds methods
     /// intended to be used only by unit tests.
     /// It also adds a number of features useful for testing:
     /// <ul>
-    ///   <li> Instances created by <seealso cref="LuceneTestCase#newDirectory()"/> are tracked 
+    ///   <li> Instances created by <seealso cref="LuceneTestCase#newDirectory()"/> are tracked
     ///        to ensure they are closed by the test.
-    ///   <li> When a MockDirectoryWrapper is closed, it will throw an exception if 
-    ///        it has any open files against it (with a stacktrace indicating where 
+    ///   <li> When a MockDirectoryWrapper is closed, it will throw an exception if
+    ///        it has any open files against it (with a stacktrace indicating where
     ///        they were opened from).
     ///   <li> When a MockDirectoryWrapper is closed, it runs CheckIndex to test if
     ///        the index was corrupted.
@@ -60,6 +59,7 @@ namespace Lucene.Net.Store
 
         // Max actual bytes used. this is set by MockRAMOutputStream:
         internal long MaxUsedSize;
+
         internal double RandomIOExceptionRate_Renamed;
         internal double RandomIOExceptionRateOnOpen_Renamed;
         internal Random RandomState;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// If set to true, we throw anSystem.IO.IOException if the same
-        ///  file is opened by createOutput, ever. 
+        ///  file is opened by createOutput, ever.
         /// </summary>
         public virtual bool PreventDoubleWrite
         {
@@ -161,7 +161,7 @@ namespace Lucene.Net.Store
         /// If set to true (the default), when we throw random
         /// System.IO.IOException on openInput or createOutput, we may
         ///  sometimes throw FileNotFoundException or
-        ///  NoSuchFileException. 
+        ///  NoSuchFileException.
         /// </summary>
         public virtual bool AllowRandomFileNotFoundException
         {
@@ -173,7 +173,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// If set to true, you can open an inputstream on a file
-        ///  that is still open for writes. 
+        ///  that is still open for writes.
         /// </summary>
         public virtual bool AllowReadingFilesStillOpenForWrite
         {
@@ -194,9 +194,11 @@ namespace Lucene.Net.Store
             /// <summary>
             /// always emulate a slow hard disk. could be very slow! </summary>
             ALWAYS,
+
             /// <summary>
             /// sometimes (2% of the time) emulate a slow hard disk. </summary>
             SOMETIMES,
+
             /// <summary>
             /// never throttle output </summary>
             NEVER
@@ -277,7 +279,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Simulates a crash of OS or machine by overwriting
-        ///  unsynced files. 
+        ///  unsynced files.
         /// </summary>
         public virtual void Crash()
         {
@@ -416,6 +418,7 @@ namespace Lucene.Net.Store
                 return this.MaxUsedSize;
             }
         }
+
         public virtual void ResetMaxUsedSizeInBytes()
         {
             this.MaxUsedSize = RecomputedActualSizeInBytes;
@@ -437,7 +440,6 @@ namespace Lucene.Net.Store
             }
         }
 
-
         /// <summary>
         /// Trip a test assert if there is an attempt
         /// to delete an open file.
@@ -453,7 +455,6 @@ namespace Lucene.Net.Store
                 return assertNoDeleteOpenFile;
             }
         }
-
 
         /// <summary>
         /// If 0.0, no exceptions will be thrown.  Else this should
@@ -473,7 +474,6 @@ namespace Lucene.Net.Store
             }
         }
 
-
         /// <summary>
         /// If 0.0, no exceptions will be thrown during openInput
         /// and createOutput.  Else this should
@@ -492,7 +492,6 @@ namespace Lucene.Net.Store
                 return RandomIOExceptionRateOnOpen_Renamed;
             }
         }
-
 
         internal virtual void MaybeThrowIOException(string message)
         {
@@ -1131,7 +1130,7 @@ namespace Lucene.Net.Store
             /// multiple cases. this, combined with the fact that Failure
             /// subclasses are often anonymous classes makes reset difficult to
             /// do otherwise.
-            /// 
+            ///
             /// A typical example of use is
             /// Failure failure = new Failure() { ... };
             /// ...
@@ -1267,7 +1266,6 @@ namespace Lucene.Net.Store
             }
         }
 
-
         public override string LockID
         {
             get
@@ -1327,6 +1325,7 @@ namespace Lucene.Net.Store
             }
 
             private int disposed = 0;
+
             public override void Dispose(bool disposing)
             {
                 if (0 == Interlocked.CompareExchange(ref this.disposed, 1, 0))
@@ -1354,7 +1353,6 @@ namespace Lucene.Net.Store
                 OuterInstance.AddFileHandle(ii, Name, Handle.Input);
                 return ii;
             }
-
         }
 
         internal sealed class BufferedIndexOutputWrapper : BufferedIndexOutput
@@ -1416,12 +1414,10 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Use this when throwing fake {@codeSystem.IO.IOException},
-        ///  e.g. from <seealso cref="MockDirectoryWrapper.Failure"/>. 
+        ///  e.g. from <seealso cref="MockDirectoryWrapper.Failure"/>.
         /// </summary>
         public class FakeIOException : System.IO.IOException
         {
         }
-
     }
-
 }

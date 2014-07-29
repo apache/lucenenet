@@ -1,9 +1,5 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.TestFramework.Support
 {
@@ -24,8 +20,6 @@ namespace Lucene.Net.TestFramework.Support
             return defaultValue;
         }
 
-
-
         public static int SystemPropertyAsInt(string key, int defaultValue)
         {
             var setting = ConfigurationManager.AppSettings[key];
@@ -41,7 +35,8 @@ namespace Lucene.Net.TestFramework.Support
             return defaultValue;
         }
 
-        public void AssumeTrue(string msg, bool value) {
+        public void AssumeTrue(string msg, bool value)
+        {
             Assume.That(value);
         }
 
@@ -49,6 +44,5 @@ namespace Lucene.Net.TestFramework.Support
         {
             Assume.That(!value);
         }
-        
     }
 }

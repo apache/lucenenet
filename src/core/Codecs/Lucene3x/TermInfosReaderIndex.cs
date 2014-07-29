@@ -73,8 +73,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             PagedBytes dataPagedBytes = new PagedBytes(EstimatePageBits(initialSize));
             PagedBytesDataOutput dataOutput = dataPagedBytes.DataOutput;
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int bitEstimate = 1+Lucene.Net.Util.MathUtil.log(tiiFileLength, 2);
             int bitEstimate = 1 + MathUtil.Log(tiiFileLength, 2);
             GrowableWriter indexToTerms = new GrowableWriter(bitEstimate, IndexSize, PackedInts.DEFAULT);
 

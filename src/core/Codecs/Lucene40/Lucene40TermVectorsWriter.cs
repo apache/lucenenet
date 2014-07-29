@@ -39,9 +39,6 @@ namespace Lucene.Net.Codecs.Lucene40
     using SegmentReader = Lucene.Net.Index.SegmentReader;
     using StringHelper = Lucene.Net.Util.StringHelper;
 
-    //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-    //import static Lucene.Net.Codecs.Lucene40.Lucene40TermVectorsReader.*;
-
     // TODO: make a new 4.0 TV format that encodes better
     //   - use startOffset (not endOffset) as base for delta on
     //     next startOffset because today for syns or ngrams or

@@ -562,12 +562,8 @@ namespace Lucene.Net.Codecs.Compressing
                     maxNumTerms |= fd.NumTerms;
                 }
             }
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int bitsRequired = Lucene.Net.Util.Packed.PackedInts.bitsRequired(maxNumTerms);
             int bitsRequired = PackedInts.BitsRequired(maxNumTerms);
             VectorsStream.WriteVInt(bitsRequired);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Writer writer = Lucene.Net.Util.Packed.PackedInts.getWriterNoHeader(vectorsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, totalFields, bitsRequired, 1);
             PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, totalFields, bitsRequired, 1);
             foreach (DocData dd in PendingDocs)
             {
@@ -639,8 +635,6 @@ namespace Lucene.Net.Codecs.Compressing
                             int previousPosition = 0;
                             for (int j = 0; j < fd.Freqs[i]; ++j)
                             {
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int position = positionsBuf[fd.posStart + pos++];
                                 int position = PositionsBuf[fd.PosStart + pos++];
                                 Writer.Add(position - previousPosition);
                                 previousPosition = position;
@@ -665,8 +659,6 @@ namespace Lucene.Net.Codecs.Compressing
                     hasOffsets |= fd.HasOffsets;
                     if (fd.HasOffsets && fd.HasPositions)
                     {
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int fieldNumOff = java.util.Arrays.binarySearch(fieldNums, fd.fieldNum);
                         int fieldNumOff = Array.BinarySearch(fieldNums, fd.FieldNum);
                         int pos = 0;
                         for (int i = 0; i < fd.NumTerms; ++i)
@@ -675,11 +667,7 @@ namespace Lucene.Net.Codecs.Compressing
                             int previousOff = 0;
                             for (int j = 0; j < fd.Freqs[i]; ++j)
                             {
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int position = positionsBuf[fd.posStart + pos];
                                 int position = PositionsBuf[fd.PosStart + pos];
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int startOffset = startOffsetsBuf[fd.offStart + pos];
                                 int startOffset = StartOffsetsBuf[fd.OffStart + pos];
                                 sumPos[fieldNumOff] += position - previousPos;
                                 sumOffsets[fieldNumOff] += startOffset - previousOff;
@@ -699,8 +687,6 @@ namespace Lucene.Net.Codecs.Compressing
                 return;
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final float[] charsPerTerm = new float[fieldNums.length];
             float[] charsPerTerm = new float[fieldNums.Length];
             for (int i = 0; i < fieldNums.Length; ++i)
             {
@@ -720,11 +706,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     if ((fd.Flags & OFFSETS) != 0)
                     {
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int fieldNumOff = java.util.Arrays.binarySearch(fieldNums, fd.fieldNum);
                         int fieldNumOff = Array.BinarySearch(fieldNums, fd.FieldNum);
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final float cpt = charsPerTerm[fieldNumOff];
                         float cpt = charsPerTerm[fieldNumOff];
                         int pos = 0;
                         for (int i = 0; i < fd.NumTerms; ++i)
@@ -733,11 +715,7 @@ namespace Lucene.Net.Codecs.Compressing
                             int previousOff = 0;
                             for (int j = 0; j < fd.Freqs[i]; ++j)
                             {
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int position = fd.hasPositions ? positionsBuf[fd.posStart + pos] : 0;
                                 int position = fd.HasPositions ? PositionsBuf[fd.PosStart + pos] : 0;
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int startOffset = startOffsetsBuf[fd.offStart + pos];
                                 int startOffset = StartOffsetsBuf[fd.OffStart + pos];
                                 Writer.Add(startOffset - previousOff - (int)(cpt * (position - previousPos)));
                                 previousPos = position;

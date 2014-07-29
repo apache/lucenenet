@@ -43,8 +43,6 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (state < 2)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int loc = vector * 2 + state;
                     int loc = vector * 2 + state;
                     offset += Unpack(OffsetIncrs0, loc, 1);
                     state = Unpack(ToStates0, loc, 2) - 1;
@@ -54,8 +52,6 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (state < 3)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int loc = vector * 3 + state;
                     int loc = vector * 3 + state;
                     offset += Unpack(OffsetIncrs1, loc, 1);
                     state = Unpack(ToStates1, loc, 2) - 1;
@@ -65,8 +61,6 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (state < 5)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int loc = vector * 5 + state;
                     int loc = vector * 5 + state;
                     offset += Unpack(OffsetIncrs2, loc, 2);
                     state = Unpack(ToStates2, loc, 3) - 1;
@@ -76,8 +70,6 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (state < 5)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int loc = vector * 5 + state;
                     int loc = vector * 5 + state;
                     offset += Unpack(OffsetIncrs3, loc, 2);
                     state = Unpack(ToStates3, loc, 3) - 1;

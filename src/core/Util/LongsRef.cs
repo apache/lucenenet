@@ -115,11 +115,7 @@ namespace Lucene.Net.Util
             if (Length == other.Length)
             {
                 int otherUpto = other.Offset;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long[] otherInts = other.longs;
                 long[] otherInts = other.Longs;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long end = offset + length;
                 long end = Offset + Length;
                 for (int upto = Offset; upto < end; upto++, otherUpto++)
                 {
@@ -145,17 +141,11 @@ namespace Lucene.Net.Util
                 return 0;
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long[] aInts = this.longs;
             long[] aInts = this.Longs;
             int aUpto = this.Offset;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long[] bInts = other.longs;
             long[] bInts = other.Longs;
             int bUpto = other.Offset;
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long aStop = aUpto + Math.min(this.length, other.length);
             long aStop = aUpto + Math.Min(this.Length, other.Length);
 
             while (aUpto < aStop)
@@ -206,8 +196,6 @@ namespace Lucene.Net.Util
         {
             StringBuilder sb = new StringBuilder();
             sb.Append('[');
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long end = offset + length;
             long end = Offset + Length;
             for (int i = Offset; i < end; i++)
             {

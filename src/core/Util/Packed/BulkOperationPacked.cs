@@ -108,8 +108,6 @@ namespace Lucene.Net.Util.Packed
             int bitsLeft = BitsPerValue;
             for (int i = 0; i < iterations * ByteBlockCount_Renamed; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long bytes = blocks[blocksOffset++] & 0xFFL;
                 long bytes = blocks[blocksOffset++] & 0xFFL;
                 if (bitsLeft > 8)
                 {
@@ -163,8 +161,6 @@ namespace Lucene.Net.Util.Packed
             int bitsLeft = BitsPerValue;
             for (int i = 0; i < iterations * ByteBlockCount_Renamed; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int bytes = blocks[blocksOffset++] & 0xFF;
                 int bytes = blocks[blocksOffset++] & 0xFF;
                 if (bitsLeft > 8)
                 {
@@ -252,8 +248,6 @@ namespace Lucene.Net.Util.Packed
             int bitsLeft = 8;
             for (int i = 0; i < ByteValueCount_Renamed * iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long v = values[valuesOffset++];
                 long v = values[valuesOffset++];
                 Debug.Assert(BitsPerValue == 64 || PackedInts.BitsRequired(v) <= BitsPerValue);
                 if (BitsPerValue < bitsLeft)
@@ -286,8 +280,6 @@ namespace Lucene.Net.Util.Packed
             int bitsLeft = 8;
             for (int i = 0; i < ByteValueCount_Renamed * iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int v = values[valuesOffset++];
                 int v = values[valuesOffset++];
                 Debug.Assert(PackedInts.BitsRequired(v & 0xFFFFFFFFL) <= BitsPerValue);
                 if (BitsPerValue < bitsLeft)

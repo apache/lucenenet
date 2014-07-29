@@ -27,8 +27,6 @@ namespace Lucene.Net.Store
     [TestFixture]
     public class TestFilterDirectory : LuceneTestCase
     {
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testOverrides() throws Exception
         [Test]
         public virtual void TestOverrides()
         {

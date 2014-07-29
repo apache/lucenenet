@@ -39,19 +39,13 @@ namespace Lucene.Net.Util.Packed
 
         public override long Get(int index)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int blockOffset = index / valuesPerBlock;
             int blockOffset = index / ValuesPerBlock;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long skip = ((long) blockOffset) << 3;
             long skip = ((long)blockOffset) << 3;
             try
             {
                 @in.Seek(StartPointer + skip);
 
                 long block = @in.ReadLong();
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int offsetInBlock = index % valuesPerBlock;
                 int offsetInBlock = index % ValuesPerBlock;
                 return ((long)((ulong)block >> (offsetInBlock * bitsPerValue))) & Mask;
             }

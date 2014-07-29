@@ -88,8 +88,6 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(index >= 0 && index < valueCount);
             Debug.Assert(off + len <= arr.Length);
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int gets = Math.min(valueCount - index, len);
             int gets = Math.Min(valueCount - index, len);
             System.Array.Copy(Values, index, arr, off, gets);
             return gets;
@@ -101,8 +99,6 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(index >= 0 && index < valueCount);
             Debug.Assert(off + len <= arr.Length);
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int sets = Math.min(valueCount - index, len);
             int sets = Math.Min(valueCount - index, len);
             System.Array.Copy(arr, off, Values, index, sets);
             return sets;

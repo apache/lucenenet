@@ -32,8 +32,6 @@ namespace Lucene.Net.Index
     /*using Ignore = org.junit.Ignore;
     using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;*/
 
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @TimeoutSuite(millis = 80 * TimeUnits.HOUR) @Ignore("very slow") @SuppressCodecs("Lucene3x") public class Test2BSortedDocValues extends Lucene.Net.Util.LuceneTestCase
     [Ignore]
     [TestFixture]
     public class Test2BSortedDocValues : LuceneTestCase

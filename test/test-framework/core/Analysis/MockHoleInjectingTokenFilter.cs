@@ -1,9 +1,8 @@
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,10 +20,6 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-
-
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using PositionLengthAttribute = Lucene.Net.Analysis.Tokenattributes.PositionLengthAttribute;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     // TODO: maybe, instead to be more "natural", we should make
@@ -36,7 +31,6 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class MockHoleInjectingTokenFilter : TokenFilter
     {
-
         private readonly int RandomSeed;
         private Random Random;
         private readonly IPositionIncrementAttribute PosIncAtt;
@@ -88,5 +82,4 @@ namespace Lucene.Net.Analysis
 
         // TODO: end?
     }
-
 }

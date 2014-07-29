@@ -1610,11 +1610,7 @@ namespace Lucene.Net.Index
                     infoStream.Write("    test: terms, freq, prox...");
                 }
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Fields fields = reader.fields();
                 Fields fields = reader.Fields();
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final FieldInfos fieldInfos = reader.getFieldInfos();
                 FieldInfos fieldInfos = reader.FieldInfos;
                 status = CheckFields(fields, liveDocs, maxDoc, fieldInfos, true, false, infoStream, verbose);
                 if (liveDocs != null)
@@ -1646,8 +1642,6 @@ namespace Lucene.Net.Index
         /// </summary>
         public static Status.StoredFieldStatus TestStoredFields(AtomicReader reader, StreamWriter infoStream)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Status.StoredFieldStatus status = new Status.StoredFieldStatus();
             Status.StoredFieldStatus status = new Status.StoredFieldStatus();
 
             try
@@ -1658,8 +1652,6 @@ namespace Lucene.Net.Index
                 }
 
                 // Scan stored fields for all documents
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = reader.getLiveDocs();
                 Bits liveDocs = reader.LiveDocs;
                 for (int j = 0; j < reader.MaxDoc(); ++j)
                 {

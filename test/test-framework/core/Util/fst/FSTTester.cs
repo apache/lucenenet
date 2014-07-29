@@ -1,43 +1,42 @@
 using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
 {
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     * <p/>
-     * http://www.apache.org/licenses/LICENSE-2.0
-     * <p/>
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         * <p/>
+         * http://www.apache.org/licenses/LICENSE-2.0
+         * <p/>
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IOContext = Lucene.Net.Store.IOContext;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
-    using Lucene.Net.Randomized.Generators;
-    using System.IO;
-    using NUnit.Framework;
 
     /// <summary>
     /// Helper class to test FSTs. </summary>
     public class FSTTester<T>
     {
-
         internal readonly Random Random;
         internal readonly List<InputOutput<T>> Pairs;
         internal readonly int InputMode;
@@ -304,7 +303,6 @@ namespace Lucene.Net.Util.Fst
             return output;
         }
 
-
         internal virtual FST<T> DoTest(int prune1, int prune2, bool allowRandomSuffixSharing)
         {
             if (LuceneTestCase.VERBOSE)
@@ -403,7 +401,6 @@ namespace Lucene.Net.Util.Fst
         // FST is complete
         private void VerifyUnPruned(int inputMode, FST<T> fst)
         {
-
             FST<long> fstLong;
             ISet<long> validOutputs;
             long minLong = long.MaxValue;
@@ -703,7 +700,6 @@ namespace Lucene.Net.Util.Fst
                         {
                             continue;
                         }
-
                     }
                     else
                     {
@@ -788,7 +784,6 @@ namespace Lucene.Net.Util.Fst
         // FST is pruned
         private void VerifyPruned(int inputMode, FST<T> fst, int prune1, int prune2)
         {
-
             if (LuceneTestCase.VERBOSE)
             {
                 Console.WriteLine("TEST: now verify pruned " + Pairs.Count + " terms; outputs=" + Outputs);
@@ -996,5 +991,4 @@ namespace Lucene.Net.Util.Fst
             }
         }
     }
-
 }

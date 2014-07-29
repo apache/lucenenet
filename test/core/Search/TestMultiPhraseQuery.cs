@@ -172,7 +172,6 @@ namespace Lucene.Net.Search
             indexStore.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
         //ORIGINAL LINE: @Ignore public void testMultiSloppyWithRepeats() throws java.io.IOException
         [Test]
         public virtual void TestMultiSloppyWithRepeats() //LUCENE-3821 fixes sloppy phrase scoring, except for this known problem

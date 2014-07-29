@@ -1131,8 +1131,6 @@ namespace Lucene.Net.Index
 
                 // Must carefully compute fileName from "generation"
                 // since lastGeneration isn't incremented:
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final String segmentFileName = IndexFileNames.fileNameFromGeneration(IndexFileNames.SEGMENTS, "", generation);
                 string segmentFileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", Generation_Renamed);
                 // Suppress so we keep throwing the original exception
                 // in our caller

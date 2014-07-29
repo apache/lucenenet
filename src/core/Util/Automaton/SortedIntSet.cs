@@ -55,8 +55,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 int key = num;
                 int val;
-                Map.TryGetValue(key, out val);
-                if (val == null)
+                if (!Map.TryGetValue(key, out val))
                 {
                     Map[key] = 1;
                 }

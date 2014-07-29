@@ -72,14 +72,8 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final BucketTable table = bucketTable;
                 BucketTable table = BucketTable;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int i = doc & BucketTable.MASK;
                 int i = doc & BucketTable.MASK;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Bucket bucket = table.buckets[i];
                 Bucket bucket = table.Buckets[i];
 
                 if (bucket.Doc != doc) // invalid bucket

@@ -1,13 +1,13 @@
-﻿/* 
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,18 +15,16 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using Lucene.Net.Support;
-using NUnit.Framework;
+using System;
+using System.Threading;
 
 namespace Lucene.Net.Randomized
 {
     public class RandomizedContext : IDisposable
     {
-        private static  readonly object globalLock  = new object();
-        protected       readonly object contextLock = new object();
+        private static readonly object globalLock = new object();
+        protected readonly object contextLock = new object();
 
         private class ThreadResources
         {
@@ -38,7 +36,7 @@ namespace Lucene.Net.Randomized
             //public Queue<Randomness> Queue { get; private set; }
         }
 
-        private static readonly IdentityHashMap<ThreadGroup, RandomizedContext> contexts = 
+        private static readonly IdentityHashMap<ThreadGroup, RandomizedContext> contexts =
             new IdentityHashMap<ThreadGroup, RandomizedContext>();
 
         private readonly WeakDictionary<ThreadClass, ThreadResources> threadResources
@@ -97,7 +95,7 @@ namespace Lucene.Net.Randomized
         {
             this.threadGroup = group;
             this.suiteClass = suiteClass;
-            this.runner = runner; 
+            this.runner = runner;
         }
 
         public static RandomizedContext Current { get { return Context(ThreadClass.Current()); } }
@@ -108,10 +106,8 @@ namespace Lucene.Net.Randomized
 
             RandomizedContext context;
 
-            lock(globalLock)
+            lock (globalLock)
             {
-               
-
                 while (true)
                 {
                     context = contexts[group];
@@ -122,13 +118,13 @@ namespace Lucene.Net.Randomized
                 }
 
                 // TODO: revisit
-                if(context == null)
+                if (context == null)
                 {
                     context = contexts[group] = new RandomizedContext(group, null, null);
                 }
             }
 
-            if(context == null)
+            if (context == null)
             {
                 // TODO: revisit
                 var message = "No context information for thread," + thread.Name + ". " +
@@ -158,9 +154,10 @@ namespace Lucene.Net.Randomized
                 throw new ObjectDisposedException("RandomContext is diposed for thread," + Thread.CurrentThread.Name + ".");
         }
 
-
-        static RandomizedContext Create(ThreadGroup tg, Type suiteClass, RandomizedRunner runner) {
-            lock(globalLock) {
+        private static RandomizedContext Create(ThreadGroup tg, Type suiteClass, RandomizedRunner runner)
+        {
+            lock (globalLock)
+            {
                 var context = new RandomizedContext(tg, suiteClass, runner);
                 contexts.Add(tg, context);
                 context.threadResources.Add(ThreadClass.Current(), new ThreadResources());

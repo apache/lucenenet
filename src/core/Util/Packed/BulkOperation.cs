@@ -103,8 +103,6 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public int ComputeIterations(int valueCount, int ramBudget)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int iterations = ramBudget / (byteBlockCount() + 8 * byteValueCount());
             int iterations = ramBudget / (ByteBlockCount() + 8 * ByteValueCount());
             if (iterations == 0)
             {

@@ -117,12 +117,8 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.BytesRef payload = postings.getPayload();
                 BytesRef payload = Postings_Renamed.Payload;
                 ReadPayload = true;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final byte[] bytes;
                 sbyte[] bytes;
                 if (payload != null)
                 {

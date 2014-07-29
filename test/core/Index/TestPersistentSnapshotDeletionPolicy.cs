@@ -96,8 +96,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testNoSnapshotInfos() throws Exception
         [Test]
         public virtual void TestNoSnapshotInfos()
         {
@@ -106,8 +104,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testMissingSnapshots() throws Exception
         [Test]
         public virtual void TestMissingSnapshots()
         {

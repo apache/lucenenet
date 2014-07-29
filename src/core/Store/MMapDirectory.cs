@@ -200,7 +200,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
 
-            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file.ToString() + "\")", c);
         }
@@ -210,7 +210,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
 
-            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             var full = new MMapIndexInput(this, "MMapIndexInputSlicer(path=\"" + file.ToString() + "\")", c);
 

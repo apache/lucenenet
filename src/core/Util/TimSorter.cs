@@ -72,8 +72,6 @@ namespace Lucene.Net.Util
                 r |= n & 1;
                 n = (int)((uint)n >> 1);
             }
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int minRun = n + r;
             int minRun = n + r;
             Debug.Assert(minRun >= MINRUN && minRun <= THRESHOLD);
             return minRun;
@@ -81,8 +79,6 @@ namespace Lucene.Net.Util
 
         internal virtual int RunLen(int i)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int off = stackSize - i;
             int off = StackSize - i;
             return RunEnds[off] - RunEnds[off - 1];
         }
@@ -114,8 +110,6 @@ namespace Lucene.Net.Util
         /// </summary>
         internal virtual int NextRun()
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int runBase = runEnd(0);
             int runBase = RunEnd(0);
             Debug.Assert(runBase < To);
             if (runBase == To - 1)
@@ -140,8 +134,6 @@ namespace Lucene.Net.Util
                     ++o;
                 }
             }
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int runHi = Math.max(o, Math.min(to, runBase + minRun));
             int runHi = Math.Max(o, Math.Min(To, runBase + MinRun_Renamed));
             BinarySort(runBase, runHi, o);
             return runHi - runBase;
@@ -151,17 +143,11 @@ namespace Lucene.Net.Util
         {
             while (StackSize > 1)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int runLen0 = runLen(0);
                 int runLen0 = RunLen(0);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int runLen1 = runLen(1);
                 int runLen1 = RunLen(1);
 
                 if (StackSize > 2)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int runLen2 = runLen(2);
                     int runLen2 = RunLen(2);
 
                     if (runLen2 <= runLen1 + runLen0)
@@ -203,8 +189,6 @@ namespace Lucene.Net.Util
             Array.Clear(RunEnds, 0, RunEnds.Length);
             RunEnds[0] = from;
             this.To = to;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int length = to - from;
             int length = to - from;
             this.MinRun_Renamed = length <= THRESHOLD ? length : MinRun(length);
         }

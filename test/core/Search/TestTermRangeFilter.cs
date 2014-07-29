@@ -34,8 +34,6 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestTermRangeFilter : BaseTestRangeFilter
     {
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testRangeFilterId() throws java.io.IOException
         [Test]
         public virtual void TestRangeFilterId()
         {
@@ -118,8 +116,6 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, result.Length, "med,med,T,T");
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testRangeFilterRand() throws java.io.IOException
         [Test]
         public virtual void TestRangeFilterRand()
         {

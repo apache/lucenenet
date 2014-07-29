@@ -43,8 +43,6 @@ namespace Lucene.Net.Search
         private static IndexReader r;
         private static IndexSearcher s;
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
         [TestFixtureSetUp]
         public static void BeforeClass()
         {
@@ -71,8 +69,6 @@ namespace Lucene.Net.Search
             //System.out.println("Set up " + getName());
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
         [TestFixtureTearDown]
         public static void AfterClass()
         {

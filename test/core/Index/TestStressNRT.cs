@@ -65,7 +65,6 @@ namespace Lucene.Net.Index
                 Model[i] = -1L;
                 SyncArr[i] = new object();
             }
-            //JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
             CommittedModel.PutAll(Model);
         }
 

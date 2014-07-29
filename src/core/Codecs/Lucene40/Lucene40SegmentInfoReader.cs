@@ -45,41 +45,25 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override SegmentInfo Read(Directory dir, string segment, IOContext context)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final String fileName = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, "", Lucene40SegmentInfoFormat.SI_EXTENSION);
             string fileName = IndexFileNames.SegmentFileName(segment, "", Lucene40SegmentInfoFormat.SI_EXTENSION);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Lucene.Net.Store.IndexInput input = dir.openInput(fileName, context);
             IndexInput input = dir.OpenInput(fileName, context);
             bool success = false;
             try
             {
                 CodecUtil.CheckHeader(input, Lucene40SegmentInfoFormat.CODEC_NAME, Lucene40SegmentInfoFormat.VERSION_START, Lucene40SegmentInfoFormat.VERSION_CURRENT);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final String version = input.readString();
                 string version = input.ReadString();
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int docCount = input.readInt();
                 int docCount = input.ReadInt();
                 if (docCount < 0)
                 {
                     throw new CorruptIndexException("invalid docCount: " + docCount + " (resource=" + input + ")");
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final boolean isCompoundFile = input.readByte() == Lucene.Net.Index.SegmentInfo.YES;
                 bool isCompoundFile = input.ReadByte() == SegmentInfo.YES;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final java.util.Map<String,String> diagnostics = input.readStringStringMap();
                 IDictionary<string, string> diagnostics = input.ReadStringStringMap();
                 input.ReadStringStringMap(); // read deprecated attributes
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final java.util.Set<String> files = input.readStringSet();
                 ISet<string> files = input.ReadStringSet();
 
                 CodecUtil.CheckEOF(input);
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Index.SegmentInfo si = new Lucene.Net.Index.SegmentInfo(dir, version, segment, docCount, isCompoundFile, null, diagnostics);
                 SegmentInfo si = new SegmentInfo(dir, version, segment, docCount, isCompoundFile, null, diagnostics);
                 si.Files = files;
 

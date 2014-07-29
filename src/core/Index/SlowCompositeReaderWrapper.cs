@@ -45,8 +45,8 @@ namespace Lucene.Net.Index
     public sealed class SlowCompositeReaderWrapper : AtomicReader
     {
         private readonly CompositeReader @in;
-        private readonly Fields Fields_Renamed;
-        private readonly Bits LiveDocs_Renamed;
+        private readonly Fields fields;
+        private readonly Bits liveDocs;
 
         /// <summary>
         /// this method is sugar for getting an <seealso cref="AtomicReader"/> from
@@ -55,9 +55,10 @@ namespace Lucene.Net.Index
         /// </summary>
         public static AtomicReader Wrap(IndexReader reader)
         {
-            if (reader is CompositeReader)
+            CompositeReader compositeReader = reader as CompositeReader;
+            if (compositeReader != null)
             {
-                return new SlowCompositeReaderWrapper((CompositeReader)reader);
+                return new SlowCompositeReaderWrapper(compositeReader);
             }
             else
             {
@@ -70,8 +71,8 @@ namespace Lucene.Net.Index
             : base()
         {
             @in = reader;
-            Fields_Renamed = MultiFields.GetFields(@in);
-            LiveDocs_Renamed = MultiFields.GetLiveDocs(@in);
+            fields = MultiFields.GetFields(@in);
+            liveDocs = MultiFields.GetLiveDocs(@in);
             @in.RegisterParentReader(this);
         }
 
@@ -83,7 +84,7 @@ namespace Lucene.Net.Index
         public override Fields Fields()
         {
             EnsureOpen();
-            return Fields_Renamed;
+            return fields;
         }
 
         public override NumericDocValues GetNumericDocValues(string field)
@@ -114,9 +115,10 @@ namespace Lucene.Net.Index
                 {
                     // uncached, or not a multi dv
                     SortedDocValues dv = MultiDocValues.GetSortedValues(@in, field);
-                    if (dv is MultiSortedDocValues)
+                    MultiSortedDocValues docValues = dv as MultiSortedDocValues;
+                    if (docValues != null)
                     {
-                        map = ((MultiSortedDocValues)dv).Mapping;
+                        map = docValues.Mapping;
                         if (map.Owner == CoreCacheKey)
                         {
                             CachedOrdMaps[field] = map;
@@ -131,20 +133,12 @@ namespace Lucene.Net.Index
                 return null;
             }
             int size = @in.Leaves().Count;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final SortedDocValues[] values = new SortedDocValues[size];
             SortedDocValues[] values = new SortedDocValues[size];
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int[] starts = new int[size+1];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {
                 AtomicReaderContext context = @in.Leaves()[i];
-                SortedDocValues v = context.AtomicReader.GetSortedDocValues(field);
-                if (v == null)
-                {
-                    v = DocValues.EMPTY_SORTED;
-                }
+                SortedDocValues v = context.AtomicReader.GetSortedDocValues(field) ?? DocValues.EMPTY_SORTED;
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
@@ -158,14 +152,14 @@ namespace Lucene.Net.Index
             OrdinalMap map = null;
             lock (CachedOrdMaps)
             {
-                map = CachedOrdMaps[field];
-                if (map == null)
+                if (!CachedOrdMaps.TryGetValue(field, out map))
                 {
                     // uncached, or not a multi dv
                     SortedSetDocValues dv = MultiDocValues.GetSortedSetValues(@in, field);
-                    if (dv is MultiSortedSetDocValues)
+                    MultiSortedSetDocValues docValues = dv as MultiSortedSetDocValues;
+                    if (docValues != null)
                     {
-                        map = ((MultiSortedSetDocValues)dv).Mapping;
+                        map = docValues.Mapping;
                         if (map.Owner == CoreCacheKey)
                         {
                             CachedOrdMaps[field] = map;
@@ -181,20 +175,12 @@ namespace Lucene.Net.Index
             }
             Debug.Assert(map != null);
             int size = @in.Leaves().Count;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final SortedSetDocValues[] values = new SortedSetDocValues[size];
             SortedSetDocValues[] values = new SortedSetDocValues[size];
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int[] starts = new int[size+1];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {
                 AtomicReaderContext context = @in.Leaves()[i];
-                SortedSetDocValues v = context.AtomicReader.GetSortedSetDocValues(field);
-                if (v == null)
-                {
-                    v = DocValues.EMPTY_SORTED_SET;
-                }
+                SortedSetDocValues v = context.AtomicReader.GetSortedSetDocValues(field) ?? DocValues.EMPTY_SORTED_SET;
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
@@ -241,7 +227,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return LiveDocs_Renamed;
+                return liveDocs;
             }
         }
 

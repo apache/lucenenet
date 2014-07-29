@@ -4,30 +4,29 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
 {
+    using Lucene.Net.Randomized.Generators;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Randomized.Generators;
 
     /// <summary>
     /// Helper class that adds some extra checks to ensure correct
@@ -36,6 +35,7 @@ namespace Lucene.Net.Search
     public class AssertingIndexSearcher : IndexSearcher
     {
         internal readonly Random Random;
+
         public AssertingIndexSearcher(Random random, IndexReader r)
             : base(r)
         {
@@ -78,7 +78,6 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-
             public override void Normalize(float norm, float topLevelBoost)
             {
                 throw new InvalidOperationException("Weight already normalized.");
@@ -91,7 +90,6 @@ namespace Lucene.Net.Search
                     throw new InvalidOperationException("Weight already normalized.");
                 }
             }
-
         }
 
         public override Query Rewrite(Query original)
@@ -122,7 +120,5 @@ namespace Lucene.Net.Search
         {
             return "AssertingIndexSearcher(" + base.ToString() + ")";
         }
-
     }
-
 }

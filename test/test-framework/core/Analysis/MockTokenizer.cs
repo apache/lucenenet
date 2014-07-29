@@ -1,37 +1,33 @@
+using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Diagnostics;
-using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using Lucene.Net.Support;
 
     //using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
     using System.IO;
-    using Lucene.Net.Support;
-    using Lucene.Net.Randomized;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
+    using RegExp = Lucene.Net.Util.Automaton.RegExp;
 
     /// <summary>
     /// Tokenizer for testing.
@@ -50,11 +46,13 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Acts Similar to WhitespaceTokenizer </summary>
         public static readonly CharacterRunAutomaton WHITESPACE = new CharacterRunAutomaton(new RegExp("[^ \t\r\n]+").ToAutomaton());
+
         /// <summary>
         /// Acts Similar to KeywordTokenizer.
-        /// TODO: Keyword returns an "empty" token for an empty reader... 
+        /// TODO: Keyword returns an "empty" token for an empty reader...
         /// </summary>
         public static readonly CharacterRunAutomaton KEYWORD = new CharacterRunAutomaton(new RegExp(".*").ToAutomaton());
+
         /// <summary>
         /// Acts like LetterTokenizer. </summary>
         // the ugly regex below is incomplete Unicode 5.2 [:Letter:]
@@ -73,6 +71,7 @@ namespace Lucene.Net.Analysis
         // buffered state (previous codepoint and offset). we replay this once we
         // hit a reject state in case its permissible as the start of a new term.
         internal int BufferedCodePoint = -1; // -1 indicates empty buffer
+
         internal int BufferedOff = -1;
 
         // TODO: "register" with LuceneTestCase to ensure all streams are closed() ?
@@ -116,6 +115,7 @@ namespace Lucene.Net.Analysis
             : this(input, runAutomaton, lowerCase, DEFAULT_MAX_TOKEN_LENGTH)
         {
         }
+
         /// <summary>
         /// Calls <seealso cref="#MockTokenizer(Reader, CharacterRunAutomaton, boolean) MockTokenizer(Reader, WHITESPACE, true)"/> </summary>
         public MockTokenizer(TextReader input)
@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Calls {@link #MockTokenizer(Lucene.Net.Util.AttributeSource.AttributeFactory,Reader,CharacterRunAutomaton,boolean)
-        ///                MockTokenizer(AttributeFactory, Reader, WHITESPACE, true)} 
+        ///                MockTokenizer(AttributeFactory, Reader, WHITESPACE, true)}
         /// </summary>
         public MockTokenizer(AttributeFactory factory, StreamReader input)
             : this(input, WHITESPACE, true)
@@ -349,5 +349,4 @@ namespace Lucene.Net.Analysis
             }
         }
     }
-
 }

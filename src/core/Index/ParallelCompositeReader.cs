@@ -147,8 +147,6 @@ namespace Lucene.Net.Index
                         {
                             compositeSubs[j] = (CompositeReader)readers[j].GetSequentialSubReaders()[i];
                         }
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final CompositeReader[] storedSubs = new CompositeReader[storedFieldsReaders.length];
                         CompositeReader[] storedSubs = new CompositeReader[storedFieldsReaders.Length];
                         for (int j = 0; j < storedFieldsReaders.Length; j++)
                         {

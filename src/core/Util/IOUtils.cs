@@ -431,7 +431,7 @@ namespace Lucene.Net.Util
         /// <param name="fileToSync"> the file to fsync </param>
         /// <param name="isDir"> if true, the given file is a directory (we open for read and ignore IOExceptions,
         ///  because not all file systems and operating systems allow to fsync on a directory) </param>
-        public static void Fsync(FileInfo fileToSync, bool isDir)
+        public static void Fsync(string fileToSync, bool isDir)
         {
             System.IO.IOException exc = null;
 
@@ -440,34 +440,39 @@ namespace Lucene.Net.Util
             try
             {
                 //FileChannel file = FileChannel.open(fileToSync.toPath(), isDir ? StandardOpenOption.READ : StandardOpenOption.WRITE);
-                FileStream fs = new FileStream(fileToSync.FullName, FileMode.OpenOrCreate, isDir ? FileAccess.Read : FileAccess.Write);
-                for (int retry = 0; retry < 5; retry++)
+                using (
+                    FileStream fs = new FileStream(fileToSync, FileMode.OpenOrCreate,
+                        isDir ? FileAccess.Read : FileAccess.Write))
                 {
-                    try
+                    for (int retry = 0; retry < 5; retry++)
                     {
-                        //LUCENE TO-DO I believe this is the equivalent of forcing the stream to disk
-                        fs.Flush(true);
-                        return;
-                    }
-                    catch (System.IO.IOException ioe)
-                    {
-                        if (exc == null)
-                        {
-                            exc = ioe;
-                        }
                         try
                         {
-                            // Pause 5 msec
-                            Thread.Sleep(5);
+                            //LUCENE TO-DO I believe this is the equivalent of forcing the stream to disk
+                            fs.Flush(true);
+                            return;
                         }
-                        catch (ThreadInterruptedException ie)
+                        catch (System.IO.IOException ioe)
                         {
-                            ThreadInterruptedException ex = new ThreadInterruptedException(ie);
-                            //ex.addSuppressed(exc);
-                            throw ex;
+                            if (exc == null)
+                            {
+                                exc = ioe;
+                            }
+                            try
+                            {
+                                // Pause 5 msec
+                                Thread.Sleep(5);
+                            }
+                            catch (ThreadInterruptedException ie)
+                            {
+                                ThreadInterruptedException ex = new ThreadInterruptedException(ie);
+                                //ex.addSuppressed(exc);
+                                throw ex;
+                            }
                         }
                     }
                 }
+
             }
             catch (System.IO.IOException ioe)
             {

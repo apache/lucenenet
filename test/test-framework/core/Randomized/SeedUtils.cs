@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,7 +12,7 @@ namespace Lucene.Net.Randomized
         public static int ParseSeed(string seed)
         {
             int result = 0;
-            foreach(var item in seed.ToCharArray())
+            foreach (var item in seed.ToCharArray())
             {
                 var character = Char.ToLower(item);
                 result = result << 4;
@@ -42,7 +41,7 @@ namespace Lucene.Net.Randomized
 
         public static int[] ParseSeedChain(String chain)
         {
-            if(chain == null)
+            if (chain == null)
                 throw new ArgumentNullException("chain");
 
             chain = chain.Replace("[", "").Replace("]", "");
@@ -70,7 +69,7 @@ namespace Lucene.Net.Randomized
                 sb.Append(FormatSeed(values[i].Seed));
             }
 
-            return sb.ToString(); 
+            return sb.ToString();
         }
     }
 }

@@ -1,115 +1,102 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Lucene.Net.Index;
-using Lucene.Net.Store;
-using NUnit.Framework;
-using Lucene.Net.Support;
-using Lucene.Net.Randomized;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Util
 {
+    using Lucene.Net.TestFramework.Support;
+    using System.IO;
+    using System.Reflection;
+    using AlcoholicMergePolicy = Lucene.Net.Index.AlcoholicMergePolicy;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using Store = Lucene.Net.Document.Field.Store;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using AlcoholicMergePolicy = Lucene.Net.Index.AlcoholicMergePolicy;
     using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
     using AssertingDirectoryReader = Lucene.Net.Index.AssertingDirectoryReader;
+    using AssertingIndexSearcher = Lucene.Net.Search.AssertingIndexSearcher;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
+    using CacheEntry = Lucene.Net.Search.FieldCache_Fields.CacheEntry;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using CompositeReader = Lucene.Net.Index.CompositeReader;
     using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using Document = Lucene.Net.Document.Document;
+    using FCInvisibleMultiReader = Lucene.Net.Search.QueryUtils.FCInvisibleMultiReader;
+    using Field = Lucene.Net.Document.Field;
+    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldFilterAtomicReader = Lucene.Net.Index.FieldFilterAtomicReader;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using Fields = Lucene.Net.Index.Fields;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using ReaderClosedListener = Lucene.Net.Index.IndexReader.ReaderClosedListener;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using FlushInfo = Lucene.Net.Store.FlushInfo;
+    using FSDirectory = Lucene.Net.Store.FSDirectory;
     using IndexableField = Lucene.Net.Index.IndexableField;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using Insanity = Lucene.Net.Util.FieldCacheSanityChecker.Insanity;
+    using IOContext = Lucene.Net.Store.IOContext;
+
+    //using Context = Lucene.Net.Store.IOContext.Context;
+    using LockFactory = Lucene.Net.Store.LockFactory;
     using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
     using LogDocMergePolicy = Lucene.Net.Index.LogDocMergePolicy;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
+    using MergeInfo = Lucene.Net.Store.MergeInfo;
     using MergePolicy = Lucene.Net.Index.MergePolicy;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using MockRandomMergePolicy = Lucene.Net.Index.MockRandomMergePolicy;
     using MultiDocValues = Lucene.Net.Index.MultiDocValues;
     using MultiFields = Lucene.Net.Index.MultiFields;
+    using NRTCachingDirectory = Lucene.Net.Store.NRTCachingDirectory;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
     using ParallelAtomicReader = Lucene.Net.Index.ParallelAtomicReader;
     using ParallelCompositeReader = Lucene.Net.Index.ParallelCompositeReader;
+    using RateLimitedDirectoryWrapper = Lucene.Net.Store.RateLimitedDirectoryWrapper;
+    using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using SegmentReader = Lucene.Net.Index.SegmentReader;
     using SerialMergeScheduler = Lucene.Net.Index.SerialMergeScheduler;
     using SimpleMergedSegmentWarmer = Lucene.Net.Index.SimpleMergedSegmentWarmer;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
+    using StringField = Lucene.Net.Document.StringField;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
+    using TextField = Lucene.Net.Document.TextField;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
-    using AssertingIndexSearcher = Lucene.Net.Search.AssertingIndexSearcher;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using FieldCache = Lucene.Net.Search.FieldCache;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using CacheEntry = Lucene.Net.Search.FieldCache_Fields.CacheEntry;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using FCInvisibleMultiReader = Lucene.Net.Search.QueryUtils.FCInvisibleMultiReader;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Directory = Lucene.Net.Store.Directory;
-    using FSDirectory = Lucene.Net.Store.FSDirectory;
-    using FlushInfo = Lucene.Net.Store.FlushInfo;
-    using IOContext = Lucene.Net.Store.IOContext;
-    //using Context = Lucene.Net.Store.IOContext.Context;
-    using LockFactory = Lucene.Net.Store.LockFactory;
-    using MergeInfo = Lucene.Net.Store.MergeInfo;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using Throttling = Lucene.Net.Store.MockDirectoryWrapper.Throttling_e;
-    using NRTCachingDirectory = Lucene.Net.Store.NRTCachingDirectory;
-    using RateLimitedDirectoryWrapper = Lucene.Net.Store.RateLimitedDirectoryWrapper;
-    using Insanity = Lucene.Net.Util.FieldCacheSanityChecker.Insanity;
-    using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
-    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
-    using Lucene.Net.TestFramework.Support;
-    using System.IO;
-    using Apache.NMS.Util;
-    using System.Reflection;
-
-
 
     /*using After = org.junit.After;
     using AfterClass = org.junit.AfterClass;
@@ -151,34 +138,35 @@ namespace Lucene.Net.Util
     using SystemPropertiesInvariantRule = com.carrotsearch.randomizedtesting.rules.SystemPropertiesInvariantRule;
     using TestRuleAdapter = com.carrotsearch.randomizedtesting.rules.TestRuleAdapter;
     */
+
     /// <summary>
     /// Base class for all Lucene unit tests, Junit3 or Junit4 variant.
-    /// 
+    ///
     /// <h3>Class and instance setup.</h3>
-    /// 
+    ///
     /// <p>
     /// The preferred way to specify class (suite-level) setup/cleanup is to use
     /// static methods annotated with <seealso cref="BeforeClass"/> and <seealso cref="AfterClass"/>. Any
     /// code in these methods is executed within the test framework's control and
     /// ensure proper setup has been made. <b>Try not to use static initializers
     /// (including complex final field initializers).</b> Static initializers are
-    /// executed before any setup rules are fired and may cause you (or somebody 
+    /// executed before any setup rules are fired and may cause you (or somebody
     /// else) headaches.
-    /// 
+    ///
     /// <p>
     /// For instance-level setup, use <seealso cref="Before"/> and <seealso cref="After"/> annotated
     /// methods. If you override either <seealso cref="#setUp()"/> or <seealso cref="#tearDown()"/> in
     /// your subclass, make sure you call <code>super.setUp()</code> and
     /// <code>super.tearDown()</code>. this is detected and enforced.
-    /// 
+    ///
     /// <h3>Specifying test cases</h3>
-    /// 
+    ///
     /// <p>
     /// Any test method with a <code>testXXX</code> prefix is considered a test case.
     /// Any test method annotated with <seealso cref="Test"/> is considered a test case.
-    /// 
+    ///
     /// <h3>Randomized execution and test facilities</h3>
-    /// 
+    ///
     /// <p>
     /// <seealso cref="LuceneTestCase"/> uses <seealso cref="RandomizedRunner"/> to execute test cases.
     /// <seealso cref="RandomizedRunner"/> has built-in support for tests randomization
@@ -201,13 +189,13 @@ namespace Lucene.Net.Util
     public abstract class LuceneTestCase : Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
     {
         public static System.IO.FileInfo TEMP_DIR;
+
         public LuceneTestCase()
         {
             String directory = Paths.TempDirectory;
 
             TEMP_DIR = new System.IO.FileInfo(directory);
         }
-
 
         // --------------------------------------------------------------------
         // Test groups, system properties and other annotations modifying tests
@@ -225,7 +213,6 @@ namespace Lucene.Net.Util
         /// <seealso> cref= #ignoreAfterMaxFailures </seealso>
         public const string SYSPROP_FAILFAST = "tests.failfast";
 
-
         public interface Nightly
         {
         }
@@ -233,7 +220,6 @@ namespace Lucene.Net.Util
         public interface Weekly
         {
         }
-
 
         /*/// <summary>
       /// Annotation for tests that should only be run during nightly builds.
@@ -249,7 +235,6 @@ namespace Lucene.Net.Util
           {
               this.OuterInstance = outerInstance;
           }
-
       }
       public class Weekly : System.Attribute
       /// <summary>
@@ -262,7 +247,6 @@ namespace Lucene.Net.Util
           {
               this.OuterInstance = outerInstance;
           }
-
       }
       public class AwaitsFix : System.Attribute
       {
@@ -286,7 +270,7 @@ namespace Lucene.Net.Util
       /// <summary>
       /// Annotation for tests that fail frequently and should
       /// be moved to a <a href="https://builds.apache.org/job/Lucene-BadApples-trunk-java7/">"vault" plan in Jenkins</a>.
-      /// 
+      ///
       /// Tests annotated with this will be turned off by default. If you want to enable
       /// them, set:
       /// <pre>
@@ -336,7 +320,7 @@ namespace Lucene.Net.Util
         }
 
         // -----------------------------------------------------------------
-        // Truly immutable fields and constants, initialized once and valid 
+        // Truly immutable fields and constants, initialized once and valid
         // for all suites ever since.
         // -----------------------------------------------------------------
 
@@ -414,6 +398,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Leave temporary files on disk, even on successful runs. </summary>
         public static bool LEAVE_TEMPORARY;
+
         static LuceneTestCase()
         {
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
@@ -442,7 +427,6 @@ namespace Lucene.Net.Util
             }
 
             AppSettings.Set("tests.seed", Random().NextLong().ToString());
-
 
             //IgnoreAfterMaxFailuresDelegate = new AtomicReference<TestRuleIgnoreAfterMaxFailures>(new TestRuleIgnoreAfterMaxFailures(maxFailures));
             //IgnoreAfterMaxFailures = TestRuleDelegate.Of(IgnoreAfterMaxFailuresDelegate);
@@ -473,7 +457,7 @@ namespace Lucene.Net.Util
         /// When {@code true}, Codecs for old Lucene version will support writing
         /// indexes in that format. Defaults to {@code false}, can be disabled by
         /// specific tests on demand.
-        /// 
+        ///
         /// @lucene.internal
         /// </summary>
         public static bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
@@ -490,7 +474,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Class environment setup rule.
         /// </summary>
-        static TestRuleSetupAndRestoreClassEnv ClassEnvRule;
+        private static TestRuleSetupAndRestoreClassEnv ClassEnvRule;
 
         /// <summary>
         /// Suite failure marker (any error in the test or suite scope).
@@ -501,11 +485,11 @@ namespace Lucene.Net.Util
         /// Ignore tests after hitting a designated number of initial failures. this
         /// is truly a "static" global singleton since it needs to span the lifetime of all
         /// test classes running inside this JVM (it cannot be part of a class rule).
-        /// 
+        ///
         /// <p>this poses some problems for the test framework's tests because these sometimes
         /// trigger intentional failures which add up to the global count. this field contains
         /// a (possibly) changing reference to <seealso cref="TestRuleIgnoreAfterMaxFailures"/> and we
-        /// dispatch to its current value from the <seealso cref="#classRules"/> chain using <seealso cref="TestRuleDelegate"/>.  
+        /// dispatch to its current value from the <seealso cref="#classRules"/> chain using <seealso cref="TestRuleDelegate"/>.
         /// </summary>
         //private static AtomicReference<TestRuleIgnoreAfterMaxFailures> IgnoreAfterMaxFailuresDelegate;
 
@@ -513,7 +497,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Temporarily substitute the global <seealso cref="TestRuleIgnoreAfterMaxFailures"/>. See
-        /// <seealso cref="#ignoreAfterMaxFailuresDelegate"/> for some explanation why this method 
+        /// <seealso cref="#ignoreAfterMaxFailuresDelegate"/> for some explanation why this method
         /// is needed.
         /// </summary>
         /*public static TestRuleIgnoreAfterMaxFailures ReplaceMaxFailureRule(TestRuleIgnoreAfterMaxFailures newValue)
@@ -531,16 +515,13 @@ namespace Lucene.Net.Util
         /// By-name list of ignored types like loggers etc. </summary>
         //private static ISet<string> STATIC_LEAK_IGNORED_TYPES = new HashSet<string>(Arrays.AsList("org.slf4j.Logger", "org.apache.solr.SolrLogFormatter", typeof(EnumSet).Name));
 
-
-
-
         /// <summary>
         /// this controls how suite-level rules are nested. It is important that _all_ rules declared
-        /// in <seealso cref="LuceneTestCase"/> are executed in proper order if they depend on each 
+        /// in <seealso cref="LuceneTestCase"/> are executed in proper order if they depend on each
         /// other.
         /// </summary>
 
-        /* LUCENE TODO: WTF is this???  
+        /* LUCENE TODO: WTF is this???
         public static TestRule ClassRules = RuleChain
           .outerRule(new TestRuleIgnoreTestSuites())
           .around(IgnoreAfterMaxFailures)
@@ -549,26 +530,26 @@ namespace Lucene.Net.Util
           .around(new TemporaryFilesCleanupRule())
           .around(new StaticFieldsInvariantRule(STATIC_LEAK_THRESHOLD, true)
           {
-              @Override 
-              protected bool accept(System.Reflection.FieldInfo field) 
+              @Override
+              protected bool accept(System.Reflection.FieldInfo field)
               {
-                  if (STATIC_LEAK_IGNORED_TYPES.contains(field.Type.Name)) 
+                  if (STATIC_LEAK_IGNORED_TYPES.contains(field.Type.Name))
                   {
                       return false;
-                  } 
+                  }
                   if (field.DeclaringClass == typeof(LuceneTestCase))
                   {
                       return false;
-                  } 
+                  }
                   return base.accept(field);
               }})
               .around(new NoClassHooksShadowingRule())
               .around(new NoInstanceHooksOverridesRule()
               {
-              @Override 
-              protected bool verify(Method key) 
+              @Override
+              protected bool verify(Method key)
               {
-                  string name = key.Name; 
+                  string name = key.Name;
                   return !(name.Equals("SetUp") || name.Equals("TearDown"));
               }})
               .around(new SystemPropertiesInvariantRule(IGNORED_INVARIANT_PROPERTIES))
@@ -578,8 +559,6 @@ namespace Lucene.Net.Util
 
         // Don't count known classes that consume memory once.
         // Don't count references from ourselves, we're top-level.
-
-
 
         // -----------------------------------------------------------------
         // Test level rules.
@@ -624,7 +603,6 @@ namespace Lucene.Net.Util
             ///* LUCENE TO-DO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
-
         }
 
         /// <summary>
@@ -639,27 +617,27 @@ namespace Lucene.Net.Util
         }
 
         // -----------------------------------------------------------------
-        // Test facilities and facades for subclasses. 
+        // Test facilities and facades for subclasses.
         // -----------------------------------------------------------------
 
         /// <summary>
         /// Access to the current <seealso cref="RandomizedContext"/>'s Random instance. It is safe to use
         /// this method from multiple threads, etc., but it should be called while within a runner's
-        /// scope (so no static initializers). The returned <seealso cref="Random"/> instance will be 
-        /// <b>different</b> when this method is called inside a <seealso cref="BeforeClass"/> hook (static 
-        /// suite scope) and within <seealso cref="Before"/>/ <seealso cref="After"/> hooks or test methods. 
-        /// 
-        /// <p>The returned instance must not be shared with other threads or cross a single scope's 
+        /// scope (so no static initializers). The returned <seealso cref="Random"/> instance will be
+        /// <b>different</b> when this method is called inside a <seealso cref="BeforeClass"/> hook (static
+        /// suite scope) and within <seealso cref="Before"/>/ <seealso cref="After"/> hooks or test methods.
+        ///
+        /// <p>The returned instance must not be shared with other threads or cross a single scope's
         /// boundary. For example, a <seealso cref="Random"/> acquired within a test method shouldn't be reused
         /// for another test case.
-        /// 
+        ///
         /// <p>There is an overhead connected with getting the <seealso cref="Random"/> for a particular context
         /// and thread. It is better to cache the <seealso cref="Random"/> locally if tight loops with multiple
-        /// invocations are present or create a derivative local <seealso cref="Random"/> for millions of calls 
+        /// invocations are present or create a derivative local <seealso cref="Random"/> for millions of calls
         /// like this:
         /// <pre>
         /// Random random = new Random(random().nextLong());
-        /// // tight loop with many invocations. 
+        /// // tight loop with many invocations.
         /// </pre>
         /// </summary>
         public static Random Random()
@@ -713,7 +691,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Some tests expect the directory to contain a single segment, and want to 
+        /// Some tests expect the directory to contain a single segment, and want to
         /// do tests on that segment's reader. this is an utility method to help them.
         /// </summary>
         public static SegmentReader GetOnlySegmentReader(DirectoryReader reader)
@@ -729,8 +707,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns true if and only if the calling thread is the primary thread 
-        /// executing the test case. 
+        /// Returns true if and only if the calling thread is the primary thread
+        /// executing the test case.
         /// </summary>
         public static bool TestThread()
         {
@@ -777,7 +755,6 @@ namespace Lucene.Net.Util
             }
             finally
             {
-
                 // report this in the event of any exception/failure
                 // if no failure, then insanity will be null anyway
                 if (null != insanity)
@@ -1237,7 +1214,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns a new Directory instance, using the specified random
-        /// with contents copied from the provided directory. See 
+        /// with contents copied from the provided directory. See
         /// <seealso cref="#newDirectory()"/> for more information.
         /// </summary>
         public static BaseDirectoryWrapper NewDirectory(Random r, Directory d)
@@ -1270,16 +1247,17 @@ namespace Lucene.Net.Util
                     case 3: // sometimes rate limit on flush
                         rateLimitedDirectoryWrapper.SetMaxWriteMBPerSec(maxMBPerSec, IOContext.Context_e.FLUSH);
                         break;
+
                     case 2: // sometimes rate limit flush & merge
                         rateLimitedDirectoryWrapper.SetMaxWriteMBPerSec(maxMBPerSec, IOContext.Context_e.FLUSH);
                         rateLimitedDirectoryWrapper.SetMaxWriteMBPerSec(maxMBPerSec, IOContext.Context_e.MERGE);
                         break;
+
                     default:
                         rateLimitedDirectoryWrapper.SetMaxWriteMBPerSec(maxMBPerSec, IOContext.Context_e.MERGE);
                         break;
                 }
                 directory = rateLimitedDirectoryWrapper;
-
             }
 
             if (bare)
@@ -1371,6 +1349,7 @@ namespace Lucene.Net.Util
 
             return new Field(name, value, newType);
         }
+
         /* LUCENE TODO: removing until use is shown
 
             /// <summary>
@@ -1400,10 +1379,13 @@ namespace Lucene.Net.Util
                     case 4: // fallthrough for special cases
                     case 3:
                     return new Locale(elements[0], elements[1], elements[2]);
+
                     case 2:
                     return new Locale(elements[0], elements[1]);
+
                     case 1:
                     return new Locale(elements[0]);
+
                     default:
                     throw new System.ArgumentException("Invalid Locale: " + localeName);
                 }
@@ -1428,7 +1410,7 @@ namespace Lucene.Net.Util
             return d;
         }
 
-        static Directory NewDirectoryImpl(Random random, string clazzName)
+        private static Directory NewDirectoryImpl(Random random, string clazzName)
         {
             if (clazzName.Equals("random"))
             {
@@ -1483,16 +1465,19 @@ namespace Lucene.Net.Util
                         case 0:
                             r = SlowCompositeReaderWrapper.Wrap(r);
                             break;
+
                         case 1:
                             // will create no FC insanity in atomic case, as ParallelAtomicReader has own cache key:
                             r = (r is AtomicReader) ? (IndexReader)new ParallelAtomicReader((AtomicReader)r) : new ParallelCompositeReader((CompositeReader)r);
                             break;
+
                         case 2:
                             // Häckidy-Hick-Hack: a standard MultiReader will cause FC insanity, so we use
                             // QueryUtils' reader with a fake cache key, so insanity checker cannot walk
                             // along our reader:
                             r = new FCInvisibleMultiReader(r);
                             break;
+
                         case 3:
                             AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
                             IList<string> allFields = new List<string>();
@@ -1506,6 +1491,7 @@ namespace Lucene.Net.Util
                             // will create no FC insanity as ParallelAtomicReader has own cache key:
                             r = new ParallelAtomicReader(new FieldFilterAtomicReader(ar, fields, false), new FieldFilterAtomicReader(ar, fields, true));
                             break;
+
                         case 4:
                             // Häckidy-Hick-Hack: a standard Reader will cause FC insanity, so we use
                             // QueryUtils' reader with a fake cache key, so insanity checker cannot walk
@@ -1519,6 +1505,7 @@ namespace Lucene.Net.Util
                                 r = new AssertingDirectoryReader((DirectoryReader)r);
                             }
                             break;
+
                         default:
                             Assert.Fail("should not get here");
                             break;
@@ -1575,18 +1562,23 @@ namespace Lucene.Net.Util
                     case 0:
                         context = IOContext.DEFAULT;
                         break;
+
                     case 1:
                         context = IOContext.READ;
                         break;
+
                     case 2:
                         context = IOContext.READONCE;
                         break;
+
                     case 3:
                         context = new IOContext(new MergeInfo(randomNumDocs, size, true, -1));
                         break;
+
                     case 4:
                         context = new IOContext(new FlushInfo(randomNumDocs, size));
                         break;
+
                     default:
                         context = IOContext.DEFAULT;
                         break;
@@ -1637,7 +1629,7 @@ namespace Lucene.Net.Util
                     }
                 }
                 // TODO: this whole check is a coverage hack, we should move it to tests for various filterreaders.
-                // ultimately whatever you do will be checkIndex'd at the end anyway. 
+                // ultimately whatever you do will be checkIndex'd at the end anyway.
                 if (random.Next(500) == 0 && r is AtomicReader)
                 {
                     // TODO: not useful to check DirectoryReader (redundant with checkindex)
@@ -1746,8 +1738,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns true if the codec "supports" docsWithField 
-        /// (other codecs return MatchAllBits, because you couldnt write missing values before) 
+        /// Returns true if the codec "supports" docsWithField
+        /// (other codecs return MatchAllBits, because you couldnt write missing values before)
         /// </summary>
         public static bool DefaultCodecSupportsDocsWithField()
         {
@@ -1788,7 +1780,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// checks that reader-level statistics are the same 
+        /// checks that reader-level statistics are the same
         /// </summary>
         public void AssertReaderStatisticsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
@@ -1800,7 +1792,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Fields api equivalency 
+        /// Fields api equivalency
         /// </summary>
         public void AssertFieldsEquals(string info, IndexReader leftReader, Fields leftFields, Fields rightFields, bool deep)
         {
@@ -1828,7 +1820,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// checks that top-level statistics on Fields are the same 
+        /// checks that top-level statistics on Fields are the same
         /// </summary>
         public void AssertFieldStatisticsEquals(string info, Fields leftFields, Fields rightFields)
         {
@@ -1839,7 +1831,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Terms api equivalency 
+        /// Terms api equivalency
         /// </summary>
         public void AssertTermsEquals(string info, IndexReader leftReader, Terms leftTerms, Terms rightTerms, bool deep)
         {
@@ -1879,7 +1871,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// checks collection-level statistics on Terms 
+        /// checks collection-level statistics on Terms
         /// </summary>
         public void AssertTermsStatisticsEquals(string info, Terms leftTerms, Terms rightTerms)
         {
@@ -1904,7 +1896,7 @@ namespace Lucene.Net.Util
 
         internal class RandomBits : Bits
         {
-            static FixedBitSet bits;
+            private static FixedBitSet bits;
 
             internal RandomBits(int maxDoc, double pctLive, Random random)
             {
@@ -1973,7 +1965,6 @@ namespace Lucene.Net.Util
             }
             Assert.IsNull(rightTermsEnum.Next(), info);
         }
-
 
         /// <summary>
         /// checks docs + freqs + positions + payloads, sequentially
@@ -2116,7 +2107,6 @@ namespace Lucene.Net.Util
             }
         }
 
-
         private void AssertTermsSeekingEquals(string info, Terms leftTerms, Terms rightTerms)
         {
             TermsEnum leftEnum = null;
@@ -2165,12 +2155,15 @@ namespace Lucene.Net.Util
                             case 0:
                                 tests.Add(new BytesRef()); // before the first term
                                 break;
+
                             case 1:
                                 tests.Add(new BytesRef(new sbyte[] { unchecked((sbyte)0xFF), unchecked((sbyte)0xFF) })); // past the last term
                                 break;
+
                             case 2:
                                 tests.Add(new BytesRef(TestUtil.RandomSimpleString(Random()))); // random term
                                 break;
+
                             default:
                                 throw new InvalidOperationException();
                         }
@@ -2226,7 +2219,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// checks that norms are the same across all fields 
+        /// checks that norms are the same across all fields
         /// </summary>
         public void AssertNormsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
@@ -2258,7 +2251,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// checks that stored fields of all documents are the same 
+        /// checks that stored fields of all documents are the same
         /// </summary>
         public void AssertStoredFieldsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
@@ -2289,7 +2282,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// checks that two stored fields are equivalent 
+        /// checks that two stored fields are equivalent
         /// </summary>
         public void AssertStoredFieldEquals(string info, IndexableField leftField, IndexableField rightField)
         {
@@ -2301,7 +2294,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// checks that term vectors across all fields are equivalent 
+        /// checks that term vectors across all fields are equivalent
         /// </summary>
         public void AssertTermVectorsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
@@ -2520,7 +2513,7 @@ namespace Lucene.Net.Util
         /// Returns true if the file exists (can be opened), false
         ///  if it cannot be opened, and (unlike Java's
         ///  File.exists)  if there's some
-        ///  unexpected error. 
+        ///  unexpected error.
         /// </summary>
         public static bool SlowFileExists(Directory dir, string fileName)
         {
@@ -2595,7 +2588,6 @@ namespace Lucene.Net.Util
             return TempDirBase;
         }*/
 
-
         /// <summary>
         /// Creates an empty, temporary folder (when the name of the folder is of no importance).
         /// </summary>
@@ -2606,12 +2598,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates an empty, temporary folder with the given name prefix under the 
+        /// Creates an empty, temporary folder with the given name prefix under the
         /// test class's <seealso cref="#getBaseTempDirForTestClass()"/>.
-        ///  
+        ///
         /// <p>The folder will be automatically removed after the
         /// test class completes successfully. The test should close any file handles that would prevent
-        /// the folder from being removed. 
+        /// the folder from being removed.
         /// </summary>
         public static DirectoryInfo CreateTempDir(string prefix)
         {
@@ -2647,12 +2639,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates an empty file with the given prefix and suffix under the 
+        /// Creates an empty file with the given prefix and suffix under the
         /// test class's <seealso cref="#getBaseTempDirForTestClass()"/>.
-        /// 
+        ///
         /// <p>The file will be automatically removed after the
         /// test class completes successfully. The test should close any file handles that would prevent
-        /// the folder from being removed. 
+        /// the folder from being removed.
         /// </summary>
         public static FileInfo CreateTempFile(string prefix, string suffix)
         {
@@ -2762,10 +2754,8 @@ namespace Lucene.Net.Util
         }*/
     }
 
-
     /*internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
     {
-
         private ThreadPoolExecutor ex;
 
         public ReaderClosedListenerAnonymousInnerClassHelper(ThreadPoolExecutor ex)

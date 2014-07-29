@@ -1063,8 +1063,6 @@ namespace Lucene.Net.Index
                 set
                 {
                     Tnum = 0;
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int code = index[value];
                     int code = OuterInstance.Index[value];
                     if ((code & 0xff) == 1)
                     {

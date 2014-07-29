@@ -566,7 +566,8 @@ namespace Lucene.Net.Util
                 this.Buffer = buffer;
             }
 
-            public void Reflect<T>(string key, object value) where T : IAttribute
+            public void Reflect<T>(string key, object value)
+                where T : IAttribute
             {
                 Reflect(typeof(T), key, value);
             }
@@ -581,7 +582,7 @@ namespace Lucene.Net.Util
                 {
                     Buffer.Append(attClass.Name).Append('#');
                 }
-                Buffer.Append(key).Append('=').Append((value == null) ? "null" : value);
+                Buffer.Append(key).Append('=').Append(object.ReferenceEquals(value, null) ? "null" : value);
             }
         }
 

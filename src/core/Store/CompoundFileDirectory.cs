@@ -423,11 +423,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             Debug.Assert(!OpenForWrite);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final String id = Lucene.Net.Index.IndexFileNames.stripSegmentName(name);
             string id = IndexFileNames.StripSegmentName(name);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final FileEntry entry = entries.get(id);
             FileEntry entry = Entries[id];
             if (entry == null)
             {

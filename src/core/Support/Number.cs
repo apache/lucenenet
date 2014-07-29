@@ -336,13 +336,15 @@ namespace Lucene.Net.Support
         // Returns the number of 1-bits in the number
         public static int BitCount(long num)
         {
-            long bitcount = 0;
-            while (num > 0)
+            int bitcount = 0;
+            // To use the > 0 condition
+            ulong nonNegNum = (ulong) num;
+            while (nonNegNum > 0)
             {
-                bitcount += (num & 1);
-                num >>= 1;
+                bitcount += (int)(nonNegNum & 0x1);
+                nonNegNum >>= 1;
             }
-            return (int)bitcount;
+            return bitcount;
         }
 
         public static int Signum(long a)

@@ -1297,7 +1297,6 @@ namespace Lucene.Net.Index
 
         // Make sure buffered (pushed) deletes don't use up so
         // much RAM that it forces long tail of tiny segments:
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
         //ORIGINAL LINE: @Nightly public void testApplyDeletesOnFlush() throws Exception
         [Test]
         public virtual void TestApplyDeletesOnFlush()

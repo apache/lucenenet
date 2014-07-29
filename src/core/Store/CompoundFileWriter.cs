@@ -215,17 +215,11 @@ namespace Lucene.Net.Store
         /// </summary>
         private long CopyFileEntry(IndexOutput dataOut, FileEntry fileEntry)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final IndexInput is = fileEntry.dir.openInput(fileEntry.file, IOContext.READONCE);
             IndexInput @is = fileEntry.Dir.OpenInput(fileEntry.File, IOContext.READONCE);
             bool success = false;
             try
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long startPtr = dataOut.getFilePointer();
                 long startPtr = dataOut.FilePointer;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long length = fileEntry.length;
                 long length = fileEntry.Length;
                 dataOut.CopyBytes(@is, length);
                 // Verify that the output length diff is equal to original file
@@ -279,18 +273,12 @@ namespace Lucene.Net.Store
                 {
                     throw new System.ArgumentException("File " + name + " already exists");
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final FileEntry entry = new FileEntry();
                 FileEntry entry = new FileEntry();
                 entry.File = name;
                 Entries[name] = entry;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final String id = Lucene.Net.Index.IndexFileNames.stripSegmentName(name);
                 string id = IndexFileNames.StripSegmentName(name);
                 Debug.Assert(!SeenIDs.Contains(id), "file=\"" + name + "\" maps to id=\"" + id + "\", which was already written");
                 SeenIDs.Add(id);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final DirectCFSIndexOutput out;
                 DirectCFSIndexOutput @out;
 
                 if ((outputLocked = OutputTaken.CompareAndSet(false, true)))
@@ -366,8 +354,6 @@ namespace Lucene.Net.Store
                 }
                 finally
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final boolean compareAndSet = outputTaken.compareAndSet(true, false);
                     bool compareAndSet = OutputTaken.CompareAndSet(true, false);
                     Debug.Assert(compareAndSet);
                 }

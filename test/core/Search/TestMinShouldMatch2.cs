@@ -45,8 +45,6 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// tests BooleanScorer2's minShouldMatch </summary>
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({"Appending", "Lucene3x", "Lucene40", "Lucene41"}) public class TestMinShouldMatch2 extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestMinShouldMatch2 : LuceneTestCase
     {
@@ -60,8 +58,6 @@ namespace Lucene.Net.Search
         internal static readonly string[] MediumTerms = new string[] { "e", "f", "g" };
         internal static readonly string[] RareTerms = new string[] { "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
         [TestFixtureSetUp]
         public static void BeforeClass()
         {
@@ -108,8 +104,6 @@ namespace Lucene.Net.Search
             }
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
         [TestFixtureTearDown]
         public static void AfterClass()
         {

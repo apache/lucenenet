@@ -446,8 +446,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
             protected internal int Refill()
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int doc = nextUnreadDoc();
                 int doc = NextUnreadDoc();
                 Count = 0;
                 Start = -1;
@@ -455,8 +453,6 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     return NO_MORE_DOCS;
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int numDocs = Math.min(docs.length, limit - ord);
                 int numDocs = Math.Min(Docs.Length, Limit - Ord);
                 Ord += numDocs;
                 if (IndexOmitsTF)
@@ -475,11 +471,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             internal int FillDocs(int size)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Store.IndexInput freqIn = this.freqIn;
                 IndexInput freqIn = this.FreqIn;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int docs[] = this.docs;
                 int[] docs = this.Docs;
                 int docAc = Accum;
                 for (int i = 0; i < size; i++)
@@ -493,20 +485,12 @@ namespace Lucene.Net.Codecs.Lucene40
 
             internal int FillDocsAndFreqs(int size)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Store.IndexInput freqIn = this.freqIn;
                 IndexInput freqIn = this.FreqIn;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int docs[] = this.docs;
                 int[] docs = this.Docs;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int freqs[] = this.freqs;
                 int[] freqs = this.Freqs;
                 int docAc = Accum;
                 for (int i = 0; i < size; i++)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int code = freqIn.readVInt();
                     int code = freqIn.ReadVInt();
                     docAc += (int)((uint)code >> 1); // shift off low bit
                     freqs[i] = ReadFreq(freqIn, code);
@@ -540,8 +524,6 @@ namespace Lucene.Net.Codecs.Lucene40
                         Skipped = true;
                     }
 
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int newOrd = skipper.skipTo(target);
                     int newOrd = Skipper.SkipTo(target);
 
                     if (newOrd > Ord)
@@ -585,16 +567,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
             protected internal override int LinearScan(int scanTo)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int[] docs = this.docs;
                 int[] docs = this.Docs;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int upTo = count;
                 int upTo = Count;
                 for (int i = Start; i < upTo; i++)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int d = docs[i];
                     int d = docs[i];
                     if (scanTo <= d)
                     {
@@ -610,14 +586,8 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 int docAcc = Accum;
                 int frq = 1;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Store.IndexInput freqIn = this.freqIn;
                 IndexInput freqIn = this.FreqIn;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final boolean omitTF = indexOmitsTF;
                 bool omitTF = IndexOmitsTF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int loopLimit = limit;
                 int loopLimit = Limit;
                 for (int i = Ord; i < loopLimit; i++)
                 {
@@ -680,8 +650,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override int NextDoc()
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = this.liveDocs;
                 Bits liveDocs = this.LiveDocs;
                 for (int i = Start + 1; i < Count; i++)
                 {
@@ -699,14 +667,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
             protected internal override int LinearScan(int scanTo)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int[] docs = this.docs;
                 int[] docs = this.Docs;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int upTo = count;
                 int upTo = Count;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = this.liveDocs;
                 Bits liveDocs = this.LiveDocs;
                 for (int i = Start; i < upTo; i++)
                 {
@@ -725,17 +687,9 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 int docAcc = Accum;
                 int frq = 1;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Store.IndexInput freqIn = this.freqIn;
                 IndexInput freqIn = this.FreqIn;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final boolean omitTF = indexOmitsTF;
                 bool omitTF = IndexOmitsTF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int loopLimit = limit;
                 int loopLimit = Limit;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = this.liveDocs;
                 Bits liveDocs = this.LiveDocs;
                 for (int i = Ord; i < loopLimit; i++)
                 {
@@ -766,17 +720,9 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 int docAcc = Accum;
                 int frq = 1;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Store.IndexInput freqIn = this.freqIn;
                 IndexInput freqIn = this.FreqIn;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final boolean omitTF = indexOmitsTF;
                 bool omitTF = IndexOmitsTF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int loopLimit = limit;
                 int loopLimit = Limit;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = this.liveDocs;
                 Bits liveDocs = this.LiveDocs;
                 for (int i = Ord; i < loopLimit; i++)
                 {
@@ -887,8 +833,6 @@ namespace Lucene.Net.Codecs.Lucene40
                     Ord++;
 
                     // Decode next doc/freq pair
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int code = freqIn.readVInt();
                     int code = FreqIn.ReadVInt();
 
                     Accum += (int)((uint)code >> 1); // shift off low bit
@@ -950,8 +894,6 @@ namespace Lucene.Net.Codecs.Lucene40
                         Skipped = true;
                     }
 
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int newOrd = skipper.skipTo(target);
                     int newOrd = Skipper.SkipTo(target);
 
                     if (newOrd > Ord)
@@ -1130,8 +1072,6 @@ namespace Lucene.Net.Codecs.Lucene40
                     Ord++;
 
                     // Decode next doc/freq pair
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int code = freqIn.readVInt();
                     int code = FreqIn.ReadVInt();
 
                     Accum += (int)((uint)code >> 1); // shift off low bit
@@ -1194,8 +1134,6 @@ namespace Lucene.Net.Codecs.Lucene40
                         Skipped = true;
                     }
 
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int newOrd = skipper.skipTo(target);
                     int newOrd = Skipper.SkipTo(target);
 
                     if (newOrd > Ord)
@@ -1241,8 +1179,6 @@ namespace Lucene.Net.Codecs.Lucene40
                 // scan over any docs that were iterated without their positions
                 while (PosPendingCount > Freq_Renamed)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int code = proxIn.readVInt();
                     int code = ProxIn.ReadVInt();
 
                     if (StorePayloads)

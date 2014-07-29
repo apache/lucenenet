@@ -47,13 +47,9 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Save a single segment's info. </summary>
         public override void Write(Directory dir, SegmentInfo si, FieldInfos fis, IOContext ioContext)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final String fileName = Lucene.Net.Index.IndexFileNames.segmentFileName(si.name, "", Lucene40SegmentInfoFormat.SI_EXTENSION);
             string fileName = IndexFileNames.SegmentFileName(si.Name, "", Lucene40SegmentInfoFormat.SI_EXTENSION);
             si.AddFile(fileName);
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Lucene.Net.Store.IndexOutput output = dir.createOutput(fileName, ioContext);
             IndexOutput output = dir.CreateOutput(fileName, ioContext);
 
             bool success = false;

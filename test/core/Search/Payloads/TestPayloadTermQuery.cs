@@ -114,8 +114,6 @@ namespace Lucene.Net.Search.Payloads
             }
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
         [TestFixtureSetUp]
         public static void BeforeClass()
         {
@@ -139,8 +137,6 @@ namespace Lucene.Net.Search.Payloads
             Searcher.Similarity = Similarity;
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
         [TestFixtureTearDown]
         public static void AfterClass()
         {

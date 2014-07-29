@@ -401,8 +401,6 @@ namespace Lucene.Net.Index
                     // the iterator threw an exception that is not aborting
                     // go and mark all docs from this block as deleted
                     int docID = numDocsInRAM - 1;
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int endDocID = docID - docCount;
                     int endDocID = docID - docCount;
                     while (docID > endDocID)
                     {
@@ -493,8 +491,6 @@ namespace Lucene.Net.Index
         internal virtual FrozenBufferedUpdates PrepareFlush()
         {
             Debug.Assert(numDocsInRAM > 0);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final FrozenBufferedUpdates globalUpdates = deleteQueue.freezeGlobalBuffer(deleteSlice);
             FrozenBufferedUpdates globalUpdates = DeleteQueue.FreezeGlobalBuffer(DeleteSlice);
             /* deleteSlice can possibly be null if we have hit non-aborting exceptions during indexing and never succeeded
             adding a document. */

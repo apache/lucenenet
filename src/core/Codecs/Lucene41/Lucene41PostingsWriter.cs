@@ -302,8 +302,6 @@ namespace Lucene.Net.Codecs.Lucene41
                 SkipWriter.BufferSkip(LastBlockDocID, DocCount, LastBlockPosFP, LastBlockPayFP, LastBlockPosBufferUpto, LastBlockPayloadByteUpto);
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int docDelta = docID - lastDocID;
             int docDelta = docID - LastDocID;
 
             if (docID < 0 || (DocCount > 0 && docDelta <= 0))
@@ -453,8 +451,6 @@ namespace Lucene.Net.Codecs.Lucene41
             // }
 
             // docFreq == 1, don't write the single docid/freq to a separate file along with a pointer to it.
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int singletonDocID;
             int singletonDocID;
             if (state.DocFreq == 1)
             {
@@ -467,11 +463,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 // vInt encode the remaining doc deltas and freqs:
                 for (int i = 0; i < DocBufferUpto; i++)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int docDelta = docDeltaBuffer[i];
                     int docDelta = DocDeltaBuffer[i];
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int freq = freqBuffer[i];
                     int freq = FreqBuffer[i];
                     if (!FieldHasFreqs)
                     {
@@ -489,8 +481,6 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long lastPosBlockOffset;
             long lastPosBlockOffset;
 
             if (FieldHasPositions)
@@ -526,13 +516,9 @@ namespace Lucene.Net.Codecs.Lucene41
                     int payloadBytesReadUpto = 0;
                     for (int i = 0; i < PosBufferUpto; i++)
                     {
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int posDelta = posDeltaBuffer[i];
                         int posDelta = PosDeltaBuffer[i];
                         if (FieldHasPayloads)
                         {
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final int payloadLength = payloadLengthBuffer[i];
                             int payloadLength = PayloadLengthBuffer[i];
                             if (payloadLength != lastPayloadLength)
                             {

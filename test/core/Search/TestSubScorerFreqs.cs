@@ -36,8 +36,6 @@ namespace Lucene.Net.Search
         private static Directory Dir;
         private static IndexSearcher s;
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @BeforeClass public static void makeIndex() throws Exception
         [TestFixtureSetUp]
         public static void MakeIndex()
         {
@@ -60,8 +58,6 @@ namespace Lucene.Net.Search
             w.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @AfterClass public static void finish() throws Exception
         [TestFixtureTearDown]
         public static void Finish()
         {
@@ -144,8 +140,6 @@ namespace Lucene.Net.Search
 
         private const float FLOAT_TOLERANCE = 0.00001F;
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testTermQuery() throws Exception
         [Test]
         public virtual void TestTermQuery()
         {
@@ -166,8 +160,6 @@ namespace Lucene.Net.Search
             }
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testBooleanQuery() throws Exception
         [Test]
         public virtual void TestBooleanQuery()
         {
@@ -219,8 +211,6 @@ namespace Lucene.Net.Search
             }
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testPhraseQuery() throws Exception
         [Test]
         public virtual void TestPhraseQuery()
         {

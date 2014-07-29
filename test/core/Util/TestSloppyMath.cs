@@ -21,13 +21,6 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-    //import static Lucene.Net.Util.SloppyMath.cos;
-    //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-    //import static Lucene.Net.Util.SloppyMath.asin;
-    //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-    //import static Lucene.Net.Util.SloppyMath.haversin;
-
     [TestFixture]
     public class TestSloppyMath : LuceneTestCase
     {

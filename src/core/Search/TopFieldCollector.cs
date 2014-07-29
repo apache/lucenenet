@@ -1025,7 +1025,7 @@ namespace Lucene.Net.Search
                 // Tell all comparators their top value:
                 for (int i = 0; i < comparators.Length; i++)
                 {
-                    FieldComparator<object> comparator = (FieldComparator<object>)comparators[i];
+                    FieldComparator comparator = comparators[i];
                     comparator.TopValue = after.Fields[i];
                 }
             }

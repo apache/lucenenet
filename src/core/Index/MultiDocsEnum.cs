@@ -112,8 +112,6 @@ namespace Lucene.Net.Index
             {
                 if (Current != null)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int doc;
                     int doc;
                     if (target < CurrentBase)
                     {
@@ -164,8 +162,6 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int doc = current.nextDoc();
                 int doc = Current.NextDoc();
                 if (doc != NO_MORE_DOCS)
                 {

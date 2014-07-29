@@ -87,8 +87,6 @@ namespace Lucene.Net.Index
         private const int DOC_FREQ_RAND = 500; // must be > 16 to test skipping
         private const int TERM_DOC_FREQ_RAND = 20;
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @BeforeClass public static void beforeClass()
         [TestFixtureSetUp]
         public static void BeforeClass()
         {

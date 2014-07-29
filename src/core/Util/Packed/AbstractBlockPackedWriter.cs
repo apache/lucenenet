@@ -140,14 +140,8 @@ namespace Lucene.Net.Util.Packed
 
         protected internal void WriteValues(int bitsRequired)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final PackedInts.Encoder encoder = PackedInts.getEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsRequired);
             PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, bitsRequired);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int iterations = values.length / encoder.byteValueCount();
             int iterations = Values.Length / encoder.ByteValueCount();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int blockSize = encoder.byteBlockCount() * iterations;
             int blockSize = encoder.ByteBlockCount() * iterations;
             if (Blocks == null || Blocks.Length < blockSize)
             {
@@ -158,8 +152,6 @@ namespace Lucene.Net.Util.Packed
                 Arrays.Fill(Values, Off, Values.Length, 0L);
             }
             encoder.Encode(Values, 0, Blocks, 0, iterations);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int blockCount = (int) PackedInts.Format.PACKED.byteCount(PackedInts.VERSION_CURRENT, off, bitsRequired);
             int blockCount = (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, Off, bitsRequired);
             @out.WriteBytes(Blocks, blockCount);
         }

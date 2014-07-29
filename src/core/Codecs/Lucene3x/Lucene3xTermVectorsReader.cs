@@ -364,8 +364,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                 this.OuterInstance = outerInstance;
                 outerInstance.Tvf.Seek(tvfFP);
                 NumTerms = outerInstance.Tvf.ReadVInt();
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final byte bits = tvf.readByte();
                 byte bits = outerInstance.Tvf.ReadByte();
                 StorePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
                 StoreOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
@@ -533,11 +531,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     TermAndPostings t = new TermAndPostings();
                     BytesRef term = new BytesRef();
                     term.CopyBytes(lastTerm);
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int start = tvf.readVInt();
                     int start = Tvf.ReadVInt();
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int deltaLen = tvf.readVInt();
                     int deltaLen = Tvf.ReadVInt();
                     term.Length = start + deltaLen;
                     term.Grow(term.Length);

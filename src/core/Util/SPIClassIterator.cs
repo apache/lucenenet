@@ -223,8 +223,6 @@ namespace Lucene.Net.Util
 
       public override bool HasNext()
       {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-        return LinesIterator.hasNext() || LoadNextProfile();
       }
 
       public override Type Next()
@@ -234,11 +232,6 @@ namespace Lucene.Net.Util
         {
           throw new NoSuchElementException();
         }
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-        Debug.Assert(LinesIterator.hasNext());
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String c = linesIterator.next();
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
         string c = LinesIterator.next();
         try
         {

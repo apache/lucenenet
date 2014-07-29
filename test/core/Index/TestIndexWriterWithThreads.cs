@@ -50,8 +50,6 @@ namespace Lucene.Net.Index
     /// <summary>
     /// MultiThreaded IndexWriter tests
     /// </summary>
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs("Lucene3x") @Slow public class TestIndexWriterWithThreads extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestIndexWriterWithThreads : LuceneTestCase
     {

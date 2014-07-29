@@ -152,8 +152,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     return false;
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int docCode = freqStream.readVInt();
                 int docCode = FreqStream.ReadVInt();
 
                 if (IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
@@ -189,8 +187,6 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Optimized implementation. </summary>
         public virtual int Read(int[] docs, int[] freqs)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int length = docs.length;
             int length = docs.Length;
             if (IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
             {
@@ -202,8 +198,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                 while (i < length && Count < Df)
                 {
                     // manually inlined call to next() for speed
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int docCode = freqStream.readVInt();
                     int docCode = FreqStream.ReadVInt();
                     Doc_Renamed += (int)((uint)docCode >> 1); // shift off low bit
                     if ((docCode & 1) != 0) // if low bit is set

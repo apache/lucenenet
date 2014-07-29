@@ -31,8 +31,6 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestMixedCodecs extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestMixedCodecs : LuceneTestCase
     {

@@ -59,8 +59,6 @@ namespace Lucene.Net.Search.Spans
         /// on the wrapped <code>query</code>, changing its rewrite method to a suitable one for spans.
         /// Be sure to not change the rewrite method on the wrapped query afterwards! Doing so will
         /// throw <seealso cref="UnsupportedOperationException"/> on rewriting this query! </param>
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) public SpanMultiTermQueryWrapper(Q query)
         public SpanMultiTermQueryWrapper(Q query_)
         {
             this.query = query_;
@@ -68,8 +66,6 @@ namespace Lucene.Net.Search.Spans
             MultiTermQuery.RewriteMethod method = query.GetRewriteMethod();
             if (method is TopTermsRewrite<Q>)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int pqsize = ((Lucene.Net.Search.TopTermsRewrite) method).getSize();
                 int pqsize = ((TopTermsRewrite<Q>)method).Size;
                 RewriteMethod = new TopTermsSpanBooleanQueryRewrite(pqsize);
             }
@@ -138,8 +134,6 @@ namespace Lucene.Net.Search.Spans
 
         public override Query Rewrite(IndexReader reader)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Lucene.Net.Search.Query q = query.rewrite(reader);
             Query q = query.Rewrite(reader);
             if (!(q is SpanQuery))
             {
@@ -171,8 +165,6 @@ namespace Lucene.Net.Search.Spans
             {
                 return false;
             }
-            //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-            //ORIGINAL LINE: SpanMultiTermQueryWrapper<?> other = (SpanMultiTermQueryWrapper<?>) obj;
             var other = (SpanMultiTermQueryWrapper<Q>)obj;
             if (!query.Equals(other.query))
             {
@@ -291,8 +283,6 @@ namespace Lucene.Net.Search.Spans
 
                 protected internal override void AddClause(SpanOrQuery topLevel, Term term, int docFreq, float boost, TermContext states)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final SpanTermQuery q = new SpanTermQuery(term);
                     SpanTermQuery q = new SpanTermQuery(term);
                     q.Boost = boost;
                     topLevel.AddClause(q);
@@ -333,8 +323,6 @@ namespace Lucene.Net.Search.Spans
                 {
                     return false;
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final TopTermsSpanBooleanQueryRewrite other = (TopTermsSpanBooleanQueryRewrite) obj;
                 TopTermsSpanBooleanQueryRewrite other = (TopTermsSpanBooleanQueryRewrite)obj;
                 return @delegate.Equals(other.@delegate);
             }

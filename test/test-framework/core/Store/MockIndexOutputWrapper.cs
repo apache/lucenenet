@@ -1,9 +1,7 @@
-using System;
 using System.Threading;
 
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,8 +18,6 @@ namespace Lucene.Net.Store
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /// <summary>
     /// Used by MockRAMDirectory to create an output stream that
@@ -215,5 +211,4 @@ namespace Lucene.Net.Store
             return "MockIndexOutputWrapper(" + @delegate + ")";
         }
     }
-
 }

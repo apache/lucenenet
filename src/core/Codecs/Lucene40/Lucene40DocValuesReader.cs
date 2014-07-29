@@ -432,8 +432,8 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             lock (this)
             {
-                BinaryDocValues instance = BinaryInstances[field.Number];
-                if (instance == null)
+                BinaryDocValues instance;
+                if (!BinaryInstances.TryGetValue(field.Number, out instance))
                 {
                     var type = LegacyDocValuesType.ValueOf(field.GetAttribute(LegacyKey));
 
@@ -710,8 +710,8 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             lock (this)
             {
-                SortedDocValues instance = SortedInstances[field.Number];
-                if (instance == null)
+                SortedDocValues instance;
+                if (!SortedInstances.TryGetValue(field.Number, out instance))
                 {
                     string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
                     string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");

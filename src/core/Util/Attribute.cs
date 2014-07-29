@@ -52,7 +52,8 @@ namespace Lucene.Net.Util
                 this.prependAttClass = prependAttClass;
             }
 
-            public void Reflect<T>(string key, object value) where T : IAttribute
+            public void Reflect<T>(string key, object value)
+                where T : IAttribute
             {
                 Reflect(typeof(T), key, value);
             }
@@ -67,7 +68,7 @@ namespace Lucene.Net.Util
                 {
                     buffer.Append(type.Name).Append('#');
                 }
-                buffer.Append(key).Append('=').Append((value == null) ? "null" : value);
+                buffer.Append(key).Append('=').Append(object.ReferenceEquals(value, null) ? (object)"null" : value);
             }
         }
 

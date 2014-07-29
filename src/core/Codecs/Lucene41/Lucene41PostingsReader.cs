@@ -400,8 +400,6 @@ namespace Lucene.Net.Codecs.Lucene41
 
             internal void RefillDocs()
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int left = DocFreq - docUpto;
                 int left = DocFreq - DocUpto;
                 Debug.Assert(left > 0);
 
@@ -521,8 +519,6 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     // always plus one to fix the result, since skip position in Lucene41SkipReader
                     // is a little different from MultiLevelSkipListReader
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int newDocUpto = skipper.skipTo(target) + 1;
                     int newDocUpto = Skipper.SkipTo(target) + 1;
 
                     if (newDocUpto > DocUpto)
@@ -737,8 +733,6 @@ namespace Lucene.Net.Codecs.Lucene41
 
             internal void RefillDocs()
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int left = DocFreq - docUpto;
                 int left = DocFreq - DocUpto;
                 Debug.Assert(left > 0);
 
@@ -779,8 +773,6 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("        vInt pos block @ fp=" + posIn.getFilePointer() + " hasPayloads=" + indexHasPayloads + " hasOffsets=" + indexHasOffsets);
                     // }
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int count = (int)(TotalTermFreq % BLOCK_SIZE);
                     int count = (int)(TotalTermFreq % Lucene41PostingsFormat.BLOCK_SIZE);
                     int payloadLength = 0;
                     for (int i = 0; i < count; i++)
@@ -896,8 +888,6 @@ namespace Lucene.Net.Codecs.Lucene41
                         Skipped = true;
                     }
 
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int newDocUpto = skipper.skipTo(target) + 1;
                     int newDocUpto = Skipper.SkipTo(target) + 1;
 
                     if (newDocUpto > DocUpto)
@@ -980,8 +970,6 @@ namespace Lucene.Net.Codecs.Lucene41
                 //   System.out.println("      FPR.skipPositions: toSkip=" + toSkip);
                 // }
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int leftInBlock = BLOCK_SIZE - posBufferUpto;
                 int leftInBlock = Lucene41PostingsFormat.BLOCK_SIZE - PosBufferUpto;
                 if (toSkip < leftInBlock)
                 {
@@ -1263,8 +1251,6 @@ namespace Lucene.Net.Codecs.Lucene41
 
             internal void RefillDocs()
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int left = DocFreq - docUpto;
                 int left = DocFreq - DocUpto;
                 Debug.Assert(left > 0);
 
@@ -1304,8 +1290,6 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("        vInt pos block @ fp=" + posIn.getFilePointer() + " hasPayloads=" + indexHasPayloads + " hasOffsets=" + indexHasOffsets);
                     // }
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int count = (int)(TotalTermFreq % BLOCK_SIZE);
                     int count = (int)(TotalTermFreq % Lucene41PostingsFormat.BLOCK_SIZE);
                     int payloadLength = 0;
                     int offsetLength = 0;
@@ -1492,8 +1476,6 @@ namespace Lucene.Net.Codecs.Lucene41
                         Skipped = true;
                     }
 
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int newDocUpto = skipper.skipTo(target) + 1;
                     int newDocUpto = Skipper.SkipTo(target) + 1;
 
                     if (newDocUpto > DocUpto)
@@ -1578,8 +1560,6 @@ namespace Lucene.Net.Codecs.Lucene41
                 //   System.out.println("      FPR.skipPositions: toSkip=" + toSkip);
                 // }
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int leftInBlock = BLOCK_SIZE - posBufferUpto;
                 int leftInBlock = Lucene41PostingsFormat.BLOCK_SIZE - PosBufferUpto;
                 if (toSkip < leftInBlock)
                 {

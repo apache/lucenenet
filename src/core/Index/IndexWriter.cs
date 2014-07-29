@@ -1621,8 +1621,6 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final AtomicReader reader;
                 AtomicReader reader;
                 if (readerIn is AtomicReader)
                 {

@@ -431,8 +431,6 @@ namespace Lucene.Net.Util.Fst
                 Array.Copy(path.Input.Ints, 0, newInput.Ints, 0, path.Input.Length);
                 newInput.Ints[path.Input.Length] = path.Arc.Label;
                 newInput.Length = path.Input.Length + 1;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final FSTPath<T> newPath = new FSTPath<>(cost, path.arc, newInput);
                 FSTPath<T> newPath = new FSTPath<T>(cost, path.Arc, newInput);
 
                 Queue.Add(newPath);
@@ -961,8 +959,6 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public static IntsRef ToUTF16(string s, IntsRef scratch)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int charLimit = s.length();
             int charLimit = s.Length;
             scratch.Offset = 0;
             scratch.Length = charLimit;
@@ -1121,11 +1117,7 @@ namespace Lucene.Net.Util.Fst
                     mid = (int)((uint)(low + high) >> 1);
                     @in.Position = arc.PosArcsStart;
                     @in.SkipBytes(arc.BytesPerArc * mid + 1);
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int midLabel = fst.readLabel(in);
                     int midLabel = fst.ReadLabel(@in);
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int cmp = midLabel - label;
                     int cmp = midLabel - label;
                     // System.out.println("  cycle low=" + low + " high=" + high + " mid=" +
                     // mid + " midLabel=" + midLabel + " cmp=" + cmp);

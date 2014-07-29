@@ -336,7 +336,6 @@ namespace Lucene.Net.Index
 
                             genLoaded = gen;
                             RefCounts.Clear();
-                            //JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
                             RefCounts.PutAll(m);
                         }
                     }

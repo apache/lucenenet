@@ -41,22 +41,16 @@ namespace Lucene.Net.Util.Packed
             this.Size_Renamed = size;
             PageShift = PackedInts.CheckBlockSize(pageSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
             PageMask = pageSize - 1;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numPages = numBlocks(size, pageSize);
             int numPages = PackedInts.NumBlocks(size, pageSize);
             SubMutables = new PackedInts.Mutable[numPages];
         }
 
         protected internal void FillPages()
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numPages = numBlocks(size, pageSize());
             int numPages = PackedInts.NumBlocks(Size_Renamed, PageSize());
             for (int i = 0; i < numPages; ++i)
             {
                 // do not allocate for more entries than necessary on the last page
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int valueCount = i == numPages - 1 ? lastPageSize(size) : pageSize();
                 int valueCount = i == numPages - 1 ? LastPageSize(Size_Renamed) : PageSize();
                 SubMutables[i] = NewMutable(valueCount, BitsPerValue);
             }
@@ -66,8 +60,6 @@ namespace Lucene.Net.Util.Packed
 
         internal int LastPageSize(long size)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int sz = indexInPage(size);
             int sz = IndexInPage(size);
             return sz == 0 ? PageSize() : sz;
         }
@@ -97,11 +89,7 @@ namespace Lucene.Net.Util.Packed
         public override sealed long Get(long index)
         {
             Debug.Assert(index >= 0 && index < Size_Renamed);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int pageIndex = pageIndex(index);
             int pageIndex = PageIndex(index);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int indexInPage = indexInPage(index);
             int indexInPage = IndexInPage(index);
             return SubMutables[pageIndex].Get(indexInPage);
         }
@@ -111,11 +99,7 @@ namespace Lucene.Net.Util.Packed
         public void Set(long index, long value)
         {
             Debug.Assert(index >= 0 && index < Size_Renamed);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int pageIndex = pageIndex(index);
             int pageIndex = PageIndex(index);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int indexInPage = indexInPage(index);
             int indexInPage = IndexInPage(index);
             SubMutables[pageIndex].Set(indexInPage, value);
         }
@@ -147,28 +131,16 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public T Resize(long newSize)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final T copy = newUnfilledCopy(newSize);
             T copy = NewUnfilledCopy(newSize);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numCommonPages = Math.min(copy.subMutables.length, subMutables.length);
             int numCommonPages = Math.Min(copy.SubMutables.Length, SubMutables.Length);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long[] copyBuffer = new long[1024];
             long[] copyBuffer = new long[1024];
             for (int i = 0; i < copy.SubMutables.Length; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int valueCount = i == copy.subMutables.length - 1 ? lastPageSize(newSize) : pageSize();
                 int valueCount = i == copy.SubMutables.Length - 1 ? LastPageSize(newSize) : PageSize();
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int bpv = i < numCommonPages ? subMutables[i].getBitsPerValue() : this.bitsPerValue;
                 int bpv = i < numCommonPages ? SubMutables[i].BitsPerValue : this.BitsPerValue;
                 copy.SubMutables[i] = NewMutable(valueCount, bpv);
                 if (i < numCommonPages)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int copyLength = Math.min(valueCount, subMutables[i].size());
                     int copyLength = Math.Min(valueCount, SubMutables[i].Size());
                     PackedInts.Copy(SubMutables[i], 0, copy.SubMutables[i], 0, copyLength, copyBuffer);
                 }
@@ -183,9 +155,6 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(minSize >= 0);
             if (minSize <= Size())
             {
-                //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-                //ORIGINAL LINE: @SuppressWarnings("unchecked") final T result = (T) this;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
                 T result = (T)this;
                 return result;
             }
@@ -194,8 +163,6 @@ namespace Lucene.Net.Util.Packed
             {
                 extra = 3;
             }
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long newSize = minSize + extra;
             long newSize = minSize + extra;
             return Resize(newSize);
         }

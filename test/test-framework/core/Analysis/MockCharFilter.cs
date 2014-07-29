@@ -1,11 +1,10 @@
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.IO;
 using Lucene.Net.Support;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,10 +22,9 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-
     /// <summary>
     /// the purpose of this charfilter is to send offsets out of bounds
-    ///  if the analyzer doesn't use correctOffset or does incorrect offset math. 
+    ///  if the analyzer doesn't use correctOffset or does incorrect offset math.
     /// </summary>
     public class MockCharFilter : CharFilter
     {
@@ -69,7 +67,7 @@ namespace Lucene.Net.Analysis
                 return ch;
             }
 
-            // otherwise actually read one    
+            // otherwise actually read one
             int c = Input.Read();
             if (c < 0)
             {
@@ -109,5 +107,4 @@ namespace Lucene.Net.Analysis
 
         internal SortedDictionary<int, int> Corrections = new SortedDictionary<int, int>();
     }
-
 }

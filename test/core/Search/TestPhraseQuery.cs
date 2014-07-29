@@ -42,9 +42,6 @@ namespace Lucene.Net.Search
      * to get leaked thread errors.
      */
 
-    // @ThreadLeaks(linger = 1000, leakedThreadsBelongToSuite = true)
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @Seed("AFD1E7E84B35D2B1") public class TestPhraseQuery extends LuceneTestCase
     [TestFixture]
     public class TestPhraseQuery : LuceneTestCase
     {

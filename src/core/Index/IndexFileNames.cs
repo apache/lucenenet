@@ -229,8 +229,6 @@ namespace Lucene.Net.Index
         /// </summary>
         public static string GetExtension(string filename)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int idx = filename.indexOf('.');
             int idx = filename.IndexOf('.');
             if (idx == -1)
             {

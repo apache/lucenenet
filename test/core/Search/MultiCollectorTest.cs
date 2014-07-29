@@ -60,8 +60,6 @@ namespace Lucene.Net.Search
             }
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testNullCollectors() throws Exception
         [Test]
         public virtual void TestNullCollectors()
         {
@@ -86,8 +84,6 @@ namespace Lucene.Net.Search
             c.Scorer = null;
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testSingleCollector() throws Exception
         [Test]
         public virtual void TestSingleCollector()
         {
@@ -97,8 +93,6 @@ namespace Lucene.Net.Search
             Assert.AreSame(dc, MultiCollector.Wrap(dc, null));
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testCollector() throws Exception
         [Test]
         public virtual void TestCollector()
         {

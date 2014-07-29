@@ -59,16 +59,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override FieldInfos Read(Directory directory, string segmentName, string segmentSuffix, IOContext iocontext)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final String fileName = Lucene.Net.Index.IndexFileNames.segmentFileName(segmentName, "", FIELD_INFOS_EXTENSION);
             string fileName = IndexFileNames.SegmentFileName(segmentName, "", FIELD_INFOS_EXTENSION);
             IndexInput input = directory.OpenInput(fileName, iocontext);
 
             bool success = false;
             try
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int format = input.readVInt();
                 int format = input.ReadVInt();
 
                 if (format > FORMAT_MINIMUM)
@@ -80,24 +76,18 @@ namespace Lucene.Net.Codecs.Lucene3x
                     throw new IndexFormatTooNewException(input, format, FORMAT_MINIMUM, FORMAT_CURRENT);
                 }
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int size = input.readVInt();
                 int size = input.ReadVInt(); //read in the size
                 FieldInfo[] infos = new FieldInfo[size];
 
                 for (int i = 0; i < size; i++)
                 {
                     string name = input.ReadString();
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int fieldNumber = i;
                     int fieldNumber = i;
                     byte bits = input.ReadByte();
                     bool isIndexed = (bits & IS_INDEXED) != 0;
                     bool storeTermVector = (bits & STORE_TERMVECTOR) != 0;
                     bool omitNorms = (bits & OMIT_NORMS) != 0;
                     bool storePayloads = (bits & STORE_PAYLOADS) != 0;
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.IndexOptions indexOptions;
                     FieldInfo.IndexOptions_e indexOptions;
                     if (!isIndexed)
                     {

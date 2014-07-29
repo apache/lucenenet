@@ -508,8 +508,6 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     //System.out.println("  cycle");
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int termFreq;
                     int termFreq;
                     if (freq.Eof())
                     {
@@ -535,8 +533,6 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int code = freq.readVInt();
                         int code = freq.ReadVInt();
                         if (!readTermFreq)
                         {
@@ -606,22 +602,16 @@ namespace Lucene.Net.Index
                         int offset = 0;
                         for (int j = 0; j < termFreq; j++)
                         {
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final Lucene.Net.Util.BytesRef thisPayload;
                             BytesRef thisPayload;
 
                             if (readPositions)
                             {
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int code = prox.readVInt();
                                 int code = prox.ReadVInt();
                                 position += (int)((uint)code >> 1);
 
                                 if ((code & 1) != 0)
                                 {
                                     // this position has a payload
-                                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                    //ORIGINAL LINE: final int payloadLength = prox.readVInt();
                                     int payloadLength = prox.ReadVInt();
 
                                     if (Payload == null)
@@ -645,11 +635,7 @@ namespace Lucene.Net.Index
 
                                 if (readOffsets)
                                 {
-                                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                    //ORIGINAL LINE: final int startOffset = offset + prox.readVInt();
                                     int startOffset = offset + prox.ReadVInt();
-                                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                    //ORIGINAL LINE: final int endOffset = startOffset + prox.readVInt();
                                     int endOffset = startOffset + prox.ReadVInt();
                                     if (writePositions)
                                     {

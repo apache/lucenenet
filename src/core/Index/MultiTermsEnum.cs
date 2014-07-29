@@ -192,8 +192,6 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < NumSubs; i++)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final boolean status;
                 bool status;
                 // LUCENE-2130: if we had just seek'd already, prior
                 // to this seek, and the new seek term is after the
@@ -203,13 +201,9 @@ namespace Lucene.Net.Index
                 // seek to the same spot.
                 if (seekOpt)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Util.BytesRef curTerm = currentSubs[i].current;
                     BytesRef curTerm = CurrentSubs[i].Current;
                     if (curTerm != null)
                     {
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int cmp = termComp.compare(term, curTerm);
                         int cmp = TermComp.Compare(term, curTerm);
                         if (cmp == 0)
                         {
@@ -264,8 +258,6 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < NumSubs; i++)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final SeekStatus status;
                 SeekStatus status;
                 // LUCENE-2130: if we had just seek'd already, prior
                 // to this seek, and the new seek term is after the
@@ -275,13 +267,9 @@ namespace Lucene.Net.Index
                 // seek to the same spot.
                 if (seekOpt)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Util.BytesRef curTerm = currentSubs[i].current;
                     BytesRef curTerm = CurrentSubs[i].Current;
                     if (curTerm != null)
                     {
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int cmp = termComp.compare(term, curTerm);
                         int cmp = TermComp.Compare(term, curTerm);
                         if (cmp == 0)
                         {
@@ -400,8 +388,6 @@ namespace Lucene.Net.Index
                 // subs that didn't match the last exact seek... but
                 // most impls short-circuit if you SeekCeil to term
                 // they are already on.
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final SeekStatus status = SeekCeil(current);
                 SeekStatus status = SeekCeil(Current);
                 Debug.Assert(status == SeekStatus.FOUND);
                 LastSeekExact = false;
@@ -439,8 +425,6 @@ namespace Lucene.Net.Index
             long sum = 0;
             for (int i = 0; i < NumTop; i++)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long v = top[i].terms.totalTermFreq();
                 long v = Top[i].Terms.TotalTermFreq();
                 if (v == -1)
                 {
@@ -469,8 +453,6 @@ namespace Lucene.Net.Index
                 docsEnum = new MultiDocsEnum(this, Subs.Length);
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final MultiBits multiLiveDocs;
             MultiBits multiLiveDocs;
             if (liveDocs is MultiBits)
             {
@@ -485,12 +467,8 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < NumTop; i++)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final TermsEnumWithSlice entry = top[i];
                 TermsEnumWithSlice entry = Top[i];
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.Bits b;
                 Bits b;
 
                 if (multiLiveDocs != null)
@@ -500,8 +478,6 @@ namespace Lucene.Net.Index
                     // just pull the liveDocs from the sub reader, rather
                     // than making the inefficient
                     // Slice(Multi(sub-readers)):
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final MultiBits.SubResult sub = multiLiveDocs.getMatchingSub(entry.subSlice);
                     MultiBits.SubResult sub = multiLiveDocs.GetMatchingSub(entry.SubSlice);
                     if (sub.Matches)
                     {
@@ -525,8 +501,6 @@ namespace Lucene.Net.Index
                 }
 
                 Debug.Assert(entry.Index < docsEnum.SubDocsEnum.Length, entry.Index + " vs " + docsEnum.SubDocsEnum.Length + "; " + Subs.Length);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final DocsEnum subDocsEnum = entry.terms.docs(b, docsEnum.subDocsEnum[entry.index], flags);
                 DocsEnum subDocsEnum = entry.Terms.Docs(b, docsEnum.SubDocsEnum[entry.Index], flags);
                 if (subDocsEnum != null)
                 {
@@ -570,8 +544,6 @@ namespace Lucene.Net.Index
                 docsAndPositionsEnum = new MultiDocsAndPositionsEnum(this, Subs.Length);
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final MultiBits multiLiveDocs;
             MultiBits multiLiveDocs;
             if (liveDocs is MultiBits)
             {
@@ -586,12 +558,8 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < NumTop; i++)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final TermsEnumWithSlice entry = top[i];
                 TermsEnumWithSlice entry = Top[i];
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.Bits b;
                 Bits b;
 
                 if (multiLiveDocs != null)
@@ -601,8 +569,6 @@ namespace Lucene.Net.Index
                     // just pull the liveDocs from the sub reader, rather
                     // than making the inefficient
                     // Slice(Multi(sub-readers)):
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final MultiBits.SubResult sub = multiLiveDocs.getMatchingSub(top[i].subSlice);
                     MultiBits.SubResult sub = multiLiveDocs.GetMatchingSub(Top[i].SubSlice);
                     if (sub.Matches)
                     {
@@ -627,8 +593,6 @@ namespace Lucene.Net.Index
                 }
 
                 Debug.Assert(entry.Index < docsAndPositionsEnum.SubDocsAndPositionsEnum.Length, entry.Index + " vs " + docsAndPositionsEnum.SubDocsAndPositionsEnum.Length + "; " + Subs.Length);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final DocsAndPositionsEnum subPostings = entry.terms.docsAndPositions(b, docsAndPositionsEnum.subDocsAndPositionsEnum[entry.index], flags);
                 DocsAndPositionsEnum subPostings = entry.Terms.DocsAndPositions(b, docsAndPositionsEnum.SubDocsAndPositionsEnum[entry.Index], flags);
 
                 if (subPostings != null)

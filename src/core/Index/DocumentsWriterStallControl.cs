@@ -104,8 +104,9 @@ namespace Lucene.Net.Index
         private bool IncWaiters()
         {
             NumWaiting++;
-            //LUCENE TO-DO
-            //Debug.Assert(Waiting.Put(Thread.CurrentThread, true) == null);
+            bool existed = Waiting.ContainsKey(ThreadClass.Current());
+            Debug.Assert(!existed);
+            Waiting[ThreadClass.Current()] = true;
 
             return NumWaiting > 0;
         }
@@ -113,8 +114,9 @@ namespace Lucene.Net.Index
         private bool DecrWaiters()
         {
             NumWaiting--;
-            //LUCENE TO-DO
-            Debug.Assert(Waiting.Remove(ThreadClass.Current()) != false);
+            bool removed = Waiting.Remove(ThreadClass.Current());
+            Debug.Assert(removed);
+
             return NumWaiting >= 0;
         }
 

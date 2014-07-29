@@ -1,56 +1,54 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Lucene.Net.Search
 {
+    using NUnit.Framework;
+    using System.IO;
+    using AllDeletedFilterReader = Lucene.Net.Index.AllDeletedFilterReader;
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Document.Document;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
     //using Assert = junit.framework.Assert;
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using AllDeletedFilterReader = Lucene.Net.Index.AllDeletedFilterReader;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using MultiReader = Lucene.Net.Index.MultiReader;
-    using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
-    using Directory = Lucene.Net.Store.Directory;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using MultiReader = Lucene.Net.Index.MultiReader;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using Bits = Lucene.Net.Util.Bits;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NUnit.Framework;
-    using System.IO;
+    using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
 
     /// <summary>
     /// Utility class for sanity-checking queries.
     /// </summary>
     public class QueryUtils
     {
-
         /// <summary>
         /// Check the types of things query objects should be able to do. </summary>
         public static void Check(Query q)
@@ -128,6 +126,7 @@ namespace Lucene.Net.Search
         {
             Check(random, q1, s, true);
         }
+
         public static void Check(Random random, Query q1, IndexSearcher s, bool wrap)
         {
             try
@@ -164,7 +163,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// this is a MultiReader that can be used for randomly wrapping other readers
         /// without creating FieldCache insanity.
-        /// The trick is to use an opaque/fake cache key. 
+        /// The trick is to use an opaque/fake cache key.
         /// </summary>
         public class FCInvisibleMultiReader : MultiReader
         {
@@ -193,16 +192,15 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Given an IndexSearcher, returns a new IndexSearcher whose IndexReader 
-        /// is a MultiReader containing the Reader of the original IndexSearcher, 
-        /// as well as several "empty" IndexReaders -- some of which will have 
-        /// deleted documents in them.  this new IndexSearcher should 
+        /// Given an IndexSearcher, returns a new IndexSearcher whose IndexReader
+        /// is a MultiReader containing the Reader of the original IndexSearcher,
+        /// as well as several "empty" IndexReaders -- some of which will have
+        /// deleted documents in them.  this new IndexSearcher should
         /// behave exactly the same as the original IndexSearcher. </summary>
         /// <param name="s"> the searcher to wrap </param>
         /// <param name="edge"> if negative, s will be the first sub; if 0, s will be in the middle, if positive s will be the last sub </param>
         public static IndexSearcher WrapUnderlyingReader(Random random, IndexSearcher s, int edge)
         {
-
             IndexReader r = s.IndexReader;
 
             // we can't put deleted docs before the nested reader, because
@@ -215,6 +213,7 @@ namespace Lucene.Net.Search
         }
 
         internal static readonly IndexReader[] EmptyReaders = null;// = new IndexReader[8];
+
         static QueryUtils()
         {
             EmptyReaders = new IndexReader[8];
@@ -265,7 +264,6 @@ namespace Lucene.Net.Search
             int[][] orders = new int[][] { new int[] { next_op }, new int[] { skip_op }, new int[] { skip_op, next_op }, new int[] { next_op, skip_op }, new int[] { skip_op, skip_op, next_op, next_op }, new int[] { next_op, next_op, skip_op, skip_op }, new int[] { skip_op, skip_op, skip_op, next_op, next_op } };
             for (int k = 0; k < orders.Length; k++)
             {
-
                 int[] order = orders[k];
                 // System.out.print("Order:");for (int i = 0; i < order.Length; i++)
                 // System.out.print(order[i]==skip_op ? " skip()":" next()");
@@ -458,6 +456,7 @@ namespace Lucene.Net.Search
             private Scorer scorer;
             private int leafPtr;
             private Bits liveDocs;
+
             public override Scorer Scorer
             {
                 set
@@ -465,6 +464,7 @@ namespace Lucene.Net.Search
                     this.scorer = value;
                 }
             }
+
             public override void Collect(int doc)
             {
                 float score = scorer.Score();
@@ -522,11 +522,11 @@ namespace Lucene.Net.Search
                     liveDocs = ((AtomicReader)value.Reader()).LiveDocs;
                 }
             }
+
             public override bool AcceptsDocsOutOfOrder()
             {
                 return false;
             }
         }
     }
-
 }

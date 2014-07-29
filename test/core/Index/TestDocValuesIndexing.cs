@@ -44,8 +44,6 @@ namespace Lucene.Net.Index
     /// Tests DocValues integration into IndexWriter
     ///
     /// </summary>
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestDocValuesIndexing extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestDocValuesIndexing : LuceneTestCase
     {

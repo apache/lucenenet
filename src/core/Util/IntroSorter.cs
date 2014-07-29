@@ -61,8 +61,6 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int mid = (from + to) >>> 1;
             int mid = (int)((uint)(from + to) >> 1);
 
             if (Compare(from, mid) > 0)

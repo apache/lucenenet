@@ -37,8 +37,6 @@ namespace Lucene.Net.Index
     using Token = Lucene.Net.Analysis.Token;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestPayloadsOnVectors extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestPayloadsOnVectors : LuceneTestCase
     {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Randomized.Generators
 {
@@ -14,7 +13,7 @@ namespace Lucene.Net.Randomized.Generators
             var range = max - min;
             if (range < Int32.MaxValue)
                 return min + random.Next(1 + range);
-           
+
             return min + (int)Math.Round(random.NextDouble() * range);
         }
 
@@ -25,7 +24,7 @@ namespace Lucene.Net.Randomized.Generators
 
         public static float NextFloat(this Random random)
         {
-            return (float) random.NextDouble();
+            return (float)random.NextDouble();
         }
 
         /* .NET has random.Next(max) which negates the need for randomInt(Random random, int max) as  */
@@ -38,7 +37,8 @@ namespace Lucene.Net.Randomized.Generators
             return l12;
         }
 
-        public static T RandomFrom<T>(Random rand, ISet<T> set) {
+        public static T RandomFrom<T>(Random rand, ISet<T> set)
+        {
             return set.ElementAt(rand.Next(0, set.Count - 1));
         }
 
@@ -46,6 +46,5 @@ namespace Lucene.Net.Randomized.Generators
         {
             return set.ElementAt(rand.Next(0, set.Count - 1));
         }
-
     }
 }

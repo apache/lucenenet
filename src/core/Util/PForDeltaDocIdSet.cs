@@ -500,8 +500,6 @@ namespace Lucene.Net.Util
 
                 if ((token & LAST_BLOCK) != 0)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int blockSize = data[offset++];
                     int blockSize = Data[Offset++];
                     Arrays.Fill(NextDocs, blockSize, BLOCK_SIZE, NO_MORE_DOCS);
                 }
@@ -528,8 +526,6 @@ namespace Lucene.Net.Util
             internal virtual int ForwardBinarySearch(int target)
             {
                 // advance forward and double the window at each step
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int indexSize = (int) docIDs.size();
                 int indexSize = (int)DocIDs.Size();
                 int lo = Math.Max(BlockIdx / IndexInterval, 0), hi = lo + 1;
                 Debug.Assert(BlockIdx == -1 || DocIDs.Get(lo) <= DocID_Renamed);
@@ -545,8 +541,6 @@ namespace Lucene.Net.Util
                     {
                         break;
                     }
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int newLo = hi;
                     int newLo = hi;
                     hi += (hi - lo) << 1;
                     lo = newLo;
@@ -555,11 +549,7 @@ namespace Lucene.Net.Util
                 // we found a window containing our target, let's binary search now
                 while (lo <= hi)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int mid = (lo + hi) >>> 1;
                     int mid = (int)((uint)(lo + hi) >> 1);
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int midDocID = (int) docIDs.get(mid);
                     int midDocID = (int)DocIDs.Get(mid);
                     if (midDocID <= target)
                     {
@@ -581,11 +571,7 @@ namespace Lucene.Net.Util
                 if (NextDocs[BLOCK_SIZE - 1] < target)
                 {
                     // not in the next block, now use the index
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int index = forwardBinarySearch(target);
                     int index = ForwardBinarySearch(target);
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int offset = (int) offsets.get(index);
                     int offset = (int)Offsets.Get(index);
                     if (offset > this.Offset)
                     {

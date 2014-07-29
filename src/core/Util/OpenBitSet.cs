@@ -803,8 +803,6 @@ namespace Lucene.Net.Util
         public virtual int PrevSetBit(int index)
         {
             int i = index >> 6;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int subIndex;
             int subIndex;
             long word;
             if (i >= Wlen)
@@ -852,8 +850,6 @@ namespace Lucene.Net.Util
         public virtual long PrevSetBit(long index)
         {
             int i = (int)(index >> 6);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int subIndex;
             int subIndex;
             long word;
             if (i >= Wlen)

@@ -135,8 +135,6 @@ namespace Lucene.Net.Index
         /// </summary>
         protected internal virtual BytesRef NextSeekTerm(BytesRef currentTerm)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Lucene.Net.Util.BytesRef t = initialSeekTerm;
             BytesRef t = InitialSeekTerm_Renamed;
             InitialSeekTerm_Renamed = null;
             return t;
@@ -234,8 +232,6 @@ namespace Lucene.Net.Index
             return Tenum.TermState();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @SuppressWarnings("fallthrough") @Override public Lucene.Net.Util.BytesRef next() throws java.io.IOException
         public override BytesRef Next()
         {
             //System.out.println("FTE.next doSeek=" + doSeek);
@@ -246,8 +242,6 @@ namespace Lucene.Net.Index
                 if (DoSeek)
                 {
                     DoSeek = false;
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Util.BytesRef t = nextSeekTerm(actualTerm);
                     BytesRef t = NextSeekTerm(ActualTerm);
                     //System.out.println("  seek to t=" + (t == null ? "null" : t.utf8ToString()) + " tenum=" + tenum);
                     // Make sure we always seek forward:

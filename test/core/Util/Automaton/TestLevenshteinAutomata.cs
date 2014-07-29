@@ -378,8 +378,6 @@ namespace Lucene.Net.Util.Automaton
             sa = target.ToCharArray();
             n = sa.Length;
             int m = other.Length;
-            //JAVA TO C# CONVERTER NOTE: The following call to the 'RectangularArrays' helper class reproduces the rectangular array initialization that is automatic in Java:
-            //ORIGINAL LINE: d = new int[n+1][m+1];
             d = RectangularArrays.ReturnRectangularIntArray(n + 1, m + 1);
 
             if (n == 0 || m == 0)

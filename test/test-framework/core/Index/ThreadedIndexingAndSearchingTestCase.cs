@@ -1,55 +1,53 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    using System.IO;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
+    using FailOnNonBulkMergesInfoStream = Lucene.Net.Util.FailOnNonBulkMergesInfoStream;
     using Field = Lucene.Net.Document.Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using LineFileDocs = Lucene.Net.Util.LineFileDocs;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+    using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
     using Query = Lucene.Net.Search.Query;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using Sort = Lucene.Net.Search.Sort;
     using SortField = Lucene.Net.Search.SortField;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Directory = Lucene.Net.Store.Directory;
-    using Bits = Lucene.Net.Util.Bits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using FailOnNonBulkMergesInfoStream = Lucene.Net.Util.FailOnNonBulkMergesInfoStream;
-    using LineFileDocs = Lucene.Net.Util.LineFileDocs;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NamedThreadFactory = Lucene.Net.Util.NamedThreadFactory;
-    using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Support;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using System.IO;
+    using TopDocs = Lucene.Net.Search.TopDocs;
 
     // TODO
     //   - mix in forceMerge, addIndexes
@@ -57,11 +55,10 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Utility class that spawns multiple indexing and
-    ///  searching threads. 
+    ///  searching threads.
     /// </summary>
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
     {
-
         protected internal readonly AtomicBoolean Failed = new AtomicBoolean();
         protected internal readonly AtomicInteger AddCount = new AtomicInteger();
         protected internal readonly AtomicInteger DelCount = new AtomicInteger();
@@ -171,7 +168,6 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-
                         // Occasional longish pause if running
                         // nightly
                         if (LuceneTestCase.TEST_NIGHTLY && Random().Next(6) == 3)
@@ -213,7 +209,6 @@ namespace Lucene.Net.Index
 
                         if (Random().NextBoolean())
                         {
-
                             if (Random().NextBoolean())
                             {
                                 // Add/update doc block:
@@ -288,7 +283,6 @@ namespace Lucene.Net.Index
                                     }
                                     toDeleteSubDocs.Add(subDocs);
                                 }
-
                             }
                             else
                             {
@@ -313,7 +307,6 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-
                             // Update single doc, but we never re-use
                             // and ID so the delete will never
                             // actually happen:
@@ -548,7 +541,6 @@ namespace Lucene.Net.Index
 
         public virtual void RunTest(string testName)
         {
-
             Failed.Set(false);
             AddCount.Set(0);
             DelCount.Set(0);
@@ -860,5 +852,4 @@ namespace Lucene.Net.Index
             RunQuery(s, pq);
         }
     }
-
 }

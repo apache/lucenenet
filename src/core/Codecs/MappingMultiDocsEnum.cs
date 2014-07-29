@@ -117,8 +117,6 @@ namespace Lucene.Net.Codecs
                     else
                     {
                         Upto++;
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final int reader = subs[upto].slice.readerIndex;
                         int reader = Subs_Renamed[Upto].Slice.ReaderIndex;
                         Current = Subs_Renamed[Upto].DocsEnum;
                         CurrentBase = MergeState_Renamed.DocBase[reader];

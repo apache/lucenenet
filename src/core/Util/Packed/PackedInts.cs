@@ -106,8 +106,6 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Get a format according to its ID.
         /// </summary>
-        //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain methods in .NET:
-        //		public static Format byId(int id)
         //	{
         //	  for (Format format : Format.values())
         //	  {
@@ -119,14 +117,9 @@ namespace Lucene.Net.Util.Packed
         //	  throw new IllegalArgumentException("Unknown format id: " + id);
         //	}
 
-        //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain methods in .NET:
-        //		private Format(int id)
         //	{
         //	  this.id = id;
         //	}
-
-        //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain fields in .NET:
-        //		public int id;
 
         /// <summary>
         /// Returns the ID of the format.
@@ -175,8 +168,6 @@ namespace Lucene.Net.Util.Packed
                 {
                   public int outerInstance.LongCount(int packedIntsVersion, int valueCount, int bitsPerValue)
                   {
-        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-        //ORIGINAL LINE: final int valuesPerBlock = 64 / bitsPerValue;
                     int valuesPerBlock = 64 / bitsPerValue;
                     return (int) Math.Ceiling((double) valueCount / valuesPerBlock);
                   }
@@ -189,11 +180,7 @@ namespace Lucene.Net.Util.Packed
                   public float outerInstance.OverheadPerValue(int bitsPerValue)
                   {
                     Debug.Assert(outerInstance.IsSupported(bitsPerValue));
-        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-        //ORIGINAL LINE: final int valuesPerBlock = 64 / bitsPerValue;
                     int valuesPerBlock = 64 / bitsPerValue;
-        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-        //ORIGINAL LINE: final int overhead = 64 % bitsPerValue;
                     int overhead = 64 % bitsPerValue;
                     return (float) overhead / valuesPerBlock;
                   }
@@ -1097,18 +1084,10 @@ namespace Lucene.Net.Util.Packed
         /// @lucene.internal </exception>
         public static Reader GetReader(DataInput @in)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int version = Lucene.Net.Codecs.CodecUtil.checkHeader(in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int bitsPerValue = in.readVInt();
             int bitsPerValue = @in.ReadVInt();
             Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int valueCount = in.readVInt();
             int valueCount = @in.ReadVInt();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Format format = Format.byId(in.readVInt());
             Format format = Format.ById(@in.ReadVInt());
 
             return GetReaderNoHeader(@in, format, version, valueCount, bitsPerValue);
@@ -1144,18 +1123,10 @@ namespace Lucene.Net.Util.Packed
         /// @lucene.internal </exception>
         public static ReaderIterator GetReaderIterator(DataInput @in, int mem)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int version = Lucene.Net.Codecs.CodecUtil.checkHeader(in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int bitsPerValue = in.readVInt();
             int bitsPerValue = @in.ReadVInt();
             Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int valueCount = in.readVInt();
             int valueCount = @in.ReadVInt();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Format format = Format.byId(in.readVInt());
             Format format = Format.ById(@in.ReadVInt());
             return GetReaderIteratorNoHeader(@in, format, version, valueCount, bitsPerValue, mem);
         }

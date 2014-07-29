@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +21,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
@@ -32,16 +30,15 @@ namespace Lucene.Net.Index
     /// During the daytime it sleeps.
     /// </p>
     /// <p>
-    /// if tests pass with this, then they are likely to pass with any 
+    /// if tests pass with this, then they are likely to pass with any
     /// bizarro merge policy users might write.
     /// </p>
     /// <p>
-    /// It is a fine bottle of champagne (Ordered by Martijn). 
+    /// It is a fine bottle of champagne (Ordered by Martijn).
     /// </p>
     /// </summary>
     public class AlcoholicMergePolicy : LogMergePolicy
     {
-
         private readonly Random Random;
         private readonly DateTime Calendar;
 
@@ -58,7 +55,6 @@ namespace Lucene.Net.Index
             if (hourOfDay < 6 || hourOfDay > 20 || Random.Next(23) == 5)
             // its 5 o'clock somewhere
             {
-
                 Drink.Drink_e[] values = Enum.GetValues(typeof(Drink.Drink_e)).Cast<Drink.Drink_e>().ToArray();
                 // pick a random drink during the day
                 Drink.Drink_e drink = values[Random.Next(values.Length - 1)];
@@ -81,7 +77,5 @@ namespace Lucene.Net.Index
                 SingleMalt = 30
             }
         }
-
     }
-
 }

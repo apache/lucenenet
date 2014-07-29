@@ -42,8 +42,6 @@ namespace Lucene.Net.Util.Packed
             this.ValueCount = valueCount;
             BlockShift = PackedInts.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
             BlockMask = blockSize - 1;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numBlocks = numBlocks(valueCount, blockSize);
             int numBlocks = PackedInts.NumBlocks(valueCount, blockSize);
             MinValues = new long[numBlocks];
             Averages = new float[numBlocks];
@@ -52,8 +50,6 @@ namespace Lucene.Net.Util.Packed
             {
                 MinValues[i] = @in.ReadVLong();
                 Averages[i] = Number.IntBitsToFloat(@in.ReadInt());
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int bitsPerValue = in.readVInt();
                 int bitsPerValue = @in.ReadVInt();
                 if (bitsPerValue > 64)
                 {
@@ -65,13 +61,9 @@ namespace Lucene.Net.Util.Packed
                 }
                 else
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int size = (int) Math.min(blockSize, valueCount - (long) i * blockSize);
                     int size = (int)Math.Min(blockSize, valueCount - (long)i * blockSize);
                     if (direct)
                     {
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final long pointer = in.getFilePointer();
                         long pointer = @in.FilePointer;
                         SubReaders[i] = PackedInts.GetDirectReaderNoHeader(@in, PackedInts.Format.PACKED, packedIntsVersion, size, bitsPerValue);
                         @in.Seek(pointer + PackedInts.Format.PACKED.ByteCount(packedIntsVersion, size, bitsPerValue));
@@ -87,11 +79,7 @@ namespace Lucene.Net.Util.Packed
         public override long Get(long index)
         {
             Debug.Assert(index >= 0 && index < ValueCount);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int block = (int)(index >>> blockShift);
             int block = (int)((long)((ulong)index >> BlockShift));
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int idx = (int)(index & blockMask);
             int idx = (int)(index & BlockMask);
             return MinValues[block] + (long)(idx * Averages[block]) + BlockPackedReaderIterator.ZigZagDecode(SubReaders[block].Get(idx));
         }

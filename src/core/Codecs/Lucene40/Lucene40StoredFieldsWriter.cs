@@ -282,14 +282,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
             foreach (AtomicReader reader in mergeState.Readers)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Index.SegmentReader matchingSegmentReader = mergeState.matchingSegmentReaders[idx++];
                 SegmentReader matchingSegmentReader = mergeState.MatchingSegmentReaders[idx++];
                 Lucene40StoredFieldsReader matchingFieldsReader = null;
                 if (matchingSegmentReader != null)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Codecs.StoredFieldsReader fieldsReader = matchingSegmentReader.getFieldsReader();
                     StoredFieldsReader fieldsReader = matchingSegmentReader.FieldsReader;
                     // we can only bulk-copy if the matching reader is also a Lucene40FieldsReader
                     if (fieldsReader != null && fieldsReader is Lucene40StoredFieldsReader)
@@ -320,11 +316,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private int CopyFieldsWithDeletions(MergeState mergeState, AtomicReader reader, Lucene40StoredFieldsReader matchingFieldsReader, int[] rawDocLengths)
         {
             int docCount = 0;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int maxDoc = reader.maxDoc();
             int maxDoc = reader.MaxDoc();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = reader.getLiveDocs();
             Bits liveDocs = reader.LiveDocs;
             Debug.Assert(liveDocs != null);
             if (matchingFieldsReader != null)
@@ -388,8 +380,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private int CopyFieldsNoDeletions(MergeState mergeState, AtomicReader reader, Lucene40StoredFieldsReader matchingFieldsReader, int[] rawDocLengths)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int maxDoc = reader.maxDoc();
             int maxDoc = reader.MaxDoc();
             int docCount = 0;
             if (matchingFieldsReader != null)

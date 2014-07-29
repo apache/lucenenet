@@ -43,16 +43,12 @@ namespace Lucene.Net.Index
 
         internal Directory Dir = null;
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Before public void createDir()
         [SetUp]
         public virtual void CreateDir()
         {
             Dir = NewDirectory();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @After public void destroyDir() throws java.io.IOException
         [TearDown]
         public virtual void DestroyDir()
         {

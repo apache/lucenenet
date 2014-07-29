@@ -106,8 +106,6 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block = blocks[blocksOffset++];
                 long block = blocks[blocksOffset++];
                 valuesOffset = Decode(block, values, valuesOffset);
             }
@@ -117,8 +115,6 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block = readLong(blocks, blocksOffset);
                 long block = ReadLong(blocks, blocksOffset);
                 blocksOffset += 8;
                 valuesOffset = Decode(block, values, valuesOffset);
@@ -133,8 +129,6 @@ namespace Lucene.Net.Util.Packed
             }
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block = blocks[blocksOffset++];
                 long block = blocks[blocksOffset++];
                 valuesOffset = Decode(block, values, valuesOffset);
             }
@@ -148,8 +142,6 @@ namespace Lucene.Net.Util.Packed
             }
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block = readLong(blocks, blocksOffset);
                 long block = ReadLong(blocks, blocksOffset);
                 blocksOffset += 8;
                 valuesOffset = Decode(block, values, valuesOffset);
@@ -178,8 +170,6 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block = encode(values, valuesOffset);
                 long block = Encode(values, valuesOffset);
                 valuesOffset += ValueCount;
                 blocksOffset = WriteLong(block, blocks, blocksOffset);
@@ -190,8 +180,6 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block = encode(values, valuesOffset);
                 long block = Encode(values, valuesOffset);
                 valuesOffset += ValueCount;
                 blocksOffset = WriteLong(block, blocks, blocksOffset);

@@ -126,8 +126,6 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (Lucene3xSegmentInfoFormat.GetDocStoreOffset(info) != -1)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final String dsName = Lucene3xSegmentInfoFormat.getDocStoreSegment(info);
                 string dsName = Lucene3xSegmentInfoFormat.GetDocStoreSegment(info);
                 ISet<string> files = new HashSet<string>();
                 if (Lucene3xSegmentInfoFormat.GetDocStoreIsCompoundFile(info))

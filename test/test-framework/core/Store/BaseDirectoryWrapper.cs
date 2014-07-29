@@ -1,6 +1,5 @@
 namespace Lucene.Net.Store
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -29,7 +28,6 @@ namespace Lucene.Net.Store
     // no randoms, no nothing.
     public class BaseDirectoryWrapper : FilterDirectory
     {
-
         private bool CheckIndexOnClose_Renamed = true;
         private bool CrossCheckTermVectorsOnClose_Renamed = true;
         protected internal volatile bool IsOpen = true;
@@ -73,7 +71,6 @@ namespace Lucene.Net.Store
             }
         }
 
-
         public virtual bool CrossCheckTermVectorsOnClose
         {
             set
@@ -86,7 +83,6 @@ namespace Lucene.Net.Store
             }
         }
 
-
         public override void Copy(Directory to, string src, string dest, IOContext context)
         {
             @in.Copy(to, src, dest, context);
@@ -97,5 +93,4 @@ namespace Lucene.Net.Store
             return @in.CreateSlicer(name, context);
         }
     }
-
 }

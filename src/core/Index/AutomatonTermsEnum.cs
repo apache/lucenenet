@@ -212,8 +212,6 @@ namespace Lucene.Net.Index
             int state;
             int pos = 0;
             SavedStates.Grow(SeekBytesRef.Length + 1);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int[] states = savedStates.ints;
             int[] states = SavedStates.Ints;
             states[0] = RunAutomaton.InitialState;
 
@@ -251,8 +249,6 @@ namespace Lucene.Net.Index
                     {
                         return false;
                     }
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int newState = runAutomaton.step(states[pos], seekBytesRef.bytes[pos] & 0xff);
                     int newState = RunAutomaton.Step(states[pos], SeekBytesRef.Bytes[pos] & 0xff);
                     if (newState >= 0 && RunAutomaton.IsAccept(newState))
                     /* String is good to go as-is */

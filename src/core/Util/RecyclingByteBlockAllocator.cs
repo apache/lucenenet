@@ -88,8 +88,6 @@ namespace Lucene.Net.Util
                     BytesUsed_Renamed.AddAndGet(BlockSize);
                     return new sbyte[BlockSize];
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final byte[] b = freeByteBlocks[--freeBlocks];
                 sbyte[] b = FreeByteBlocks[--FreeBlocks_Renamed];
                 FreeByteBlocks[FreeBlocks_Renamed] = null;
                 return b;
@@ -98,22 +96,14 @@ namespace Lucene.Net.Util
 
         public override void RecycleByteBlocks(sbyte[][] blocks, int start, int end)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numBlocks = Math.min(maxBufferedBlocks - freeBlocks, end - start);
             int numBlocks = Math.Min(MaxBufferedBlocks_Renamed - FreeBlocks_Renamed, end - start);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int size = freeBlocks + numBlocks;
             int size = FreeBlocks_Renamed + numBlocks;
             if (size >= FreeByteBlocks.Length)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final byte[][] newBlocks = new byte[ArrayUtil.oversize(size, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
                 sbyte[][] newBlocks = new sbyte[ArrayUtil.Oversize(size, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
                 Array.Copy(FreeByteBlocks, 0, newBlocks, 0, FreeBlocks_Renamed);
                 FreeByteBlocks = newBlocks;
             }
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int stop = start + numBlocks;
             int stop = start + numBlocks;
             for (int i = start; i < stop; i++)
             {
@@ -155,11 +145,7 @@ namespace Lucene.Net.Util
         public int FreeBlocks(int num)
         {
             Debug.Assert(num >= 0, "free blocks must be >= 0 but was: " + num);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int stop;
             int stop;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int count;
             int count;
             if (num > FreeBlocks_Renamed)
             {

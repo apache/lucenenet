@@ -118,8 +118,6 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         public override float LengthNorm(FieldInvertState state)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numTerms;
             int numTerms;
             if (DiscountOverlaps_Renamed)
             {

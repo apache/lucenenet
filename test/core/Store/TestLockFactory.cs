@@ -147,8 +147,8 @@ namespace Lucene.Net.Store
         // Verify: do stress test, by opening IndexReaders and
         // IndexWriters over & over in 2 threads and making sure
         // no unexpected exceptions are raised:
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
         //ORIGINAL LINE: @Nightly public void testStressLocks() throws Exception
+        [Ignore]
         [Test]
         public virtual void TestStressLocks()
         {

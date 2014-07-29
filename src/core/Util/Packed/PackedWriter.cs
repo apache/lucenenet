@@ -91,8 +91,6 @@ namespace Lucene.Net.Util.Packed
         private void Flush()
         {
             Encoder.Encode(NextValues, 0, NextBlocks, 0, Iterations);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int blockCount = (int) format.byteCount(PackedInts.VERSION_CURRENT, off, bitsPerValue);
             int blockCount = (int)Format_Renamed.ByteCount(PackedInts.VERSION_CURRENT, Off, bitsPerValue);
             @out.WriteBytes(NextBlocks, blockCount);
             Arrays.Fill(NextValues, 0L);

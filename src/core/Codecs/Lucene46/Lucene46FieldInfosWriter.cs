@@ -46,8 +46,6 @@ namespace Lucene.Net.Codecs.Lucene46
 
         public override void Write(Directory directory, string segmentName, string segmentSuffix, FieldInfos infos, IOContext context)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final String fileName = Lucene.Net.Index.IndexFileNames.segmentFileName(segmentName, segmentSuffix, Lucene46FieldInfosFormat.EXTENSION);
             string fileName = IndexFileNames.SegmentFileName(segmentName, segmentSuffix, Lucene46FieldInfosFormat.EXTENSION);
             IndexOutput output = directory.CreateOutput(fileName, context);
             bool success = false;

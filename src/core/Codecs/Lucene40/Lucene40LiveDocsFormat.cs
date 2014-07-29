@@ -83,8 +83,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override MutableBits NewLiveDocs(Bits existing)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final BitVector liveDocs = (BitVector) existing;
             BitVector liveDocs = (BitVector)existing;
             return (BitVector)liveDocs.Clone();
         }
@@ -92,8 +90,6 @@ namespace Lucene.Net.Codecs.Lucene40
         public override Bits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
         {
             string filename = IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.DelGen);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final BitVector liveDocs = new BitVector(dir, filename, context);
             BitVector liveDocs = new BitVector(dir, filename, context);
             Debug.Assert(liveDocs.Count() == info.Info.DocCount - info.DelCount, "liveDocs.count()=" + liveDocs.Count() + " info.docCount=" + info.Info.DocCount + " info.getDelCount()=" + info.DelCount);
             Debug.Assert(liveDocs.Length() == info.Info.DocCount);
@@ -103,8 +99,6 @@ namespace Lucene.Net.Codecs.Lucene40
         public override void WriteLiveDocs(MutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context)
         {
             string filename = IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.NextDelGen);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final BitVector liveDocs = (BitVector) bits;
             BitVector liveDocs = (BitVector)bits;
             Debug.Assert(liveDocs.Count() == info.Info.DocCount - info.DelCount - newDelCount);
             Debug.Assert(liveDocs.Length() == info.Info.DocCount);

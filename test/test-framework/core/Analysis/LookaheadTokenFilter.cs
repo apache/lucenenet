@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,11 +22,8 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-
-    using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using PositionLengthAttribute = Lucene.Net.Analysis.Tokenattributes.PositionLengthAttribute;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
+
     //using RollingBuffer = Lucene.Net.Util.RollingBuffer;
 
     // TODO: cut SynFilter over to this
@@ -37,7 +33,7 @@ namespace Lucene.Net.Analysis
     /// An abstract TokenFilter to make it easier to build graph
     ///  token filters requiring some lookahead.  this class handles
     ///  the details of buffering up tokens, recording them by
-    ///  position, restoring them, providing access to them, etc. 
+    ///  position, restoring them, providing access to them, etc.
     /// </summary>
 
     public class LookaheadTokenFilter
@@ -49,11 +45,10 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Holds all state for a single position; subclass this
-        ///  to record other state at each position. 
+        ///  to record other state at each position.
         /// </summary>
         public class Position : Lucene.Net.Util.RollingBuffer.Resettable
         {
-
             // Buffered input tokens at this position:
             public readonly IList<AttributeSource.State> InputTokens = new List<AttributeSource.State>();
 
@@ -90,7 +85,6 @@ namespace Lucene.Net.Analysis
     public abstract class LookaheadTokenFilter<T> : TokenFilter
         where T : LookaheadTokenFilter.Position
     {
-
         private const bool DEBUG = false;
 
         protected internal readonly IPositionIncrementAttribute PosIncAtt;// = AddAttribute<PositionIncrementAttribute>();
@@ -109,8 +103,6 @@ namespace Lucene.Net.Analysis
         private bool TokenPending;
         private bool InsertPending;
 
-
-
         protected internal LookaheadTokenFilter(TokenStream input)
             : base(input)
         {
@@ -123,7 +115,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Call this only from within afterPosition, to insert a new
         ///  token.  After calling this you should set any
-        ///  necessary token you need. 
+        ///  necessary token you need.
         /// </summary>
         protected internal virtual void InsertToken()
         {
@@ -141,7 +133,7 @@ namespace Lucene.Net.Analysis
         ///  position have been returned.  Override this and
         ///  call insertToken and then set whichever token's
         ///  attributes you want, if you want to inject
-        ///  a token starting from this position. 
+        ///  a token starting from this position.
         /// </summary>
         protected internal virtual void AfterPosition()
         {
@@ -234,7 +226,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Call this when you are done looking ahead; it will set
         ///  the next token to return.  Return the boolean back to
-        ///  the caller. 
+        ///  the caller.
         /// </summary>
         protected internal virtual bool NextToken()
         {
@@ -250,7 +242,6 @@ namespace Lucene.Net.Analysis
             // skip over a hole from the input:
             while (true)
             {
-
                 //System.out.println("    check buffer @ outputPos=" +
                 //outputPos + " inputPos=" + inputPos + " nextRead=" +
                 //posData.nextRead + " vs size=" +
@@ -374,5 +365,4 @@ namespace Lucene.Net.Analysis
             End = false;
         }
     }
-
 }

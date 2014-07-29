@@ -48,8 +48,6 @@ namespace Lucene.Net.Util.Fst
                 this.Output2 = output2;
             }
 
-            //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-            //ORIGINAL LINE: @Override @SuppressWarnings("rawtypes") public boolean equals(Object other)
             public override bool Equals(object other)
             {
                 if (other == this)
@@ -99,8 +97,6 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Pair<A,B> p = new Pair<>(a, b);
                 Pair<A, B> p = new Pair<A, B>(a, b);
                 Debug.Assert(Valid(p));
                 return p;
@@ -110,11 +106,7 @@ namespace Lucene.Net.Util.Fst
         // for assert
         private bool Valid(Pair<A, B> pair)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final boolean noOutput1 = pair.output1.equals(outputs1.getNoOutput());
             bool noOutput1 = pair.Output1.Equals(Outputs1.NoOutput);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final boolean noOutput2 = pair.output2.equals(outputs2.getNoOutput());
             bool noOutput2 = pair.Output2.Equals(Outputs2.NoOutput);
 
             if (noOutput1 && (object)pair.Output1 != (object)Outputs1.NoOutput)

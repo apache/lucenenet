@@ -323,8 +323,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             // Swap in S, in place of E:
             internal virtual bool SeekToNonBMP(SegmentTermEnum te, BytesRef term, int pos)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int savLength = term.length;
                 int savLength = term.Length;
 
                 Debug.Assert(term.Offset == 0);
@@ -720,8 +718,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                         if (t2 != null && t2.Field() == InternedFieldName)
                         {
-                            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                            //ORIGINAL LINE: final Lucene.Net.Util.BytesRef b2 = t2.bytes();
                             BytesRef b2 = t2.Bytes();
                             Debug.Assert(b2.Offset == 0);
                             if (b2.Length >= upTo + 3 && IsHighBMPChar(b2.Bytes, upTo))
@@ -846,19 +842,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                     Console.WriteLine("TE.seek target=" + UnicodeUtil.ToHexString(term.Utf8ToString()));
                 }
                 SkipNext = false;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final TermInfosReader tis = getTermsDict();
                 TermInfosReader tis = OuterInstance.TermsDict;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Index.Term t0 = new Lucene.Net.Index.Term(fieldInfo.name, term);
                 Term t0 = new Term(FieldInfo.Name, term);
 
                 Debug.Assert(TermEnum != null);
 
                 tis.SeekEnum(TermEnum, t0, false);
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Index.Term t = termEnum.term();
                 Term t = TermEnum.Term();
 
                 if (t != null && t.Field() == InternedFieldName && term.BytesEquals(t.Bytes()))
@@ -1024,8 +1014,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                         Console.WriteLine("  newSuffixStart=" + NewSuffixStart);
                     }
                     SurrogateDance();
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Index.Term t = termEnum.term();
                     Term t = TermEnum.Term();
                     if (t == null || t.Field() != InternedFieldName)
                     {
@@ -1051,8 +1039,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                     NewSuffixStart = 0;
                     SurrogateDance();
 
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Index.Term t = termEnum.term();
                     Term t = TermEnum.Term();
                     if (t == null || t.Field() != InternedFieldName)
                     {

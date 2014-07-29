@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
 using Lucene.Net.Support;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util.Automaton
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -140,7 +139,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// picks a random int code point, avoiding surrogates;
         /// throws IllegalArgumentException if this transition only
-        /// accepts surrogates 
+        /// accepts surrogates
         /// </summary>
         private static int GetRandomCodePoint(Random r, Transition t)
         {
@@ -203,7 +202,6 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public class RandomAcceptedStrings
         {
-
             internal readonly IDictionary<Transition, bool?> LeadsToAccept;
             internal readonly Automaton a;
 
@@ -211,6 +209,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 internal readonly State From;
                 internal readonly Transition t;
+
                 public ArrivingTransition(State from, Transition t)
                 {
                     this.From = from;
@@ -284,7 +283,6 @@ namespace Lucene.Net.Util.Automaton
 
             public virtual int[] GetRandomAcceptedString(Random r)
             {
-
                 IList<int?> soFar = new List<int?>();
                 if (!String.IsNullOrEmpty(a.Singleton))
                 {
@@ -301,12 +299,10 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else
                 {
-
                     State s = a.InitialState;
 
                     while (true)
                     {
-
                         if (s.Accept)
                         {
                             if (s.numTransitions == 0)
@@ -389,10 +385,13 @@ namespace Lucene.Net.Util.Automaton
             {
                 case 0:
                     return BasicOperations.Concatenate(a1, a2);
+
                 case 1:
                     return BasicOperations.Union(a1, a2);
+
                 case 2:
                     return BasicOperations.Intersection(a1, a2);
+
                 default:
                     return BasicOperations.Minus(a1, a2);
             }
@@ -405,10 +404,10 @@ namespace Lucene.Net.Util.Automaton
 
         /*
          * dk.brics.automaton
-         * 
+         *
          * Copyright (c) 2001-2009 Anders Moeller
          * All rights reserved.
-         * 
+         *
          * Redistribution and use in source and binary forms, with or without
          * modification, are permitted provided that the following conditions
          * are met:
@@ -419,7 +418,7 @@ namespace Lucene.Net.Util.Automaton
          *    documentation and/or other materials provided with the distribution.
          * 3. The name of the author may not be used to endorse or promote products
          *    derived from this software without specific prior written permission.
-         * 
+         *
          * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
          * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
          * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -461,7 +460,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Simple, original brics implementation of determinize()
-        /// Determinizes the given automaton using the given set of initial states. 
+        /// Determinizes the given automaton using the given set of initial states.
         /// </summary>
         public static void DeterminizeSimple(Automaton a, ISet<State> initialset)
         {
@@ -560,7 +559,6 @@ namespace Lucene.Net.Util.Automaton
             return true;
         }
 
-
         /// <summary>
         /// Checks that an automaton has no detached states that are unreachable
         /// from the initial state.
@@ -572,5 +570,4 @@ namespace Lucene.Net.Util.Automaton
             Debug.Assert(numStates == a.NumberOfStates, "automaton has " + (numStates - a.NumberOfStates) + " detached states");
         }
     }
-
 }

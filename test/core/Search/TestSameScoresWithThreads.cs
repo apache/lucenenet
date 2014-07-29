@@ -131,7 +131,6 @@ namespace Lucene.Net.Search
                     StartingGun.@await();
                     for (int i = 0; i < 20; i++)
                     {
-                        //JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'entrySet' method:
                         IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(Answers.EntrySet());
                         shuffled = CollectionsHelper.Shuffle(shuffled);
                         foreach (KeyValuePair<BytesRef, TopDocs> ent in shuffled)

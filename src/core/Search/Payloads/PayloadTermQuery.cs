@@ -126,8 +126,6 @@ namespace Lucene.Net.Search.Payloads
                 {
                     if (TermSpans.PayloadAvailable)
                     {
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final Lucene.Net.Index.DocsAndPositionsEnum postings = termSpans.getPostings();
                         DocsAndPositionsEnum postings = TermSpans.Postings;
                         Payload = postings.Payload;
                         if (Payload != null)

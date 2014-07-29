@@ -27,8 +27,6 @@ namespace Lucene.Net.Search
     ///  <seealso cref="IndexSearcher#search"/> as it is unnecessary and might hide misuse
     ///  of this exception.
     /// </summary>
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressWarnings("serial") public final class CollectionTerminatedException extends RuntimeException
     public sealed class CollectionTerminatedException : Exception
     {
         /// <summary>

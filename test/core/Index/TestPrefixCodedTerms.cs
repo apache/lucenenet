@@ -78,8 +78,6 @@ namespace Lucene.Net.Index
             Assert.IsFalse(expected.MoveNext());
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @SuppressWarnings("unchecked") public void testMergeOne()
         [Test]
         public virtual void TestMergeOne()
         {
@@ -100,8 +98,6 @@ namespace Lucene.Net.Index
             Assert.AreEqual(t2, merged.Current);
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @SuppressWarnings({"unchecked","rawtypes"}) public void testMergeRandom()
         [Test]
         public virtual void TestMergeRandom()
         {

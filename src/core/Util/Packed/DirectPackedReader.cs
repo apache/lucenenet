@@ -47,22 +47,14 @@ namespace Lucene.Net.Util.Packed
 
         public override long Get(int index)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long majorBitPos = (long)index * bitsPerValue;
             long majorBitPos = (long)index * bitsPerValue;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long elementPos = majorBitPos >>> 3;
             long elementPos = (long)((ulong)majorBitPos >> 3);
             try
             {
                 @in.Seek(StartPointer + elementPos);
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int bitPos = (int)(majorBitPos & 7);
                 int bitPos = (int)(majorBitPos & 7);
                 // round up bits to a multiple of 8 to find total bytes needed to read
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int roundedBits = ((bitPos + bitsPerValue + 7) & ~7);
                 int roundedBits = ((bitPos + bitsPerValue + 7) & ~7);
                 // the number of extra bits read at the end to shift out
                 int shiftRightBits = roundedBits - bitPos - bitsPerValue;

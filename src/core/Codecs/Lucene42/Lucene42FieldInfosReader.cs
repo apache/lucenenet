@@ -48,8 +48,6 @@ namespace Lucene.Net.Codecs.Lucene42
 
         public override FieldInfos Read(Directory directory, string segmentName, string segmentSuffix, IOContext iocontext)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final String fileName = Lucene.Net.Index.IndexFileNames.segmentFileName(segmentName, "", Lucene42FieldInfosFormat.EXTENSION);
             string fileName = IndexFileNames.SegmentFileName(segmentName, "", Lucene42FieldInfosFormat.EXTENSION);
             IndexInput input = directory.OpenInput(fileName, iocontext);
 
@@ -58,24 +56,18 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 CodecUtil.CheckHeader(input, Lucene42FieldInfosFormat.CODEC_NAME, Lucene42FieldInfosFormat.FORMAT_START, Lucene42FieldInfosFormat.FORMAT_CURRENT);
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int size = input.readVInt();
                 int size = input.ReadVInt(); //read in the size
                 FieldInfo[] infos = new FieldInfo[size];
 
                 for (int i = 0; i < size; i++)
                 {
                     string name = input.ReadString();
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int fieldNumber = input.readVInt();
                     int fieldNumber = input.ReadVInt();
                     byte bits = input.ReadByte();
                     bool isIndexed = (bits & Lucene42FieldInfosFormat.IS_INDEXED) != 0;
                     bool storeTermVector = (bits & Lucene42FieldInfosFormat.STORE_TERMVECTOR) != 0;
                     bool omitNorms = (bits & Lucene42FieldInfosFormat.OMIT_NORMS) != 0;
                     bool storePayloads = (bits & Lucene42FieldInfosFormat.STORE_PAYLOADS) != 0;
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.IndexOptions indexOptions;
                     FieldInfo.IndexOptions_e indexOptions;
                     if (!isIndexed)
                     {
@@ -100,14 +92,8 @@ namespace Lucene.Net.Codecs.Lucene42
 
                     // DV Types are packed in one byte
                     byte val = input.ReadByte();
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType docValuesType = getDocValuesType(input, (byte)(val & 0x0F));
                     FieldInfo.DocValuesType_e docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType normsType = getDocValuesType(input, (byte)((val >>> 4) & 0x0F));
                     FieldInfo.DocValuesType_e normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final java.util.Map<String,String> attributes = input.readStringStringMap();
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, CollectionsHelper.UnmodifiableMap(attributes));
                 }

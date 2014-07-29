@@ -286,8 +286,6 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     // no need to seek
 
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final TermInfo ti;
                     TermInfo ti;
                     int numScans = enumerator.ScanTo(term);
                     if (enumerator.Term() != null && CompareAsUTF16(term, enumerator.Term()) == 0)
@@ -324,8 +322,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             // random-access: must seek
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int indexPos;
             int indexPos;
             if (tiOrd != null)
             {
@@ -339,8 +335,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             Index.SeekEnum(enumerator, indexPos);
             enumerator.ScanTo(term);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final TermInfo ti;
             TermInfo ti_;
 
             if (enumerator.Term() != null && CompareAsUTF16(term, enumerator.Term()) == 0)

@@ -74,11 +74,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(Off > 0);
 
             // TODO: perform a true linear regression?
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long min = values[0];
             long min = Values[0];
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final float avg = off == 1 ? 0f : (float)(values[off - 1] - min) / (off - 1);
             float avg = Off == 1 ? 0f : (float)(Values[Off - 1] - min) / (Off - 1);
 
             long maxZigZagDelta = 0;
@@ -96,8 +92,6 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int bitsRequired = PackedInts.bitsRequired(maxZigZagDelta);
                 int bitsRequired = PackedInts.BitsRequired(maxZigZagDelta);
                 @out.WriteVInt(bitsRequired);
                 WriteValues(bitsRequired);

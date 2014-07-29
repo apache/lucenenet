@@ -1,39 +1,41 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
+    using Lucene.Net.Support;
     using AssertingDocValuesFormat = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat;
     using AssertingPostingsFormat = Lucene.Net.Codecs.asserting.AssertingPostingsFormat;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+
     //using TestBloomFilteredLucene41Postings = Lucene.Net.Codecs.bloom.TestBloomFilteredLucene41Postings;
     //using DiskDocValuesFormat = Lucene.Net.Codecs.diskdv.DiskDocValuesFormat;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
+
     //using Lucene41WithOrds = Lucene.Net.Codecs.Lucene41ords.Lucene41WithOrds;
     using Lucene45DocValuesFormat = Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
+    using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
+
     //using DirectPostingsFormat = Lucene.Net.Codecs.memory.DirectPostingsFormat;
     //using MemoryDocValuesFormat = Lucene.Net.Codecs.memory.MemoryDocValuesFormat;
     //using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
@@ -49,9 +51,7 @@ namespace Lucene.Net.Index
     //using FSTOrdPulsing41PostingsFormat = Lucene.Net.Codecs.memory.FSTOrdPulsing41PostingsFormat;
     //using FSTPostingsFormat = Lucene.Net.Codecs.memory.FSTPostingsFormat;
     //using FSTPulsing41PostingsFormat = Lucene.Net.Codecs.memory.FSTPulsing41PostingsFormat;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Codec that assigns per-field random postings formats.
@@ -82,10 +82,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// memorized field->postingsformat mappings </summary>
-        // note: we have to sync this map even though its just for debugging/toString, 
-        // otherwise DWPT's .toString() calls that iterate over the map can 
+        // note: we have to sync this map even though its just for debugging/toString,
+        // otherwise DWPT's .toString() calls that iterate over the map can
         // cause concurrentmodificationexception if indexwriter's infostream is on
         private IDictionary<string, PostingsFormat> PreviousMappings = new ConcurrentHashMapWrapper<string, PostingsFormat>(new Dictionary<string, PostingsFormat>());
+
         private IDictionary<string, DocValuesFormat> PreviousDVMappings = new ConcurrentHashMapWrapper<string, DocValuesFormat>(new Dictionary<string, DocValuesFormat>());
         private readonly int PerFieldSeed;
 
@@ -136,8 +137,8 @@ namespace Lucene.Net.Index
 
             Add(avoidCodecs, new Lucene41PostingsFormat(minItemsPerBlock, maxItemsPerBlock), /*, new FSTPostingsFormat(), new FSTOrdPostingsFormat(), new FSTPulsing41PostingsFormat(1 + random.Next(20)), new FSTOrdPulsing41PostingsFormat(1 + random.Next(20)), new DirectPostingsFormat(LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : maxItemsPerBlock), LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : lowFreqCutoff)), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new TestBloomFilteredLucene41Postings(), new MockSepPostingsFormat(), new MockFixedIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)), new MockVariableIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), new MockRandomPostingsFormat(random), new NestedPulsingPostingsFormat(), new Lucene41WithOrds(), new SimpleTextPostingsFormat(),*/ new AssertingPostingsFormat() /*, new MemoryPostingsFormat(true, random.nextFloat()), new MemoryPostingsFormat(false, random.nextFloat())*/);
             // add pulsing again with (usually) different parameters
-            //TODO as a PostingsFormat which wraps others, we should allow TestBloomFilteredLucene41Postings to be constructed 
-            //with a choice of concrete PostingsFormats. Maybe useful to have a generic means of marking and dealing 
+            //TODO as a PostingsFormat which wraps others, we should allow TestBloomFilteredLucene41Postings to be constructed
+            //with a choice of concrete PostingsFormats. Maybe useful to have a generic means of marking and dealing
             //with such "wrapper" classes?
 
             AddDocValues(avoidCodecs, new Lucene45DocValuesFormat(), /*new DiskDocValuesFormat(), new MemoryDocValuesFormat(), new SimpleTextDocValuesFormat(),*/ new AssertingDocValuesFormat());
@@ -190,5 +191,4 @@ namespace Lucene.Net.Index
             return base.ToString() + ": " + PreviousMappings.ToString() + ", docValues:" + PreviousDVMappings.ToString();
         }
     }
-
 }

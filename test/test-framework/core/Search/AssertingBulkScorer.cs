@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Util;
+using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,14 +22,12 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     using DocsEnum = Lucene.Net.Index.DocsEnum;
 
     /// <summary>
     /// Wraps a Scorer with additional checks </summary>
     public class AssertingBulkScorer : BulkScorer
     {
-
         private static readonly VirtualMethod<BulkScorer> SCORE_COLLECTOR = new VirtualMethod<BulkScorer>(typeof(BulkScorer), "Score", typeof(Collector));
         private static readonly VirtualMethod<BulkScorer> SCORE_COLLECTOR_RANGE = new VirtualMethod<BulkScorer>(typeof(BulkScorer), "Score", typeof(Collector), typeof(int));
 
@@ -94,7 +91,5 @@ namespace Lucene.Net.Search
         {
             return "AssertingBulkScorer(" + @in + ")";
         }
-
     }
-
 }

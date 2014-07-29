@@ -2,7 +2,6 @@ using System;
 
 namespace Lucene.Net.Search
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,14 +19,12 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-
     /// <summary>
     /// A crazy <seealso cref="BulkScorer"/> that wraps another <seealso cref="BulkScorer"/>
-    ///  but shuffles the order of the collected documents. 
+    ///  but shuffles the order of the collected documents.
     /// </summary>
     public class AssertingBulkOutOfOrderScorer : BulkScorer
     {
-
         internal readonly BulkScorer @in;
         internal readonly Random Random;
 
@@ -57,5 +54,4 @@ namespace Lucene.Net.Search
             return "AssertingBulkOutOfOrderScorer(" + @in + ")";
         }
     }
-
 }

@@ -42,8 +42,6 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestFieldCacheRangeFilter : BaseTestRangeFilter
     {
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testRangeFilterId() throws java.io.IOException
         [Test]
         public virtual void TestRangeFilterId()
         {
@@ -128,8 +126,6 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, result.Length, "med,med,T,T");
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterRand() throws java.io.IOException
         [Test]
         public virtual void TestFieldCacheRangeFilterRand()
         {
@@ -194,8 +190,6 @@ namespace Lucene.Net.Search
 
         // byte-ranges cannot be tested, because all ranges are too big for bytes, need an extra range for that
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterShorts() throws java.io.IOException
         [Test]
         public virtual void TestFieldCacheRangeFilterShorts()
         {
@@ -286,8 +280,6 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, result.Length, "inverse range");
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterInts() throws java.io.IOException
         [Test]
         public virtual void TestFieldCacheRangeFilterInts()
         {
@@ -379,8 +371,6 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, result.Length, "inverse range");
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterLongs() throws java.io.IOException
         [Test]
         public virtual void TestFieldCacheRangeFilterLongs()
         {
@@ -474,8 +464,6 @@ namespace Lucene.Net.Search
 
         // float and double tests are a bit minimalistic, but its complicated, because missing precision
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterFloats() throws java.io.IOException
         [Test]
         public virtual void TestFieldCacheRangeFilterFloats()
         {
@@ -505,8 +493,6 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, result.Length, "infinity special case");
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterDoubles() throws java.io.IOException
         [Test]
         public virtual void TestFieldCacheRangeFilterDoubles()
         {
@@ -537,8 +523,6 @@ namespace Lucene.Net.Search
         }
 
         // test using a sparse index (with deleted docs).
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testSparseIndex() throws java.io.IOException
         [Test]
         public virtual void TestSparseIndex()
         {

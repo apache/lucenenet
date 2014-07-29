@@ -194,8 +194,6 @@ namespace Lucene.Net.Search.Payloads
             }
             foreach (AtomicReaderContext atomicReaderContext in Context.Leaves())
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Search.Spans.Spans spans = query.getSpans(atomicReaderContext, atomicReaderContext.reader().getLiveDocs(), termContexts);
                 Spans spans = query.GetSpans(atomicReaderContext, ((AtomicReader)atomicReaderContext.Reader()).LiveDocs, termContexts);
                 while (spans.Next() == true)
                 {

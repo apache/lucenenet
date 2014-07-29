@@ -1143,6 +1143,7 @@ namespace Lucene.Net.Index
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
                 return DefaultFormat;
+                //LUCENE TODO: Other codecs not defined in core
                 /*if (field.Equals("id"))
                 {
                     return SimpleTextFormat;

@@ -1,13 +1,13 @@
-﻿/* 
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,23 +18,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Lucene.Net.Randomized
 {
-
     public static class ThreadGroupExtensions
     {
         private static readonly object globalLock = new object();
 
         public static ThreadGroup GetThreadGroup(this Thread thread)
         {
-            if(thread.IsAlive)
-            { 
-                lock(ThreadGroup.GroupLock)
+            if (thread.IsAlive)
+            {
+                lock (ThreadGroup.GroupLock)
                 {
-                    foreach(var group in ThreadGroup.Groups)
+                    foreach (var group in ThreadGroup.Groups)
                     {
                         group.Prune();
                         foreach (var weak in group)
@@ -56,6 +54,7 @@ namespace Lucene.Net.Randomized
     {
         private List<WeakReference> threads;
         private static object s_groupLock = new Object();
+
         internal static object GroupLock
         {
             get
@@ -65,13 +64,13 @@ namespace Lucene.Net.Randomized
                 return s_groupLock;
             }
         }
-        internal static List<ThreadGroup> Groups {get; set;}
+
+        internal static List<ThreadGroup> Groups { get; set; }
 
         static ThreadGroup()
         {
             Groups = new List<ThreadGroup>();
             Root = new ThreadGroup("Root");
-           
         }
 
         public static ThreadGroup Root { get; set; }
@@ -83,7 +82,6 @@ namespace Lucene.Net.Randomized
         public ThreadGroup(string name)
             : this(name, null)
         {
-
         }
 
         public ThreadGroup(string name, ThreadGroup parent)
@@ -91,19 +89,16 @@ namespace Lucene.Net.Randomized
             this.Parent = parent;
             this.Name = name;
             this.threads = new List<WeakReference>();
-            lock(GroupLock){
+            lock (GroupLock)
+            {
                 Groups.Add(this);
             }
         }
-
-       
 
         internal void Add(Thread instance)
         {
             var threadRef = new WeakReference(instance);
             this.threads.Add(threadRef);
-            
-            
         }
 
         internal void Prune()
@@ -115,7 +110,6 @@ namespace Lucene.Net.Randomized
                     this.threads.Remove(item);
             }
         }
-
 
         public IEnumerator<WeakReference> GetEnumerator()
         {
@@ -129,7 +123,8 @@ namespace Lucene.Net.Randomized
 
         public void Dispose()
         {
-            lock(GroupLock){
+            lock (GroupLock)
+            {
                 Groups.Remove(this);
             }
         }

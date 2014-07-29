@@ -590,8 +590,6 @@ namespace Lucene.Net.Index
 
         internal ThreadState ObtainAndLock()
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState perThread = perThreadPool.getAndLock(Thread.currentThread(), documentsWriter);
             ThreadState perThread = PerThreadPool.GetAndLock(Thread.CurrentThread, DocumentsWriter);
             bool success = false;
             try

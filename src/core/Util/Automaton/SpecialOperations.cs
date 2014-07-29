@@ -195,7 +195,6 @@ namespace Lucene.Net.Util.Automaton
             Automaton r = (Automaton)a.Clone();
             Reverse(r);
             r.Determinize();
-            //JAVA TO C# CONVERTER TODO TASK: There is no .NET StringBuilder equivalent to the Java 'reverse' method:
             return (new StringBuilder(SpecialOperations.GetCommonPrefix(r))).Reverse().ToString();
         }
 

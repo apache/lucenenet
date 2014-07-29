@@ -2,7 +2,6 @@ using System;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,7 +22,7 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Sneaky: rethrowing checked exceptions as unchecked
     /// ones. Eh, it is sometimes useful...
-    /// 
+    ///
     /// <p>Pulled from <a href="http://www.javapuzzlers.com">Java Puzzlers</a>.</p> </summary>
     /// <seealso> cref= "http://www.amazon.com/Java-Puzzlers-Traps-Pitfalls-Corner/dp/032133678X" </seealso>
     public sealed class Rethrow
@@ -47,6 +46,4 @@ namespace Lucene.Net.Util
             (new Rethrower()).Rethrow(t);
         }
     }
-
-
 }

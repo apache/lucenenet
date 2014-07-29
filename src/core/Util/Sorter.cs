@@ -94,8 +94,6 @@ namespace Lucene.Net.Util
                 len11 = first_cut - from;
             }
             Rotate(first_cut, mid, second_cut);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int new_mid = first_cut + len22;
             int new_mid = first_cut + len22;
             MergeInPlace(from, first_cut, new_mid);
             MergeInPlace(new_mid, second_cut, to);
@@ -106,11 +104,7 @@ namespace Lucene.Net.Util
             int len = to - from;
             while (len > 0)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int half = len >>> 1;
                 int half = (int)((uint)len >> 1);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int mid = from + half;
                 int mid = from + half;
                 if (Compare(mid, val) < 0)
                 {
@@ -130,11 +124,7 @@ namespace Lucene.Net.Util
             int len = to - from;
             while (len > 0)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int half = len >>> 1;
                 int half = (int)((uint)len >> 1);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int mid = from + half;
                 int mid = from + half;
                 if (Compare(val, mid) < 0)
                 {
@@ -159,8 +149,6 @@ namespace Lucene.Net.Util
                 {
                     return Lower(f, t, val);
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int delta = t - f;
                 int delta = t - f;
                 t = f;
                 f -= delta << 1;
@@ -178,8 +166,6 @@ namespace Lucene.Net.Util
                 {
                     return Upper(f, t, val);
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int delta = t - f;
                 int delta = t - f;
                 f = t;
                 t += delta << 1;
@@ -254,11 +240,7 @@ namespace Lucene.Net.Util
                 int h = i - 1;
                 while (l <= h)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int mid = (l + h) >>> 1;
                     int mid = (int)((uint)(l + h) >> 1);
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int cmp = compare(i, mid);
                     int cmp = Compare(i, mid);
                     if (cmp < 0)
                     {
@@ -319,8 +301,6 @@ namespace Lucene.Net.Util
         {
             for (int leftChild = HeapChild(from, i); leftChild < to; leftChild = HeapChild(from, i))
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int rightChild = leftChild + 1;
                 int rightChild = leftChild + 1;
                 if (Compare(i, leftChild) < 0)
                 {

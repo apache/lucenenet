@@ -37,8 +37,6 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         public override TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final String fileName = Lucene.Net.Index.IndexFileNames.segmentFileName(Lucene3xSegmentInfoFormat.getDocStoreSegment(segmentInfo), "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION);
             string fileName = IndexFileNames.SegmentFileName(Lucene3xSegmentInfoFormat.GetDocStoreSegment(segmentInfo), "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION);
 
             // Unfortunately, for 3.x indices, each segment's
@@ -46,8 +44,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             // when really it's false).... so we have to carefully
             // check if the files really exist before trying to open
             // them (4.x has fixed this):
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final boolean exists;
             bool exists;
             if (Lucene3xSegmentInfoFormat.GetDocStoreOffset(segmentInfo) != -1 && Lucene3xSegmentInfoFormat.GetDocStoreIsCompoundFile(segmentInfo))
             {

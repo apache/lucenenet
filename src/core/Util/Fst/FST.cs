@@ -1995,8 +1995,6 @@ namespace Lucene.Net.Util.Fst
 
                             if (useArcArray)
                             {
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int arcBytes = (int)(writer.getPosition() - arcStartPos);
                                 int arcBytes = (int)(writer.Position - arcStartPos);
                                 //System.out.println("  " + arcBytes + " bytes");
                                 maxBytesPerArc = Math.Max(maxBytesPerArc, arcBytes);

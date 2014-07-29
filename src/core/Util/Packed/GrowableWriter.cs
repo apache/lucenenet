@@ -96,12 +96,8 @@ namespace Lucene.Net.Util.Packed
             {
                 return;
             }
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int bitsRequired = value < 0 ? 64 : PackedInts.bitsRequired(value);
             int bitsRequired = value < 0 ? 64 : PackedInts.BitsRequired(value);
             Debug.Assert(bitsRequired > Current.BitsPerValue);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int valueCount = size();
             int valueCount = Size();
             PackedInts.Mutable next = PackedInts.GetMutable(valueCount, bitsRequired, AcceptableOverheadRatio);
             PackedInts.Copy(Current, 0, next, 0, valueCount, PackedInts.DEFAULT_BUFFER_SIZE);
@@ -123,8 +119,6 @@ namespace Lucene.Net.Util.Packed
         public virtual GrowableWriter Resize(int newSize)
         {
             GrowableWriter next = new GrowableWriter(BitsPerValue, newSize, AcceptableOverheadRatio);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int limit = Math.min(size(), newSize);
             int limit = Math.Min(Size(), newSize);
             PackedInts.Copy(Current, 0, next, 0, limit, PackedInts.DEFAULT_BUFFER_SIZE);
             return next;

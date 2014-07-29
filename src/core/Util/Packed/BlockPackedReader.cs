@@ -39,18 +39,12 @@ namespace Lucene.Net.Util.Packed
             this.ValueCount = valueCount;
             BlockShift = PackedInts.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
             BlockMask = blockSize - 1;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int numBlocks = numBlocks(valueCount, blockSize);
             int numBlocks = PackedInts.NumBlocks(valueCount, blockSize);
             long[] minValues = null;
             SubReaders = new PackedInts.Reader[numBlocks];
             for (int i = 0; i < numBlocks; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int token = in.readByte() & 0xFF;
                 int token = @in.ReadByte() & 0xFF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int bitsPerValue = token >>> AbstractBlockPackedWriter.BPV_SHIFT;
                 int bitsPerValue = (int)((uint)token >> AbstractBlockPackedWriter.BPV_SHIFT);
                 if (bitsPerValue > 64)
                 {
@@ -70,13 +64,9 @@ namespace Lucene.Net.Util.Packed
                 }
                 else
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final int size = (int) Math.min(blockSize, valueCount - (long) i * blockSize);
                     int size = (int)Math.Min(blockSize, valueCount - (long)i * blockSize);
                     if (direct)
                     {
-                        //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                        //ORIGINAL LINE: final long pointer = in.getFilePointer();
                         long pointer = @in.FilePointer;
                         SubReaders[i] = PackedInts.GetDirectReaderNoHeader(@in, PackedInts.Format.PACKED, packedIntsVersion, size, bitsPerValue);
                         @in.Seek(pointer + PackedInts.Format.PACKED.ByteCount(packedIntsVersion, size, bitsPerValue));
@@ -93,11 +83,7 @@ namespace Lucene.Net.Util.Packed
         public override long Get(long index)
         {
             Debug.Assert(index >= 0 && index < ValueCount);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int block = (int)(index >>> blockShift);
             int block = (int)((long)((ulong)index >> BlockShift));
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int idx = (int)(index & blockMask);
             int idx = (int)(index & BlockMask);
             return (MinValues == null ? 0 : MinValues[block]) + SubReaders[block].Get(idx);
         }

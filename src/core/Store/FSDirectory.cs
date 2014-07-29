@@ -302,10 +302,6 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             return File.Exists(Path.Combine(Directory_Renamed.FullName, name));
-            /*
-            FileInfo file = new FileInfo(Path.Combine(Directory_Renamed.FullName, name));
-            return file.Exists;
-            */
         }
 
         /// <summary>
@@ -402,7 +398,7 @@ namespace Lucene.Net.Store
             {
                 //LUCENE TO-DO
                 //IOUtils.Fsync(Directory_Renamed.FullName, true);
-                IOUtils.Fsync(new FileInfo(Path.Combine(Directory_Renamed.FullName)), true);
+                IOUtils.Fsync(Directory_Renamed.FullName, true);
             }
 
             StaleFiles.ExceptWith(toSync);
@@ -560,7 +556,7 @@ namespace Lucene.Net.Store
 
         protected internal virtual void Fsync(string name)
         {
-            IOUtils.Fsync(new FileInfo(Path.Combine(Directory.FullName, name)), false);
+            IOUtils.Fsync(Path.Combine(Directory.FullName, name), false);
         }
     }
 }

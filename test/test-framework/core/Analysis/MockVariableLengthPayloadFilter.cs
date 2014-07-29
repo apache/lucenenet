@@ -1,9 +1,8 @@
-using System;
 using Lucene.Net.Analysis.Tokenattributes;
+using System;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,8 +20,6 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-
-    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
@@ -60,5 +57,4 @@ namespace Lucene.Net.Analysis
             }
         }
     }
-
 }

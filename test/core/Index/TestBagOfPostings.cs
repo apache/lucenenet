@@ -39,8 +39,6 @@ namespace Lucene.Net.Index
     /// Simple test that adds numeric terms, where each term has the
     /// docFreq of its integer value, and checks that the docFreq is correct.
     /// </summary>
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({"Direct", "Memory"}) public class TestBagOfPostings extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestBagOfPostings : LuceneTestCase // at night this makes like 200k/300k docs and will make Direct's heart beat!
     {

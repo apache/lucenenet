@@ -322,7 +322,6 @@ namespace Lucene.Net.Store
                 @lock = Channel.TryLock();
                 success = @lock != null;
               }
-  //JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
               catch (System.IO.IOException | OverlappingFileLockException e)
               {
                 // At least on OS X, we will sometimes get an

@@ -57,8 +57,6 @@ namespace Lucene.Net.Util.Packed
                     Current = 0L;
                     RemainingBits = 8;
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int bits = Math.min(remainingBits, bitsPerValue);
                 int bits = Math.Min(RemainingBits, bitsPerValue);
                 Current = Current | ((((long)((ulong)value >> (bitsPerValue - bits))) & ((1L << bits) - 1)) << (RemainingBits - bits));
                 bitsPerValue -= bits;

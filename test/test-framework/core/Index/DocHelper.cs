@@ -1,12 +1,11 @@
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,22 +23,21 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
+    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using StoredField = Lucene.Net.Document.StoredField;
     using StringField = Lucene.Net.Document.StringField;
     using TextField = Lucene.Net.Document.TextField;
-    using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Directory = Lucene.Net.Store.Directory;
 
-    class DocHelper
+    internal class DocHelper
     {
         public static readonly FieldType CustomType;
         public const string FIELD_1_TEXT = "field one text";
@@ -48,8 +46,10 @@ namespace Lucene.Net.Index
 
         public static readonly FieldType CustomType2;
         public const string FIELD_2_TEXT = "field field field two text";
+
         //Fields will be lexicographically sorted.  So, the order is: field, text, two
         public static readonly int[] FIELD_2_FREQS = new int[] { 3, 1, 1 };
+
         public const string TEXT_FIELD_2_KEY = "textField2";
         public static Field TextField2;
 
@@ -100,12 +100,15 @@ namespace Lucene.Net.Index
 
         //From Issue 509
         public const string FIELD_UTF1_TEXT = "field one \u4e00text";
+
         public const string TEXT_FIELD_UTF1_KEY = "textField1Utf8";
         public static Field TextUtfField1;// = new Field(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT, CustomType);
 
         public const string FIELD_UTF2_TEXT = "field field field \u4e00two text";
+
         //Fields will be lexicographically sorted.  So, the order is: field, text, two
         public static readonly int[] FIELD_UTF2_FREQS = new int[] { 3, 1, 1 };
+
         public const string TEXT_FIELD_UTF2_KEY = "textField2Utf8";
         public static Field TextUtfField2;// = new Field(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT, CustomType2);
 
@@ -145,7 +148,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Writes the document to the directory using a segment
         /// named "test"; returns the SegmentInfo describing the new
-        /// segment 
+        /// segment
         /// </summary>
         public static SegmentCommitInfo WriteDoc(Random random, Directory dir, Document doc)
         {
@@ -241,7 +244,7 @@ namespace Lucene.Net.Index
             {
                 buffer.Append("Lazily loading lengths of language in lieu of laughing ");
             }
-            
+
             try
             {
                 LAZY_FIELD_BINARY_BYTES = "These are some binary field bytes".GetBytes(IOUtils.CHARSET_UTF_8);
@@ -313,5 +316,4 @@ namespace Lucene.Net.Index
             NameValues[TEXT_FIELD_UTF2_KEY] = FIELD_UTF2_TEXT;
         }
     }
-
 }

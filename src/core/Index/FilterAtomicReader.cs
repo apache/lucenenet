@@ -451,8 +451,6 @@ namespace Lucene.Net.Index
 
         public override string ToString()
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final StringBuilder buffer = new StringBuilder("FilterAtomicReader(");
             StringBuilder buffer = new StringBuilder("FilterAtomicReader(");
             buffer.Append(@in);
             buffer.Append(')');

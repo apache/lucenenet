@@ -1,12 +1,11 @@
-using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Threading;
 using Lucene.Net.Randomized.Generators;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,16 +23,15 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Query = Lucene.Net.Search.Query;
-    using Directory = Lucene.Net.Store.Directory;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using Directory = Lucene.Net.Store.Directory;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NullInfoStream = Lucene.Net.Util.NullInfoStream;
+    using Query = Lucene.Net.Search.Query;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using Version = Lucene.Net.Util.Version;
 
@@ -41,12 +39,11 @@ namespace Lucene.Net.Index
     /// Silly class that randomizes the indexing experience.  EG
     ///  it may swap in a different merge policy/scheduler; may
     ///  commit periodically; may or may not forceMerge in the end,
-    ///  may flush by doc count instead of RAM, etc. 
+    ///  may flush by doc count instead of RAM, etc.
     /// </summary>
 
     public class RandomIndexWriter : IDisposable
     {
-
         public IndexWriter w;
         private readonly Random r;
         internal int DocCount;
@@ -54,7 +51,6 @@ namespace Lucene.Net.Index
         private double FlushAtFactor = 1.0;
         private bool GetReaderCalled;
         private readonly Codec Codec; // sugar
-
 
         public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, Random r)
         {
@@ -215,7 +211,9 @@ namespace Lucene.Net.Index
                     throw new NotImplementedException();
                 }
 
-                public void Dispose() { }
+                public void Dispose()
+                {
+                }
             }
         }
 
@@ -277,7 +275,6 @@ namespace Lucene.Net.Index
                 this.Doc = doc;
             }
 
-
             public IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
             {
                 return new IteratorAnonymousInnerClassHelper2(this);
@@ -327,7 +324,9 @@ namespace Lucene.Net.Index
                     throw new NotImplementedException();
                 }
 
-                public void Dispose() { }
+                public void Dispose()
+                {
+                }
             }
         }
 
@@ -554,5 +553,4 @@ namespace Lucene.Net.Index
             void Apply(string message);
         }
     }
-
 }

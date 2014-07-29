@@ -83,8 +83,6 @@ namespace Lucene.Net.Index
                 try
                 {
                     // prepare flush freezes the global deletes - do in synced block!
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final SegmentFlushTicket ticket = new SegmentFlushTicket(dwpt.prepareFlush());
                     SegmentFlushTicket ticket = new SegmentFlushTicket(dwpt.PrepareFlush());
                     Queue.AddLast(ticket);
                     success = true;
@@ -246,8 +244,6 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(newSegment != null);
                 Debug.Assert(newSegment.SegmentInfo != null);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final FrozenBufferedUpdates segmentUpdates = newSegment.segmentUpdates;
                 FrozenBufferedUpdates segmentUpdates = newSegment.SegmentUpdates;
                 //System.out.println("FLUSH: " + newSegment.segmentInfo.info.name);
                 if (indexWriter.infoStream.IsEnabled("DW"))

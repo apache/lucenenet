@@ -50,8 +50,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({"Appending","Lucene3x","Lucene40","Lucene41","Lucene42","Lucene45"}) public class TestBinaryDocValuesUpdates extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestBinaryDocValuesUpdates : LuceneTestCase
     {

@@ -33,32 +33,22 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block0 = blocks[blocksOffset++];
                 long block0 = blocks[blocksOffset++];
                 values[valuesOffset++] = (int)((long)((ulong)block0 >> 44));
                 values[valuesOffset++] = (int)(((long)((ulong)block0 >> 24)) & 1048575L);
                 values[valuesOffset++] = (int)(((long)((ulong)block0 >> 4)) & 1048575L);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block1 = blocks[blocksOffset++];
                 long block1 = blocks[blocksOffset++];
                 values[valuesOffset++] = (int)(((block0 & 15L) << 16) | ((long)((ulong)block1 >> 48)));
                 values[valuesOffset++] = (int)(((long)((ulong)block1 >> 28)) & 1048575L);
                 values[valuesOffset++] = (int)(((long)((ulong)block1 >> 8)) & 1048575L);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block2 = blocks[blocksOffset++];
                 long block2 = blocks[blocksOffset++];
                 values[valuesOffset++] = (int)(((block1 & 255L) << 12) | ((long)((ulong)block2 >> 52)));
                 values[valuesOffset++] = (int)(((long)((ulong)block2 >> 32)) & 1048575L);
                 values[valuesOffset++] = (int)(((long)((ulong)block2 >> 12)) & 1048575L);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block3 = blocks[blocksOffset++];
                 long block3 = blocks[blocksOffset++];
                 values[valuesOffset++] = (int)(((block2 & 4095L) << 8) | ((long)((ulong)block3 >> 56)));
                 values[valuesOffset++] = (int)(((long)((ulong)block3 >> 36)) & 1048575L);
                 values[valuesOffset++] = (int)(((long)((ulong)block3 >> 16)) & 1048575L);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block4 = blocks[blocksOffset++];
                 long block4 = blocks[blocksOffset++];
                 values[valuesOffset++] = (int)(((block3 & 65535L) << 4) | ((long)((ulong)block4 >> 60)));
                 values[valuesOffset++] = (int)(((long)((ulong)block4 >> 40)) & 1048575L);
@@ -71,21 +61,11 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int byte0 = blocks[blocksOffset++] & 0xFF;
                 int byte0 = blocks[blocksOffset++] & 0xFF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int byte1 = blocks[blocksOffset++] & 0xFF;
                 int byte1 = blocks[blocksOffset++] & 0xFF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int byte2 = blocks[blocksOffset++] & 0xFF;
                 int byte2 = blocks[blocksOffset++] & 0xFF;
                 values[valuesOffset++] = (byte0 << 12) | (byte1 << 4) | ((int)((uint)byte2 >> 4));
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int byte3 = blocks[blocksOffset++] & 0xFF;
                 int byte3 = blocks[blocksOffset++] & 0xFF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int byte4 = blocks[blocksOffset++] & 0xFF;
                 int byte4 = blocks[blocksOffset++] & 0xFF;
                 values[valuesOffset++] = ((byte2 & 15) << 16) | (byte3 << 8) | byte4;
             }
@@ -95,32 +75,22 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block0 = blocks[blocksOffset++];
                 long block0 = blocks[blocksOffset++];
                 values[valuesOffset++] = (long)((ulong)block0 >> 44);
                 values[valuesOffset++] = ((long)((ulong)block0 >> 24)) & 1048575L;
                 values[valuesOffset++] = ((long)((ulong)block0 >> 4)) & 1048575L;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block1 = blocks[blocksOffset++];
                 long block1 = blocks[blocksOffset++];
                 values[valuesOffset++] = ((block0 & 15L) << 16) | ((long)((ulong)block1 >> 48));
                 values[valuesOffset++] = ((long)((ulong)block1 >> 28)) & 1048575L;
                 values[valuesOffset++] = ((long)((ulong)block1 >> 8)) & 1048575L;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block2 = blocks[blocksOffset++];
                 long block2 = blocks[blocksOffset++];
                 values[valuesOffset++] = ((block1 & 255L) << 12) | ((long)((ulong)block2 >> 52));
                 values[valuesOffset++] = ((long)((ulong)block2 >> 32)) & 1048575L;
                 values[valuesOffset++] = ((long)((ulong)block2 >> 12)) & 1048575L;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block3 = blocks[blocksOffset++];
                 long block3 = blocks[blocksOffset++];
                 values[valuesOffset++] = ((block2 & 4095L) << 8) | ((long)((ulong)block3 >> 56));
                 values[valuesOffset++] = ((long)((ulong)block3 >> 36)) & 1048575L;
                 values[valuesOffset++] = ((long)((ulong)block3 >> 16)) & 1048575L;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long block4 = blocks[blocksOffset++];
                 long block4 = blocks[blocksOffset++];
                 values[valuesOffset++] = ((block3 & 65535L) << 4) | ((long)((ulong)block4 >> 60));
                 values[valuesOffset++] = ((long)((ulong)block4 >> 40)) & 1048575L;
@@ -133,21 +103,11 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < iterations; ++i)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long byte0 = blocks[blocksOffset++] & 0xFF;
                 long byte0 = blocks[blocksOffset++] & 0xFF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long byte1 = blocks[blocksOffset++] & 0xFF;
                 long byte1 = blocks[blocksOffset++] & 0xFF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long byte2 = blocks[blocksOffset++] & 0xFF;
                 long byte2 = blocks[blocksOffset++] & 0xFF;
                 values[valuesOffset++] = (byte0 << 12) | (byte1 << 4) | ((long)((ulong)byte2 >> 4));
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long byte3 = blocks[blocksOffset++] & 0xFF;
                 long byte3 = blocks[blocksOffset++] & 0xFF;
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long byte4 = blocks[blocksOffset++] & 0xFF;
                 long byte4 = blocks[blocksOffset++] & 0xFF;
                 values[valuesOffset++] = ((byte2 & 15) << 16) | (byte3 << 8) | byte4;
             }

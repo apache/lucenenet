@@ -103,11 +103,7 @@ namespace Lucene.Net.Util
                 {
                     return;
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int index = (int)(start >> blockBits);
                 int index = (int)(start >> BlockBits);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int offset = (int)(start & blockMask);
                 int offset = (int)(start & BlockMask);
                 if (BlockSize - offset >= length)
                 {
@@ -138,14 +134,8 @@ namespace Lucene.Net.Util
             // TODO: this really needs to be refactored into fieldcacheimpl
             public void Fill(BytesRef b, long start)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int index = (int)(start >> blockBits);
                 int index = (int)(start >> BlockBits);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int offset = (int)(start & blockMask);
                 int offset = (int)(start & BlockMask);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final byte[] block = b.bytes = blocks[index];
                 sbyte[] block = b.Bytes = Blocks[index];
 
                 if ((block[offset] & 128) == 0)
@@ -261,8 +251,6 @@ namespace Lucene.Net.Util
             }
             if (trim && Upto < BlockSize)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final byte[] newBlock = new byte[upto];
                 sbyte[] newBlock = new sbyte[Upto];
                 Array.Copy(CurrentBlock, 0, newBlock, 0, Upto);
                 CurrentBlock = newBlock;
@@ -327,8 +315,6 @@ namespace Lucene.Net.Util
                 Upto = 0;
             }
 
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final long pointer = getPointer();
             long pointer = Pointer;
 
             if (bytes.Length < 128)

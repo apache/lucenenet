@@ -1,63 +1,58 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading;
 using Apache.NMS.Util;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Index
 {
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
-    using StoredFieldsFormat = Lucene.Net.Codecs.StoredFieldsFormat;
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
+    using Directory = Lucene.Net.Store.Directory;
+
     //using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
     using Document = Lucene.Net.Document.Document;
     using DoubleField = Lucene.Net.Document.DoubleField;
     using Field = Lucene.Net.Document.Field;
-    using Store = Lucene.Net.Document.Field.Store;
+    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldType = Lucene.Net.Document.FieldType;
-    using NumericType = Lucene.Net.Document.FieldType.NumericType;
     using FloatField = Lucene.Net.Document.FloatField;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IntField = Lucene.Net.Document.IntField;
     using LongField = Lucene.Net.Document.LongField;
-    using StoredField = Lucene.Net.Document.StoredField;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
+    using MMapDirectory = Lucene.Net.Store.MMapDirectory;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
     using Query = Lucene.Net.Search.Query;
+    using StoredField = Lucene.Net.Document.StoredField;
+    using StringField = Lucene.Net.Document.StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
-    using MMapDirectory = Lucene.Net.Store.MMapDirectory;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using Throttling_e = Lucene.Net.Store.MockDirectoryWrapper.Throttling_e;
-    using BytesRef = Lucene.Net.Util.BytesRef;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Document.TextField;
+    using TopDocs = Lucene.Net.Search.TopDocs;
 
     /// <summary>
     /// Base class aiming at testing <seealso cref="StoredFieldsFormat stored fields formats"/>.
@@ -67,7 +62,6 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class BaseStoredFieldsFormatTestCase : BaseIndexFileFormatTestCase
     {
-
         protected internal override void AddRandomFields(Document d)
         {
             int numValues = Random().Next(3);
@@ -521,8 +515,6 @@ namespace Lucene.Net.Index
                 }
             }
 
-
-
             public override void Run()
             {
                 foreach (int q in queries)
@@ -669,7 +661,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
         //ORIGINAL LINE: @Nightly public void testBigDocuments() throws java.io.IOException
         public virtual void TestBigDocuments()
         {
@@ -774,7 +765,5 @@ namespace Lucene.Net.Index
             TestUtil.CheckIndex(dir);
             dir.Dispose();
         }
-
     }
-
 }

@@ -144,8 +144,6 @@ namespace Lucene.Net.Util.Fst
 
         public override IntsRef Read(DataInput @in)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int len = in.readVInt();
             int len = @in.ReadVInt();
             if (len == 0)
             {
@@ -153,8 +151,6 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.IntsRef output = new Lucene.Net.Util.IntsRef(len);
                 IntsRef output = new IntsRef(len);
                 for (int idx = 0; idx < len; idx++)
                 {

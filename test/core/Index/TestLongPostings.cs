@@ -41,8 +41,6 @@ namespace Lucene.Net.Index
     using TextField = Lucene.Net.Document.TextField;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestLongPostings extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestLongPostings : LuceneTestCase
     {

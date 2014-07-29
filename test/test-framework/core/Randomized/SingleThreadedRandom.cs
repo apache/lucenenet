@@ -1,13 +1,13 @@
-﻿/* 
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,13 +15,10 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using Lucene.Net.Support;
+using System;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Lucene.Net.Randomized
 {
@@ -36,9 +33,7 @@ namespace Lucene.Net.Randomized
         private readonly string ownerName;
         private StackTrace trace;
 
-
         private volatile Boolean isDisposed = true;
-
 
         public SingleThreadedRandom(ThreadClass owner, Random @delegate)
             : base(0)
@@ -91,8 +86,6 @@ namespace Lucene.Net.Randomized
             return this.@delegate.GetHashCode();
         }
 
-
-
         private void Guard()
         {
             /* checkValid(); */
@@ -103,12 +96,12 @@ namespace Lucene.Net.Randomized
 
             Thread owner = ownerRef.Target as Thread;
 
-            if(owner == null || owner != Thread.CurrentThread)
+            if (owner == null || owner != Thread.CurrentThread)
             {
                 var message = "The SingleThreadRandom instance was created for thread," + ownerName +
                                 " and must not be shared.  The current thread is " + Thread.CurrentThread.Name + ".";
-                
-                throw new InvalidOperationException(message, 
+
+                throw new InvalidOperationException(message,
                     new IllegalStateException("The instance was illegally accessed", this.trace));
             }
         }
@@ -122,7 +115,7 @@ namespace Lucene.Net.Randomized
 
         protected void Dispose(bool disposing)
         {
-            if(!this.isDisposed)
+            if (!this.isDisposed)
             {
                 if (disposing)
                 {

@@ -510,8 +510,6 @@ namespace Lucene.Net.Util
         internal int ReadPartition(ByteSequencesReader reader)
         {
             long start = DateTime.Now.Millisecond;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final BytesRef scratch = new BytesRef();
             BytesRef scratch = new BytesRef();
             while ((scratch.Bytes = reader.Read()) != null)
             {

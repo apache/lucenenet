@@ -132,8 +132,6 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final java.util.Set<String> files = new java.util.HashSet<>();
                 ISet<string> files = new HashSet<string>();
                 foreach (string f in Cache.ListAll())
                 {

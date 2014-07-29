@@ -110,11 +110,7 @@ namespace Lucene.Net.Search
                 // QueryWrapperFilter was used to wrap queries.
                 if (filter is QueryWrapperFilter)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final QueryWrapperFilter qwf = (QueryWrapperFilter) filter;
                     QueryWrapperFilter qwf = (QueryWrapperFilter)filter;
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final Query rewritten = new ConstantScoreQuery(qwf.getQuery().rewrite(reader));
                     Query rewritten = new ConstantScoreQuery(qwf.Query.Rewrite(reader));
                     rewritten.Boost = this.Boost;
                     return rewritten;

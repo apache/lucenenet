@@ -41,8 +41,6 @@ namespace Lucene.Net.Index
         internal static long[] LONGS;
         internal static byte[] RANDOM_TEST_BYTES;
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws java.io.IOException
         [TestFixtureSetUp]
         public static void BeforeClass()
         {
@@ -72,8 +70,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @AfterClass public static void afterClass()
         [TestFixtureTearDown]
         public static void AfterClass()
         {

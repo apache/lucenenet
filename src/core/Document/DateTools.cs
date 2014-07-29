@@ -305,35 +305,6 @@ namespace Lucene.Net.Document
             /// <summary>
             /// Limit a date's resolution to millisecond granularity. </summary>
             MILLISECOND = 17
-
-            //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain fields in .NET:
-            //		final int formatLen;
-            //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain fields in .NET:
-            //		final java.text.SimpleDateFormat format; //should be cloned before use, since it's not threadsafe
-
-            //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain methods in .NET:
-            //		Resolution(int formatLen)
-            //	{
-            //	  this.formatLen = formatLen;
-            //	  // formatLen 10's place:                     11111111
-            //	  // formatLen  1's place:            12345678901234567
-            //	  this.format = new SimpleDateFormat("yyyyMMddHHmmssSSS".substring(0,formatLen),Locale.ROOT);
-            //	  this.format.setTimeZone(GMT);
-            //	}
-
-            /// <summary>
-            /// this method returns the name of the resolution
-            /// in lowercase (for backwards compatibility)
-            /// </summary>
         }
-
-        /*
-	public static partial class EnumExtensionMethods
-	{
-		public override static string ToString(this Resolution instance)
-		{
-		  return base.ToString().ToLower(Locale.ROOT);
-		}
-	}*/
     }
 }

@@ -42,8 +42,6 @@ namespace Lucene.Net.Index
     /// so you get > Integer.MAX_VALUE postings data for the term
     /// @lucene.experimental
     /// </summary>
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct", "Lucene3x" }) @TimeoutSuite(millis = 4 * TimeUnits.HOUR) public class Test2BPostingsBytes extends Lucene.Net.Util.LuceneTestCase
     [Ignore]
     [TestFixture]
     public class Test2BPostingsBytes : LuceneTestCase
@@ -51,7 +49,6 @@ namespace Lucene.Net.Index
     // @Absurd @Ignore takes ~20GB-30GB of space and 10 minutes.
     // with some codecs needs more heap space as well.
     {
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
         //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
         [Test]
         public virtual void Test()

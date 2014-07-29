@@ -100,24 +100,18 @@ namespace Lucene.Net.Index
 
         public virtual void IncRef()
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int rc = refCount.incrementAndGet();
             int rc = RefCount_Renamed.IncrementAndGet();
             Debug.Assert(rc > 1);
         }
 
         public virtual void DecRef()
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int rc = refCount.decrementAndGet();
             int rc = RefCount_Renamed.DecrementAndGet();
             Debug.Assert(rc >= 0);
         }
 
         public virtual int RefCount()
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int rc = refCount.get();
             int rc = RefCount_Renamed.Get();
             Debug.Assert(rc >= 0);
             return rc;

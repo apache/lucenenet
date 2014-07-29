@@ -50,8 +50,6 @@ namespace Lucene.Net.Index
     // TODO: we really need to test indexingoffsets, but then getting only docs / docs + freqs.
     // not all codecs store prx separate...
     // TODO: fix sep codec to index offsets so we can greatly reduce this list!
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({"Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom"}) public class TestPostingsOffsets extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestPostingsOffsets : LuceneTestCase
     {

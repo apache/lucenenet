@@ -45,8 +45,6 @@ namespace Lucene.Net.Util
             }
             else
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int mid = (from + to) >>> 1;
                 int mid = (int)((uint)(from + to) >> 1);
                 MergeSort(from, mid);
                 MergeSort(mid, to);

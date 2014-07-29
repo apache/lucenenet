@@ -147,8 +147,6 @@ namespace Lucene.Net.Util
         /// @deprecated Use an actual version instead.
         [System.Obsolete("Use an actual version instead.")]
         LUCENE_CURRENT
-
-        //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain methods in .NET:
     }
 
     public static class VersionEnumExtensionMethods

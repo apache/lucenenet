@@ -68,15 +68,9 @@ namespace Lucene.Net.Util
             Cache2 = new ConcurrentDictionary<K, V>();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @SuppressWarnings("unchecked") public V get(K key)
         public V Get(K key)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.Map<K,V> primary;
             IDictionary<K, V> primary;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.Map<K,V> secondary;
             IDictionary<K, V> secondary;
             if (Swapped)
             {

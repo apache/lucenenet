@@ -364,21 +364,15 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             get
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int clearedCount = size() - count();
                 int clearedCount = Size() - Count();
                 if (clearedCount == 0)
                 {
                     return true;
                 }
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int avgGapLength = bits.length / clearedCount;
                 int avgGapLength = Bits.Length / clearedCount;
 
                 // expected number of bytes for vInt encoding of each gap
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int expectedDGapBytes;
                 int expectedDGapBytes;
                 if (avgGapLength <= (1 << 7))
                 {
@@ -403,13 +397,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 // +1 because we write the byte itself that contains the
                 // set bit
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int bytesPerSetBit = expectedDGapBytes + 1;
                 int bytesPerSetBit = expectedDGapBytes + 1;
 
                 // note: adding 32 because we start with ((int) -1) to indicate d-gaps format.
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final long expectedBits = 32 + 8 * bytesPerSetBit * clearedCount;
                 long expectedBits = 32 + 8 * bytesPerSetBit * clearedCount;
 
                 // note: factor is for read/write of byte-arrays being faster than vints.
@@ -428,8 +418,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
             try
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int firstInt = input.readInt();
                 int firstInt = input.ReadInt();
 
                 if (firstInt == -2)
@@ -484,8 +472,6 @@ namespace Lucene.Net.Codecs.Lucene40
         private bool VerifyCount()
         {
             Debug.Assert(Count_Renamed != -1);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int countSav = count;
             int countSav = Count_Renamed;
             Count_Renamed = -1;
             Debug.Assert(countSav == Count(), "saved count was " + countSav + " but recomputed count is " + Count_Renamed);

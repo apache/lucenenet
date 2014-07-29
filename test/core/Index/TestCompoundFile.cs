@@ -563,7 +563,7 @@ namespace Lucene.Net.Index
                 cr.OpenInput("bogus", NewIOContext(Random()));
                 Assert.Fail("File not found");
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 /* success */
                 //System.out.println("SUCCESS: File Not Found: " + e);

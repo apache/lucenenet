@@ -1,13 +1,13 @@
-﻿/* 
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
     /// <summary>
-    /// The static accessor class for file paths used in testing. 
+    /// The static accessor class for file paths used in testing.
     /// </summary>
     public static class Paths
     {
@@ -41,10 +41,10 @@ namespace Lucene.Net.Util
         /// </value>
         /// <remarks>
         /// 	<para>
-        /// 		The temp directory first looks at the app settings for the &qt;tempDir&qt; 
+        /// 		The temp directory first looks at the app settings for the &qt;tempDir&qt;
         /// 		key. If the path does not exists or the setting is empty, the temp directory
-        /// 		fall back to using the environment's temp directory path and 
-        /// 		append &qt;lucene-net&qt; to it. 
+        /// 		fall back to using the environment's temp directory path and
+        /// 		append &qt;lucene-net&qt; to it.
         /// 	</para>
         /// </remarks>
         public static string TempDirectory
@@ -53,7 +53,6 @@ namespace Lucene.Net.Util
             {
                 if (s_tempDirectory == null)
                 {
-
                     string tempDirectory = AppSettings.Get("tempDir", "");
 
                     if (string.IsNullOrEmpty(tempDirectory) ||
@@ -63,7 +62,6 @@ namespace Lucene.Net.Util
 
                         if (!Directory.Exists(tempDirectory))
                             Directory.CreateDirectory(tempDirectory);
-
                     }
                     s_tempDirectory = tempDirectory;
                 }
@@ -92,8 +90,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Gets the directory where the compiled assembly Lucene.Net.Tests is found.
-        /// We use Assembly.CodeBase in case NUnit or the current test runner 
-        /// has shadow copy enabled. 
+        /// We use Assembly.CodeBase in case NUnit or the current test runner
+        /// has shadow copy enabled.
         /// </summary>
         public static string AssemblyDirectory
         {
@@ -112,7 +110,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Gets the root directory for the project. e.g. if you were working on trunk
-        /// it would be the trunk directory. 
+        /// it would be the trunk directory.
         /// </summary>
         public static string ProjectRootDirectory
         {
@@ -121,7 +119,7 @@ namespace Lucene.Net.Util
                 if (s_projectRootDirectory == null)
                 {
                     // we currently assume that the assembly's directory is root/bin/[Section]/[Build]
-                    // where [Section] is either core, demo, or contrib, and [Build] is either Debug or Release.  
+                    // where [Section] is either core, demo, or contrib, and [Build] is either Debug or Release.
                     string assemblyLocation = AssemblyDirectory;
                     int index = -1;
                     if (assemblyLocation.IndexOf("build") > -1)
@@ -145,7 +143,6 @@ namespace Lucene.Net.Util
                 }
                 return s_projectRootDirectory;
             }
-
         }
 
         /// <summary>

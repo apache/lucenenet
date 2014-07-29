@@ -129,11 +129,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static NumericDocValues GetNumericValues(IndexReader r, string field)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.List<AtomicReaderContext> leaves = r.leaves();
             IList<AtomicReaderContext> leaves = r.Leaves();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int size = leaves.size();
             int size = leaves.Count;
             if (size == 0)
             {
@@ -145,11 +141,7 @@ namespace Lucene.Net.Index
             }
 
             bool anyReal = false;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final NumericDocValues[] values = new NumericDocValues[size];
             NumericDocValues[] values = new NumericDocValues[size];
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int[] starts = new int[size+1];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {
@@ -266,11 +258,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static BinaryDocValues GetBinaryValues(IndexReader r, string field)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.List<AtomicReaderContext> leaves = r.leaves();
             IList<AtomicReaderContext> leaves = r.Leaves();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int size = leaves.size();
             int size = leaves.Count;
 
             if (size == 0)
@@ -283,11 +271,7 @@ namespace Lucene.Net.Index
             }
 
             bool anyReal = false;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final BinaryDocValues[] values = new BinaryDocValues[size];
             BinaryDocValues[] values = new BinaryDocValues[size];
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int[] starts = new int[size+1];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {
@@ -343,11 +327,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static SortedDocValues GetSortedValues(IndexReader r, string field)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.List<AtomicReaderContext> leaves = r.leaves();
             IList<AtomicReaderContext> leaves = r.Leaves();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int size = leaves.size();
             int size = leaves.Count;
 
             if (size == 0)
@@ -360,11 +340,7 @@ namespace Lucene.Net.Index
             }
 
             bool anyReal = false;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final SortedDocValues[] values = new SortedDocValues[size];
             SortedDocValues[] values = new SortedDocValues[size];
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int[] starts = new int[size+1];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {
@@ -408,11 +384,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static SortedSetDocValues GetSortedSetValues(IndexReader r, string field)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.List<AtomicReaderContext> leaves = r.leaves();
             IList<AtomicReaderContext> leaves = r.Leaves();
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int size = leaves.size();
             int size = leaves.Count;
 
             if (size == 0)
@@ -425,11 +397,7 @@ namespace Lucene.Net.Index
             }
 
             bool anyReal = false;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final SortedSetDocValues[] values = new SortedSetDocValues[size];
             SortedSetDocValues[] values = new SortedSetDocValues[size];
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int[] starts = new int[size+1];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {

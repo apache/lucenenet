@@ -1,3 +1,4 @@
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 using System;
 
@@ -41,14 +42,11 @@ namespace Lucene.Net.Index
     /// Test indexes ~82M docs with 52 positions each, so you get > Integer.MAX_VALUE positions
     /// @lucene.experimental
     /// </summary>
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) @TimeoutSuite(millis = 4 * TimeUnits.HOUR) public class Test2BPositions extends Lucene.Net.Util.LuceneTestCase
     [Ignore]
     [TestFixture]
     public class Test2BPositions : LuceneTestCase
     // uses lots of space and takes a few minutes
     {
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
         //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
         [Test]
         public virtual void Test()
@@ -91,9 +89,15 @@ namespace Lucene.Net.Index
 
         public sealed class MyTokenStream : TokenStream
         {
-            internal readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
-            internal readonly PositionIncrementAttribute PosIncAtt;// = AddAttribute<PositionIncrementAttribute>();
+            internal readonly ICharTermAttribute TermAtt;
+            internal readonly IPositionIncrementAttribute PosIncAtt;
             internal int Index;
+
+            public MyTokenStream()
+            {
+                TermAtt = AddAttribute<ICharTermAttribute>();
+                PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
+            }
 
             public override bool IncrementToken()
             {

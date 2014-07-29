@@ -160,14 +160,10 @@ namespace Lucene.Net.Util
         private readonly bool RemoveDuplicates;
         private int NumTop;
 
-  //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-  //ORIGINAL LINE: @SuppressWarnings({"unchecked","rawtypes"}) public MergedIterator(java.util.Iterator<T>... iterators)
         public MergedIterator(params IEnumerator<T>[] iterators) : this(true, iterators)
         {
         }
 
-  //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-  //ORIGINAL LINE: @SuppressWarnings({"unchecked","rawtypes"}) public MergedIterator(boolean removeDuplicates, java.util.Iterator<T>... iterators)
         public MergedIterator(bool removeDuplicates, params IEnumerator<T>[] iterators)
         {
           this.RemoveDuplicates = removeDuplicates;
@@ -176,11 +172,9 @@ namespace Lucene.Net.Util
           int index = 0;
           foreach (IEnumerator<T> iterator in iterators)
           {
-  //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
             if (iterator.HasNext())
             {
               SubIterator<T> sub = new SubIterator<T>();
-  //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
               sub.Current = iterator.next();
               sub.Iterator = iterator;
               sub.Index = index++;
@@ -198,7 +192,6 @@ namespace Lucene.Net.Util
 
           for (int i = 0; i < NumTop; i++)
           {
-  //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
             if (Top[i].Iterator.hasNext())
             {
               return true;
@@ -253,10 +246,8 @@ namespace Lucene.Net.Util
           // call next() on each top, and put back into queue
           for (int i = 0; i < NumTop; i++)
           {
-  //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
             if (Top[i].Iterator.hasNext())
             {
-  //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
               Top[i].Current = Top[i].Iterator.next();
               Queue.Add(Top[i]);
             }

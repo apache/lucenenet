@@ -214,8 +214,6 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// A comparator used for enforcing sorted UTF8 order, used in assertions only.
         /// </summary>
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @SuppressWarnings("deprecation") private static final Comparator<Lucene.Net.Util.CharsRef> comparator = Lucene.Net.Util.CharsRef.getUTF16SortedAsUTF8Comparator();
         private static readonly IComparer<CharsRef> Comparator = CharsRef.UTF16SortedAsUTF8Comparer;
 
         /// <summary>

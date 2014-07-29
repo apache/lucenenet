@@ -43,8 +43,6 @@ namespace Lucene.Net.Index
     /// Test that norms info is preserved during index life - including
     /// separate norms, addDocument, addIndexes, forceMerge.
     /// </summary>
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({ "Memory", "Direct", "SimpleText" }) @Slow public class TestNorms extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestNorms : LuceneTestCase
     {

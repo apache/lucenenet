@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Lucene.Net.Search
 {
-
     using NUnit.Framework;
     using System.IO;
+
     /*
              * Licensed to the Apache Software Foundation (ASF) under one or more
              * contributor license agreements.  See the NOTICE file distributed with
@@ -35,7 +35,6 @@ namespace Lucene.Net.Search
     /// </summary>
     public class CheckHits
     {
-
         /// <summary>
         /// Some explains methods calculate their values though a slightly
         /// different  order of operations from the actual scoring method ...
@@ -53,12 +52,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Tests that all documents up to maxDoc which are *not* in the
-        /// expected result set, have an explanation which indicates that 
+        /// expected result set, have an explanation which indicates that
         /// the document does not match
         /// </summary>
         public static void CheckNoMatchExplanations(Query q, string defaultFieldName, IndexSearcher searcher, int[] results)
         {
-
             string d = q.ToString(defaultFieldName);
             SortedSet<int?> ignore = new SortedSet<int?>();
             for (int i = 0; i < results.Length; i++)
@@ -78,13 +76,12 @@ namespace Lucene.Net.Search
                 Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
                 Assert.IsFalse(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
             }
-
         }
 
         /// <summary>
         /// Tests that a query matches the an expected set of documents using a
         /// HitCollector.
-        /// 
+        ///
         /// <p>
         /// Note that when using the HitCollector API, documents will be collected
         /// if they "match" regardless of what their score is.
@@ -107,7 +104,7 @@ namespace Lucene.Net.Search
             }
             SortedSet<int?> actual = new SortedSet<int?>();
             Collector c = new SetCollector(actual);
-            
+
             searcher.Search(query, c);
 
             Assert.AreEqual(correct, actual, "Simple: " + query.ToString(defaultFieldName));
@@ -127,21 +124,26 @@ namespace Lucene.Net.Search
         public class SetCollector : Collector
         {
             internal readonly ISet<int?> Bag;
+
             public SetCollector(ISet<int?> bag)
             {
                 this.Bag = bag;
             }
+
             internal int @base = 0;
+
             public override Scorer Scorer
             {
                 set
                 {
                 }
             }
+
             public override void Collect(int doc)
             {
                 Bag.Add(Convert.ToInt32(doc + @base));
             }
+
             public override AtomicReaderContext NextReader
             {
                 set
@@ -149,6 +151,7 @@ namespace Lucene.Net.Search
                     @base = value.DocBase;
                 }
             }
+
             public override bool AcceptsDocsOutOfOrder()
             {
                 return true;
@@ -157,7 +160,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Tests that a query matches the an expected set of documents using Hits.
-        /// 
+        ///
         /// <p>
         /// Note that when using the Hits API, documents will only be returned
         /// if they have a positive normalized score.
@@ -205,7 +208,6 @@ namespace Lucene.Net.Search
         /// </summary>
         public static void CheckHitsQuery(Query query, ScoreDoc[] hits1, ScoreDoc[] hits2, int[] results)
         {
-
             CheckDocIds("hits1", results, hits1);
             CheckDocIds("hits2", results, hits2);
             CheckEqual(query, hits1, hits2);
@@ -266,7 +268,6 @@ namespace Lucene.Net.Search
             return sb.ToString();
         }
 
-
         public static string TopdocsString(TopDocs docs, int start, int end)
         {
             StringBuilder sb = new StringBuilder();
@@ -294,7 +295,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Asserts that the explanation value for every document matching a
-        /// query corresponds with the true score. 
+        /// query corresponds with the true score.
         /// </summary>
         /// <seealso cref= ExplanationAsserter </seealso>
         /// <seealso cref= #checkExplanations(Query, String, IndexSearcher, boolean) for a
@@ -310,7 +311,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Asserts that the explanation value for every document matching a
-        /// query corresponds with the true score.  Optionally does "deep" 
+        /// query corresponds with the true score.  Optionally does "deep"
         /// testing of the explanation details.
         /// </summary>
         /// <seealso cref= ExplanationAsserter </seealso>
@@ -320,14 +321,12 @@ namespace Lucene.Net.Search
         /// <param name="deep"> indicates whether a deep comparison of sub-Explanation details should be executed </param>
         public static void CheckExplanations(Query query, string defaultFieldName, IndexSearcher searcher, bool deep)
         {
-
             searcher.Search(query, new ExplanationAsserter(query, defaultFieldName, searcher, deep));
-
         }
 
         /// <summary>
         /// returns a reasonable epsilon for comparing two floats,
-        ///  where minor differences are acceptable such as score vs. explain 
+        ///  where minor differences are acceptable such as score vs. explain
         /// </summary>
         public static float ExplainToleranceDelta(float f1, float f2)
         {
@@ -363,7 +362,7 @@ namespace Lucene.Net.Search
             {
                 if (detail.Length == 1)
                 {
-                    // simple containment, unless its a freq of: (which lets a query explain how the freq is calculated), 
+                    // simple containment, unless its a freq of: (which lets a query explain how the freq is calculated),
                     // just verify contained expl has same score
                     if (!expl.Description.EndsWith("with freq of:"))
                     {
@@ -452,29 +451,32 @@ namespace Lucene.Net.Search
                 : base(r)
             {
             }
+
             protected internal virtual void CheckExplanations(Query q)
             {
                 base.Search(q, null, new ExplanationAsserter(q, null, this));
             }
+
             public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
             {
-
                 CheckExplanations(query);
                 return base.Search(query, filter, n, sort);
             }
+
             public override void Search(Query query, Collector results)
             {
                 CheckExplanations(query);
                 base.Search(query, results);
             }
+
             public override void Search(Query query, Filter filter, Collector results)
             {
                 CheckExplanations(query);
                 base.Search(query, filter, results);
             }
+
             public override TopDocs Search(Query query, Filter filter, int n)
             {
-
                 CheckExplanations(query);
                 return base.Search(query, filter, n);
             }
@@ -483,14 +485,13 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Asserts that the score explanation for every document matching a
         /// query corresponds with the true score.
-        /// 
+        ///
         /// NOTE: this HitCollector should only be used with the Query and Searcher
         /// specified at when it is constructed.
         /// </summary>
         /// <seealso cref= CheckHits#verifyExplanation </seealso>
         public class ExplanationAsserter : Collector
         {
-
             internal Query q;
             internal IndexSearcher s;
             internal string d;
@@ -505,6 +506,7 @@ namespace Lucene.Net.Search
                 : this(q, defaultFieldName, s, false)
             {
             }
+
             public ExplanationAsserter(Query q, string defaultFieldName, IndexSearcher s, bool deep)
             {
                 this.q = q;
@@ -538,6 +540,7 @@ namespace Lucene.Net.Search
                 VerifyExplanation(d, doc, Scorer_Renamed.Score(), Deep, exp);
                 Assert.IsTrue(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString());
             }
+
             public override AtomicReaderContext NextReader
             {
                 set
@@ -545,14 +548,11 @@ namespace Lucene.Net.Search
                     @base = value.DocBase;
                 }
             }
+
             public override bool AcceptsDocsOutOfOrder()
             {
                 return true;
             }
         }
-
     }
-
-
-
 }

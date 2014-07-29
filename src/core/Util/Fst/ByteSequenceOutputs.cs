@@ -141,8 +141,6 @@ namespace Lucene.Net.Util.Fst
 
         public override BytesRef Read(DataInput @in)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int len = in.readVInt();
             int len = @in.ReadVInt();
             if (len == 0)
             {
@@ -150,8 +148,6 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final Lucene.Net.Util.BytesRef output = new Lucene.Net.Util.BytesRef(len);
                 BytesRef output = new BytesRef(len);
                 @in.ReadBytes(output.Bytes, 0, len);
                 output.Length = len;

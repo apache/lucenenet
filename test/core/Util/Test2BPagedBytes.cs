@@ -30,7 +30,6 @@ namespace Lucene.Net.Util
 
     //using Ignore = org.junit.Ignore;
 
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
     //ORIGINAL LINE: @Ignore("You must increase heap to > 2 G to run this") public class Test2BPagedBytes extends LuceneTestCase
     [Ignore]
     [TestFixture]

@@ -1,14 +1,12 @@
+using NUnit.Framework;
 using System;
-using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
-using NUnit.Framework;
 
 namespace Lucene.Net.Analysis
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,33 +24,32 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-
     using Lucene.Net.Analysis.Tokenattributes;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using System.Globalization;
+    using System.IO;
+    using Attribute = Lucene.Net.Util.Attribute;
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Document.Document;
     using Field = Lucene.Net.Document.Field;
     using FieldType = Lucene.Net.Document.FieldType;
-    using TextField = Lucene.Net.Document.TextField;
-    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Directory = Lucene.Net.Store.Directory;
-    using Attribute = Lucene.Net.Util.Attribute;
     using IAttribute = Lucene.Net.Util.IAttribute;
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Rethrow = Lucene.Net.Util.Rethrow;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using System.IO;
-    using Lucene.Net.Support;
-    using Lucene.Net.Randomized.Generators;
-    using System.Globalization;
+    using TextField = Lucene.Net.Document.TextField;
 
     /// <summary>
-    /// base class for all Lucene unit tests that use TokenStreams. 
+    /// base class for all Lucene unit tests that use TokenStreams.
     /// <p>
     /// When writing unit tests for analysis components, its highly recommended
     /// to use the helper methods here (especially in conjunction with <seealso cref="MockAnalyzer"/> or
-    /// <seealso cref="MockTokenizer"/>), as they contain many assertions and checks to 
+    /// <seealso cref="MockTokenizer"/>), as they contain many assertions and checks to
     /// catch bugs.
     /// </summary>
     /// <seealso cref= MockAnalyzer </seealso>
@@ -62,7 +59,7 @@ namespace Lucene.Net.Analysis
         // some helpers to test Analyzers and TokenStreams:
 
         /// <summary>
-        /// Attribute that records if it was cleared or not.  this is used 
+        /// Attribute that records if it was cleared or not.  this is used
         /// for testing that ClearAttributes() was called correctly.
         /// </summary>
         public interface ICheckClearAttributesAttribute : IAttribute
@@ -71,7 +68,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Attribute that records if it was cleared or not.  this is used 
+        /// Attribute that records if it was cleared or not.  this is used
         /// for testing that ClearAttributes() was called correctly.
         /// </summary>
         public sealed class CheckClearAttributesAttribute : Attribute, ICheckClearAttributesAttribute
@@ -676,7 +673,6 @@ namespace Lucene.Net.Analysis
 
         private static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
         {
-
             LineFileDocs docs = new LineFileDocs(random);
             Document doc = null;
             Field field = null, currentField = null;
@@ -706,12 +702,15 @@ namespace Lucene.Net.Analysis
                     case 0:
                         ft.IndexOptionsValue = IndexOptions.DOCS_ONLY;
                         break;
+
                     case 1:
                         ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS;
                         break;
+
                     case 2:
                         ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                         break;
+
                     default:
                         if (supportsOffsets && offsetsAreCorrect)
                         {
@@ -739,7 +738,6 @@ namespace Lucene.Net.Analysis
                         text = docs.NextDoc().Get("body");
                         if (text.Length > maxWordLength)
                         {
-
                             // Take a random slice from the text...:
                             int startPos = random.Next(text.Length - maxWordLength);
                             if (startPos > 0 && char.IsLowSurrogate(text[startPos]))
@@ -857,7 +855,6 @@ namespace Lucene.Net.Analysis
 
         private static void CheckAnalysisConsistency(Random random, Analyzer a, bool useCharFilter, string text, bool offsetsAreCorrect, Field field)
         {
-
             if (VERBOSE)
             {
                 Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: get first token stream now text=" + text);
@@ -908,12 +905,10 @@ namespace Lucene.Net.Analysis
             // verify reusing is "reproducable" and also get the normal tokenstream sanity checks
             if (tokens.Count > 0)
             {
-
                 // KWTokenizer (for example) can produce a token
                 // even when input is length 0:
                 if (text.Length != 0)
                 {
-
                     // (Optional) second pass: do something evil:
                     int evilness = random.Next(50);
                     if (evilness == 17)
@@ -1105,5 +1100,4 @@ namespace Lucene.Net.Analysis
             return ret;
         }
     }
-
 }

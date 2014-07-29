@@ -40,8 +40,6 @@ namespace Lucene.Net.Index
     using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestTermsEnum extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestTermsEnum : LuceneTestCase
     {
