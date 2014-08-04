@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace Lucene.Net
 {
@@ -92,6 +93,11 @@ namespace Lucene.Net
         protected static void fail(string message)
         {
             Fail(message);
+        }
+
+        protected Random Random()
+        {
+            return new Random();
         }
     }
 }

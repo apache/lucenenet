@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Randomized.Generators
 {
     public static class RandomInts
     {
+        public static int randomIntBetween(Random random, int start, int end)
+        {
+            return random.NextIntBetween(start, end);
+        }
+
         public static int NextIntBetween(this Random random, int min, int max)
         {
             Debug.Assert(min <= max, String.Format("Min must be less than or equal max int. min: {0}, max: {1}", min, max));

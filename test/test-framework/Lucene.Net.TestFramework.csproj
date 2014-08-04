@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JavaCompatibility\RandomHelpers.cs" />
     <Compile Include="Randomized\Attributes\SeedAttribute.cs" />
     <Compile Include="Analysis\MockFixedLengthPayloadFilter.cs" />
     <Compile Include="Analysis\MockTokenFilter.cs" />

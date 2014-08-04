@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net
@@ -43,6 +41,11 @@ namespace Lucene.Net
         public static long size<T>(this IList<T> list)
         {
             return list.Count;
+        }
+
+        public static void printStackTrace(this Exception e)
+        {
+            Console.WriteLine(e.StackTrace);
         }
     }
 }

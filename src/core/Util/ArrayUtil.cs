@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
         /// </param>
         /// <returns> int the value represented by the argument
         /// </returns>
-        /// <throws>  NumberFormatException if the argument could not be parsed as an int quantity. </throws>
+        /// <throws>FormatException if the argument could not be parsed as an int quantity. </throws>
         public static int ParseInt(char[] chars)
         {
             return ParseInt(chars, 0, chars.Length, 10);
