@@ -74,5 +74,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
             impl.Flags = Flags;
             return impl;
         }
+
+        public override string ToString()
+        {
+            return "flags=" + this.Flags.ToString();
+        }
     }
 }

@@ -77,5 +77,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
             impl.Type = Type;
             return impl;
 		}
+
+        public override string ToString()
+        {
+            return "type=" + this.Type.ToString();
+        }
 	}
 }
