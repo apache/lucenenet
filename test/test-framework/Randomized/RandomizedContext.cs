@@ -73,6 +73,7 @@ namespace Lucene.Net.Randomized
         public Randomness Randomness
         {
             get {
+                
                 var randomness = this.PerThreadResources.Queue.Peek();
                 return randomness;
             }
@@ -85,9 +86,23 @@ namespace Lucene.Net.Randomized
                 this.GuardDiposed();
                 lock (contextLock)
                 {
-                    var resource = threadResources[Thread.CurrentThread];
+                    var resources = threadResources[Thread.CurrentThread];
 
-                    return resource;
+                    // TODO: remove after completion
+
+                    if(resources == null)
+                    {
+                        resources = new ThreadResources();
+                        threadResources.Add(Thread.CurrentThread, resources);
+                    }
+
+                    if(resources.Queue.Count == 0)
+                    {
+                        resources.Queue.Enqueue(new Randomness(Thread.CurrentThread, (int)DateTime.Now.Ticks));
+                       
+                    }
+
+                    return resources;
                 }
             }
         }
@@ -142,7 +157,17 @@ namespace Lucene.Net.Randomized
                 if (!context.threadResources.ContainsKey(thread))
                 {
                     var resources = new ThreadResources();
-                    resources.Queue.Enqueue(context.runner.Randomness.Clone(thread));
+                    if(context.runner != null )
+                    {
+                        resources.Queue.Enqueue(context.runner.Randomness.Clone(thread));
+                    }
+                         
+                    
+                    if(context.Randomness == null)
+                    {
+                        resources.Queue.Enqueue(new Randomness(thread, (int)DateTime.Now.Ticks));
+                    }
+
 
                     context.threadResources.Add(thread, resources);
                 }
