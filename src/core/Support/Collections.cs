@@ -368,5 +368,15 @@ namespace Lucene.Net.Support
         {
             return new UnmodifiableDictionary<TKey, TValue>(dict);
         }
+
+        public static IComparer ReverseOrder()
+        {
+            return new ReverseComparer();
+        }
+
+        public static IComparer<T> ReverseOrder<T>()
+        {
+            return new ReverseComparer<T>();
+        }
     }
 }

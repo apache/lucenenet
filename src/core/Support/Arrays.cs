@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Lucene.Net.Support
 {
@@ -117,6 +116,16 @@ namespace Lucene.Net.Support
         public static List<T> asList<T>(params T[] objects)
         {
             return objects.ToList();
+        }
+
+        public static void Sort<T>(T[] ar)
+        {
+            Array.Sort(ar);
+        }
+
+        public static void Sort<T>(T[] ar, IComparer<T> comparer)
+        {
+            Array.Sort(ar, comparer);
         }
     }
 }

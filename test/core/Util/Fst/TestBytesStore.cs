@@ -1,7 +1,6 @@
 ﻿using System;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using NUnit.Framework;
 using Lucene.Net.Randomized.Generators;

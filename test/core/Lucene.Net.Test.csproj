@@ -208,6 +208,7 @@
     <Compile Include="SupportClassException.cs" />
     <Compile Include="Util\Fst\TestBytesStore.cs" />
     <Compile Include="Util\LocalizedTestCase.cs" />
+    <Compile Include="Util\TestArrayUtil.cs" />
     <Compile Include="Util\TestBytesRef.cs" />
     <None Include="App.config" />
     <None Include="Index\index.19.cfs.zip" />

@@ -925,6 +925,7 @@
     <Compile Include="Support\OS.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
+    <Compile Include="Support\ReverseComparer.cs" />
     <Compile Include="Support\SharpZipLib.cs" />
     <Compile Include="Support\Single.cs" />
     <Compile Include="Support\IChecksum.cs">

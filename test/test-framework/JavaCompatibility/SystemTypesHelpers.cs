@@ -43,6 +43,11 @@ namespace Lucene.Net
             return list.Count;
         }
 
+        public static T[] clone<T>(this T[] e)
+        {
+            return (T[]) e.Clone();
+        }
+
         public static void printStackTrace(this Exception e)
         {
             Console.WriteLine(e.StackTrace);

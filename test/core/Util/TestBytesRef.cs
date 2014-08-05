@@ -1,10 +1,13 @@
 ﻿using System;
 using Lucene.Net.Util;
+using NUnit.Framework;
 
 namespace Lucene.Net.Test.Util
 {
+    [TestFixture]
     public class TestBytesRef : LuceneTestCase
     {
+        [Test]
         public void TestEmpty()
         {
             BytesRef b = new BytesRef();
@@ -13,6 +16,7 @@ namespace Lucene.Net.Test.Util
             assertEquals(0, b.length);
         }
 
+        [Test]
         public void TestFromBytes()
         {
             var bytes = new[]
@@ -30,6 +34,7 @@ namespace Lucene.Net.Test.Util
             assertFalse(b.Equals(b2));
         }
 
+        [Test]
         public void TestFromChars()
         {
             for (int i = 0; i < 100; i++)
@@ -42,6 +47,7 @@ namespace Lucene.Net.Test.Util
             assertEquals(@"?", new BytesRef(@"?").Utf8ToString());
         }
 
+        [Test]
         public void TestAppend()
         {
             var bytes = new[]
@@ -54,6 +60,7 @@ namespace Lucene.Net.Test.Util
             assertEquals(@"bcde", b.Utf8ToString());
         }
 
+        [Test]
         public void TestCopyBytes()
         {
             var bytes = new[]

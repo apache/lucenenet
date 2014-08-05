@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Lucene.Net
@@ -83,6 +85,12 @@ namespace Lucene.Net
         protected static void assertNull(string msg, object o)
         {
             Assert.Null(o, msg);
+        }
+
+        protected static void assertArrayEquals(IEnumerable a1, IEnumerable a2)
+        {
+            if (!a1.Equals(a2))
+                Fail();
         }
 
         protected static void fail()
