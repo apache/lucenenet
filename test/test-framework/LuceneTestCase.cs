@@ -557,7 +557,8 @@ namespace Lucene.Net
 
         public static int AtLeast(int minimum)
         {
-            return AtLeast(RandomizedContext.Current.Random, minimum);
+            return AtLeast(new Random(), minimum);
+            //return AtLeast(RandomizedContext.Current.Random, minimum);
         }
 
         /// <summary>

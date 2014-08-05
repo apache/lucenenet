@@ -46,7 +46,7 @@ namespace Lucene.Net.Randomized
         private readonly ThreadGroup threadGroup;
         private Type suiteClass;
         private volatile Boolean isDisposed = false;
-        private RandomizedRunner runner;
+        private readonly RandomizedRunner runner;
 
         public Type GetTargetType
         {
@@ -167,11 +167,8 @@ namespace Lucene.Net.Randomized
             }
         }
 
-
-
         public void Dispose()
-        {
-            throw new NotImplementedException();
+        {            
         }
     }
 }
