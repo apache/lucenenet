@@ -89,8 +89,7 @@ namespace Lucene.Net
 
         protected static void assertArrayEquals(IEnumerable a1, IEnumerable a2)
         {
-            if (!a1.Equals(a2))
-                Fail();
+            CollectionAssert.AreEqual(a1, a2);
         }
 
         protected static void fail()
