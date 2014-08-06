@@ -32,54 +32,17 @@ namespace Lucene.Net.Spatial.Util
 			cache = new Dictionary<int, double>();
 		}
 
-		public class CachingDoubleDocValue : DocValues
+		public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
 		{
-			private readonly int docBase;
-			private readonly DocValues values;
-			private readonly Dictionary<int, double> cache;
-
-			public CachingDoubleDocValue(int docBase, DocValues vals, Dictionary<int, double> cache)
-			{
-				this.docBase = docBase;
-				this.values = vals;
-				this.cache = cache;
-			}
-
-			public override double DoubleVal(int doc)
-			{
-				var key = docBase + doc;
-				double v;
-				if (!cache.TryGetValue(key, out v))
-				{
-					v = values.DoubleVal(doc);
-					cache[key] = v;
-				}
-				return v;
-			}
-
-			public override float FloatVal(int doc)
-			{
-				return (float)DoubleVal(doc);
-			}
-
-			public override string ToString(int doc)
-			{
-				return DoubleVal(doc) + string.Empty;
-			}
+		    var docBase = readerContext.docBase;
+			var vals = source.GetValues(context, readerContext);
+			return new CachingDoubleDocValue(docBase, vals, cache);
 		}
 
-		public override DocValues GetValues(IndexReader reader)
-		{
-			var @base = 0; //reader.DocBase;
-			var vals = source.GetValues(reader);
-			return new CachingDoubleDocValue(@base, vals, cache);
-
-		}
-
-		public override string Description()
-		{
-			return "Cached[" + source.Description() + "]";
-		}
+	    public override string Description
+	    {
+            get { return string.Format("Cached[{0}]", source.Description); }
+	    }
 
 		public override bool Equals(object o)
 		{
@@ -98,4 +61,40 @@ namespace Lucene.Net.Spatial.Util
 			return source != null ? source.GetHashCode() : 0;
 		}
 	}
+
+    public class CachingDoubleDocValue : FunctionValues
+    {
+        private readonly int docBase;
+        private readonly FunctionValues values;
+        private readonly Dictionary<int, double> cache;
+
+        public CachingDoubleDocValue(int docBase, FunctionValues vals, Dictionary<int, double> cache)
+        {
+            this.docBase = docBase;
+            this.values = vals;
+            this.cache = cache;
+        }
+
+        public override double DoubleVal(int doc)
+        {
+            var key = docBase + doc;
+            double v;
+            if (!cache.TryGetValue(key, out v))
+            {
+                v = values.DoubleVal(doc);
+                cache[key] = v;
+            }
+            return v;
+        }
+
+        public override float FloatVal(int doc)
+        {
+            return (float)DoubleVal(doc);
+        }
+
+        public override string ToString(int doc)
+        {
+            return DoubleVal(doc) + string.Empty;
+        }
+    }
 }

@@ -120,5 +120,23 @@ namespace Lucene.Net.Support
         {
             return ch >= MIN_HIGH_SURROGATE && ch <= MAX_HIGH_SURROGATE;
         }
+
+        public static int CodePointCount(char[] a, int offset, int count)
+        {
+            int endIndex = offset + count;
+            int n = 0;
+            for (int i = offset; i < endIndex;)
+            {
+                n++;
+                if (IsHighSurrogate(a[i++]))
+                {
+                    if (i < endIndex && IsLowSurrogate(a[i]))
+                    {
+                        i++;
+                    }
+                }
+            }
+            return n;
+        }
     }
 }

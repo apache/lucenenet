@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Function;
 using Spatial4n.Core.Context;
@@ -40,7 +41,7 @@ namespace Lucene.Net.Spatial.Util
 			this.provider = provider;
 		}
 
-		public class CachedDistanceDocValues : DocValues
+		public class CachedDistanceDocValues : FunctionValues
 		{
 			private readonly ShapeFieldCacheDistanceValueSource enclosingInstance;
 			private readonly ShapeFieldCache<Point> cache;
@@ -84,14 +85,17 @@ namespace Lucene.Net.Spatial.Util
 			}
 		}
 
-		public override DocValues GetValues(IndexReader reader)
+		public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
 		{
-			return new CachedDistanceDocValues(reader, this);
+			return new CachedDistanceDocValues(readerContext, this);
 		}
 
-		public override string Description()
+		public override string Description
 		{
-            return GetType().Name + "(" + provider + ", " + from + ")";
+		    get
+		    {
+		        return string.Format("{0}({1}, {2})", GetType().Name, provider, @from);
+		    }
 		}
 
 		public override bool Equals(object o)

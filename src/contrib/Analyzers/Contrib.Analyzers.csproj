@@ -170,12 +170,34 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HTMLCharStripFilterResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Miscellaneous\ASCIIFoldingFilter.cs" />
+    <Compile Include="Miscellaneous\ASCIIFoldingFilterFactory.cs" />
+    <Compile Include="Miscellaneous\CapitalizationFilter.cs" />
+    <Compile Include="Miscellaneous\CapitalizationFilterFactory.cs" />
     <Compile Include="Miscellaneous\EmptyTokenStream.cs" />
+    <Compile Include="Miscellaneous\HyphenatedWordsFilter.cs" />
+    <Compile Include="Miscellaneous\HyphenatedWordsFilterFactory.cs" />
     <Compile Include="Miscellaneous\InjectablePrefixAwareTokenFilter.cs" />
+    <Compile Include="Miscellaneous\KeepWordFilter.cs" />
+    <Compile Include="Miscellaneous\KeepWordFilterFactory.cs" />
     <Compile Include="Miscellaneous\KeywordMarkerFilter.cs" />
+    <Compile Include="Miscellaneous\KeywordMarkerFilterFactory.cs" />
+    <Compile Include="Miscellaneous\KeywordRepeatFilter.cs" />
+    <Compile Include="Miscellaneous\KeywordRepeatFilterFactory.cs" />
+    <Compile Include="Miscellaneous\LengthFilter.cs" />
+    <Compile Include="Miscellaneous\LengthFilterFactory.cs" />
+    <Compile Include="Miscellaneous\LimitTokenCountAnalyzer.cs" />
+    <Compile Include="Miscellaneous\LimitTokenCountFilter.cs" />
+    <Compile Include="Miscellaneous\LimitTokenCountFilterFactory.cs" />
+    <Compile Include="Miscellaneous\LimitTokenPositionFilter.cs" />
+    <Compile Include="Miscellaneous\LimitTokenPositionFilterFactory.cs" />
     <Compile Include="Miscellaneous\PatternAnalyzer.cs" />
+    <Compile Include="Miscellaneous\PatternKeywordMarkerFilter.cs" />
+    <Compile Include="Miscellaneous\PerFieldAnalyzerWrapper.cs" />
     <Compile Include="Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Miscellaneous\PrefixAwareTokenStream.cs" />
+    <Compile Include="Miscellaneous\RemoveDuplicatesTokenFilter.cs" />
+    <Compile Include="Miscellaneous\RemoveDuplicatesTokenFilterFactory.cs" />
     <Compile Include="Miscellaneous\SetKeywordMarkerFilter.cs" />
     <Compile Include="Miscellaneous\SingleTokenTokenStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

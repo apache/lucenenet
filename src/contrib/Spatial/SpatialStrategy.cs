@@ -82,21 +82,16 @@ namespace Lucene.Net.Spatial
 		/// </summary>
 		/// <param name="shape"></param>
 		/// <returns>Not null nor will it have null elements.</returns>
-		public abstract AbstractField[] CreateIndexableFields(Shape shape);
+		public abstract Field[] CreateIndexableFields(Shape shape);
+        
+        /// <summary>
+        /// Make a ValueSource returning the distance between the center of the
+        /// indexed shape and {@code queryPoint}.  If there are multiple indexed shapes
+        /// then the closest one is chosen.
+        /// </summary>
+        public abstract ValueSource MakeDistanceValueSource(Point queryPoint);
 
-		public AbstractField CreateStoredField(Shape shape)
-		{
-			return new Field(GetFieldName(), ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
-		}
-
-		/// <summary>
-		/// Make a ValueSource returning the distance between the center of the
-		/// indexed shape and {@code queryPoint}.  If there are multiple indexed shapes
-		/// then the closest one is chosen.
-		/// </summary>
-		public abstract ValueSource MakeDistanceValueSource(Point queryPoint);
-
-	    /// <summary>
+        /// <summary>
 	    /// Make a (ConstantScore) Query based principally on {@link org.apache.lucene.spatial.query.SpatialOperation}
 	    /// and {@link Shape} from the supplied {@code args}.
 	    /// The default implementation is
@@ -134,11 +129,11 @@ namespace Lucene.Net.Spatial
         /// <returns></returns>
         public ValueSource MakeRecipDistanceValueSource(Shape queryShape)
         {
-            Rectangle bbox = queryShape.GetBoundingBox();
-            double diagonalDist = ctx.GetDistCalc().Distance(
+            var bbox = queryShape.GetBoundingBox();
+            var diagonalDist = ctx.GetDistCalc().Distance(
                 ctx.MakePoint(bbox.GetMinX(), bbox.GetMinY()), bbox.GetMaxX(), bbox.GetMaxY());
-            double distToEdge = diagonalDist*0.5;
-            float c = (float) distToEdge*0.1f; //one tenth
+            var distToEdge = diagonalDist*0.5;
+            var c = (float) distToEdge*0.1f; //one tenth
             return new ReciprocalFloatFunction(MakeDistanceValueSource(queryShape.GetCenter()), 1f, c, c);
         }
 

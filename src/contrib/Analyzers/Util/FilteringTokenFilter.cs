@@ -1,29 +1,33 @@
 ﻿using Lucene.Net.Analysis.Tokenattributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Lucene.Net.Util;
+
 
 namespace Lucene.Net.Analysis.Util
 {
     public abstract class FilteringTokenFilter : TokenFilter
     {
-        private readonly IPositionIncrementAttribute posIncrAtt; // = addAttribute(PositionIncrementAttribute.class);
-        private bool enablePositionIncrements; // no init needed, as ctor enforces setting value!
+        private readonly IPositionIncrementAttribute posIncrAtt;
+        
+        
+        /// <summary>
+        /// If <code>true</code>, this TokenFilter will preserve positions of the incoming tokens (ie, accumulate and set position increments of the removed tokens).
+        /// Generally, <code>true</code> is best as it does not lose information (positions of the original tokens) during indexing.
+        /// When set, when a token is stopped (omitted), the position increment of the following token is incremented.
+        /// </summary>
+        public bool EnablePositionIncrements { get; set; } // no init needed, as ctor enforces setting value!
         private bool first = true; // only used when not preserving gaps
 
-        public FilteringTokenFilter(bool enablePositionIncrements, TokenStream input)
-            : base(input)
+        protected FilteringTokenFilter(bool enablePositionIncrements, TokenStream input) : base(input)
         {
-            this.enablePositionIncrements = enablePositionIncrements;
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            EnablePositionIncrements = enablePositionIncrements;
         }
 
         protected abstract bool Accept();
 
         public override bool IncrementToken()
         {
-            if (enablePositionIncrements)
+            if (EnablePositionIncrements)
             {
                 int skippedPositions = 0;
                 while (input.IncrementToken())
@@ -66,12 +70,6 @@ namespace Lucene.Net.Analysis.Util
         {
             base.Reset();
             first = true;
-        }
-
-        public bool EnablePositionIncrements
-        {
-            get { return enablePositionIncrements; }
-            set { enablePositionIncrements = value; }
         }
     }
 }

@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
 
@@ -44,18 +45,18 @@ namespace Lucene.Net.Spatial.Util
 			this.max = max;
 		}
 
-		public override DocIdSet GetDocIdSet(Index.IndexReader reader)
-		{
-			var values = source.GetValues(reader);
-			return new ValueSourceFilteredDocIdSet(startingFilter.GetDocIdSet(reader), values, this);
-		}
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Net.Util.IBits acceptDocs)
+        {
+            var values = source.GetValues( null, context );
+            return new ValueSourceFilteredDocIdSet(startingFilter.GetDocIdSet(context, acceptDocs), values, this);
+        }
 
         public class ValueSourceFilteredDocIdSet : FilteredDocIdSet
         {
             private readonly ValueSourceFilter enclosingFilter;
-            private readonly DocValues values;
+            private readonly FunctionValues values;
 
-            public ValueSourceFilteredDocIdSet(DocIdSet innerSet, DocValues values, ValueSourceFilter caller)
+            public ValueSourceFilteredDocIdSet(DocIdSet innerSet, FunctionValues values, ValueSourceFilter caller)
                 : base(innerSet)
             {
                 this.enclosingFilter = caller;
@@ -64,7 +65,7 @@ namespace Lucene.Net.Spatial.Util
 
             public override bool Match(int doc)
             {
-                double val = values.DoubleVal(doc);
+                var val = values.DoubleVal(doc);
                 return val >= enclosingFilter.min && val <= enclosingFilter.max;
             }
         }

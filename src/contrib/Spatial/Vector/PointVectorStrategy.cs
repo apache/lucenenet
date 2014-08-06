@@ -70,7 +70,7 @@ namespace Lucene.Net.Spatial.Vector
 			return fieldNameY;
 		}
 
-		public override AbstractField[] CreateIndexableFields(Shape shape)
+		public override Field[] CreateIndexableFields(Shape shape)
 		{
 		    var point = shape as Point;
 		    if (point != null)
@@ -79,9 +79,9 @@ namespace Lucene.Net.Spatial.Vector
 		    throw new InvalidOperationException("Can only index Point, not " + shape);
 		}
 
-        public AbstractField[] CreateIndexableFields(Point point)
+        public Field[] CreateIndexableFields(Point point)
         {
-				var f = new AbstractField[2];
+				var f = new Field[2];
 
 				var f0 = new NumericField(fieldNameX, precisionStep, Field.Store.NO, true)
 				         	{OmitNorms = true, OmitTermFreqAndPositions = true};
