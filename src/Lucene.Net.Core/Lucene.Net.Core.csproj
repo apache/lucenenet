@@ -62,6 +62,7 @@
     <Compile Include="Support\EnumUtil.cs" />
     <Compile Include="Support\HashMap.cs" />
     <Compile Include="Support\ICloneable.cs" />
+    <Compile Include="Support\NumberExtensionMethods.cs" />
     <Compile Include="Support\SerializableAttribute.cs" />
     <Compile Include="Support\ShallowCloneNotSupportedException.cs" />
     <Compile Include="Support\StringExtensionMethods.cs" />
@@ -69,6 +70,8 @@
     <Compile Include="Util\ArrayInPlaceMergeSorter`.cs" />
     <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\Bits.cs" />
+    <Compile Include="Util\BitUtil.cs" />
+    <Compile Include="Util\BroadWord.cs" />
     <Compile Include="Util\Constants.cs" />
     <Compile Include="Util\IAccountable.cs" />
     <Compile Include="Util\IAttribute.cs" />
@@ -80,12 +83,12 @@
     <Compile Include="Util\Version.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Framework.ConfigurationModel">
-      <HintPath>..\..\packages\Microsoft.Framework.ConfigurationModel.1.0.0-alpha3-10137\lib\portable-net451+win81+wpa81\Microsoft.Framework.ConfigurationModel.dll</HintPath>
-    </Reference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Reference Include="Microsoft.Framework.ConfigurationModel">
+      <HintPath>..\..\packages\Microsoft.Framework.ConfigurationModel\1.0.0-alpha4-10193\lib\portable-net451+win81+wpa81\Microsoft.Framework.ConfigurationModel.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

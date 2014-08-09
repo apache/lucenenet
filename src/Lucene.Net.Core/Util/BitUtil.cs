@@ -277,16 +277,24 @@ namespace Lucene.Net.Util
             return value;
         }
 
-        /** Decode an int previously encoded with {@link #zigZagEncode(int)}. */
+        /// <summary>
+        /// Decode a long previously encoded with <see cref="ZigZagEndcode"/>.
+        /// </summary>
+        /// <param name="value">The value to be decoded.</param>
+        /// <returns>The decoded value.</returns>
         public static int ZigZagDecode(int value) 
         {
             return (int)(((uint)value >> 1) ^ -(value & 1));
         }
 
-        /** Decode a long previously encoded with {@link #zigZagEncode(long)}. */
-        public static long zigZagDecode(long value) 
+        /// <summary>
+        /// Decode a long previously encoded with <see cref="ZigZagEndcode"/>.
+        /// </summary>
+        /// <param name="value">The value to be decoded.</param>
+        /// <returns>The decoded value.</returns>
+        public static long ZigZagDecode(long value) 
         {
-            return ((value >>> 1) ^ -(value & 1));
+            return ((long)((ulong)value >> 1) ^ -(value & 1));
         }
 
         /// <summary>
@@ -320,7 +328,7 @@ namespace Lucene.Net.Util
         /// </remarks>
         /// <param name="value">The value that will be encoded.</param>
         /// <returns>The encoded value.</returns>
-        public static long zigZagEncode(long value)
+        public static long ZigZagEncode(long value)
         {
             return (value >> 63) ^ (value << 1);
         }
@@ -331,7 +339,7 @@ namespace Lucene.Net.Util
         /// <param name="value">The value to be inspected.</param>
         /// <returns></returns>
         /// <seealso href="http://docs.oracle.com/javase/6/docs/api/java/lang/Long.html#bitCount(long)"/>
-        private static long BitCount(long value)
+        public static long BitCount(long value)
         {
             return SparseBitCount(value);
         }

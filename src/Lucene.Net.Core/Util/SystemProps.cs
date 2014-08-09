@@ -40,9 +40,8 @@ namespace Lucene.Net.Util
         /// Adds the <see cref="IConfigurationSource"/> to what is available in <see cref="SystemProps"/>.
         /// </summary>
         /// <param name="configurationSource"></param>
-#pragma warning disable "CS3001"
+        [CLSCompliant(false)]
         public static void Add(IConfigurationSource configurationSource)
-#pragma warning restore "CS3001"
         {
             s_config.Add(configurationSource);
         }
@@ -89,10 +88,8 @@ namespace Lucene.Net.Util
         /// 
         /// </summary>
         /// <param name="configuration"></param>
-
-#pragma warning disable "CS3001"
+        [CLSCompliant(false)]
         public static void UseConfiguration(Configuration configuration)
-#pragma warning restore "CS3001"
         {
             s_config = configuration;
         }

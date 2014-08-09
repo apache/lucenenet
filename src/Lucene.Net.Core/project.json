@@ -1,8 +1,8 @@
 ﻿{
-    "licenses": ["apache 2.0"],
-     "version": "5.0.0.0",
+    "licenses": [ "apache 2.0" ],
+    "version": "5.0.0.0",
     "dependencies": {
-        "Microsoft.Framework.ConfigurationModel": "1.0.0-alpha2"
+        "Microsoft.Framework.ConfigurationModel": "1.0.0-alpha4-10193" 
     },
     "license": "apache 2.0",
     "configurations" : {

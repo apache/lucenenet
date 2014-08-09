@@ -25,6 +25,9 @@ namespace Lucene.Net.Support
     /// </summary>
     public static class SupportExtensionMethods
     {
+
+
+
         /// <summary>
         /// Clones and casts the new instance to the same type of the old instance. 
         /// </summary>
