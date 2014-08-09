@@ -24,9 +24,18 @@ namespace Lucene.Net.Util
     using Lucene.Net.Support;
 
     /// <summary>
-    /// Methods and constants inspired by the article
-    /// "Broadword Implementation of Rank/Select Queries" by Sebastiano Vigna, January 30, 2012:
+    ///
     /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///      Methods and constants inspired by the article
+    ///     "Broadword Implementation of Rank/Select Queries" by Sebastiano Vigna, January 30, 2012 which can be 
+    ///     found in the book:
+    ///     <see href="http://www.amazon.com/Experimental-Algorithms-International-Provincetown-Proceedings/dp/3540685480">
+    ///         Experimental Algorithms: 7th International Workshop, WEA 2008 Provincetown, MA, USA, May 30 - June 1, 2008 Proceedings (Lecture Notes in Computer ... Computer Science and General Issues) 
+    ///     </see>
+    ///     </para>
+    /// </remarks>
     public sealed class BroadWord
     {
 
