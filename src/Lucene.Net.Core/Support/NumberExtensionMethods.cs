@@ -112,5 +112,34 @@ namespace Lucene.Net.Support
         {
             return DeBruijn64.Position(value);
         }
+
+
+        internal static uint RotateLeft(this uint value, int distance)
+        {
+            var v = value;
+            return (v << distance) | (v >> (32 - distance));
+        }
+
+        internal static uint RotateRight(this uint value, int distance)
+        {
+            var v = value;
+            return (v >> distance) | (v << (32 - distance));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="distance"></param>
+        /// <returns></returns>
+        public static int RotateLeft(this int value, int distance)
+        {
+            return (int)RotateLeft((uint)value, distance);
+        }
+
+        public static int RotateRight(this int value, int distance)
+        {
+            return (int)RotateRight((uint)value, distance);
+        }
     }
 }

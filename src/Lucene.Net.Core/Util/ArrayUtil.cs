@@ -1,9 +1,12 @@
 ﻿
 
-namespace Lucene.Net
+namespace Lucene.Net.Util
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Diagnostics;
+    using System.Reflection;
 
     /// <summary>
     /// Utility methods for manipulating arrays.
@@ -11,6 +14,138 @@ namespace Lucene.Net
     public static class ArrayUtil
     {
 
+
+        /// <summary>
+        /// Returns an array that has been resized to a length greater than
+        /// the original array.
+        /// </summary>
+        /// <typeparam name="T">The element type for the array.</typeparam>
+        /// <param name="array">The array to base the resize on.</param>
+        /// <param name="minSize">The minimum size to grow the array.</param>
+        /// <returns>The resized array.</returns>
+        /// <exception cref="ArgumentException">Throws when <paramref name="minTargetSize"/> is less than zero.</exception>
+        public static T[] Grow<T>(this T[] array, int minSize = 1)
+        {
+            Debug.Assert(typeof(T).GetTypeInfo().IsPrimitive, "Type T must be primitive");
+            Debug.Assert(minSize >= 0, "targetSize must be positive");
+
+            if (array.Length < minSize)
+            {
+                int capacity = Oversize(minSize, RamUsageEstimator.PrimitiveSizes[typeof(T)]);
+                var oversizedArray = new T[capacity];
+                Array.Copy(array, 0, oversizedArray, 0, array.Length);
+
+                return oversizedArray;
+            }
+            else
+            {
+                return array;
+            }
+        }
+
+
+        /// <summary>
+        /// Returns a hashcode for an array.
+        /// </summary>
+        /// <typeparam name="T">The element type for the array.</typeparam>
+        /// <param name="array">The target array to create a hashcode.</param>
+        /// <param name="start">The starting position for a loop.</param>
+        /// <param name="end">The number of iterations for the loop to perform.</param>
+        /// <returns>The hashcode.</returns>
+        public static int CreateHashCode<T>(this T[] array, int start, int end) where T : struct
+        {
+            var code = 0;
+            var elements = array.Cast<int>().ToArray();
+            for (var i = end - 1; i >= start; i--)
+            {
+                code = code * 31 + elements[i];
+            }
+
+            return code;
+        }
+
+
+        /// <summary>
+        /// Returns a new capacity number to resize an array.
+        /// </summary>
+        /// <param name="minTargetSize">The minium size for the oversize.</param>
+        /// <param name="bytesPerElement">The number of bytes an element of the array will allocate in memory.</param>
+        /// <returns>The new capacity size.</returns>
+        /// <exception cref="ArgumentException">Throws when <paramref name="minTargetSize"/> is less than zero.</exception>
+        public static int Oversize(int minTargetSize, int bytesPerElement)
+        {
+            // catch usage that accidentally overflows int
+            Check.Condition(minTargetSize < 0, "minTargetSize", "invalid array size {0}", minTargetSize);
+
+            if (minTargetSize == 0)
+            {
+                // wait until at least one element is requested
+                return 0;
+            }
+
+            // asymptotic exponential growth by 1/8th, favors
+            // spending a bit more CPU to not tie up too much wasted
+            // RAM:
+            int extra = minTargetSize >> 3;
+
+            if (extra < 3)
+            {
+                // for very small arrays, where constant overhead of
+                // realloc is presumably relatively high, we grow
+                // faster
+                extra = 3;
+            }
+
+            int newSize = minTargetSize + extra;
+
+            // add 7 to allow for worst case byte alignment addition below:
+            if (newSize + 7 < 0)
+            {
+                // int overflowed -- return max allowed array size
+                return int.MaxValue;
+            }
+
+            if (Constants.KRE_IS_64BIT)
+            {
+                // round up to 8 byte alignment in 64bit env
+                switch (bytesPerElement)
+                {
+                    case 4:
+                        // round up to multiple of 2
+                        return (newSize + 1) & 0x7ffffffe;
+                    case 2:
+                        // round up to multiple of 4
+                        return (newSize + 3) & 0x7ffffffc;
+                    case 1:
+                        // round up to multiple of 8
+                        return (newSize + 7) & 0x7ffffff8;
+                    case 8:
+                    // no rounding
+                    default:
+                        // odd (invalid?) size
+                        return newSize;
+                }
+            }
+            else
+            {
+                // round up to 4 byte alignment in 64bit env
+                switch (bytesPerElement)
+                {
+                    case 2:
+                        // round up to multiple of 2
+                        return (newSize + 1) & 0x7ffffffe;
+                    case 1:
+                        // round up to multiple of 4
+                        return (newSize + 3) & 0x7ffffffc;
+                    case 4:
+                    case 8:
+                    // no rounding
+                    default:
+                        // odd (invalid?) size
+                        return newSize;
+                }
+            }
+        }
 
         /// <summary>
         /// Parses the string argument as if it was an int value and returns the result.

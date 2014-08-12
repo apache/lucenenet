@@ -96,6 +96,11 @@ namespace Lucene.Net.Util
             Assert.Equal(expected, actual);
         }
 
+        [DebuggerHidden]
+        public static void NotEqual<T>(T expected, T actual)
+        {
+            Assert.NotEqual(expected, actual);
+        }
 
 
         [DebuggerHidden]

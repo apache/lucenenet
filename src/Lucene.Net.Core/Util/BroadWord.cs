@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
     using Lucene.Net.Support;
 
     /// <summary>
-    ///
+    /// An implementation of Broadword for rank/select queries.
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -48,34 +48,35 @@ namespace Lucene.Net.Util
         // Thus, there is not a valid reason to make them public.  
 
         /// <summary>
-        ///  L8  denotes the constant of 8-byte-counts or 8k.
-        ///  _L denotes that the number is an long format. 
+        /// L8  denotes the constant of 8-byte-counts or 8k.
+        /// _L denotes that the number is an long format. 
         /// </summary>
         private const ulong L8_L = 0x0101010101010101L;
 
         /// <summary>
-        ///  L9  denotes the constant of 8-byte-counts or 9k.
-        ///  _L denotes that the number is an long format. 
+        /// L9  denotes the constant of 8-byte-counts or 9k.
+        /// _L denotes that the number is an long format. 
         /// </summary>
         private const ulong L9_L = 0x8040201008040201L;
 
         /// <summary>
-        ///  L16  denotes the constant of 16-byte-counts or 16k.
-        ///  _L denotes that the number is an long format. 
+        /// L16  denotes the constant of 16-byte-counts or 16k.
+        /// _L denotes that the number is an long format. 
         /// </summary>
         private const ulong L16_L = 0x0001000100010001L;
 
         /// <summary>
         /// H8 = L8 << (8-1) .
-        ///  These contain the high bit of each group of k bits.
-        ///  The suffix _L indicates the long implementation.
+        /// These contain the high bit of each group of k bits.
+        /// The suffix _L indicates the long implementation.
         /// </summary>
         private static readonly ulong H8_L = L8_L << 7;
 
+        /* unused
         /// H16 = L16 << (16-1) .
         ///  These contain the high bit of each group of k bits.
         ///  The suffix _L indicates the long implementation.
-        private static readonly ulong H16_L = L16_L << 15;
+        private static readonly ulong H16_L = L16_L << 15; */
 
         /// <summary>
         /// Bit count of a long.
@@ -96,8 +97,9 @@ namespace Lucene.Net.Util
         }
 
        
-         /// <summary>
-        /// Select a 1-bit from a long. </summary>
+        /// <summary>
+        /// Select a 1-bit from a long. 
+        /// </summary>
         /// <returns> The index of the right most 1 bit in x, or if no such bit exists, 72. </returns>
         public static int Select(long value, int rank)
         {
@@ -136,7 +138,8 @@ namespace Lucene.Net.Util
      
         /// <summary>
         /// A signed bytewise smaller &lt;<sub><small>8</small></sub> operator, for operands 0L<= x, y <=0x7L.
-        /// this uses the following numbers of basic long operations: 1 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
+        /// this uses the following numbers of basic long operations: 1 or, 2 and, 2 xor, 1 minus, 1 not. 
+        /// </summary>
         /// <returns> A long with bits set in the <seealso cref="#H8_L"/> positions corresponding to each input signed byte pair that compares smaller. </returns>
         private static ulong SmallerUpTo7_8(ulong x, ulong y)
         {
@@ -151,7 +154,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Naive implementation of <seealso cref="#select(long,int)"/>, using <seealso cref="Long#numberOfTrailingZeros"/> repetitively.
-        /// Works relatively fast for low ranks. </summary>
+        /// Works relatively fast for low ranks. 
+        /// </summary>
         /// <returns> The index of the r-th 1 bit in x, or if no such bit exists, 72. </returns>
         public static int SelectNaive(long x, int r)
         {

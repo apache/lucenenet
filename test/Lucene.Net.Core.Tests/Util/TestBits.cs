@@ -18,7 +18,6 @@
 namespace Lucene.Net.Util
 {
     using System;
-    using Lucene.Net.TestFramework;
 
     /// <summary>
     /// Test Bits

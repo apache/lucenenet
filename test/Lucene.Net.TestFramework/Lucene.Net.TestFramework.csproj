@@ -57,11 +57,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Util\ExtensionMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Random\RandomExtensions.cs" />
     <Compile Include="Util\LuceneTestCase.cs" />
     <Compile Include="Util\RamUsageTester.cs" />
     <Compile Include="Util\TestAttribute.cs" />
+    <Compile Include="Util\TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="xunit.abstractions">

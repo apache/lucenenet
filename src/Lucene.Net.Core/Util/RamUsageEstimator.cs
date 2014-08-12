@@ -180,34 +180,34 @@ namespace Lucene.Net.Util
 
 
 
-        private static readonly IDictionary<Type, int> primitiveSizes;
+        internal static readonly IDictionary<Type, int> PrimitiveSizes;
 
         static RamUsageEstimator()
         {
-            primitiveSizes = new HashMap<Type, int>();
+            PrimitiveSizes = new HashMap<Type, int>();
 
             // 1 
-            primitiveSizes[typeof(bool)] = NUM_BYTES_BOOLEAN;
-            primitiveSizes[typeof(byte)] = NUM_BYTES_BYTE;
-            primitiveSizes[typeof(sbyte)] = NUM_BYTES_SBYTE;
+            PrimitiveSizes[typeof(bool)] = NUM_BYTES_BOOLEAN;
+            PrimitiveSizes[typeof(byte)] = NUM_BYTES_BYTE;
+            PrimitiveSizes[typeof(sbyte)] = NUM_BYTES_SBYTE;
 
             // 2
-            primitiveSizes[typeof(char)] = NUM_BYTES_CHAR;
-            primitiveSizes[typeof(short)] = NUM_BYTES_SHORT;
-            primitiveSizes[typeof(ushort)] = NUM_BYTES_USHORT;
+            PrimitiveSizes[typeof(char)] = NUM_BYTES_CHAR;
+            PrimitiveSizes[typeof(short)] = NUM_BYTES_SHORT;
+            PrimitiveSizes[typeof(ushort)] = NUM_BYTES_USHORT;
 
             // 4
-            primitiveSizes[typeof(int)] = NUM_BYTES_INT;
-            primitiveSizes[typeof(uint)] = NUM_BYTES_UINT;
-            primitiveSizes[typeof(float)] = NUM_BYTES_FLOAT;
+            PrimitiveSizes[typeof(int)] = NUM_BYTES_INT;
+            PrimitiveSizes[typeof(uint)] = NUM_BYTES_UINT;
+            PrimitiveSizes[typeof(float)] = NUM_BYTES_FLOAT;
 
             // 8
-            primitiveSizes[typeof(long)] = NUM_BYTES_LONG;
-            primitiveSizes[typeof(ulong)] = NUM_BYTES_ULONG;
-            primitiveSizes[typeof(double)] = NUM_BYTES_DOUBLE;
+            PrimitiveSizes[typeof(long)] = NUM_BYTES_LONG;
+            PrimitiveSizes[typeof(ulong)] = NUM_BYTES_ULONG;
+            PrimitiveSizes[typeof(double)] = NUM_BYTES_DOUBLE;
 
             // 16
-            primitiveSizes[typeof(decimal)] = NUM_BYTES_DECIMAL;
+            PrimitiveSizes[typeof(decimal)] = NUM_BYTES_DECIMAL;
 
             // The Java Version references "sun.misc.Unsafe", the closest class to have one or two of the
             // methods that Unsafe has is System.Runtime.InteropServices.Marshal
@@ -253,7 +253,7 @@ namespace Lucene.Net.Util
         public static long AdjustForField(long sizeSoFar, FieldInfo f)
         {
             var typeInfo = f.FieldType.GetTypeInfo();
-            int fsize = typeInfo.IsPrimitive ? primitiveSizes[f.FieldType] : NUM_BYTES_OBJECT_REF;
+            int fsize = typeInfo.IsPrimitive ? PrimitiveSizes[f.FieldType] : NUM_BYTES_OBJECT_REF;
 
             if (f.DeclaringType != null && f.DeclaringType.GetTypeInfo().IsValueType)
             {
@@ -386,7 +386,7 @@ namespace Lucene.Net.Util
                 throw new ArgumentException("This method does not work with Arrays.");
 
             if (typeInfo.IsPrimitive)
-                return primitiveSizes[typeInfo.AsType()];
+                return PrimitiveSizes[typeInfo.AsType()];
 
             long size = NUM_BYTES_OBJECT_HEADER;
 
@@ -412,7 +412,7 @@ namespace Lucene.Net.Util
                 if (arrayElementTypeInfo.IsPrimitive)
                 {
                     size = NUM_BYTES_VALUE_TYPE_ARRAY_HEADER;
-                    size += (long)length * primitiveSizes[arrayElementType];
+                    size += (long)length * PrimitiveSizes[arrayElementType];
                 }
       
                 else
@@ -445,10 +445,10 @@ namespace Lucene.Net.Util
         public static long SizeOf<T>(T[] array) where T : struct
         {
             var type = typeof(T);
-            if (!primitiveSizes.ContainsKey(type))
+            if (!PrimitiveSizes.ContainsKey(type))
                 return ShallowSizeOfArray(array);
 
-            int bytes = primitiveSizes[type];
+            int bytes = PrimitiveSizes[type];
           
             var size = (long)NUM_BYTES_VALUE_TYPE_ARRAY_HEADER + (long)bytes * array.Length;
 

@@ -20,7 +20,6 @@
 namespace Lucene.Net.Util
 {
     using System;
-    using Lucene.Net.TestFramework;
     using System.Diagnostics.CodeAnalysis;
 
     public class TestRamUsageEstimator : LuceneTestCase

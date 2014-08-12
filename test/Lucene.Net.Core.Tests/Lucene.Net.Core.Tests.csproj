@@ -63,6 +63,8 @@
     <Compile Include="Util\TestArrayUtil.cs" />
     <Compile Include="Util\TestBits.cs" />
     <Compile Include="Util\TestBroadWord.cs" />
+    <Compile Include="Util\TestBytesRef.cs" />
+    <Compile Include="Util\TestCharsRef.cs" />
     <Compile Include="Util\TestConstants.cs" />
     <Compile Include="Util\TestInPlaceMergeSorter.cs" />
     <Compile Include="Util\TestRamEstimatorUsage.cs" />

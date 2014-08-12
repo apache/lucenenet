@@ -22,8 +22,7 @@ namespace Lucene.Net.Util
     using System;
     using System.Linq;
     using System.Collections.Generic;
-    using Lucene.Net.TestFramework;
-    using Lucene.Net.TestFramework.Random;
+    using Lucene.Net.Random;
 
     public abstract class BaseSorterTestCase : LuceneTestCase
     {

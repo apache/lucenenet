@@ -16,7 +16,7 @@
  */
 
 
-namespace Lucene.Net.TestFramework.Random
+namespace Lucene.Net.Random
 {
     using System;
     using System.Diagnostics;
@@ -31,7 +31,20 @@ namespace Lucene.Net.TestFramework.Random
     /// </remarks>
     public static class RandomExtensions
     {
-	     
+	    /// <summary>
+	    /// Returns an integer between the min and max value. This is compatable 
+        /// with the Java Lucene version of the NextIntBetween method.
+	    /// </summary>
+        /// <remarks>
+        ///    <para>
+        ///        .NET has a default overloade for <see cref="System.Random.Next"/> that has a min and
+        ///        max value. However, this method exists to keep capatablity with the Java Version of Lucene.
+        ///    </para>
+        /// </remarks>
+	    /// <param name="random">The instance of random.</param>
+        /// <param name="minValue">The minimum value that the random may use.</param>
+        /// <param name="maxValue">The maximum value that the random may use.</param>
+	    /// <returns>A random integer.</returns>
         public static int NextBetween(this Random random, int minValue, int maxValue)
         {
             Debug.Assert(maxValue >= minValue, string.Format("maxValue must be greater than minValue" +

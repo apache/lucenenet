@@ -21,7 +21,6 @@
 
 namespace Lucene.Net.Util
 {
-    using Lucene.Net.TestFramework;
     using System;
     using System.Linq;
     using System.Reflection;

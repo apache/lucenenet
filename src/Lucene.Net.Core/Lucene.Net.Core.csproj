@@ -61,6 +61,7 @@
     <Compile Include="Support\DeepCloneNotSupportedException.cs" />
     <Compile Include="Support\EnumUtil.cs" />
     <Compile Include="Support\HashMap.cs" />
+    <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\ICloneable.cs" />
     <Compile Include="Support\NumberExtensionMethods.cs" />
     <Compile Include="Support\SerializableAttribute.cs" />
@@ -72,6 +73,8 @@
     <Compile Include="Util\Bits.cs" />
     <Compile Include="Util\BitUtil.cs" />
     <Compile Include="Util\BroadWord.cs" />
+    <Compile Include="Util\BytesRef.cs" />
+    <Compile Include="Util\CharsRef.cs" />
     <Compile Include="Util\Constants.cs" />
     <Compile Include="Util\IAccountable.cs" />
     <Compile Include="Util\IAttribute.cs" />
@@ -79,7 +82,9 @@
     <Compile Include="Util\InPlaceMergeSorter.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
     <Compile Include="Util\Sorter.cs" />
+    <Compile Include="Util\StringHelper.cs" />
     <Compile Include="Util\SystemProps.cs" />
+    <Compile Include="Util\UnicodeUtil.cs" />
     <Compile Include="Util\Version.cs" />
   </ItemGroup>
   <ItemGroup>

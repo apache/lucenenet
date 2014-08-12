@@ -21,7 +21,6 @@ namespace Lucene.Net.Util
     using System;
     using System.Text.RegularExpressions;
     using Lucene.Net.Support;
-    using Lucene.Net.TestFramework;
 
 
     [System.CLSCompliant(false)]
