@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-
-
 namespace Lucene.Net.Util
 {
     using Lucene.Net.Support;

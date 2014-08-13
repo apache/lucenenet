@@ -42,11 +42,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The contents of the CharsRef. Should never be <see cref="Null"/>. </summary>
-        public char[] Chars { get; set; }
+        public char[] Chars { get; internal set; }
 
         /// <summary>
         /// Offset of first valid character. </summary>
-        public int Offset {get; set;}
+        public int Offset {get; internal set;}
 
         /// <summary>
         /// Length of used characters. </summary>
@@ -86,9 +86,9 @@ namespace Lucene.Net.Util
         /// Creates a new <seealso cref="CharsRef"/> initialized with the given Strings character
         /// array
         /// </summary>
-        public CharsRef(string @string)
+        public CharsRef(string value)
         {
-            this.Chars = @string.ToCharArray();
+            this.Chars = value.ToCharArray();
             this.Offset = 0;
             this.Length = Chars.Length;
         }
@@ -98,11 +98,16 @@ namespace Lucene.Net.Util
         /// <b>not</b> copied and will be shared by both the returned object and this
         /// object.
         /// </summary>
-        /// <seealso cref= #deepCopyOf </seealso>
+        /// <seealso cref="Lucene.Net.Support.ICloneable"/>
         public object Clone(bool deepClone = false)
         {
             if (deepClone)
-                throw new DeepCloneNotSupportedException(typeof(CharsRef));
+            {
+                var charsRef = new CharsRef();
+                charsRef.CopyChars(this);
+
+                return charsRef;
+            }
 
             return new CharsRef(Chars, Offset, Length);
         }
@@ -354,12 +359,7 @@ namespace Lucene.Net.Util
         /// The returned CharsRef will have a length of other.length
         /// and an offset of zero.
         /// </summary>
-        public static CharsRef DeepCopyOf(CharsRef other)
-        {
-            CharsRef clone = new CharsRef();
-            clone.CopyChars(other);
-            return clone;
-        }
+       
 
         /// <summary>
         /// Performs internal consistency checks.
@@ -403,12 +403,93 @@ namespace Lucene.Net.Util
 
         public IEnumerator<char> GetEnumerator()
         {
-            return ((IEnumerable<char>)this.Chars).GetEnumerator();
+            return new CharEnumerator(this.Chars, this.Offset, this.Offset + this.Length);
+        }
+
+        public class CharEnumerator : IEnumerator<char>, ICharSequence
+        {
+            private int length;
+            private char[] chars;
+            private int position = -1;
+            private int offset = 0;
+      
+            public CharEnumerator(char[] chars, int offset = 0, int length = 0)
+            {
+                if (length == 0 || length > chars.Length)
+                    length = chars.Length;
+
+                this.chars = chars;
+                this.length = length;
+                this.offset = offset;
+                this.position = (this.offset - 1);
+            }
+
+      
+
+
+            public char Current
+            {
+                get {
+                    return this.chars[this.position];
+                }
+            }
+
+            object System.Collections.IEnumerator.Current
+            {
+                get { return this.Current; }
+            }
+
+            public bool MoveNext()
+            {
+                this.position = this.position + 1;
+                return this.position < this.length;
+            }
+
+            public void Reset()
+            {
+                this.position = this.offset - 1;
+            }
+
+            public void Dispose()
+            {
+                this.Dispose(true);
+            }
+
+            protected  virtual void Dispose(bool dispose)
+            {
+                if(dispose)
+                {
+                    this.chars = null;
+                    this.offset = 0;
+                    this.length = 0;
+                    this.position = -1;
+                }
+            }
+
+            ~CharEnumerator()
+            {
+                this.Dispose(false);
+            }
+
+            public int Length
+            {
+                get { return this.length; }
+            }
+
+            public char CharAt(int index)
+            {
+                return this.chars[index];
+            }
+
+            public ICharSequence SubSequence(int start, int end)
+            {
+                return new CharEnumerator(this.chars, start, end - start);
+            }
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return this.Chars.GetEnumerator();
+            return this.GetEnumerator();
         }
     }
 }

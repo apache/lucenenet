@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-
 namespace Lucene.Net.Random
 {
+    using Lucene.Net.Util;
     using System;
     using System.Diagnostics;
 
@@ -31,6 +31,15 @@ namespace Lucene.Net.Random
     /// </remarks>
     public static class RandomExtensions
     {
+
+
+        public static int AtLeast(this LuceneTestCase instance, int minimumValue)
+        {
+            int min = (LuceneTestCase.TEST_NIGHTLY ? 2 * minimumValue : minimumValue) * LuceneTestCase.RANDOM_MULTIPLIER;
+            int max = min + (min / 2);
+            return instance.Random.NextBetween(min, max);
+        }
+
 	    /// <summary>
 	    /// Returns an integer between the min and max value. This is compatable 
         /// with the Java Lucene version of the NextIntBetween method.

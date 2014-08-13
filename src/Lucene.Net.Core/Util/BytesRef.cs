@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 namespace Lucene.Net.Util
 {
     using Lucene.Net.Support;
@@ -45,15 +46,15 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The contents of the BytesRef. Should never be {@code null}. </summary>
-        public byte[] Bytes { get; set; }
+        public byte[] Bytes { get; internal set; }
 
         /// <summary>
         /// Offset of first valid byte. </summary>
-        public int Offset { get; set; }
+        public int Offset { get; internal set; }
 
         /// <summary>
         /// Length of used bytes. </summary>
-        public int Length { get; set; }
+        public int Length { get; internal set; }
 
         /// <summary>
         /// Create a BytesRef with <seealso cref="#EMPTY_BYTES"/> </summary>
@@ -71,7 +72,7 @@ namespace Lucene.Net.Util
             this.Bytes = bytes;
             this.Offset = offset;
             this.Length = length;
-            Debug.Assert(Valid);
+            Debug.Assert(this.Valid());
         }
 
         /// <summary>
@@ -432,50 +433,123 @@ namespace Lucene.Net.Util
         /// Performs internal consistency checks.
         /// Always returns true (or throws InvalidOperationException)
         /// </summary>
-        public bool Valid
+        // this should be a method instead of a property due to the exceptions thrown. 
+        public bool Valid()
         {
-            get
+            
+            if (Bytes == null)
             {
-                if (Bytes == null)
+                throw new Exception("bytes is null");
+            }
+            if (Length < 0)
+            {
+                throw new Exception("length is negative: " + Length);
+            }
+            if (Length > Bytes.Length)
+            {
+                throw new Exception("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
+            }
+            if (Offset < 0)
+            {
+                throw new Exception("offset is negative: " + Offset);
+            }
+            if (Offset > Bytes.Length)
+            {
+                throw new Exception("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
+            }
+            if (Offset + Length < 0)
+            {
+                throw new Exception("offset+length is negative: offset=" + Offset + ",length=" + Length);
+            }
+            if (Offset + Length > Bytes.Length)
+            {
+                throw new Exception("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
+            }
+            return true;
+            
+        }
+
+        public class ByteEnumerator : IEnumerator<byte>
+        {
+            private int length;
+            private byte[] bytes;
+            private int position = -1;
+            private int offset = 0;
+
+            public ByteEnumerator(byte[] bytes, int offset = 0, int length = 0)
+            {
+                if (length == 0 || length > bytes.Length)
+                    length = bytes.Length;
+
+                this.bytes = bytes;
+                this.length = length;
+                this.offset = offset;
+                this.position = (this.offset - 1);
+            }
+
+
+
+
+            public byte Current
+            {
+                get
                 {
-                    throw new Exception("bytes is null");
+                    return this.bytes[this.position];
                 }
-                if (Length < 0)
+            }
+
+            object System.Collections.IEnumerator.Current
+            {
+                get { return this.Current; }
+            }
+
+            public bool MoveNext()
+            {
+                this.position = this.position + 1;
+                return this.position < this.length;
+            }
+
+            public void Reset()
+            {
+                this.position = this.offset - 1;
+            }
+
+            public void Dispose()
+            {
+                this.Dispose(true);
+            }
+
+            protected virtual void Dispose(bool dispose)
+            {
+                if (dispose)
                 {
-                    throw new Exception("length is negative: " + Length);
+                    this.bytes = null;
+                    this.offset = 0;
+                    this.length = 0;
+                    this.position = -1;
                 }
-                if (Length > Bytes.Length)
-                {
-                    throw new Exception("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
-                }
-                if (Offset < 0)
-                {
-                    throw new Exception("offset is negative: " + Offset);
-                }
-                if (Offset > Bytes.Length)
-                {
-                    throw new Exception("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
-                }
-                if (Offset + Length < 0)
-                {
-                    throw new Exception("offset+length is negative: offset=" + Offset + ",length=" + Length);
-                }
-                if (Offset + Length > Bytes.Length)
-                {
-                    throw new Exception("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
-                }
-                return true;
+            }
+
+            ~ByteEnumerator()
+            {
+                this.Dispose(false);
+            }
+
+            public int Length
+            {
+                get { return this.length; }
             }
         }
 
+
         public IEnumerator<byte> GetEnumerator()
         {
-            return ((IEnumerable<byte>)this.Bytes).GetEnumerator();
+            return new ByteEnumerator(this.Bytes, this.Offset, this.Length);
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return this.Bytes.GetEnumerator();
+            return this.GetEnumerator();
         }
     }
 }

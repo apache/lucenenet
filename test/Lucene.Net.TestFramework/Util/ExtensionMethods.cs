@@ -18,7 +18,7 @@
 namespace Lucene.Net.Util
 {
     using System;
-
+    using Lucene.Net.Random;
     /// <summary>
     /// Extension methods to make writing tests easier.
     /// </summary>
@@ -36,5 +36,6 @@ namespace Lucene.Net.Util
                 invoke(i);
             }
         }
+
     }
 }

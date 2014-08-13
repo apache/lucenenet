@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
         /// Gets the number of bits which are encoded in <paramref name="value"/> .
         /// </summary>
         /// <remarks>
-        ///     <list>
+        ///     <list type="bullet">
         ///     <item>
         ///         <code>(i >>> (4 * n)) & 0x0F</code> is the offset of the n-th set bit of the given 
         ///         byte. For example <see cref="GetBiteList"/>(12) returns 0x43.

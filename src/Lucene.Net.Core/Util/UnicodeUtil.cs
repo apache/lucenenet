@@ -1,12 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 namespace Lucene.Net.Util
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Text;
+
+    /// <summary>
+    /// Utility methods for dealing with unicode.
+    /// </summary>
     public static class UnicodeUtil
     {
         public const int UNI_SUR_HIGH_START = 0xD800;
@@ -23,7 +42,14 @@ namespace Lucene.Net.Util
 
         private static readonly int SURROGATE_OFFSET = MIN_SUPPLEMENTARY_CODE_POINT - (UNI_SUR_HIGH_START << (int)HALF_SHIFT) - UNI_SUR_LOW_START;
 
-        public static void UTF16toUTF8(IEnumerable<char> s, int offset, int length, BytesRef result)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chars"></param>
+        /// <param name="offset"></param>
+        /// <param name="length"></param>
+        /// <param name="result"></param>
+        public static void UTF16toUTF8(IEnumerable<char> chars, int offset, int length, BytesRef result)
         {
             int end = offset + length;
 
@@ -39,7 +65,7 @@ namespace Lucene.Net.Util
             int upto = 0;
             for (int i = offset; i < end; i++)
             {
-                int code = (int)s.ElementAt(i);
+                int code = (int)chars.ElementAt(i);
 
                 if (code < 0x80)
                 {
@@ -62,7 +88,7 @@ namespace Lucene.Net.Util
                     // confirm valid high surrogate
                     if (code < 0xDC00 && (i < end - 1))
                     {
-                        int utf32 = (int)s.ElementAt(i + 1);
+                        int utf32 = (int)chars.ElementAt(i + 1);
                         // confirm valid low surrogate and write pair
                         if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
                         {
@@ -97,7 +123,7 @@ namespace Lucene.Net.Util
         /// Explicit checks for valid UTF-8 are not performed.
         /// </summary>
         // TODO: broken if chars.offset != 0
-        public static void UTF8toUTF16(byte[] utf8, int offset, int length, CharsRef chars)
+        public static int UTF8toUTF16(byte[] utf8, int offset, int length, CharsRef chars)
         {
             int outOffset = chars.Offset = 0,
                 limit = offset + length;
@@ -140,6 +166,8 @@ namespace Lucene.Net.Util
                 }
             }
             chars.Length = outOffset - chars.Offset;
+
+            return chars.Length;
         }
     }
 }

@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-
-
 namespace Lucene.Net.Support
 {
     using System;
@@ -113,33 +111,50 @@ namespace Lucene.Net.Support
             return DeBruijn64.Position(value);
         }
 
-
-        internal static uint RotateLeft(this uint value, int distance)
+        /// <summary>
+        /// Rotates bits to the left. Similar to _rotl in c++ or Java's Integer.rotateLeft.
+        /// </summary>
+        /// <param name="value">The value to rotate.</param>
+        /// <param name="shift">The number of bits to shift.</param>
+        /// <returns>The rotated value.</returns>
+        internal static uint RotateLeft(this uint value, int shift)
         {
             var v = value;
-            return (v << distance) | (v >> (32 - distance));
-        }
-
-        internal static uint RotateRight(this uint value, int distance)
-        {
-            var v = value;
-            return (v >> distance) | (v << (32 - distance));
+            return (v << shift) | (v >> (32 - shift));
         }
 
         /// <summary>
-        /// 
+        /// Rotates bits to the right. Similar to _rotr in c++ or Java's Integer.rotateRight.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="distance"></param>
-        /// <returns></returns>
-        public static int RotateLeft(this int value, int distance)
+        /// <param name="value">The value to rotate.</param>
+        /// <param name="shift">The number of bits to shift.</param>
+        /// <returns>The rotated value.</returns>
+        internal static uint RotateRight(this uint value, int shift)
         {
-            return (int)RotateLeft((uint)value, distance);
+            var v = value;
+            return (v >> shift) | (v << (32 - shift));
         }
 
-        public static int RotateRight(this int value, int distance)
+        /// <summary>
+        /// Rotates bits to the left. Similar to _rotl in c++ or Java's Integer.rotateLeft.
+        /// </summary>
+        /// <param name="value">The value to rotate.</param>
+        /// <param name="shift">The number of bits to shift.</param>
+        /// <returns>The rotated value.</returns>
+        public static int RotateLeft(this int value, int shift)
         {
-            return (int)RotateRight((uint)value, distance);
+            return (int)RotateLeft((uint)value, shift);
+        }
+
+        /// <summary>
+        /// Rotates bits to the right. Similar to _rotr in c++ or Java's Integer.rotateRight.
+        /// </summary>
+        /// <param name="value">The value to rotate.</param>
+        /// <param name="shift">The number of bits to shift.</param>
+        /// <returns>The rotated value.</returns>
+        public static int RotateRight(this int value, int shift)
+        {
+            return (int)RotateRight((uint)value, shift);
         }
     }
 }
