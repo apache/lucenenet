@@ -227,6 +227,7 @@ namespace Lucene.Net.Util
             return new CharsRef(copy, 0, this.charsRef.Length);
         }
 
+        /// <inherited />
         public override string ToString()
         {
             return this.charsRef.ToString();

@@ -24,69 +24,87 @@ namespace Lucene.Net.Util
     using System.Text;
 
     /// <summary>
-    /// Represents byte[], as a slice (offset + length) into an
-    ///  existing byte[].  The <seealso cref="#bytes"/> member should never be null;
-    ///  use <seealso cref="#EMPTY_BYTES"/> if necessary.
-    ///
-    /// <p><b>Important note:</b> Unless otherwise noted, Lucene uses this class to
-    /// represent terms that are encoded as <b>UTF8</b> bytes in the index. To
-    /// convert them to a Java <seealso cref="String"/> (which is UTF16), use <seealso cref="#Utf8ToString"/>.
-    /// Using code like {@code new String(bytes, offset, length)} to do this
-    /// is <b>wrong</b>, as it does not respect the correct character set
-    /// and may return wrong results (depending on the platform's defaults)!
+    /// <see cref="BytesRef"/> represents a byte array as a slice of an existing byte array.  
     /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         The <seealso cref="#Bytes"/> property should never be null;
+    ///         Use <seealso cref="#EMPTY_BYTES"/> if necessary.
+    ///     </para>
+    ///     <para>
+    ///         Important note:</b> Unless otherwise noted, Lucene uses this class to
+    ///         represent terms that are encoded as <b>UTF8</b> bytes in the index. To
+    ///         convert them to a Java <seealso cref="String"/> (which is UTF16), use <seealso cref="#Utf8ToString"/>.
+    ///     
+    ///         Using code like <c>new String(bytes, offset, length)</c> to do this
+    ///         is <b>wrong</b>. It does not respect the correct character set
+    ///         and may return wrong results (depending on the platform's defaults)!
+    ///     </para>
+    /// </remarks>
     public sealed class BytesRef : 
         System.IComparable, 
         Lucene.Net.Support.ICloneable,
         IEnumerable<Byte>
     {
         /// <summary>
-        /// An empty byte array for convenience </summary>
+        /// An empty byte array for convenience 
+        /// </summary>
         public static readonly byte[] EMPTY_BYTES = new byte[0];
 
         /// <summary>
-        /// The contents of the BytesRef. Should never be {@code null}. </summary>
+        /// The contents of <see cref="BytesRef"/> 
+        /// </summary>
         public byte[] Bytes { get; internal set; }
 
         /// <summary>
-        /// Offset of first valid byte. </summary>
+        /// Offset of first valid byte.
+        /// </summary>
         public int Offset { get; internal set; }
 
         /// <summary>
-        /// Length of used bytes. </summary>
+        /// Length of used bytes. 
+        /// </summary>
         public int Length { get; internal set; }
 
         /// <summary>
-        /// Create a BytesRef with <seealso cref="#EMPTY_BYTES"/> </summary>
+        /// Create a BytesRef with <seealso cref="#EMPTY_BYTES"/> 
+        /// </summary>
         public BytesRef()
             : this(EMPTY_BYTES)
         {
         }
 
         /// <summary>
-        /// this instance will directly reference bytes w/o making a copy.
-        /// bytes should not be null.
+        /// Initializes a new instance of <see cref="BytesRef"/> that
+        /// references the <paramref name="bytes"/> instead of making
+        /// a copy.
         /// </summary>
+        /// <param name="bytes">The array of bytes to be references.</param>
+        /// <param name="offset">The starting position of the first valid byte.</param>
+        /// <param name="length">The number of bytes to use.</param>
         public BytesRef(byte[] bytes, int offset, int length)
         {
             this.Bytes = bytes;
             this.Offset = offset;
             this.Length = length;
+
             Debug.Assert(this.Valid());
         }
 
         /// <summary>
-        /// this instance will directly reference bytes w/o making a copy.
-        /// bytes should not be null
+        /// Initializes a new instance of <see cref="BytesRef"/> that
+        /// references the <paramref name="bytes"/> instead of making
+        /// a copy. 
         /// </summary>
+        /// <param name="bytes">The array of bytes to be references.</param>
         public BytesRef(byte[] bytes)
             : this(bytes, 0, bytes.Length)
         {
         }
 
         /// <summary>
-        /// Create a BytesRef pointing to a new array of size <code>capacity</code>.
-        /// Offset and length will both be zero.
+        ///  Initializes a new instance of <see cref="BytesRef"/> that creates an empty array
+        ///  with the specified <paramref name="capacity"/>.
         /// </summary>
         public BytesRef(int capacity)
         {
@@ -94,8 +112,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Initialize the byte[] from the UTF8 bytes
-        /// for the provided String.
+        ///  Initializes a new instance of <see cref="BytesRef"/> from the UTF8 bytes
+        ///  from the given <see cref="CharsRef"/>.
         /// </summary>
         /// <param name="text"> this must be well-formed
         /// unicode text, with no unpaired surrogates. </param>
@@ -106,8 +124,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Initialize the byte[] from the UTF8 bytes
-        /// for the provided String.
+        ///  Initializes a new instance of <see cref="BytesRef"/> from the UTF8 bytes
+        ///  from the given <see cref="System.String"/>.
         /// </summary>
         /// <param name="text"> this must be well-formed
         /// unicode text, with no unpaired surrogates. </param>
@@ -140,7 +158,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Expert: compares the bytes against another BytesRef,
+        /// Compares the bytes against another BytesRef,
         /// returning true if the bytes are equal.
         /// </summary>
         /// <param name="other"> Another BytesRef, should not be null.
@@ -173,22 +191,30 @@ namespace Lucene.Net.Util
         /// <b>not</b> copied and will be shared by both the returned object and this
         /// object.
         /// </summary>
-        /// <seealso cref= #deepCopyOf </seealso>
+        /// <param name="deepClone">Instructs <see cref="Clone"/> to perform a deep clone when true.</param>
+        /// <returns>A clone copy of this instance.</returns>
         public object Clone(bool deepClone = false)
         {
             if (deepClone)
-                throw new DeepCloneNotSupportedException(typeof(CharsRef));
+            {
+                var bytesRef = new BytesRef();
+                bytesRef.CopyBytes(this);
+                return bytesRef;
+            }
 
             return new BytesRef(this.Bytes, this.Offset, this.Length);
         }
 
         /// <summary>
         /// Calculates the hash code as required by TermsHash during indexing.
-        ///  <p> this is currently implemented as MurmurHash3 (32
-        ///  bit), using the seed from {@link
-        ///  StringHelper#GOOD_FAST_HASH_SEED}, but is subject to
-        ///  change from release to release.
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         This is currently implemented as MurmurHash3 (32bit), 
+        ///         using the seed from <see cref="StringHelper.GOOD_FAST_HASH_SEED"/>, but is subject to
+        ///         change from release to release.
+        ///     </para>
+        /// </remarks>
         public override int GetHashCode()
         {
             return StringHelper.MurmurHash3_x86_32(this.Bytes, this.Offset, this.Length, StringHelper.GOOD_FAST_HASH_SEED);
@@ -208,9 +234,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Interprets stored bytes as UTF8 bytes, returning the
-        ///  resulting string
+        /// Interprets stored bytes as UTF8 bytes.
         /// </summary>
+        /// <returns>A utf16 string.</returns>
         public string Utf8ToString()
         {
             CharsRef @ref = new CharsRef(Length);
@@ -219,7 +245,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns hex encoded bytes, eg [0x6c 0x75 0x63 0x65 0x6e 0x65] </summary>
+        /// Returns hex encoded bytes, eg [0x6c 0x75 0x63 0x65 0x6e 0x65] 
+        /// </summary>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -239,10 +266,14 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Copies the bytes from the given <seealso cref="BytesRef"/>
-        /// <p>
-        /// NOTE: if this would exceed the array size, this method creates a
-        /// new reference array.
         /// </summary>
+        /// <param name="other">The <see cref="BytesRef"/> to copy into this instance.</param>
+        /// <remarks>
+        ///     <para>
+        ///         NOTE: if this would exceed the array size, this method creates a
+        ///         new reference array.
+        ///     </para>
+        /// </remarks>
         public void CopyBytes(BytesRef other)
         {
             if (this.Bytes.Length - this.Offset < other.Length)
@@ -256,10 +287,13 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Appends the bytes from the given <seealso cref="BytesRef"/>
-        /// <p>
-        /// NOTE: if this would exceed the array size, this method creates a
-        /// new reference array.
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         NOTE: if this would exceed the array size, this method creates a
+        ///         new reference array.
+        ///     </para>
+        /// </remarks>
         public void Append(BytesRef other)
         {
             int newLen = Length + other.Length;
@@ -276,18 +310,16 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Used to grow the reference array.
-        ///
-        /// In general this should not be used as it does not take the offset into account.
-        /// @lucene.internal
         /// </summary>
-        public void Grow(int newLength)
+        internal void Grow(int newLength)
         {
             Debug.Assert(this.Offset == 0); // NOTE: senseless if offset != 0
             this.Bytes = ArrayUtil.Grow(this.Bytes, newLength);
         }
 
         /// <summary>
-        /// Unsigned byte order comparison </summary>
+        /// Unsigned byte order comparison.
+        /// </summary>
         public int CompareTo(object other)
         {
             BytesRef br = other as BytesRef;
@@ -297,6 +329,9 @@ namespace Lucene.Net.Util
 
         private static readonly IComparer<BytesRef> Utf8SortedAsUnicodeSortOrder = new UTF8SortedAsUnicodeComparator();
 
+        /// <summary>
+        /// Gets a a comparer for <see cref="BytesRef"/> to sort Utf8 as Unicode.
+        /// </summary>
         public static IComparer<BytesRef> UTF8SortedAsUnicodeComparer
         {
             get
@@ -415,60 +450,63 @@ namespace Lucene.Net.Util
             }
         }
 
-        /// <summary>
-        /// Creates a new BytesRef that points to a copy of the bytes from
-        /// <code>other</code>
-        /// <p>
-        /// The returned BytesRef will have a length of other.length
-        /// and an offset of zero.
-        /// </summary>
-        public static BytesRef DeepCopyOf(BytesRef other)
-        {
-            BytesRef copy = new BytesRef();
-            copy.CopyBytes(other);
-            return copy;
-        }
+      
 
         /// <summary>
         /// Performs internal consistency checks.
-        /// Always returns true (or throws InvalidOperationException)
         /// </summary>
+        /// <returns>True</returns>
+        /// <exception cref="System.InvalidOperationException">
+        ///     <list type="bullet">
+        ///         <item>Thrown when <see cref="BytesRef.Bytes"/> is null.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Length"/> is less than zero.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Length"/> is greater than <see cref="BytesRef.Bytes0"/>.Length.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Offset"/> is less than zero.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Offset"/> is greater than <see cref="BytesRef.Bytes0"/>.Length.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Offset"/> and <see cref="BytesRef.Length"/> is less than zero.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Offset"/> and <see cref="BytesRef.Length"/> is greater than <see cref="BytesRef.Bytes0"/>.Length.</item>
+        ///     </list>
+        /// </exception>
         // this should be a method instead of a property due to the exceptions thrown. 
         public bool Valid()
         {
             
             if (Bytes == null)
             {
-                throw new Exception("bytes is null");
+                throw new InvalidOperationException("bytes is null");
             }
             if (Length < 0)
             {
-                throw new Exception("length is negative: " + Length);
+                throw new InvalidOperationException("length is negative: " + Length);
             }
             if (Length > Bytes.Length)
             {
-                throw new Exception("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
+                throw new InvalidOperationException("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
             }
             if (Offset < 0)
             {
-                throw new Exception("offset is negative: " + Offset);
+                throw new InvalidOperationException("offset is negative: " + Offset);
             }
             if (Offset > Bytes.Length)
             {
-                throw new Exception("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
+                throw new InvalidOperationException("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
             }
             if (Offset + Length < 0)
             {
-                throw new Exception("offset+length is negative: offset=" + Offset + ",length=" + Length);
+                throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
             }
             if (Offset + Length > Bytes.Length)
             {
-                throw new Exception("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
+                throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
             }
             return true;
             
         }
 
+        /// <summary>
+        /// Custom enumerator for <see cref="BytesRef"/> that accounts
+        /// for the the custom Length and Offset.
+        /// </summary>
         public class ByteEnumerator : IEnumerator<byte>
         {
             private int length;

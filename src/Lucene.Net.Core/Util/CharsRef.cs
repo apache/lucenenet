@@ -24,11 +24,15 @@ namespace Lucene.Net.Util
     using System.Linq;
 
     /// <summary>
-    /// Represents char[], as a slice (offset + length) into an existing char[].
-    /// The <seealso cref="#chars"/> member should never be null; use
-    /// <seealso cref="#EMPTY_CHARS"/> if necessary.
-    /// @lucene.internal
+    /// <see cref="CharsRef"/> represents a <see cref="System.Char"/> array as a slice from an existing array.
+    /// This class is for internal use only.
     /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///            The <seealso cref="#chars"/> member should never be null; use
+    ///             <seealso cref="CharsRef.EMPTY_CHARS"/> if necessary.
+    ///     </para>
+    /// </remarks>
     public sealed class CharsRef : IComparable<CharsRef>, 
         ICharSequence, 
         Lucene.Net.Support.ICloneable, 
@@ -37,24 +41,28 @@ namespace Lucene.Net.Util
        
 
         /// <summary>
-        /// An empty character array for convenience </summary>
+        /// An empty character array for convenience 
+        /// </summary>
         public static readonly char[] EMPTY_CHARS = new char[0];
 
         /// <summary>
-        /// The contents of the CharsRef. Should never be <see cref="Null"/>. </summary>
+        /// The contents of the CharsRef. Should never be <see cref="Null"/>. 
+        /// </summary>
         public char[] Chars { get; internal set; }
 
         /// <summary>
-        /// Offset of first valid character. </summary>
+        /// Offset of first valid character. 
+        /// </summary>
         public int Offset {get; internal set;}
 
         /// <summary>
-        /// Length of used characters. </summary>
+        /// Length of used characters. 
+        /// </summary>
         public int Length { get; internal set; }
 
      
         /// <summary>
-        /// Creates a new <seealso cref="CharsRef"/> initialized an empty array zero-length
+        /// Initializes a new instance of <seealso cref="CharsRef"/> with an empty array.
         /// </summary>
         public CharsRef()
             : this(EMPTY_CHARS, 0, 0)
@@ -62,30 +70,34 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="CharsRef"/> initialized with an array of the given
-        /// capacity
+        ///  Initializes a new instance of <seealso cref="CharsRef"/> with an empty array with the
+        ///  specified <paramref name="capacity"/>.
         /// </summary>
+        /// <param name="capacity">The size of the internal array.</param>
         public CharsRef(int capacity)
         {
             this.Chars = new char[capacity];
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="CharsRef"/> initialized with the given array, offset and
-        /// length
+        ///  Initializes a new instance of <seealso cref="CharsRef"/> that 
+        ///  references the <paramref name="chars"/> instead of makinga copy.
         /// </summary>
+        /// <param name="bytes">The array of chars to reference.</param>
+        /// <param name="offset">The starting position of the first valid byte.</param>
+        /// <param name="length">The number of bytes to use.</param>
         public CharsRef(char[] chars, int offset, int length)
         {
             this.Chars = chars;
             this.Offset = offset;
             this.Length = length;
-            Debug.Assert(Valid);
+            Debug.Assert(this.Valid());
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="CharsRef"/> initialized with the given Strings character
-        /// array
+        /// Initializes a new instance of <seealso cref="CharsRef"/> with the specified <paramref name="value"/>.
         /// </summary>
+        /// <param name="value">The string that be referenced.</param>
         public CharsRef(string value)
         {
             this.Chars = value.ToCharArray();
@@ -112,6 +124,7 @@ namespace Lucene.Net.Util
             return new CharsRef(Chars, Offset, Length);
         }
 
+        /// <inherited />
         public override int GetHashCode()
         {
             const int prime = 31;
@@ -124,6 +137,7 @@ namespace Lucene.Net.Util
             return result;
         }
 
+        /// <inherited />
         public override bool Equals(object other)
         {
             if (other == null)
@@ -137,6 +151,11 @@ namespace Lucene.Net.Util
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public bool CharsEquals(CharsRef other)
         {
             if (Length == other.Length)
@@ -160,7 +179,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Signed int order comparison </summary>
+        /// Signed int order comparison 
+        /// </summary>
+        /// <param name="other">The reference that will be compared to this instance.</param>
         public int CompareTo(CharsRef other)
         {
             if (this == other)
@@ -196,8 +217,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Copies the given <seealso cref="CharsRef"/> referenced content into this instance.
         /// </summary>
-        /// <param name="other">
-        ///          the <seealso cref="CharsRef"/> to copy </param>
+        /// <param name="other">the <seealso cref="CharsRef"/> to copy </param>
         public void CopyChars(CharsRef other)
         {
             CopyChars(other.Chars, other.Offset, other.Length);
@@ -205,11 +225,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Used to grow the reference array.
-        ///
-        /// In general this should not be used as it does not take the offset into account.
-        /// @lucene.internal
         /// </summary>
-        public void Grow(int newLength)
+        /// <param name="newLength">The minimum length to grow the internal array.</param>
+        internal void Grow(int newLength)
         {
             Debug.Assert(Offset == 0);
             if (this.Chars.Length < newLength)
@@ -233,7 +251,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Appends the given array to this CharsRef
+        /// Appends the given array to this instance.
         /// </summary>
         public void Append(char[] otherChars, int otherOffset, int otherLength)
         {
@@ -249,11 +267,20 @@ namespace Lucene.Net.Util
             Length = newLen;
         }
 
+        /// <summary>
+        /// Returns the string representation of the <see cref="System.Char"/> array.
+        /// </summary>
+        /// <returns><see cref="System.String"/></returns>
         public override string ToString()
         {
             return new string(this.Chars, this.Offset, this.Length);
         }
 
+        /// <summary>
+        /// Returns the char at specified index.
+        /// </summary>
+        /// <param name="index">The index of the char to be returned.</param>
+        /// <returns>A char</returns>
         public char CharAt(int index)
         {
             // NOTE: must do a real check here to meet the specs of CharSequence
@@ -264,6 +291,12 @@ namespace Lucene.Net.Util
             return this.Chars[this.Offset + index];
         }
 
+        /// <summary>
+        /// Returns a new <see cref="ICharSequence"/> of the specified range of start and end.
+        /// </summary>
+        /// <param name="start">The position to start the new sequence.</param>
+        /// <param name="end">The position to end the new sequence.</param>
+        /// <returns>A new <see cref="ICharSequence"/>.</returns>
         public ICharSequence SubSequence(int start, int end)
         {
             // NOTE: must do a real check here to meet the specs of CharSequence
@@ -352,53 +385,57 @@ namespace Lucene.Net.Util
             }
         }
 
-        /// <summary>
-        /// Creates a new CharsRef that points to a copy of the chars from
-        /// <code>other</code>
-        /// <p>
-        /// The returned CharsRef will have a length of other.length
-        /// and an offset of zero.
-        /// </summary>
-       
+
 
         /// <summary>
         /// Performs internal consistency checks.
-        /// Always returns true (or throws InvalidOperationException)
         /// </summary>
-        public bool Valid
+        /// <returns>True</returns>
+        /// <exception cref="System.InvalidOperationException">
+        ///     <list type="bullet">
+        ///         <item>Thrown when <see cref="BytesRef.Bytes"/> is null.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Length"/> is less than zero.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Length"/> is greater than <see cref="BytesRef.Bytes0"/>.Length.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Offset"/> is less than zero.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Offset"/> is greater than <see cref="BytesRef.Bytes0"/>.Length.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Offset"/> and <see cref="BytesRef.Length"/> is less than zero.</item>
+        ///         <item>Thrown when <see cref="BytesRef.Offset"/> and <see cref="BytesRef.Length"/> is greater than <see cref="BytesRef.Bytes0"/>.Length.</item>
+        ///     </list>
+        /// </exception>
+        // this should be a method instead of a property due to the exceptions thrown. 
+        public bool Valid()
         {
-            get
+           
+            if (this.Chars == null)
             {
-                if (this.Chars == null)
-                {
-                    throw new InvalidOperationException("chars is null");
-                }
-                if (this.Length < 0)
-                {
-                    throw new InvalidOperationException("length is negative: " + Length);
-                }
-                if (this.Length > this.Chars.Length)
-                {
-                    throw new InvalidOperationException("length is out of bounds: " + Length + ",chars.length=" + Chars.Length);
-                }
-                if (this.Offset < 0)
-                {
-                    throw new InvalidOperationException("offset is negative: " + Offset);
-                }
-                if (this.Offset > this.Chars.Length)
-                {
-                    throw new InvalidOperationException("offset out of bounds: " + Offset + ",chars.length=" + Chars.Length);
-                }
-                if (this.Offset + this.Length < 0)
-                {
-                    throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
-                }
-                if (this.Offset + this.Length > this.Chars.Length)
-                {
-                    throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",chars.length=" + Chars.Length);
-                }
-                return true;
+                throw new InvalidOperationException("chars is null");
             }
+            if (this.Length < 0)
+            {
+                throw new InvalidOperationException("length is negative: " + Length);
+            }
+            if (this.Length > this.Chars.Length)
+            {
+                throw new InvalidOperationException("length is out of bounds: " + Length + ",chars.length=" + Chars.Length);
+            }
+            if (this.Offset < 0)
+            {
+                throw new InvalidOperationException("offset is negative: " + Offset);
+            }
+            if (this.Offset > this.Chars.Length)
+            {
+                throw new InvalidOperationException("offset out of bounds: " + Offset + ",chars.length=" + Chars.Length);
+            }
+            if (this.Offset + this.Length < 0)
+            {
+                throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
+            }
+            if (this.Offset + this.Length > this.Chars.Length)
+            {
+                throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",chars.length=" + Chars.Length);
+            }
+            return true;
+            
         }
 
         public IEnumerator<char> GetEnumerator()

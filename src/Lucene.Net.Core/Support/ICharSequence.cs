@@ -17,12 +17,29 @@
 
 namespace Lucene.Net.Support
 {
+    /// <summary>
+    /// A readable sequence of <see cref="System.Char"/> values.
+    /// </summary>
     public interface ICharSequence
     {
+        /// <summary>
+        /// The number of characters in the sequence.
+        /// </summary>
         int Length { get; }
 
+        /// <summary>
+        /// Returns the char at specified index.
+        /// </summary>
+        /// <param name="index">The index of the char to be returned.</param>
+        /// <returns>A char</returns>
         char CharAt(int index);
 
+        /// <summary>
+        /// Returns a new <see cref="ICharSequence"/> of the specified range of start and end.
+        /// </summary>
+        /// <param name="start">The position to start the new sequence.</param>
+        /// <param name="end">The position to end the new sequence.</param>
+        /// <returns>A new <see cref="ICharSequence"/>.</returns>
         ICharSequence SubSequence(int start, int end);
     }
 }

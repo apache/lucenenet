@@ -103,9 +103,9 @@ namespace Lucene.Net.Util
                     }
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
-                    @out[upto++] = unchecked((byte)0xEF);
-                    @out[upto++] = unchecked((byte)0xBF);
-                    @out[upto++] = unchecked((byte)0xBD);
+                    @out[upto++] = (byte)0xEF;
+                    @out[upto++] = (byte)0xBF;
+                    @out[upto++] = (byte)0xBD;
                 }
             }
             //assert matches(s, offset, length, out, upto);
