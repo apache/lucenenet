@@ -82,6 +82,7 @@
     <Compile Include="Util\IBits.cs" />
     <Compile Include="Util\InPlaceMergeSorter.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
+    <Compile Include="Util\SetOnce.cs" />
     <Compile Include="Util\Sorter.cs" />
     <Compile Include="Util\StringHelper.cs" />
     <Compile Include="Util\SystemProps.cs" />

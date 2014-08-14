@@ -151,9 +151,14 @@ namespace Lucene.Net.Util
 
 
         /// <summary>
-        /// Naive implementation of <seealso cref="#select(long,int)"/>, using <seealso cref="Long#numberOfTrailingZeros"/> repetitively.
+        /// Naive implementation of <seealso cref="Select(long,int)"/>.
         /// Works relatively fast for low ranks. 
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Internally uses <see cref="Lucene.Net.Support.NumberExtensionMethods.NumberOfTrailingZeros"/> repetitively.
+        ///     </para>
+        /// </remarks>
         /// <returns> The index of the r-th 1 bit in x, or if no such bit exists, 72. </returns>
         public static int SelectNaive(long x, int r)
         {

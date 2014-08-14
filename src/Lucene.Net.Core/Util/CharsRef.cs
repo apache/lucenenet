@@ -152,10 +152,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// 
+        /// Determines if the other <see cref="CharsRef"/> is equal to the current instance.
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
+        /// <param name="other">The instance to compare.</param>
+        /// <returns>True, if the other instance is equal to the current instance, otherwise false.</returns>
         public bool CharsEquals(CharsRef other)
         {
             if (Length == other.Length)

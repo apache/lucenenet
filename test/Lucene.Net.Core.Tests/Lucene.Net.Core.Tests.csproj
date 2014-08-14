@@ -68,6 +68,7 @@
     <Compile Include="Util\TestConstants.cs" />
     <Compile Include="Util\TestInPlaceMergeSorter.cs" />
     <Compile Include="Util\TestRamEstimatorUsage.cs" />
+    <Compile Include="Util\TestSetOnce.cs" />
     <Compile Include="Util\TestVersion.cs" />
   </ItemGroup>
   <ItemGroup>
