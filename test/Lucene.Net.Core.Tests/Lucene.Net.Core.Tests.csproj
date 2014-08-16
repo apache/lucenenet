@@ -70,6 +70,7 @@
     <Compile Include="Util\TestRamEstimatorUsage.cs" />
     <Compile Include="Util\TestSetOnce.cs" />
     <Compile Include="Util\TestVersion.cs" />
+    <Compile Include="Util\TestWeakIdentityMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="xunit.abstractions">
@@ -94,6 +95,9 @@
       <Project>{f0d68fea-b118-43b6-b760-3fb75cde766d}</Project>
       <Name>Lucene.Net.TestFramework</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

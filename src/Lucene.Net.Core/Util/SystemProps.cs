@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
         /// <returns>The <typeparamref name="T"/> value.</returns>
         public static T Get<T>(string key)
         {
-            return Get<T>(key, default(T));
+            return Get(key, default(T));
         }
 
         /// <summary>

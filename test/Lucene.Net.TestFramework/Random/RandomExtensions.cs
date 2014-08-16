@@ -67,6 +67,11 @@ namespace Lucene.Net.Random
                 return minValue + (int)Math.Round(random.NextDouble() * range);
         }
 
+        public static bool NextBoolean(this Random random)
+        {
+            return random.NextDouble() < 0.5;
+        }
+
         public static int RandomInt(this Random random, int maxValue)
         {
             if (maxValue == 0)

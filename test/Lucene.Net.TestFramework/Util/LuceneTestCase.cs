@@ -15,8 +15,13 @@
  * limitations under the License.
  */
 
+using System.Runtime.Serialization;
+
 namespace Lucene.Net.Util
 {
+#if PORTABLE || K10
+    using Lucene.Net.Support;
+#endif
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -62,6 +67,70 @@ namespace Lucene.Net.Util
 
 #if XUNIT
 
+        [Serializable]
+        public class LuceneAssertionException : Exception
+        {
+            //
+            // For guidelines regarding the creation of new exception types, see
+            //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
+            // and
+            //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
+            //
+
+            public LuceneAssertionException()
+            {
+            }
+
+            public LuceneAssertionException(string message) : base(message)
+            {
+            }
+
+            public LuceneAssertionException(string message, Exception inner) : base(message, inner)
+            {
+            }
+
+#if NET45
+            protected LuceneAssertionException(
+                System.Runtime.Serialization.SerializationInfo info,
+                StreamingContext context) : base(info, context)
+            {
+            }
+#endif
+        }
+
+        [DebuggerHidden]
+        public static void Null(object value, string message = null, params  object[] args)
+        {
+            try
+            {
+                Assert.Null(value);
+            }
+            catch (Exception ex)
+            {
+                var msg = message ?? "The value must be null.";
+                if (args != null && args.Length > 0)
+                    msg = string.Format(msg, args);
+
+                throw new LuceneAssertionException(msg, ex);
+            }
+        }
+
+        public static void NotNull(object value, string message = null, params object[] args)
+        {
+            try
+            {
+                Assert.NotNull(value);
+            }
+            catch (Exception ex)
+            {
+                var msg = message ?? "The value must not be null.";
+                if (args != null && args.Length > 0)
+                    msg = string.Format(msg, args);
+
+                throw new LuceneAssertionException(msg, ex);
+            }
+        }
+
         /// <summary>
         /// Asserts that two object are the same.
         /// </summary>
@@ -85,27 +154,84 @@ namespace Lucene.Net.Util
         }
 
         [DebuggerHidden]
-        public static void Equal(string expected, string actual)
+        public static void Equal(string expected, string actual, string message = null, params object[] args)
         {
-            Assert.Equal(expected, actual);
+            try
+            {
+                Assert.Equal(expected, actual);
+            }
+            catch (Exception ex)
+            {
+                if (message == null)
+                    throw;
+
+                var msg = message;
+                if (args != null && args.Length > 0)
+                    msg = string.Format(msg, args);
+
+                throw new LuceneAssertionException(msg, ex);
+            }
         }
 
         [DebuggerHidden]
-        public static void Equal<T>(T expected, T actual)
+        public static void Equal<T>(T expected, T actual, string message = null, params object[] args)
         {
-            Assert.Equal(expected, actual);
+            try
+            {
+                Assert.Equal(expected, actual);
+            }
+            catch (Exception ex)
+            {
+                if (message == null)
+                    throw;
+
+                var msg = message;
+                if (args != null && args.Length > 0)
+                    msg = string.Format(msg, args);
+
+                throw new LuceneAssertionException(msg, ex);
+            }
         }
 
         [DebuggerHidden]
-        public static void Equal<T>(IEnumerable<T> expected, IEnumerable<T> actual)
+        public static void Equal<T>(IEnumerable<T> expected, IEnumerable<T> actual, string message= null, params object[] args)
         {
-            Assert.Equal(expected, actual);
+            try
+            {
+                Assert.Equal(expected, actual);
+            }
+            catch (Exception ex)
+            {
+                if (message == null)
+                    throw;
+
+                var msg = message;
+                if (args != null && args.Length > 0)
+                    msg = string.Format(msg, args);
+
+                throw new LuceneAssertionException(msg, ex);
+            }
         }
 
         [DebuggerHidden]
-        public static void NotEqual<T>(T expected, T actual)
+        public static void NotEqual<T>(T expected, T actual, string message = null, params object[] args)
         {
-            Assert.NotEqual(expected, actual);
+            try
+            {
+                Assert.NotEqual(expected, actual);
+            }
+            catch (Exception ex)
+            {
+                if (message == null)
+                    throw;
+
+                var msg = message;
+                if (args != null && args.Length > 0)
+                    msg = string.Format(msg, args);
+
+                throw new LuceneAssertionException(msg, ex);
+            }
+           
         }
 
 

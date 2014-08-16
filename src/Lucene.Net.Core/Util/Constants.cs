@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
     /// Global constants that Lucene.Net uses to make decisions based upon the environment
     /// that Lucene.Net is executing on.
     /// </summary>
-    public class Constants
+    public static class Constants
     {
         static Constants()
         {
@@ -55,6 +55,7 @@ namespace Lucene.Net.Util
         /// Determines if the KRE is 32 or 64 bit. 
         /// </summary>
         /// <remarks><para>JRE_IS_64BIT</para></remarks>
+        // ReSharper disable once InconsistentNaming
         public static readonly bool KRE_IS_64BIT = IntPtr.Size == 8;
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets the name of the operating system.
         /// </summary>
-        public static readonly string OS_NAME = SystemProps.Get("OS");
+        public static readonly string OS_NAME = SystemProps.Get("OS", "UNSUPPORTED");
 
         /// <summary>Returns true, if running on Linux. </summary>
         public static readonly bool LINUX = OS_NAME.StartsWith("Linux");
@@ -79,12 +80,14 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets the proccess architechture for the current machine.
         /// </summary>
-        public static string OS_ARCH = SystemProps.Get("PROCESSOR_ARCHITECTURE");
+        // ReSharper disable once InconsistentNaming
+        public static string OS_ARCH = SystemProps.Get("PROCESSOR_ARCHITECTURE", "x86");
 
 
         /// <summary>
         /// Gets the version of the operating system for the current machine.
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         public static string OS_VERSION = SystemProps.Get("OS_VERSION", "?");
 
 
@@ -102,11 +105,13 @@ namespace Lucene.Net.Util
         ///         using indexes created with ALPHA/BETA versions with the released version.
         ///     </para>
         /// </remarks>
+        // ReSharper disable once InconsistentNaming
         public static readonly System.String LUCENE_MAIN_VERSION = Ident("5.0");
 
         /// <summary>
         /// This is the Lucene version for display purposes.
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         public static System.String LUCENE_VERSION;
 
         // this method prevents inlining the final version constant in compiled

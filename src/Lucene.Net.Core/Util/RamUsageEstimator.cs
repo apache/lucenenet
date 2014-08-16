@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
     /// </remarks>
     // The JVM FEATURE enum should only be ported if mono or different version of the 
     // .NET framework handle memory allocation differently.
-    public sealed class RamUsageEstimator
+    public static class RamUsageEstimator
     {
         /// <summary>
         /// The number of bytes for one killabyte. 
@@ -169,12 +169,6 @@ namespace Lucene.Net.Util
         public static readonly int NUM_BYTES_OBJECT_ALIGNMENT;
 
 
-        /// <summary>
-        /// No instantiation
-        /// </summary>
-        private RamUsageEstimator()
-        {
-        }
 
 
 

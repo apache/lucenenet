@@ -65,8 +65,8 @@ namespace Lucene.Net.Util
         public virtual void TestBuildSetup()
         {
             // common-build.xml sets lucene.version, if not, we skip this test!
-            string defaultVersion = "5.0";
-            string version = SystemProps.Get("lucene.version", defaultVersion);
+            const string defaultVersion = "5.0";
+            var version = SystemProps.Get("lucene.version", defaultVersion);
             Ok(version != null);
 
             if (version != "5.0")

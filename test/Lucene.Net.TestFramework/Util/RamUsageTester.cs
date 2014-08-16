@@ -21,10 +21,8 @@ namespace Lucene.Net.Util
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using System.Text;
     using System.Reflection;
-    using System.Threading.Tasks;
-    using Lucene.Net.Support;
+    using Support;
 
 
     public class RamUsageTester
@@ -56,13 +54,13 @@ namespace Lucene.Net.Util
         private static long MeasureObjectSize(object root, Accumulator accumulator)
         {
             // Objects seen so far.
-            IdentityHashSet<object> seen = new IdentityHashSet<object>();
+            var seen = new IdentityHashSet<object>();
 
             // Class cache with reference Field and precalculated shallow size. 
-            HashMap<Type, ClassCache> classCache = new HashMap<Type, ClassCache>();
+            var classCache = new HashMap<Type, ClassCache>();
             
             // Stack of objects pending traversal. Recursion caused stack overflows. 
-            Stack<object> stack = new Stack<object>();
+            var stack = new Stack<object>();
             stack.Push(root);
 
             long totalSize = 0;
@@ -78,12 +76,11 @@ namespace Lucene.Net.Util
 
                 seen.Add(ob);
 
-                Type type = ob.GetType();
+                var type = ob.GetType();
                 if (type.IsArray)
                 {
                     var array = (Array)ob;
                     var shallowSize = RamUsageEstimator.ShallowSizeOf(ob);
-                    var length = array.Length;
                     var values = new List<object>();
 
                     var elementType = type.GetElementType().GetTypeInfo();
@@ -106,11 +103,7 @@ namespace Lucene.Net.Util
                         classCache.Add(type, cachedInfo = CreateCacheEntry(type));
                     }
 
-                    var fieldValues = new Dictionary<FieldInfo, object>();
-                    foreach (var field in cachedInfo.ReferenceFields)
-                    {
-                        fieldValues.Add(field, field.GetValue(ob));
-                    }
+                    var fieldValues = cachedInfo.ReferenceFields.ToDictionary(field => field, field => field.GetValue(ob));
 
                     totalSize += accumulator.AccumulateObject(ob, cachedInfo.AlignedShallowInstanceSize, fieldValues, stack);
                 }
@@ -134,13 +127,12 @@ namespace Lucene.Net.Util
         /// </summary>
         private static ClassCache CreateCacheEntry(Type instanceType)
         {
-            ClassCache cachedInfo;
             long shallowInstanceSize = RamUsageEstimator.NUM_BYTES_OBJECT_HEADER;
-            List<FieldInfo> referenceFields = new List<FieldInfo>(32);
+            var referenceFields = new List<FieldInfo>(32);
 
             // GetRuntimeFields includes inherited fields. 
             var fields = instanceType.GetRuntimeFields().Where(o => !o.IsStatic);
-            foreach (FieldInfo f in fields)
+            foreach (var f in fields)
             {
                 shallowInstanceSize = RamUsageEstimator.AdjustForField(shallowInstanceSize, f);
 
@@ -151,8 +143,7 @@ namespace Lucene.Net.Util
 
             }
 
-            cachedInfo = new ClassCache(RamUsageEstimator.AlignObjectSize(shallowInstanceSize), referenceFields.ToArray());
-            return cachedInfo;
+            return new ClassCache(RamUsageEstimator.AlignObjectSize(shallowInstanceSize), referenceFields.ToArray());
         }
 
         /// <summary>
@@ -213,7 +204,7 @@ namespace Lucene.Net.Util
         /// 
         /// TODO: If this is useful outside this class, make it public - needs some work
         /// </summary>
-        public sealed class IdentityHashSet<KType> : IEnumerable<KType>
+        public sealed class IdentityHashSet<TKey> : IEnumerable<TKey>
         {
             /// <summary>
             /// Default load factor.
@@ -278,7 +269,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Adds a reference to the set. Null keys are not allowed.
             /// </summary>
-            public bool Add(KType e)
+            public bool Add(TKey e)
             {
                 Debug.Assert(e != null, "Null keys not allowed.");
 
@@ -287,8 +278,9 @@ namespace Lucene.Net.Util
                     ExpandAndRehash();
                 }
 
-                int mask = Keys.Length - 1;
-                int slot = Rehash(e) & mask;
+                int mask = Keys.Length - 1,
+                    slot = Rehash(e) & mask;
+                
                 object existing;
                 while ((existing = Keys[slot]) != null)
                 {
@@ -298,6 +290,7 @@ namespace Lucene.Net.Util
                     }
                     slot = (slot + 1) & mask;
                 }
+                
                 Assigned++;
                 Keys[slot] = e;
                 return true;
@@ -306,7 +299,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Checks if the set contains a given ref.
             /// </summary>
-            public bool Contains(KType e)
+            public bool Contains(TKey e)
             {
                 int mask = Keys.Length - 1;
                 int slot = Rehash(e) & mask;
@@ -437,7 +430,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            public IEnumerator<KType> GetEnumerator()
+            public IEnumerator<TKey> GetEnumerator()
             {
                 return new IteratorAnonymousInnerClassHelper(this);
             }
@@ -447,11 +440,11 @@ namespace Lucene.Net.Util
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousInnerClassHelper : IEnumerator<KType>
+            private class IteratorAnonymousInnerClassHelper : IEnumerator<TKey>
             {
-                private readonly IdentityHashSet<KType> OuterInstance;
+                private readonly IdentityHashSet<TKey> OuterInstance;
 
-                public IteratorAnonymousInnerClassHelper(IdentityHashSet<KType> outerInstance)
+                public IteratorAnonymousInnerClassHelper(IdentityHashSet<TKey> outerInstance)
                 {
                     this.OuterInstance = outerInstance;
                     pos = -1;
@@ -460,7 +453,7 @@ namespace Lucene.Net.Util
 
                 internal int pos;
                 internal object nextElement;
-                internal KType current;
+                internal TKey current;
 
 
                 public bool MoveNext()
@@ -472,11 +465,11 @@ namespace Lucene.Net.Util
                     }
 
                     nextElement = FetchNext();
-                    current = (KType)r;
+                    current = (TKey)r;
                     return true;
                 }
 
-                public KType Current
+                public TKey Current
                 {
                     get { return current; }
                 }
