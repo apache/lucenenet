@@ -83,7 +83,7 @@ namespace Lucene.Net.Util
 
             Equal(2, map.Count);
 
-            // this will not work in .NET, key1, key2, key3 are the same reference
+            // this will not work in .NET: key1, key2, key3 are the same reference
             // Equal("bar1", map.Get(key1));
             // Equal(null, map.Get(key3));
             Equal("bar2", map.Get(key2));

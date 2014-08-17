@@ -1,9 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 
 namespace Lucene.Net.Support
 {
@@ -14,7 +25,7 @@ namespace Lucene.Net.Support
     public class AtomicReferenceArray<T>
     {
         // ReSharper disable once StaticFieldInGenericType
-        private static readonly object SyncLock = new object();
+        private static readonly object s_syncLock = new object();
         private readonly T[] array;
 
 
@@ -60,6 +71,10 @@ namespace Lucene.Net.Support
             set { this.Set(index, value);}
         }
 
+        /// <summary>
+        /// Gets the length.
+        /// </summary>
+        /// <value>The length.</value>
         public int Length
         {
             get { return this.array.Length; }
@@ -75,7 +90,7 @@ namespace Lucene.Net.Support
         /// <returns><c>true</c> if the index was updated, <c>false</c> otherwise.</returns>
         public bool CompareAndSet(int index, T expected, T value)
         {
-            lock (SyncLock)
+            lock (s_syncLock)
             {
                 var currentValue = this.array[index];
                 if (!expected.Equals(currentValue)) 
@@ -114,7 +129,7 @@ namespace Lucene.Net.Support
         {
             //Check.InRangeOfLength(0, this.Length, index);
 
-            lock (SyncLock)
+            lock (s_syncLock)
             {
                 var currentValue = this.array[index];
                 this.array[index] = value;
@@ -135,7 +150,7 @@ namespace Lucene.Net.Support
         {
           
 
-            lock (SyncLock)
+            lock (s_syncLock)
             {
                 array[index] = value;
             }

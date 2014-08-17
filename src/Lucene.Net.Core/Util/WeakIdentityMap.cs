@@ -75,7 +75,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns <c>True</c> when this map contains no key-value mappings. </summary>
+        /// Returns <c>True</c> when this map contains no key-value mappings. 
+        /// </summary>
         public bool Empty
         {
             get
@@ -84,6 +85,10 @@ namespace Lucene.Net.Util
             }
         }
 
+        /// <summary>
+        /// Gets the keys.
+        /// </summary>
+        /// <value>The keys.</value>
         public IEnumerable<TKey> Keys
         {
             // .NET port: using this method which mimics IDictionary instead of KeyIterator()
@@ -104,6 +109,10 @@ namespace Lucene.Net.Util
             }
         }
 
+        /// <summary>
+        /// Gets the values.
+        /// </summary>
+        /// <value>The values.</value>
         public IEnumerable<TValue> Values
         {
             get
@@ -123,7 +132,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new {@code WeakIdentityMap} based on a <seealso cref="ConcurrentHashMap"/>. </summary>
+        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a <seealso cref="ConcurrentHashMap"/>. </summary>
         /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
         public static WeakIdentityMap<TKey, TValue> NewConcurrentHashMap(bool reapOnRead)
         {
@@ -131,7 +140,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new {@code WeakIdentityMap} based on a non-synchronized <seealso cref="HashMap"/>.
+        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a non-synchronized <seealso cref="HashMap"/>.
         /// The map <a href="#reapInfo">cleans up the reference queue on every read operation</a>.
         /// </summary>
         public static WeakIdentityMap<TKey, TValue> NewHashMap()
@@ -140,7 +149,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new {@code WeakIdentityMap} based on a non-synchronized <seealso cref="HashMap"/>. </summary>
+        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a non-synchronized <seealso cref="HashMap"/>. </summary>
         /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
         public static WeakIdentityMap<TKey, TValue> NewHashMap(bool reapOnRead)
         {
@@ -178,7 +187,13 @@ namespace Lucene.Net.Util
             return value;
         }
 
-        
+
+        /// <summary>
+        /// Stores the specified value with the associated key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>TValue.</returns>
         public TValue Put(TKey key, TValue value)
         {
             this.Reap();

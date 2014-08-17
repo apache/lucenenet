@@ -67,6 +67,7 @@
     <Compile Include="Util\TestCharsRef.cs" />
     <Compile Include="Util\TestConstants.cs" />
     <Compile Include="Util\TestInPlaceMergeSorter.cs" />
+    <Compile Include="Util\TestPurgableThreadLocal.cs" />
     <Compile Include="Util\TestRamEstimatorUsage.cs" />
     <Compile Include="Util\TestSetOnce.cs" />
     <Compile Include="Util\TestVersion.cs" />
