@@ -44,23 +44,27 @@ namespace Lucene.Net.Util
 
 
         /// <summary>
-        /// add as an asynchronous operation.
+        /// Add the value asynchronously.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns><see cref="Task" /></returns>
-        public async Task AddAsync(object value)
+        public Task AddAsync(object value)
         {
-            await this.semaphoreSlim.WaitAsync();
+            return new Task(async () =>
+            {
+                await this.semaphoreSlim.WaitAsync();
 
-            try
-            {
-                this.hardReferences.Add(value);
-                this.weakReferences.Add(new WeakReference(value));
-            }
-            finally
-            {
-                this.semaphoreSlim.Release();
-            }
+                try
+                {
+                    this.hardReferences.Add(value);
+                    this.weakReferences.Add(new WeakReference(value));
+                }
+                finally
+                {
+                    this.semaphoreSlim.Release();
+                }
+            });
+
         }
 
         /// <summary>
@@ -82,6 +86,7 @@ namespace Lucene.Net.Util
 
                 GC.Collect();
 
+                // let GC do it's thing.
                 await Task.Delay(1000);
 
                 foreach (var reference in this.weakReferences)

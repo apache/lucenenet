@@ -56,7 +56,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Index\IIndexDocument.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Check.cs" />
     <Compile Include="Support\AtomicReferenceArray.cs" />
@@ -93,7 +92,7 @@
     <Compile Include="Util\UnicodeUtil.cs" />
     <Compile Include="Util\Version.cs" />
     <Compile Include="Util\WeakIdentityMap.cs" />
-    <Compile Include="Util\PurgableThreadLocal.cs" />
+    <Compile Include="Util\PurgeableThreadLocal.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -106,6 +105,7 @@
   <ItemGroup>
     <Folder Include="Analysis\" />
     <Folder Include="Document\" />
+    <Folder Include="Index\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
