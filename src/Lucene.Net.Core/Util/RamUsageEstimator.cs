@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
     ///         
     ///         <item>
     ///             <see href="https://www.simple-talk.com/dotnet/.net-framework/object-overhead-the-hidden-.net-memory--allocation-cost/">
-    ///             Hiden Object Overhead.
+    ///             Hidden Object Overhead.
     ///             </see>
     ///         </item>
     ///         <item>
@@ -61,10 +61,11 @@ namespace Lucene.Net.Util
     /// </remarks>
     // The JVM FEATURE enum should only be ported if mono or different version of the 
     // .NET framework handle memory allocation differently.
+    // ReSharper disable CSharpWarnings::CS1574
     public static class RamUsageEstimator
     {
         /// <summary>
-        /// The number of bytes for one killabyte. 
+        /// The number of bytes for one kilobyte. 
         /// </summary>
         public const long ONE_KB = 1024L;
 
@@ -74,7 +75,7 @@ namespace Lucene.Net.Util
         public const long ONE_MB = ONE_KB * ONE_KB;
 
         /// <summary>
-        /// The number of bytes for one gigbyte. 
+        /// The number of bytes for one gigabyte. 
         /// </summary>
         public const long ONE_GB = ONE_KB * ONE_MB;
 
@@ -119,7 +120,7 @@ namespace Lucene.Net.Util
         public const int NUM_BYTES_UINT = 4;
 
         /// <summary>
-        /// The number of bytes that a <see cref="unit"/> takes up in memory.
+        /// The number of bytes that a <see cref="uint"/> takes up in memory.
         /// </summary>
         public const int NUM_BYTES_FLOAT = 4;
 
@@ -172,34 +173,34 @@ namespace Lucene.Net.Util
 
 
 
-        internal static readonly IDictionary<Type, int> PrimitiveSizes;
+        internal static readonly IDictionary<Type, int> PRIMITIVE_SIZES;
 
         static RamUsageEstimator()
         {
-            PrimitiveSizes = new HashMap<Type, int>();
+            PRIMITIVE_SIZES = new HashMap<Type, int>();
 
             // 1 
-            PrimitiveSizes[typeof(bool)] = NUM_BYTES_BOOLEAN;
-            PrimitiveSizes[typeof(byte)] = NUM_BYTES_BYTE;
-            PrimitiveSizes[typeof(sbyte)] = NUM_BYTES_SBYTE;
+            PRIMITIVE_SIZES[typeof(bool)] = NUM_BYTES_BOOLEAN;
+            PRIMITIVE_SIZES[typeof(byte)] = NUM_BYTES_BYTE;
+            PRIMITIVE_SIZES[typeof(sbyte)] = NUM_BYTES_SBYTE;
 
             // 2
-            PrimitiveSizes[typeof(char)] = NUM_BYTES_CHAR;
-            PrimitiveSizes[typeof(short)] = NUM_BYTES_SHORT;
-            PrimitiveSizes[typeof(ushort)] = NUM_BYTES_USHORT;
+            PRIMITIVE_SIZES[typeof(char)] = NUM_BYTES_CHAR;
+            PRIMITIVE_SIZES[typeof(short)] = NUM_BYTES_SHORT;
+            PRIMITIVE_SIZES[typeof(ushort)] = NUM_BYTES_USHORT;
 
             // 4
-            PrimitiveSizes[typeof(int)] = NUM_BYTES_INT;
-            PrimitiveSizes[typeof(uint)] = NUM_BYTES_UINT;
-            PrimitiveSizes[typeof(float)] = NUM_BYTES_FLOAT;
+            PRIMITIVE_SIZES[typeof(int)] = NUM_BYTES_INT;
+            PRIMITIVE_SIZES[typeof(uint)] = NUM_BYTES_UINT;
+            PRIMITIVE_SIZES[typeof(float)] = NUM_BYTES_FLOAT;
 
             // 8
-            PrimitiveSizes[typeof(long)] = NUM_BYTES_LONG;
-            PrimitiveSizes[typeof(ulong)] = NUM_BYTES_ULONG;
-            PrimitiveSizes[typeof(double)] = NUM_BYTES_DOUBLE;
+            PRIMITIVE_SIZES[typeof(long)] = NUM_BYTES_LONG;
+            PRIMITIVE_SIZES[typeof(ulong)] = NUM_BYTES_ULONG;
+            PRIMITIVE_SIZES[typeof(double)] = NUM_BYTES_DOUBLE;
 
             // 16
-            PrimitiveSizes[typeof(decimal)] = NUM_BYTES_DECIMAL;
+            PRIMITIVE_SIZES[typeof(decimal)] = NUM_BYTES_DECIMAL;
 
             // The Java Version references "sun.misc.Unsafe", the closest class to have one or two of the
             // methods that Unsafe has is System.Runtime.InteropServices.Marshal
@@ -208,12 +209,12 @@ namespace Lucene.Net.Util
             // a developer can visually see how the number of bytes are actually
             // added up.
 
-            int typeObjectPointer = 4; // 4 bytes  32 bit
-            int syncBlock = 4;
-            int arrayLength = 4;
-            int elementReferenceMethodTable = 4;
-            int memoryAlignmentSize = 4;
-            int referenceTypeSize = 4;
+            int typeObjectPointer = 4, // 4 bytes  32 bit
+                syncBlock = 4,
+                arrayLength = 4,
+                elementReferenceMethodTable = 4,
+                memoryAlignmentSize = 4,
+                referenceTypeSize = 4;
 
             if (Constants.KRE_IS_64BIT)
             {
@@ -227,9 +228,9 @@ namespace Lucene.Net.Util
 
             
 
-            int objectHeader = typeObjectPointer + syncBlock;
-            int valueTypeArrayHeader = typeObjectPointer + syncBlock + arrayLength;
-            int referenceTypeArrayHeader = typeObjectPointer + syncBlock + arrayLength + elementReferenceMethodTable;
+            int objectHeader = typeObjectPointer + syncBlock,
+                valueTypeArrayHeader = typeObjectPointer + syncBlock + arrayLength,
+                referenceTypeArrayHeader = typeObjectPointer + syncBlock + arrayLength + elementReferenceMethodTable;
 
             NUM_BYTES_OBJECT_REF = referenceTypeSize;
             NUM_BYTES_OBJECT_HEADER = objectHeader;
@@ -242,34 +243,33 @@ namespace Lucene.Net.Util
             NUM_BYTES_REFERENCE_TYPE_ARRAY_HEADER = referenceTypeArrayHeader;
         }
 
+        /// <summary>
+        /// Adjusts for field.
+        /// </summary>
+        /// <param name="sizeSoFar">The size so far.</param>
+        /// <param name="f">The f.</param>
+        /// <returns>System.Int64.</returns>
         public static long AdjustForField(long sizeSoFar, FieldInfo f)
         {
             var typeInfo = f.FieldType.GetTypeInfo();
-            int fsize = typeInfo.IsPrimitive ? PrimitiveSizes[f.FieldType] : NUM_BYTES_OBJECT_REF;
+            var fieldSize = typeInfo.IsPrimitive ? PRIMITIVE_SIZES[f.FieldType] : NUM_BYTES_OBJECT_REF;
 
-            if (f.DeclaringType != null && f.DeclaringType.GetTypeInfo().IsValueType)
-            {
-                try
-                {
-                    // this is the closest thing that .NET has to getting the FieldOffset.
-                    // objectFieldOffsetMethod
+            if (f.DeclaringType == null || !f.DeclaringType.GetTypeInfo().IsValueType) 
+                return sizeSoFar + fieldSize;
+           
+            // this is the closest thing that .NET has to getting the FieldOffset.
+            // objectFieldOffsetMethod
 
-                    // here is a .NET Fiddle that shows what the code in Java is attempting to account for
-                    // https://dotnetfiddle.net/7fSZ5b
+            // here is a .NET Fiddle that shows what the code in Java is attempting to account for
+            // https://dotnetfiddle.net/7fSZ5b
 
-                    // the alternative would be to create an express to use Marshal.OffsetOf<T>(fieldName).
+            // the alternative would be to create an express to use Marshal.OffsetOf<T>(fieldName).
 #pragma warning disable 0618
-                    var offset = Marshal.OffsetOf(f.DeclaringType, f.Name).ToInt64() + fsize;
+            var offset = Marshal.OffsetOf(f.DeclaringType, f.Name).ToInt64() + fieldSize;
 #pragma warning restore 0618
-                    Math.Max(sizeSoFar, offset);
-                }
-                catch
-                {
-                    throw;
-                }
-            }
+            return Math.Max(sizeSoFar, offset);
 
-            return sizeSoFar + fsize;
+  
         }
 
 
@@ -280,7 +280,7 @@ namespace Lucene.Net.Util
         /// <returns>The size of the object after its alignment. </returns>
         public static long AlignObjectSize(long size)
         {
-            size += (long)NUM_BYTES_OBJECT_ALIGNMENT - 1L;
+            size += NUM_BYTES_OBJECT_ALIGNMENT - 1L;
             return size - (size % NUM_BYTES_OBJECT_ALIGNMENT);
         }
 
@@ -290,7 +290,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static string HumanReadableUnits(long bytes)
         {
-            return HumanReadableUnits(bytes, new NumberFormatInfo() { NumberDecimalDigits = 1 });
+            return HumanReadableUnits(bytes, new NumberFormatInfo { NumberDecimalDigits = 1 });
         }
 
         /// <summary> 
@@ -302,19 +302,19 @@ namespace Lucene.Net.Util
 
             if (bytes / ONE_GB > 0)
             {
-                newSizeAndUnits = System.Convert.ToString(((float)bytes / ONE_GB), df) + " GB";
+                newSizeAndUnits = Convert.ToString(((float)bytes / ONE_GB), df) + " GB";
             }
             else if (bytes / ONE_MB > 0)
             {
-                newSizeAndUnits = System.Convert.ToString((float)bytes / ONE_MB, df) + " MB";
+                newSizeAndUnits = Convert.ToString((float)bytes / ONE_MB, df) + " MB";
             }
             else if (bytes / ONE_KB > 0)
             {
-                newSizeAndUnits = System.Convert.ToString((float)bytes / ONE_KB, df) + " KB";
+                newSizeAndUnits = Convert.ToString((float)bytes / ONE_KB, df) + " KB";
             }
             else
             {
-                newSizeAndUnits = System.Convert.ToString(bytes) + " bytes";
+                newSizeAndUnits = Convert.ToString(bytes) + " bytes";
             }
 
             return newSizeAndUnits;
@@ -349,16 +349,9 @@ namespace Lucene.Net.Util
             if (obj == null)
                 return 0;
 
-            Type type = obj.GetType();
+            var type = obj.GetType();
 
-            if (type.IsArray)
-            {
-                return ShallowSizeOfArray((Array)obj);
-            }
-            else
-            {
-                return ShallowSizeOfInstance(type);
-            }
+            return type.IsArray ? ShallowSizeOfArray((Array)obj) : ShallowSizeOfInstance(type);
         }
 
         /// <summary>
@@ -378,7 +371,7 @@ namespace Lucene.Net.Util
                 throw new ArgumentException("This method does not work with Arrays.");
 
             if (typeInfo.IsPrimitive)
-                return PrimitiveSizes[typeInfo.AsType()];
+                return PRIMITIVE_SIZES[typeInfo.AsType()];
 
             long size = NUM_BYTES_OBJECT_HEADER;
 
@@ -404,7 +397,7 @@ namespace Lucene.Net.Util
                 if (arrayElementTypeInfo.IsPrimitive)
                 {
                     size = NUM_BYTES_VALUE_TYPE_ARRAY_HEADER;
-                    size += (long)length * PrimitiveSizes[arrayElementType];
+                    size += (long)length * PRIMITIVE_SIZES[arrayElementType];
                 }
       
                 else
@@ -427,9 +420,10 @@ namespace Lucene.Net.Util
             return SizeOf(array.ToCharArray());
         }
 
+        // ReSharper disable once CSharpWarnings::CS1580
         /// <summary>
         /// Returns the size of the memory allocation for <typeparamref name="T"/>[]. If the
-        /// array is not a primitive type, it defers the array to <see cref="ShallowSizeOfArray(Array)"/> 
+        /// array is not a primitive type, it defers the array to <see cref="ShallowSizeOfArray(System.Array)"/> 
         /// </summary>
         /// <typeparam name="T">The element type of the array</typeparam>
         /// <param name="array">The array of <typeparamref name="T"/>.</param>
@@ -437,12 +431,12 @@ namespace Lucene.Net.Util
         public static long SizeOf<T>(T[] array) where T : struct
         {
             var type = typeof(T);
-            if (!PrimitiveSizes.ContainsKey(type))
+            if (!PRIMITIVE_SIZES.ContainsKey(type))
                 return ShallowSizeOfArray(array);
 
-            int bytes = PrimitiveSizes[type];
+            var bytes = PRIMITIVE_SIZES[type];
           
-            var size = (long)NUM_BYTES_VALUE_TYPE_ARRAY_HEADER + (long)bytes * array.Length;
+            var size = NUM_BYTES_VALUE_TYPE_ARRAY_HEADER + (long)bytes * array.Length;
 
             return AlignObjectSize(size);
         }
@@ -456,13 +450,8 @@ namespace Lucene.Net.Util
         /// <returns>The memory allocation size.</returns>
         public static long SizeOf(IAccountable[] accountables)
         {
-            var size = ShallowSizeOf(accountables);
-            foreach (var accountable in accountables)
-            {
-                size += accountable.RamBytesUsed;
-            }
-
-            return size;
+            // ReSharper disable once CoVariantArrayConversion
+            return ShallowSizeOf(accountables) + accountables.Sum(accountable => accountable.RamBytesUsed);
         }
     }
 }

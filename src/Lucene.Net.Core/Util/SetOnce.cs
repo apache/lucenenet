@@ -19,7 +19,7 @@ namespace Lucene.Net.Util
 {
     using System;
     using Lucene.Net.Support;
-
+    using ICloneable = Lucene.Net.Support.ICloneable;
   
 
     /// <summary>
@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     /// and retrieve it many times. 
     /// </summary>
     /// <typeparam name="T">The value type.</typeparam>
-    public class SetOnce<T> : Lucene.Net.Support.ICloneable
+    public class SetOnce<T> : ICloneable
     {
         private T value;
         private volatile bool isSet;
@@ -72,10 +72,11 @@ namespace Lucene.Net.Util
         /// Sets the value.
         /// </summary>
         /// <param name="value">The value to be set.</param>
-        /// <exception cref="SetOnce.AlreadySetException">Thrown when the value has already been set.</exception>
+        /// <exception cref="SetOnce{T}.AlreadySetException">Thrown when the value has already been set.</exception>
+        // ReSharper disable once ParameterHidesMember
         protected void Set(T value)
         {
-            if (!Object.ReferenceEquals(this.value, value) && isSet)
+            if (!ReferenceEquals(this.value, value) && isSet)
                 throw new AlreadySetException("value has already been set");
 
             this.isSet = true;

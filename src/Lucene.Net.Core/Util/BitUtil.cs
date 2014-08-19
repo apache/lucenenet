@@ -21,12 +21,14 @@ namespace Lucene.Net.Util
     /// <summary>
     ///  A variety of high efficiency bit twiddling routines.
     ///  </summary>
+    // ReSharper disable CSharpWarnings::CS1574
     public static class BitUtil
     {
         /// <summary>
         /// table of bytes
         /// </summary>
-        private static readonly byte[] BYTE_COUNTS = new byte[] {
+        private static readonly byte[] BYTE_COUNTS =
+        {
             0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 
             1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 
             1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 
@@ -55,13 +57,13 @@ namespace Lucene.Net.Util
         /// <remarks>
         ///     <para>
         ///         <code language="python">
-        ///             *** the python code that generated bitlist
+        ///             *** the python code that generated bit list
         /// def bits2int(val):
         ///     arr=0
         ///     for shift in range(8,0,-1):
         ///     if val & 0x80:
-        ///         arr = (arr << 4) | shift
-        ///     val = val << 1
+        ///         arr = (arr &lt;&lt; 4) | shift
+        ///     val = val &lt;&lt; 1
         ///     return arr
         ///
         /// def int_table():
@@ -71,11 +73,12 @@ namespace Lucene.Net.Util
         ///         </code>
         ///     </para>
         ///     <para>
-        ///         0x87654321 converts to unint, so an unchecked conversion to int is required. 
+        ///         0x87654321 converts to uint, so an unchecked conversion to int is required. 
         ///     </para>
         /// </remarks>
-        private static readonly int[] BIT_LISTS = new int[] { 
-          0x0, 0x1, 0x2, 0x21, 0x3, 0x31, 0x32, 0x321, 0x4, 0x41, 0x42, 0x421, 0x43, 
+        private static readonly int[] BIT_LISTS =
+        { 
+            0x0, 0x1, 0x2, 0x21, 0x3, 0x31, 0x32, 0x321, 0x4, 0x41, 0x42, 0x421, 0x43, 
             0x431, 0x432, 0x4321, 0x5, 0x51, 0x52, 0x521, 0x53, 0x531, 0x532, 0x5321, 
             0x54, 0x541, 0x542, 0x5421, 0x543, 0x5431, 0x5432, 0x54321, 0x6, 0x61, 0x62, 
             0x621, 0x63, 0x631, 0x632, 0x6321, 0x64, 0x641, 0x642, 0x6421, 0x643, 
@@ -103,7 +106,7 @@ namespace Lucene.Net.Util
             0x87643, 0x876431, 0x876432, 0x8764321, 0x8765, 0x87651, 0x87652, 0x876521, 
             0x87653, 0x876531, 0x876532, 0x8765321, 0x87654, 0x876541, 0x876542, 
             0x8765421, 0x876543, 0x8765431, 0x8765432, unchecked((int)0x87654321)
-       };
+        };
 
         /// <summary>
         /// Gets the number of bits sets in the <paramref name="value"/>.
@@ -123,7 +126,7 @@ namespace Lucene.Net.Util
         ///     <list type="bullet">
         ///     <item>
         ///         <code>(i >>> (4 * n)) & 0x0F</code> is the offset of the n-th set bit of the given 
-        ///         byte. For example <see cref="GetBiteList"/>(12) returns 0x43.
+        ///         byte. For example <see cref="BitList(byte)"/>(12) returns 0x43.
         ///     </item>
         ///     <item>
         ///         <code>0x43 & 0x0F</code> is 3, meaning the the first bit set is at offset 3-1 = 2.
@@ -134,7 +137,8 @@ namespace Lucene.Net.Util
         ///     <item>
         ///         <code>(0x43 >>> 8) & 0x0F</code> is 0, meaning there is no more bit set in this byte.
         ///     </item>
-        ///     </para>
+        ///     </list>
+        ///     
         /// </remarks>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -146,7 +150,7 @@ namespace Lucene.Net.Util
 
        
         /// <summary>
-        /// Returns the number of set bits in an array of <see cref="System.Int34"/>.
+        /// Returns the number of set bits in an array of <see cref="System.Int32"/>.
         /// </summary>
         /// <param name="array">An array of <see cref="System.Int64"/></param>
         /// <param name="wordOffset">The offset position.</param>
@@ -173,10 +177,10 @@ namespace Lucene.Net.Util
         /// <param name="wordOffset">The offset position.</param>
         /// <param name="numberOfWords">The number of words, usually the length of the first array.</param>
         /// <returns>The number of set bits.</returns>
-        public static long PopIntersect(long[] left, long[] right, int wordOffset, int numWords)
+        public static long PopIntersect(long[] left, long[] right, int wordOffset, int numberOfWords)
         {
             long popCount = 0;
-            for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
+            for (int i = wordOffset, end = wordOffset + numberOfWords; i < end; ++i)
             {
                 popCount += BitCount(left[i] & right[i]);
             }
@@ -192,10 +196,10 @@ namespace Lucene.Net.Util
         /// <param name="wordOffset">The offset position.</param>
         /// <param name="numberOfWords">The number of words, usually the length of the first array.</param>
         /// <returns>The number of set bits.</returns>
-        public static long PopUnion(long[] left, long[] right, int wordOffset, int numWords)
+        public static long PopUnion(long[] left, long[] right, int wordOffset, int numberOfWords)
         {
             long popCount = 0;
-            for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
+            for (int i = wordOffset, end = wordOffset + numberOfWords; i < end; ++i)
             {
                 popCount += BitCount(left[i] | right[i]);
             }
@@ -211,10 +215,10 @@ namespace Lucene.Net.Util
         /// <param name="wordOffset">The offset position.</param>
         /// <param name="numberOfWords">The number of words, usually the length of the first array.</param>
         /// <returns>The number of set bits.</returns>
-        public static long PopAndNot(long[] left, long[] right, int wordOffset, int numWords)
+        public static long PopAndNot(long[] left, long[] right, int wordOffset, int numberOfWords)
         {
             long popCount = 0;
-            for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
+            for (int i = wordOffset, end = wordOffset + numberOfWords; i < end; ++i)
             {
                 popCount += BitCount(left[i] & ~right[i]);
             }
@@ -230,11 +234,11 @@ namespace Lucene.Net.Util
         /// <param name="wordOffset">The offset position.</param>
         /// <param name="numberOfWords">The number of words, usually the length of the first array.</param>
         /// <returns>The number of set bits.</returns>
-        public static long PopXor(long[] left, long[] right, int wordOffset, int numWords)
+        public static long PopXor(long[] left, long[] right, int wordOffset, int numberOfWords)
         {
          
             long popCount = 0;
-            for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
+            for (int i = wordOffset, end = wordOffset + numberOfWords; i < end; ++i)
             {
                 popCount += BitCount(left[i] ^ right[i]);
             }
@@ -278,7 +282,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Decode a long previously encoded with <see cref="ZigZagEndcode"/>.
+        /// Decode a long previously encoded with <see cref="ZigZagEncode(int)"/>.
         /// </summary>
         /// <param name="value">The value to be decoded.</param>
         /// <returns>The decoded value.</returns>
@@ -288,7 +292,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Decode a long previously encoded with <see cref="ZigZagEndcode"/>.
+        /// Decode a long previously encoded with <see cref="ZigZagEncode(long)"/>.
         /// </summary>
         /// <param name="value">The value to be decoded.</param>
         /// <returns>The decoded value.</returns>
@@ -302,7 +306,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///     <ahref="https://developers.google.com/protocol-buffers/docs/encoding#types">Zig-zag</a>
+        ///     <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">Zig-zag</a>
         ///     encode the provided long. Assuming the input is a signed long whose
         ///     absolute value can be stored on <tt>n</tt> bits, the returned value will
         ///     be an unsigned long that can be stored on <tt>n+1</tt> bits.
@@ -320,7 +324,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///     <ahref="https://developers.google.com/protocol-buffers/docs/encoding#types">Zig-zag</a>
+        ///     <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">Zig-zag</a>
         ///     encode the provided long. Assuming the input is a signed long whose
         ///     absolute value can be stored on <tt>n</tt> bits, the returned value will
         ///     be an unsigned long that can be stored on <tt>n+1</tt> bits.

@@ -21,6 +21,8 @@ namespace Lucene.Net.Util
     using System.Reflection;
     using System.Threading;
 
+    // ReSharper disable CSharpWarnings::CS1574
+    // ReSharper disable once CSharpWarnings::CS1584
     /// <summary>
     ///     Replacement for Java's CloseableThreadLocal. Java's ThreadLocal keeps objects alive even after a thread dies.
     ///     CloseableThreadLocal was created in order to purge objects that are still in memory even though the
@@ -34,6 +36,7 @@ namespace Lucene.Net.Util
     ///         collection to do it.
     ///     </para>
     ///     <para>
+
     ///         PCL, portable class libraries, currently does not support the <see cref="System.Threading.Thread" />
     ///         class. In order to get around this, <see cref="IPurgeStrategy" /> was created so that different
     ///         purge strategies can be swapped out.  The default strategy can't investigate threads, so the
@@ -106,7 +109,7 @@ namespace Lucene.Net.Util
             get
             {
                 this.CheckDisposed();
-                WeakReference reference = this.threadLocal.Value;
+                var reference = this.threadLocal.Value;
                 if (reference == null || !reference.IsAlive)
                 {
                     T value = default(T);

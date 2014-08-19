@@ -17,11 +17,10 @@
 
 namespace Lucene.Net.Support
 {
-    using System.Text;
     using System.Text.RegularExpressions;
 
     /// <summary>
-    /// String extenion methods to help with Java to C# conversion
+    /// String extension methods to help with Java to C# conversion
     /// </summary>
     public static class StringExtensionMethods
     {

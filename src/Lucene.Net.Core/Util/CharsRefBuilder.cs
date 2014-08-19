@@ -22,13 +22,14 @@ namespace Lucene.Net.Util
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
-    /// Builds up characters for a <see cref="Lucene.Net.Util.CharRef"/>. 
+    /// Builds up characters for a <see cref="Lucene.Net.Util.CharsRef"/>. 
     /// This class is meant for internal use only. 
     /// </summary>
+    // ReSharper disable CSharpWarnings::CS1574
     public class CharsRefBuilder:
         IEnumerable<char>
     {
-        private CharsRef charsRef;
+        private readonly CharsRef charsRef;
         
         /// <summary>
         /// Initializes a new instance of <see cref="CharsRefBuilder"/>.
@@ -42,7 +43,7 @@ namespace Lucene.Net.Util
         /// Gets or sets the character value at the specified index.
         /// </summary>
         /// <param name="index">The position of the value to get or set.</param>
-        /// <returns>The value at the spcified index.</returns>
+        /// <returns>The value at the specified index.</returns>
         public char this[int index]
         {
             get { return this.charsRef.Chars[index]; }
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Gets the internal reference of <see cref="Lucene.Net.Util.CharRef"/> 
+        /// Gets the internal reference of <see cref="Lucene.Net.Util.CharsRef"/> 
         /// that the builder uses.
         /// </summary>
         public CharsRef CharRef
@@ -105,7 +106,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Copies the <see cref="Lucene.Net.Util.CharRef"/> into this instance.
+        /// Copies the <see cref="Lucene.Net.Util.CharsRef"/> into this instance.
         /// </summary>
         /// <param name="other">The instance to copy.</param>
         public void CopyChars(CharsRef other)
@@ -127,7 +128,7 @@ namespace Lucene.Net.Util
         /// </exception>
         public void CopyChars(char[] chars, int offset = 0, int length = 0)
         {
-            this.InternalCopyChars(chars, offset, length, false);
+            this.InternalCopyChars(chars, offset, length);
         }
 
         private void InternalCopyChars(char[] chars, int offset = 0, int length = 0, bool append = false)
@@ -157,7 +158,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Copies the <see cref="Lucene.Net.Util.BytesRef"/> into this instance.
         /// </summary>
-        /// <param name="other">The instance to copy.</param>
+        /// <param name="bytes">The instance to copy.</param>
         public void CopyUtf8Bytes(BytesRef bytes)
         {
             this.CopyUtf8Bytes(bytes.Bytes, bytes.Offset, bytes.Length);
@@ -167,13 +168,13 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Copies the bytes into this instance.
         /// </summary>
-        /// <param name="chars">The array of characters to copy.</param>
-        /// <param name="offset">The starting position in <paramref name="chars"/> for the copy.</param>
-        /// <param name="length">The number of characters to copy from <paramref name="chars"/>.</param>
+        /// <param name="bytes">The array of bytes to copy.</param>
+        /// <param name="offset">The starting position in <paramref name="bytes"/> for the copy.</param>
+        /// <param name="length">The number of characters to copy from <paramref name="bytes"/>.</param>
         /// <exception cref="System.ArgumentException">
         ///     <list type="bullet">
         ///         <item>Thrown when <paramref name="offset"/> is less than 0.</item>
-        ///         <item>Thrown when <paramref name="length"/> is less than 0 or greater than <paramref name="chars"/>.Length.</item>
+        ///         <item>Thrown when <paramref name="length"/> is less than 0 or greater than <paramref name="bytes"/>.Length.</item>
         ///     </list>
         /// </exception>
         public void CopyUtf8Bytes(byte[] bytes, int offset = 0, int length = 0)
@@ -187,7 +188,7 @@ namespace Lucene.Net.Util
 
             this.Grow(length);
 
-            this.charsRef.Length = UnicodeUtil.UTF8toUTF16(bytes, offset, length, this.charsRef);
+            this.charsRef.Length = UnicodeUtil.Utf8ToUtf16(bytes, offset, length, this.charsRef);
         }
 
         /// <inherits />
@@ -217,10 +218,10 @@ namespace Lucene.Net.Util
 
 
         /// <summary>
-        /// Returns a new instance of <see cref="Lucene.Net.Util.CharRef"/> that has 
+        /// Returns a new instance of <see cref="Lucene.Net.Util.CharsRef"/> that has 
         /// copy of the current state of this instance.
         /// </summary>
-        /// <returns>a new instance of <see cref="Lucene.Net.Util.CharRef"/></returns>
+        /// <returns>a new instance of <see cref="Lucene.Net.Util.CharsRef"/></returns>
         public CharsRef ToCharRef()
         {
             var copy = this.charsRef.Chars.CopyOf(this.charsRef.Length);

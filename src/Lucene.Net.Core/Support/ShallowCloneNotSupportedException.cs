@@ -26,12 +26,12 @@ namespace Lucene.Net.Support
     public class ShallowCloneNotSupportedException : NotSupportedException
     {
         /// <summary>
-        /// Initizalizes a new instance of <see cref="ShallowCloneNotSupportedException"/> class.
+        /// Initializes a new instance of <see cref="ShallowCloneNotSupportedException"/> class.
         /// </summary>        
         public ShallowCloneNotSupportedException() { }
 
         /// <summary>
-        /// Initizalizes a new instance of <see cref="ShallowCloneNotSupportedException"/> class with the type
+        /// Initializes a new instance of <see cref="ShallowCloneNotSupportedException"/> class with the type
         /// that does not allow shallow clones.
         /// </summary>        
         /// <param name="type">The class type that does not allow shallow clones.</param>
@@ -42,13 +42,13 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Initizalizes a new instance of <see cref="ShallowCloneNotSupportedException"/> class with a specified message.
+        /// Initializes a new instance of <see cref="ShallowCloneNotSupportedException"/> class with a specified message.
         /// </summary>
         /// <param name="message">A string that describes the error that is meant to be understood by humans.</param>
         public ShallowCloneNotSupportedException(string message) : base(message) { }
 
         /// <summary>
-        /// Initizalizes a new instance of <see cref="ShallowCloneNotSupportedException"/> class with a specified message and a 
+        /// Initializes a new instance of <see cref="ShallowCloneNotSupportedException"/> class with a specified message and a 
         /// reference to the inner exception that caused this exception.
         /// </summary>
         /// <param name="message">A string that describes the error that is meant to be understood by humans.</param>

@@ -27,7 +27,7 @@ namespace Lucene.Net.Support
     {
 
         /// <summary>
-        /// Initizalizes a new instance of <see cref="DeepCloneNotSupportedException"/> class.
+        /// Initializes a new instance of <see cref="DeepCloneNotSupportedException"/> class.
         /// </summary>
         public DeepCloneNotSupportedException() { }
 

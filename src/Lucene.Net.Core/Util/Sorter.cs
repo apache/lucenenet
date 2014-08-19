@@ -26,12 +26,10 @@ namespace Lucene.Net.Util
     /// <summary>
     /// 
     /// </summary>
+    // ReSharper disable CSharpWarnings::CS1574
     public abstract class Sorter : IComparer<int>
     {
         protected static readonly int THRESHOLD = 20;
-
-
-        protected Sorter() { }
 
         /// <summary>
         /// Sort a slice or range which begins at the <paramref name="start"/> index to the <paramref name="count"/> index.
@@ -81,7 +79,8 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            else if (count - start == 2)
+            
+            if (count - start == 2)
             {
                 this.Swap(middle - 1, middle);
                 return;
@@ -96,11 +95,11 @@ namespace Lucene.Net.Util
             }
 
             int firstCut, secondCut;
-            int len11, len22;
+            int len22;
 
             if (middle - start > count - middle)
             {
-                len11 = (middle - start) >> 1;
+                var len11 = (middle - start) >> 1;
                 firstCut = start + len11;
                 secondCut = this.Lower(middle, count, firstCut);
                 len22 = secondCut - middle;
@@ -110,7 +109,7 @@ namespace Lucene.Net.Util
                 len22 = (count - middle) >> 1;
                 secondCut = middle + len22;
                 firstCut = this.Upper(start, middle, secondCut);
-                len11 = firstCut - start;
+                //len11 = firstCut - start;
             }
 
             this.Rotate(firstCut, middle, secondCut);
@@ -251,12 +250,12 @@ namespace Lucene.Net.Util
             }
         }
 
-        void BinarySort(int start, int count)
+        protected void BinarySort(int start, int count)
         {
             this.BinarySort(start, count, start + 1);
         }
 
-        void BinarySort(int start, int count, int i)
+        protected void BinarySort(int start, int count, int i)
         {
             for (; i < count; ++i)
             {
@@ -296,7 +295,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        void HeapSort(int start, int count)
+        protected void HeapSort(int start, int count)
         {
             if (count - start <= 1)
             {
@@ -305,14 +304,14 @@ namespace Lucene.Net.Util
 
             this.Heapify(start, count);
 
-            for (int end = count - 1; end > start; --end)
+            for (var end = count - 1; end > start; --end)
             {
                 this.Swap(start, end);
                 this.SiftDown(start, start, end);
             }
         }
 
-        void Heapify(int start, int count)
+        protected void Heapify(int start, int count)
         {
             for (int i = HeapParent(start, count - 1); i >= start; --i)
             {
@@ -320,7 +319,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        void SiftDown(int i, int start, int count)
+        protected void SiftDown(int i, int start, int count)
         {
             for (int leftChild = HeapChild(start, i); leftChild < count; leftChild = HeapChild(start, i))
             {

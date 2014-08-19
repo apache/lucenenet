@@ -27,8 +27,8 @@ namespace Lucene.Net.Support
     /// A C# emulation of the <a href="http://download.oracle.com/javase/1,5.0/docs/api/java/util/HashMap.html">Java Hashmap</a>
     /// <para>
     /// A <see cref="Dictionary{TKey, TValue}" /> is a close equivalent to the Java
-    /// Hashmap.  One difference java implementation of the class is that
-    /// the Hashmap supports both null keys and values, where the C# Dictionary
+    /// HashMap.  One difference java implementation of the class is that
+    /// the HashMap supports both null keys and values, where the C# Dictionary
     /// only supports null values not keys.  Also, <c>V Get(TKey)</c>
     /// method in Java returns null if the key doesn't exist, instead of throwing
     /// an exception.  This implementation doesn't throw an exception when a key 
@@ -42,26 +42,27 @@ namespace Lucene.Net.Support
     /// null).  Therefore, if the expected behavior of the java code is to execute code
     /// based on if the key exists, when the key is an integer type, it will return 0 instead of null.
     /// </para>
-    /// <remaks>
+    /// <remarks>
     /// Consider also implementing IDictionary, IEnumerable, and ICollection
     /// like <see cref="Dictionary{TKey, TValue}" /> does, so HashMap can be
     /// used in substituted in place for the same interfaces it implements.
-    /// </remaks>
+    /// </remarks>
     /// </summary>
     /// <typeparam name="TKey">The type of keys in the dictionary</typeparam>
     /// <typeparam name="TValue">The type of values in the dictionary</typeparam>
+    // ReSharper disable CSharpWarnings::CS1574
     [Serializable]
     public class HashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        internal IEqualityComparer<TKey> _comparer;
-        internal IDictionary<TKey, TValue> _dict;
+        internal IEqualityComparer<TKey> Comparer;
+        internal IDictionary<TKey, TValue> Dictionary;
 
         // Indicates if a null key has been assigned, used for iteration
-        private bool _hasNullValue;
+        private bool hasNullValue;
         // stores the value for the null key
-        private TValue _nullValue;
-        // Indicates the type of key is a non-nullable valuetype
-        private bool _isValueType;
+        private TValue nullValue;
+        // Indicates the type of key is a non-nullable value type
+        private readonly bool isValueType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HashMap{TKey, TValue}"/> class.
@@ -107,20 +108,21 @@ namespace Lucene.Net.Support
         {
             foreach (var kvp in collection)
             {
+                // ReSharper disable once DoNotCallOverridableMethodsInConstructor
                 Add(kvp.Key, kvp.Value);
             }
         }
 
-        internal HashMap(IDictionary<TKey, TValue> wrappedDict, IEqualityComparer<TKey> comparer)
+        internal HashMap(IDictionary<TKey, TValue> wrappedDictionary, IEqualityComparer<TKey> comparer)
         {
-            _comparer = EqualityComparer<TKey>.Default;
-            _dict = wrappedDict;
-            _hasNullValue = false;
+            this.Comparer = comparer ?? EqualityComparer<TKey>.Default;
+            this.Dictionary = wrappedDictionary;
+            this.hasNullValue = false;
 
 
             if (typeof(TKey).GetTypeInfo().IsValueType)
             {
-                _isValueType = Nullable.GetUnderlyingType(typeof(TKey)) == null;
+                this.isValueType = Nullable.GetUnderlyingType(typeof(TKey)) == null;
             }
         }
 
@@ -132,10 +134,10 @@ namespace Lucene.Net.Support
         /// <returns>True, if the <see cref="HashMap{TKey, TValue}"/> contains the value; otherwise, false.</returns>
         public bool ContainsValue(TValue value)
         {
-            if (!_isValueType && _hasNullValue && _nullValue.Equals(value))
+            if (!this.isValueType && this.hasNullValue && this.nullValue.Equals(value))
                 return true;
 
-            return _dict.Values.Contains(value);
+            return this.Dictionary.Values.Contains(value);
         }
 
         /*
@@ -166,11 +168,11 @@ namespace Lucene.Net.Support
         /// </returns>
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            if (!_isValueType && _hasNullValue)
+            if (!this.isValueType && this.hasNullValue)
             {
-                yield return new KeyValuePair<TKey, TValue>(default(TKey), _nullValue);
+                yield return new KeyValuePair<TKey, TValue>(default(TKey), this.nullValue);
             }
-            foreach (var kvp in _dict)
+            foreach (var kvp in this.Dictionary)
             {
                 yield return kvp;
             }
@@ -195,9 +197,9 @@ namespace Lucene.Net.Support
         /// </summary>
         public void Clear()
         {
-            _hasNullValue = false;
-            _nullValue = default(TValue);
-            _dict.Clear();
+            this.hasNullValue = false;
+            this.nullValue = default(TValue);
+            this.Dictionary.Clear();
         }
 
 
@@ -210,12 +212,12 @@ namespace Lucene.Net.Support
         ///     false.</returns>
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            if (!_isValueType && _comparer.Equals(item.Key, default(TKey)))
+            if (!this.isValueType && this.Comparer.Equals(item.Key, default(TKey)))
             {
-                return _hasNullValue && EqualityComparer<TValue>.Default.Equals(item.Value, _nullValue);
+                return this.hasNullValue && EqualityComparer<TValue>.Default.Equals(item.Value, this.nullValue);
             }
 
-            return ((ICollection<KeyValuePair<TKey, TValue>>)_dict).Contains(item);
+            return this.Dictionary.Contains(item);
         }
 
         /// <summary>
@@ -224,7 +226,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="array">
         ///  The one-dimensional <see cref="System.Array"/> that is the destination of the elements copied
-        ///  from <see cref="HashMap{TKey, TValue}"> . The <see cref="System.Array"/> must have zero-based
+        ///  from <see cref="HashMap{TKey, TValue}" /> . The <see cref="System.Array"/> must have zero-based
         ///     indexing.
         /// </param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
@@ -233,12 +235,12 @@ namespace Lucene.Net.Support
             Check.NotNull("array", array);
 
             if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException("arrayIndex is must be 0 or greater.");
+                throw new ArgumentOutOfRangeException("arrayIndex", "arrayIndex must be 0 or greater.");
 
-            ((ICollection<KeyValuePair<TKey, TValue>>)_dict).CopyTo(array, arrayIndex);
-            if (!_isValueType && _hasNullValue)
+            this.Dictionary.CopyTo(array, arrayIndex);
+            if (!this.isValueType && this.hasNullValue)
             {
-                array[array.Length - 1] = new KeyValuePair<TKey, TValue>(default(TKey), _nullValue);
+                array[array.Length - 1] = new KeyValuePair<TKey, TValue>(default(TKey), this.nullValue);
             }
 
 
@@ -254,17 +256,17 @@ namespace Lucene.Net.Support
         /// </returns>
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            if (!_isValueType && _comparer.Equals(item.Key, default(TKey)))
+            if (!this.isValueType && this.Comparer.Equals(item.Key, default(TKey)))
             {
-                if (!_hasNullValue)
+                if (!this.hasNullValue)
                     return false;
 
-                _hasNullValue = false;
-                _nullValue = default(TValue);
+                this.hasNullValue = false;
+                this.nullValue = default(TValue);
                 return true;
             }
 
-            return ((ICollection<KeyValuePair<TKey, TValue>>)_dict).Remove(item);
+            return this.Dictionary.Remove(item);
         }
 
         /// <summary>
@@ -272,7 +274,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public int Count
         {
-            get { return _dict.Count + (_hasNullValue ? 1 : 0); }
+            get { return this.Dictionary.Count + (this.hasNullValue ? 1 : 0); }
         }
 
         /// <summary>
@@ -301,16 +303,16 @@ namespace Lucene.Net.Support
         /// </returns>
         public bool ContainsKey(TKey key)
         {
-            if (!_isValueType && _comparer.Equals(key, default(TKey)))
+            if (!this.isValueType && this.Comparer.Equals(key, default(TKey)))
             {
-                if (_hasNullValue)
+                if (this.hasNullValue)
                 {
                     return true;
                 }
                 return false;
             }
 
-            return _dict.ContainsKey(key);
+            return this.Dictionary.ContainsKey(key);
         }
 
         /// <summary>
@@ -320,14 +322,14 @@ namespace Lucene.Net.Support
         /// <param name="value">The object associated with the key.</param>
         public virtual void Add(TKey key, TValue value)
         {
-            if (!_isValueType && _comparer.Equals(key, default(TKey)))
+            if (!this.isValueType && this.Comparer.Equals(key, default(TKey)))
             {
-                _hasNullValue = true;
-                _nullValue = value;
+                this.hasNullValue = true;
+                this.nullValue = value;
             }
             else
             {
-                _dict[key] = value;
+                this.Dictionary[key] = value;
             }
         }
 
@@ -338,18 +340,12 @@ namespace Lucene.Net.Support
         /// <returns>True, if the element is successfully removed; otherwise, false. </returns>
         public bool Remove(TKey key)
         {
+            if (this.isValueType || !this.Comparer.Equals(key, default(TKey))) 
+                return this.Dictionary.Remove(key);
             
-           
-            if (!_isValueType && _comparer.Equals(key, default(TKey)))
-            {
-                _hasNullValue = false;
-                _nullValue = default(TValue);
-                return true;
-            }
-            else
-            {
-                return _dict.Remove(key);
-            }
+            this.hasNullValue = false;
+            this.nullValue = default(TValue);
+            return true;
         }
 
         /// <summary>
@@ -365,21 +361,17 @@ namespace Lucene.Net.Support
         /// </returns>
         public bool TryGetValue(TKey key, out TValue value)
         {
-            if (!_isValueType && _comparer.Equals(key, default(TKey)))
-            {
-                if (_hasNullValue)
-                {
-                    value = _nullValue;
-                    return true;
-                }
+            if (this.isValueType || !this.Comparer.Equals(key, default(TKey)))
+                return this.Dictionary.TryGetValue(key, out value);
 
-                value = default(TValue);
-                return false;
-            }
-            else
+            if (this.hasNullValue)
             {
-                return _dict.TryGetValue(key, out value);
+                value = this.nullValue;
+                return true;
             }
+
+            value = default(TValue);
+            return false;
         }
 
         /// <summary>
@@ -391,15 +383,15 @@ namespace Lucene.Net.Support
         {
             get
             {
-                if (!_isValueType && _comparer.Equals(key, default(TKey)))
+                if (!this.isValueType && this.Comparer.Equals(key, default(TKey)))
                 {
-                    if (!_hasNullValue)
+                    if (!this.hasNullValue)
                     {
                         return default(TValue);
                     }
-                    return _nullValue;
+                    return this.nullValue;
                 }
-                return _dict.ContainsKey(key) ? _dict[key] : default(TValue);
+                return this.Dictionary.ContainsKey(key) ? this.Dictionary[key] : default(TValue);
             }
             set { Add(key, value); }
         }
@@ -408,12 +400,12 @@ namespace Lucene.Net.Support
         {
             get
             {
-                if (!_hasNullValue) return _dict.Keys;
+                if (!this.hasNullValue) return this.Dictionary.Keys;
 
                 // Using a List<T> to generate an ICollection<TKey>
                 // would incur a costly copy of the dict's KeyCollection
                 // use out own wrapper instead
-                return new NullKeyCollection(_dict);
+                return new NullKeyCollection(this.Dictionary);
             }
         }
 
@@ -421,12 +413,12 @@ namespace Lucene.Net.Support
         {
             get
             {
-                if (!_hasNullValue) return _dict.Values;
+                if (!this.hasNullValue) return this.Dictionary.Values;
 
                 // Using a List<T> to generate an ICollection<TValue>
                 // would incur a costly copy of the dict's ValueCollection
                 // use out own wrapper instead
-                return new NullValueCollection(_dict, _nullValue);
+                return new NullValueCollection(this.Dictionary, this.nullValue);
             }
         }
 
@@ -440,22 +432,22 @@ namespace Lucene.Net.Support
         /// </summary>
         class NullValueCollection : ICollection<TValue>
         {
-            private readonly TValue _nullValue;
-            private readonly IDictionary<TKey, TValue> _internalDict;
+            private readonly TValue nullValue;
+            private readonly IDictionary<TKey, TValue> internalDictionary;
 
-            public NullValueCollection(IDictionary<TKey, TValue> dict, TValue nullValue)
+            public NullValueCollection(IDictionary<TKey, TValue> dictionary, TValue nullValue)
             {
-                _internalDict = dict;
-                _nullValue = nullValue;
+                this.internalDictionary = dictionary;
+                this.nullValue = nullValue;
             }
 
             #region Implementation of IEnumerable
 
             public IEnumerator<TValue> GetEnumerator()
             {
-                yield return _nullValue;
+                yield return nullValue;
 
-                foreach (var val in _internalDict.Values)
+                foreach (var val in internalDictionary.Values)
                 {
                     yield return val;
                 }
@@ -477,7 +469,7 @@ namespace Lucene.Net.Support
 
             public int Count
             {
-                get { return _internalDict.Count + 1; }
+                get { return internalDictionary.Count + 1; }
             }
 
             public bool IsReadOnly
@@ -520,17 +512,17 @@ namespace Lucene.Net.Support
         /// </summary>
         class NullKeyCollection : ICollection<TKey>
         {
-            private readonly IDictionary<TKey, TValue> _internalDict;
+            private readonly IDictionary<TKey, TValue> internalDictionary;
 
-            public NullKeyCollection(IDictionary<TKey, TValue> dict)
+            public NullKeyCollection(IDictionary<TKey, TValue> dictionary)
             {
-                _internalDict = dict;
+                this.internalDictionary = dictionary;
             }
 
             public IEnumerator<TKey> GetEnumerator()
             {
                 yield return default(TKey);
-                foreach (var key in _internalDict.Keys)
+                foreach (var key in internalDictionary.Keys)
                 {
                     yield return key;
                 }
@@ -548,7 +540,7 @@ namespace Lucene.Net.Support
 
             public int Count
             {
-                get { return _internalDict.Count + 1; }
+                get { return internalDictionary.Count + 1; }
             }
 
             public bool IsReadOnly

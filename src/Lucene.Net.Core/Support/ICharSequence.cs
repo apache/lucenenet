@@ -18,7 +18,7 @@
 namespace Lucene.Net.Support
 {
     /// <summary>
-    /// A readable sequence of <see cref="System.Char"/> values.
+    /// A readable sequence of <see cref="char"/> values.
     /// </summary>
     public interface ICharSequence
     {

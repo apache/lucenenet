@@ -25,7 +25,7 @@ namespace Lucene.Net.Support
     ///  Indicates that a class can be serialized. This class cannot be inherited. 
     ///  This is a placeholder for the SerializableAttribute that is not present in smaller
     ///  version of the .NET framework.
-    /// <summary>
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class SerializableAttribute : Attribute
     {

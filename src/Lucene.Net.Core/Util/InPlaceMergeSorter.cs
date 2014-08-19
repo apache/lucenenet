@@ -25,9 +25,7 @@ namespace Lucene.Net.Util
     public abstract class InPlaceMergeSorter : Sorter
     {
 
-        /** Create a new {@link InPlaceMergeSorter} */
-        public InPlaceMergeSorter() { }
-
+       
        
         public sealed override void SortRange(int start, int count)
         {
@@ -44,7 +42,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                int mid = (start + end) >> 1;
+                var mid = (start + end) >> 1;
 
                 this.MergeSort(start, mid);
                 this.MergeSort(mid, end);

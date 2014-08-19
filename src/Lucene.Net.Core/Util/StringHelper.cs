@@ -17,7 +17,6 @@
 
 namespace Lucene.Net.Util
 {
-    using System;
     using Lucene.Net.Support;
 
     public class StringHelper

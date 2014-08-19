@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
         public static readonly bool MAC_OS_X = OS_NAME.StartsWith("Mac OS X");
 
         /// <summary>
-        /// Gets the proccess architechture for the current machine.
+        /// Gets the process architecture for the current machine.
         /// </summary>
         // ReSharper disable once InconsistentNaming
         public static string OS_ARCH = SystemProps.Get("PROCESSOR_ARCHITECTURE", "x86");
@@ -106,19 +106,20 @@ namespace Lucene.Net.Util
         ///     </para>
         /// </remarks>
         // ReSharper disable once InconsistentNaming
-        public static readonly System.String LUCENE_MAIN_VERSION = Ident("5.0");
+        public static readonly String LUCENE_MAIN_VERSION = Identity("5.0");
 
         /// <summary>
         /// This is the Lucene version for display purposes.
         /// </summary>
         // ReSharper disable once InconsistentNaming
-        public static System.String LUCENE_VERSION;
+        public static String LUCENE_VERSION;
 
-        // this method prevents inlining the final version constant in compiled
+        // this method prevents in lining the final version constant in compiled
         // classes,
         // see: http://www.javaworld.com/community/node/3400
-        private static System.String Ident(System.String s)
+        private static String Identity(String s)
         {
+            // ReSharper disable once RedundantToStringCall
             return s.ToString();
         }
 

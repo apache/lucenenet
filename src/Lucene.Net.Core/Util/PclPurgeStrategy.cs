@@ -21,6 +21,7 @@ namespace Lucene.Net.Util
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    // ReSharper disable CSharpWarnings::CS1574
 
     /// <summary>
     /// Default <see cref="IPurgeStrategy"/> for <see cref="PurgeableThreadLocal{T}"/> that 
@@ -76,7 +77,6 @@ namespace Lucene.Net.Util
             if (Interlocked.Decrement(ref this.countUntilPurge) != 0) 
                 return;
 
-            var sem = new SemaphoreSlim(1);
             await this.semaphoreSlim.WaitAsync();
             try
             {

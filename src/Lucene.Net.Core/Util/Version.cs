@@ -19,7 +19,6 @@ namespace Lucene.Net.Util
 {
     using Lucene.Net.Support;
     using System;
-    using System.Text.RegularExpressions;
 
 
     /// <summary> Use by certain classes to match version compatibility
@@ -35,6 +34,7 @@ namespace Lucene.Net.Util
     ///         Java <see href="https://github.com/apache/lucene-solr/blob/trunk/lucene/core/src/test/org/apache/lucene/util/TestVersion.java">Source</see>
     ///     </para>
     /// </remarks>
+    // ReSharper disable InconsistentNaming
     [Flags]
     public enum Version
     {
@@ -46,7 +46,8 @@ namespace Lucene.Net.Util
         /// etc, for Lucene.
         /// </para>
         /// </summary>
-        [Obsolete()]
+        [Obsolete]
+
         LUCENE_4_3,
 
 
@@ -114,7 +115,6 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Parses the string value and converts it to the version. Some examples are: "4.3", "LUCENE_43", and "LUCENE_4_3" 
         /// </summary>
-        /// <param name="version">The string representation of the version.</param>
         /// <param name="version">The string representation of the version.</param>
         /// <returns><see cref="Lucene.Net.Util.Version"/></returns>
         public static Version ParseLeniently(string version)

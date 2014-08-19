@@ -20,6 +20,7 @@ namespace Lucene.Net.Support
     /// <summary>
     /// Summary description for SupportExtensionMethods
     /// </summary>
+    // ReSharper disable CSharpWarnings::CS1574
     public static class SupportExtensionMethods
     {
         /// <summary>
@@ -41,7 +42,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///     <see cref="https://code.google.com/p/smhasher/wiki/MurmurHash3">MurmurHash3</see>
+        ///     <a href="https://code.google.com/p/smhasher/wiki/MurmurHash3">MurmurHash3</a>
         ///     </para>
         /// </remarks>
         /// <param name="value">The value, usually from a <see cref="System.Object.GetHashCode"/>.</param>
@@ -56,7 +57,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///     <see cref="https://code.google.com/p/smhasher/wiki/MurmurHash3">MurmurHash3</see>
+        ///     <a href="https://code.google.com/p/smhasher/wiki/MurmurHash3">MurmurHash3</a>
         ///     </para>
         /// </remarks>
         /// <param name="value">The value, usually from a <see cref="System.Object.GetHashCode"/>.</param>

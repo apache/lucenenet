@@ -27,6 +27,8 @@ namespace Lucene.Net.Util
     ///     </para>
     /// </remarks>
     /// <seealso cref="IBits"/>
+    // for exceptions
+    // ReSharper disable CSharpWarnings::CS1574
     public static class Bits
     {
         public static readonly IBits[] EMPTY_ARRAY = new IBits[0];

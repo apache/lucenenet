@@ -17,6 +17,7 @@
 
 namespace Lucene.Net.Support
 {
+    // ReSharper disable once CSharpWarnings::CS1584
     /// <summary>
     /// Supports cloning, which creates a new instance of a class with the same value as an existing instance.
     /// </summary>
@@ -27,7 +28,7 @@ namespace Lucene.Net.Support
     ///         <see href="http://blogs.msdn.com/b/brada/archive/2003/04/09/49935.aspx">Brad Abrams even suggests not to use it.</see>
     ///     </para>
     ///     <para>
-    ///         The Lucene code base makes heavy use of the Java equivelant of ICloneable in its public APIs. In order to help keep on 
+    ///         The Lucene code base makes heavy use of the Java equivalent of ICloneable in its public APIs. In order to help keep on 
     ///         par with Lucene.Net's parent project and keep with design standards, the <see cref="ICloneable.Clone(bool)"/> method
     ///         has a parameter that instructs the instance to make a deep clone when true.  If a deep or shallow clone is not supported,
     ///         an exception must be thrown. 

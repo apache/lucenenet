@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-
 namespace Lucene.Net.Support
 {
     /// <summary>
     /// Class AtomicReferenceArray.
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    // ReSharper disable CSharpWarnings::CS1574
     public class AtomicReferenceArray<T>
     {
         // ReSharper disable once StaticFieldInGenericType
-        private static readonly object s_syncLock = new object();
+        private static readonly object SYNC_LOCK = new object();
         private readonly T[] array;
 
 
@@ -90,7 +90,7 @@ namespace Lucene.Net.Support
         /// <returns><c>true</c> if the index was updated, <c>false</c> otherwise.</returns>
         public bool CompareAndSet(int index, T expected, T value)
         {
-            lock (s_syncLock)
+            lock (SYNC_LOCK)
             {
                 var currentValue = this.array[index];
                 if (!expected.Equals(currentValue)) 
@@ -129,7 +129,7 @@ namespace Lucene.Net.Support
         {
             //Check.InRangeOfLength(0, this.Length, index);
 
-            lock (s_syncLock)
+            lock (SYNC_LOCK)
             {
                 var currentValue = this.array[index];
                 this.array[index] = value;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Support
         {
           
 
-            lock (s_syncLock)
+            lock (SYNC_LOCK)
             {
                 array[index] = value;
             }

@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
         /// Gets the string value associated with the specified <paramref name="key"/>.
         /// </summary>
         /// <param name="key">The identifier associated with a value.</param>
-        /// <returns>The <see cref="System.String"/> value.</returns>
+        /// <returns>The <see cref="string"/> value.</returns>
         public static string Get(string key)
         {
             return s_config.Get(key);

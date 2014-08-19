@@ -30,76 +30,75 @@ namespace Lucene.Net
         [DebuggerStepThrough]
         public static void Condition(bool condition, string name, string message, params object[] args)
         {
-            if (condition)
-            {
-                var formattedMessage = message;
-                if (args != null && args.Length > 0)
-                    formattedMessage = string.Format(message, args);
+            if (!condition) 
+                return;
+            
+            var formattedMessage = message;
+            if (args != null && args.Length > 0)
+                formattedMessage = string.Format(message, args);
 
-                throw new ArgumentException(formattedMessage, name);
-            }
+            throw new ArgumentException(formattedMessage, name);
         }
 
         [DebuggerStepThrough]
         public static void Condition<T>(bool condition, string message, params object[] args) where T : Exception
         {
-            if (condition)
-            {
-                var formattedMessage = message;
-                if (args != null && args.Length > 0)
-                    formattedMessage = string.Format(message, args);
+            if (!condition) 
+                return;
+            
+            var formattedMessage = message;
+            if (args != null && args.Length > 0)
+                formattedMessage = string.Format(message, args);
 
-                var ctorArgs = new object[] { formattedMessage };
-                var exception = (T)Activator.CreateInstance(typeof(T), ctorArgs);
+            var constructorArgs = new object[] { formattedMessage };
+            var exception = (T)Activator.CreateInstance(typeof(T), constructorArgs);
 
-                throw exception;
-            }
+            throw exception;
         }
 
         [DebuggerStepThrough]
         public static void InRangeOfLength(int start, int count, int length)
         {
-            if (start < 0 || start > length || count > length || start > count)
-            {
-                var message = string.Format("The argument, start, must not be less than 0 or " +
-                    " greater than end or Length. The argument, count, must be equal to or less than Length. " +
-                    " Start was {0}. Count was {1}. Length was {2}", start, count, length);
+            if (start >= 0 && start <= length && count <= length && start <= count) 
+                return;
+            
+            var message = string.Format("The argument, start, must not be less than 0 or " +
+                                        " greater than end or Length. The argument, count, must be equal to or less than Length. " +
+                                        " Start was {0}. Count was {1}. Length was {2}", start, count, length);
 
-                throw new IndexOutOfRangeException(message);
-            }
+            throw new IndexOutOfRangeException(message);
         }
 
         [DebuggerStepThrough]
         public static void InRangeOfLength(string argument, int value, int length)
         {
-            if (value < 0 || value > length)
-            {
-                var message = string.Format("{0} must not be less than 0 or " +
-                    "greater than or equal to the Length, {1}. {0} was {2}", argument, length, value);
+            if (value >= 0 && value <= length) 
+                return;
+            
+            var message = string.Format("{0} must not be less than 0 or " +
+                                        "greater than or equal to the Length, {1}. {0} was {2}", argument, length, value);
 
-                throw new IndexOutOfRangeException(message);
-            }
+            throw new IndexOutOfRangeException(message);
         }
 
         [DebuggerStepThrough]
         public static T NotNull<T>(string argument, T value, bool reference = false)
         {
-            if (value == null)
-            {
-                if (reference)
-                    throw new NullReferenceException(argument + " cannot be null.");
-                else
-                    throw new ArgumentNullException(argument);
 
-            }
-
-            return value;
+            // ReSharper disable once CompareNonConstrainedGenericWithNull
+            if (typeof (T).GetTypeInfo().IsValueType || value != null) 
+                return value;
+            
+            if (reference)
+                throw new NullReferenceException(argument + " cannot be null.");
+                
+            throw new ArgumentNullException(argument);
         }
 
         [DebuggerStepThrough]
         public static string NotEmpty(string argument, string value, bool reference = false)
         {
-            Check.NotNull(argument, value, reference);
+            NotNull(argument, value, reference);
 
             if (value.Length == 0)
             {
@@ -112,7 +111,7 @@ namespace Lucene.Net
         [DebuggerStepThrough]
         public static string NotEmptyOrWhitespace(string argument, string value, bool reference = false)
         {
-            Check.NotEmpty(argument, value, reference);
+            NotEmpty(argument, value, reference);
 
             if (value.Trim().Length == 0)
             {

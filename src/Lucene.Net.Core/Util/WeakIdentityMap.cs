@@ -101,7 +101,7 @@ namespace Lucene.Net.Util
                     if (target == null)
                         continue;
                     
-                    if (Object.ReferenceEquals(target, NULL_VALUE))
+                    if (ReferenceEquals(target, NULL_VALUE))
                         yield return null;
                     else
                         yield return (TKey)target;
@@ -123,7 +123,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a <seealso cref="ConcurrentHashMap"/>.
+        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a ConcurrentHashMap.
         /// The map <a href="#reapInfo">cleans up the reference queue on every read operation</a>.
         /// </summary>
         public static WeakIdentityMap<TKey, TValue> NewConcurrentHashMap()
@@ -132,7 +132,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a <seealso cref="ConcurrentHashMap"/>. </summary>
+        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a ConcurrentHashMap. </summary>
         /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
         public static WeakIdentityMap<TKey, TValue> NewConcurrentHashMap(bool reapOnRead)
         {
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a non-synchronized <seealso cref="HashMap"/>.
+        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a non-synchronized HashMap.
         /// The map <a href="#reapInfo">cleans up the reference queue on every read operation</a>.
         /// </summary>
         public static WeakIdentityMap<TKey, TValue> NewHashMap()
@@ -149,7 +149,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a non-synchronized <seealso cref="HashMap"/>. </summary>
+        /// Initializes a new <see cref="WeakIdentityMap{TKey,TValue}"/> based on a non-synchronized HashMap. </summary>
         /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
         public static WeakIdentityMap<TKey, TValue> NewHashMap(bool reapOnRead)
         {

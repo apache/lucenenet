@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
 
             Array.Sort(utf8);
 #pragma warning disable 0612, 0618
-            Array.Sort(utf16, CharsRef.UTF16SortedAsUTF8Comparer);
+            Array.Sort(utf16, CharsRef.Utf16SortedAsUtf8Comparer);
 #pragma warning restore 0612, 0618
 
             iterations.Times((i) => Equal(utf8[i].Utf8ToString(), utf16[i].ToString()));

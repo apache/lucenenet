@@ -17,8 +17,6 @@
 
 namespace Lucene.Net.Support
 {
-    using System;
-
     /// <summary>
     /// Extension methods for numeric types to enable the same functionality that
     /// currently exists in the standard java libraries. 
@@ -30,7 +28,7 @@ namespace Lucene.Net.Support
         /// </summary>
         static class DeBruijn32
         {
-            static int[] s_positions = new int[32]
+            static readonly int[] POSITIONS = 
 	        {
 	            0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
 	            31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
@@ -41,8 +39,8 @@ namespace Lucene.Net.Support
             /// </summary>
             public static int Position(int number)
             {
-                uint res = unchecked((uint)(number & -number) * 0x077CB531U) >> 27;
-                return s_positions[res];
+                var res = unchecked((uint)(number & -number) * 0x077CB531U) >> 27;
+                return POSITIONS[res];
             }
         }
 
@@ -51,18 +49,18 @@ namespace Lucene.Net.Support
         {
 
 
-            static int[] s_positions = new int[64] {
+            static readonly int[] POSITIONS = {
                 0,  1,  2, 53,  3,  7, 54, 27, 4, 38, 41,  8, 34, 55, 48, 28,
                 62,  5, 39, 46, 44, 42, 22,  9, 24, 35, 59, 56, 49, 18, 29, 11,
                 63, 52,  6, 26, 37, 40, 33, 47, 61, 45, 43, 21, 23, 58, 17, 10,
-                51, 25, 36, 32, 60, 20, 57, 16, 50, 31, 19, 15, 30, 14, 13, 12,
+                51, 25, 36, 32, 60, 20, 57, 16, 50, 31, 19, 15, 30, 14, 13, 12
             };
 
             public static int Position(long value)
             {
 
                 var result = unchecked((uint)(value & -value) * 0x022fdd63cc95386d) >> 58;
-                return s_positions[result];
+                return POSITIONS[result];
             }
         }
 
@@ -74,13 +72,13 @@ namespace Lucene.Net.Support
         /// <remarks>
         ///     <para>
         ///         We're using the De Bruijn sequences based upon the various bit twiddling hacks found in 
-        ///         an online paper stanford <see cref="https://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup" />
+        ///         an <a href="https://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup">online paper at stanford</a>
         ///     </para>
         ///     <para>
         ///          It should be faster than Java's native 
-        ///          <see href="http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/lang/Integer.java#Integer.numberOfTrailingZeros%28int%29">
+        ///          <a href="http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/lang/Integer.java#Integer.numberOfTrailingZeros%28int%29">
         ///          Long.numberOfTrailingZeros
-        ///          </see> which uses the binary search method of finding trailing zeros.  
+        ///          </a> which uses the binary search method of finding trailing zeros.  
         ///     </para>
         /// </remarks>
         /// <returns>The number of trailing zeros.</returns>
@@ -89,6 +87,7 @@ namespace Lucene.Net.Support
             return DeBruijn32.Position(value);
         }
 
+        // ReSharper disable once CSharpWarnings::CS1584
         /// <summary>
         /// Returns the number of trailing zeros. i.e 100 has two trailing zeros.
         /// </summary>
@@ -96,7 +95,8 @@ namespace Lucene.Net.Support
         /// <remarks>
         ///     <para>
         ///         We're using the De Bruijn sequences based upon the various bit twiddling hacks found in 
-        ///         an online paper stanford <see cref="https://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup" />
+
+        ///         an online paper stanford <see href="https://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup" />
         ///     </para>
         ///     <para>
         ///          It should be faster than Java's native 

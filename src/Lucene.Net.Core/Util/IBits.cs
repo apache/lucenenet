@@ -27,6 +27,7 @@ namespace Lucene.Net.Util
     ///     </para>
     /// </remarks>
     /// <seealso cref="Bits"/>
+    // ReSharper disable CSharpWarnings::CS1574
     public interface IBits
     {
         /// <summary>

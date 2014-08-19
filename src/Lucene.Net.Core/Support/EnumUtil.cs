@@ -22,6 +22,10 @@ namespace Lucene.Net
     using System.Linq;
     using System.Reflection;
 
+    /// <summary>
+    /// Utility methods for working with <c>enum</c>s
+    /// </summary>
+    // ReSharper disable CSharpWarnings::CS1574
     public static class EnumUtil
     {
         /// <summary>
