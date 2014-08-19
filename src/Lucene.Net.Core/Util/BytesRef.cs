@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
     ///     </para>
     /// </remarks>
     // ReSharper disable CSharpWarnings::CS1574
-    public sealed class BytesRef :
+    public class BytesRef :
         IComparable,
         Support.ICloneable,
         IEnumerable<Byte>
@@ -63,7 +63,7 @@ namespace Lucene.Net.Util
         /// <summary>
         ///     Length of used bytes.
         /// </summary>
-        public int Length { get; internal set; }
+        public virtual int Length { get; internal protected set; }
 
         /// <summary>
         ///     Create a BytesRef with <seealso cref="EMPTY_BYTES" />
@@ -318,7 +318,7 @@ namespace Lucene.Net.Util
         /// <summary>
         ///     Used to grow the reference array.
         /// </summary>
-        internal void Grow(int newLength)
+        internal protected virtual void Grow(int newLength)
         {
             Debug.Assert(this.Offset == 0); // NOTE: senseless if offset != 0
             this.Bytes = ArrayUtil.Grow(this.Bytes, newLength);
