@@ -62,6 +62,8 @@
     <Compile Include="Util\BaseSorterTestCase.cs" />
     <Compile Include="Util\TestArrayUtil.cs" />
     <Compile Include="Util\TestBits.cs" />
+    <Compile Include="Util\TestByteArrayRef.cs" />
+    <Compile Include="Util\TestByteBlockPool.cs" />
     <Compile Include="Util\TestBroadWord.cs" />
     <Compile Include="Util\TestBytesRef.cs" />
     <Compile Include="Util\TestCharsRef.cs" />

@@ -161,7 +161,7 @@ namespace Lucene.Net.Util
         public void CopyChars(string text)
         {
             Debug.Assert(this.Offset == 0);
-            UnicodeUtil.Utf16ToUtf8(text.ToCharArray(0, text.Length), 0, text.Length, this);
+            UnicodeUtil.Utf16ToUtf8(text.ToCharArray(), 0, text.Length, this);
         }
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace Lucene.Net.Util
         /// @deprecated this comparator is only a transition mechanism
 #pragma warning disable 0612, 0618
         private static readonly IComparer<BytesRef> UTF8_SORTED_AS_UTF16_SORT_ORDER = new Utf8SortedAsUtf16Comparator();
-#pragma warning restore 0612, 0618
+
 
         /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
@@ -384,6 +384,7 @@ namespace Lucene.Net.Util
         {
             get { return UTF8_SORTED_AS_UTF16_SORT_ORDER; }
         }
+#pragma warning restore 0612, 0618
 
         /// @deprecated this comparator is only a transition mechanism
         [Obsolete("this comparator is only a transition mechanism")]
@@ -413,31 +414,30 @@ namespace Lucene.Net.Util
                     var aByte = aBytes[aOffset++] & 0xff;
                     var bByte = bBytes[bOffset++] & 0xff;
 
-                    if (aByte != bByte)
+                    if (aByte == bByte) 
+                        continue;
+                    // See http://icu-project.org/docs/papers/utf16_code_point_order.html#utf-8-in-utf-16-order
+
+                    // We know the terms are not equal, but, we may
+                    // have to carefully fixup the bytes at the
+                    // difference to match UTF16's sort order:
+
+                    // NOTE: instead of moving supplementary code points (0xee and 0xef) to the unused 0xfe and 0xff,
+                    // we move them to the unused 0xfc and 0xfd [reserved for future 6-byte character sequences]
+                    // this reserves 0xff for preflex's term reordering (surrogate dance), and if unicode grows such
+                    // that 6-byte sequences are needed we have much bigger problems anyway.
+                    if (aByte >= 0xee && bByte >= 0xee)
                     {
-                        // See http://icu-project.org/docs/papers/utf16_code_point_order.html#utf-8-in-utf-16-order
-
-                        // We know the terms are not equal, but, we may
-                        // have to carefully fixup the bytes at the
-                        // difference to match UTF16's sort order:
-
-                        // NOTE: instead of moving supplementary code points (0xee and 0xef) to the unused 0xfe and 0xff,
-                        // we move them to the unused 0xfc and 0xfd [reserved for future 6-byte character sequences]
-                        // this reserves 0xff for preflex's term reordering (surrogate dance), and if unicode grows such
-                        // that 6-byte sequences are needed we have much bigger problems anyway.
-                        if (aByte >= 0xee && bByte >= 0xee)
+                        if ((aByte & 0xfe) == 0xee)
                         {
-                            if ((aByte & 0xfe) == 0xee)
-                            {
-                                aByte += 0xe;
-                            }
-                            if ((bByte & 0xfe) == 0xee)
-                            {
-                                bByte += 0xe;
-                            }
+                            aByte += 0xe;
                         }
-                        return aByte - bByte;
+                        if ((bByte & 0xfe) == 0xee)
+                        {
+                            bByte += 0xe;
+                        }
                     }
+                    return aByte - bByte;
                 }
 
                 // One is a prefix of the other, or, they are equal:

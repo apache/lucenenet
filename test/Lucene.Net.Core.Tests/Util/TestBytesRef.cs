@@ -50,11 +50,11 @@ namespace Lucene.Net.Util
         {
             100.Times((i) =>
             {
-                var utf8str1 = this.Random.ToUnicodeString();
-                var utf8str2 = new BytesRef(utf8str1).Utf8ToString();
-                Equal(utf8str1, utf8str2);
+                var utf8Str1 = this.Random.ToUnicodeString();
+                var utf8Str2 = new BytesRef(utf8Str1).Utf8ToString();
+                Equal(utf8Str1, utf8Str2);
             });
-            var value = "\uFFFF";
+            const string value = "\uFFFF";
 
             Equal(value, new BytesRef(value).Utf8ToString());
         }

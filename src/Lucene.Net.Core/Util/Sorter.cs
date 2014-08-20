@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         /// <param name="start">The position to start the slice.</param>
         /// <param name="count">The count or length of the slice. </param>
         /// <exception cref="IndexOutOfRangeException">Throws when start is greater or equal the length or when the start + count </exception>
-        public abstract void SortRange(int start, int count);
+        public abstract void Sort(int start, int count);
 
 
         /// <summary>

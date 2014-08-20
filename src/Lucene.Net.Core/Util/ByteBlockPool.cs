@@ -115,6 +115,8 @@ namespace Lucene.Net.Util
         public ByteBlockPool(Allocator allocator)
         {
             this.allocator = allocator;
+            // this should always be called when a pool is created.
+            this.NextBuffer();
         }
 
         /// <summary>
@@ -163,7 +165,12 @@ namespace Lucene.Net.Util
                     var offset = reuseFirst ? 1 : 0;
                     // Recycle all but the first buffer
                     allocator.RecycleByteBlocks(Buffers, offset, 1 + this.bufferPosition);
-                    Array.Clear(Buffers, 0, Buffers.Length);
+
+
+                    for (var i = offset; i < (this.bufferPosition + 1); i++)
+                    {
+                        Buffers[i] = new byte[10];
+                    }
                 }
                 if (reuseFirst)
                 {
@@ -171,7 +178,7 @@ namespace Lucene.Net.Util
                     this.bufferPosition = 0;
                     BytePosition = 0;
                     ByteOffset = 0;
-                    Buffer = Buffers[0];
+                    this.Buffer = this.Buffers[0];
                 }
                 else
                 {
@@ -179,6 +186,7 @@ namespace Lucene.Net.Util
                     BytePosition = BYTE_BLOCK_SIZE;
                     ByteOffset = -BYTE_BLOCK_SIZE;
                     Buffer = null;
+                   
                 }
             }
         }
@@ -196,9 +204,10 @@ namespace Lucene.Net.Util
                 var newBuffers =
                     new byte[ArrayUtil.Oversize(Buffers.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
                 Array.Copy(Buffers, 0, newBuffers, 0, Buffers.Length);
-                Buffers = newBuffers;
+                
+                this.Buffers = newBuffers;
             }
-            Buffer = Buffers[1 + this.bufferPosition] = allocator.ByteBlock;
+           this.Buffer = Buffers[1 + this.bufferPosition] = allocator.ByteBlock;
             this.bufferPosition++;
 
             BytePosition = 0;
@@ -314,8 +323,12 @@ namespace Lucene.Net.Util
             {
                 if (overflow <= 0)
                 {
+                    if (Buffer == null)
+                        this.Buffer = this.Buffers[this.bufferPosition];
+                    
                     Array.Copy(bytes.Bytes, offset, Buffer, BytePosition, length);
                     BytePosition += length;
+                    
                     break;
                 }
 

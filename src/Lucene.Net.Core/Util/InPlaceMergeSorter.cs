@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
 
        
        
-        public sealed override void SortRange(int start, int count)
+        public sealed override void Sort(int start, int count)
         {
             this.CheckSlice(start, count);
             this.MergeSort(start, count);

@@ -113,7 +113,7 @@ namespace Lucene.Net.Util
 
             var sorter = this.CreateSorter(toSort);
 
-            sorter.SortRange(start, start + entries.Length);
+            sorter.Sort(start, start + entries.Length);
 
             return toSort.CopyOfRange(start, start + entries.Length);
         }
