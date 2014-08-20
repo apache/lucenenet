@@ -202,10 +202,10 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Resizes and increases the length of the reference array.
         /// </summary>
-        /// <param name="mininumSize">The minimum size to grow the array.</param>
-        public void Grow(int mininumSize)
+        /// <param name="minimumSize">The minimum size to grow the array.</param>
+        public void Grow(int minimumSize)
         {
-            this.charsRef.Chars = ArrayUtil.Grow(this.charsRef.Chars, mininumSize);
+            this.charsRef.Chars = ArrayUtil.Grow(this.charsRef.Chars, minimumSize);
         }
 
         /// <inherits />
@@ -245,5 +245,7 @@ namespace Lucene.Net.Util
             return this.charsRef.GetEnumerator();
         }
         #endregion
+
+        public int minimumSize { get; set; }
     }
 }

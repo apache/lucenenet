@@ -67,25 +67,35 @@ namespace Lucene.Net.Support
 
             public static int Position(long value)
             {
-
-                var result = unchecked((uint) (value & -value)*0x022fdd63cc95386d) >> 58;
-                return POSITIONS[result];
+                var v = value;
+                
+                return POSITIONS[(v & -v) * 0x022fdd63cc95386d >> 58];
             }
         }
 
 
+        /// <summary>
+        /// Returns the leading zeros from the value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>System.Int32.</returns>
         public static int NumberOfLeadingZeros(this long value)
         {
             return (int) NumberOfLeadingZeros((ulong) value);
         }
 
+        /// <summary>
+        /// Returns the leading zeros from the value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>System.UInt32.</returns>
          [CLSCompliant(false)]
         public static uint NumberOfLeadingZeros(this ulong value)
         {
             if (value == 0)
                 return 64;
             uint number = 1;
-            var test = (uint)value >> 32;
+            var test = value >> 32;
 
 
             if (test == 0)
@@ -117,21 +127,32 @@ namespace Lucene.Net.Support
                 number += 2;
                 test <<= 2;
             }
-            number -= test >> 31;
+            number -= (uint)test >> 31;
 
             return number;
         }
 
+         /// <summary>
+         /// Returns the leading zeros from the value. Similar to __lzcnt in 
+         /// </summary>
+         /// <param name="value">The value.</param>
+         /// <returns>System.Int32.</returns>
         public static int NumberOfLeadingZeros(this int value)
         {
             return (int) NumberOfLeadingZeros((uint) value);
         }
 
+
+        /// <summary>
+        /// Returns the leading zeros from the value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>System.UInt32.</returns>
         [CLSCompliant(false)]
         public static uint NumberOfLeadingZeros(this uint value)
         {
             // from hacker's delight
-            http: //www.hackersdelight.org/permissions.htm
+            // http://www.hackersdelight.org/permissions.htm
             uint test, number;
             uint x = value;
 
