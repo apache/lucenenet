@@ -37,19 +37,19 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <typeparam name="T">The element type for the array.</typeparam>
         /// <param name="array">The array to base the resize on.</param>
-        /// <param name="minSize">The minimum size to grow the array.</param>
+        /// <param name="capacity">The minimum size to grow the array.</param>
         /// <returns>The resized array.</returns>
-        /// <exception cref="System.ArgumentException">Throws when <paramref name="minSize"/> is less than zero.</exception>
-        public static T[] Grow<T>(this T[] array, int minSize = 1)
+        /// <exception cref="System.ArgumentException">Throws when <paramref name="capacity"/> is less than zero.</exception>
+        public static T[] Grow<T>(this T[] array, int capacity = 1)
         {
             Debug.Assert(typeof(T).GetTypeInfo().IsPrimitive, "Type T must be primitive");
-            Debug.Assert(minSize >= 0, "targetSize must be positive");
+            Debug.Assert(capacity >= 0, "targetSize must be positive");
 
-            if (array.Length >= minSize) 
+            if (array.Length >= capacity) 
                 return array;
             
-            var capacity = Oversize(minSize, RamUsageEstimator.PRIMITIVE_SIZES[typeof(T)]);
-            var oversizedArray = new T[capacity];
+            var length = Oversize(capacity, RamUsageEstimator.PRIMITIVE_SIZES[typeof(T)]);
+            var oversizedArray = new T[length];
             Array.Copy(array, 0, oversizedArray, 0, array.Length);
 
             return oversizedArray;

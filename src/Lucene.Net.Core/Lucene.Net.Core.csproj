@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Check.cs" />
+    <Compile Include="Support\ArrayExtensionMethods.cs" />
     <Compile Include="Support\AtomicReferenceArray.cs" />
     <Compile Include="Support\DeepCloneNotSupportedException.cs" />
     <Compile Include="Support\EnumUtil.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Util\BitUtil.cs" />
     <Compile Include="Util\BroadWord.cs" />
     <Compile Include="Util\ByteBlockPool.cs" />
+    <Compile Include="Util\BytesRefBuilder.cs" />
     <Compile Include="Util\BytesRef.cs" />
     <Compile Include="Util\BytesRefArray.cs" />
     <Compile Include="Util\CharsRefBuilder.cs" />

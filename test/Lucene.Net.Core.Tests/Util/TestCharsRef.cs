@@ -29,11 +29,11 @@ namespace Lucene.Net.Util
     public class TestCharsRef : LuceneTestCase
     {
         [Test]
-        public void testUTF16InUTF8Order()
+        public void TestUtf16InUtf8Order()
         {
-            int iterations = this.AtLeast(1000);
-            BytesRef[] utf8 = new BytesRef[iterations];
-            CharsRef[] utf16 = new CharsRef[iterations];
+            var iterations = this.AtLeast(1000);
+            var utf8 = new BytesRef[iterations];
+            var utf16 = new CharsRef[iterations];
 
             iterations.Times((i) =>
             {
@@ -42,12 +42,12 @@ namespace Lucene.Net.Util
                 utf16[i] = new CharsRef(s);
             });
 
-            Array.Sort(utf8);
+            Array.Sort(utf8, BytesRef.Utf8SortedAsUnicodeComparer);
 #pragma warning disable 0612, 0618
             Array.Sort(utf16, CharsRef.Utf16SortedAsUtf8Comparer);
 #pragma warning restore 0612, 0618
 
-            iterations.Times((i) => Equal(utf8[i].Utf8ToString(), utf16[i].ToString()));
+            iterations.Times(i => Equal(utf8[i].Utf8ToString(), utf16[i].ToString()));
         }
 
 

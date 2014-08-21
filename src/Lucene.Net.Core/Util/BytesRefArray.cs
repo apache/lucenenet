@@ -110,10 +110,10 @@ namespace Lucene.Net.Util
         /// <param name="spare"> a spare <seealso cref="BytesRef" /> instance </param>
         /// <param name="index"> the elements index to retrieve </param>
         /// <returns> the <i>n'th</i> element of this <seealso cref="BytesRefArray" /> </returns>
-        public BytesRef Retrieve(BytesRef spare, int index)
+        public BytesRef Retrieve(BytesRefBuilder spare, int index)
         {
             Debug.Assert(spare != null, "spare must never be null");
-            Debug.Assert(spare.Offset == 0);
+            //Debug.Assert(spare.Offset == 0);
 
             if (index > this.lastElement)
                 throw new IndexOutOfRangeException("index " + index + " must be less than the size: " +
@@ -121,10 +121,10 @@ namespace Lucene.Net.Util
             var offset = this.offsets[index];
             var length = index == this.lastElement - 1 ? this.currentOffset - offset : this.offsets[index + 1] - offset;
 
-            spare.Grow(length);
+      
             spare.Length = length;
-            this.pool.ReadBytes(offset, spare.Bytes, spare.Offset, spare.Length);
-            return spare;
+            this.pool.ReadBytes(offset, spare.Bytes, 0, spare.Length);
+            return spare.ToBytesRef();
         }
 
         /// <summary>
@@ -181,9 +181,9 @@ namespace Lucene.Net.Util
             private BytesRefArray bytesRefArray;
             private IComparer<BytesRef> comparer;
             private int[] orderedEntries;
-            private BytesRef pivot;
-            private BytesRef scratch1;
-            private BytesRef scratch2;
+            private BytesRefBuilder pivot;
+            private BytesRefBuilder scratch1;
+            private BytesRefBuilder scratch2;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="ByteRefArraySorter"/> class.
@@ -196,9 +196,9 @@ namespace Lucene.Net.Util
                 this.bytesRefArray = outerInstance;
                 this.comparer = comp;
                 this.orderedEntries = orderedEntries;
-                pivot = new BytesRef();
-                scratch1 = new BytesRef();
-                scratch2 = new BytesRef();
+                pivot = new BytesRefBuilder();
+                scratch1 = new BytesRefBuilder();
+                scratch2 = new BytesRefBuilder();
             }
 
             /// <summary>
@@ -260,7 +260,7 @@ namespace Lucene.Net.Util
             protected internal override int ComparePivot(int j)
             {
                 var index = orderedEntries[j];
-                return this.comparer.Compare(this.pivot, bytesRefArray.Retrieve(this.scratch2, index));
+                return this.comparer.Compare(this.pivot.ToBytesRef(), bytesRefArray.Retrieve(this.scratch2, index));
             }
 
 
@@ -297,6 +297,7 @@ namespace Lucene.Net.Util
             private readonly int size;
             private BytesRefArray bytesRefArray;
             private int position;
+            private BytesRefBuilder builder;
 
             /// <summary>
             ///     Initializes a new instance of the <see cref="BytesRefEnumerator" /> class.
@@ -306,6 +307,7 @@ namespace Lucene.Net.Util
             /// <param name="indices">The indices.</param>
             public BytesRefEnumerator(BytesRefArray bytesRefArray,  int size, int[] indices)
             {
+                this.builder = new BytesRefBuilder();
                 this.bytesRefArray = bytesRefArray;
                 this.size = size;
                 this.indices = indices;
@@ -344,7 +346,7 @@ namespace Lucene.Net.Util
 
                 // return a new instance for each loop. 
                 var bytesRef = new BytesRef();
-                this.Current = bytesRefArray.Retrieve(bytesRef, indices == null ? position : indices[position]);
+                this.Current = bytesRefArray.Retrieve(this.builder, indices == null ? position : indices[position]);
                 return true;
             }
 

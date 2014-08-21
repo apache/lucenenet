@@ -20,6 +20,7 @@ namespace Lucene.Net.Util
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Text;
 
     /// <summary>
@@ -45,6 +46,7 @@ namespace Lucene.Net.Util
         Support.ICloneable,
         IEnumerable<Byte>
     {
+        private int length;
         /// <summary>
         ///     An empty byte array for convenience
         /// </summary>
@@ -63,7 +65,16 @@ namespace Lucene.Net.Util
         /// <summary>
         ///     Length of used bytes.
         /// </summary>
-        public virtual int Length { get; internal protected set; }
+        public virtual int Length
+        {
+            get { return this.length; }
+            set
+            {
+                this.length = value; 
+                if(this.Bytes.Length < value)
+                    this.Grow(value);
+            }
+        }
 
         /// <summary>
         ///     Create a BytesRef with <seealso cref="EMPTY_BYTES" />
@@ -139,6 +150,36 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
+        ///     Initializes a new instance of <see cref="BytesRef" /> from the UTF8 bytes
+        ///     from the given <see cref="string" />.
+        /// </summary>
+        /// <param name="text">
+        ///     this must be well-formed
+        ///     unicode text, with no unpaired surrogates.
+        /// </param>
+        public BytesRef(char[] text)
+            : this()
+        {
+
+            CopyChars(text);
+        }
+
+
+        public void CopyChars(char[] text)
+        {
+            Debug.Assert(this.Offset == 0);
+            this.Grow(text.Length * UnicodeUtil.MAX_UTF8_BYTES_PER_CHAR);
+            this.Length = UnicodeUtil.Utf16ToUtf8(text, 0, text.Length, this.Bytes);
+        }
+
+        public void CopyChars(IEnumerable<char> text)
+        {
+            Debug.Assert(this.Offset == 0);
+            var array = text as char[];
+            this.CopyChars(array ?? text.ToArray());
+        }
+
+        /// <summary>
         ///     Copies the UTF8 bytes for this string.
         /// </summary>
         /// <param name="text">
@@ -148,7 +189,8 @@ namespace Lucene.Net.Util
         public void CopyChars(CharsRef text)
         {
             Debug.Assert(this.Offset == 0);
-            UnicodeUtil.Utf16ToUtf8(text, 0, text.Length, this);
+            this.Grow(text.Length * UnicodeUtil.MAX_UTF8_BYTES_PER_CHAR);
+            this.Length = UnicodeUtil.Utf16ToUtf8(text.Chars, 0, text.Length, this.Bytes);
         }
 
         /// <summary>
@@ -160,8 +202,7 @@ namespace Lucene.Net.Util
         /// </param>
         public void CopyChars(string text)
         {
-            Debug.Assert(this.Offset == 0);
-            UnicodeUtil.Utf16ToUtf8(text.ToCharArray(), 0, text.Length, this);
+            this.CopyChars(text.ToCharArray());
         }
 
         /// <summary>
@@ -233,11 +274,9 @@ namespace Lucene.Net.Util
             {
                 return false;
             }
-            if (other is BytesRef)
-            {
-                return this.BytesEquals((BytesRef) other);
-            }
-            return false;
+
+            var bytesRef = other as BytesRef;
+            return bytesRef != null && this.BytesEquals(bytesRef);
         }
 
         /// <summary>
@@ -246,9 +285,9 @@ namespace Lucene.Net.Util
         /// <returns>A utf16 string.</returns>
         public string Utf8ToString()
         {
-            var @ref = new CharsRef(Length);
-            UnicodeUtil.Utf8ToUtf16(this.Bytes, this.Offset, this.Length, @ref);
-            return @ref.ToString();
+            var charsRef = new CharsRef(this.Length);
+            charsRef.Length = UnicodeUtil.Utf8ToUtf16(this.Bytes, this.Offset, this.Length, charsRef.Chars);
+            return charsRef.ToString();
         }
 
         /// <summary>
@@ -318,10 +357,10 @@ namespace Lucene.Net.Util
         /// <summary>
         ///     Used to grow the reference array.
         /// </summary>
-        internal protected virtual void Grow(int newLength)
+        internal protected virtual void Grow(int capacity)
         {
             Debug.Assert(this.Offset == 0); // NOTE: senseless if offset != 0
-            this.Bytes = ArrayUtil.Grow(this.Bytes, newLength);
+            this.Bytes = ArrayUtil.Grow(this.Bytes, capacity);
         }
 
         /// <summary>

@@ -188,7 +188,7 @@ namespace Lucene.Net.Util
 
             this.Grow(length);
 
-            this.charsRef.Length = UnicodeUtil.Utf8ToUtf16(bytes, offset, length, this.charsRef);
+            this.charsRef.Length = UnicodeUtil.Utf8ToUtf16(bytes, offset, length, this.Chars);
         }
 
         /// <inherits />
@@ -203,9 +203,9 @@ namespace Lucene.Net.Util
         /// Resizes and increases the length of the reference array.
         /// </summary>
         /// <param name="minimumSize">The minimum size to grow the array.</param>
-        public void Grow(int minimumSize)
+        public void Grow(int capacity)
         {
-            this.charsRef.Chars = ArrayUtil.Grow(this.charsRef.Chars, minimumSize);
+            this.charsRef.Chars = ArrayUtil.Grow(this.charsRef.Chars, capacity);
         }
 
         /// <inherits />

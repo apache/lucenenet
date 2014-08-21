@@ -39,27 +39,29 @@ namespace Lucene.Net.Util
                     stringList.Clear();
                 }
                 int entries = this.AtLeast(500);
-                BytesRef spare = new BytesRef();
+                var spare = new BytesRefBuilder();
                 int initSize = list.Length;
                 for (int i = 0; i < entries; i++)
                 {
                     string randomRealisticUnicodeString = random.RandomRealisticUnicodeString();
                     spare.CopyChars(randomRealisticUnicodeString);
-                    Equal(i + initSize, list.Append(spare));
+                    Equal(i + initSize, list.Append(spare.ToBytesRef()));
                     stringList.Add(randomRealisticUnicodeString);
                 }
                 for (int i = 0; i < entries; i++)
                 {
-                    NotNull(list.Retrieve(spare, i));
-                    Equal(stringList[i], spare.Utf8ToString(), "entry " + i + " doesn't match");
+                    var bytesRef = list.Retrieve(spare, i);
+                    NotNull(bytesRef);
+                    Equal(stringList[i], bytesRef.Utf8ToString(), "entry " + i + " doesn't match");
                 }
 
                 // check random
                 for (int i = 0; i < entries; i++)
                 {
                     int e = random.Next(entries);
-                    NotNull(list.Retrieve(spare, e));
-                    Equal(stringList[e], spare.Utf8ToString(), "entry " + i + " doesn't match");
+                    var bytesRef = list.Retrieve(spare, e);
+                    NotNull(bytesRef);
+                    Equal(stringList[e], bytesRef.Utf8ToString(), "entry " + i + " doesn't match");
                 }
                 for (int i = 0; i < 2; i++)
                 {

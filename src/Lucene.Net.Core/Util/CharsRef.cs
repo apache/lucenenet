@@ -20,6 +20,7 @@ namespace Lucene.Net.Util
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using Lucene.Net.Support;
     using ICloneable = Lucene.Net.Support.ICloneable; 
 
@@ -40,6 +41,8 @@ namespace Lucene.Net.Util
         ICloneable,
         IEnumerable<char>
     {
+        private int length;
+
         /// <summary>
         ///     An empty character array for convenience
         /// </summary>
@@ -58,7 +61,16 @@ namespace Lucene.Net.Util
         /// <summary>
         ///     Length of used characters.
         /// </summary>
-        public int Length { get; internal set; }
+        public int Length
+        {
+            get { return this.length; }
+            set
+            {
+                this.length = value;
+                if(this.Chars.Length < value)
+                    this.Grow(value);
+            }
+        }
 
 
         /// <summary>
@@ -77,6 +89,7 @@ namespace Lucene.Net.Util
         public CharsRef(int capacity)
         {
             this.Chars = new char[capacity];
+            
         }
 
         /// <summary>
@@ -227,13 +240,13 @@ namespace Lucene.Net.Util
         /// <summary>
         ///     Used to grow the reference array.
         /// </summary>
-        /// <param name="newLength">The minimum length to grow the internal array.</param>
-        internal void Grow(int newLength)
+        /// <param name="capacity">The minimum length to grow the internal array.</param>
+        internal void Grow(int capacity)
         {
             Debug.Assert(Offset == 0);
-            if (this.Chars.Length < newLength)
+            if (this.Chars.Length < capacity)
             {
-                this.Chars = ArrayUtil.Grow(this.Chars, newLength);
+                this.Chars = ArrayUtil.Grow(this.Chars, capacity);
             }
         }
 
