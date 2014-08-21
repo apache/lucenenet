@@ -56,6 +56,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Search\DocIdSet.cs" />
+    <Compile Include="Search\DocIdSetIterator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Check.cs" />
     <Compile Include="Support\ArrayExtensionMethods.cs" />
@@ -89,6 +91,8 @@
     <Compile Include="Util\InPlaceMergeSorter.cs" />
     <Compile Include="Util\IntroSorter.cs" />
     <Compile Include="Util\IPurgeStrategy.cs" />
+    <Compile Include="Util\OpenBitSet.cs" />
+    <Compile Include="Util\OpenBitSetIterator.cs" />
     <Compile Include="Util\PclPurgeStrategy.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
     <Compile Include="Util\SetOnce.cs" />

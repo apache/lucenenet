@@ -231,7 +231,7 @@ namespace Lucene.Net.Util
             throw new NotSupportedException();
         }
 
-          /// <inherits />
+        /// <inherits />
         /// <exception cref="NotSupportedException">Throws when called.</exception>
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations", Justification = "Java Port Consistency")]
         public override int GetHashCode()
