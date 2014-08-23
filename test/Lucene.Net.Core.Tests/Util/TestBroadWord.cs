@@ -98,10 +98,11 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        [Perf] // TODO: implement a real performance test.
+        [Performance] // TODO: implement a real performance test.
         public void TestPerfSelectAllBitsBroad()
         {
-            for (int j = 0; j < 100000; j++)
+            var length = AtLeast(5000);
+            for (int j = 0; j < length; j++)
             { // 1000000 for real perf test
                 for (int i = 0; i < 64; i++)
                 {
@@ -111,10 +112,12 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Test][Perf]
+        [Test]
+        [Performance]
         public void TestPerfSelectAllBitsNaive()
         {
-            for (int j = 0; j < 10000; j++)
+            var length = AtLeast(5000);
+            for (int j = 0; j < length; j++)
             { // real perftest: 1000000
                 for (int i = 0; i < 64; i++)
                 {

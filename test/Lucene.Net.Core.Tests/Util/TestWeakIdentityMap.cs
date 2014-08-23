@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
         [Test]
         public async virtual void TestSimpleHashMap()
         {
-            var map = WeakIdentityMap<string, string>.NewHashMap(this.Random.NextBoolean());
+            var map = WeakIdentityMap<string, string>.NewHashMap(Random.NextBoolean());
             // we keep strong references to the keys,
             // so WeakIdentityMap will not forget about them:
             string key1 = "foo",
@@ -190,7 +190,7 @@ namespace Lucene.Net.Util
             // don't make threadCount and keyCount random, otherwise easily OOMs or fails otherwise:
             const int threadCount = 8, keyCount = 1024;
             var tasks = new List<Task>();
-            var map = WeakIdentityMap<object, int?>.NewConcurrentHashMap(this.Random.NextBoolean());
+            var map = WeakIdentityMap<object, int?>.NewConcurrentHashMap(Random.NextBoolean());
             // we keep strong references to the keys,
             // so WeakIdentityMap will not forget about them:
             var keys = new AtomicReferenceArray<object>(keyCount);
@@ -201,7 +201,7 @@ namespace Lucene.Net.Util
 
             for (var t = 0; t < threadCount; t++)
             {
-                var rnd = new Random(this.Random.Next());
+                var rnd = new Random(Random.Next());
                 tasks.Add(Task.Run(() =>
                 {
                        
@@ -272,7 +272,7 @@ namespace Lucene.Net.Util
             public void Run()
             {
 // ReSharper disable once InvokeAsExtensionMethod
-                var count =  this.outerInstance.AtLeast(10000);
+                var count =  AtLeast(10000);
                 for (var i = 0; i < count; i++)
                 {
                     var j = rnd.Next(keyCount);

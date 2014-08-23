@@ -1,0 +1,37 @@
+﻿{
+    "licenses": ["apache 2.0"],
+    "version": "5.0.0.0",
+    "compilationOptions": {
+        "warningsAsErrors": false,
+        "define": ["XUNIT"]
+    },
+    "sources": ["../src"],
+    "code": "**/*.cs",
+    "commands": {
+        "test": "Xunit.KRunner"
+    },
+    
+    
+    "dependencies": {
+        "Lucene.Net.Java":  "",
+        "Lucene.Net.TestFramework.Core": "",
+        "Xunit.KRunner": "1.0.0-*",
+        "System.Console": "4.0.0.0"
+    },
+
+    "configurations" : {
+        "net451": {},
+        "net45" : { 
+            "dependencies": {
+            }
+        },
+        "k10" : { 
+            "dependencies": {
+                "System.Runtime": "4.0.20.0",
+                "System.Diagnostics.Debug": "4.0.10.0"
+              
+            }
+            
+        }
+    }
+}

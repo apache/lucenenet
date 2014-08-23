@@ -1,0 +1,20 @@
+﻿{
+    "licenses": [ "apache 2.0" ],
+    "version": "5.0.0.0",
+    "configurations" : {
+        "net451" : { 
+            "dependencies": {
+            }
+        },
+        "k10" : { 
+            "dependencies": {
+                "System.Linq": "",
+                "System.Reflection": "",
+                "System.Runtime": "",
+                "System.Reflection.Extensions": "",
+                "System.Text.RegularExpressions": "",
+                "System.Diagnostics.Debug": ""
+            }
+        }
+    }
+}

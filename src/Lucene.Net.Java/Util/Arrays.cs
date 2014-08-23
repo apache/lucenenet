@@ -15,27 +15,23 @@
  * limitations under the License.
  */
 
-namespace Lucene.Net.Util
+namespace Java.Util
 {
     using System;
-    using Lucene.Net.Random;
-    /// <summary>
-    /// Extension methods to make writing tests easier.
-    /// </summary>
-    public static class ExtensionMethods
+    using System.Collections.Generic;
+
+    public static class Arrays
     {
-        /// <summary>
-        /// Performs a loop for the specified number of times. 
-        /// </summary>
-        /// <param name="value">The number of times to perform a loop.</param>
-        /// <param name="invoke">The code that should be ivnoked for each iteration.</param>
-        public static void Times(this int value, Action<int> invoke)
+
+        public static void Fill<T>(IList<T> list, Func<T> factory)
         {
-            for(var i = 0; i < value; i++)
-            {
-                invoke(i);
-            }
+            Fill(list, 0, list.Count, factory);
         }
 
+        public static void Fill<T>(IList<T> list, int start, int count, Func<T> factory)
+        {
+            for (var i = start; i < count; i++)
+                list[i] = factory();
+        }
     }
 }

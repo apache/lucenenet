@@ -62,6 +62,9 @@
     <Compile Include="Check.cs" />
     <Compile Include="Support\ArrayExtensionMethods.cs" />
     <Compile Include="Support\AtomicReferenceArray.cs" />
+    <Compile Include="Support\BitArrayExtensions.cs" />
+    <Compile Include="Support\BitSet.cs" />
+    <Compile Include="Support\Class1.cs" />
     <Compile Include="Support\DeepCloneNotSupportedException.cs" />
     <Compile Include="Support\EnumUtil.cs" />
     <Compile Include="Support\HashMap.cs" />

@@ -31,13 +31,13 @@ namespace Lucene.Net.Util
         [Test]
         public void TestUtf16InUtf8Order()
         {
-            var iterations = this.AtLeast(1000);
+            var iterations = AtLeast(1000);
             var utf8 = new BytesRef[iterations];
             var utf16 = new CharsRef[iterations];
 
             iterations.Times((i) =>
             {
-                var s = this.Random.RandomUnicodeString();
+                var s = Random.RandomUnicodeString();
                 utf8[i] = new BytesRef(s);
                 utf16[i] = new CharsRef(s);
             });
@@ -55,11 +55,11 @@ namespace Lucene.Net.Util
         public void TestAppend() {
             var builder = new CharsRefBuilder();
             var sb = new StringBuilder();
-            int iterations = this.AtLeast(10);
+            int iterations = Random.AtLeast(10);
 
             iterations.Times((i) => {
-                var charArray = this.Random.RandomRealisticUnicodeString(1, 100).ToCharArray();
-                int offset = this.Random.Next(charArray.Length);
+                var charArray = Random.RandomRealisticUnicodeString(1, 100).ToCharArray();
+                int offset = Random.Next(charArray.Length);
                 int length = charArray.Length - offset;
                 sb.Append(charArray, offset, length);
                 builder.Append(charArray, offset, length);  
@@ -72,11 +72,11 @@ namespace Lucene.Net.Util
         [Test]
         public void TestCopy()
         {
-            var iterations = this.AtLeast(10);
+            var iterations = Random.AtLeast(10);
             iterations.Times((i) => {
                 var builder = new CharsRefBuilder();
-                var charArray = this.Random.RandomRealisticUnicodeString(1, 100).ToCharArray();
-                int offset = this.Random.Next(charArray.Length),
+                var charArray = Random.RandomRealisticUnicodeString(1, 100).ToCharArray();
+                int offset = Random.Next(charArray.Length),
                     length = charArray.Length - offset;
 
                String str = new String(charArray, offset, length);

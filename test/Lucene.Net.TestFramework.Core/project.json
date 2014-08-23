@@ -1,0 +1,34 @@
+﻿{
+    "licenses": ["apache 2.0"],
+      "version": "5.0.0.0",
+    "compilationOptions": {
+        "warningsAsErrors": false,
+        "define": ["XUNIT"]
+    },
+    "sources": ["../src"],
+    "code": "**/*.cs",
+    "commands": {
+        "test": "Xunit.KRunner"
+    },
+
+    
+    "dependencies": {
+        "Xunit.KRunner": "1.0.0-*"
+    },
+
+    "configurations" : {
+        "net451": {},
+        "net45" : { 
+            "dependencies": {
+            }
+        },
+        "k10" : { 
+            "dependencies": {
+                "System.Runtime": "4.0.20.0",
+                "System.Linq": "",
+                "System.Diagnostics.Debug": "4.0.10.0",
+                "System.Threading": ""
+            }
+        }
+    }
+}

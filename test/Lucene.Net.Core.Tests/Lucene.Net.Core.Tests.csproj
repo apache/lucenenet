@@ -23,7 +23,7 @@
   <Import Project="..\..\packages\xunit.core.2.0.0-beta-build2700\build\portable-net45+win+wpa81+wp80\xunit.core.props" Condition="Exists('..\..\packages\xunit.core.2.0.0-beta-build2700\build\portable-net45+win+wpa81+wp80\xunit.core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C879C7A6-FBE5-4F22-B363-A4356C7B8E76}</ProjectGuid>
@@ -34,8 +34,8 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile151</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -70,6 +70,7 @@
     <Compile Include="Util\TestCharsRef.cs" />
     <Compile Include="Util\TestConstants.cs" />
     <Compile Include="Util\TestInPlaceMergeSorter.cs" />
+    <Compile Include="Util\TestOpenBitSet.cs" />
     <Compile Include="Util\TestPurgableThreadLocal.cs" />
     <Compile Include="Util\TestRamEstimatorUsage.cs" />
     <Compile Include="Util\TestSetOnce.cs" />
@@ -94,6 +95,10 @@
     <ProjectReference Include="..\..\src\Lucene.Net.Core\Lucene.Net.Core.csproj">
       <Project>{ad8901c0-209d-4132-80aa-257dbaceecb4}</Project>
       <Name>Lucene.Net.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework.Core\Lucene.Net.TestFramework.Core.csproj">
+      <Project>{438b8450-e93a-425f-9a9b-11d02e8896d5}</Project>
+      <Name>Lucene.Net.TestFramework.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
       <Project>{f0d68fea-b118-43b6-b760-3fb75cde766d}</Project>

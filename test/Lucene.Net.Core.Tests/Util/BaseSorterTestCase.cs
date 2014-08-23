@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
             var entries = new Entry[length];
             for (var i = 0; i < entries.Length; ++i)
             {
-                strategy.SetValue(this.Random, entries, i);
+                strategy.SetValue(Random, entries, i);
             }
 
             return entries;
@@ -107,8 +107,8 @@ namespace Lucene.Net.Util
         // test(Entry[] array)
         protected Entry[] CopyAndSort(Entry[] entries)
         {
-            int start = this.Random.Next(1000);
-            var toSort = new Entry[start + entries.Length + this.Random.Next(3)];
+            int start = Random.Next(1000);
+            var toSort = new Entry[start + entries.Length + Random.Next(3)];
             Array.Copy(entries, 0, toSort, start, entries.Length);
 
             var sorter = this.CreateSorter(toSort);

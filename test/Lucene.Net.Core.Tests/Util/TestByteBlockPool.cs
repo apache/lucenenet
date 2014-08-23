@@ -52,17 +52,17 @@ namespace Lucene.Net.Util
             var bytesUsed = Counter.NewCounter();
             var  pool = new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(bytesUsed));
             
-            var reuseFirst = this.Random.NextBoolean();
+            var reuseFirst = Random.NextBoolean();
             for (var j = 0; j < 2; j++)
             {
                 IList<BytesRefProxy> list = new List<BytesRefProxy>();
-                int maxLength = this.AtLeast(500),
-                    numValues = this.AtLeast(100);
+                int maxLength = Random.AtLeast(500),
+                    numValues = Random.AtLeast(100);
                 
                
                 numValues.Times(i =>
                 {
-                    string value = this.Random.RandomRealisticUnicodeString(maxLength: maxLength);
+                    string value = Random.RandomRealisticUnicodeString(maxLength: maxLength);
                     list.Add(new BytesRefProxy(value));
                     var @ref = new BytesRefProxy();
                     @ref.CopyChars(value);
@@ -80,7 +80,7 @@ namespace Lucene.Net.Util
                     Equal(expected, @ref);
                     position += @ref.Length;
                 }
-                pool.Reset(this.Random.NextBoolean(), reuseFirst);
+                pool.Reset(Random.NextBoolean(), reuseFirst);
                 if (reuseFirst)
                 {
                     Equal(ByteBlockPool.BYTE_BLOCK_SIZE, bytesUsed.Count);

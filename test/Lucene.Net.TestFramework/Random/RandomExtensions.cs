@@ -33,12 +33,7 @@ namespace Lucene.Net.Random
     {
 
 
-        public static int AtLeast(this LuceneTestCase instance, int minimumValue)
-        {
-            int min = (LuceneTestCase.TEST_NIGHTLY ? 2 * minimumValue : minimumValue) * LuceneTestCase.RANDOM_MULTIPLIER;
-            int max = min + (min / 2);
-            return instance.Random.NextBetween(min, max);
-        }
+      
 
 	    /// <summary>
 	    /// Returns an integer between the min and max value. This is compatable 

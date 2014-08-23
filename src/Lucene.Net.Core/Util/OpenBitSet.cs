@@ -131,11 +131,21 @@ namespace Lucene.Net.Util
             this.numBits = wordLength * 64;
         }
 
+        /// <summary>
+        /// Provides a <seealso cref="DocIdSetIterator" /> to access the set.
+        /// this implementation can return <code>null</code> if there
+        /// are no docs that match.
+        /// </summary>
+        /// <returns>DocIdSetIterator.</returns>
         public override DocIdSetIterator GetIterator()
         {
             return new OpenBitSetIterator(bits, this.wordLength);
         }
 
+        /// <summary>
+        /// Gets the bits.
+        /// </summary>
+        /// <returns>IBits.</returns>
         public override IBits GetBits()
         {
             return this;
@@ -233,8 +243,8 @@ namespace Lucene.Net.Util
             }
 
             int bit = index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            return (bits[i] & bitmask) != 0;
+            long bitMask = 1L << bit;
+            return (bits[i] & bitMask) != 0;
         }
 
         /// <summary>
@@ -248,8 +258,8 @@ namespace Lucene.Net.Util
             // signed shift will keep a negative index and force an
             // array-index-out-of-bounds-exception, removing the need for an explicit check.
             int bit = index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            return (bits[i] & bitmask) != 0;
+            long bitMask = 1L << bit;
+            return (bits[i] & bitMask) != 0;
         }
 
         /// <summary>
@@ -263,8 +273,8 @@ namespace Lucene.Net.Util
                 return false;
             }
             int bit = (int)index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            return (bits[i] & bitmask) != 0;
+            long bitMask = 1L << bit;
+            return (bits[i] & bitMask) != 0;
         }
 
         /// <summary>
@@ -276,8 +286,8 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int i = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            return (bits[i] & bitmask) != 0;
+            long bitMask = 1L << bit;
+            return (bits[i] & bitMask) != 0;
         }
 
         /*
@@ -288,7 +298,7 @@ namespace Lucene.Net.Util
           return ((bits[i]>>>bit) & 0x01) != 0;
           // this does a long shift and a bittest (on x86) vs
           // a long shift, and a long AND, (the test for zero is prob a no-op)
-          // testing on a P4 indicates this is slower than (bits[i] & bitmask) != 0;
+          // testing on a P4 indicates this is slower than (bits[i] & bitMask) != 0;
         }
         */
 
@@ -319,8 +329,8 @@ namespace Lucene.Net.Util
         {
             int wordNum = ExpandingWordNum(index);
             int bit = (int)index & 0x3f;
-            long bitmask = 1L << bit;
-            bits[wordNum] |= bitmask;
+            long bitMask = 1L << bit;
+            bits[wordNum] |= bitMask;
         }
 
         /// <summary>
@@ -332,8 +342,8 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bits[wordNum] |= bitmask;
+            long bitMask = 1L << bit;
+            bits[wordNum] |= bitMask;
         }
 
         /// <summary>
@@ -345,8 +355,8 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6);
             int bit = (int)index & 0x3f;
-            long bitmask = 1L << bit;
-            bits[wordNum] |= bitmask;
+            long bitMask = 1L << bit;
+            bits[wordNum] |= bitMask;
         }
 
         /// <summary>
@@ -367,18 +377,18 @@ namespace Lucene.Net.Util
             // word to be changed.
             int endWord = ExpandingWordNum(endIndex - 1);
 
-            long startmask = -1L << (int)startIndex;
-            long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long startMask = -1L << (int)startIndex;
+            long endMask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
             {
-                bits[startWord] |= (startmask & endmask);
+                bits[startWord] |= (startMask & endMask);
                 return;
             }
 
-            bits[startWord] |= startmask;
+            bits[startWord] |= startMask;
             bits.Fill(startWord + 1, endWord, -1L);
-            bits[endWord] |= endmask;
+            bits[endWord] |= endMask;
         }
 
         protected internal virtual int ExpandingWordNum(long index)
@@ -400,8 +410,8 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = index >> 6;
             int bit = index & 0x03f;
-            long bitmask = 1L << bit;
-            bits[wordNum] &= ~bitmask;
+            long bitMask = 1L << bit;
+            bits[wordNum] &= ~bitMask;
             // hmmm, it takes one more instruction to clear than it does to set... any
             // way to work around this?  If there were only 63 bits per word, we could
             // use a right shift of 10111111...111 in binary to position the 0 in the
@@ -420,8 +430,8 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bits[wordNum] &= ~bitmask;
+            long bitMask = 1L << bit;
+            bits[wordNum] &= ~bitMask;
         }
 
         /// <summary>
@@ -434,8 +444,8 @@ namespace Lucene.Net.Util
                 return;
             }
             int bit = (int)index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bits[wordNum] &= ~bitmask;
+            long bitMask = 1L << bit;
+            bits[wordNum] &= ~bitMask;
         }
 
         /// <summary>
@@ -461,26 +471,26 @@ namespace Lucene.Net.Util
             int endWord = ((endIndex - 1) >> 6);
 
             //LUCENE TO-DO
-            long startmask = -1L << startIndex;
-            long endmask = -(int)((uint)1L >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long startMask = -1L << startIndex;
+            long endMask = -(int)((uint)1L >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             // invert masks since we are clearing
-            startmask = ~startmask;
-            endmask = ~endmask;
+            startMask = ~startMask;
+            endMask = ~endMask;
 
             if (startWord == endWord)
             {
-                bits[startWord] &= (startmask | endmask);
+                bits[startWord] &= (startMask | endMask);
                 return;
             }
 
-            bits[startWord] &= startmask;
+            bits[startWord] &= startMask;
 
             int middle = Math.Min(wordLength, endWord);
             bits.Fill(startWord + 1, middle, 0L);
             if (endWord < wordLength)
             {
-                bits[endWord] &= endmask;
+                bits[endWord] &= endMask;
             }
         }
 
@@ -507,26 +517,26 @@ namespace Lucene.Net.Util
             int endWord = (int)((endIndex - 1) >> 6);
 
             //LUCENE TO-DO
-            long startmask = -1L << (int)startIndex;
-            long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long startMask = -1L << (int)startIndex;
+            long endMask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             // invert masks since we are clearing
-            startmask = ~startmask;
-            endmask = ~endmask;
+            startMask = ~startMask;
+            endMask = ~endMask;
 
             if (startWord == endWord)
             {
-                bits[startWord] &= (startmask | endmask);
+                bits[startWord] &= (startMask | endMask);
                 return;
             }
 
-            bits[startWord] &= startmask;
+            bits[startWord] &= startMask;
 
             int middle = Math.Min(wordLength, endWord);
             bits.Fill(startWord + 1, middle, 0L);
             if (endWord < wordLength)
             {
-                bits[endWord] &= endmask;
+                bits[endWord] &= endMask;
             }
         }
 
@@ -539,9 +549,9 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bool val = (bits[wordNum] & bitmask) != 0;
-            bits[wordNum] |= bitmask;
+            long bitMask = 1L << bit;
+            bool val = (bits[wordNum] & bitMask) != 0;
+            bits[wordNum] |= bitMask;
             return val;
         }
 
@@ -554,9 +564,9 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bool val = (bits[wordNum] & bitmask) != 0;
-            bits[wordNum] |= bitmask;
+            long bitMask = 1L << bit;
+            bool val = (bits[wordNum] & bitMask) != 0;
+            bits[wordNum] |= bitMask;
             return val;
         }
 
@@ -569,8 +579,8 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bits[wordNum] ^= bitmask;
+            long bitMask = 1L << bit;
+            bits[wordNum] ^= bitMask;
         }
 
         /// <summary>
@@ -582,8 +592,8 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bits[wordNum] ^= bitmask;
+            long bitMask = 1L << bit;
+            bits[wordNum] ^= bitMask;
         }
 
         /// <summary>
@@ -592,8 +602,8 @@ namespace Lucene.Net.Util
         {
             int wordNum = ExpandingWordNum(index);
             int bit = (int)index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bits[wordNum] ^= bitmask;
+            long bitMask = 1L << bit;
+            bits[wordNum] ^= bitMask;
         }
 
         /// <summary>
@@ -605,9 +615,9 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bits[wordNum] ^= bitmask;
-            return (bits[wordNum] & bitmask) != 0;
+            long bitMask = 1L << bit;
+            bits[wordNum] ^= bitMask;
+            return (bits[wordNum] & bitMask) != 0;
         }
 
         /// <summary>
@@ -619,9 +629,9 @@ namespace Lucene.Net.Util
             Debug.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
-            long bitmask = 1L << bit;
-            bits[wordNum] ^= bitmask;
-            return (bits[wordNum] & bitmask) != 0;
+            long bitMask = 1L << bit;
+            bits[wordNum] ^= bitMask;
+            return (bits[wordNum] & bitMask) != 0;
         }
 
         /// <summary>
@@ -650,23 +660,23 @@ namespace Lucene.Net.Util
            
 
             //LUCENE TO-DO
-            long startmask = -1L << (int)startIndex;
-            long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long startMask = -1L << (int)startIndex;
+            long endMask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
             {
-                bits[startWord] ^= (startmask & endmask);
+                bits[startWord] ^= (startMask & endMask);
                 return;
             }
 
-            bits[startWord] ^= startmask;
+            bits[startWord] ^= startMask;
 
             for (int i = startWord + 1; i < endWord; i++)
             {
                 bits[i] = ~bits[i];
             }
 
-            bits[endWord] ^= endmask;
+            bits[endWord] ^= endMask;
         }
 
         /*
@@ -922,7 +932,7 @@ namespace Lucene.Net.Util
         public object Clone(bool deepCopy = true)
         {
             if (!deepCopy) 
-                return new OpenBitSet((long[])this.bits.Copy(), this.wordLength);
+                return new OpenBitSet(this.bits.Copy(), this.wordLength);
             
             try
             {
