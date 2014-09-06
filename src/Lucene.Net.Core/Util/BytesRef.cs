@@ -298,7 +298,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class UTF8SortedAsUnicodeComparator : IComparer<BytesRef>
+        internal class UTF8SortedAsUnicodeComparator : IComparer<BytesRef>
         {
             // Only singleton
             internal UTF8SortedAsUnicodeComparator()

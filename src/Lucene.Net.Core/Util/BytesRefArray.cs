@@ -171,7 +171,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// sugar for <seealso cref="#iterator(Comparator)"/> with a <code>null</code> comparator
         /// </summary>
-        public IBytesRefIterator Iterator()
+        public BytesRefIterator Iterator()
         {
             return Iterator(null);
         }
@@ -190,7 +190,7 @@ namespace Lucene.Net.Util
         /// this is a non-destructive operation.
         /// </p>
         /// </summary>
-        public IBytesRefIterator Iterator(IComparer<BytesRef> comp)
+        public BytesRefIterator Iterator(IComparer<BytesRef> comp)
         {
             BytesRef spare = new BytesRef();
             int size = Size();
@@ -198,7 +198,7 @@ namespace Lucene.Net.Util
             return new BytesRefIteratorAnonymousInnerClassHelper(this, comp, spare, size, indices);
         }
 
-        private class BytesRefIteratorAnonymousInnerClassHelper : IBytesRefIterator
+        private class BytesRefIteratorAnonymousInnerClassHelper : BytesRefIterator
         {
             private readonly BytesRefArray OuterInstance;
 
