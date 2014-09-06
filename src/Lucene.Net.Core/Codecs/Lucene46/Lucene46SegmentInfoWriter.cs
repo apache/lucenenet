@@ -1,0 +1,79 @@
+namespace Lucene.Net.Codecs.Lucene46
+{
+    using Directory = Lucene.Net.Store.Directory;
+
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
+
+    using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+    using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using SegmentInfo = Lucene.Net.Index.SegmentInfo;
+
+    /// <summary>
+    /// Lucene 4.0 implementation of <seealso cref="SegmentInfoWriter"/>.
+    /// </summary>
+    /// <seealso cref= Lucene46SegmentInfoFormat
+    /// @lucene.experimental </seealso>
+    public class Lucene46SegmentInfoWriter : SegmentInfoWriter
+    {
+        /// <summary>
+        /// Sole constructor. </summary>
+        public Lucene46SegmentInfoWriter()
+        {
+        }
+
+        /// <summary>
+        /// Save a single segment's info. </summary>
+        public override void Write(Directory dir, SegmentInfo si, FieldInfos fis, IOContext ioContext)
+        {
+            string fileName = IndexFileNames.SegmentFileName(si.Name, "", Lucene46SegmentInfoFormat.SI_EXTENSION);
+            si.AddFile(fileName);
+
+            IndexOutput output = dir.CreateOutput(fileName, ioContext);
+
+            bool success = false;
+            try
+            {
+                CodecUtil.WriteHeader(output, Lucene46SegmentInfoFormat.CODEC_NAME, Lucene46SegmentInfoFormat.VERSION_CURRENT);
+                // Write the Lucene version that created this segment, since 3.1
+                output.WriteString(si.Version);
+                output.WriteInt(si.DocCount);
+
+                output.WriteByte((sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
+                output.WriteStringStringMap(si.Diagnostics);
+                output.WriteStringSet(si.Files);
+                CodecUtil.WriteFooter(output);
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException(output);
+                    si.Dir.DeleteFile(fileName);
+                }
+                else
+                {
+                    output.Dispose();
+                }
+            }
+        }
+    }
+}

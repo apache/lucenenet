@@ -1,0 +1,489 @@
+package org.apache.lucene.codecs.simpletext;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.END;
+import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.FIELD;
+import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.LENGTH;
+import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.MAXLENGTH;
+import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.MINVALUE;
+import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.NUMVALUES;
+import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.ORDPATTERN;
+import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.PATTERN;
+import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.TYPE;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.lucene.codecs.DocValuesProducer;
+import org.apache.lucene.index.BinaryDocValues;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.DocValues;
+import org.apache.lucene.index.FieldInfo;
+import org.apache.lucene.index.FieldInfo.DocValuesType;
+import org.apache.lucene.index.IndexFileNames;
+import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.index.SegmentReadState;
+import org.apache.lucene.index.SortedDocValues;
+import org.apache.lucene.index.SortedSetDocValues;
+import org.apache.lucene.store.BufferedChecksumIndexInput;
+import org.apache.lucene.store.ChecksumIndexInput;
+import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.util.Bits;
+import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.StringHelper;
+
+class SimpleTextDocValuesReader extends DocValuesProducer {
+
+  static class OneField {
+    long dataStartFilePointer;
+    String pattern;
+    String ordPattern;
+    int maxLength;
+    bool fixedLength;
+    long minValue;
+    long numValues;
+  }
+
+  final int maxDoc;
+  final IndexInput data;
+  final BytesRef scratch = new BytesRef();
+  final Map<String,OneField> fields = new HashMap<>();
+  
+  public SimpleTextDocValuesReader(SegmentReadState state, String ext)  {
+    // System.out.println("dir=" + state.directory + " seg=" + state.segmentInfo.name + " file=" + IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, ext));
+    data = state.directory.openInput(IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, ext), state.context);
+    maxDoc = state.segmentInfo.getDocCount();
+    while(true) {
+      readLine();
+      //System.out.println("READ field=" + scratch.utf8ToString());
+      if (scratch.equals(END)) {
+        break;
+      }
+      Debug.Assert( startsWith(FIELD) : scratch.utf8ToString();
+      String fieldName = stripPrefix(FIELD);
+      //System.out.println("  field=" + fieldName);
+
+      OneField field = new OneField();
+      fields.put(fieldName, field);
+
+      readLine();
+      Debug.Assert( startsWith(TYPE) : scratch.utf8ToString();
+
+      DocValuesType dvType = DocValuesType.valueOf(stripPrefix(TYPE));
+      Debug.Assert( dvType != null;
+      if (dvType == DocValuesType.NUMERIC) {
+        readLine();
+        Debug.Assert( startsWith(MINVALUE): "got " + scratch.utf8ToString() + " field=" + fieldName + " ext=" + ext;
+        field.minValue = Long.parseLong(stripPrefix(MINVALUE));
+        readLine();
+        Debug.Assert( startsWith(PATTERN);
+        field.pattern = stripPrefix(PATTERN);
+        field.dataStartFilePointer = data.getFilePointer();
+        data.seek(data.getFilePointer() + (1+field.pattern.length()+2) * maxDoc);
+      } else if (dvType == DocValuesType.BINARY) {
+        readLine();
+        Debug.Assert( startsWith(MAXLENGTH);
+        field.maxLength = Integer.parseInt(stripPrefix(MAXLENGTH));
+        readLine();
+        Debug.Assert( startsWith(PATTERN);
+        field.pattern = stripPrefix(PATTERN);
+        field.dataStartFilePointer = data.getFilePointer();
+        data.seek(data.getFilePointer() + (9+field.pattern.length()+field.maxLength+2) * maxDoc);
+      } else if (dvType == DocValuesType.SORTED || dvType == DocValuesType.SORTED_SET) {
+        readLine();
+        Debug.Assert( startsWith(NUMVALUES);
+        field.numValues = Long.parseLong(stripPrefix(NUMVALUES));
+        readLine();
+        Debug.Assert( startsWith(MAXLENGTH);
+        field.maxLength = Integer.parseInt(stripPrefix(MAXLENGTH));
+        readLine();
+        Debug.Assert( startsWith(PATTERN);
+        field.pattern = stripPrefix(PATTERN);
+        readLine();
+        Debug.Assert( startsWith(ORDPATTERN);
+        field.ordPattern = stripPrefix(ORDPATTERN);
+        field.dataStartFilePointer = data.getFilePointer();
+        data.seek(data.getFilePointer() + (9+field.pattern.length()+field.maxLength) * field.numValues + (1+field.ordPattern.length())*maxDoc);
+      } else {
+        throw new Debug.Assert(ionError();
+      }
+    }
+
+    // We should only be called from above if at least one
+    // field has DVs:
+    Debug.Assert( !fields.isEmpty();
+  }
+
+  @Override
+  public NumericDocValues getNumeric(FieldInfo fieldInfo)  {
+    final OneField field = fields.get(fieldInfo.name);
+    Debug.Assert( field != null;
+
+    // SegmentCoreReaders already verifies this field is
+    // valid:
+    Debug.Assert( field != null: "field=" + fieldInfo.name + " fields=" + fields;
+
+    final IndexInput in = data.clone();
+    final BytesRef scratch = new BytesRef();
+    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+
+    decoder.setParseBigDecimal(true);
+
+    return new NumericDocValues() {
+      @Override
+      public long get(int docID) {
+        try {
+          //System.out.println(Thread.currentThread().getName() + ": get docID=" + docID + " in=" + in);
+          if (docID < 0 || docID >= maxDoc) {
+            throw new IndexOutOfBoundsException("docID must be 0 .. " + (maxDoc-1) + "; got " + docID);
+          }
+          in.seek(field.dataStartFilePointer + (1+field.pattern.length()+2)*docID);
+          SimpleTextUtil.readLine(in, scratch);
+          //System.out.println("parsing delta: " + scratch.utf8ToString());
+          BigDecimal bd;
+          try {
+            bd = (BigDecimal) decoder.parse(scratch.utf8ToString());
+          } catch (ParseException pe) {
+            CorruptIndexException e = new CorruptIndexException("failed to parse BigDecimal value (resource=" + in + ")");
+            e.initCause(pe);
+            throw e;
+          }
+          SimpleTextUtil.readLine(in, scratch); // read the line telling us if its real or not
+          return BigInteger.valueOf(field.minValue).add(bd.toBigIntegerExact()).longValue();
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe);
+        }
+      }
+    };
+  }
+  
+  private Bits getNumericDocsWithField(FieldInfo fieldInfo)  {
+    final OneField field = fields.get(fieldInfo.name);
+    final IndexInput in = data.clone();
+    final BytesRef scratch = new BytesRef();
+    return new Bits() {
+      @Override
+      public bool get(int index) {
+        try {
+          in.seek(field.dataStartFilePointer + (1+field.pattern.length()+2)*index);
+          SimpleTextUtil.readLine(in, scratch); // data
+          SimpleTextUtil.readLine(in, scratch); // 'T' or 'F'
+          return scratch.bytes[scratch.offset] == (byte) 'T';
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+
+      @Override
+      public int length() {
+        return maxDoc;
+      }
+    };
+  }
+
+  @Override
+  public BinaryDocValues getBinary(FieldInfo fieldInfo)  {
+    final OneField field = fields.get(fieldInfo.name);
+
+    // SegmentCoreReaders already verifies this field is
+    // valid:
+    Debug.Assert( field != null;
+
+    final IndexInput in = data.clone();
+    final BytesRef scratch = new BytesRef();
+    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+
+    return new BinaryDocValues() {
+      @Override
+      public void get(int docID, BytesRef result) {
+        try {
+          if (docID < 0 || docID >= maxDoc) {
+            throw new IndexOutOfBoundsException("docID must be 0 .. " + (maxDoc-1) + "; got " + docID);
+          }
+          in.seek(field.dataStartFilePointer + (9+field.pattern.length() + field.maxLength+2)*docID);
+          SimpleTextUtil.readLine(in, scratch);
+          Debug.Assert( StringHelper.startsWith(scratch, LENGTH);
+          int len;
+          try {
+            len = decoder.parse(new String(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8)).intValue();
+          } catch (ParseException pe) {
+            CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + in + ")");
+            e.initCause(pe);
+            throw e;
+          }
+          result.bytes = new byte[len];
+          result.offset = 0;
+          result.length = len;
+          in.readBytes(result.bytes, 0, len);
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe);
+        }
+      }
+    };
+  }
+  
+  private Bits getBinaryDocsWithField(FieldInfo fieldInfo)  {
+    final OneField field = fields.get(fieldInfo.name);
+    final IndexInput in = data.clone();
+    final BytesRef scratch = new BytesRef();
+    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+
+    return new Bits() {
+      @Override
+      public bool get(int index) {
+        try {
+          in.seek(field.dataStartFilePointer + (9+field.pattern.length() + field.maxLength+2)*index);
+          SimpleTextUtil.readLine(in, scratch);
+          Debug.Assert( StringHelper.startsWith(scratch, LENGTH);
+          int len;
+          try {
+            len = decoder.parse(new String(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8)).intValue();
+          } catch (ParseException pe) {
+            CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + in + ")");
+            e.initCause(pe);
+            throw e;
+          }
+          // skip past bytes
+          byte bytes[] = new byte[len];
+          in.readBytes(bytes, 0, len);
+          SimpleTextUtil.readLine(in, scratch); // newline
+          SimpleTextUtil.readLine(in, scratch); // 'T' or 'F'
+          return scratch.bytes[scratch.offset] == (byte) 'T';
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe);
+        }
+      }
+
+      @Override
+      public int length() {
+        return maxDoc;
+      }
+    };
+  }
+
+  @Override
+  public SortedDocValues getSorted(FieldInfo fieldInfo)  {
+    final OneField field = fields.get(fieldInfo.name);
+
+    // SegmentCoreReaders already verifies this field is
+    // valid:
+    Debug.Assert( field != null;
+
+    final IndexInput in = data.clone();
+    final BytesRef scratch = new BytesRef();
+    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+    final DecimalFormat ordDecoder = new DecimalFormat(field.ordPattern, new DecimalFormatSymbols(Locale.ROOT));
+
+    return new SortedDocValues() {
+      @Override
+      public int getOrd(int docID) {
+        if (docID < 0 || docID >= maxDoc) {
+          throw new IndexOutOfBoundsException("docID must be 0 .. " + (maxDoc-1) + "; got " + docID);
+        }
+        try {
+          in.seek(field.dataStartFilePointer + field.numValues * (9 + field.pattern.length() + field.maxLength) + docID * (1 + field.ordPattern.length()));
+          SimpleTextUtil.readLine(in, scratch);
+          try {
+            return (int) ordDecoder.parse(scratch.utf8ToString()).longValue()-1;
+          } catch (ParseException pe) {
+            CorruptIndexException e = new CorruptIndexException("failed to parse ord (resource=" + in + ")");
+            e.initCause(pe);
+            throw e;
+          }
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe);
+        }
+      }
+
+      @Override
+      public void lookupOrd(int ord, BytesRef result) {
+        try {
+          if (ord < 0 || ord >= field.numValues) {
+            throw new IndexOutOfBoundsException("ord must be 0 .. " + (field.numValues-1) + "; got " + ord);
+          }
+          in.seek(field.dataStartFilePointer + ord * (9 + field.pattern.length() + field.maxLength));
+          SimpleTextUtil.readLine(in, scratch);
+          Debug.Assert( StringHelper.startsWith(scratch, LENGTH): "got " + scratch.utf8ToString() + " in=" + in;
+          int len;
+          try {
+            len = decoder.parse(new String(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8)).intValue();
+          } catch (ParseException pe) {
+            CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + in + ")");
+            e.initCause(pe);
+            throw e;
+          }
+          result.bytes = new byte[len];
+          result.offset = 0;
+          result.length = len;
+          in.readBytes(result.bytes, 0, len);
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe);
+        }
+      }
+
+      @Override
+      public int getValueCount() {
+        return (int)field.numValues;
+      }
+    };
+  }
+
+  @Override
+  public SortedSetDocValues getSortedSet(FieldInfo fieldInfo)  {
+    final OneField field = fields.get(fieldInfo.name);
+
+    // SegmentCoreReaders already verifies this field is
+    // valid:
+    Debug.Assert( field != null;
+
+    final IndexInput in = data.clone();
+    final BytesRef scratch = new BytesRef();
+    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+    
+    return new SortedSetDocValues() {
+      String[] currentOrds = new String[0];
+      int currentIndex = 0;
+      
+      @Override
+      public long nextOrd() {
+        if (currentIndex == currentOrds.length) {
+          return NO_MORE_ORDS;
+        } else {
+          return Long.parseLong(currentOrds[currentIndex++]);
+        }
+      }
+
+      @Override
+      public void setDocument(int docID) {
+        if (docID < 0 || docID >= maxDoc) {
+          throw new IndexOutOfBoundsException("docID must be 0 .. " + (maxDoc-1) + "; got " + docID);
+        }
+        try {
+          in.seek(field.dataStartFilePointer + field.numValues * (9 + field.pattern.length() + field.maxLength) + docID * (1 + field.ordPattern.length()));
+          SimpleTextUtil.readLine(in, scratch);
+          String ordList = scratch.utf8ToString().trim();
+          if (ordList.isEmpty()) {
+            currentOrds = new String[0];
+          } else {
+            currentOrds = ordList.split(",");
+          }
+          currentIndex = 0;
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe);
+        }
+      }
+
+      @Override
+      public void lookupOrd(long ord, BytesRef result) {
+        try {
+          if (ord < 0 || ord >= field.numValues) {
+            throw new IndexOutOfBoundsException("ord must be 0 .. " + (field.numValues-1) + "; got " + ord);
+          }
+          in.seek(field.dataStartFilePointer + ord * (9 + field.pattern.length() + field.maxLength));
+          SimpleTextUtil.readLine(in, scratch);
+          Debug.Assert( StringHelper.startsWith(scratch, LENGTH): "got " + scratch.utf8ToString() + " in=" + in;
+          int len;
+          try {
+            len = decoder.parse(new String(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8)).intValue();
+          } catch (ParseException pe) {
+            CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + in + ")");
+            e.initCause(pe);
+            throw e;
+          }
+          result.bytes = new byte[len];
+          result.offset = 0;
+          result.length = len;
+          in.readBytes(result.bytes, 0, len);
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe);
+        }
+      }
+
+      @Override
+      public long getValueCount() {
+        return field.numValues;
+      }
+    };
+  }
+  
+  @Override
+  public Bits getDocsWithField(FieldInfo field)  {
+    switch (field.getDocValuesType()) {
+      case SORTED_SET:
+        return DocValues.docsWithValue(getSortedSet(field), maxDoc);
+      case SORTED:
+        return DocValues.docsWithValue(getSorted(field), maxDoc);
+      case BINARY:
+        return getBinaryDocsWithField(field);
+      case NUMERIC:
+        return getNumericDocsWithField(field);
+      default:
+        throw new Debug.Assert(ionError();
+    }
+  }
+
+  @Override
+  public void close()  {
+    data.close();
+  }
+
+  /** Used only in ctor: */
+  private void readLine()  {
+    SimpleTextUtil.readLine(data, scratch);
+    //System.out.println("line: " + scratch.utf8ToString());
+  }
+
+  /** Used only in ctor: */
+  private bool startsWith(BytesRef prefix) {
+    return StringHelper.startsWith(scratch, prefix);
+  }
+
+  /** Used only in ctor: */
+  private String stripPrefix(BytesRef prefix)  {
+    return new String(scratch.bytes, scratch.offset + prefix.length, scratch.length - prefix.length, StandardCharsets.UTF_8);
+  }
+
+  @Override
+  public long ramBytesUsed() {
+    return 0;
+  }
+
+  @Override
+  public void checkIntegrity()  {
+    BytesRef scratch = new BytesRef();
+    IndexInput clone = data.clone();
+    clone.seek(0);
+    ChecksumIndexInput input = new BufferedChecksumIndexInput(clone);
+    while(true) {
+      SimpleTextUtil.readLine(input, scratch);
+      if (scratch.equals(END)) {
+        SimpleTextUtil.checkFooter(input);
+        break;
+      }
+    }
+  }
+}

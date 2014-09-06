@@ -1,0 +1,84 @@
+﻿Some fairly large changes happened between Lucene 2.x and 3.x, particularly the addition of Generics and Enum types to Java.
+Due to some of the major differences between C#'s generics and Java's generics, there are some areas of lucene that differ
+greatly in design.  
+
+The AttributeFactory in AttributeSource is a good example of this.  Java has the Class<E> type, which would
+be .NET's Type<T>, if it existed.  Since .NET doesn't have a generic type, the compile time checking Java has for attributes
+(being constrained to typeof(Attribute)) had to be done in a different way.  The factory methods for AddAttribute and GetAttribute
+now take no parameters, and instead use generic type arguments (AddAttribute<TypeAttribute>(); instead of 
+AddAttribute(typeof(TypeAttribute));)  this change should be documented.
+
+Another example is in Enum types.  Lucene has converted its Enum types from Util.Parameter classes into proper Enums.  this
+is good improvement, since they are more lightweight and performant than a class.  However, Java's enums are closer to classes than
+in .NET.  The enumerations in Field (ie, Field.Index) have methods that help to determine the properties of that field.
+Right now, they are put in a static class as extension methods.  That allows us to use methods like IsStored(), WithOffsets(),
+WithPositions(), etc on the actual enum type without having to use a static class, but since the extension methods can only be used
+on instances of the type, the functions that create the enums, ie ToIndex(), ToTermVector(), are static methods on a static
+class.
+
+Also, more unit tests fail intermittantly in Release mode.  We notice this mostly with TestIndexWriter.TestExceptionsDuringCommit, but
+now we're seeing it on a others as well (I think one in Store and others).  It has to do with the file system, we'll get 
+AccessViolationExceptions, and seem to be caused by the pure speed that we're trying to access the file.  I think we're trying to 
+access the file after it's been written, but before the kernel has finished writing to the file, since its buffered like that.  
+It passes if you run in release with the debugger attached.  I can also get them to pass if I run them in release where they would 
+normally fail, but with Process Monitor on in the background, monitoring the file requests. - cc
+
+TODO: Confirm HashMap emulates java properly
+TODO: Tests need to be written for WeakDictionary
+TODO: Comments need to be written for WeakDictionary
+TODO: Tests need to be written for IdentityDictionary -> Verify behavior
+
+
+PriorityQueue in InsertWithOverflow, java returns null, I set it to return default(T).  I don't think it's an issue.  We should, at least, document
+              that is may have unexpected results if used with a non-nullable type.
+
+BooleanClause.java - Can't override ToString on Enum or replace with Extension Method.  Leave type-safe, override with extension method, or create static class?
+
+ParallelReader - extra data types, using SortedDictionary in place of TreeMap.  Confirm compatibility.  Looks okay, .NET uses a r/b tree just like Java, and it
+                 seems to perform/behave just about the same.
+
+FieldValueHitQueue.Entry had to be made public for accessibility.
+
+FieldCacheRangeFilter & (NumericRangeFilter/Query) - Expects nullable primitives for the anonymous range filters<T> -> replaced with Nullable<T>
+         -> Could FieldCacheRangeFilter and NumericRangeFilter/Query be converted to use normal primitives, and define no lower/upper bounds as being
+            Type.MaxValue instead of null?
+
+FuzzyQuery - uses java.util.PriorityQueue<T>, which .net does not have.  Using SortedList<TKey, TVal> in it's place, which works, but a) isn't a perfect replacement
+             (a SortedList<TKey, TVal> doesn't allow duplicate keys, which is what is sorted, where a PriorityQueue does) and b) it's likely slower than a PriorityQueue<T>
+             I can't tell if the PriorityQueue that is defined in Lucene.Net.Util would work in its place.
+
+Java LinkedList behavior compared to C#.  Used extensively in Attributes, filters and the like
+
+SegmentInfos inherits from java.util.Vector which is threadsafe.  Closest equiv is SynchronizedCollection<T>, which is in System.ServiceModel.dll
+      so, we'd have a dependency on that DLL for the one collection, which I'm not sure is worth it.  We could probably synchronize it a different way.
+
+ThreadInterruptedException.java was not ported, because it only exists in the java because the built-in one is a checked exception
+        -> Anywhere in .NET code that catches a ThreadInterruptedException and re-throws it, should just be removed, as it's redundant.
+        -> Example places include (FSDirectory, ConcurrentMergeScheduler, 
+
+Dispose needs to be implemented properly around the entire library.  IMO, that means that Close should be Obsoleted and the code in Close() moved to Dispose().
+
+Constants.cs - LUCENE_MAIN_VERSION, and static constructor differs quite a bit from Java.  It may be that way by design, I'm guessing differences in how
+               java packages work versus .NET.  Either way, the tests for versioning passes, so it's probably not an issue?
+
+ParallelMultiSearcher -> Successfully ported, but in Java the threads are named, in .NET, I ported it without named threads 
+                         (also without NamedThreadFactory from java's util)
+
+FieldSelectorResult -> uses kludgy workaround due to Enums not being able to be null.  It's only used in the MapFieldSelector class, when
+                       deciding to include a field or not.
+
+ConcurrentMergeScheduler/IndexWriter -> Tries to assert the current thread holds a lock.  this isn't possible in .NET
+
+SegmentInfos.cs -> 3 places need to return a readonly HashMap.
+
+
+There are a good amount of methods that have been changed from protected internal to public, seemingly for use with NUnit.  I've added Lucene.Net.Test
+as a friend assembly that can access internals.  We can change these accessibility modifiers back to how they are in java, and still have it be testable.
+We can also get rid of the properties and such that are "fields_forNUnit" or like it.  It just doesn't look good.
+
+TODO: NamedThreadFactory.java - Is this needed?  What is it for, just for debugging?
+TODO: DummyConcurrentLock.java - Not Needed?
+
+TODO: LockStressTest.java - Not yet ported.
+TODO: MMapDirectory.java - Port Issues
+TODO: NIOFSDirectory.java - Port Issues

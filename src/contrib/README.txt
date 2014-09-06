@@ -1,4 +1,6 @@
-This folder contains both ported and contributed code to the Lucene.Net project.  The ported code are those from the Java to C# while the contributed code are new work which don't necessarily exist in the Java side of Lucene.  
+This folder contains legacy code contributed to the Lucene.Net project (some ported from the Java Lucene project).
+
+The code in this folder is deprecated and not guaranteed to work, and will be removed once we have finished the current effort of porting from Java Lucene 4.8.
 
 Ported code:
 ------------

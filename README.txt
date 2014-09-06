@@ -15,16 +15,6 @@ Please join the Apache Lucene.Net-User mailing list by sending a message to:
   user-subscribe@lucenenet.apache.org
 
 
-CURRENT WORK
----------------
-The Lucene.NET committers and community are currently working on a version 4.3 port of Lucene that can be found in branch_4x of the git repository.  
-
-The apache source code for Lucene.Net can be found here:
-https://git-wip-us.apache.org/repos/asf/lucenenet.git
-
-
-
-
 FILES
 ---------------
 build/scripts
@@ -48,11 +38,11 @@ test/*
 DOCUMENTATION
 ---------------------
 MSDN style API documentation for Apache Lucene.Net exists.  Those can be found at this site:
-  http://lucenenet.apache.org/docs/3.0.3/Index.html
+  http://incubator.apache.org/lucene.net/docs/2.9.4/Index.html
   
   or 
   
-  http://lucenenet.apache.org/docs/3.0.3/Lucene.Net.chm
+  http://incubator.apache.org/lucene.net/docs/2.9.4/Lucene.Net.chm
   
 ADDITIONAL LIBRARIES
 -----------------------------
@@ -60,12 +50,11 @@ There are a number of additional libraries that various parts of Lucene.Net may 
 included in the source distribution
 
 These libraries can be found at:
-	https://svn.apache.org/repos/asf/lucene.net/tags/Lucene.Net_3_0_3_RC1/lib/
+	https://svn.apache.org/repos/asf/incubator/lucene.net/tags/Lucene.Net_2_9_4_RC3/lib/
 	
 Libraries:
-  - Gallio 3.2.750
-  - ICSharpCode
-  - Nuget
-  - NUnit.org
-  - Spatial4n
-  - StyleCop 4.5
+	- Gallio 3.2.750
+	- ICSharpCode
+	- Nuget
+	- NUnit.org
+	- StyleCop 4.5
