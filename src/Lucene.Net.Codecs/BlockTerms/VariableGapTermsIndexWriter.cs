@@ -15,352 +15,334 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Lucene.Net.Codecs;
-using Lucene.Net.Codecs.BlockTerms;
-using Lucene.Net.Index;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
-using Lucene.Net.Util.Fst;
-
 namespace Lucene.Net.Codecs.BlockTerms
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using Codecs;
+    using Index;
+    using Store;
+    using Util;
+    using Util.Fst;
     
-}
-/**
- * Selects index terms according to provided pluggable
- * {@link IndexTermSelector}, and stores them in a prefix trie that's
- * loaded entirely in RAM stored as an FST.  This terms
- * index only supports unsigned byte term sort order
- * (unicode codepoint order when the bytes are UTF8).
- *
- * @lucene.experimental */
-public class VariableGapTermsIndexWriter : TermsIndexWriterBase {
-  protected IndexOutput output;
-
-  /** Extension of terms index file */
-  public const String TERMS_INDEX_EXTENSION = "tiv";
-
- public const String CODEC_NAME = "VARIABLE_GAP_TERMS_INDEX";
- public const int VERSION_START = 0;
-public const int VERSION_APPEND_ONLY = 1;
-  public const int VERSION_CHECKSUM = 2;
-  public const int VERSION_CURRENT = VERSION_CHECKSUM;
-
-  private readonly List<FSTFieldWriter> fields = new ArrayList<>();
-  
-  @SuppressWarnings("unused") private final FieldInfos fieldInfos; // unread
-  private final IndexTermSelector policy;
-
-  /** 
-   * Hook for selecting which terms should be placed in the terms index.
-   * <p>
-   * {@link #newField} is called at the start of each new field, and
-   * {@link #isIndexTerm} for each term in that field.
-   * 
-   * @lucene.experimental 
-   */
-
-    public abstract class IndexTermSelector
-    {
-        /// <summary>
-        /// Called sequentially on every term being written
-        /// returning true if this term should be indexed
-        /// </summary>
-        public abstract bool IsIndexTerm(BytesRef term, TermStats stats);
-        
-        /// <summary>Called when a new field is started</summary>
-        public abstract void NewField(FieldInfo fieldInfo);
-    }
-
-    /// <remarks>
-    /// Same policy as {@link FixedGapTermsIndexWriter}
-    /// </remarks>
-    public sealed class EveryNTermSelector : IndexTermSelector
-    {
-        private int count;
-        private readonly int interval;
-
-        public EveryNTermSelector(int interval)
-        {
-            this.interval = interval;
-            // First term is first indexed term:
-            count = interval;
-        }
-
-        public override bool IsIndexTerm(BytesRef term, TermStats stats)
-        {
-            if (count >= interval)
-            {
-                count = 1;
-                return true;
-            }
-            else
-            {
-                count++;
-                return false;
-            }
-        }
-
-        public override void NewField(FieldInfo fieldInfo)
-        {
-            count = interval;
-        }
-    }
-
     /// <summary>
-    /// Sets an index term when docFreq >= docFreqThresh, or
-    /// every interval terms.  This should reduce seek time
-    /// to high docFreq terms. 
+    /// Selects index terms according to provided pluggable
+    /// {@link IndexTermSelector}, and stores them in a prefix trie that's
+    /// loaded entirely in RAM stored as an FST.  This terms
+    /// index only supports unsigned byte term sort order
+    /// (unicode codepoint order when the bytes are UTF8).
+    /// 
+    /// @lucene.experimental
     /// </summary>
-    public class EveryNOrDocFreqTermSelector : IndexTermSelector
+    public class VariableGapTermsIndexWriter : TermsIndexWriterBase
     {
-        private int count;
-        private readonly int docFreqThresh;
-        private readonly int interval;
+        protected IndexOutput Output;
 
-        public EveryNOrDocFreqTermSelector(int docFreqThresh, int interval)
+        /** Extension of terms index file */
+        public const String TERMS_INDEX_EXTENSION = "tiv";
+        public const String CODEC_NAME = "VARIABLE_GAP_TERMS_INDEX";
+        public const int VERSION_START = 0;
+        public const int VERSION_APPEND_ONLY = 1;
+        public const int VERSION_CHECKSUM = 2;
+        public const int VERSION_CURRENT = VERSION_CHECKSUM;
+
+        private readonly List<FstFieldWriter> _fields = new List<FstFieldWriter>();
+        private readonly IndexTermSelector _policy;
+
+        /// <summary>
+        /// Hook for selecting which terms should be placed in the terms index
+        /// 
+        /// IsIndexTerm for each term in that field
+        /// NewField is called at the start of each new field
+        /// 
+        /// @lucene.experimental
+        /// </summary>
+        public abstract class IndexTermSelector
         {
-            this.interval = interval;
-            this.docFreqThresh = docFreqThresh;
+            /// <summary>
+            /// Called sequentially on every term being written
+            /// returning true if this term should be indexed
+            /// </summary>
+            public abstract bool IsIndexTerm(BytesRef term, TermStats stats);
 
-            // First term is first indexed term:
-            count = interval;
+            /// <summary>Called when a new field is started</summary>
+            public abstract void NewField(FieldInfo fieldInfo);
         }
 
-        public override bool IsIndexTerm(BytesRef term, TermStats stats)
+        /// <remarks>
+        /// Same policy as {@link FixedGapTermsIndexWriter}
+        /// </remarks>
+        public class EveryNTermSelector : IndexTermSelector
         {
-            if (stats.DocFreq >= docFreqThresh || count >= interval)
+            private int _count;
+            private readonly int _interval;
+
+            public EveryNTermSelector(int interval)
             {
-                count = 1;
-                return true;
+                _interval = interval;
+                _count = interval; // First term is first indexed term
             }
-            else
+
+            public override bool IsIndexTerm(BytesRef term, TermStats stats)
             {
-                count++;
+                if (_count >= _interval) 
+                {
+                    _count = 1;
+                    return true;
+                }
+                
+                _count++;
                 return false;
             }
-        }
 
-        public override void NewField(FieldInfo fieldInfo)
-        {
-            count = interval;
-        }
-    }
-
-    // TODO: it'd be nice to let the FST builder prune based
-  // on term count of each node (the prune1/prune2 that it
-  // accepts), and build the index based on that.  This
-  // should result in a more compact terms index, more like
-  // a prefix trie than the other selectors, because it
-  // only stores enough leading bytes to get down to N
-  // terms that may complete that prefix.  It becomes
-  // "deeper" when terms are dense, and "shallow" when they
-  // are less dense.
-  //
-  // However, it's not easy to make that work this this
-  // API, because that pruning doesn't immediately know on
-  // seeing each term whether that term will be a seek point
-  // or not.  It requires some non-causality in the API, ie
-  // only on seeing some number of future terms will the
-  // builder decide which past terms are seek points.
-  // Somehow the API'd need to be able to return a "I don't
-  // know" value, eg like a Future, which only later on is
-  // flipped (frozen) to true or false.
-  //
-  // We could solve this with a 2-pass approach, where the
-  // first pass would build an FSA (no outputs) solely to
-  // determine which prefixes are the 'leaves' in the
-  // pruning. The 2nd pass would then look at this prefix
-  // trie to mark the seek points and build the FST mapping
-  // to the true output.
-  //
-  // But, one downside to this approach is that it'd result
-  // in uneven index term selection.  EG with prune1=10, the
-  // resulting index terms could be as frequent as every 10
-  // terms or as rare as every <maxArcCount> * 10 (eg 2560),
-  // in the extremes.
-
-    public VariableGapTermsIndexWriter(SegmentWriteState state, IndexTermSelector policy)
-    {
-        string indexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
-            TERMS_INDEX_EXTENSION);
-        output = state.Directory.CreateOutput(indexFileName, state.Context);
-        bool success = false;
-        try
-        {
-            FieldInfos = state.FieldInfos;
-            this.Policy = policy;
-            writeHeader(output);
-            success = true;
-        }
-        finally
-        {
-            if (!success)
+            public override void NewField(FieldInfo fieldInfo)
             {
-                IOUtils.CloseWhileHandlingException(output);
-            }
-        }
-    }
-
-    private void WriteHeader(IndexOutput output)
-    {
-        CodecUtil.WriteHeader(output, CODEC_NAME, VERSION_CURRENT);
-    }
-
-    public override FieldWriter AddField(FieldInfo field, long termsFilePointer)
-    {
-        ////System.out.println("VGW: field=" + field.name);
-        Policy.newField(field);
-        FSTFieldWriter writer = new FSTFieldWriter(field, termsFilePointer);
-        fields.Add(writer);
-        return writer;
-    }
-
-    /** NOTE: if your codec does not sort in unicode code
-   *  point order, you must override this method, to simply
-   *  return indexedTerm.length. */
-
-    protected int IndexedTermPrefixLength(BytesRef priorTerm, BytesRef indexedTerm)
-    {
-        // As long as codec sorts terms in unicode codepoint
-        // order, we can safely strip off the non-distinguishing
-        // suffix to save RAM in the loaded terms index.
-        int idxTermOffset = indexedTerm.Offset;
-        int priorTermOffset = priorTerm.Offset;
-        int limit = Math.Min(priorTerm.Length, indexedTerm.Length);
-        for (int byteIdx = 0; byteIdx < limit; byteIdx++)
-        {
-            if (priorTerm.Bytes[priorTermOffset + byteIdx] != indexedTerm.Bytes[idxTermOffset + byteIdx])
-            {
-                return byteIdx + 1;
+                _count = _interval;
             }
         }
 
-        return Math.Min(1 + priorTerm.Length, indexedTerm.Length);
-    }
-
-    private class FSTFieldWriter : FieldWriter
-    {
-        private readonly Builder<long> fstBuilder;
-        private readonly PositiveIntOutputs fstOutputs;
-        private readonly long startTermsFilePointer;
-
-        public FieldInfo fieldInfo;
-        private FST<long> fst;
-        private long indexStart;
-
-        private readonly BytesRef lastTerm = new BytesRef();
-        private bool first = true;
-
-        public FSTFieldWriter(FieldInfo fieldInfo, long termsFilePointer)
+        /// <summary>
+        /// Sets an index term when docFreq >= docFreqThresh, or
+        /// every interval terms.  This should reduce seek time
+        /// to high docFreq terms. 
+        /// </summary>
+        public class EveryNOrDocFreqTermSelector : IndexTermSelector
         {
-            this.fieldInfo = fieldInfo;
-            fstOutputs = PositiveIntOutputs.Singleton;
-            fstBuilder = new Builder<>(FST.INPUT_TYPE.BYTE1, fstOutputs);
-            indexStart = output.FilePointer;
-            ////System.out.println("VGW: field=" + fieldInfo.name);
+            private int _count;
+            private readonly int _docFreqThresh;
+            private readonly int _interval;
 
-            // Always put empty string in
-            fstBuilder.Add(new IntsRef(), termsFilePointer);
-            startTermsFilePointer = termsFilePointer;
-        }
-
-        public override bool CheckIndexTerm(BytesRef text, TermStats stats)
-        {
-            //System.out.println("VGW: index term=" + text.utf8ToString());
-            // NOTE: we must force the first term per field to be
-            // indexed, in case policy doesn't:
-            if (policy.isIndexTerm(text, stats) || first)
+            public EveryNOrDocFreqTermSelector(int docFreqThresh, int interval)
             {
-                first = false;
-                //System.out.println("  YES");
-                return true;
+                _interval = interval;
+                _docFreqThresh = docFreqThresh;
+                _count = interval; // First term is first indexed term
             }
-            else
+
+            public override bool IsIndexTerm(BytesRef term, TermStats stats)
             {
-                lastTerm.CopyBytes(text);
+                if (stats.DocFreq >= _docFreqThresh || _count >= _interval)
+                {
+                    _count = 1;
+                    return true;
+                }
+                
+                _count++;
                 return false;
             }
+
+            public override void NewField(FieldInfo fieldInfo)
+            {
+                _count = _interval;
+            }
         }
 
-        private readonly IntsRef scratchIntsRef = new IntsRef();
+        // TODO: it'd be nice to let the FST builder prune based
+        // on term count of each node (the prune1/prune2 that it
+        // accepts), and build the index based on that.  This
+        // should result in a more compact terms index, more like
+        // a prefix trie than the other selectors, because it
+        // only stores enough leading bytes to get down to N
+        // terms that may complete that prefix.  It becomes
+        // "deeper" when terms are dense, and "shallow" when they
+        // are less dense.
+        //
+        // However, it's not easy to make that work this this
+        // API, because that pruning doesn't immediately know on
+        // seeing each term whether that term will be a seek point
+        // or not.  It requires some non-causality in the API, ie
+        // only on seeing some number of future terms will the
+        // builder decide which past terms are seek points.
+        // Somehow the API'd need to be able to return a "I don't
+        // know" value, eg like a Future, which only later on is
+        // flipped (frozen) to true or false.
+        //
+        // We could solve this with a 2-pass approach, where the
+        // first pass would build an FSA (no outputs) solely to
+        // determine which prefixes are the 'leaves' in the
+        // pruning. The 2nd pass would then look at this prefix
+        // trie to mark the seek points and build the FST mapping
+        // to the true output.
+        //
+        // But, one downside to this approach is that it'd result
+        // in uneven index term selection.  EG with prune1=10, the
+        // resulting index terms could be as frequent as every 10
+        // terms or as rare as every <maxArcCount> * 10 (eg 2560),
+        // in the extremes.
 
-        public override void Add(BytesRef text, TermStats stats, long termsFilePointer)
+        public VariableGapTermsIndexWriter(SegmentWriteState state, IndexTermSelector policy)
         {
-            if (text.Length == 0)
-            {
-                // We already added empty string in ctor
-                Debug.Assert(termsFilePointer == startTermsFilePointer);
-                return;
-            }
-            int lengthSave = text.Length;
-            text.Length = IndexedTermPrefixLength(lastTerm, text);
+            string indexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
+                TERMS_INDEX_EXTENSION);
+            Output = state.Directory.CreateOutput(indexFileName, state.Context);
+            bool success = false;
+
             try
             {
-                fstBuilder.Add(Util.ToIntsRef(text, scratchIntsRef), termsFilePointer);
+                _policy = policy;
+                WriteHeader(Output);
+                success = true;
             }
             finally
             {
-                text.Length = lengthSave;
+                if (!success)
+                    IOUtils.CloseWhileHandlingException(Output);
             }
-            lastTerm.CopyBytes(text);
         }
 
-        public override void Finish(long termsFilePointer)
+        private static void WriteHeader(IndexOutput output)
         {
-            fst = fstBuilder.Finish();
-            if (fst != null)
+            CodecUtil.WriteHeader(output, CODEC_NAME, VERSION_CURRENT);
+        }
+
+        public override FieldWriter AddField(FieldInfo field, long termsFilePointer)
+        {
+            _policy.NewField(field);
+            var writer = new FstFieldWriter(field, termsFilePointer, this);
+            _fields.Add(writer);
+            return writer;
+        }
+
+        /// <remarks>
+        /// Note: If your codec does not sort in unicode code point order,
+        /// you must override this method to simplly return IndexedTerm.Length
+        /// </remarks>
+        protected int IndexedTermPrefixLength(BytesRef priorTerm, BytesRef indexedTerm)
+        {
+            // As long as codec sorts terms in unicode codepoint
+            // order, we can safely strip off the non-distinguishing
+            // suffix to save RAM in the loaded terms index.
+
+            int idxTermOffset = indexedTerm.Offset;
+            int priorTermOffset = priorTerm.Offset;
+            int limit = Math.Min(priorTerm.Length, indexedTerm.Length);
+            for (int byteIdx = 0; byteIdx < limit; byteIdx++)
             {
-                fst.Save(output);
+                if (priorTerm.Bytes[priorTermOffset + byteIdx] != indexedTerm.Bytes[idxTermOffset + byteIdx])
+                {
+                    return byteIdx + 1;
+                }
+            }
+
+            return Math.Min(1 + priorTerm.Length, indexedTerm.Length);
+        }
+
+        private class FstFieldWriter : FieldWriter
+        {
+            private readonly Builder<long> _fstBuilder;
+            private readonly long _startTermsFilePointer;
+            private readonly BytesRef _lastTerm = new BytesRef();
+            private readonly IntsRef _scratchIntsRef = new IntsRef();
+            private readonly VariableGapTermsIndexWriter _vgtiw;
+
+            private bool _first = true;
+
+            public long IndexStart { get; private set; }
+            public FieldInfo FieldInfo { get; private set; }
+            public FST<long> Fst { get; private set; }
+
+            public FstFieldWriter(FieldInfo fieldInfo, long termsFilePointer, VariableGapTermsIndexWriter vgtiw)
+            {
+                _vgtiw = vgtiw;
+                FieldInfo = fieldInfo;
+                PositiveIntOutputs fstOutputs = PositiveIntOutputs.Singleton;
+                _fstBuilder = new Builder<long>(FST.INPUT_TYPE.BYTE1, fstOutputs);
+                IndexStart = _vgtiw.Output.FilePointer;
+
+                // Always put empty string in
+                _fstBuilder.Add(new IntsRef(), termsFilePointer);
+                _startTermsFilePointer = termsFilePointer;
+            }
+
+            public override bool CheckIndexTerm(BytesRef text, TermStats stats)
+            {
+                // NOTE: we must force the first term per field to be
+                // indexed, in case policy doesn't:
+                if (_vgtiw._policy.IsIndexTerm(text, stats) || _first)
+                {
+                    _first = false;
+                    return true;
+                }
+            
+                _lastTerm.CopyBytes(text);
+                return false;
+            }
+
+            public override void Add(BytesRef text, TermStats stats, long termsFilePointer)
+            {
+                if (text.Length == 0)
+                {
+                    // We already added empty string in ctor
+                    Debug.Assert(termsFilePointer == _startTermsFilePointer);
+                    return;
+                }
+                int lengthSave = text.Length;
+                text.Length = _vgtiw.IndexedTermPrefixLength(_lastTerm, text);
+                try
+                {
+                    _fstBuilder.Add(Util.ToIntsRef(text, _scratchIntsRef), termsFilePointer);
+                }
+                finally
+                {
+                    text.Length = lengthSave;
+                }
+                _lastTerm.CopyBytes(text);
+            }
+
+            public override void Finish(long termsFilePointer)
+            {
+                Fst = _fstBuilder.Finish();
+                if (Fst != null)
+                    Fst.Save(_vgtiw.Output);
             }
         }
-    }
 
-    public void Dispose()
-    {
-        if (output != null)
+        public override void Dispose()
         {
+            if (Output == null) return;
+
             try
             {
-                long dirStart = output.FilePointer;
-                int fieldCount = fields.Size;
+                long dirStart = Output.FilePointer;
+                int fieldCount = _fields.Count;
 
                 int nonNullFieldCount = 0;
                 for (int i = 0; i < fieldCount; i++)
                 {
-                    FSTFieldWriter field = fields[i];
-                    if (field.fst != null)
+                    FstFieldWriter field = _fields[i];
+                    if (field.Fst != null)
                     {
                         nonNullFieldCount++;
                     }
                 }
 
-                output.WriteVInt(nonNullFieldCount);
+                Output.WriteVInt(nonNullFieldCount);
                 for (int i = 0; i < fieldCount; i++)
                 {
-                    FSTFieldWriter field = fields[i];
+                    FstFieldWriter field = _fields[i];
                     if (field.Fst != null)
                     {
-                        output.WriteVInt(field.fieldInfo.Number);
-                        output.WriteVLong(field.indexStart);
+                        Output.WriteVInt(field.FieldInfo.Number);
+                        Output.WriteVLong(field.IndexStart);
                     }
                 }
-                writeTrailer(dirStart);
-                CodecUtil.WriteFooter(output);
+                WriteTrailer(dirStart);
+                CodecUtil.WriteFooter(Output);
             }
             finally
             {
-                output.Dispose();
-                output = null;
+                Output.Dispose();
+                Output = null;
             }
         }
+
+        private void WriteTrailer(long dirStart)
+        {
+            Output.WriteLong(dirStart);
+        }
+
     }
 
-    private void WriteTrailer(long dirStart)
-    {
-        output.WriteLong(dirStart);
-    }
 }

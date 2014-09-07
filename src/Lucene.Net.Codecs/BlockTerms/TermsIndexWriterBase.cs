@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-using System;
-using Lucene.Net.Index;
-using Lucene.Net.Util;
-
 namespace Lucene.Net.Codecs.BlockTerms
 {
+    using System;
+    using Index;
+    using Util;
 
     /// <summary>
     ///  Base class for terms index implementations to plug
@@ -34,11 +33,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public abstract FieldWriter AddField(FieldInfo fieldInfo, long termsFilePointer);
 
-        public void Dispose()
-        {
-            //
-        }
-
+        public abstract void Dispose();
 
         /// <summary>Terms index API for a single field</summary>
         public abstract class FieldWriter

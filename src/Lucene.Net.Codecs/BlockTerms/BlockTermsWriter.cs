@@ -17,330 +17,372 @@
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
-    
-}
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using Lucene.Net.Index;
+    using Lucene.Net.Store;
+    using Lucene.Net.Util;
 
-// TODO: currently we encode all terms between two indexed
-// terms as a block; but, we could decouple the two, ie
-// allow several blocks in between two indexed terms
-
-/**
- * Writes terms dict, block-encoding (column stride) each
- * term's metadata for each set of terms between two
- * index terms.
- *
- * @lucene.experimental
- */
-
-public class BlockTermsWriter extends FieldsConsumer {
-
-  final static String CODEC_NAME = "BLOCK_TERMS_DICT";
-
-  // Initial format
-  public static final int VERSION_START = 0;
-  public static final int VERSION_APPEND_ONLY = 1;
-  public static final int VERSION_META_ARRAY = 2;
-  public static final int VERSION_CHECKSUM = 3;
-  public static final int VERSION_CURRENT = VERSION_CHECKSUM;
-
-  /** Extension of terms file */
-  static final String TERMS_EXTENSION = "tib";
-
-  protected IndexOutput out;
-  final PostingsWriterBase postingsWriter;
-  final FieldInfos fieldInfos;
-  FieldInfo currentField;
-  private final TermsIndexWriterBase termsIndexWriter;
-
-  private static class FieldMetaData {
-    public final FieldInfo fieldInfo;
-    public final long numTerms;
-    public final long termsStartPointer;
-    public final long sumTotalTermFreq;
-    public final long sumDocFreq;
-    public final int docCount;
-    public final int longsSize;
-
-    public FieldMetaData(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize) {
-      Debug.Assert( numTerms > 0;
-      this.fieldInfo = fieldInfo;
-      this.termsStartPointer = termsStartPointer;
-      this.numTerms = numTerms;
-      this.sumTotalTermFreq = sumTotalTermFreq;
-      this.sumDocFreq = sumDocFreq;
-      this.docCount = docCount;
-      this.longsSize = longsSize;
-    }
-  }
-
-  private final List<FieldMetaData> fields = new ArrayList<>();
-
-  // private final String segment;
-
-  public BlockTermsWriter(TermsIndexWriterBase termsIndexWriter,
-      SegmentWriteState state, PostingsWriterBase postingsWriter)
-       {
-    final String termsFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, TERMS_EXTENSION);
-    this.termsIndexWriter = termsIndexWriter;
-    out = state.directory.createOutput(termsFileName, state.context);
-    bool success = false;
-    try {
-      fieldInfos = state.fieldInfos;
-      writeHeader(out);
-      currentField = null;
-      this.postingsWriter = postingsWriter;
-      // segment = state.segmentName;
-      
-      //System.out.println("BTW.init seg=" + state.segmentName);
-      
-      postingsWriter.init(out); // have consumer write its format/header
-      success = true;
-    } finally {
-      if (!success) {
-        IOUtils.closeWhileHandlingException(out);
-      }
-    }
-  }
-  
-  private void writeHeader(IndexOutput out)  {
-    CodecUtil.writeHeader(out, CODEC_NAME, VERSION_CURRENT);     
-  }
-
-  @Override
-  public TermsConsumer addField(FieldInfo field)  {
-    //System.out.println("\nBTW.addField seg=" + segment + " field=" + field.name);
-    Debug.Assert( currentField == null || currentField.name.compareTo(field.name) < 0;
-    currentField = field;
-    TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.addField(field, out.getFilePointer());
-    return new TermsWriter(fieldIndexWriter, field, postingsWriter);
-  }
-
-  @Override
-  public void close()  {
-    if (out != null) {
-      try {
-        final long dirStart = out.getFilePointer();
-        
-        out.writeVInt(fields.size());
-        for(FieldMetaData field : fields) {
-          out.writeVInt(field.fieldInfo.number);
-          out.writeVLong(field.numTerms);
-          out.writeVLong(field.termsStartPointer);
-          if (field.fieldInfo.getIndexOptions() != IndexOptions.DOCS_ONLY) {
-            out.writeVLong(field.sumTotalTermFreq);
-          }
-          out.writeVLong(field.sumDocFreq);
-          out.writeVInt(field.docCount);
-          if (VERSION_CURRENT >= VERSION_META_ARRAY) {
-            out.writeVInt(field.longsSize);
-          }
-        }
-        writeTrailer(dirStart);
-        CodecUtil.writeFooter(out);
-      } finally {
-        IOUtils.close(out, postingsWriter, termsIndexWriter);
-        out = null;
-      }
-    }
-  }
-
-  private void writeTrailer(long dirStart)  {
-    out.writeLong(dirStart);    
-  }
-  
-  private static class TermEntry {
-    public final BytesRef term = new BytesRef();
-    public BlockTermState state;
-  }
-
-  class TermsWriter extends TermsConsumer {
-    private final FieldInfo fieldInfo;
-    private final PostingsWriterBase postingsWriter;
-    private final long termsStartPointer;
-    private long numTerms;
-    private final TermsIndexWriterBase.FieldWriter fieldIndexWriter;
-    long sumTotalTermFreq;
-    long sumDocFreq;
-    int docCount;
-    int longsSize;
-
-    private TermEntry[] pendingTerms;
-
-    private int pendingCount;
-
-    TermsWriter(
-        TermsIndexWriterBase.FieldWriter fieldIndexWriter,
-        FieldInfo fieldInfo,
-        PostingsWriterBase postingsWriter) 
+    /// <summary>
+    /// Writes terms dict, block-encoding (column stride) each term's metadata 
+    /// for each set of terms between two index terms
+    /// 
+    /// lucene.experimental
+    /// </summary>
+    /// <remarks>
+    /// TODO Currently we encode all terms between two indexed terms as a block
+    /// But we could decouple the two, ie allow several blocks in between two indexed terms
+    /// </remarks>
+    public class BlockTermsWriter : FieldsConsumer
     {
-      this.fieldInfo = fieldInfo;
-      this.fieldIndexWriter = fieldIndexWriter;
-      pendingTerms = new TermEntry[32];
-      for(int i=0;i<pendingTerms.length;i++) {
-        pendingTerms[i] = new TermEntry();
-      }
-      termsStartPointer = out.getFilePointer();
-      this.postingsWriter = postingsWriter;
-      this.longsSize = postingsWriter.setField(fieldInfo);
-    }
-    
-    @Override
-    public Comparator<BytesRef> getComparator() {
-      return BytesRef.getUTF8SortedAsUnicodeComparator();
-    }
 
-    @Override
-    public PostingsConsumer startTerm(BytesRef text)  {
-      //System.out.println("BTW: startTerm term=" + fieldInfo.name + ":" + text.utf8ToString() + " " + text + " seg=" + segment);
-      postingsWriter.startTerm();
-      return postingsWriter;
-    }
+        public const String CODEC_NAME = "BLOCK_TERMS_DICT";
 
-    private final BytesRef lastPrevTerm = new BytesRef();
+        // Initial format
+        public const int VERSION_START = 0;
+        public const int VERSION_APPEND_ONLY = 1;
+        public const int VERSION_META_ARRAY = 2;
+        public const int VERSION_CHECKSUM = 3;
+        public const int VERSION_CURRENT = VERSION_CHECKSUM;
 
-    @Override
-    public void finishTerm(BytesRef text, TermStats stats)  {
+        /** Extension of terms file */
+        public const String TERMS_EXTENSION = "tib";
 
-      Debug.Assert( stats.docFreq > 0;
-      //System.out.println("BTW: finishTerm term=" + fieldInfo.name + ":" + text.utf8ToString() + " " + text + " seg=" + segment + " df=" + stats.docFreq);
+        protected IndexOutput output;
+        protected readonly PostingsWriterBase postingsWriter;
+        protected readonly FieldInfos fieldInfos;
+        protected FieldInfo currentField;
+        private readonly TermsIndexWriterBase termsIndexWriter;
+        private readonly List<FieldMetaData> fields = new List<FieldMetaData>();
 
-      final bool isIndexTerm = fieldIndexWriter.checkIndexTerm(text, stats);
+        public BlockTermsWriter(TermsIndexWriterBase termsIndexWriter,
+            SegmentWriteState state, PostingsWriterBase postingsWriter)
+        {
+            String termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
+                TERMS_EXTENSION);
+            this.termsIndexWriter = termsIndexWriter;
+            output = state.Directory.CreateOutput(termsFileName, state.Context);
+            bool success = false;
 
-      if (isIndexTerm) {
-        if (pendingCount > 0) {
-          // Instead of writing each term, live, we gather terms
-          // in RAM in a pending buffer, and then write the
-          // entire block in between index terms:
-          flushBlock();
+            try
+            {
+                fieldInfos = state.FieldInfos;
+                WriteHeader(output);
+                currentField = null;
+                this.postingsWriter = postingsWriter;
+
+                postingsWriter.Init(output); // have consumer write its format/header
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException(output);
+                }
+            }
         }
-        fieldIndexWriter.add(text, stats, out.getFilePointer());
-        //System.out.println("  index term!");
-      }
 
-      if (pendingTerms.length == pendingCount) {
-        final TermEntry[] newArray = new TermEntry[ArrayUtil.oversize(pendingCount+1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-        System.arraycopy(pendingTerms, 0, newArray, 0, pendingCount);
-        for(int i=pendingCount;i<newArray.length;i++) {
-          newArray[i] = new TermEntry();
+        private void WriteHeader(IndexOutput output)
+        {
+            CodecUtil.WriteHeader(output, CODEC_NAME, VERSION_CURRENT);
         }
-        pendingTerms = newArray;
-      }
-      final TermEntry te = pendingTerms[pendingCount];
-      te.term.copyBytes(text);
-      te.state = postingsWriter.newTermState();
-      te.state.docFreq = stats.docFreq;
-      te.state.totalTermFreq = stats.totalTermFreq;
-      postingsWriter.finishTerm(te.state);
 
-      pendingCount++;
-      numTerms++;
-    }
+        public override TermsConsumer AddField(FieldInfo field)
+        {
+            Debug.Assert(currentField == null || currentField.Name.CompareTo(field.Name) < 0);
 
-    // Finishes all terms in this field
-    @Override
-    public void finish(long sumTotalTermFreq, long sumDocFreq, int docCount)  {
-      if (pendingCount > 0) {
-        flushBlock();
-      }
-      // EOF marker:
-      out.writeVInt(0);
-
-      this.sumTotalTermFreq = sumTotalTermFreq;
-      this.sumDocFreq = sumDocFreq;
-      this.docCount = docCount;
-      fieldIndexWriter.finish(out.getFilePointer());
-      if (numTerms > 0) {
-        fields.add(new FieldMetaData(fieldInfo,
-                                     numTerms,
-                                     termsStartPointer,
-                                     sumTotalTermFreq,
-                                     sumDocFreq,
-                                     docCount,
-                                     longsSize));
-      }
-    }
-
-    private int sharedPrefix(BytesRef term1, BytesRef term2) {
-      Debug.Assert( term1.offset == 0;
-      Debug.Assert( term2.offset == 0;
-      int pos1 = 0;
-      int pos1End = pos1 + Math.min(term1.length, term2.length);
-      int pos2 = 0;
-      while(pos1 < pos1End) {
-        if (term1.bytes[pos1] != term2.bytes[pos2]) {
-          return pos1;
+            currentField = field;
+            var fiw = termsIndexWriter.AddField(field, output.FilePointer);
+            return new TermsWriter(fiw, field, postingsWriter);
         }
-        pos1++;
-        pos2++;
-      }
-      return pos1;
-    }
 
-    private final RAMOutputStream bytesWriter = new RAMOutputStream();
-    private final RAMOutputStream bufferWriter = new RAMOutputStream();
+        public override void Dispose()
+        {
+            if (output != null)
+            {
+                try
+                {
+                    long dirStart = output.FilePointer;
 
-    private void flushBlock()  {
-      //System.out.println("BTW.flushBlock seg=" + segment + " pendingCount=" + pendingCount + " fp=" + out.getFilePointer());
+                    output.WriteVInt(fields.Size);
 
-      // First pass: compute common prefix for all terms
-      // in the block, against term before first term in
-      // this block:
-      int commonPrefix = sharedPrefix(lastPrevTerm, pendingTerms[0].term);
-      for(int termCount=1;termCount<pendingCount;termCount++) {
-        commonPrefix = Math.min(commonPrefix,
-                                sharedPrefix(lastPrevTerm,
-                                             pendingTerms[termCount].term));
-      }        
+                    foreach (var field in fields)
+                    {
+                        output.WriteVInt(field.FieldInfo.Number);
+                        output.WriteVLong(field.NumTerms);
+                        output.WriteVLong(field.TermsStartPointer);
+                        if (field.FieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                        {
+                            output.WriteVLong(field.SumTotalTermFreq);
+                        }
+                        output.WriteVLong(field.SumDocFreq);
+                        output.WriteVInt(field.DocCount);
+                        if (VERSION_CURRENT >= VERSION_META_ARRAY)
+                        {
+                            output.WriteVInt(field.LongsSize);
+                        }
 
-      out.writeVInt(pendingCount);
-      out.writeVInt(commonPrefix);
-
-      // 2nd pass: write suffixes, as separate byte[] blob
-      for(int termCount=0;termCount<pendingCount;termCount++) {
-        final int suffix = pendingTerms[termCount].term.length - commonPrefix;
-        // TODO: cutover to better intblock codec, instead
-        // of interleaving here:
-        bytesWriter.writeVInt(suffix);
-        bytesWriter.writeBytes(pendingTerms[termCount].term.bytes, commonPrefix, suffix);
-      }
-      out.writeVInt((int) bytesWriter.getFilePointer());
-      bytesWriter.writeTo(out);
-      bytesWriter.reset();
-
-      // 3rd pass: write the freqs as byte[] blob
-      // TODO: cutover to better intblock codec.  simple64?
-      // write prefix, suffix first:
-      for(int termCount=0;termCount<pendingCount;termCount++) {
-        final BlockTermState state = pendingTerms[termCount].state;
-        Debug.Assert( state != null;
-        bytesWriter.writeVInt(state.docFreq);
-        if (fieldInfo.getIndexOptions() != IndexOptions.DOCS_ONLY) {
-          bytesWriter.writeVLong(state.totalTermFreq-state.docFreq);
+                    }
+                    WriteTrailer(dirStart);
+                    CodecUtil.WriteFooter(output);
+                }
+                finally
+                {
+                    IOUtils.Close(output, postingsWriter, termsIndexWriter);
+                    output = null;
+                }
+            }
         }
-      }
-      out.writeVInt((int) bytesWriter.getFilePointer());
-      bytesWriter.writeTo(out);
-      bytesWriter.reset();
 
-      // 4th pass: write the metadata 
-      long[] longs = new long[longsSize];
-      bool absolute = true;
-      for(int termCount=0;termCount<pendingCount;termCount++) {
-        final BlockTermState state = pendingTerms[termCount].state;
-        postingsWriter.encodeTerm(longs, bufferWriter, fieldInfo, state, absolute);
-        for (int i = 0; i < longsSize; i++) {
-          bytesWriter.writeVLong(longs[i]);
+        private void WriteTrailer(long dirStart)
+        {
+            output.WriteLong(dirStart);
         }
-        bufferWriter.writeTo(bytesWriter);
-        bufferWriter.reset();
-        absolute = false;
-      }
-      out.writeVInt((int) bytesWriter.getFilePointer());
-      bytesWriter.writeTo(out);
-      bytesWriter.reset();
 
-      lastPrevTerm.copyBytes(pendingTerms[pendingCount-1].term);
-      pendingCount = 0;
+
+        protected class FieldMetaData
+        {
+            public FieldInfo FieldInfo { get; private set; }
+            public long NumTerms { get; private set; }
+            public long TermsStartPointer { get; private set; }
+            public long SumTotalTermFreq { get; private set; }
+            public long SumDocFreq { get; private set; }
+            public int DocCount { get; private set; }
+            public int LongsSize { get; private set; }
+
+            public FieldMetaData(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
+                long sumDocFreq, int docCount, int longsSize)
+            {
+                Debug.Assert(numTerms > 0);
+
+                FieldInfo = fieldInfo;
+                TermsStartPointer = termsStartPointer;
+                NumTerms = numTerms;
+                SumTotalTermFreq = sumTotalTermFreq;
+                SumDocFreq = sumDocFreq;
+                DocCount = docCount;
+                LongsSize = longsSize;
+            }
+        }
+
+        private class TermEntry
+        {
+            public readonly BytesRef Term = new BytesRef();
+            public BlockTermState State;
+        }
+
+        public class TermsWriter : TermsConsumer
+        {
+            private readonly FieldInfo fieldInfo;
+            private readonly PostingsWriterBase postingsWriter;
+            private readonly long termsStartPointer;
+
+            private readonly BytesRef lastPrevTerm = new BytesRef();
+            private readonly TermsIndexWriterBase.FieldWriter fieldIndexWriter;
+
+            private long numTerms;
+            private long sumTotalTermFreq;
+            private long sumDocFreq;
+            private int docCount;
+            private int longsSize;
+
+            private TermEntry[] pendingTerms;
+
+            private int pendingCount;
+
+            private TermsWriter(
+                TermsIndexWriterBase.FieldWriter fieldIndexWriter,
+                FieldInfo fieldInfo,
+                PostingsWriterBase postingsWriter)
+            {
+                this.fieldInfo = fieldInfo;
+                this.fieldIndexWriter = fieldIndexWriter;
+                pendingTerms = new TermEntry[32];
+                for (int i = 0; i < pendingTerms.Length; i++)
+                {
+                    pendingTerms[i] = new TermEntry();
+                }
+                termsStartPointer = output.FilePointer;
+                this.postingsWriter = postingsWriter;
+                this.longsSize = postingsWriter.SetField(fieldInfo);
+            }
+
+            public override IComparer<BytesRef> Comparator()
+            {
+                return BytesRef.UTF8SortedAsUnicodeComparer;
+            }
+
+            public override PostingsConsumer StartTerm(BytesRef text)
+            {
+                postingsWriter.StartTerm();
+                return postingsWriter;
+            }
+
+            public override void FinishTerm(BytesRef text, TermStats stats)
+            {
+
+                Debug.Assert(stats.DocFreq > 0);
+
+                bool isIndexTerm = fieldIndexWriter.CheckIndexTerm(text, stats);
+
+                if (isIndexTerm)
+                {
+                    if (pendingCount > 0)
+                    {
+                        // Instead of writing each term, live, we gather terms
+                        // in RAM in a pending buffer, and then write the
+                        // entire block in between index terms:
+                        FlushBlock();
+                    }
+                    fieldIndexWriter.Add(text, stats, output.FilePointer);
+                }
+
+                if (pendingTerms.Length == pendingCount)
+                {
+                    TermEntry[] newArray =
+                        new TermEntry[ArrayUtil.Oversize(pendingCount + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                    System.Arraycopy(pendingTerms, 0, newArray, 0, pendingCount);
+                    for (int i = pendingCount; i < newArray.Length; i++)
+                    {
+                        newArray[i] = new TermEntry();
+                    }
+                    pendingTerms = newArray;
+                }
+                TermEntry te = pendingTerms[pendingCount];
+                te.Term.CopyBytes(text);
+                te.State = postingsWriter.NewTermState();
+                te.State.DocFreq = stats.DocFreq;
+                te.State.TotalTermFreq = stats.TotalTermFreq;
+                postingsWriter.FinishTerm(te.State);
+
+                pendingCount++;
+                numTerms++;
+            }
+
+            // Finishes all terms in this field
+            public override void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
+            {
+                if (pendingCount > 0)
+                {
+                    FlushBlock();
+                }
+
+                // EOF marker:
+                output.WriteVInt(0);
+
+                this.sumTotalTermFreq = sumTotalTermFreq;
+                this.sumDocFreq = sumDocFreq;
+                this.docCount = docCount;
+                fieldIndexWriter.Finish(output.FilePointer);
+
+                if (numTerms > 0)
+                {
+                    fields.Add(new FieldMetaData(fieldInfo,
+                        numTerms,
+                        termsStartPointer,
+                        sumTotalTermFreq,
+                        sumDocFreq,
+                        docCount,
+                        longsSize));
+                }
+            }
+
+            private int SharedPrefix(BytesRef term1, BytesRef term2)
+            {
+                Debug.Assert(term1.Offset == 0);
+                Debug.Assert(term2.Offset == 0);
+                int pos1 = 0;
+                int pos1End = pos1 + Math.Min(term1.Length, term2.Length);
+                int pos2 = 0;
+                while (pos1 < pos1End)
+                {
+                    if (term1.Bytes[pos1] != term2.Bytes[pos2])
+                    {
+                        return pos1;
+                    }
+                    pos1++;
+                    pos2++;
+                }
+                return pos1;
+            }
+
+            private readonly RAMOutputStream bytesWriter = new RAMOutputStream();
+            private readonly RAMOutputStream bufferWriter = new RAMOutputStream();
+
+            private void FlushBlock()
+            {
+                // First pass: compute common prefix for all terms
+                // in the block, against term before first term in
+                // this block:
+
+                int commonPrefix = SharedPrefix(lastPrevTerm, pendingTerms[0].Term);
+                for (int termCount = 1; termCount < pendingCount; termCount++)
+                {
+                    commonPrefix = Math.Min(commonPrefix,
+                        SharedPrefix(lastPrevTerm,
+                            pendingTerms[termCount].Term));
+                }
+
+                output.WriteVInt(pendingCount);
+                output.WriteVInt(commonPrefix);
+
+                // 2nd pass: write suffixes, as separate byte[] blob
+                for (int termCount = 0; termCount < pendingCount; termCount++)
+                {
+                    int suffix = pendingTerms[termCount].Term.Length - commonPrefix;
+                    // TODO: cutover to better intblock codec, instead
+                    // of interleaving here:
+                    bytesWriter.WriteVInt(suffix);
+                    bytesWriter.WriteBytes(pendingTerms[termCount].Term.Bytes, commonPrefix, suffix);
+                }
+                output.WriteVInt((int) bytesWriter.FilePointer);
+                bytesWriter.WriteTo(output);
+                bytesWriter.Reset();
+
+                // 3rd pass: write the freqs as byte[] blob
+                // TODO: cutover to better intblock codec.  simple64?
+                // write prefix, suffix first:
+                for (int termCount = 0; termCount < pendingCount; termCount++)
+                {
+                    BlockTermState state = pendingTerms[termCount].State;
+
+                    Debug.Assert(state != null);
+
+                    bytesWriter.WriteVInt(state.DocFreq);
+                    if (fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                    {
+                        bytesWriter.WriteVLong(state.TotalTermFreq - state.DocFreq);
+                    }
+                }
+                output.WriteVInt((int) bytesWriter.FilePointer);
+                bytesWriter.WriteTo(output);
+                bytesWriter.Reset();
+
+                // 4th pass: write the metadata 
+                var longs = new long[longsSize];
+                bool absolute = true;
+                for (int termCount = 0; termCount < pendingCount; termCount++)
+                {
+                    BlockTermState state = pendingTerms[termCount].State;
+                    postingsWriter.EncodeTerm(longs, bufferWriter, fieldInfo, state, absolute);
+                    for (int i = 0; i < longsSize; i++)
+                    {
+                        bytesWriter.WriteVLong(longs[i]);
+                    }
+                    bufferWriter.WriteTo(bytesWriter);
+                    bufferWriter.Reset();
+                    absolute = false;
+                }
+                output.WriteVInt((int) bytesWriter.FilePointer);
+                bytesWriter.WriteTo(output);
+                bytesWriter.Reset();
+
+                lastPrevTerm.CopyBytes(pendingTerms[pendingCount - 1].Term);
+                pendingCount = 0;
+            }
+        }
+
     }
-  }
 }

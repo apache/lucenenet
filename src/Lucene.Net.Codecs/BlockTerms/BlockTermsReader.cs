@@ -108,20 +108,20 @@ public class BlockTermsReader : FieldsProducer {
       // Read per-field details
       seekDir(in, dirOffset);
 
-      final int numFields = in.readVInt();
+      readonly int numFields = in.readVInt();
       if (numFields < 0) {
         throw new CorruptIndexException("invalid number of fields: " + numFields + " (resource=" + in + ")");
       }
       for(int i=0;i<numFields;i++) {
-        final int field = in.readVInt();
-        final long numTerms = in.readVLong();
+        readonly int field = in.readVInt();
+        readonly long numTerms = in.readVLong();
         Debug.Assert( numTerms >= 0;
-        final long termsStartPointer = in.readVLong();
-        final FieldInfo fieldInfo = fieldInfos.fieldInfo(field);
-        final long sumTotalTermFreq = fieldInfo.getIndexOptions() == IndexOptions.DOCS_ONLY ? -1 : in.readVLong();
-        final long sumDocFreq = in.readVLong();
-        final int docCount = in.readVInt();
-        final int longsSize = version >= BlockTermsWriter.VERSION_META_ARRAY ? in.readVInt() : 0;
+        readonly long termsStartPointer = in.readVLong();
+        readonly FieldInfo fieldInfo = fieldInfos.fieldInfo(field);
+        readonly long sumTotalTermFreq = fieldInfo.getIndexOptions() == IndexOptions.DOCS_ONLY ? -1 : in.readVLong();
+        readonly long sumDocFreq = in.readVLong();
+        readonly int docCount = in.readVInt();
+        readonly int longsSize = version >= BlockTermsWriter.VERSION_META_ARRAY ? in.readVInt() : 0;
         if (docCount < 0 || docCount > info.getDocCount()) { // #docs with field must be <= #docs
           throw new CorruptIndexException("invalid docCount: " + docCount + " maxDoc: " + info.getDocCount() + " (resource=" + in + ")");
         }
@@ -137,7 +137,7 @@ public class BlockTermsReader : FieldsProducer {
         }
       }
       success = true;
-    } finally {
+    } readonlyly {
       if (!success) {
         in.close();
       }
@@ -174,7 +174,7 @@ public class BlockTermsReader : FieldsProducer {
         if (indexReader != null) {
           indexReader.close();
         }
-      } finally {
+      } readonlyly {
         // null so if an app hangs on to us (ie, we are not
         // GCable, despite being closed) we still free most
         // ram
@@ -183,7 +183,7 @@ public class BlockTermsReader : FieldsProducer {
           in.close();
         }
       }
-    } finally {
+    } readonlyly {
       if (postingsReader != null) {
         postingsReader.close();
       }
@@ -207,13 +207,13 @@ public class BlockTermsReader : FieldsProducer {
   }
 
   private class FieldReader extends Terms {
-    final long numTerms;
-    final FieldInfo fieldInfo;
-    final long termsStartPointer;
-    final long sumTotalTermFreq;
-    final long sumDocFreq;
-    final int docCount;
-    final int longsSize;
+    readonly long numTerms;
+    readonly FieldInfo fieldInfo;
+    readonly long termsStartPointer;
+    readonly long sumTotalTermFreq;
+    readonly long sumDocFreq;
+    readonly int docCount;
+    readonly int longsSize;
 
     FieldReader(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize) {
       Debug.Assert( numTerms > 0;
@@ -277,13 +277,13 @@ public class BlockTermsReader : FieldsProducer {
     }
 
     // Iterates through terms in this field
-    private final class SegmentTermsEnum extends TermsEnum {
-      private final IndexInput in;
-      private final BlockTermState state;
-      private final bool doOrd;
-      private final FieldAndTerm fieldTerm = new FieldAndTerm();
-      private final TermsIndexReaderBase.FieldIndexEnum indexEnum;
-      private final BytesRef term = new BytesRef();
+    private readonly class SegmentTermsEnum extends TermsEnum {
+      private readonly IndexInput in;
+      private readonly BlockTermState state;
+      private readonly bool doOrd;
+      private readonly FieldAndTerm fieldTerm = new FieldAndTerm();
+      private readonly TermsIndexReaderBase.FieldIndexEnum indexEnum;
+      private readonly BytesRef term = new BytesRef();
 
       /* This is true if indexEnum is "still" seek'd to the index term
          for the current term. We set it to true on seeking, and then it
@@ -318,7 +318,7 @@ public class BlockTermsReader : FieldsProducer {
       private int blockTermCount;
 
       private byte[] docFreqBytes;
-      private final ByteArrayDataInput freqReader = new ByteArrayDataInput();
+      private readonly ByteArrayDataInput freqReader = new ByteArrayDataInput();
       private int metaDataUpto;
 
       private long[] longs;
@@ -353,7 +353,7 @@ public class BlockTermsReader : FieldsProducer {
       // return NOT_FOUND so it's a waste for us to fill in
       // the term that was actually NOT_FOUND
       @Override
-      public SeekStatus seekCeil(final BytesRef target)  {
+      public SeekStatus seekCeil(readonly BytesRef target)  {
 
         if (indexEnum == null) {
           throw new IllegalStateException("terms index was not loaded");
@@ -374,7 +374,7 @@ public class BlockTermsReader : FieldsProducer {
         // is after current term but before next index term:
         if (indexIsCurrent) {
 
-          final int cmp = BytesRef.getUTF8SortedAsUnicodeComparator().compare(term, target);
+          readonly int cmp = BytesRef.getUTF8SortedAsUnicodeComparator().compare(term, target);
 
           if (cmp == 0) {
             // Already at the requested term
@@ -450,7 +450,7 @@ public class BlockTermsReader : FieldsProducer {
           // First, see if target term matches common prefix
           // in this block:
           if (common < termBlockPrefix) {
-            final int cmp = (term.bytes[common]&0xFF) - (target.bytes[target.offset + common]&0xFF);
+            readonly int cmp = (term.bytes[common]&0xFF) - (target.bytes[target.offset + common]&0xFF);
             if (cmp < 0) {
 
               // TODO: maybe we should store common prefix
@@ -468,7 +468,7 @@ public class BlockTermsReader : FieldsProducer {
                   state.ord++;
                   termSuffixesReader.skipBytes(termSuffixesReader.readVInt());
                 }
-                final int suffix = termSuffixesReader.readVInt();
+                readonly int suffix = termSuffixesReader.readVInt();
                 term.length = termBlockPrefix + suffix;
                 if (term.bytes.length < term.length) {
                   term.grow(term.length);
@@ -489,7 +489,7 @@ public class BlockTermsReader : FieldsProducer {
               // block and return NOT_FOUND:
               Debug.Assert( state.termBlockOrd == 0;
 
-              final int suffix = termSuffixesReader.readVInt();
+              readonly int suffix = termSuffixesReader.readVInt();
               term.length = termBlockPrefix + suffix;
               if (term.bytes.length < term.length) {
                 term.grow(term.length);
@@ -508,17 +508,17 @@ public class BlockTermsReader : FieldsProducer {
             state.termBlockOrd++;
             state.ord++;
 
-            final int suffix = termSuffixesReader.readVInt();
+            readonly int suffix = termSuffixesReader.readVInt();
             
             // We know the prefix matches, so just compare the new suffix:
-            final int termLen = termBlockPrefix + suffix;
+            readonly int termLen = termBlockPrefix + suffix;
             int bytePos = termSuffixesReader.getPosition();
 
             bool next = false;
-            final int limit = target.offset + (termLen < target.length ? termLen : target.length);
+            readonly int limit = target.offset + (termLen < target.length ? termLen : target.length);
             int targetPos = target.offset + termBlockPrefix;
             while(targetPos < limit) {
-              final int cmp = (termSuffixes[bytePos++]&0xFF) - (target.bytes[targetPos++]&0xFF);
+              readonly int cmp = (termSuffixes[bytePos++]&0xFF) - (target.bytes[targetPos++]&0xFF);
               if (cmp < 0) {
                 // Current term is still before the target;
                 // keep scanning
@@ -597,10 +597,10 @@ public class BlockTermsReader : FieldsProducer {
         if (seekPending) {
           Debug.Assert( !indexIsCurrent;
           in.seek(state.blockFilePointer);
-          final int pendingSeekCount = state.termBlockOrd;
+          readonly int pendingSeekCount = state.termBlockOrd;
           bool result = nextBlock();
 
-          final long savOrd = state.ord;
+          readonly long savOrd = state.ord;
 
           // Block must exist since seek(TermState) was called w/ a
           // TermState previously returned by this enum when positioned
@@ -629,7 +629,7 @@ public class BlockTermsReader : FieldsProducer {
         }
 
         // TODO: cutover to something better for these ints!  simple64?
-        final int suffix = termSuffixesReader.readVInt();
+        readonly int suffix = termSuffixesReader.readVInt();
         //System.out.println("  suffix=" + suffix);
 
         term.length = termBlockPrefix + suffix;
@@ -734,7 +734,7 @@ public class BlockTermsReader : FieldsProducer {
         // Now, scan:
         int left = (int) (ord - state.ord);
         while(left > 0) {
-          final BytesRef term = _next();
+          readonly BytesRef term = _next();
           Debug.Assert( term != null;
           left--;
           Debug.Assert( indexIsCurrent;
@@ -822,7 +822,7 @@ public class BlockTermsReader : FieldsProducer {
           // that we really need...
 
           // lazily catch up on metadata decode:
-          final int limit = state.termBlockOrd;
+          readonly int limit = state.termBlockOrd;
           bool absolute = metaDataUpto == 0;
           // TODO: better API would be "jump straight to term=N"???
           while (metaDataUpto < limit) {

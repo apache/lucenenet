@@ -21,10 +21,10 @@ namespace Lucene.Net.Codecs.BlockTerms
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Lucene.Net.Index;
-    using Lucene.Net.Store;
-    using Lucene.Net.Util;
-    using Lucene.Net.Util.Packed;
+    using Index;
+    using Store;
+    using Util;
+    using Util.Packed;
 
     /// <summary>
     /// Selects every Nth term as and index term, and hold term
@@ -37,41 +37,40 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class FixedGapTermsIndexWriter : TermsIndexWriterBase
     {
-        protected IndexOutput output;
+        protected IndexOutput Output;
 
         /** Extension of terms index file */
-        private static readonly String TERMS_INDEX_EXTENSION = "tii";
-        private static readonly String CODEC_NAME = "SIMPLE_STANDARD_TERMS_INDEX";
-        private static readonly int VERSION_START = 0;
-        private static readonly int VERSION_APPEND_ONLY = 1;
+        private const String TERMS_INDEX_EXTENSION = "tii";
+        public const String CODEC_NAME = "SIMPLE_STANDARD_TERMS_INDEX";
 
-        private static readonly int VERSION_CHECKSUM = 1000;
+        public const int VERSION_CHECKSUM = 1000;
 
         // 4.x "skipped" trunk's monotonic addressing: give any user a nice exception
-        private static readonly int VERSION_CURRENT = VERSION_CHECKSUM;
-        private readonly int termIndexInterval;
-        private readonly List<SimpleFieldWriter> fields = new List<SimpleFieldWriter>();
-        private readonly FieldInfos fieldInfos;  //@SuppressWarnings("unused") 
+        public const int VERSION_CURRENT = VERSION_CHECKSUM;
+        private readonly int _termIndexInterval;
+        private readonly List<SimpleFieldWriter> _fields = new List<SimpleFieldWriter>();
+
+        private readonly FieldInfos _fieldInfos;  //@SuppressWarnings("unused") 
 
         public FixedGapTermsIndexWriter(SegmentWriteState state)
         {
             String indexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
                 TERMS_INDEX_EXTENSION);
-            termIndexInterval = state.TermIndexInterval;
-            output = state.Directory.CreateOutput(indexFileName, state.Context);
+            _termIndexInterval = state.TermIndexInterval;
+            Output = state.Directory.CreateOutput(indexFileName, state.Context);
             bool success = false;
             try
             {
-                fieldInfos = state.FieldInfos;
-                WriteHeader(output);
-                output.WriteInt(termIndexInterval);
+                _fieldInfos = state.FieldInfos;
+                WriteHeader(Output);
+                Output.WriteInt(_termIndexInterval);
                 success = true;
             }
             finally
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.CloseWhileHandlingException(Output);
                 }
             }
         }
@@ -83,9 +82,8 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override FieldWriter AddField(FieldInfo field, long termsFilePointer)
         {
-            //System.output.println("FGW: addFfield=" + field.name);
-            SimpleFieldWriter writer = new SimpleFieldWriter(field, termsFilePointer);
-            fields.Add(writer);
+            var writer = new SimpleFieldWriter(field, termsFilePointer, this);
+            _fields.Add(writer);
             return writer;
         }
 
@@ -112,182 +110,179 @@ namespace Lucene.Net.Codecs.BlockTerms
             return Math.Min(1 + priorTerm.Length, indexedTerm.Length);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            if (output != null)
+            if (Output != null)
             {
                 bool success = false;
                 try
                 {
-                    long dirStart = output.FilePointer;
-                    int fieldCount = fields.Count;
+                    long dirStart = Output.FilePointer;
+                    int fieldCount = _fields.Count;
 
                     int nonNullFieldCount = 0;
                     for (int i = 0; i < fieldCount; i++)
                     {
-                        SimpleFieldWriter field = fields[i];
-                        if (field.numIndexTerms > 0)
+                        SimpleFieldWriter field = _fields[i];
+                        if (field.NumIndexTerms > 0)
                         {
                             nonNullFieldCount++;
                         }
                     }
 
-                    output.WriteVInt(nonNullFieldCount);
+                    Output.WriteVInt(nonNullFieldCount);
                     for (int i = 0; i < fieldCount; i++)
                     {
-                        SimpleFieldWriter field = fields[i];
-                        if (field.numIndexTerms > 0)
+                        SimpleFieldWriter field = _fields[i];
+                        if (field.NumIndexTerms > 0)
                         {
-                            output.WriteVInt(field.fieldInfo.Number);
-                            output.WriteVInt(field.numIndexTerms);
-                            output.WriteVLong(field.termsStart);
-                            output.WriteVLong(field.indexStart);
-                            output.WriteVLong(field.packedIndexStart);
-                            output.WriteVLong(field.packedOffsetsStart);
+                            Output.WriteVInt(field.FieldInfo.Number);
+                            Output.WriteVInt(field.NumIndexTerms);
+                            Output.WriteVLong(field.TermsStart);
+                            Output.WriteVLong(field.IndexStart);
+                            Output.WriteVLong(field.PackedIndexStart);
+                            Output.WriteVLong(field.PackedOffsetsStart);
                         }
                     }
                     WriteTrailer(dirStart);
-                    CodecUtil.WriteFooter(output);
+                    CodecUtil.WriteFooter(Output);
                     success = true;
                 }
                 finally
                 {
                     if (success)
                     {
-                        IOUtils.Close(output);
+                        IOUtils.Close(Output);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(output);
+                        IOUtils.CloseWhileHandlingException(Output);
                     }
-                    output = null;
+                    Output = null;
                 }
             }
         }
 
         private void WriteTrailer(long dirStart)
         {
-            output.WriteLong(dirStart);
+            Output.WriteLong(dirStart);
         }
 
 
         private class SimpleFieldWriter : FieldWriter
         {
-            public readonly FieldInfo fieldInfo;
-            public int numIndexTerms;
-            public readonly long indexStart;
-            public readonly long termsStart;
-            public long packedIndexStart;
-            public long packedOffsetsStart;
-            private long numTerms;
+            public readonly FieldInfo FieldInfo;
+            public int NumIndexTerms;
+            public readonly long IndexStart;
+            public readonly long TermsStart;
+            public long PackedIndexStart;
+            public long PackedOffsetsStart;
+            private long _numTerms;
 
             // TODO: we could conceivably make a PackedInts wrapper
             // that auto-grows... then we wouldn't force 6 bytes RAM
             // per index term:
-            private short[] termLengths;
-            private int[] termsPointerDeltas;
-            private long lastTermsPointer;
-            private long totTermLength;
+            private short[] _termLengths;
+            private int[] _termsPointerDeltas;
+            private long _lastTermsPointer;
+            private long _totTermLength;
 
-            private readonly BytesRef lastTerm = new BytesRef();
+            private readonly BytesRef _lastTerm = new BytesRef();
 
-            public SimpleFieldWriter(FieldInfo fieldInfo, long termsFilePointer)
+            private readonly FixedGapTermsIndexWriter _fgtiw;
+
+            public SimpleFieldWriter(FieldInfo fieldInfo, long termsFilePointer, FixedGapTermsIndexWriter fgtiw)
             {
-                this.fieldInfo = fieldInfo;
-                indexStart = output.FilePointer;
-                termsStart = lastTermsPointer = termsFilePointer;
-                termLengths = new short[0];
-                termsPointerDeltas = new int[0];
+                FieldInfo = fieldInfo;
+                IndexStart = fgtiw.Output.FilePointer;
+                TermsStart = _lastTermsPointer = termsFilePointer;
+                _termLengths = new short[0];
+                _termsPointerDeltas = new int[0];
+                _fgtiw = fgtiw;
             }
 
             public override bool CheckIndexTerm(BytesRef text, TermStats stats)
             {
                 // First term is first indexed term:
                 //System.output.println("FGW: checkIndexTerm text=" + text.utf8ToString());
-                if (0 == (numTerms++ % termIndexInterval))
-                {
+                if (0 == (_numTerms++ % _fgtiw._termIndexInterval))
                     return true;
-                }
-                else
-                {
-                    if (0 == numTerms % termIndexInterval)
-                    {
-                        // save last term just before next index term so we
-                        // can compute wasted suffix
-                        lastTerm.CopyBytes(text);
-                    }
-                    return false;
-                }
+
+                // save last term just before next index term so we
+                // can compute wasted suffix
+                if (0 == _numTerms % _fgtiw._termIndexInterval)
+                    _lastTerm.CopyBytes(text);
+                
+                return false;
             }
 
             public override void Add(BytesRef text, TermStats stats, long termsFilePointer)
             {
-                int indexedTermLength = IndexedTermPrefixLength(lastTerm, text);
-                //System.output.println("FGW: add text=" + text.utf8ToString() + " " + text + " fp=" + termsFilePointer);
-
+                int indexedTermLength = _fgtiw.IndexedTermPrefixLength(_lastTerm, text);
+                
                 // write only the min prefix that shows the diff
                 // against prior term
-                output.WriteBytes(text.Bytes, text.Offset, indexedTermLength);
+                _fgtiw.Output.WriteBytes(text.Bytes, text.Offset, indexedTermLength);
 
-                if (termLengths.Length == numIndexTerms)
+                if (_termLengths.Length == NumIndexTerms)
                 {
-                    termLengths = ArrayUtil.Grow(termLengths);
+                    _termLengths = ArrayUtil.Grow(_termLengths);
                 }
-                if (termsPointerDeltas.Length == numIndexTerms)
+                if (_termsPointerDeltas.Length == NumIndexTerms)
                 {
-                    termsPointerDeltas = ArrayUtil.Grow(termsPointerDeltas);
+                    _termsPointerDeltas = ArrayUtil.Grow(_termsPointerDeltas);
                 }
 
                 // save delta terms pointer
-                termsPointerDeltas[numIndexTerms] = (int)(termsFilePointer - lastTermsPointer);
-                lastTermsPointer = termsFilePointer;
+                _termsPointerDeltas[NumIndexTerms] = (int)(termsFilePointer - _lastTermsPointer);
+                _lastTermsPointer = termsFilePointer;
 
                 // save term length (in bytes)
-                Debug.Assert(indexedTermLength <= Short.MAX_VALUE);
-                termLengths[numIndexTerms] = (short)indexedTermLength;
-                totTermLength += indexedTermLength;
+                Debug.Assert(indexedTermLength <= short.MaxValue);
+                _termLengths[NumIndexTerms] = (short)indexedTermLength;
+                _totTermLength += indexedTermLength;
 
-                lastTerm.CopyBytes(text);
-                numIndexTerms++;
+                _lastTerm.CopyBytes(text);
+                NumIndexTerms++;
             }
 
             public override void Finish(long termsFilePointer)
             {
 
                 // write primary terms dict offsets
-                packedIndexStart = output.FilePointer;
+                PackedIndexStart = _fgtiw.Output.FilePointer;
 
-                PackedInts.Writer w = PackedInts.GetWriter(output, numIndexTerms,
+                PackedInts.Writer w = PackedInts.GetWriter(_fgtiw.Output, NumIndexTerms,
                     PackedInts.BitsRequired(termsFilePointer),
                     PackedInts.DEFAULT);
 
                 // relative to our indexStart
                 long upto = 0;
-                for (int i = 0; i < numIndexTerms; i++)
+                for (int i = 0; i < NumIndexTerms; i++)
                 {
-                    upto += termsPointerDeltas[i];
+                    upto += _termsPointerDeltas[i];
                     w.Add(upto);
                 }
                 w.Finish();
 
-                packedOffsetsStart = output.FilePointer;
+                PackedOffsetsStart = _fgtiw.Output.FilePointer;
 
                 // write offsets into the byte[] terms
-                w = PackedInts.GetWriter(output, 1 + numIndexTerms, PackedInts.BitsRequired(totTermLength),
+                w = PackedInts.GetWriter(_fgtiw.Output, 1 + NumIndexTerms, PackedInts.BitsRequired(_totTermLength),
                     PackedInts.DEFAULT);
                 upto = 0;
-                for (int i = 0; i < numIndexTerms; i++)
+                for (int i = 0; i < NumIndexTerms; i++)
                 {
                     w.Add(upto);
-                    upto += termLengths[i];
+                    upto += _termLengths[i];
                 }
                 w.Add(upto);
                 w.Finish();
 
                 // our referrer holds onto us, while other fields are
                 // being written, so don't tie up this RAM:
-                termLengths = null;
-                termsPointerDeltas = null;
+                _termLengths = null;
+                _termsPointerDeltas = null;
             }
         }
     }
