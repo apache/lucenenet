@@ -300,8 +300,10 @@ namespace Lucene.Net.Util
 
         internal class UTF8SortedAsUnicodeComparator : IComparer<BytesRef>
         {
+            internal static UTF8SortedAsUnicodeComparator Instance = new UTF8SortedAsUnicodeComparator();
+
             // Only singleton
-            internal UTF8SortedAsUnicodeComparator()
+            private UTF8SortedAsUnicodeComparator()
             {
             }
 
