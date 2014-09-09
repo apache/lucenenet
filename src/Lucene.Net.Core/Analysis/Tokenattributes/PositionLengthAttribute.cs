@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
     /// Default implementation of <seealso cref="PositionLengthAttribute"/>. </summary>
     public class PositionLengthAttribute : Attribute, IPositionLengthAttribute, ICloneable
     {
-        private int PositionLength_Renamed = 1;
+        private int positionLength = 1;
 
         /// <summary>
         /// Initializes this attribute with position length of 1. </summary>
@@ -41,17 +41,17 @@ namespace Lucene.Net.Analysis.Tokenattributes
                 {
                     throw new System.ArgumentException("Position length must be 1 or greater: got " + value);
                 }
-                this.PositionLength_Renamed = value;
+                this.positionLength = value;
             }
             get
             {
-                return PositionLength_Renamed;
+                return positionLength;
             }
         }
 
         public override void Clear()
         {
-            this.PositionLength_Renamed = 1;
+            this.positionLength = 1;
         }
 
         public override bool Equals(object other)
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
             if (other is PositionLengthAttribute)
             {
                 PositionLengthAttribute _other = (PositionLengthAttribute)other;
-                return PositionLength_Renamed == _other.PositionLength_Renamed;
+                return positionLength == _other.positionLength;
             }
 
             return false;
@@ -72,13 +72,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override int GetHashCode()
         {
-            return PositionLength_Renamed;
+            return positionLength;
         }
 
         public override void CopyTo(Attribute target)
         {
             PositionLengthAttribute t = (PositionLengthAttribute)target;
-            t.PositionLength = PositionLength_Renamed;
+            t.PositionLength = positionLength;
         }
     }
 }

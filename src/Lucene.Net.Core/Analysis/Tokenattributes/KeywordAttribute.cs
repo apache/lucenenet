@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
     /// Default implementation of <seealso cref="KeywordAttribute"/>. </summary>
     public sealed class KeywordAttribute : Attribute, IKeywordAttribute
     {
-        private bool Keyword_Renamed;
+        private bool keyword;
 
         /// <summary>
         /// Initialize this attribute with the keyword value as false. </summary>
@@ -33,18 +33,18 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override void Clear()
         {
-            Keyword_Renamed = false;
+            keyword = false;
         }
 
         public override void CopyTo(Attribute target)
         {
             KeywordAttribute attr = (KeywordAttribute)target;
-            attr.Keyword = Keyword_Renamed;
+            attr.Keyword = keyword;
         }
 
         public override int GetHashCode()
         {
-            return Keyword_Renamed ? 31 : 37;
+            return keyword ? 31 : 37;
         }
 
         public override bool Equals(object obj)
@@ -58,18 +58,18 @@ namespace Lucene.Net.Analysis.Tokenattributes
                 return false;
             }
             KeywordAttribute other = (KeywordAttribute)obj;
-            return Keyword_Renamed == other.Keyword_Renamed;
+            return keyword == other.keyword;
         }
 
         public bool Keyword
         {
             get
             {
-                return Keyword_Renamed;
+                return keyword;
             }
             set
             {
-                Keyword_Renamed = value;
+                keyword = value;
             }
         }
     }

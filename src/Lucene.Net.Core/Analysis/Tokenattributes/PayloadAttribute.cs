@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
     /// Default implementation of <seealso cref="PayloadAttribute"/>. </summary>
     public class PayloadAttribute : Attribute, IPayloadAttribute, ICloneable
     {
-        private BytesRef Payload_Renamed;
+        private BytesRef payload;
 
         /// <summary>
         /// Initialize this attribute with no payload.
@@ -40,32 +40,32 @@ namespace Lucene.Net.Analysis.Tokenattributes
         /// </summary>
         public PayloadAttribute(BytesRef payload)
         {
-            this.Payload_Renamed = payload;
+            this.payload = payload;
         }
 
         public BytesRef Payload
         {
             get
             {
-                return this.Payload_Renamed;
+                return this.payload;
             }
             set
             {
-                this.Payload_Renamed = value;
+                this.payload = value;
             }
         }
 
         public override void Clear()
         {
-            Payload_Renamed = null;
+            payload = null;
         }
 
         public override object Clone()
         {
             PayloadAttribute clone = (PayloadAttribute)base.Clone();
-            if (Payload_Renamed != null)
+            if (payload != null)
             {
-                clone.Payload_Renamed = (BytesRef)Payload_Renamed.Clone();
+                clone.payload = (BytesRef)payload.Clone();
             }
             return clone;
         }
@@ -80,12 +80,12 @@ namespace Lucene.Net.Analysis.Tokenattributes
             if (other is PayloadAttribute)
             {
                 PayloadAttribute o = (PayloadAttribute)other;
-                if (o.Payload_Renamed == null || Payload_Renamed == null)
+                if (o.payload == null || payload == null)
                 {
-                    return o.Payload_Renamed == null && Payload_Renamed == null;
+                    return o.payload == null && payload == null;
                 }
 
-                return o.Payload_Renamed.Equals(Payload_Renamed);
+                return o.payload.Equals(payload);
             }
 
             return false;
@@ -93,13 +93,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override int GetHashCode()
         {
-            return (Payload_Renamed == null) ? 0 : Payload_Renamed.GetHashCode();
+            return (payload == null) ? 0 : payload.GetHashCode();
         }
 
         public override void CopyTo(Attribute target)
         {
             PayloadAttribute t = (PayloadAttribute)target;
-            t.Payload = (Payload_Renamed == null) ? null : (BytesRef)Payload_Renamed.Clone();
+            t.Payload = (payload == null) ? null : (BytesRef)payload.Clone();
         }
     }
 }
