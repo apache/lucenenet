@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestWhitespace()
         {
-            Analyzer a = new MockAnalyzer(new Random());
+            Analyzer a = new MockAnalyzer(Random());
             AssertAnalyzesTo(a, "A bc defg hiJklmn opqrstuv wxy z ", new string[] { "a", "bc", "defg", "hijklmn", "opqrstuv", "wxy", "z" });
             AssertAnalyzesTo(a, "aba cadaba shazam", new string[] { "aba", "cadaba", "shazam" });
             AssertAnalyzesTo(a, "break on whitespace", new string[] { "break", "on", "whitespace" });
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestSimple()
         {
-            Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.SIMPLE, true);
+            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
             AssertAnalyzesTo(a, "a-bc123 defg+hijklmn567opqrstuv78wxy_z ", new string[] { "a", "bc", "defg", "hijklmn", "opqrstuv", "wxy", "z" });
             AssertAnalyzesTo(a, "aba4cadaba-Shazam", new string[] { "aba", "cadaba", "shazam" });
             AssertAnalyzesTo(a, "break+on/Letters", new string[] { "break", "on", "letters" });
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestKeyword()
         {
-            Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.KEYWORD, false);
+            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false);
             AssertAnalyzesTo(a, "a-bc123 defg+hijklmn567opqrstuv78wxy_z ", new string[] { "a-bc123 defg+hijklmn567opqrstuv78wxy_z " });
             AssertAnalyzesTo(a, "aba4cadaba-Shazam", new string[] { "aba4cadaba-Shazam" });
             AssertAnalyzesTo(a, "break+on/Nothing", new string[] { "break+on/Nothing" });
@@ -101,11 +101,11 @@ namespace Lucene.Net.Analysis
         public virtual void TestTwoChars()
         {
             CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp("..")).ToAutomaton());
-            Analyzer a = new MockAnalyzer(new Random(), single, false);
+            Analyzer a = new MockAnalyzer(Random(), single, false);
             AssertAnalyzesTo(a, "foobar", new string[] { "fo", "ob", "ar" }, new int[] { 0, 2, 4 }, new int[] { 2, 4, 6 });
             // make sure when last term is a "partial" match that End() is correct
             AssertTokenStreamContents(a.TokenStream("bogus", new StringReader("fooba")), new string[] { "fo", "ob" }, new int[] { 0, 2 }, new int[] { 2, 4 }, new int[] { 1, 1 }, new int?(5));
-            CheckRandomData(new Random(), a, 100);
+            CheckRandomData(Random(), a, 100);
         }
 
         /// <summary>
@@ -114,11 +114,11 @@ namespace Lucene.Net.Analysis
         public virtual void TestThreeChars()
         {
             CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp("...")).ToAutomaton());
-            Analyzer a = new MockAnalyzer(new Random(), single, false);
+            Analyzer a = new MockAnalyzer(Random(), single, false);
             AssertAnalyzesTo(a, "foobar", new string[] { "foo", "bar" }, new int[] { 0, 3 }, new int[] { 3, 6 });
             // make sure when last term is a "partial" match that End() is correct
             AssertTokenStreamContents(a.TokenStream("bogus", new StringReader("fooba")), new string[] { "foo" }, new int[] { 0 }, new int[] { 3 }, new int[] { 1 }, new int?(5));
-            CheckRandomData(new Random(), a, 100);
+            CheckRandomData(Random(), a, 100);
         }
 
         /// <summary>
@@ -127,10 +127,10 @@ namespace Lucene.Net.Analysis
         public virtual void TestUppercase()
         {
             CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp("[A-Z][a-z]*")).ToAutomaton());
-            Analyzer a = new MockAnalyzer(new Random(), single, false);
+            Analyzer a = new MockAnalyzer(Random(), single, false);
             AssertAnalyzesTo(a, "FooBarBAZ", new string[] { "Foo", "Bar", "B", "A", "Z" }, new int[] { 0, 3, 6, 7, 8 }, new int[] { 3, 6, 7, 8, 9 });
             AssertAnalyzesTo(a, "aFooBar", new string[] { "Foo", "Bar" }, new int[] { 1, 4 }, new int[] { 4, 7 });
-            CheckRandomData(new Random(), a, 100);
+            CheckRandomData(Random(), a, 100);
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestStop()
         {
-            Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
+            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
             AssertAnalyzesTo(a, "the quick brown a fox", new string[] { "quick", "brown", "fox" }, new int[] { 2, 1, 2 });
         }
 
@@ -148,7 +148,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestKeep()
         {
             CharacterRunAutomaton keepWords = new CharacterRunAutomaton(BasicOperations.Complement(Automaton.Union(Arrays.AsList(BasicAutomata.MakeString("foo"), BasicAutomata.MakeString("bar")))));
-            Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.SIMPLE, true, keepWords);
+            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, keepWords);
             AssertAnalyzesTo(a, "quick foo brown bar bar fox foo", new string[] { "foo", "bar", "bar", "foo" }, new int[] { 2, 2, 1, 2 });
         }
 
@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestLength()
         {
             CharacterRunAutomaton length5 = new CharacterRunAutomaton((new RegExp(".{5,}")).ToAutomaton());
-            Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.WHITESPACE, true, length5);
+            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true, length5);
             AssertAnalyzesTo(a, "ok toolong fine notfine", new string[] { "ok", "fine" }, new int[] { 1, 2 });
         }
 
@@ -193,7 +193,7 @@ namespace Lucene.Net.Analysis
         {
             string testString = "t";
 
-            Analyzer analyzer = new MockAnalyzer(new Random());
+            Analyzer analyzer = new MockAnalyzer(Random());
             Exception priorException = null;
             TokenStream stream = analyzer.TokenStream("dummy", new StringReader(testString));
             try
@@ -222,7 +222,7 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(new Random(), new MockAnalyzer(new Random()), AtLeast(1000));
+            CheckRandomData(Random(), new MockAnalyzer(Random()), AtLeast(1000));
         }
 
         /// <summary>
@@ -235,9 +235,9 @@ namespace Lucene.Net.Analysis
             {
                 CharacterRunAutomaton dfa = new CharacterRunAutomaton(AutomatonTestUtil.RandomAutomaton(Random()));
                 bool lowercase = Random().NextBoolean();
-                int limit = TestUtil.NextInt(new Random(), 0, 500);
+                int limit = TestUtil.NextInt(Random(), 0, 500);
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, dfa, lowercase, limit);
-                CheckRandomData(new Random(), a, 100);
+                CheckRandomData(Random(), a, 100);
                 a.Dispose();
             }
         }
@@ -271,7 +271,7 @@ namespace Lucene.Net.Analysis
             int num = AtLeast(10000);
             for (int i = 0; i < num; i++)
             {
-                string s = TestUtil.RandomHtmlishString(new Random(), 20);
+                string s = TestUtil.RandomHtmlishString(Random(), 20);
                 StringReader reader = new StringReader(s);
                 MockCharFilter charfilter = new MockCharFilter(reader, 2);
                 MockAnalyzer analyzer = new MockAnalyzer(Random());
@@ -301,7 +301,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestWrapReader()
         {
             // LUCENE-5153: test that wrapping an analyzer's reader is allowed
-            Random random = new Random();
+            Random random = Random();
 
             Analyzer @delegate = new MockAnalyzer(random);
             Analyzer a = new AnalyzerWrapperAnonymousInnerClassHelper(this, @delegate.Strategy, @delegate);
@@ -344,7 +344,7 @@ namespace Lucene.Net.Analysis
             // LUCENE-5324: check that it is possible to change the wrapper's gaps
             int positionGap = Random().Next(1000);
             int offsetGap = Random().Next(1000);
-            Analyzer @delegate = new MockAnalyzer(new Random());
+            Analyzer @delegate = new MockAnalyzer(Random());
             Analyzer a = new AnalyzerWrapperAnonymousInnerClassHelper2(this, @delegate.Strategy, positionGap, offsetGap, @delegate);
 
             RandomIndexWriter writer = new RandomIndexWriter(Random(), NewDirectory());

@@ -195,8 +195,8 @@ namespace Lucene.Net.Util
             }
             Codec.Default = Codec;
             */
-            Random random = new Random();
-            Similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(new Random());
+            Random random = new Random(1);
+            Similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(new Random(1));
             /*
             // Check codec restrictions once at class level.
             try
