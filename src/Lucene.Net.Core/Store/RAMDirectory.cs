@@ -1,3 +1,4 @@
+using System.Linq;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Compatibility;
 using System.Collections.Concurrent;

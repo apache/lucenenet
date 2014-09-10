@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
