@@ -228,6 +228,23 @@ namespace Lucene.Net.Support
             }
         }
 
+
+        // Emulates the Java BitSet.Get() method.
+        // Prevents exceptions from being thrown when the index is too high.
+        public static bool SafeGet(this BitArray a, int loc)
+        {
+            return loc >= a.Count ? false : a.Get(loc);
+        }
+
+        //Emulates the Java BitSet.Set() method. Required to reconcile differences between Java BitSet and C# BitArray
+        public static void SafeSet(this BitArray a, int loc, bool value)
+        {
+            if (loc >= a.Length)
+                a.Length = loc + 1;
+
+            a.Set(loc, value);
+        }
+
         // Clears all bits in this BitArray that correspond to a set bit in the parameter BitArray
         public static void AndNot(this BitArray bitsA, BitArray bitsB)
         {
