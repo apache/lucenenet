@@ -352,7 +352,7 @@ namespace Lucene.Net.Analysis
             Document doc = new Document();
             FieldType ft = new FieldType();
             ft.Indexed = true;
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             ft.Tokenized = true;
             ft.StoreTermVectors = true;
             ft.StoreTermVectorPositions = true;

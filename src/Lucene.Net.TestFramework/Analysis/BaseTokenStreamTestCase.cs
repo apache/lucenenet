@@ -701,25 +701,25 @@ namespace Lucene.Net.Analysis
                 switch (random.Next(4))
                 {
                     case 0:
-                        ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+                        ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
                         break;
 
                     case 1:
-                        ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+                        ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
                         break;
 
                     case 2:
-                        ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                        ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                         break;
 
                     default:
                         if (supportsOffsets && offsetsAreCorrect)
                         {
-                            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                         }
                         else
                         {
-                            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                         }
                         break;
                 }

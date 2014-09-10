@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
             doc.Add(NewField("f1", "v2", customType2));
             // f2 has no TF
             FieldType customType3 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType3.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            customType3.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             Field f = NewField("f2", "v1", customType3);
             doc.Add(f);
             doc.Add(NewField("f2", "v2", customType2));

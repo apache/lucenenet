@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
                 MyTokenStream ts = new MyTokenStream(Random(), TERMS_PER_DOC);
 
                 FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-                customType.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+                customType.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
                 customType.OmitNorms = true;
                 Field field = new Field("field", ts, customType);
                 doc.Add(field);

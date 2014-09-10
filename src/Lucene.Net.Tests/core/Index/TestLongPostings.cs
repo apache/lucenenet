@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
                 RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
 
                 FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-                ft.IndexOptionsValue = options;
+                ft.IndexOptions = options;
                 for (int idx = 0; idx < NUM_DOCS; idx++)
                 {
                     Document doc = new Document();

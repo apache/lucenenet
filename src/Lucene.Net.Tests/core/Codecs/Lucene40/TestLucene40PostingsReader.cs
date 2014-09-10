@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs.Lucene40
             titleType.StoreTermVectors = true;
             titleType.StoreTermVectorPositions = true;
             titleType.StoreTermVectorOffsets = true;
-            titleType.IndexOptionsValue = IndexOptions();
+            titleType.IndexOptions = IndexOptions();
             Field titleField = new Field("title", "", titleType);
             doc.Add(titleField);
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene40
             bodyType.StoreTermVectors = true;
             bodyType.StoreTermVectorPositions = true;
             bodyType.StoreTermVectorOffsets = true;
-            bodyType.IndexOptionsValue = IndexOptions();
+            bodyType.IndexOptions = IndexOptions();
             Field bodyField = new Field("body", "", bodyType);
             doc.Add(bodyField);
 

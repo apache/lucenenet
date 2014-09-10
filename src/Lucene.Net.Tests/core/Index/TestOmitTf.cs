@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
 
         static TestOmitTf()
         {
-            OmitType.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            OmitType.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
         }
 
         // Tests whether the DocumentWriter correctly enable the
@@ -590,7 +590,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             ft.Freeze();
             Field f = NewField("foo", "bar", ft);
             doc.Add(f);

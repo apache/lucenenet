@@ -93,10 +93,10 @@ namespace Lucene.Net.Index
         bool OmitNorms { get; set; }
 
         /// <summary>
-        /// <seealso cref="IndexOptionsValue"/>, describing what should be
+        /// <seealso cref="IndexOptions"/>, describing what should be
         /// recorded into the inverted index
         /// </summary>
-        FieldInfo.IndexOptions? IndexOptionsValue { get; set; }
+        FieldInfo.IndexOptions? IndexOptions { get; set; }
 
         FieldType.NumericType? NumericTypeValue { get; set; }
 

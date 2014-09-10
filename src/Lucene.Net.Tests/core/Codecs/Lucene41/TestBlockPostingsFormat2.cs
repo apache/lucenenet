@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     StoreTermVectorOffsets = true,
                     StoreTermVectorPositions = true,
                     StoreTermVectorPayloads = true,
-                    IndexOptionsValue = option
+                    IndexOptions = option
                 };
                 // turn on tvs for a cross-check, since we rely upon checkindex in this test (for now)
                 doc.Add(new Field(option.ToString(), "", ft));

@@ -99,12 +99,12 @@ namespace Lucene.Net.Index
             int options = Random().Next(3);
             if (options == 0)
             {
-                fieldType.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS; // we dont actually need positions
+                fieldType.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS; // we dont actually need positions
                 fieldType.StoreTermVectors = true; // but enforce term vectors when we do this so we check SOMETHING
             }
             else if (options == 1 && !DoesntSupportOffsets.Contains(TestUtil.GetPostingsFormat("field")))
             {
-                fieldType.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                fieldType.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
             // else just positions
 

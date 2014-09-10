@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
                     set { }
                 }
 
-                public FieldInfo.IndexOptions? IndexOptionsValue
+                public FieldInfo.IndexOptions? IndexOptions
                 {
                     get { return OmitTF ? FieldInfo.IndexOptions.DOCS_ONLY : FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
                     set { }
