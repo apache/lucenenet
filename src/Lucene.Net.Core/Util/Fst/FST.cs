@@ -35,9 +35,6 @@ namespace Lucene.Net.Util.Fst
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
 
-    //import java.io.Writer;
-    //import java.io.OutputStreamWriter;
-
     // TODO: break this into WritableFST and ReadOnlyFST.. then
     // we can have subclasses of ReadOnlyFST to handle the
     // different byte[] level encodings (packed or
@@ -167,7 +164,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// If arc has this label then that arc is final/accepted </summary>
-        public const int END_LABEL = -1;
+        public static readonly int END_LABEL = -1;
 
         private readonly bool AllowArrayArcs;
 
@@ -396,7 +393,7 @@ namespace Lucene.Net.Util.Fst
         {
             Arc<T> arc = new Arc<T>();
             GetFirstArc(arc);
-            BytesReader @in = GetBytesReader;
+            BytesReader @in = BytesReader;
             if (TargetHasArcs(arc))
             {
                 ReadFirstRealTargetArc(arc.Target, arc, @in);
@@ -588,7 +585,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Reads an automaton from a file.
         /// </summary>
-        public static FST<T> read<T>(FileInfo file, Outputs<T> outputs)
+        public static FST<T> Read<T>(FileInfo file, Outputs<T> outputs)
         {
             var bs = new BufferedStream(file.OpenRead());
             bool success = false;
@@ -698,7 +695,7 @@ namespace Lucene.Net.Util.Fst
             for (int arcIdx = 0; arcIdx < nodeIn.NumArcs; arcIdx++)
             {
                 Builder<T>.Arc<T> arc = nodeIn.Arcs[arcIdx];
-                Builder<T>.CompiledNode target = (Builder<T>.CompiledNode)arc.Target;
+                var target = (Builder<T>.CompiledNode)arc.Target;
                 int flags = 0;
                 //System.out.println("  arc " + arcIdx + " label=" + arc.Label + " -> target=" + target.Node);
 
@@ -1508,10 +1505,10 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Returns a <seealso cref="BytesReader"/> for this FST, positioned at
+        /// Returns a <seealso cref="FST.BytesReader"/> for this FST, positioned at
         ///  position 0.
         /// </summary>
-        public FST.BytesReader GetBytesReader
+        public FST.BytesReader BytesReader
         {
             get
             {
@@ -1720,7 +1717,7 @@ namespace Lucene.Net.Util.Fst
 
             Arc<T> arc = new Arc<T>();
 
-            BytesReader r = GetBytesReader;
+            BytesReader r = BytesReader;
 
             int topN = Math.Min(maxDerefNodes, InCounts.Size());
 
