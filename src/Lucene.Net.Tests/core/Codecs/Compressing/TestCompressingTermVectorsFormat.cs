@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Codecs.Compressing
 {
     using NUnit.Framework;
@@ -5,13 +7,13 @@ namespace Lucene.Net.Codecs.Compressing
     using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     //using Repeat = com.carrotsearch.randomizedtesting.annotations.Repeat;
 

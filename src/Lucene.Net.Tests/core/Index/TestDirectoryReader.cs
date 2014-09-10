@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -11,10 +12,10 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -38,10 +39,10 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using StoredField = Lucene.Net.Document.StoredField;
-    using StringField = Lucene.Net.Document.StringField;
+    using StoredField = StoredField;
+    using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestDirectoryReader : LuceneTestCase

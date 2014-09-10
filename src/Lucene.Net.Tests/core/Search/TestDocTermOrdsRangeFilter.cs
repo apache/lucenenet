@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -7,8 +8,8 @@ namespace Lucene.Net.Search
     using Lucene.Net.Randomized.Generators;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -32,7 +33,7 @@ namespace Lucene.Net.Search
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
+    using SortedSetDocValuesField = SortedSetDocValuesField;
     using Term = Lucene.Net.Index.Term;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;

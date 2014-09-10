@@ -1,4 +1,5 @@
 using Apache.NMS.Util;
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -8,12 +9,12 @@ namespace Lucene.Net.Search
 {
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using IntField = Lucene.Net.Document.IntField;
+    using IntField = IntField;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -34,7 +35,7 @@ namespace Lucene.Net.Search
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using Term = Lucene.Net.Index.Term;
     using TestUtil = Lucene.Net.Util.TestUtil;
 

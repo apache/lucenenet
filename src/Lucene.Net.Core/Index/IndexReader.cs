@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -26,8 +27,8 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using DocumentStoredFieldVisitor = Lucene.Net.Document.DocumentStoredFieldVisitor;
+    using Document = Documents.Document;
+    using DocumentStoredFieldVisitor = DocumentStoredFieldVisitor;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     // javadocs

@@ -1,10 +1,12 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Search
 {
     using Lucene.Net.Support;
     using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -30,7 +32,7 @@ namespace Lucene.Net.Search
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestBooleanOr : LuceneTestCase

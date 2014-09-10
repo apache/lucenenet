@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Text;
@@ -26,12 +27,12 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TokenFilter = Lucene.Net.Analysis.TokenFilter;
     using Tokenizer = Lucene.Net.Analysis.Tokenizer;
 

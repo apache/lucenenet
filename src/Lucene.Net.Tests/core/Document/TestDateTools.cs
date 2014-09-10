@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Document
 {

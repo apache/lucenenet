@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -12,9 +13,9 @@ namespace Lucene.Net.Index
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using FakeIOException = Lucene.Net.Store.MockDirectoryWrapper.FakeIOException;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -41,7 +42,7 @@ namespace Lucene.Net.Index
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using TopDocs = Lucene.Net.Search.TopDocs;
 

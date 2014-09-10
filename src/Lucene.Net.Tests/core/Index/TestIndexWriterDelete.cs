@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -31,19 +32,19 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
 

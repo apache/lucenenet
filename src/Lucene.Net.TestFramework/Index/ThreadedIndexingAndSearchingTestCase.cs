@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -14,9 +15,9 @@ namespace Lucene.Net.Index
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using FailOnNonBulkMergesInfoStream = Lucene.Net.Util.FailOnNonBulkMergesInfoStream;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

@@ -1,6 +1,7 @@
 using Apache.NMS.Util;
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -9,12 +10,12 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
     using AssertingDocValuesFormat = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using Lucene40RWCodec = Lucene.Net.Codecs.Lucene40.Lucene40RWCodec;
@@ -26,11 +27,11 @@ namespace Lucene.Net.Index
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
-    using Store = Lucene.Net.Document.Field.Store;
-    using StringField = Lucene.Net.Document.StringField;
+    using NumericDocValuesField = NumericDocValuesField;
+    using SortedDocValuesField = SortedDocValuesField;
+    using SortedSetDocValuesField = SortedSetDocValuesField;
+    using Store = Field.Store;
+    using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /*

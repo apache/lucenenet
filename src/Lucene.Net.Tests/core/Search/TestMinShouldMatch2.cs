@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,15 +31,15 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SimScorer = Lucene.Net.Search.Similarities.Similarity.SimScorer;
     using SimWeight = Lucene.Net.Search.Similarities.Similarity.SimWeight;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
-    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
-    using StringField = Lucene.Net.Document.StringField;
+    using SortedSetDocValuesField = SortedSetDocValuesField;
+    using StringField = StringField;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
     using TestUtil = Lucene.Net.Util.TestUtil;

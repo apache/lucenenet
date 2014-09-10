@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using System;
 
@@ -25,8 +26,8 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;

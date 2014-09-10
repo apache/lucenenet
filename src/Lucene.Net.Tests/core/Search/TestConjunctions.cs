@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Search
 {
     using NUnit.Framework;
@@ -23,7 +25,7 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
@@ -31,10 +33,10 @@ namespace Lucene.Net.Search
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Store = Lucene.Net.Document.Field.Store;
-    using StringField = Lucene.Net.Document.StringField;
+    using Store = Field.Store;
+    using StringField = StringField;
     using Term = Lucene.Net.Index.Term;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestConjunctions : LuceneTestCase

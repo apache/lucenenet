@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -36,7 +37,7 @@ namespace Lucene.Net.Index
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
 
     //using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
@@ -44,10 +45,10 @@ namespace Lucene.Net.Index
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IOContext = Lucene.Net.Store.IOContext;
@@ -59,7 +60,7 @@ namespace Lucene.Net.Index
     using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using NoLockFactory = Lucene.Net.Store.NoLockFactory;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
@@ -67,13 +68,13 @@ namespace Lucene.Net.Index
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using SimpleFSLockFactory = Lucene.Net.Store.SimpleFSLockFactory;
     using SingleInstanceLockFactory = Lucene.Net.Store.SingleInstanceLockFactory;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
-    using StoredField = Lucene.Net.Document.StoredField;
-    using StringField = Lucene.Net.Document.StringField;
+    using SortedDocValuesField = SortedDocValuesField;
+    using SortedSetDocValuesField = SortedSetDocValuesField;
+    using StoredField = StoredField;
+    using StringField = StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     [TestFixture]

@@ -1,8 +1,9 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Document;
+    
     using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
@@ -48,8 +49,8 @@ namespace Lucene.Net.Search
             Field f2 = NewTextField("field", "word", Field.Store.YES);
             f2.Boost = 2.0f;
 
-            Document d1 = new Document();
-            Document d2 = new Document();
+            Documents.Document d1 = new Documents.Document();
+            Documents.Document d2 = new Documents.Document();
 
             d1.Add(f1); // boost = 1
             d2.Add(f2); // boost = 2

@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using NUnit.Framework;
 using System.IO;
 using System.Text;
@@ -5,7 +6,7 @@ using System.Text;
 namespace Lucene.Net.Store
 {
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,7 +25,7 @@ namespace Lucene.Net.Store
          * limitations under the License.
          */
 
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;

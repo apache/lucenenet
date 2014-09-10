@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 
@@ -6,8 +7,8 @@ namespace Lucene.Net.Index
     using CodecUtil = Lucene.Net.Codecs.CodecUtil;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
@@ -31,7 +32,7 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>

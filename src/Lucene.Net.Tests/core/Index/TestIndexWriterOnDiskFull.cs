@@ -1,14 +1,15 @@
 using System;
 using System.Diagnostics;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using System.IO;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -31,13 +32,13 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     /// <summary>
     /// Tests for IndexWriter when the disk runs out of space

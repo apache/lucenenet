@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -11,8 +12,8 @@ namespace Lucene.Net.Index
     using CheckHits = Lucene.Net.Search.CheckHits;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 

@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using System.Collections.Generic;
 
@@ -5,7 +6,7 @@ namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,7 +26,7 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using TestUtil = Lucene.Net.Util.TestUtil;

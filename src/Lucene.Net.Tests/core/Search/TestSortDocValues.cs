@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Search
 {
     using NUnit.Framework;
@@ -19,18 +21,18 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using DoubleDocValuesField = Lucene.Net.Document.DoubleDocValuesField;
-    using Field = Lucene.Net.Document.Field;
-    using FloatDocValuesField = Lucene.Net.Document.FloatDocValuesField;
+    using Document = Documents.Document;
+    using DoubleDocValuesField = DoubleDocValuesField;
+    using Field = Field;
+    using FloatDocValuesField = FloatDocValuesField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
+    using SortedDocValuesField = SortedDocValuesField;
 
     /// <summary>
     /// Tests basic sorting on docvalues fields.

@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
          * the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 

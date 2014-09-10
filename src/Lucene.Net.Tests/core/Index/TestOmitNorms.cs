@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Index
 {
     using Lucene.Net.Randomized.Generators;
@@ -22,13 +24,13 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestOmitNorms : LuceneTestCase

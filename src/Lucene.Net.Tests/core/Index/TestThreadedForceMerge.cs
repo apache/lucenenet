@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -7,9 +8,9 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -32,7 +33,7 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
 
     [TestFixture]
     public class TestThreadedForceMerge : LuceneTestCase

@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -28,8 +29,8 @@ namespace Lucene.Net.Search.Spans
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
@@ -38,7 +39,7 @@ namespace Lucene.Net.Search.Spans
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using Term = Lucene.Net.Index.Term;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TokenFilter = Lucene.Net.Analysis.TokenFilter;
     using Tokenizer = Lucene.Net.Analysis.Tokenizer;
     using TokenStream = Lucene.Net.Analysis.TokenStream;

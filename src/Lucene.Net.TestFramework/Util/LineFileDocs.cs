@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.IO;
@@ -26,12 +27,12 @@ namespace Lucene.Net.Util
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
+    using SortedDocValuesField = SortedDocValuesField;
+    using StringField = StringField;
+    using TextField = TextField;
 
     /// <summary>
     /// Minimal port of benchmark's LneDocSource +

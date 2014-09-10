@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -8,8 +9,8 @@ namespace Lucene.Net.Store
 {
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;

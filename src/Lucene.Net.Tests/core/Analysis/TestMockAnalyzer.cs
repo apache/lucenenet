@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Analysis
@@ -33,10 +34,10 @@ namespace Lucene.Net.Analysis
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using Fields = Lucene.Net.Index.Fields;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using RegExp = Lucene.Net.Util.Automaton.RegExp;

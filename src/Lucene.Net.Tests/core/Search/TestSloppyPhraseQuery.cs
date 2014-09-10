@@ -1,13 +1,14 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
     using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
 
     /*
@@ -32,7 +33,7 @@ namespace Lucene.Net.Search
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestSloppyPhraseQuery : LuceneTestCase

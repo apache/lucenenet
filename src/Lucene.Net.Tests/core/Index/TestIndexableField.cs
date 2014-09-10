@@ -1,8 +1,9 @@
-using Lucene.Net.Document;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -32,9 +33,9 @@ namespace Lucene.Net.Index
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

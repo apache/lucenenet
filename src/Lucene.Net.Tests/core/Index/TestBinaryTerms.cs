@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
@@ -21,13 +23,13 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TopDocs = Lucene.Net.Search.TopDocs;
 
     /// <summary>

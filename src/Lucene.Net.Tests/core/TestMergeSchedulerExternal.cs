@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Lucene.Net.Documents;
 using NUnit.Framework;
 
 namespace Lucene.Net.Tests
@@ -23,8 +24,8 @@ namespace Lucene.Net.Tests
      * limitations under the License.
      */
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;

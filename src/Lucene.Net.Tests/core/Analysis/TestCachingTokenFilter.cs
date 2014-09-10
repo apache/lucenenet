@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Analysis
 {
@@ -26,11 +27,11 @@ namespace Lucene.Net.Analysis
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using MultiFields = Lucene.Net.Index.MultiFields;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestCachingTokenFilter : BaseTokenStreamTestCase

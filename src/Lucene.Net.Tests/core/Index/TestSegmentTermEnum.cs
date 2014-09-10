@@ -1,9 +1,11 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,7 +24,7 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;

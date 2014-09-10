@@ -1,4 +1,8 @@
-namespace Lucene.Net.Document
+using System;
+
+using Lucene.Net.Search;
+
+namespace Lucene.Net.Documents
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,8 +23,7 @@ namespace Lucene.Net.Document
 
     // javadocs
     // javadocs
-    using System;
-
+    
     /// <summary>
     /// Syntactic sugar for encoding doubles as NumericDocValues
     /// via <seealso cref="Double#doubleToRawLongBits(double)"/>.

@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 
@@ -6,8 +7,8 @@ namespace Lucene.Net.Util
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldCache = Lucene.Net.Search.FieldCache;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using IndexWriter = Lucene.Net.Index.IndexWriter;

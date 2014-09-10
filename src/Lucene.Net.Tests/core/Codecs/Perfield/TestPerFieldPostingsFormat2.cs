@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Codecs.Perfield
 {
@@ -11,9 +12,9 @@ namespace Lucene.Net.Codecs.Perfield
         using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
         using SimpleTextPostingsFormat = Lucene.Net.Codecs.simpletext.SimpleTextPostingsFormat;*/
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -43,7 +44,7 @@ namespace Lucene.Net.Codecs.Perfield
     using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TopDocs = Lucene.Net.Search.TopDocs;
 
     //TODO: would be better in this test to pull termsenums and instanceof or something?

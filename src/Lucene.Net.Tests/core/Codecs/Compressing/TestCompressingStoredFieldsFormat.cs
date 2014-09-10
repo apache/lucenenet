@@ -1,14 +1,17 @@
+using Lucene.Net.Documents;
+using Field = Lucene.Net.Documents.Field;
+
 namespace Lucene.Net.Codecs.Compressing
 {
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
     using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using IntField = Lucene.Net.Document.IntField;
+    using IntField = IntField;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Analysis
 {
@@ -29,9 +30,9 @@ namespace Lucene.Net.Analysis
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexableBinaryStringTools = Lucene.Net.Util.IndexableBinaryStringTools;
     using IndexableField = Lucene.Net.Index.IndexableField;
     using IndexReader = Lucene.Net.Index.IndexReader;
@@ -44,13 +45,13 @@ namespace Lucene.Net.Analysis
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using Sort = Lucene.Net.Search.Sort;
     using SortField = Lucene.Net.Search.SortField;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TermRangeFilter = Lucene.Net.Search.TermRangeFilter;
     using TermRangeQuery = Lucene.Net.Search.TermRangeQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     /// <summary>
     /// base test class for testing Unicode collation.

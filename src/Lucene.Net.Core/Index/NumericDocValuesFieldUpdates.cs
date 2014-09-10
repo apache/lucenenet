@@ -1,12 +1,13 @@
 using System;
 using System.Diagnostics;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using InPlaceMergeSorter = Lucene.Net.Util.InPlaceMergeSorter;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using PagedGrowableWriter = Lucene.Net.Util.Packed.PagedGrowableWriter;

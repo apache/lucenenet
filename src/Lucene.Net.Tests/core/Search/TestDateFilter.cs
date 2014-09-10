@@ -1,11 +1,12 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
     using NUnit.Framework;
-    using DateTools = Lucene.Net.Document.DateTools;
+    using DateTools = DateTools;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,7 +25,7 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;

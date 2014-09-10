@@ -1,5 +1,6 @@
 using Apache.NMS.Util;
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -24,20 +25,20 @@ namespace Lucene.Net.Index
          */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
+    using NumericDocValuesField = NumericDocValuesField;
+    using SortedDocValuesField = SortedDocValuesField;
+    using SortedSetDocValuesField = SortedSetDocValuesField;
+    using StringField = StringField;
+    using TextField = TextField;
 
     ///
     /// <summary>

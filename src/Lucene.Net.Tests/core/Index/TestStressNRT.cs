@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -10,8 +11,8 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -336,7 +337,7 @@ namespace Lucene.Net.Index
                                     if (Tombstones)
                                     {
                                         Document d = new Document();
-                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Lucene.Net.Document.Field.Store.YES));
+                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Documents.Field.Store.YES));
                                         d.Add(NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
                                         Writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
                                     }
@@ -356,7 +357,7 @@ namespace Lucene.Net.Index
                                     if (Tombstones)
                                     {
                                         Document d = new Document();
-                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Lucene.Net.Document.Field.Store.YES));
+                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Documents.Field.Store.YES));
                                         d.Add(NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
                                         Writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
                                     }
@@ -372,7 +373,7 @@ namespace Lucene.Net.Index
                                 {
                                     // assertU(adoc("id",Integer.toString(id), field, Long.toString(nextVal)));
                                     Document d = new Document();
-                                    d.Add(NewStringField("id", Convert.ToString(id), Lucene.Net.Document.Field.Store.YES));
+                                    d.Add(NewStringField("id", Convert.ToString(id), Documents.Field.Store.YES));
                                     d.Add(NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
                                     if (VERBOSE)
                                     {

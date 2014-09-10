@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -7,8 +8,8 @@ namespace Lucene.Net.Index
     using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -34,7 +35,7 @@ namespace Lucene.Net.Index
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using TermStatistics = Lucene.Net.Search.TermStatistics;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestCustomNorms : LuceneTestCase

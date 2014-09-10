@@ -1,10 +1,12 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Search
 {
     using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,7 +25,7 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

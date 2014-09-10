@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -8,8 +9,8 @@ namespace Lucene.Net.Search.Spans
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
     using IndexWriter = Lucene.Net.Index.IndexWriter;

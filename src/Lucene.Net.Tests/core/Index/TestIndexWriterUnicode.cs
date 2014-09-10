@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,8 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharsRef = Lucene.Net.Util.CharsRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*

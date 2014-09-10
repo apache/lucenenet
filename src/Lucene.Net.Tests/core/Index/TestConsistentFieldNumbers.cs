@@ -1,14 +1,15 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using FailOnNonBulkMergesInfoStream = Lucene.Net.Util.FailOnNonBulkMergesInfoStream;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Field = Field;
+    using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -29,9 +30,9 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using StoredField = Lucene.Net.Document.StoredField;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
+    using StoredField = StoredField;
+    using StringField = StringField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestConsistentFieldNumbers : LuceneTestCase

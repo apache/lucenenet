@@ -1,9 +1,10 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     //using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
-    using Lucene.Net.Document;
+    
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Store;
     using Lucene.Net.Support;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Index
             // TODO: sometimes update ids not in order...
             for (int docIter = 0; docIter < numUpdates; docIter++)
             {
-                Document doc = docs.NextDoc();
+                Documents.Document doc = docs.NextDoc();
                 string myID = "" + id;
                 if (id == SIZE - 1)
                 {
@@ -241,7 +242,7 @@ namespace Lucene.Net.Index
                     DirectoryReader open = null;
                     for (int i = 0; i < Num; i++)
                     {
-                        Document doc = new Document(); // docs.NextDoc();
+                        Documents.Document doc = new Documents.Document(); // docs.NextDoc();
                         doc.Add(NewStringField("id", "test", Field.Store.NO));
                         Writer.UpdateDocument(new Term("id", "test"), doc);
                         if (Random().Next(3) == 0)

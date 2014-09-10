@@ -1,5 +1,6 @@
 using System.Linq;
 using Apache.NMS.Util;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using NUnit.Framework;
 using System;
@@ -34,16 +35,16 @@ namespace Lucene.Net.Analysis
     using System.IO;
     using Attribute = Lucene.Net.Util.Attribute;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IAttribute = Lucene.Net.Util.IAttribute;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;   
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     /// <summary>
     /// base class for all Lucene unit tests that use TokenStreams.

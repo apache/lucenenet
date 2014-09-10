@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

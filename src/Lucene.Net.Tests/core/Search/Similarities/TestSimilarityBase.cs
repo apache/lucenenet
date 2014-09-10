@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -25,15 +26,15 @@ namespace Lucene.Net.Search.Similarities
 
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     /// <summary>
     /// Tests the <seealso cref="SimilarityBase"/>-based Similarities. Contains unit tests and

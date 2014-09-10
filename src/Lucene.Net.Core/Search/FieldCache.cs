@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
@@ -28,11 +29,11 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using DoubleField = Lucene.Net.Document.DoubleField;
-    using FloatField = Lucene.Net.Document.FloatField;
-    using IntField = Lucene.Net.Document.IntField;
-    using LongField = Lucene.Net.Document.LongField;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using DoubleField = DoubleField;
+    using FloatField = FloatField;
+    using IntField = IntField;
+    using LongField = LongField;
+    using NumericDocValuesField = NumericDocValuesField;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 

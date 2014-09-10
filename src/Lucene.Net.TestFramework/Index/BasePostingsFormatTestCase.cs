@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using System;
@@ -32,12 +33,12 @@ namespace Lucene.Net.Index
     using Codec = Lucene.Net.Codecs.Codec;
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using FlushInfo = Lucene.Net.Store.FlushInfo;
     using IOContext = Lucene.Net.Store.IOContext;

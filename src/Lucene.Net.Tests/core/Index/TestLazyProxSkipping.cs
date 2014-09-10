@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
     using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IOContext = Lucene.Net.Store.IOContext;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
                     content = this.Term3 + " " + this.Term2;
                 }
 
-                doc.Add(NewTextField(this.Field, content, Lucene.Net.Document.Field.Store.YES));
+                doc.Add(NewTextField(this.Field, content, Documents.Field.Store.YES));
                 writer.AddDocument(doc);
             }
 
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 10; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField(this.Field, "a b", Lucene.Net.Document.Field.Store.YES));
+                doc.Add(NewTextField(this.Field, "a b", Documents.Field.Store.YES));
                 writer.AddDocument(doc);
             }
 

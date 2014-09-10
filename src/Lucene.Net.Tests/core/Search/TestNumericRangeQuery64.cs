@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
@@ -9,12 +10,12 @@ namespace Lucene.Net.Search
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
-    using DoubleField = Lucene.Net.Document.DoubleField;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using DoubleField = DoubleField;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using LongField = Lucene.Net.Document.LongField;
+    using LongField = LongField;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*

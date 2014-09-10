@@ -1,4 +1,9 @@
-namespace Lucene.Net.Document
+using System;
+using System.Globalization;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+
+namespace Lucene.Net.Documents
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -16,9 +21,6 @@ namespace Lucene.Net.Document
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using System;
-
     // for javadocs
     // for javadocs
 

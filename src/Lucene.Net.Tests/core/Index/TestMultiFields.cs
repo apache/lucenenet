@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using System;
 using System.Collections.Generic;
@@ -5,7 +6,7 @@ using System.Collections.Generic;
 namespace Lucene.Net.Index
 {
     using Lucene.Net.Analysis;
-    using Lucene.Net.Document;
+    
     using Lucene.Net.Store;
     using Lucene.Net.Util;
     using NUnit.Framework;
@@ -54,7 +55,7 @@ namespace Lucene.Net.Index
                 IList<BytesRef> terms = new List<BytesRef>();
 
                 int numDocs = TestUtil.NextInt(Random(), 1, 100 * RANDOM_MULTIPLIER);
-                Document doc = new Document();
+                Documents.Document doc = new Documents.Document();
                 Field f = NewStringField("field", "", Field.Store.NO);
                 doc.Add(f);
                 Field id = NewStringField("id", "", Field.Store.NO);
@@ -187,7 +188,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            Document d = new Document();
+            Documents.Document d = new Documents.Document();
             d.Add(NewStringField("f", "j", Field.Store.NO));
             w.AddDocument(d);
             w.Commit();
@@ -207,7 +208,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            Document d = new Document();
+            Documents.Document d = new Documents.Document();
             d.Add(NewStringField("f", "j", Field.Store.NO));
             w.AddDocument(d);
             w.Commit();

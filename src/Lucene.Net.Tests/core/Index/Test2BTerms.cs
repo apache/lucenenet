@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     using Lucene.Net.Analysis;
     using Lucene.Net.Analysis.Tokenattributes;
-    using Lucene.Net.Document;
+    
     using Lucene.Net.Search;
     using Lucene.Net.Store;
     using Lucene.Net.Support;
@@ -200,7 +201,7 @@ namespace Lucene.Net.Index
                     ((LogByteSizeMergePolicy)mp).MaxMergeMB = 1024 * 1024 * 1024;
                 }
 
-                Document doc = new Document();
+                Documents.Document doc = new Documents.Document();
                 MyTokenStream ts = new MyTokenStream(Random(), TERMS_PER_DOC);
 
                 FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);

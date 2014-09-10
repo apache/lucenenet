@@ -1,9 +1,10 @@
-namespace Lucene.Net.Document
-{
-    using Lucene.Net.Index;
-    using System;
-    using System.Text;
+using System;
+using System.Text;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
+namespace Lucene.Net.Documents
+{
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -22,11 +23,8 @@ namespace Lucene.Net.Document
          */
 
     // javadocs
-    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
 
     // javadocs
-    using NumericUtils = Lucene.Net.Util.NumericUtils;
 
     /// <summary>
     /// Describes the properties of a field.
@@ -68,7 +66,7 @@ namespace Lucene.Net.Document
         private NumericType? numericType;
         private bool Frozen;
         private int NumericPrecisionStep_Renamed = NumericUtils.PRECISION_STEP_DEFAULT;
-        private DocValuesType_e? docValueType;
+        private FieldInfo.DocValuesType_e? docValueType;
 
         /// <summary>
         /// Create a new mutable FieldType with all of the properties from <code>ref</code>
@@ -407,7 +405,7 @@ namespace Lucene.Net.Document
         /// <exception cref="IllegalStateException"> if this FieldType is frozen against
         ///         future modifications. </exception>
         /// <seealso cref= #docValueType() </seealso>
-        public DocValuesType_e? DocValueType
+        public FieldInfo.DocValuesType_e? DocValueType
         {
             get
             {

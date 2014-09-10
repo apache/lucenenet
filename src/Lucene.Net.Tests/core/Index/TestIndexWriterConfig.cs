@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,7 +10,7 @@ namespace Lucene.Net.Index
     using Codec = Lucene.Net.Codecs.Codec;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using InfoStream = Lucene.Net.Util.InfoStream;
@@ -34,7 +35,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
-    using Store = Lucene.Net.Document.Field.Store;
+    using Store = Field.Store;
 
     [TestFixture]
     public class TestIndexWriterConfig : LuceneTestCase

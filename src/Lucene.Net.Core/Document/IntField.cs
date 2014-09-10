@@ -1,11 +1,11 @@
+using System;
+
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 
-namespace Lucene.Net.Document
+namespace Lucene.Net.Documents
 {
-    // javadocs
-    // javadocs
-    using System;
-
+ 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -127,13 +127,13 @@ namespace Lucene.Net.Document
             TYPE_NOT_STORED.Tokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericTypeValue = Lucene.Net.Document.FieldType.NumericType.INT;
+            TYPE_NOT_STORED.NumericTypeValue = Documents.FieldType.NumericType.INT;
             TYPE_NOT_STORED.Freeze();
             TYPE_STORED.Indexed = true;
             TYPE_STORED.Tokenized = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericTypeValue = Lucene.Net.Document.FieldType.NumericType.INT;
+            TYPE_STORED.NumericTypeValue = Documents.FieldType.NumericType.INT;
             TYPE_STORED.Stored = true;
             TYPE_STORED.Freeze();
         }
@@ -170,7 +170,7 @@ namespace Lucene.Net.Document
         public IntField(string name, int value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericTypeValue != Lucene.Net.Document.FieldType.NumericType.INT)
+            if (type.NumericTypeValue != Documents.FieldType.NumericType.INT)
             {
                 throw new System.ArgumentException("type.numericType() must be INT but got " + type.NumericTypeValue);
             }

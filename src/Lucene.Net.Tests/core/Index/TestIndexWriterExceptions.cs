@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -29,15 +30,15 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
@@ -47,15 +48,15 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
-    using StringField = Lucene.Net.Document.StringField;
+    using SortedDocValuesField = SortedDocValuesField;
+    using SortedSetDocValuesField = SortedSetDocValuesField;
+    using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using Token = Lucene.Net.Analysis.Token;
     using TokenFilter = Lucene.Net.Analysis.TokenFilter;
     using TokenStream = Lucene.Net.Analysis.TokenStream;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
@@ -31,7 +32,7 @@ namespace Lucene.Net.Search
     // for javadocs
     // for javadocs
     // for javadocs
-    using NumericType = Lucene.Net.Document.FieldType.NumericType;
+    using NumericType = FieldType.NumericType;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;

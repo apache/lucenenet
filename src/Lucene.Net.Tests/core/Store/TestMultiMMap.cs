@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -5,8 +6,8 @@ using System.IO;
 namespace Lucene.Net.Store
 {
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexInputSlicer = Lucene.Net.Store.Directory.IndexInputSlicer;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

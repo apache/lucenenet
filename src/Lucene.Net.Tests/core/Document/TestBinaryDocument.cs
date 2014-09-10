@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System.Text;
 
@@ -46,7 +47,7 @@ namespace Lucene.Net.Document
             IndexableField binaryFldStored = new StoredField("binaryStored", (sbyte[])(Array)System.Text.UTF8Encoding.UTF8.GetBytes(BinaryValStored));
             IndexableField stringFldStored = new Field("stringStored", BinaryValStored, ft);
 
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
 
             doc.Add(binaryFldStored);
 
@@ -66,7 +67,7 @@ namespace Lucene.Net.Document
             /// <summary>
             /// open a reader and fetch the document </summary>
             IndexReader reader = writer.Reader;
-            Document docFromReader = reader.Document(0);
+            Documents.Document docFromReader = reader.Document(0);
             Assert.IsTrue(docFromReader != null);
 
             /// <summary>
@@ -94,7 +95,7 @@ namespace Lucene.Net.Document
             IndexableField binaryFldCompressed = new StoredField("binaryCompressed", (sbyte[])(Array)CompressionTools.Compress(BinaryValCompressed.GetBytes(Encoding.UTF8)));
             IndexableField stringFldCompressed = new StoredField("stringCompressed", (sbyte[])(Array)CompressionTools.CompressString(BinaryValCompressed));
 
-            var doc = new Document {binaryFldCompressed, stringFldCompressed};
+            var doc = new Documents.Document {binaryFldCompressed, stringFldCompressed};
 
             using (Directory dir = NewDirectory())
             using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir))
@@ -103,7 +104,7 @@ namespace Lucene.Net.Document
 
                 using (IndexReader reader = writer.Reader)
                 {
-                    Document docFromReader = reader.Document(0);
+                    Documents.Document docFromReader = reader.Document(0);
                     Assert.IsTrue(docFromReader != null);
 
                     string binaryFldCompressedTest =

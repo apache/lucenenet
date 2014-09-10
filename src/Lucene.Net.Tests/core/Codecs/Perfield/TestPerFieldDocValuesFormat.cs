@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Codecs.Perfield
 {
@@ -27,12 +28,12 @@ namespace Lucene.Net.Codecs.Perfield
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BaseDocValuesFormatTestCase = Lucene.Net.Index.BaseDocValuesFormatTestCase;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -40,7 +41,7 @@ namespace Lucene.Net.Codecs.Perfield
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using Query = Lucene.Net.Search.Query;
     using RandomCodec = Lucene.Net.Index.RandomCodec;
     using Term = Lucene.Net.Index.Term;

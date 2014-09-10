@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
@@ -25,9 +27,9 @@ namespace Lucene.Net.Index
     using CachingTokenFilter = Lucene.Net.Analysis.CachingTokenFilter;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
@@ -35,8 +37,8 @@ namespace Lucene.Net.Index
     using MockTokenFilter = Lucene.Net.Analysis.MockTokenFilter;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
+    using StringField = StringField;
+    using TextField = TextField;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /// <summary>

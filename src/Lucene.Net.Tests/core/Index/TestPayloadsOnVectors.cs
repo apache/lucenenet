@@ -1,5 +1,6 @@
 using Lucene.Net.Analysis.Tokenattributes;
 using System.Diagnostics;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -27,13 +28,13 @@ namespace Lucene.Net.Index
 
     using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using Token = Lucene.Net.Analysis.Token;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 

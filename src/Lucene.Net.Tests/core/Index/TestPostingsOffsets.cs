@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -30,19 +31,19 @@ namespace Lucene.Net.Index
     using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using IntField = Lucene.Net.Document.IntField;
+    using FieldType = FieldType;
+    using IntField = IntField;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockPayloadAnalyzer = Lucene.Net.Analysis.MockPayloadAnalyzer;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using Token = Lucene.Net.Analysis.Token;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 

@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
@@ -39,10 +40,10 @@ namespace Lucene.Net.Codecs.Lucene41
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Field = Field;
+    using FieldType = FieldType;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
@@ -57,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TokenFilter = Lucene.Net.Analysis.TokenFilter;
     using Tokenizer = Lucene.Net.Analysis.Tokenizer;
 

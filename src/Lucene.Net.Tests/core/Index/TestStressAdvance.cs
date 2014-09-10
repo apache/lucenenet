@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Document;
+    
     using Lucene.Net.Store;
 
     /*
@@ -42,7 +43,7 @@ namespace Lucene.Net.Index
                 Directory dir = NewDirectory();
                 RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
                 HashSet<int> aDocs = new HashSet<int>();
-                Document doc = new Document();
+                Documents.Document doc = new Documents.Document();
                 Field f = NewStringField("field", "", Field.Store.NO);
                 doc.Add(f);
                 Field idField = NewStringField("id", "", Field.Store.YES);

@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -22,8 +23,8 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
 

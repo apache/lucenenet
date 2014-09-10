@@ -1,11 +1,13 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Search.Spans
 {
     using Lucene.Net.Index;
     using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

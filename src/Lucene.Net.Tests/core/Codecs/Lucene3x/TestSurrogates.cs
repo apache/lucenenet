@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
     using Lucene.Net.Analysis;
-    using Lucene.Net.Document;
+    
     using Lucene.Net.Index;
 
     /*
@@ -361,7 +362,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     string term = GetRandomString(Random()) + "_ " + (tc++);
                     uniqueTerms.Add(term);
                     fieldTerms.Add(new Term(field, term));
-                    Document doc = new Document();
+                    Documents.Document doc = new Documents.Document();
                     doc.Add(NewStringField(field, term, Field.Store.NO));
                     w.AddDocument(doc);
                 }

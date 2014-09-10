@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using DocValuesStatus = Lucene.Net.Index.CheckIndex.Status.DocValuesStatus;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexInput = Lucene.Net.Store.IndexInput;

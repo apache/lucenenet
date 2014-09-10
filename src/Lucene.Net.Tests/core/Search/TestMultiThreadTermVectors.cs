@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -6,7 +7,7 @@ using System.Threading;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Document;
+    
     using NUnit.Framework;
     using System.IO;
     using Directory = Lucene.Net.Store.Directory;
@@ -58,7 +59,7 @@ namespace Lucene.Net.Search
             customType.StoreTermVectors = true;
             for (int i = 0; i < NumDocs; i++)
             {
-                Document doc = new Document();
+                Documents.Document doc = new Documents.Document();
                 Field fld = NewField("field", English.IntToEnglish(i), customType);
                 doc.Add(fld);
                 writer.AddDocument(doc);

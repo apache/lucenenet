@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -8,9 +9,9 @@ namespace Lucene.Net.Index
     using BaseDirectory = Lucene.Net.Store.BaseDirectory;
     using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using DocumentStoredFieldVisitor = Lucene.Net.Document.DocumentStoredFieldVisitor;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using DocumentStoredFieldVisitor = DocumentStoredFieldVisitor;
+    using Field = Field;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;

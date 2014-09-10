@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Document;
+    
     using Lucene.Net.Index;
     using Lucene.Net.Store;
     using Lucene.Net.Support;
@@ -45,11 +46,11 @@ namespace Lucene.Net.Search
             int num = AtLeast(31);
             for (int i = 0; i < num; i++)
             {
-                Document doc = new Document();
+                Documents.Document doc = new Documents.Document();
                 doc.Add(NewTextField("f", "a b c d b c d c d d", Field.Store.NO));
                 w.AddDocument(doc);
 
-                doc = new Document();
+                doc = new Documents.Document();
                 doc.Add(NewTextField("f", "a b c d", Field.Store.NO));
                 w.AddDocument(doc);
             }

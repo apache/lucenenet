@@ -1,13 +1,12 @@
-namespace Lucene.Net.Document
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+
+namespace Lucene.Net.Documents
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Text;
-
-    // for javadoc
-    // for javadoc
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -25,9 +24,6 @@ namespace Lucene.Net.Document
          * limitations under the License.
          */
 
-    // for javadoc
-    using IndexableField = Lucene.Net.Index.IndexableField;
-
     /// <summary>
     /// Documents are the unit of indexing and search.
     ///
@@ -39,9 +35,8 @@ namespace Lucene.Net.Document
     ///
     /// <p>Note that fields which are <i>not</i> <seealso cref="Lucene.Net.Index.IndexableFieldType#stored() stored"/> are
     /// <i>not</i> available in documents retrieved from the index, e.g. with {@link
-    /// ScoreDoc#doc} or <seealso cref="IndexReader#document(int)"/>.
+    /// ScoreDoc#doc} or <seealso cref="IndexReader#document(int)"/>.</p>
     /// </summary>
-
     public sealed class Document : IEnumerable<IndexableField>
     {
         private readonly List<IndexableField> Fields_Renamed = new List<IndexableField>();
@@ -133,7 +128,7 @@ namespace Lucene.Net.Document
         /// <returns> a <code>BytesRef[]</code> of binary field values </returns>
         public BytesRef[] GetBinaryValues(string name)
         {
-            List<BytesRef> result = new List<BytesRef>();
+            var result = new List<BytesRef>();
 
             foreach (IndexableField field in Fields_Renamed)
             {
@@ -201,7 +196,7 @@ namespace Lucene.Net.Document
         /// <returns> a <code>IndexableField[]</code> array </returns>
         public IndexableField[] GetFields(string name)
         {
-            List<IndexableField> result = new List<IndexableField>();
+            var result = new List<IndexableField>();
             foreach (IndexableField field in Fields_Renamed)
             {
                 if (field.Name().Equals(name))
@@ -241,7 +236,7 @@ namespace Lucene.Net.Document
         /// <returns> a <code>String[]</code> of field values </returns>
         public string[] GetValues(string name)
         {
-            List<string> result = new List<string>();
+            var result = new List<string>();
             foreach (IndexableField field in Fields_Renamed)
             {
                 if (field.Name().Equals(name) && field.StringValue != null)
@@ -283,7 +278,7 @@ namespace Lucene.Net.Document
         /// Prints the fields of a document for human consumption. </summary>
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            var buffer = new StringBuilder();
             buffer.Append("Document<");
             for (int i = 0; i < Fields_Renamed.Count; i++)
             {

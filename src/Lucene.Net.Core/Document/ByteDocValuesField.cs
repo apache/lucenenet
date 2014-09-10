@@ -1,6 +1,7 @@
 using System;
 
-namespace Lucene.Net.Document
+
+namespace Lucene.Net.Documents
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

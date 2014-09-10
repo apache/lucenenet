@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Licensed to the Apache Software Foundation (ASF) under one or more
 * contributor license agreements.  See the NOTICE file distributed with
 * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
 */
 
 using System.Runtime.CompilerServices;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized;
 using Lucene.Net.Randomized.Generators;
@@ -53,15 +54,15 @@ namespace Lucene.Net.Util
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using FCInvisibleMultiReader = Lucene.Net.Search.QueryUtils.FCInvisibleMultiReader;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldFilterAtomicReader = Lucene.Net.Index.FieldFilterAtomicReader;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using Fields = Lucene.Net.Index.Fields;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using FlushInfo = Lucene.Net.Store.FlushInfo;
     using FSDirectory = Lucene.Net.Store.FSDirectory;
     using IndexableField = Lucene.Net.Index.IndexableField;
@@ -94,10 +95,10 @@ namespace Lucene.Net.Util
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
 
     /*using After = org.junit.After;

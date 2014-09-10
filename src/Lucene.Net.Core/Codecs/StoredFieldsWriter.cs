@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs
     /// the License.
     /// </summary>
 
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexableField = Lucene.Net.Index.IndexableField;

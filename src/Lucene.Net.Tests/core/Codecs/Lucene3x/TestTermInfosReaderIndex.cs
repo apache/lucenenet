@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -7,8 +8,8 @@ namespace Lucene.Net.Codecs.Lucene3x
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using Fields = Lucene.Net.Index.Fields;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;

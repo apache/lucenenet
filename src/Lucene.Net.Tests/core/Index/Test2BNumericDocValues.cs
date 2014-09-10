@@ -1,10 +1,11 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -26,7 +27,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
 
     /*using Ignore = org.junit.Ignore;
 

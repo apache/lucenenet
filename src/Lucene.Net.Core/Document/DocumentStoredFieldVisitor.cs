@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 
-namespace Lucene.Net.Document
+using Lucene.Net.Index;
+
+namespace Lucene.Net.Documents
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -18,10 +20,6 @@ namespace Lucene.Net.Document
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using StoredFieldVisitor = Lucene.Net.Index.StoredFieldVisitor;
-
     /// <summary>
     /// A <seealso cref="StoredFieldVisitor"/> that creates a {@link
     ///  Document} containing all stored fields, or only specific
@@ -35,7 +33,7 @@ namespace Lucene.Net.Document
 
     public class DocumentStoredFieldVisitor : StoredFieldVisitor
     {
-        private readonly Document Doc = new Document();
+        private readonly Documents.Document Doc = new Documents.Document();
         private readonly ISet<string> FieldsToAdd;
 
         /// <summary>
@@ -110,7 +108,7 @@ namespace Lucene.Net.Document
         ///         the stored information in the field instances is valid,
         ///         data such as boosts, indexing options, term vector options,
         ///         etc is not set. </returns>
-        public virtual Document Document
+        public virtual Documents.Document Document
         {
             get
             {
