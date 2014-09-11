@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Support
 {
@@ -228,7 +229,6 @@ namespace Lucene.Net.Support
             }
         }
 
-
         // Emulates the Java BitSet.Get() method.
         // Prevents exceptions from being thrown when the index is too high.
         public static bool SafeGet(this BitArray a, int loc)
@@ -261,6 +261,39 @@ namespace Lucene.Net.Support
                     bitsA[i] = false;
                 }
             }
+        }
+
+        //Does a deep comparison of two BitArrays
+        public static bool BitWiseEquals(this BitArray bitsA, BitArray bitsB)
+        {
+            if (bitsA == bitsB)
+                return true;
+            if (bitsA.Count != bitsB.Count)
+                return false;
+
+            for (int i = 0; i < bitsA.Count; i++)
+            {
+                if (bitsA[i] != bitsB[i])
+                    return false;
+            }
+
+            return true;
+        }
+
+        //Compares a BitArray with an OpenBitSet
+        public static bool Equals(BitArray a, OpenBitSet b)
+        {
+            var bitArrayCardinality = a.Cardinality();
+            if (bitArrayCardinality != b.Cardinality())
+                return false;
+
+            for (int i = 0; i < bitArrayCardinality; i++)
+            {
+                if (a.Get(i) != b.Get(i))
+                    return false;
+            }
+
+            return true;
         }
     }
 }

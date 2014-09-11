@@ -267,7 +267,7 @@ namespace Lucene.Net.Util
 
                 if (a0 != null)
                 {
-                    Assert.AreEqual(a.Equals(a0), b.Equals(b0));
+                    Assert.AreEqual(a.BitWiseEquals(a0), b.Equals(b0));
 
                     Assert.AreEqual(a.Cardinality(), b.Cardinality());
 
