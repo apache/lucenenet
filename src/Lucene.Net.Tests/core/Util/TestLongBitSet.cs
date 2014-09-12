@@ -55,9 +55,9 @@ namespace Lucene.Net.Util
             long bb = aa;
             do
             {
-                aa = a.PrevSetBit(aa-1);
+                //aa = a.PrevSetBit(aa-1);
                 aa--;
-                while ((aa >= 0) && (!a.Get(aa)))
+                while ((aa >= 0) && (!a.SafeGet(aa)))
                 {
                     aa--;
                 }
@@ -318,7 +318,7 @@ namespace Lucene.Net.Util
             BitArray bs = new BitArray(a.Length);
             foreach (int e in a)
             {
-                bs.Set(e, true);
+                bs.SafeSet(e, true);
             }
             return bs;
         }
