@@ -142,7 +142,7 @@ namespace Lucene.Net.Util
             copy_ = CopyOf(set_, numBits); // then random index
             AssertEquals(numBits, set_, copy_);
             // test regular increments
-            for (int inc = 2; inc < 1000; inc += TestUtil.NextInt(Random(), 1, 100))
+            for (int inc = 2; inc < 10; inc += TestUtil.NextInt(Random(), 1, 100))
             {
                 set_ = new BitArray(numBits);
                 for (int d = Random().Next(10); d < numBits; d += inc)

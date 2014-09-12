@@ -58,7 +58,7 @@ namespace Lucene.Net.Support
             {
                 // if index bit is set, return it
                 // otherwise check previous index bit
-                if (bitArray.Get(index))
+                if (bitArray.SafeGet(index))
                     return index;
                 index--;
             }
