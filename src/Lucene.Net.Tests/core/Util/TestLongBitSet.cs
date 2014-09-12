@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -101,26 +102,26 @@ namespace Lucene.Net.Util
                         int idx;
 
                         idx = Random().Next(sz);
-                        a.Set(idx, true);
+                        a.SafeSet(idx, true);
                         b.Set(idx);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, false);
+                        a.SafeSet(idx, false);
                         b.Clear(idx);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, !a.Get(idx));
+                        a.SafeSet(idx, !a.Get(idx));
                         b.Flip(idx, idx + 1);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, !a.Get(idx));
+                        a.SafeSet(idx, !a.SafeGet(idx));
                         b.Flip(idx, idx + 1);
-
+                        
                         bool val2 = b.Get(idx);
                         bool val = b.GetAndSet(idx);
                         Assert.IsTrue(val2 == val);
                         Assert.IsTrue(b.Get(idx));
-
+                        
                         if (!val)
                         {
                             b.Clear(idx);
@@ -131,7 +132,7 @@ namespace Lucene.Net.Util
 
                 // test that the various ways of accessing the bits are equivalent
                 DoGet(a, b);
-
+                
                 // test ranges, including possible extension
                 int fromIndex, toIndex;
                 fromIndex = Random().Next(sz / 2);

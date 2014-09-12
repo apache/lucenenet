@@ -281,7 +281,7 @@ namespace Lucene.Net.Support
         }
 
         //Compares a BitArray with an OpenBitSet
-        public static bool Equals(BitArray a, OpenBitSet b)
+        public static bool Equal(this BitArray a, OpenBitSet b)
         {
             var bitArrayCardinality = a.Cardinality();
             if (bitArrayCardinality != b.Cardinality())
