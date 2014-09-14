@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
@@ -23,7 +24,7 @@ namespace Lucene.Net.Search
      */
 
     using Lucene.Net.Analysis;
-    using Lucene.Net.Document;
+    
     using Lucene.Net.Index;
     using Lucene.Net.Util;
     using NUnit.Framework;
@@ -61,7 +62,7 @@ namespace Lucene.Net.Search
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, analyzer);
 
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
             doc.Add(NewTextField("field", "one two three four five", Field.Store.YES));
             doc.Add(NewTextField("repeated", "this is a repeated field - first part", Field.Store.YES));
             IndexableField repeatedField = NewTextField("repeated", "second part of a repeated field", Field.Store.YES);
@@ -69,11 +70,11 @@ namespace Lucene.Net.Search
             doc.Add(NewTextField("palindrome", "one two three two one", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Document();
+            doc = new Documents.Document();
             doc.Add(NewTextField("nonexist", "phrase exist notexist exist found", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Document();
+            doc = new Documents.Document();
             doc.Add(NewTextField("nonexist", "phrase exist notexist exist found", Field.Store.YES));
             writer.AddDocument(doc);
 
@@ -240,7 +241,7 @@ namespace Lucene.Net.Search
             Directory directory = NewDirectory();
             Analyzer stopAnalyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, stopAnalyzer));
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
             doc.Add(NewTextField("field", "the stop words are here", Field.Store.YES));
             writer.AddDocument(doc);
             IndexReader reader = writer.Reader;
@@ -266,11 +267,11 @@ namespace Lucene.Net.Search
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
 
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
             doc.Add(NewTextField("source", "marketing info", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Document();
+            doc = new Documents.Document();
             doc.Add(NewTextField("contents", "foobar", Field.Store.YES));
             doc.Add(NewTextField("source", "marketing info", Field.Store.YES));
             writer.AddDocument(doc);
@@ -298,15 +299,15 @@ namespace Lucene.Net.Search
             reader.Dispose();
 
             writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
-            doc = new Document();
+            doc = new Documents.Document();
             doc.Add(NewTextField("contents", "map entry woo", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Document();
+            doc = new Documents.Document();
             doc.Add(NewTextField("contents", "woo map entry", Field.Store.YES));
             writer.AddDocument(doc);
 
-            doc = new Document();
+            doc = new Documents.Document();
             doc.Add(NewTextField("contents", "map foobarword entry woo", Field.Store.YES));
             writer.AddDocument(doc);
 
@@ -348,15 +349,15 @@ namespace Lucene.Net.Search
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
 
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
             doc.Add(NewTextField("field", "foo firstname lastname foo", Field.Store.YES));
             writer.AddDocument(doc);
 
-            Document doc2 = new Document();
+            Documents.Document doc2 = new Documents.Document();
             doc2.Add(NewTextField("field", "foo firstname zzz lastname foo", Field.Store.YES));
             writer.AddDocument(doc2);
 
-            Document doc3 = new Document();
+            Documents.Document doc3 = new Documents.Document();
             doc3.Add(NewTextField("field", "foo firstname zzz yyy lastname foo", Field.Store.YES));
             writer.AddDocument(doc3);
 
@@ -626,7 +627,7 @@ namespace Lucene.Net.Search
 
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMergePolicy(NewLogMergePolicy()));
             IList<IList<string>> docs = new List<IList<string>>();
-            Document d = new Document();
+            Documents.Document d = new Documents.Document();
             Field f = NewTextField("f", "", Field.Store.NO);
             d.Add(f);
 

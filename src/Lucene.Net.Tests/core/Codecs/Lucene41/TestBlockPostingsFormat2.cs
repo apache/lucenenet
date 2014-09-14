@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -5,10 +6,10 @@ using System.Text;
 namespace Lucene.Net.Codecs.Lucene41
 {
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using IndexableField = Lucene.Net.Index.IndexableField;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
@@ -34,7 +35,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     /// <summary>
     /// Tests special cases of BlockPostingsFormat
@@ -81,7 +82,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     StoreTermVectorOffsets = true,
                     StoreTermVectorPositions = true,
                     StoreTermVectorPayloads = true,
-                    IndexOptionsValue = option
+                    IndexOptions = option
                 };
                 // turn on tvs for a cross-check, since we rely upon checkindex in this test (for now)
                 doc.Add(new Field(option.ToString(), "", ft));

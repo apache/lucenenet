@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -8,9 +9,9 @@ namespace Lucene.Net.Index
     using BaseDirectory = Lucene.Net.Store.BaseDirectory;
     using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using DocumentStoredFieldVisitor = Lucene.Net.Document.DocumentStoredFieldVisitor;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using DocumentStoredFieldVisitor = DocumentStoredFieldVisitor;
+    using Field = Field;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
@@ -87,19 +88,19 @@ namespace Lucene.Net.Index
             Assert.IsTrue(field.FieldType().StoreTermVectors);
 
             Assert.IsFalse(field.FieldType().OmitNorms);
-            Assert.IsTrue(field.FieldType().IndexOptionsValue == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Assert.IsTrue(field.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
             field = (Field)doc.GetField(DocHelper.TEXT_FIELD_3_KEY);
             Assert.IsTrue(field != null);
             Assert.IsFalse(field.FieldType().StoreTermVectors);
             Assert.IsTrue(field.FieldType().OmitNorms);
-            Assert.IsTrue(field.FieldType().IndexOptionsValue == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Assert.IsTrue(field.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
             field = (Field)doc.GetField(DocHelper.NO_TF_KEY);
             Assert.IsTrue(field != null);
             Assert.IsFalse(field.FieldType().StoreTermVectors);
             Assert.IsFalse(field.FieldType().OmitNorms);
-            Assert.IsTrue(field.FieldType().IndexOptionsValue == FieldInfo.IndexOptions.DOCS_ONLY);
+            Assert.IsTrue(field.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY);
 
             DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor(DocHelper.TEXT_FIELD_3_KEY);
             reader.Document(0, visitor);

@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

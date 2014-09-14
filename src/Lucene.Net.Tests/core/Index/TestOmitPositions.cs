@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Index
 {
     using Lucene.Net.Randomized.Generators;
@@ -24,13 +26,13 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     ///
     /// <summary>
@@ -46,7 +48,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
             Field f = NewField("foo", "this is a test test", ft);
             doc.Add(f);
             for (int i = 0; i < 100; i++)
@@ -81,7 +83,7 @@ namespace Lucene.Net.Index
 
             // f1,f2,f3: docs only
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
 
             Field f1 = NewField("f1", "this field has docs only", ft);
             d.Add(f1);
@@ -93,7 +95,7 @@ namespace Lucene.Net.Index
             d.Add(f3);
 
             FieldType ft2 = new FieldType(TextField.TYPE_NOT_STORED);
-            ft2.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+            ft2.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
 
             // f4,f5,f6 docs and freqs
             Field f4 = NewField("f4", "this field has docs and freqs", ft2);
@@ -106,7 +108,7 @@ namespace Lucene.Net.Index
             d.Add(f6);
 
             FieldType ft3 = new FieldType(TextField.TYPE_NOT_STORED);
-            ft3.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+            ft3.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 
             // f7,f8,f9 docs/freqs/positions
             Field f7 = NewField("f7", "this field has docs and freqs and positions", ft3);
@@ -210,7 +212,7 @@ namespace Lucene.Net.Index
             Document d = new Document();
 
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
             Field f1 = NewField("f1", "this field has term freqs", ft);
             d.Add(f1);
 
@@ -249,7 +251,7 @@ namespace Lucene.Net.Index
         {
             // no positions
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);

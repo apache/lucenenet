@@ -1,8 +1,9 @@
-namespace Lucene.Net.Document
-{
-    using Lucene.Net.Support;
-    using System;
+using System;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 
+namespace Lucene.Net.Documents
+{
     /*
                  * Licensed to the Apache Software Foundation (ASF) under one or more
                  * contributor license agreements.  See the NOTICE file distributed with
@@ -19,10 +20,6 @@ namespace Lucene.Net.Document
                  * See the License for the specific language governing permissions and
                  * limitations under the License.
                  */
-
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using CharsRef = Lucene.Net.Util.CharsRef;
-    using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
     /// <summary>
     /// Simple utility class providing static methods to

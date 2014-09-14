@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     using Lucene.Net.Support;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
@@ -36,7 +37,7 @@ namespace Lucene.Net.Index
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LiveDocsFormat = Lucene.Net.Codecs.LiveDocsFormat;
     using MutableBits = Lucene.Net.Util.MutableBits;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
     // Used by IndexWriter to hold open SegmentReaders (for

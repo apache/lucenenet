@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -30,16 +31,16 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using Occur = Lucene.Net.Search.BooleanClause.Occur;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using StoredField = Lucene.Net.Document.StoredField;
+    using SortedDocValuesField = SortedDocValuesField;
+    using StoredField = StoredField;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>

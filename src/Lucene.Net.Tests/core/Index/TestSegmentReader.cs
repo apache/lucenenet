@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using IOContext = Lucene.Net.Store.IOContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;

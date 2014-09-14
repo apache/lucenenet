@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System.Text;
 
@@ -54,7 +55,7 @@ namespace Lucene.Net.Document
         [Test]
         public virtual void TestBinaryField()
         {
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
 
             FieldType ft = new FieldType();
             ft.Stored = true;
@@ -109,7 +110,7 @@ namespace Lucene.Net.Document
         [Test]
         public virtual void TestRemoveForNewDocument()
         {
-            Document doc = MakeDocumentWithFields();
+            Documents.Document doc = MakeDocumentWithFields();
             Assert.AreEqual(10, doc.Fields.Count);
             doc.RemoveFields("keyword");
             Assert.AreEqual(8, doc.Fields.Count);
@@ -211,7 +212,7 @@ namespace Lucene.Net.Document
         [Test]
         public virtual void TestGetValues()
         {
-            Document doc = MakeDocumentWithFields();
+            Documents.Document doc = MakeDocumentWithFields();
             Assert.AreEqual(new string[] { "test1", "test2" }, doc.GetValues("keyword"));
             Assert.AreEqual(new string[] { "test1", "test2" }, doc.GetValues("text"));
             Assert.AreEqual(new string[] { "test1", "test2" }, doc.GetValues("unindexed"));
@@ -240,9 +241,9 @@ namespace Lucene.Net.Document
             dir.Dispose();
         }
 
-        private Document MakeDocumentWithFields()
+        private Documents.Document MakeDocumentWithFields()
         {
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
             FieldType stored = new FieldType();
             stored.Stored = true;
             FieldType indexedNotTokenized = new FieldType();
@@ -261,7 +262,7 @@ namespace Lucene.Net.Document
             return doc;
         }
 
-        private void DoAssert(Document doc, bool fromIndex)
+        private void DoAssert(Documents.Document doc, bool fromIndex)
         {
             IndexableField[] keywordFieldValues = doc.GetFields("keyword");
             IndexableField[] textFieldValues = doc.GetFields("text");
@@ -297,7 +298,7 @@ namespace Lucene.Net.Document
         public virtual void TestFieldSetValue()
         {
             Field field = new StringField("id", "id1", Field.Store.YES);
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
             doc.Add(field);
             doc.Add(new StringField("keyword", "test", Field.Store.YES));
 
@@ -320,7 +321,7 @@ namespace Lucene.Net.Document
             int result = 0;
             for (int i = 0; i < 3; i++)
             {
-                Document doc2 = searcher.Doc(hits[i].Doc);
+                Documents.Document doc2 = searcher.Doc(hits[i].Doc);
                 Field f = (Field)doc2.GetField("id");
                 if (f.StringValue.Equals("id1"))
                 {
@@ -367,7 +368,7 @@ namespace Lucene.Net.Document
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
             doc.Add(new Field("stored", "abc", Field.Store.YES, Field.Index.NO));
             doc.Add(new Field("stored_indexed", "abc xyz", Field.Store.YES, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("stored_tokenized", "abc xyz", Field.Store.YES, Field.Index.ANALYZED));
@@ -434,7 +435,7 @@ namespace Lucene.Net.Document
         [Test]
         public virtual void TestNumericFieldAsString()
         {
-            Document doc = new Document();
+            Documents.Document doc = new Documents.Document();
             doc.Add(new IntField("int", 5, Field.Store.YES));
             Assert.AreEqual("5", doc.Get("int"));
             Assert.IsNull(doc.Get("somethingElse"));
@@ -445,7 +446,7 @@ namespace Lucene.Net.Document
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
             iw.AddDocument(doc);
             DirectoryReader ir = iw.Reader;
-            Document sdoc = ir.Document(0);
+            Documents.Document sdoc = ir.Document(0);
             Assert.AreEqual("5", sdoc.Get("int"));
             Assert.IsNull(sdoc.Get("somethingElse"));
             Assert.AreEqual(new string[] { "5", "4" }, sdoc.GetValues("int"));

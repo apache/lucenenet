@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
@@ -27,12 +28,12 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FloatField = Lucene.Net.Document.FloatField;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FloatField = FloatField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
-    using IntField = Lucene.Net.Document.IntField;
+    using IntField = IntField;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using ReaderUtil = Lucene.Net.Index.ReaderUtil;

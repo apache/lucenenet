@@ -33,17 +33,6 @@ namespace Lucene.Net.Support
             return new SubList<T>(list, fromIndex, toIndex);
         }
 
-        public static T[] ToArray<T>(this IList<T> list)
-        {
-            if (list is Array) return (T[])list;
-
-            T[] retval = new T[list.Count];
-            for (int i = 0; i < retval.Length; i++)
-                retval[i] = list[i];
-
-            return retval;
-        }
-
         public static IList<T> Swap<T>(this IList<T> list, int indexA, int indexB)
         {
             T tmp = list[indexA];

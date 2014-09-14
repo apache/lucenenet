@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -25,16 +26,16 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using StoredField = Lucene.Net.Document.StoredField;
-    using StringField = Lucene.Net.Document.StringField;
-    using TextField = Lucene.Net.Document.TextField;
+    using StoredField = StoredField;
+    using StringField = StringField;
+    using TextField = TextField;
 
     public class DocHelper
     {
@@ -221,7 +222,7 @@ namespace Lucene.Net.Index
             CustomType5.Tokenized = false;
             NoNormsField = new Field(NO_NORMS_KEY, NO_NORMS_TEXT, CustomType5);
             CustomType6 = new FieldType(TextField.TYPE_STORED);
-            CustomType6.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            CustomType6.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             NoTFField = new Field(NO_TF_KEY, NO_TF_TEXT, CustomType6);
             CustomType7 = new FieldType();
             CustomType7.Stored = true;
@@ -284,7 +285,7 @@ namespace Lucene.Net.Index
                 {
                     Add(Unstored, f);
                 }
-                if (f.FieldType().IndexOptionsValue == FieldInfo.IndexOptions.DOCS_ONLY)
+                if (f.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
                 {
                     Add(NoTf, f);
                 }
@@ -292,7 +293,7 @@ namespace Lucene.Net.Index
                 {
                     Add(NoNorms, f);
                 }
-                if (f.FieldType().IndexOptionsValue == FieldInfo.IndexOptions.DOCS_ONLY)
+                if (f.FieldType().IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
                 {
                     Add(NoTf, f);
                 }

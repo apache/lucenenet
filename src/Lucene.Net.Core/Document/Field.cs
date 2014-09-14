@@ -1,11 +1,16 @@
-namespace Lucene.Net.Document
-{
-    using Lucene.Net.Analysis.Tokenattributes;
-    using Lucene.Net.Support; // javadocs
-    using System;
-    using System.IO;
-    using System.Text;
+using System;
+using System.IO;
+using System.Text;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
 
+using Lucene.Net.Index;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+
+namespace Lucene.Net.Documents
+{
+    // javadocs
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -23,15 +28,7 @@ namespace Lucene.Net.Document
          * limitations under the License.
          */
 
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     // javadocs
-    using IndexableField = Lucene.Net.Index.IndexableField;
-    using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
-    using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream;
-    using NumericType = Lucene.Net.Document.FieldType.NumericType;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /// <summary>
     /// Expert: directly create a field for a document.  Most
@@ -608,7 +605,7 @@ namespace Lucene.Net.Document
                 return null;
             }
             Number n = new Number();
-            NumericType? numericType = ((FieldType)FieldType()).NumericTypeValue;
+            FieldType.NumericType? numericType = ((FieldType)FieldType()).NumericTypeValue;
             if (numericType != null)
             {
                 if (!(InternalTokenStream is NumericTokenStream))
@@ -622,19 +619,19 @@ namespace Lucene.Net.Document
                 object val = FieldsData;
                 switch (numericType)
                 {
-                    case NumericType.INT:
+                    case Documents.FieldType.NumericType.INT:
                         nts.SetIntValue(Convert.ToInt32(val));
                         break;
 
-                    case NumericType.LONG:
+                    case Documents.FieldType.NumericType.LONG:
                         nts.SetLongValue(Convert.ToInt64(val));
                         break;
 
-                    case NumericType.FLOAT:
+                    case Documents.FieldType.NumericType.FLOAT:
                         nts.SetFloatValue(Convert.ToSingle(val));
                         break;
 
-                    case NumericType.DOUBLE:
+                    case Documents.FieldType.NumericType.DOUBLE:
                         nts.SetDoubleValue(Convert.ToDouble(val));
                         break;
 

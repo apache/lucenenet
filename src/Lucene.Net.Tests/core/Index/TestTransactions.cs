@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -7,10 +8,10 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Field = Field;
+    using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -33,7 +34,7 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
 
     [TestFixture]
     public class TestTransactions : LuceneTestCase

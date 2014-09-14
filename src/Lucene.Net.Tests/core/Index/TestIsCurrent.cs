@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Index
 {
     using Lucene.Net.Store;
@@ -21,8 +23,8 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
 
     [TestFixture]
     public class TestIsCurrent : LuceneTestCase

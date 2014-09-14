@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -12,10 +13,10 @@ namespace Lucene.Net.Index
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using IntField = Lucene.Net.Document.IntField;
+    using IntField = IntField;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 

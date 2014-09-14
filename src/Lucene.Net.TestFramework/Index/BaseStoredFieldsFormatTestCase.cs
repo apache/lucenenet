@@ -1,5 +1,6 @@
 using Apache.NMS.Util;
 using Lucene.Net.Codecs;
+using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -15,15 +16,15 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
 
     //using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
-    using Document = Lucene.Net.Document.Document;
-    using DoubleField = Lucene.Net.Document.DoubleField;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using DoubleField = DoubleField;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using FloatField = Lucene.Net.Document.FloatField;
+    using FieldType = FieldType;
+    using FloatField = FloatField;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using IntField = Lucene.Net.Document.IntField;
-    using LongField = Lucene.Net.Document.LongField;
+    using IntField = IntField;
+    using LongField = LongField;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using MMapDirectory = Lucene.Net.Store.MMapDirectory;
 
@@ -48,11 +49,11 @@ namespace Lucene.Net.Index
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
     using Query = Lucene.Net.Search.Query;
-    using StoredField = Lucene.Net.Document.StoredField;
-    using StringField = Lucene.Net.Document.StringField;
+    using StoredField = StoredField;
+    using StringField = StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TopDocs = Lucene.Net.Search.TopDocs;
 
     /// <summary>

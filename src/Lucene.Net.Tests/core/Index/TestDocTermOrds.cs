@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -27,15 +28,15 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using IntField = Lucene.Net.Document.IntField;
+    using IntField = IntField;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
     using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using StringHelper = Lucene.Net.Util.StringHelper;
     using TestUtil = Lucene.Net.Util.TestUtil;
 

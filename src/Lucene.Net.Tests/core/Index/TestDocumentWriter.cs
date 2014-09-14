@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -26,13 +27,13 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestDocumentWriter : LuceneTestCase
@@ -382,7 +383,7 @@ namespace Lucene.Net.Index
             doc.Add(NewField("f1", "v2", customType2));
             // f2 has no TF
             FieldType customType3 = new FieldType(TextField.TYPE_NOT_STORED);
-            customType3.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            customType3.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             Field f = NewField("f2", "v1", customType3);
             doc.Add(f);
             doc.Add(NewField("f2", "v2", customType2));

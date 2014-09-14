@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using NUnit.Framework;
 
 namespace Lucene.Net.Index
@@ -5,9 +6,9 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -29,7 +30,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /*using Ignore = org.junit.Ignore;
@@ -70,7 +71,7 @@ namespace Lucene.Net.Index
 
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
             ft.OmitNorms = true;
             MyTokenStream tokenStream = new MyTokenStream();
             Field field = new Field("field", tokenStream, ft);

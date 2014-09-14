@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search.Payloads
 {
@@ -26,9 +27,9 @@ namespace Lucene.Net.Search.Payloads
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

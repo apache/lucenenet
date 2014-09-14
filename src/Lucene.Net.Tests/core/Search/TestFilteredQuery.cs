@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -12,8 +13,8 @@ namespace Lucene.Net.Search
     using Directory = Lucene.Net.Store.Directory;
     using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FilterStrategy = Lucene.Net.Search.FilteredQuery.FilterStrategy;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IOUtils = Lucene.Net.Util.IOUtils;

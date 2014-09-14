@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -28,10 +29,10 @@ namespace Lucene.Net.Index
     using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
     using Collector = Lucene.Net.Search.Collector;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using Explanation = Lucene.Net.Search.Explanation;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
@@ -40,7 +41,7 @@ namespace Lucene.Net.Index
     using Scorer = Lucene.Net.Search.Scorer;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TermStatistics = Lucene.Net.Search.TermStatistics;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TFIDFSimilarity = Lucene.Net.Search.Similarities.TFIDFSimilarity;
 
     [TestFixture]
@@ -104,7 +105,7 @@ namespace Lucene.Net.Index
 
         static TestOmitTf()
         {
-            OmitType.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            OmitType.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
         }
 
         // Tests whether the DocumentWriter correctly enable the
@@ -589,7 +590,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             ft.Freeze();
             Field f = NewField("foo", "bar", ft);
             doc.Add(f);

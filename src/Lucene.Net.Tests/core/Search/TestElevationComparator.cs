@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
@@ -8,9 +9,9 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*

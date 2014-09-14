@@ -1,6 +1,7 @@
 using Apache.NMS.Util;
 using System;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -10,8 +11,8 @@ namespace Lucene.Net.Index
     using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -32,7 +33,7 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestIndexWriterNRTIsCurrent : LuceneTestCase

@@ -1,7 +1,9 @@
-namespace Lucene.Net.Document
-{
-    using BytesRef = Lucene.Net.Util.BytesRef;
 
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+
+namespace Lucene.Net.Documents
+{
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -19,8 +21,6 @@ namespace Lucene.Net.Document
          * limitations under the License.
          */
 
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-
     /// <summary>
     /// <p>
     /// Field that stores
@@ -37,7 +37,6 @@ namespace Lucene.Net.Document
     ///
     ///
     /// </summary>
-
     public class SortedDocValuesField : Field
     {
         /// <summary>

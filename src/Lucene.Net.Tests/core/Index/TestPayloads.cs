@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -32,13 +33,13 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestPayloads : LuceneTestCase

@@ -1,5 +1,6 @@
 using System.Numerics;
 using ICSharpCode.SharpZipLib.Zip;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Lucene.Net.Util
     using System.IO;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -43,32 +44,32 @@ namespace Lucene.Net.Util
     using Directory = Lucene.Net.Store.Directory;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using DoubleField = Lucene.Net.Document.DoubleField;
-    using Field = Lucene.Net.Document.Field;
+    using DoubleField = DoubleField;
+    using Field = Field;
     using FieldDoc = Lucene.Net.Search.FieldDoc;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using FilteredQuery = Lucene.Net.Search.FilteredQuery;
-    using FloatField = Lucene.Net.Document.FloatField;
+    using FloatField = FloatField;
     using IndexableField = Lucene.Net.Index.IndexableField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IntField = Lucene.Net.Document.IntField;
+    using IntField = IntField;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
-    using LongField = Lucene.Net.Document.LongField;
+    using LongField = LongField;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using MergePolicy = Lucene.Net.Index.MergePolicy;
     using MergeScheduler = Lucene.Net.Index.MergeScheduler;
     using MultiFields = Lucene.Net.Index.MultiFields;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using NumericType = Lucene.Net.Document.FieldType.NumericType;
+    using NumericDocValuesField = NumericDocValuesField;
+    using NumericType = FieldType.NumericType;
     using PerFieldDocValuesFormat = Lucene.Net.Codecs.Perfield.PerFieldDocValuesFormat;
     using PerFieldPostingsFormat = Lucene.Net.Codecs.Perfield.PerFieldPostingsFormat;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
+    using SortedDocValuesField = SortedDocValuesField;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;

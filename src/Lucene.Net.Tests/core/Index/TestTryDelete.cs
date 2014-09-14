@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -6,7 +7,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Search;
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -33,8 +34,8 @@ namespace Lucene.Net.Index
     using ReferenceManager = Lucene.Net.Search.ReferenceManager;
     using SearcherFactory = Lucene.Net.Search.SearcherFactory;
     using SearcherManager = Lucene.Net.Search.SearcherManager;
-    using Store = Lucene.Net.Document.Field.Store;
-    using StringField = Lucene.Net.Document.StringField;
+    using Store = Field.Store;
+    using StringField = StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TopDocs = Lucene.Net.Search.TopDocs;
 

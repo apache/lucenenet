@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using FieldInfosReader = Lucene.Net.Codecs.FieldInfosReader;
     using FieldInfosWriter = Lucene.Net.Codecs.FieldInfosWriter;
     using IndexOutput = Lucene.Net.Store.IndexOutput;

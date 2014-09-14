@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -14,9 +15,9 @@ namespace Lucene.Net.Index
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     //using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using FilterCodec = Lucene.Net.Codecs.FilterCodec;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
@@ -46,9 +47,9 @@ namespace Lucene.Net.Index
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestAddIndexes : LuceneTestCase

@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     using Lucene.Net.Support;
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using FieldType = FieldType;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -30,7 +31,7 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     //

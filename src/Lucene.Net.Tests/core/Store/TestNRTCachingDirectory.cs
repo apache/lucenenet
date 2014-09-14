@@ -26,7 +26,7 @@ namespace Lucene.Net.Store
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;

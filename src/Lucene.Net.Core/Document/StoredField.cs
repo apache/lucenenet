@@ -1,9 +1,11 @@
-namespace Lucene.Net.Document
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+
+namespace Lucene.Net.Documents
 {
     // javadocs
     // javadocs
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
+    
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

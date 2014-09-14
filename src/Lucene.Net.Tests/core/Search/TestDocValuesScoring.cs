@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Search
 {
     using Lucene.Net.Index;
@@ -23,10 +25,10 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
-    using FloatDocValuesField = Lucene.Net.Document.FloatDocValuesField;
+    using FloatDocValuesField = FloatDocValuesField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;

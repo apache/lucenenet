@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Fst
         protected internal FSTEnum(FST<T> fst)
         {
             this.Fst = fst;
-            FstReader = fst.GetBytesReader;
+            FstReader = fst.BytesReader;
             NO_OUTPUT = fst.Outputs.NoOutput;
             fst.GetFirstArc(GetArc(0));
             Output[0] = NO_OUTPUT;
@@ -164,7 +164,7 @@ namespace Lucene.Net.Util.Fst
                     // Arcs are fixed array -- use binary search to find
                     // the target.
 
-                    FST<T>.BytesReader @in = Fst.GetBytesReader;
+                    FST<T>.BytesReader @in = Fst.BytesReader;
                     int low = arc.ArcIdx;
                     int high = arc.NumArcs - 1;
                     int mid = 0;
@@ -334,7 +334,7 @@ namespace Lucene.Net.Util.Fst
                     // Arcs are fixed array -- use binary search to find
                     // the target.
 
-                    FST<T>.BytesReader @in = Fst.GetBytesReader;
+                    FST<T>.BytesReader @in = Fst.BytesReader;
                     int low = arc.ArcIdx;
                     int high = arc.NumArcs - 1;
                     int mid = 0;
@@ -517,7 +517,7 @@ namespace Lucene.Net.Util.Fst
             FST<T>.Arc<T> arc = GetArc(Upto - 1);
             int targetLabel = TargetLabel;
 
-            FST<T>.BytesReader fstReader = Fst.GetBytesReader;
+            FST<T>.BytesReader fstReader = Fst.BytesReader;
 
             while (true)
             {

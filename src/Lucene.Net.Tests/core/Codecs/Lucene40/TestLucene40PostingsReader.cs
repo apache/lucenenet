@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
@@ -9,9 +10,9 @@ namespace Lucene.Net.Codecs.Lucene40
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -34,10 +35,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using Term = Lucene.Net.Index.Term;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestLucene40PostingsReader : LuceneTestCase
@@ -83,7 +84,7 @@ namespace Lucene.Net.Codecs.Lucene40
             titleType.StoreTermVectors = true;
             titleType.StoreTermVectorPositions = true;
             titleType.StoreTermVectorOffsets = true;
-            titleType.IndexOptionsValue = IndexOptions();
+            titleType.IndexOptions = IndexOptions();
             Field titleField = new Field("title", "", titleType);
             doc.Add(titleField);
 
@@ -92,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene40
             bodyType.StoreTermVectors = true;
             bodyType.StoreTermVectorPositions = true;
             bodyType.StoreTermVectorOffsets = true;
-            bodyType.IndexOptionsValue = IndexOptions();
+            bodyType.IndexOptions = IndexOptions();
             Field bodyField = new Field("body", "", bodyType);
             doc.Add(bodyField);
 

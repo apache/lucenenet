@@ -1,4 +1,9 @@
-namespace Lucene.Net.Document
+using System;
+
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+
+namespace Lucene.Net.Documents
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,9 +25,7 @@ namespace Lucene.Net.Document
     // javadocs
     // javadocs
     // javadocs
-    using Lucene.Net.Index;
-    using System;
-
+    
     /// <summary>
     /// <p>
     /// Field that indexes <code>double</code> values
@@ -130,15 +133,15 @@ namespace Lucene.Net.Document
             TYPE_NOT_STORED.Indexed = true;
             TYPE_NOT_STORED.Tokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
-            TYPE_NOT_STORED.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericTypeValue = Lucene.Net.Document.FieldType.NumericType.DOUBLE;
+            TYPE_NOT_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+            TYPE_NOT_STORED.NumericTypeValue = Documents.FieldType.NumericType.DOUBLE;
             TYPE_NOT_STORED.Freeze();
 
             TYPE_STORED.Indexed = true;
             TYPE_STORED.Tokenized = true;
             TYPE_STORED.OmitNorms = true;
-            TYPE_STORED.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericTypeValue = Lucene.Net.Document.FieldType.NumericType.DOUBLE;
+            TYPE_STORED.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+            TYPE_STORED.NumericTypeValue = Documents.FieldType.NumericType.DOUBLE;
             TYPE_STORED.Stored = true;
             TYPE_STORED.Freeze();
         }
@@ -169,7 +172,7 @@ namespace Lucene.Net.Document
         public DoubleField(string name, double value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericTypeValue != Lucene.Net.Document.FieldType.NumericType.DOUBLE)
+            if (type.NumericTypeValue != Documents.FieldType.NumericType.DOUBLE)
             {
                 throw new System.ArgumentException("type.numericType() must be DOUBLE but got " + type.NumericTypeValue);
             }

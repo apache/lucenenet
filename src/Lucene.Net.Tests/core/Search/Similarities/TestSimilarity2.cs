@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Search.Similarities
@@ -23,16 +24,16 @@ namespace Lucene.Net.Search.Similarities
          * limitations under the License.
          */
 
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SpanOrQuery = Lucene.Net.Search.Spans.SpanOrQuery;
     using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
     using Term = Lucene.Net.Index.Term;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     /// <summary>
     /// Tests against all the similarities we have
@@ -186,7 +187,7 @@ namespace Lucene.Net.Search.Similarities
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             ft.Freeze();
             Field f = NewField("foo", "bar", ft);
             doc.Add(f);
@@ -215,7 +216,7 @@ namespace Lucene.Net.Search.Similarities
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
             ft.OmitNorms = true;
             ft.Freeze();
             Field f = NewField("foo", "bar", ft);

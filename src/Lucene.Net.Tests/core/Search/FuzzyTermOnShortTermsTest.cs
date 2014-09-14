@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Search
 {
     using NUnit.Framework;
@@ -22,8 +24,8 @@ namespace Lucene.Net.Search
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;

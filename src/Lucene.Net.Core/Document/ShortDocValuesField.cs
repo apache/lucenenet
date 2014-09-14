@@ -1,4 +1,7 @@
-namespace Lucene.Net.Document
+using System;
+
+
+namespace Lucene.Net.Documents
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -39,7 +42,7 @@ namespace Lucene.Net.Document
         /// Creates a new DocValues field with the specified 16-bit short value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 16-bit short value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentException"> if the field name is null </exception>
         public ShortDocValuesField(string name, short value)
             : base(name, value)
         {

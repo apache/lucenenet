@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,9 @@ namespace Lucene.Net.Index
     using System.IO;
     using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -32,7 +33,7 @@ namespace Lucene.Net.Index
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using Token = Lucene.Net.Analysis.Token;
 
     [TestFixture]

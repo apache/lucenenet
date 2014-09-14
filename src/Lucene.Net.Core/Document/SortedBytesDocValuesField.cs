@@ -1,4 +1,7 @@
-namespace Lucene.Net.Document
+
+using Lucene.Net.Util;
+
+namespace Lucene.Net.Documents
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -16,9 +19,6 @@ namespace Lucene.Net.Document
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /// <summary>
     /// <p>
     /// Field that stores

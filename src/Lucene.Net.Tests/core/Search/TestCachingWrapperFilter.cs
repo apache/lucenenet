@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
@@ -8,8 +9,8 @@ namespace Lucene.Net.Search
     using Bits = Lucene.Net.Util.Bits;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -36,7 +37,7 @@ namespace Lucene.Net.Search
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SerialMergeScheduler = Lucene.Net.Index.SerialMergeScheduler;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using Term = Lucene.Net.Index.Term;
 
     [TestFixture]

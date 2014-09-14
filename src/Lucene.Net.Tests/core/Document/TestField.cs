@@ -1,4 +1,5 @@
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Document
 {

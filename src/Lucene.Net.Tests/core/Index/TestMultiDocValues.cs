@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using System.Collections.Generic;
 
@@ -22,16 +23,16 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
+    using SortedDocValuesField = SortedDocValuesField;
+    using SortedSetDocValuesField = SortedSetDocValuesField;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>

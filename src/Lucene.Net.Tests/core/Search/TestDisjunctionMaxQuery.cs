@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
@@ -10,7 +11,7 @@ namespace Lucene.Net.Search
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -29,9 +30,9 @@ namespace Lucene.Net.Search
          * limitations under the License.
          */
 
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
@@ -43,7 +44,7 @@ namespace Lucene.Net.Search
     using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
     using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
     using Term = Lucene.Net.Index.Term;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     /// <summary>
     /// Test of the DisjunctionMaxQuery.

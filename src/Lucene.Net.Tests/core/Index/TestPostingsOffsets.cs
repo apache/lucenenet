@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -30,19 +31,19 @@ namespace Lucene.Net.Index
     using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using FieldType = Lucene.Net.Document.FieldType;
-    using IntField = Lucene.Net.Document.IntField;
+    using FieldType = FieldType;
+    using IntField = IntField;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockPayloadAnalyzer = Lucene.Net.Analysis.MockPayloadAnalyzer;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using Token = Lucene.Net.Analysis.Token;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
@@ -70,7 +71,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
 
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             if (Random().NextBoolean())
             {
                 ft.StoreTermVectors = true;
@@ -139,7 +140,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Iwc);
 
             FieldType ft = new FieldType(TextField.TYPE_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             if (Random().NextBoolean())
             {
                 ft.StoreTermVectors = true;
@@ -249,7 +250,7 @@ namespace Lucene.Net.Index
 
             // TODO: randomize what IndexOptions we use; also test
             // changing this up in one IW buffered segment...:
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             if (Random().NextBoolean())
             {
                 ft.StoreTermVectors = true;
@@ -411,7 +412,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     FieldType ft = new FieldType(TextField.TYPE_STORED);
-                    ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                    ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                     if (Random().NextBoolean())
                     {
                         // store some term vectors for the checkindex cross-check
@@ -443,7 +444,7 @@ namespace Lucene.Net.Index
             customType3.StoreTermVectors = true;
             customType3.StoreTermVectorPositions = true;
             customType3.StoreTermVectorOffsets = true;
-            customType3.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            customType3.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             doc.Add(new Field("content3", "here is more content with aaa aaa aaa", customType3));
             doc.Add(new Field("content3", "here is more content with aaa aaa aaa", customType3));
             iw.AddDocument(doc);
@@ -514,7 +515,7 @@ namespace Lucene.Net.Index
             Token t2 = new Token("foo", int.MaxValue - 500, int.MaxValue);
             TokenStream tokenStream = new CannedTokenStream(new Token[] { t1, t2 });
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             // store some term vectors for the checkindex cross-check
             ft.StoreTermVectors = true;
             ft.StoreTermVectorPositions = true;
@@ -536,7 +537,7 @@ namespace Lucene.Net.Index
             try
             {
                 FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-                ft.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                 // store some term vectors for the checkindex cross-check
                 ft.StoreTermVectors = true;
                 ft.StoreTermVectorPositions = true;

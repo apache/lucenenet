@@ -1,14 +1,16 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Search
 {
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
-    using Field = Lucene.Net.Document.Field;
+    using Field = Field;
     using Fields = Lucene.Net.Index.Fields;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -38,7 +40,7 @@ namespace Lucene.Net.Search
     using Term = Lucene.Net.Index.Term;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     public class TestTermVectors : LuceneTestCase
     {

@@ -1,8 +1,9 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;

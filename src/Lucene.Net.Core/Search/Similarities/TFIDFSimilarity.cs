@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -450,7 +452,7 @@ namespace Lucene.Net.Search.Similarities
     ///
     ///      <ul>
     ///        <li><b>Field boost</b> - set by calling
-    ///        <seealso cref="Lucene.Net.Document.Field#setBoost(float) field.setBoost()"/>
+    ///        <seealso cref="Field#setBoost(float) field.setBoost()"/>
     ///        before adding the field to a document.
     ///        </li>
     ///        <li><b>lengthNorm</b> - computed

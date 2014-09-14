@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -14,11 +15,11 @@ namespace Lucene.Net.Index
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     //using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
@@ -45,13 +46,13 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using OpenBitSet = Lucene.Net.Util.OpenBitSet;
     using PostingsConsumer = Lucene.Net.Codecs.PostingsConsumer;
     using Query = Lucene.Net.Search.Query;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using Store = Lucene.Net.Document.Field.Store;
-    using StringField = Lucene.Net.Document.StringField;
+    using Store = Field.Store;
+    using StringField = StringField;
     using TermsConsumer = Lucene.Net.Codecs.TermsConsumer;
     using TermStats = Lucene.Net.Codecs.TermStats;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -181,7 +182,7 @@ namespace Lucene.Net.Index
                     set { }
                 }
 
-                public FieldInfo.IndexOptions? IndexOptionsValue
+                public FieldInfo.IndexOptions? IndexOptions
                 {
                     get { return OmitTF ? FieldInfo.IndexOptions.DOCS_ONLY : FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
                     set { }

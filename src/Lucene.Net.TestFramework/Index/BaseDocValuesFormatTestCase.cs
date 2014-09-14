@@ -1,4 +1,5 @@
 using Apache.NMS.Util;
+using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using System;
 using System.Collections.Generic;
@@ -27,31 +28,31 @@ namespace Lucene.Net.Index
          */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+    using BinaryDocValuesField = BinaryDocValuesField;
     using Bits = Lucene.Net.Util.Bits;
     using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using BytesRefHash = Lucene.Net.Util.BytesRefHash;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
-    using FloatDocValuesField = Lucene.Net.Document.FloatDocValuesField;
+    using FloatDocValuesField = FloatDocValuesField;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Lucene42DocValuesFormat = Lucene.Net.Codecs.Lucene42.Lucene42DocValuesFormat;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using Query = Lucene.Net.Search.Query;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-    using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
-    using StoredField = Lucene.Net.Document.StoredField;
-    using StringField = Lucene.Net.Document.StringField;
+    using SortedDocValuesField = SortedDocValuesField;
+    using SortedSetDocValuesField = SortedSetDocValuesField;
+    using StoredField = StoredField;
+    using StringField = StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TopDocs = Lucene.Net.Search.TopDocs;
 
     /// <summary>

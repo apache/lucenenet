@@ -1,12 +1,13 @@
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Documents;
 using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

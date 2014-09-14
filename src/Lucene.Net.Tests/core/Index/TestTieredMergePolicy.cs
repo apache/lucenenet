@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using System;
 
@@ -5,8 +6,8 @@ namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

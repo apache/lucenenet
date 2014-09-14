@@ -1,11 +1,12 @@
 using System.Text;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
+    using Document = Documents.Document;
+    using Field = Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -30,7 +31,7 @@ namespace Lucene.Net.Index
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using TermRangeQuery = Lucene.Net.Search.TermRangeQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TopDocs = Lucene.Net.Search.TopDocs;
 
     [TestFixture]

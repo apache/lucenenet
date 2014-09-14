@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Lucene.Net.Codecs;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -16,19 +17,19 @@ namespace Lucene.Net.Index
     using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
     using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
     using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
     using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
-    using StringField = Lucene.Net.Document.StringField;
+    using StringField = StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -1,7 +1,9 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Index
 {
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+    using NumericDocValuesField = NumericDocValuesField;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /*

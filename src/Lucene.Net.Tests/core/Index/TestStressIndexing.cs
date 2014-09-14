@@ -1,9 +1,10 @@
 using System;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Document;
+    
     using Lucene.Net.Search;
     using Lucene.Net.Store;
     using Lucene.Net.Support;
@@ -104,7 +105,7 @@ namespace Lucene.Net.Index
                 // Add 10 docs:
                 for (int j = 0; j < 10; j++)
                 {
-                    Document d = new Document();
+                    Documents.Document d = new Documents.Document();
                     int n = Random().Next();
                     d.Add(NewStringField("id", Convert.ToString(NextID++), Field.Store.YES));
                     d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));

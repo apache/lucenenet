@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
@@ -39,10 +40,10 @@ namespace Lucene.Net.Codecs.Lucene41
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Field = Field;
+    using FieldType = FieldType;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
@@ -57,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TokenFilter = Lucene.Net.Analysis.TokenFilter;
     using Tokenizer = Lucene.Net.Analysis.Tokenizer;
 
@@ -84,12 +85,12 @@ namespace Lucene.Net.Codecs.Lucene41
             FieldType docsOnlyType = new FieldType(TextField.TYPE_NOT_STORED);
             // turn this on for a cross-check
             docsOnlyType.StoreTermVectors = true;
-            docsOnlyType.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_ONLY;
+            docsOnlyType.IndexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
 
             FieldType docsAndFreqsType = new FieldType(TextField.TYPE_NOT_STORED);
             // turn this on for a cross-check
             docsAndFreqsType.StoreTermVectors = true;
-            docsAndFreqsType.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+            docsAndFreqsType.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
 
             FieldType positionsType = new FieldType(TextField.TYPE_NOT_STORED);
             // turn these on for a cross-check
@@ -98,7 +99,7 @@ namespace Lucene.Net.Codecs.Lucene41
             positionsType.StoreTermVectorOffsets = true;
             positionsType.StoreTermVectorPayloads = true;
             FieldType offsetsType = new FieldType(positionsType);
-            offsetsType.IndexOptionsValue = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            offsetsType.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             Field field1 = new Field("field1docs", "", docsOnlyType);
             Field field2 = new Field("field2freqs", "", docsAndFreqsType);
             Field field3 = new Field("field3positions", "", positionsType);

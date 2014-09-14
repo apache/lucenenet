@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Diagnostics;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -29,15 +30,15 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using Document = Lucene.Net.Document.Document;
-    using Field = Lucene.Net.Document.Field;
-    using FieldType = Lucene.Net.Document.FieldType;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = Lucene.Net.Document.TextField;
+    using TextField = TextField;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     [TestFixture]
@@ -382,7 +383,7 @@ namespace Lucene.Net.Index
                 RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
 
                 FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-                ft.IndexOptionsValue = options;
+                ft.IndexOptions = options;
                 for (int idx = 0; idx < NUM_DOCS; idx++)
                 {
                     Document doc = new Document();

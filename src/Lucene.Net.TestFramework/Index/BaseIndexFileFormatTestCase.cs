@@ -6,7 +6,7 @@ namespace Lucene.Net.Index
 {
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*

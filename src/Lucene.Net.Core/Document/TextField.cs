@@ -1,7 +1,8 @@
-namespace Lucene.Net.Document
-{
-    using System.IO;
+using System.IO;
+using Lucene.Net.Analysis;
 
+namespace Lucene.Net.Documents
+{
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -18,8 +19,6 @@ namespace Lucene.Net.Document
          * See the License for the specific language governing permissions and
          * limitations under the License.
          */
-
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /// <summary>
     /// A field that is indexed and tokenized, without term

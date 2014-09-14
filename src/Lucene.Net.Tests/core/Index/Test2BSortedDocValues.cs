@@ -1,11 +1,12 @@
 using System;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using Document = Lucene.Net.Document.Document;
+    using Document = Documents.Document;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -27,7 +28,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
+    using SortedDocValuesField = SortedDocValuesField;
 
     /*using Ignore = org.junit.Ignore;
     using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;*/

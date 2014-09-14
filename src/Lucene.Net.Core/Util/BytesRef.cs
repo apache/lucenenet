@@ -288,7 +288,7 @@ namespace Lucene.Net.Util
             return Utf8SortedAsUnicodeSortOrder.Compare(this, br);
         }
 
-        private static readonly IComparer<BytesRef> Utf8SortedAsUnicodeSortOrder = new UTF8SortedAsUnicodeComparator();
+        private static readonly IComparer<BytesRef> Utf8SortedAsUnicodeSortOrder = UTF8SortedAsUnicodeComparator.Instance;
 
         public static IComparer<BytesRef> UTF8SortedAsUnicodeComparer
         {
@@ -298,10 +298,12 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class UTF8SortedAsUnicodeComparator : IComparer<BytesRef>
+        internal class UTF8SortedAsUnicodeComparator : IComparer<BytesRef>
         {
+            internal static UTF8SortedAsUnicodeComparator Instance = new UTF8SortedAsUnicodeComparator();
+
             // Only singleton
-            internal UTF8SortedAsUnicodeComparator()
+            private UTF8SortedAsUnicodeComparator()
             {
             }
 

@@ -1,6 +1,8 @@
 using System;
 
-namespace Lucene.Net.Document
+using Lucene.Net.Index;
+
+namespace Lucene.Net.Documents
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -18,9 +20,6 @@ namespace Lucene.Net.Document
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-
     /// <summary>
     /// <p>
     /// Field that stores a per-document <code>long</code> value for scoring,

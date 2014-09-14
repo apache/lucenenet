@@ -1,10 +1,11 @@
 using System;
 using System.IO;
 using System.Threading;
+using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Document;
+    
     using Lucene.Net.Store;
     using Lucene.Net.Support;
     using Lucene.Net.Util;
@@ -99,7 +100,7 @@ namespace Lucene.Net.Index
                 // Update all 100 docs...
                 for (int i = 0; i < 100; i++)
                 {
-                    Document d = new Document();
+                    Documents.Document d = new Documents.Document();
                     d.Add(new StringField("id", Convert.ToString(i), Field.Store.YES));
                     d.Add(new TextField("contents", English.IntToEnglish(i + 10 * Count), Field.Store.NO));
                     Writer.UpdateDocument(new Term("id", Convert.ToString(i)), d);
@@ -141,7 +142,7 @@ namespace Lucene.Net.Index
             // Establish a base index of 100 docs:
             for (int i = 0; i < 100; i++)
             {
-                Document d = new Document();
+                Documents.Document d = new Documents.Document();
                 d.Add(NewStringField("id", Convert.ToString(i), Field.Store.YES));
                 d.Add(NewTextField("contents", English.IntToEnglish(i), Field.Store.NO));
                 if ((i - 1) % 7 == 0)

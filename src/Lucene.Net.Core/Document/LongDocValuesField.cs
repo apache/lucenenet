@@ -1,4 +1,7 @@
-namespace Lucene.Net.Document
+using System;
+
+
+namespace Lucene.Net.Documents
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -38,7 +41,7 @@ namespace Lucene.Net.Document
         /// Creates a new DocValues field with the specified 64-bit long value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 64-bit long value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentException"> if the field name is null </exception>
         public LongDocValuesField(string name, long value)
             : base(name, value)
         {

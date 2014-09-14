@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+
 namespace Lucene.Net.Util
 {
     using Lucene.Net.Search;
@@ -6,9 +8,9 @@ namespace Lucene.Net.Util
     using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
 
     // javadocs
-    using FloatField = Lucene.Net.Document.FloatField; // javadocs
-    using IntField = Lucene.Net.Document.IntField; // javadocs
-    using LongField = Lucene.Net.Document.LongField; // javadocs
+    using FloatField = FloatField; // javadocs
+    using IntField = IntField; // javadocs
+    using LongField = LongField; // javadocs
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
