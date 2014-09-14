@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             /** Returns -1 at end */
             public abstract long Next { get; }
 
-            public abstract BytesRef Term { get; }
+            public abstract BytesRef Term { get; set; }
 
             /// <summary></summary>
             /// <remarks>Only implemented if {@link TermsIndexReaderBase.supportsOrd()} 

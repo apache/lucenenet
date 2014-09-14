@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 
-using System.Linq;
-
 namespace Lucene.Net.Codecs.BlockTerms
 {
 
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using Index;
     using Store;
     using Util;
@@ -237,6 +236,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override BytesRef Term
             {
                 get { return _current == null ? null : _current.Input; }
+                set { }
             }
 
             public override long Seek(BytesRef target)
@@ -260,6 +260,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override long Ord
             {
                 get { throw new NotImplementedException(); }
+                set { }
             }
 
             public override long Seek(long ord)

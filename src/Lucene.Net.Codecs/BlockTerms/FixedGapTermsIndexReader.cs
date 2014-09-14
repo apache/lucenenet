@@ -43,118 +43,114 @@ namespace Lucene.Net.Codecs.BlockTerms
         // will overflow int during those multiplies.  So to avoid
         // having to upgrade each multiple to long in multiple
         // places (error prone), we use long here:
-        private long totalIndexInterval;
-
-        private int indexDivisor;
+        private readonly long _totalIndexInterval;
+        private readonly int _indexDivisor;
         private readonly int indexInterval;
 
         // Closed if indexLoaded is true:
-        private IndexInput input;
-        private volatile bool indexLoaded;
+        private readonly IndexInput _input;
 
-        private readonly IComparer<BytesRef> termComp;
-
-        private static readonly int PAGED_BYTES_BITS = 15;
+        private volatile bool _indexLoaded;
+        private readonly IComparer<BytesRef> _termComp;
+        private const int PAGED_BYTES_BITS = 15;
 
         // all fields share this single logical byte[]
-        private readonly PagedBytes termBytes = new PagedBytes(PAGED_BYTES_BITS);
-        private PagedBytes.Reader termBytesReader;
-
-        private readonly Dictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
+        private readonly PagedBytes _termBytes = new PagedBytes(PAGED_BYTES_BITS);
+        private readonly PagedBytes.Reader _termBytesReader;
+        private readonly Dictionary<FieldInfo, FieldIndexData> _fields = new Dictionary<FieldInfo, FieldIndexData>();
 
         // start of the field info data
-        private long dirOffset;
-
-        private readonly int version;
+        private long _dirOffset;
+        private readonly int _version;
 
         public FixedGapTermsIndexReader(Directory dir, FieldInfos fieldInfos, String segment, int indexDivisor,
             IComparer<BytesRef> termComp, String segmentSuffix, IOContext context)
         {
-            this.termComp = termComp;
+            _termComp = termComp;
 
-            Debug.Assert(indexDivisor == -1 || indexDivisor > 0;
+            Debug.Assert(indexDivisor == -1 || indexDivisor > 0);
 
-            input =
+            _input =
                 dir.OpenInput(
                     IndexFileNames.SegmentFileName(segment, segmentSuffix,
                         FixedGapTermsIndexWriter.TERMS_INDEX_EXTENSION),
                     context);
 
-            bool success = false;
+            var success = false;
 
             try
             {
 
-                version = ReadHeader(input);
+                _version = ReadHeader(_input);
 
-                if (version >= FixedGapTermsIndexWriter.VERSION_CHECKSUM)
-                    CodecUtil.ChecksumEntireFile(input);
+                if (_version >= FixedGapTermsIndexWriter.VERSION_CHECKSUM)
+                    CodecUtil.ChecksumEntireFile(_input);
                 
-                indexInterval = input.ReadInt();
+                indexInterval = _input.ReadInt();
                 
                 if (indexInterval < 1)
                 {
                     throw new CorruptIndexException(String.Format("Invalid indexInterval: {0}, Resource: {1}",
-                        indexInterval, input));
+                        indexInterval, _input));
                 }
 
-                this.indexDivisor = indexDivisor;
+                _indexDivisor = indexDivisor;
 
                 if (indexDivisor < 0)
                 {
-                    totalIndexInterval = indexInterval;
+                    _totalIndexInterval = indexInterval;
                 }
                 else
                 {
                     // In case terms index gets loaded, later, on demand
-                    totalIndexInterval = indexInterval*indexDivisor;
+                    _totalIndexInterval = indexInterval*indexDivisor;
                 }
 
-                Debug.Assert(totalIndexInterval > 0);
+                Debug.Assert(_totalIndexInterval > 0);
 
-                SeekDir(input, dirOffset);
+                SeekDir(_input, _dirOffset);
 
                 // Read directory
-                int numFields = input.ReadVInt();
+                int numFields = _input.ReadVInt();
 
                 if (numFields < 0)
                     throw new CorruptIndexException(String.Format("Invalid numFields: {0}, Resource: {1}", numFields,
-                        input));
+                        _input));
 
                 for (int i = 0; i < numFields; i++)
                 {
-                    int field = input.ReadVInt();
-                    int numIndexTerms = input.ReadVInt();
+                    int field = _input.ReadVInt();
+                    int numIndexTerms = _input.ReadVInt();
                     if (numIndexTerms < 0)
                         throw new CorruptIndexException(String.Format("Invalid numIndexTerms: {0}, Resource: {1}",
                             numIndexTerms,
-                            input));
+                            _input));
 
-                    long termsStart = input.ReadVLong();
-                    long indexStart = input.ReadVLong();
-                    long packedIndexStart = input.ReadVLong();
-                    long packedOffsetsStart = input.ReadVLong();
+                    long termsStart = _input.ReadVLong();
+                    long indexStart = _input.ReadVLong();
+                    long packedIndexStart = _input.ReadVLong();
+                    long packedOffsetsStart = _input.ReadVLong();
 
                     if (packedIndexStart < indexStart)
                         throw new CorruptIndexException(
                             String.Format(
                                 "Invalid packedIndexStart: {0}, IndexStart: {1}, NumIndexTerms: {2}, Resource: {3}",
                                 packedIndexStart,
-                                indexStart, numIndexTerms, input));
+                                indexStart, numIndexTerms, _input));
 
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
 
                     try
                     {
-                        fields.Add(fieldInfo,
-                            new FieldIndexData(fieldInfo, numIndexTerms, indexStart, termsStart, packedIndexStart,
-                                packedOffsetsStart));
+                        _fields.Add(fieldInfo,
+                            new FieldIndexData(numIndexTerms, indexStart, termsStart, packedIndexStart,
+                                packedOffsetsStart, this));
                     }
                     catch (ArgumentException)
                     {
                         throw new CorruptIndexException(String.Format("Duplicate field: {0}, Resource {1}",
                             fieldInfo.Name,
-                            input));
+                            _input));
                     }
 
 
@@ -165,65 +161,117 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.CloseWhileHandlingException(_input);
                 }
                 if (indexDivisor > 0)
                 {
-                    input.Dispose();
-                    input = null;
+                    _input.Dispose();
+                    _input = null;
                     if (success)
-                        indexLoaded = true;
+                        _indexLoaded = true;
 
-                    termBytesReader = termBytes.Freeze(true);
+                    _termBytesReader = _termBytes.Freeze(true);
                 }
             }
         }
 
         public override int Divisor
         {
-            get { return indexDivisor; }
+            get { return _indexDivisor; }
         }
 
-        private int ReadHeader(IndexInput input)
+        private int ReadHeader(DataInput input)
         {
-            int version = CodecUtil.CheckHeader(input, FixedGapTermsIndexWriter.CODEC_NAME,
+            var version = CodecUtil.CheckHeader(input, FixedGapTermsIndexWriter.CODEC_NAME,
                 FixedGapTermsIndexWriter.VERSION_START, FixedGapTermsIndexWriter.VERSION_CURRENT);
+            
             if (version < FixedGapTermsIndexWriter.VERSION_APPEND_ONLY)
-                dirOffset = input.ReadLong();
+                _dirOffset = input.ReadLong();
 
             return version;
         }
 
-        private class IndexEnum : FieldIndexEnum
+        public override bool SupportsOrd
         {
-            private readonly FieldIndexData.CoreFieldIndex fieldIndex;
-            public override long Ord { get; set; }
+            get { return true; }
+        }
 
-            public IndexEnum(FieldIndexData.CoreFieldIndex fieldIndex)
+        public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
+        {
+            FieldIndexData fieldData = _fields[fieldInfo];
+            return fieldData.CoreIndex == null ? null : new IndexEnum(fieldData.CoreIndex, this);
+        }
+
+        public override void Dispose()
+        {
+            if (_input != null && !_indexLoaded)
+                _input.Dispose();
+        }
+
+        private void SeekDir(IndexInput input, long dirOffset)
+        {
+            if (_version >= FixedGapTermsIndexWriter.VERSION_CHECKSUM)
             {
-                Term = new BytesRef();
-                this.fieldIndex = fieldIndex;
+                input.Seek(input.Length() - CodecUtil.FooterLength() - 8);
+                dirOffset = input.ReadLong();
+
+            }
+            else if (_version >= FixedGapTermsIndexWriter.VERSION_APPEND_ONLY)
+            {
+                input.Seek(input.Length() - 8);
+                dirOffset = input.ReadLong();
             }
 
-            public override BytesRef Term { get; set; }
+            input.Seek(dirOffset);
+        }
+
+        public override long RamBytesUsed
+        {
+            get
+            {
+                var sizeInBytes = ((_termBytes != null) ? _termBytes.RamBytesUsed() : 0) +
+                                  ((_termBytesReader != null) ? _termBytesReader.RamBytesUsed() : 0);
+
+                return _fields.Values.Aggregate(sizeInBytes,
+                    (current, entry) => (current + entry.CoreIndex.RamBytesUsed));
+            }
+        }
+
+        private class IndexEnum : FieldIndexEnum
+        {
+            private readonly FieldIndexData.CoreFieldIndex _fieldIndex;
+            private readonly FixedGapTermsIndexReader _fgtir;
+
+            public IndexEnum(FieldIndexData.CoreFieldIndex fieldIndex, FixedGapTermsIndexReader fgtir)
+            {
+                Term = new BytesRef();
+                _fieldIndex = fieldIndex;
+                _fgtir = fgtir;
+            }
+
+            public override long Ord { get; set; }
+
+            public override sealed BytesRef Term { get; set; }
 
             public override long Seek(BytesRef target)
             {
-                int lo = 0; // binary search
-                int hi = fieldIndex.numIndexTerms - 1;
-                Debug.Assert(totalIndexInterval > 0, "totalIndexInterval=" + totalIndexInterval);
+                var lo = 0; // binary search
+                var hi = _fieldIndex.NumIndexTerms - 1;
 
+                Debug.Assert(_fgtir._totalIndexInterval > 0,
+                    String.Format("TotalIndexInterval: {0}", _fgtir._totalIndexInterval));
+
+                long offset;
+                int length;
                 while (hi >= lo)
                 {
-                    int mid = (lo + hi) >> > 1;
+                    var mid = (int)((uint)(lo + hi) >> 1);
 
-                    readonly
-                    long offset = fieldIndex.termOffsets.get(mid);
-                    readonly
-                    int length = (int) (fieldIndex.termOffsets.Get(1 + mid) - offset);
-                    termBytesReader.FillSlice(Term, fieldIndex.termBytesStart + offset, length);
+                    offset = _fieldIndex.TermOffsets.Get(mid);
+                    length = (int) (_fieldIndex.TermOffsets.Get(1 + mid) - offset);
+                    _fgtir._termBytesReader.FillSlice(Term, _fieldIndex.TermBytesStart + offset, length);
 
-                    int delta = termComp.compare(target, term);
+                    int delta = _fgtir._termComp.Compare(target, Term);
                     if (delta < 0)
                     {
                         hi = mid - 1;
@@ -234,155 +282,161 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                     else
                     {
-                        Debug.Assert(mid >= 0;
-                        ord = mid*totalIndexInterval;
-                        return fieldIndex.termsStart + fieldIndex.termsDictOffsets.get(mid);
+                        Debug.Assert(mid >= 0);
+                        Ord = mid * _fgtir._totalIndexInterval;
+                        return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(mid);
                     }
                 }
 
                 if (hi < 0)
                 {
-                    Debug.Assert(hi == -1;
+                    Debug.Assert(hi == -1);
                     hi = 0;
                 }
 
-                
-                long offset = fieldIndex.termOffsets.Get(hi);
-                int length = (int) (fieldIndex.termOffsets.Get(1 + hi) - offset);
-                termBytesReader.FillSlice(term, fieldIndex.termBytesStart + offset, length);
+                offset = _fieldIndex.TermOffsets.Get(hi);
+                length = (int) (_fieldIndex.TermOffsets.Get(1 + hi) - offset);
+                _fgtir._termBytesReader.FillSlice(Term, _fieldIndex.TermBytesStart + offset, length);
 
-                ord = hi*totalIndexInterval;
-                return fieldIndex.termsStart + fieldIndex.termsDictOffsets.get(hi);
+                Ord = hi * _fgtir._totalIndexInterval;
+                return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(hi);
             }
 
             public override long Next
             {
                 get
                 {
-                    int idx = 1 + (int) (ord/totalIndexInterval);
-                    if (idx >= fieldIndex.numIndexTerms)
-                    {
+                    var idx = 1 + (int)(Ord / _fgtir._totalIndexInterval);
+                    if (idx >= _fieldIndex.NumIndexTerms)
                         return -1;
-                    }
-                    ord += totalIndexInterval;
 
-                    long offset = fieldIndex.termOffsets.Get(idx);
-                    int length = (int) (fieldIndex.termOffsets.Get(1 + idx) - offset);
-                    termBytesReader.FillSlice(term, fieldIndex.termBytesStart + offset, length);
-                    return fieldIndex.termsStart + fieldIndex.termsDictOffsets.Get(idx);
+                    Ord += _fgtir._totalIndexInterval;
+
+                    var offset = _fieldIndex.TermOffsets.Get(idx);
+                    var length = (int)(_fieldIndex.TermOffsets.Get(1 + idx) - offset);
+
+                    _fgtir._termBytesReader.FillSlice(Term, _fieldIndex.TermBytesStart + offset, length);
+
+                    return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(idx);
                 }
             }
 
             public override long Seek(long ord)
             {
-                int idx = (int) (ord/totalIndexInterval);
+                var idx = (int)(ord / _fgtir._totalIndexInterval);
+
                 // caller must ensure ord is in bounds
-                Debug.Assert(idx < fieldIndex.NumIndexTerms);
+                Debug.Assert(idx < _fieldIndex.NumIndexTerms);
 
-                long offset = fieldIndex.termOffsets.get(idx);
-                int length = (int) (fieldIndex.termOffsets.get(1 + idx) - offset);
-                termBytesReader.FillSlice(term, fieldIndex.termBytesStart + offset, length);
-                Ord = idx*totalIndexInterval;
-                return fieldIndex.termsStart + fieldIndex.termsDictOffsets.get(idx);
+                var offset = _fieldIndex.TermOffsets.Get(idx);
+                var length = (int)(_fieldIndex.TermOffsets.Get(1 + idx) - offset);
+
+                _fgtir._termBytesReader.FillSlice(Term, _fieldIndex.TermBytesStart + offset, length);
+                Ord = idx * _fgtir._totalIndexInterval;
+
+                return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(idx);
             }
-        }
-
-        public override bool SupportsOrd
-        {
-            get { return true; }
         }
 
         protected class FieldIndexData
         {
-
             public volatile CoreFieldIndex CoreIndex;
 
-            private readonly long indexStart;
-            private readonly long termsStart;
-            private readonly long packedIndexStart;
-            private readonly long packedOffsetsStart;
+            private readonly long _indexStart;
+            private readonly long _termsStart;
+            private readonly long _packedIndexStart;
+            private readonly long _packedOffsetsStart;
+            private readonly int _numIndexTerms;
+            private readonly FixedGapTermsIndexReader _fgtir;
 
-            private readonly int numIndexTerms;
-
-            public FieldIndexData(FieldInfo fieldInfo, int numIndexTerms, long indexStart, long termsStart,
+            public FieldIndexData(int numIndexTerms, long indexStart, long termsStart,
                 long packedIndexStart,
-                long packedOffsetsStart)
+                long packedOffsetsStart, FixedGapTermsIndexReader fgtir)
             {
 
-                this.termsStart = termsStart;
-                this.indexStart = indexStart;
-                this.packedIndexStart = packedIndexStart;
-                this.packedOffsetsStart = packedOffsetsStart;
-                this.numIndexTerms = numIndexTerms;
+                _termsStart = termsStart;
+                _indexStart = indexStart;
+                _packedIndexStart = packedIndexStart;
+                _packedOffsetsStart = packedOffsetsStart;
+                _numIndexTerms = numIndexTerms;
+                _fgtir = fgtir;
 
-                if (indexDivisor > 0)
-                {
-                    loadTermsIndex();
-                }
+                if (_fgtir._indexDivisor > 0)
+                    LoadTermsIndex();
             }
 
-            private void loadTermsIndex()
+            private void LoadTermsIndex()
             {
-                if (coreIndex == null)
-                {
-                    coreIndex = new CoreFieldIndex(indexStart, termsStart, packedIndexStart, packedOffsetsStart,
-                        numIndexTerms);
-                }
+                if (CoreIndex == null)
+                    CoreIndex = new CoreFieldIndex(_indexStart, _termsStart, _packedIndexStart, _packedOffsetsStart,
+                        _numIndexTerms, _fgtir);
             }
 
-            private class CoreFieldIndex
+            public class CoreFieldIndex
             {
+                /// <summary>
+                /// Where this fields term begin in the packed byte[] data
+                /// </summary>
+                public long TermBytesStart { get; private set; }
 
-                // where this field's terms begin in the packed byte[]
-                // data
-                private readonly long termBytesStart;
+                /// <summary>
+                /// Offset into index TermBytes
+                /// </summary>
+                public PackedInts.Reader TermOffsets { get; private set; }
 
-                // offset into index termBytes
-                private readonly PackedInts.Reader termOffsets;
+                /// <summary>
+                /// Index pointers into main terms dict
+                /// </summary>
+                public PackedInts.Reader TermsDictOffsets { get; private set; }
 
-                // index pointers into main terms dict
-                private readonly PackedInts.Reader termsDictOffsets;
+                /// <summary>Returns approximate RAM bytes Used</summary>
+                public long RamBytesUsed
+                {
+                    get
+                    {
+                        return ((TermOffsets != null) ? TermOffsets.RamBytesUsed() : 0) +
+                               ((TermsDictOffsets != null) ? TermsDictOffsets.RamBytesUsed() : 0);
+                    }
+                }
 
-                private readonly int numIndexTerms;
-                private readonly long termsStart;
+                public int NumIndexTerms { get; private set; }
+                public long TermsStart { get; private set; }
 
                 public CoreFieldIndex(long indexStart, long termsStart, long packedIndexStart, long packedOffsetsStart,
-                    int numIndexTerms)
+                    int numIndexTerms, FixedGapTermsIndexReader fgtir)
                 {
+                    TermsStart = termsStart;
+                    TermBytesStart = fgtir._termBytes.Pointer;
 
-                    this.termsStart = termsStart;
-                    termBytesStart = termBytes.Pointer;
-
-                    IndexInput clone = input.Clone();
+                    var clone = (IndexInput)fgtir._input.Clone();
                     clone.Seek(indexStart);
 
                     // -1 is passed to mean "don't load term index", but
                     // if we are then later loaded it's overwritten with
                     // a real value
-                    Debug.Assert(indexDivisor > 0);
+                    Debug.Assert(fgtir._indexDivisor > 0);
 
-                    this.numIndexTerms = 1 + (numIndexTerms - 1)/indexDivisor;
+                    NumIndexTerms = 1 + (numIndexTerms - 1)/fgtir._indexDivisor;
 
-                    Debug.Assert(this.numIndexTerms > 0:
-                    "numIndexTerms=" + numIndexTerms + " indexDivisor=" + indexDivisor;
+                    Debug.Assert(NumIndexTerms > 0,
+                        String.Format("NumIndexTerms: {0}, IndexDivisor: {1}", NumIndexTerms, fgtir._indexDivisor));
 
-                    if (indexDivisor == 1)
+                    if (fgtir._indexDivisor == 1)
                     {
                         // Default (load all index terms) is fast -- slurp in the images from disk:
 
                         try
                         {
-                        readonly
-                            long numTermBytes = packedIndexStart - indexStart;
-                            termBytes.copy(clone, numTermBytes);
+                            var numTermBytes = packedIndexStart - indexStart;
+                            fgtir._termBytes.Copy(clone, numTermBytes);
 
                             // records offsets into main terms dict file
-                            termsDictOffsets = PackedInts.getReader(clone);
-                            Debug.Assert(termsDictOffsets.size() == numIndexTerms;
+                            TermsDictOffsets = PackedInts.GetReader(clone);
+                            Debug.Assert(TermsDictOffsets.Size() == numIndexTerms);
 
                             // records offsets into byte[] term data
-                            termOffsets = PackedInts.GetReader(clone);
-                            Debug.Assert(termOffsets.Size() == 1 + numIndexTerms);
+                            TermOffsets = PackedInts.GetReader(clone);
+                            Debug.Assert(TermOffsets.Size() == 1 + numIndexTerms);
                         }
                         finally
                         {
@@ -392,8 +446,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                     else
                     {
                         // Get packed iterators
-                        var clone1 = input.Clone();
-                        var clone2 = input.Clone();
+                        var clone1 = (IndexInput)fgtir._input.Clone();
+                        var clone2 = (IndexInput)fgtir._input.Clone();
 
                         try
                         {
@@ -413,28 +467,27 @@ namespace Lucene.Net.Codecs.BlockTerms
                             // we'd have to try @ fewer bits and then grow
                             // if we overflowed it.
 
-                            PackedInts.Mutable termsDictOffsetsM = PackedInts.GetMutable(this.numIndexTerms,
+                            PackedInts.Mutable termsDictOffsetsM = PackedInts.GetMutable(NumIndexTerms,
                                 termsDictOffsetsIter.BitsPerValue, PackedInts.DEFAULT);
-                            PackedInts.Mutable termOffsetsM = PackedInts.GetMutable(this.numIndexTerms + 1,
+                            PackedInts.Mutable termOffsetsM = PackedInts.GetMutable(NumIndexTerms + 1,
                                 termOffsetsIter.BitsPerValue, PackedInts.DEFAULT);
 
-                            termsDictOffsets = termsDictOffsetsM;
-                            termOffsets = termOffsetsM;
+                            TermsDictOffsets = termsDictOffsetsM;
+                            TermOffsets = termOffsetsM;
 
-                            int upto = 0;
-
+                            var upto = 0;
                             long termOffsetUpto = 0;
 
-                            while (upto < this.numIndexTerms)
+                            while (upto < NumIndexTerms)
                             {
                                 // main file offset copies straight over
                                 termsDictOffsetsM.Set(upto, termsDictOffsetsIter.Next());
 
                                 termOffsetsM.Set(upto, termOffsetUpto);
 
-                                long termOffset = termOffsetsIter.Next();
-                                long nextTermOffset = termOffsetsIter.Next();
-                                int numTermBytes = (int) (nextTermOffset - termOffset);
+                                var termOffset = termOffsetsIter.Next();
+                                var nextTermOffset = termOffsetsIter.Next();
+                                var numTermBytes = (int) (nextTermOffset - termOffset);
 
                                 clone.Seek(indexStart + termOffset);
                                 
@@ -444,18 +497,16 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 
                                 Debug.Assert(indexStart + termOffset + numTermBytes < clone.Length());
 
-                                termBytes.Copy(clone, numTermBytes);
+                                fgtir._termBytes.Copy(clone, numTermBytes);
                                 termOffsetUpto += numTermBytes;
 
                                 upto++;
-                                if (upto == this.numIndexTerms)
-                                {
+                                if (upto == NumIndexTerms)
                                     break;
-                                }
-
+                                
                                 // skip terms:
                                 termsDictOffsetsIter.Next();
-                                for (int i = 0; i < indexDivisor - 2; i++)
+                                for (var i = 0; i < fgtir._indexDivisor - 2; i++)
                                 {
                                     termOffsetsIter.Next();
                                     termsDictOffsetsIter.Next();
@@ -473,54 +524,6 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                 }
 
-                /** Returns approximate RAM bytes Used */
-
-                public long RamBytesUsed()
-                {
-                    return ((termOffsets != null) ? termOffsets.RamBytesUsed() : 0) +
-                           ((termsDictOffsets != null) ? termsDictOffsets.RamBytesUsed() : 0);
-                }
-            }
-        }
-
-        public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
-        {
-            FieldIndexData fieldData = fields[fieldInfo];
-            return fieldData.CoreIndex == null ? null : new IndexEnum(fieldData.CoreIndex);
-        }
-
-        public override void Dispose()
-        {
-            if (input != null && !indexLoaded)
-                input.Dispose();
-        }
-
-        private void SeekDir(IndexInput input, long dirOffset)
-        {
-            if (version >= FixedGapTermsIndexWriter.VERSION_CHECKSUM)
-            {
-                input.Seek(input.Length() - CodecUtil.FooterLength() - 8);
-                dirOffset = input.ReadLong();
-
-            }
-            else if (version >= FixedGapTermsIndexWriter.VERSION_APPEND_ONLY)
-            {
-                input.Seek(input.Length() - 8);
-                dirOffset = input.ReadLong();
-            }
-
-            input.Seek(dirOffset);
-        }
-
-        public override long RamBytesUsed
-        {
-            get
-            {
-                var sizeInBytes = ((termBytes != null) ? termBytes.RamBytesUsed() : 0) +
-                                  ((termBytesReader != null) ? termBytesReader.RamBytesUsed() : 0);
-
-                return fields.Values.Aggregate(sizeInBytes,
-                    (current, entry) => (long) (current + entry.CoreIndex.RamBytesUsed));
             }
         }
 

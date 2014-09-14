@@ -40,8 +40,10 @@ namespace Lucene.Net.Codecs.BlockTerms
         protected IndexOutput Output;
 
         /** Extension of terms index file */
-        private const String TERMS_INDEX_EXTENSION = "tii";
+        public const String TERMS_INDEX_EXTENSION = "tii";
         public const String CODEC_NAME = "SIMPLE_STANDARD_TERMS_INDEX";
+        public const int VERSION_START = 0;
+        public const int VERSION_APPEND_ONLY = 1; 
 
         public const int VERSION_CHECKSUM = 1000;
 

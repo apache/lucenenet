@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-using System;
-using Lucene.Net.Codecs;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
-
 namespace Lucene.Net.Codecs.BlockTerms
 {
-    
 
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using Index;
+    using Store;
+    using Util;
+    
     /// <summary>
     /// Handles a terms dict, but decouples all details of
     /// doc/freqs/positions reading to an instance of {@link
@@ -38,840 +39,922 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// 
     /// @lucene.experimental
     /// </summary>
-public class BlockTermsReader : FieldsProducer {
-  // Open input to the main terms dict file (_X.tis)
-  private readonly IndexInput input;
+    public class BlockTermsReader : FieldsProducer
+    {
 
-  // Reads the terms dict entries, to gather state to
-  // produce DocsEnum on demand
-  private readonly PostingsReaderBase postingsReader;
+        // Open input to the main terms dict file (_X.tis)
+        private readonly IndexInput _input;
 
-  private readonly TreeMap<String,BlockTreeTermsReader.FieldReader> fields = new TreeMap<>();
+        // Reads the terms dict entries, to gather state to
+        // produce DocsEnum on demand
+        private readonly PostingsReaderBase _postingsReader;
 
-  // Reads the terms index
-  private TermsIndexReaderBase indexReader;
+        // Reads the terms index
+        private TermsIndexReaderBase _indexReader;
 
-  // keeps the dirStart offset
-  private long dirOffset;
-  
-  private const int version; 
+        private readonly Dictionary<string, FieldReader> _fields = new Dictionary<string, FieldReader>();
 
-  // Used as key for the terms cache
-  private static class FieldAndTerm extends DoubleBarrelLRUCache.CloneableKey {
-    String field;
-    BytesRef term;
+        // keeps the dirStart offset
+        private long _dirOffset;
 
-    public FieldAndTerm() {
-    }
+        private readonly int _version;
 
-    public FieldAndTerm(FieldAndTerm other) {
-      field = other.field;
-      term = BytesRef.deepCopyOf(other.term);
-    }
+        public BlockTermsReader(TermsIndexReaderBase indexReader, Directory dir, FieldInfos fieldInfos, SegmentInfo info,
+            PostingsReaderBase postingsReader, IOContext context,
+            String segmentSuffix)
+        {
+            _postingsReader = postingsReader;
 
-    @Override
-    public bool equals(Object _other) {
-      FieldAndTerm other = (FieldAndTerm) _other;
-      return other.field.equals(field) && term.bytesEquals(other.term);
-    }
+            _input =
+                dir.OpenInput(
+                    IndexFileNames.SegmentFileName(info.Name, segmentSuffix, BlockTermsWriter.TERMS_EXTENSION),
+                    context);
 
-    @Override
-    public FieldAndTerm clone() {
-      return new FieldAndTerm(this);
-    }
+            var success = false;
+            try
+            {
+                _version = ReadHeader(_input);
 
-    @Override
-    public int hashCode() {
-      return field.hashCode() * 31 + term.hashCode();
-    }
-  }
-  
-  // private String segment;
-  
-  public BlockTermsReader(TermsIndexReaderBase indexReader, Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext context,
-                          String segmentSuffix)
-     {
-    
-    this.postingsReader = postingsReader;
+                // Have PostingsReader init itself
+                postingsReader.Init(_input);
 
-    // this.segment = segment;
-    in = dir.openInput(IndexFileNames.segmentFileName(info.name, segmentSuffix, BlockTermsWriter.TERMS_EXTENSION),
-                       context);
+                // Read per-field details
+                SeekDir(_input, _dirOffset);
 
-    bool success = false;
-    try {
-      version = readHeader(in);
-
-      // Have PostingsReader init itself
-      postingsReader.init(in);
-
-      // Read per-field details
-      seekDir(in, dirOffset);
-
-      readonly int numFields = in.readVInt();
-      if (numFields < 0) {
-        throw new CorruptIndexException("invalid number of fields: " + numFields + " (resource=" + in + ")");
-      }
-      for(int i=0;i<numFields;i++) {
-        readonly int field = in.readVInt();
-        readonly long numTerms = in.readVLong();
-        Debug.Assert( numTerms >= 0;
-        readonly long termsStartPointer = in.readVLong();
-        readonly FieldInfo fieldInfo = fieldInfos.fieldInfo(field);
-        readonly long sumTotalTermFreq = fieldInfo.getIndexOptions() == IndexOptions.DOCS_ONLY ? -1 : in.readVLong();
-        readonly long sumDocFreq = in.readVLong();
-        readonly int docCount = in.readVInt();
-        readonly int longsSize = version >= BlockTermsWriter.VERSION_META_ARRAY ? in.readVInt() : 0;
-        if (docCount < 0 || docCount > info.getDocCount()) { // #docs with field must be <= #docs
-          throw new CorruptIndexException("invalid docCount: " + docCount + " maxDoc: " + info.getDocCount() + " (resource=" + in + ")");
-        }
-        if (sumDocFreq < docCount) {  // #postings must be >= #docs with field
-          throw new CorruptIndexException("invalid sumDocFreq: " + sumDocFreq + " docCount: " + docCount + " (resource=" + in + ")");
-        }
-        if (sumTotalTermFreq != -1 && sumTotalTermFreq < sumDocFreq) { // #positions must be >= #postings
-          throw new CorruptIndexException("invalid sumTotalTermFreq: " + sumTotalTermFreq + " sumDocFreq: " + sumDocFreq + " (resource=" + in + ")");
-        }
-        FieldReader previous = fields.put(fieldInfo.name, new FieldReader(fieldInfo, numTerms, termsStartPointer, sumTotalTermFreq, sumDocFreq, docCount, longsSize));
-        if (previous != null) {
-          throw new CorruptIndexException("duplicate fields: " + fieldInfo.name + " (resource=" + in + ")");
-        }
-      }
-      success = true;
-    } readonlyly {
-      if (!success) {
-        in.close();
-      }
-    }
-
-    this.indexReader = indexReader;
-  }
-
-  private int readHeader(IndexInput input)  {
-    int version = CodecUtil.checkHeader(input, BlockTermsWriter.CODEC_NAME,
-                          BlockTermsWriter.VERSION_START,
-                          BlockTermsWriter.VERSION_CURRENT);
-    if (version < BlockTermsWriter.VERSION_APPEND_ONLY) {
-      dirOffset = input.readLong();
-    }
-    return version;
-  }
-  
-  private void seekDir(IndexInput input, long dirOffset)  {
-    if (version >= BlockTermsWriter.VERSION_CHECKSUM) {
-      input.seek(input.length() - CodecUtil.footerLength() - 8);
-      dirOffset = input.readLong();
-    } else if (version >= BlockTermsWriter.VERSION_APPEND_ONLY) {
-      input.seek(input.length() - 8);
-      dirOffset = input.readLong();
-    }
-    input.seek(dirOffset);
-  }
-  
-  @Override
-  public void close()  {
-    try {
-      try {
-        if (indexReader != null) {
-          indexReader.close();
-        }
-      } readonlyly {
-        // null so if an app hangs on to us (ie, we are not
-        // GCable, despite being closed) we still free most
-        // ram
-        indexReader = null;
-        if (in != null) {
-          in.close();
-        }
-      }
-    } readonlyly {
-      if (postingsReader != null) {
-        postingsReader.close();
-      }
-    }
-  }
-
-  @Override
-  public Iterator<String> iterator() {
-    return Collections.unmodifiableSet(fields.keySet()).iterator();
-  }
-
-  @Override
-  public Terms terms(String field)  {
-    Debug.Assert( field != null;
-    return fields.get(field);
-  }
-
-  @Override
-  public int size() {
-    return fields.size();
-  }
-
-  private class FieldReader extends Terms {
-    readonly long numTerms;
-    readonly FieldInfo fieldInfo;
-    readonly long termsStartPointer;
-    readonly long sumTotalTermFreq;
-    readonly long sumDocFreq;
-    readonly int docCount;
-    readonly int longsSize;
-
-    FieldReader(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize) {
-      Debug.Assert( numTerms > 0;
-      this.fieldInfo = fieldInfo;
-      this.numTerms = numTerms;
-      this.termsStartPointer = termsStartPointer;
-      this.sumTotalTermFreq = sumTotalTermFreq;
-      this.sumDocFreq = sumDocFreq;
-      this.docCount = docCount;
-      this.longsSize = longsSize;
-    }
-
-    @Override
-    public Comparator<BytesRef> getComparator() {
-      return BytesRef.getUTF8SortedAsUnicodeComparator();
-    }
-
-    @Override
-    public TermsEnum iterator(TermsEnum reuse)  {
-      return new SegmentTermsEnum();
-    }
-
-    @Override
-    public bool hasFreqs() {
-      return fieldInfo.getIndexOptions().compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-    }
-
-    @Override
-    public bool hasOffsets() {
-      return fieldInfo.getIndexOptions().compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-    }
-
-    @Override
-    public bool hasPositions() {
-      return fieldInfo.getIndexOptions().compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-    }
-    
-    @Override
-    public bool hasPayloads() {
-      return fieldInfo.hasPayloads();
-    }
-
-    @Override
-    public long size() {
-      return numTerms;
-    }
-
-    @Override
-    public long getSumTotalTermFreq() {
-      return sumTotalTermFreq;
-    }
-
-    @Override
-    public long getSumDocFreq()  {
-      return sumDocFreq;
-    }
-
-    @Override
-    public int getDocCount()  {
-      return docCount;
-    }
-
-    // Iterates through terms in this field
-    private readonly class SegmentTermsEnum extends TermsEnum {
-      private readonly IndexInput in;
-      private readonly BlockTermState state;
-      private readonly bool doOrd;
-      private readonly FieldAndTerm fieldTerm = new FieldAndTerm();
-      private readonly TermsIndexReaderBase.FieldIndexEnum indexEnum;
-      private readonly BytesRef term = new BytesRef();
-
-      /* This is true if indexEnum is "still" seek'd to the index term
-         for the current term. We set it to true on seeking, and then it
-         remains valid until next() is called enough times to load another
-         terms block: */
-      private bool indexIsCurrent;
-
-      /* True if we've already called .next() on the indexEnum, to "bracket"
-         the current block of terms: */
-      private bool didIndexNext;
-
-      /* Next index term, bracketing the current block of terms; this is
-         only valid if didIndexNext is true: */
-      private BytesRef nextIndexTerm;
-
-      /* True after seekExact(TermState), do defer seeking.  If the app then
-         calls next() (which is not "typical"), then we'll do the real seek */
-      private bool seekPending;
-
-      /* How many blocks we've read since last seek.  Once this
-         is >= indexEnum.getDivisor() we set indexIsCurrent to false (since
-         the index can no long bracket seek-within-block). */
-      private int blocksSinceSeek;
-
-      private byte[] termSuffixes;
-      private ByteArrayDataInput termSuffixesReader = new ByteArrayDataInput();
-
-      /* Common prefix used for all terms in this block. */
-      private int termBlockPrefix;
-
-      /* How many terms in current block */
-      private int blockTermCount;
-
-      private byte[] docFreqBytes;
-      private readonly ByteArrayDataInput freqReader = new ByteArrayDataInput();
-      private int metaDataUpto;
-
-      private long[] longs;
-      private byte[] bytes;
-      private ByteArrayDataInput bytesReader;
-
-      public SegmentTermsEnum()  {
-        in = BlockTermsReader.this.in.clone();
-        in.seek(termsStartPointer);
-        indexEnum = indexReader.getFieldEnum(fieldInfo);
-        doOrd = indexReader.supportsOrd();
-        fieldTerm.field = fieldInfo.name;
-        state = postingsReader.newTermState();
-        state.totalTermFreq = -1;
-        state.ord = -1;
-
-        termSuffixes = new byte[128];
-        docFreqBytes = new byte[64];
-        //System.out.println("BTR.enum init this=" + this + " postingsReader=" + postingsReader);
-        longs = new long[longsSize];
-      }
-
-      @Override
-      public Comparator<BytesRef> getComparator() {
-        return BytesRef.getUTF8SortedAsUnicodeComparator();
-      }
-
-      // TODO: we may want an alternate mode here which is
-      // "if you are about to return NOT_FOUND I won't use
-      // the terms data from that"; eg FuzzyTermsEnum will
-      // (usually) just immediately call seek again if we
-      // return NOT_FOUND so it's a waste for us to fill in
-      // the term that was actually NOT_FOUND
-      @Override
-      public SeekStatus seekCeil(readonly BytesRef target)  {
-
-        if (indexEnum == null) {
-          throw new IllegalStateException("terms index was not loaded");
-        }
-   
-        //System.out.println("BTR.seek seg=" + segment + " target=" + fieldInfo.name + ":" + target.utf8ToString() + " " + target + " current=" + term().utf8ToString() + " " + term() + " indexIsCurrent=" + indexIsCurrent + " didIndexNext=" + didIndexNext + " seekPending=" + seekPending + " divisor=" + indexReader.getDivisor() + " this="  + this);
-        if (didIndexNext) {
-          if (nextIndexTerm == null) {
-            //System.out.println("  nextIndexTerm=null");
-          } else {
-            //System.out.println("  nextIndexTerm=" + nextIndexTerm.utf8ToString());
-          }
-        }
-
-        bool doSeek = true;
-
-        // See if we can avoid seeking, because target term
-        // is after current term but before next index term:
-        if (indexIsCurrent) {
-
-          readonly int cmp = BytesRef.getUTF8SortedAsUnicodeComparator().compare(term, target);
-
-          if (cmp == 0) {
-            // Already at the requested term
-            return SeekStatus.FOUND;
-          } else if (cmp < 0) {
-
-            // Target term is after current term
-            if (!didIndexNext) {
-              if (indexEnum.next() == -1) {
-                nextIndexTerm = null;
-              } else {
-                nextIndexTerm = indexEnum.term();
-              }
-              //System.out.println("  now do index next() nextIndexTerm=" + (nextIndexTerm == null ? "null" : nextIndexTerm.utf8ToString()));
-              didIndexNext = true;
-            }
-
-            if (nextIndexTerm == null || BytesRef.getUTF8SortedAsUnicodeComparator().compare(target, nextIndexTerm) < 0) {
-              // Optimization: requested term is within the
-              // same term block we are now in; skip seeking
-              // (but do scanning):
-              doSeek = false;
-              //System.out.println("  skip seek: nextIndexTerm=" + (nextIndexTerm == null ? "null" : nextIndexTerm.utf8ToString()));
-            }
-          }
-        }
-
-        if (doSeek) {
-          //System.out.println("  seek");
-
-          // Ask terms index to find biggest indexed term (=
-          // first term in a block) that's <= our text:
-          in.seek(indexEnum.seek(target));
-          bool result = nextBlock();
-
-          // Block must exist since, at least, the indexed term
-          // is in the block:
-          Debug.Assert( result;
-
-          indexIsCurrent = true;
-          didIndexNext = false;
-          blocksSinceSeek = 0;          
-
-          if (doOrd) {
-            state.ord = indexEnum.ord()-1;
-          }
-
-          term.copyBytes(indexEnum.term());
-          //System.out.println("  seek: term=" + term.utf8ToString());
-        } else {
-          //System.out.println("  skip seek");
-          if (state.termBlockOrd == blockTermCount && !nextBlock()) {
-            indexIsCurrent = false;
-            return SeekStatus.END;
-          }
-        }
-
-        seekPending = false;
-
-        int common = 0;
-
-        // Scan within block.  We could do this by calling
-        // _next() and testing the resulting term, but this
-        // is wasteful.  Instead, we first confirm the
-        // target matches the common prefix of this block,
-        // and then we scan the term bytes directly from the
-        // termSuffixesreader's byte[], saving a copy into
-        // the BytesRef term per term.  Only when we return
-        // do we then copy the bytes into the term.
-
-        while(true) {
-
-          // First, see if target term matches common prefix
-          // in this block:
-          if (common < termBlockPrefix) {
-            readonly int cmp = (term.bytes[common]&0xFF) - (target.bytes[target.offset + common]&0xFF);
-            if (cmp < 0) {
-
-              // TODO: maybe we should store common prefix
-              // in block header?  (instead of relying on
-              // last term of previous block)
-
-              // Target's prefix is after the common block
-              // prefix, so term cannot be in this block
-              // but it could be in next block.  We
-              // must scan to end-of-block to set common
-              // prefix for next block:
-              if (state.termBlockOrd < blockTermCount) {
-                while(state.termBlockOrd < blockTermCount-1) {
-                  state.termBlockOrd++;
-                  state.ord++;
-                  termSuffixesReader.skipBytes(termSuffixesReader.readVInt());
+                int numFields = _input.ReadVInt();
+                if (numFields < 0)
+                {
+                    throw new CorruptIndexException(String.Format("Invalid number of fields: {0}, Resource: {1}",
+                        numFields, _input));
                 }
-                readonly int suffix = termSuffixesReader.readVInt();
-                term.length = termBlockPrefix + suffix;
-                if (term.bytes.length < term.length) {
-                  term.grow(term.length);
+
+                for (var i = 0; i < numFields; i++)
+                {
+                    var field = _input.ReadVInt();
+                    var numTerms = _input.ReadVLong();
+
+                    Debug.Assert(numTerms >= 0);
+
+                    var termsStartPointer = _input.ReadVLong();
+                    var fieldInfo = fieldInfos.FieldInfo(field);
+                    var sumTotalTermFreq = fieldInfo.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_ONLY
+                        ? -1
+                        : _input.ReadVLong();
+                    var sumDocFreq = _input.ReadVLong();
+                    var docCount = _input.ReadVInt();
+                    var longsSize = _version >= BlockTermsWriter.VERSION_META_ARRAY ? _input.ReadVInt() : 0;
+
+                    if (docCount < 0 || docCount > info.DocCount)
+                    {
+                        // #docs with field must be <= #docs
+                        throw new CorruptIndexException(
+                            String.Format("Invalid DocCount: {0}, MaxDoc: {1}, Resource: {2}", docCount, info.DocCount,
+                                _input));
+                    }
+
+                    if (sumDocFreq < docCount)
+                    {
+                        // #postings must be >= #docs with field
+                        throw new CorruptIndexException(
+                            String.Format("Invalid sumDocFreq: {0}, DocCount: {1}, Resource: {2}", sumDocFreq, docCount,
+                                _input));
+                    }
+
+                    if (sumTotalTermFreq != -1 && sumTotalTermFreq < sumDocFreq)
+                    {
+                        // #positions must be >= #postings
+                        throw new CorruptIndexException(
+                            String.Format("Invalid sumTotalTermFreq: {0}, sumDocFreq: {1}, Resource: {2}",
+                                sumTotalTermFreq, sumDocFreq, _input));
+                    }
+
+                    try
+                    {
+                        _fields.Add(fieldInfo.Name,
+                            new FieldReader(fieldInfo, this, numTerms, termsStartPointer, sumTotalTermFreq, sumDocFreq,
+                                docCount,
+                                longsSize));
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw new CorruptIndexException(String.Format("Duplicate fields: {0}, Resource: {1}",
+                            fieldInfo.Name, _input));
+                    }
+
                 }
-                termSuffixesReader.readBytes(term.bytes, termBlockPrefix, suffix);
-              }
-              state.ord++;
-              
-              if (!nextBlock()) {
-                indexIsCurrent = false;
-                return SeekStatus.END;
-              }
-              common = 0;
-
-            } else if (cmp > 0) {
-              // Target's prefix is before the common prefix
-              // of this block, so we position to start of
-              // block and return NOT_FOUND:
-              Debug.Assert( state.termBlockOrd == 0;
-
-              readonly int suffix = termSuffixesReader.readVInt();
-              term.length = termBlockPrefix + suffix;
-              if (term.bytes.length < term.length) {
-                term.grow(term.length);
-              }
-              termSuffixesReader.readBytes(term.bytes, termBlockPrefix, suffix);
-              return SeekStatus.NOT_FOUND;
-            } else {
-              common++;
+                success = true;
             }
-
-            continue;
-          }
-
-          // Test every term in this block
-          while (true) {
-            state.termBlockOrd++;
-            state.ord++;
-
-            readonly int suffix = termSuffixesReader.readVInt();
-            
-            // We know the prefix matches, so just compare the new suffix:
-            readonly int termLen = termBlockPrefix + suffix;
-            int bytePos = termSuffixesReader.getPosition();
-
-            bool next = false;
-            readonly int limit = target.offset + (termLen < target.length ? termLen : target.length);
-            int targetPos = target.offset + termBlockPrefix;
-            while(targetPos < limit) {
-              readonly int cmp = (termSuffixes[bytePos++]&0xFF) - (target.bytes[targetPos++]&0xFF);
-              if (cmp < 0) {
-                // Current term is still before the target;
-                // keep scanning
-                next = true;
-                break;
-              } else if (cmp > 0) {
-                // Done!  Current term is after target. Stop
-                // here, fill in real term, return NOT_FOUND.
-                term.length = termBlockPrefix + suffix;
-                if (term.bytes.length < term.length) {
-                  term.grow(term.length);
+            finally
+            {
+                if (!success)
+                {
+                    _input.Dispose();
                 }
-                termSuffixesReader.readBytes(term.bytes, termBlockPrefix, suffix);
-                //System.out.println("  NOT_FOUND");
-                return SeekStatus.NOT_FOUND;
-              }
             }
 
-            if (!next && target.length <= termLen) {
-              term.length = termBlockPrefix + suffix;
-              if (term.bytes.length < term.length) {
-                term.grow(term.length);
-              }
-              termSuffixesReader.readBytes(term.bytes, termBlockPrefix, suffix);
+            _indexReader = indexReader;
+        }
 
-              if (target.length == termLen) {
-                // Done!  Exact match.  Stop here, fill in
-                // real term, return FOUND.
-                //System.out.println("  FOUND");
-                return SeekStatus.FOUND;
-              } else {
-                //System.out.println("  NOT_FOUND");
-                return SeekStatus.NOT_FOUND;
-              }
+        private int ReadHeader(DataInput input)
+        {
+            var version = CodecUtil.CheckHeader(input, BlockTermsWriter.CODEC_NAME,
+                BlockTermsWriter.VERSION_START,
+                BlockTermsWriter.VERSION_CURRENT);
+
+            if (version < BlockTermsWriter.VERSION_APPEND_ONLY)
+                _dirOffset = input.ReadLong();
+
+            return version;
+        }
+
+        private void SeekDir(IndexInput input, long dirOffset)
+        {
+            if (_version >= BlockTermsWriter.VERSION_CHECKSUM)
+            {
+                input.Seek(input.Length() - CodecUtil.FooterLength() - 8);
+                dirOffset = input.ReadLong();
+            }
+            else if (_version >= BlockTermsWriter.VERSION_APPEND_ONLY)
+            {
+                input.Seek(input.Length() - 8);
+                dirOffset = input.ReadLong();
+            }
+            input.Seek(dirOffset);
+        }
+
+        public override void Dispose()
+        {
+            try
+            {
+                try
+                {
+                    if (_indexReader != null)
+                        _indexReader.Dispose();
+                }
+                finally
+                {
+                    // null so if an app hangs on to us (ie, we are not
+                    // GCable, despite being closed) we still free most
+                    // ram
+                    _indexReader = null;
+                    if (_input != null)
+                        _input.Dispose();
+                }
+            }
+            finally
+            {
+                if (_postingsReader != null)
+                    _postingsReader.Dispose();
+            }
+        }
+
+        public override IEnumerator<string> GetEnumerator()
+        {
+            return _fields.Keys.GetEnumerator();
+        }
+
+        public override Terms Terms(String field)
+        {
+            Debug.Assert(field != null);
+
+            return _fields[field];
+        }
+
+        public override long RamBytesUsed()
+        {
+            var sizeInBytes = (_postingsReader != null) ? _postingsReader.RamBytesUsed() : 0;
+            sizeInBytes += (_indexReader != null) ? _indexReader.RamBytesUsed : 0;
+            return sizeInBytes;
+        }
+
+        public override void CheckIntegrity()
+        {
+            // verify terms
+            if (_version >= BlockTermsWriter.VERSION_CHECKSUM)
+            {
+                CodecUtil.ChecksumEntireFile(_input);
+            }
+            // verify postings
+            _postingsReader.CheckIntegrity();
+        }
+
+        public override int Size()
+        {
+            return _fields.Count;
+        }
+
+        /// <summary>
+        /// Used as a key for the terms cache
+        /// </summary>
+        private class FieldAndTerm : DoubleBarrelLRUCache.CloneableKey
+        {
+            public String Field { get; set; }
+            private BytesRef Term { get; set; }
+
+            public FieldAndTerm()
+            {
             }
 
-            if (state.termBlockOrd == blockTermCount) {
-              // Must pre-fill term for next block's common prefix
-              term.length = termBlockPrefix + suffix;
-              if (term.bytes.length < term.length) {
-                term.grow(term.length);
-              }
-              termSuffixesReader.readBytes(term.bytes, termBlockPrefix, suffix);
-              break;
-            } else {
-              termSuffixesReader.skipBytes(suffix);
+            private FieldAndTerm(FieldAndTerm other)
+            {
+                Field = other.Field;
+                Term = BytesRef.DeepCopyOf(other.Term);
             }
-          }
 
-          // The purpose of the terms dict index is to seek
-          // the enum to the closest index term before the
-          // term we are looking for.  So, we should never
-          // cross another index term (besides the first
-          // one) while we are scanning:
+            public override bool Equals(Object other)
+            {
+                var o = (FieldAndTerm)other;
+                return o.Field.Equals(Field) && Term.BytesEquals(o.Term);
+            }
 
-          Debug.Assert( indexIsCurrent;
+            public override DoubleBarrelLRUCache.CloneableKey Clone()
+            {
+                return new FieldAndTerm(this);
+            }
 
-          if (!nextBlock()) {
-            //System.out.println("  END");
-            indexIsCurrent = false;
-            return SeekStatus.END;
-          }
-          common = 0;
-        }
-      }
-
-      @Override
-      public BytesRef next()  {
-        //System.out.println("BTR.next() seekPending=" + seekPending + " pendingSeekCount=" + state.termBlockOrd);
-
-        // If seek was previously called and the term was cached,
-        // usually caller is just going to pull a D/&PEnum or get
-        // docFreq, etc.  But, if they then call next(),
-        // this method catches up all internal state so next()
-        // works properly:
-        if (seekPending) {
-          Debug.Assert( !indexIsCurrent;
-          in.seek(state.blockFilePointer);
-          readonly int pendingSeekCount = state.termBlockOrd;
-          bool result = nextBlock();
-
-          readonly long savOrd = state.ord;
-
-          // Block must exist since seek(TermState) was called w/ a
-          // TermState previously returned by this enum when positioned
-          // on a real term:
-          Debug.Assert( result;
-
-          while(state.termBlockOrd < pendingSeekCount) {
-            BytesRef nextResult = _next();
-            Debug.Assert( nextResult != null;
-          }
-          seekPending = false;
-          state.ord = savOrd;
-        }
-        return _next();
-      }
-
-      /* Decodes only the term bytes of the next term.  If caller then asks for
-         metadata, ie docFreq, totalTermFreq or pulls a D/&PEnum, we then (lazily)
-         decode all metadata up to the current term. */
-      private BytesRef _next()  {
-        //System.out.println("BTR._next seg=" + segment + " this=" + this + " termCount=" + state.termBlockOrd + " (vs " + blockTermCount + ")");
-        if (state.termBlockOrd == blockTermCount && !nextBlock()) {
-          //System.out.println("  eof");
-          indexIsCurrent = false;
-          return null;
+            public override int GetHashCode()
+            {
+                return Field.GetHashCode() * 31 + Term.GetHashCode();
+            }
         }
 
-        // TODO: cutover to something better for these ints!  simple64?
-        readonly int suffix = termSuffixesReader.readVInt();
-        //System.out.println("  suffix=" + suffix);
+        private class FieldReader : Terms
+        {
+            private readonly BlockTermsReader _blockTermsReader;
+            private readonly FieldInfo _fieldInfo;
+            private readonly long _numTerms;
+            private readonly long _termsStartPointer;
+            private readonly long _sumTotalTermFreq;
+            private readonly long _sumDocFreq;
+            private readonly int _docCount;
+            private readonly int _longsSize;
 
-        term.length = termBlockPrefix + suffix;
-        if (term.bytes.length < term.length) {
-          term.grow(term.length);
+            public FieldReader(FieldInfo fieldInfo, BlockTermsReader blockTermsReader, long numTerms, long termsStartPointer, long sumTotalTermFreq,
+                long sumDocFreq, int docCount, int longsSize)
+            {
+                Debug.Assert(numTerms > 0);
+
+                _blockTermsReader = blockTermsReader;
+
+                _fieldInfo = fieldInfo;
+                _numTerms = numTerms;
+                _termsStartPointer = termsStartPointer;
+                _sumTotalTermFreq = sumTotalTermFreq;
+                _sumDocFreq = sumDocFreq;
+                _docCount = docCount;
+                _longsSize = longsSize;
+            }
+
+            public override IComparer<BytesRef> Comparator
+            {
+                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
+            }
+
+            public override TermsEnum Iterator(TermsEnum reuse)
+            {
+                return new SegmentTermsEnum(this, _blockTermsReader);
+            }
+
+            public override bool HasFreqs()
+            {
+                return _fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS;
+            }
+
+            public override bool HasOffsets()
+            {
+                return _fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            }
+
+            public override bool HasPositions()
+            {
+                return _fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+            }
+
+            public override bool HasPayloads()
+            {
+                return _fieldInfo.HasPayloads();
+            }
+
+            public override long Size()
+            {
+                return _numTerms;
+            }
+
+            public override long SumTotalTermFreq
+            {
+                get { return _sumTotalTermFreq; }
+            }
+
+            public override long SumDocFreq
+            {
+                get { return _sumDocFreq; }
+            }
+
+            public override int DocCount
+            {
+                get { return _docCount; }
+            }
+
+            // Iterates through terms in this field
+            private class SegmentTermsEnum : TermsEnum
+            {
+                private readonly FieldReader _fieldReader;
+                private readonly BlockTermsReader _blockTermsReader;
+
+                private readonly IndexInput _input;
+                private readonly BlockTermState _state;
+                private readonly bool _doOrd;
+                private readonly FieldAndTerm _fieldTerm = new FieldAndTerm();
+                private readonly TermsIndexReaderBase.FieldIndexEnum _indexEnum;
+                private readonly BytesRef _term = new BytesRef();
+
+                /* This is true if indexEnum is "still" seek'd to the index term
+                 for the current term. We set it to true on seeking, and then it
+                 remains valid until next() is called enough times to load another
+                 terms block: */
+                private bool _indexIsCurrent;
+
+                /* True if we've already called .next() on the indexEnum, to "bracket"
+                the current block of terms: */
+                private bool _didIndexNext;
+
+                /* Next index term, bracketing the current block of terms; this is
+                only valid if didIndexNext is true: */
+                private BytesRef _nextIndexTerm;
+
+                /* True after seekExact(TermState), do defer seeking.  If the app then
+                calls next() (which is not "typical"), then we'll do the real seek */
+                private bool _seekPending;
+
+                /* How many blocks we've read since last seek.  Once this
+                 is >= indexEnum.getDivisor() we set indexIsCurrent to false (since
+                 the index can no long bracket seek-within-block). */
+                private int _blocksSinceSeek;
+
+                private byte[] _termSuffixes;
+                private readonly ByteArrayDataInput _termSuffixesReader = new ByteArrayDataInput();
+
+                /* Common prefix used for all terms in this block. */
+                private int _termBlockPrefix;
+
+                /* How many terms in current block */
+                private int _blockTermCount;
+
+                private byte[] _docFreqBytes;
+                private readonly ByteArrayDataInput _freqReader = new ByteArrayDataInput();
+                private int _metaDataUpto;
+
+                private readonly long[] _longs;
+                private byte[] _bytes;
+                private ByteArrayDataInput _bytesReader;
+
+                public SegmentTermsEnum(FieldReader fieldReader, BlockTermsReader blockTermsReader)
+                {
+                    _fieldReader = fieldReader;
+                    _blockTermsReader = blockTermsReader;
+
+                    _input = (IndexInput) _blockTermsReader._input.Clone();
+                    _input.Seek(_fieldReader._termsStartPointer);
+                    _indexEnum = _blockTermsReader._indexReader.GetFieldEnum(_fieldReader._fieldInfo);
+                    _doOrd = _blockTermsReader._indexReader.SupportsOrd;
+                    _fieldTerm.Field = _fieldReader._fieldInfo.Name;
+                    _state = _blockTermsReader._postingsReader.NewTermState();
+                    _state.TotalTermFreq = -1;
+                    _state.Ord = -1;
+
+                    _termSuffixes = new byte[128];
+                    _docFreqBytes = new byte[64];
+                    _longs = new long[_fieldReader._longsSize];
+                }
+
+                public override IComparer<BytesRef> Comparator
+                {
+                    get { return BytesRef.UTF8SortedAsUnicodeComparer; }
+                }
+
+                /// <remarks>
+                /// TODO: we may want an alternate mode here which is
+                /// "if you are about to return NOT_FOUND I won't use
+                /// the terms data from that"; eg FuzzyTermsEnum will
+                /// (usually) just immediately call seek again if we
+                /// return NOT_FOUND so it's a waste for us to fill in
+                /// the term that was actually NOT_FOUND 
+                /// </remarks>
+                public override SeekStatus SeekCeil(BytesRef target)
+                {
+                    if (_indexEnum == null)
+                        throw new InvalidOperationException("terms index was not loaded");
+                  
+                    var doSeek = true;
+
+                    // See if we can avoid seeking, because target term
+                    // is after current term but before next index term:
+                    if (_indexIsCurrent)
+                    {
+                        var cmp = BytesRef.UTF8SortedAsUnicodeComparer.Compare(_term, target);
+
+                        if (cmp == 0)
+                            return SeekStatus.FOUND;     // Already at the requested term
+                        
+                        if (cmp < 0)
+                        {
+                            // Target term is after current term
+                            if (!_didIndexNext)
+                            {
+                                _nextIndexTerm = _indexEnum.Next == -1 ? null : _indexEnum.Term;
+                                _didIndexNext = true;
+                            }
+
+                            if (_nextIndexTerm == null ||
+                                BytesRef.UTF8SortedAsUnicodeComparer.Compare(target, _nextIndexTerm) < 0)
+                            {
+                                // Optimization: requested term is within the
+                                // same term block we are now in; skip seeking
+                                // (but do scanning):
+                                doSeek = false;
+                            }
+                        }
+                    }
+
+                    if (doSeek)
+                    {
+                        //System.out.println("  seek");
+
+                        // Ask terms index to find biggest indexed term (=
+                        // first term in a block) that's <= our text:
+                        _input.Seek(_indexEnum.Seek(target));
+                        var result = NextBlock();
+
+                        // Block must exist since, at least, the indexed term
+                        // is in the block:
+                        Debug.Assert(result);
+
+                        _indexIsCurrent = true;
+                        _didIndexNext = false;
+                        _blocksSinceSeek = 0;
+
+                        if (_doOrd)
+                            _state.Ord = _indexEnum.Ord - 1;
+                        
+                        _term.CopyBytes(_indexEnum.Term);
+                    }
+                    else
+                    {
+                        if (_state.TermBlockOrd == _blockTermCount && !NextBlock())
+                        {
+                            _indexIsCurrent = false;
+                            return SeekStatus.END;
+                        }
+                    }
+
+                    _seekPending = false;
+
+                    var common = 0;
+
+                    // Scan within block.  We could do this by calling
+                    // _next() and testing the resulting term, but this
+                    // is wasteful.  Instead, we first confirm the
+                    // target matches the common prefix of this block,
+                    // and then we scan the term bytes directly from the
+                    // termSuffixesreader's byte[], saving a copy into
+                    // the BytesRef term per term.  Only when we return
+                    // do we then copy the bytes into the term.
+
+                    while (true)
+                    {
+                        // First, see if target term matches common prefix
+                        // in this block:
+                        if (common < _termBlockPrefix)
+                        {
+
+                            var cmp = (_term.Bytes[common] & 0xFF) - (target.Bytes[target.Offset + common] & 0xFF);
+                            if (cmp < 0)
+                            {
+
+                                // TODO: maybe we should store common prefix
+                                // in block header?  (instead of relying on
+                                // last term of previous block)
+
+                                // Target's prefix is after the common block
+                                // prefix, so term cannot be in this block
+                                // but it could be in next block.  We
+                                // must scan to end-of-block to set common
+                                // prefix for next block:
+                                if (_state.TermBlockOrd < _blockTermCount)
+                                {
+                                    while (_state.TermBlockOrd < _blockTermCount - 1)
+                                    {
+                                        _state.TermBlockOrd++;
+                                        _state.Ord++;
+                                        _termSuffixesReader.SkipBytes(_termSuffixesReader.ReadVInt());
+                                    }
+                                    var suffix = _termSuffixesReader.ReadVInt();
+                                    _term.Length = _termBlockPrefix + suffix;
+                                    if (_term.Bytes.Length < _term.Length)
+                                    {
+                                        _term.Grow(_term.Length);
+                                    }
+                                    _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
+                                }
+                                _state.Ord++;
+
+                                if (!NextBlock())
+                                {
+                                    _indexIsCurrent = false;
+                                    return SeekStatus.END;
+                                }
+                                common = 0;
+
+                            }
+                            else if (cmp > 0)
+                            {
+                                // Target's prefix is before the common prefix
+                                // of this block, so we position to start of
+                                // block and return NOT_FOUND:
+                                Debug.Assert(_state.TermBlockOrd == 0);
+
+                                var suffix = _termSuffixesReader.ReadVInt();
+                                _term.Length = _termBlockPrefix + suffix;
+                                if (_term.Bytes.Length < _term.Length)
+                                {
+                                    _term.Grow(_term.Length);
+                                }
+                                _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
+                                return SeekStatus.NOT_FOUND;
+                            }
+                            else
+                            {
+                                common++;
+                            }
+
+                            continue;
+                        }
+
+                        // Test every term in this block
+                        while (true)
+                        {
+                            _state.TermBlockOrd++;
+                            _state.Ord++;
+
+                            var suffix = _termSuffixesReader.ReadVInt();
+
+                            // We know the prefix matches, so just compare the new suffix:
+
+                            var termLen = _termBlockPrefix + suffix;
+                            var bytePos = _termSuffixesReader.Position;
+
+                            var next = false;
+
+                            var limit = target.Offset + (termLen < target.Length ? termLen : target.Length);
+                            var targetPos = target.Offset + _termBlockPrefix;
+                            while (targetPos < limit)
+                            {
+                                var cmp = (_termSuffixes[bytePos++] & 0xFF) - (target.Bytes[targetPos++] & 0xFF);
+                                if (cmp < 0)
+                                {
+                                    // Current term is still before the target;
+                                    // keep scanning
+                                    next = true;
+                                    break;
+                                }
+
+                                if (cmp <= 0) continue;
+
+                                // Done!  Current term is after target. Stop
+                                // here, fill in real term, return NOT_FOUND.
+                                _term.Length = _termBlockPrefix + suffix;
+                                if (_term.Bytes.Length < _term.Length)
+                                {
+                                    _term.Grow(_term.Length);
+                                }
+                                _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
+                                return SeekStatus.NOT_FOUND;
+                            }
+
+                            if (!next && target.Length <= termLen)
+                            {
+                                _term.Length = _termBlockPrefix + suffix;
+                                if (_term.Bytes.Length < _term.Length)
+                                {
+                                    _term.Grow(_term.Length);
+                                }
+                                _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
+
+                                return target.Length == termLen ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+                            }
+
+                            if (_state.TermBlockOrd == _blockTermCount)
+                            {
+                                // Must pre-fill term for next block's common prefix
+                                _term.Length = _termBlockPrefix + suffix;
+                                if (_term.Bytes.Length < _term.Length)
+                                {
+                                    _term.Grow(_term.Length);
+                                }
+                                _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
+                                break;
+                            }
+                            
+                            _termSuffixesReader.SkipBytes(suffix);
+                        }
+
+                        // The purpose of the terms dict index is to seek
+                        // the enum to the closest index term before the
+                        // term we are looking for.  So, we should never
+                        // cross another index term (besides the first
+                        // one) while we are scanning:
+
+                        Debug.Assert(_indexIsCurrent);
+
+                        if (!NextBlock())
+                        {
+                            _indexIsCurrent = false;
+                            return SeekStatus.END;
+                        }
+                        common = 0;
+                    }
+                }
+
+                public override BytesRef Next()
+                {
+                    // If seek was previously called and the term was cached,
+                    // usually caller is just going to pull a D/&PEnum or get
+                    // docFreq, etc.  But, if they then call next(),
+                    // this method catches up all internal state so next()
+                    // works properly:
+                    if (!_seekPending) return _next();
+
+                    Debug.Assert(!_indexIsCurrent);
+
+                    _input.Seek(_state.BlockFilePointer);
+                    var pendingSeekCount = _state.TermBlockOrd;
+                    var result = NextBlock();
+
+                    var savOrd = _state.Ord;
+
+                    // Block must exist since seek(TermState) was called w/ a
+                    // TermState previously returned by this enum when positioned
+                    // on a real term:
+                    Debug.Assert(result);
+
+                    while (_state.TermBlockOrd < pendingSeekCount)
+                    {
+                        var nextResult = _next();
+                        Debug.Assert(nextResult != null);
+                    }
+                    _seekPending = false;
+                    _state.Ord = savOrd;
+                    return _next();
+                }
+
+                /// <summary>
+                /// Decodes only the term bytes of the next term.  If caller then asks for
+                /// metadata, ie docFreq, totalTermFreq or pulls a D/P Enum, we then (lazily)
+                /// decode all metadata up to the current term
+                /// </summary>
+                /// <returns></returns>
+                private BytesRef _next()
+                {
+                    //System.out.println("BTR._next seg=" + segment + " this=" + this + " termCount=" + state.TermBlockOrd + " (vs " + blockTermCount + ")");
+                    if (_state.TermBlockOrd == _blockTermCount && !NextBlock())
+                    {
+                        //System.out.println("  eof");
+                        _indexIsCurrent = false;
+                        return null;
+                    }
+
+                    // TODO: cutover to something better for these ints!  simple64?
+
+                    var suffix = _termSuffixesReader.ReadVInt();
+                    //System.out.println("  suffix=" + suffix);
+
+                    _term.Length = _termBlockPrefix + suffix;
+                    if (_term.Bytes.Length < _term.Length)
+                    {
+                        _term.Grow(_term.Length);
+                    }
+                    _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
+                    _state.TermBlockOrd++;
+
+                    // NOTE: meaningless in the non-ord case
+                    _state.Ord++;
+
+                    return _term;
+                }
+
+                public override BytesRef Term()
+                {
+                    return _term;
+                }
+
+                public override int DocFreq()
+                {
+                    DecodeMetaData();
+                    return _state.DocFreq;
+                }
+
+                public override long TotalTermFreq()
+                {
+                    DecodeMetaData();
+                    return _state.TotalTermFreq;
+                }
+
+                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
+                {
+                    DecodeMetaData();
+                    return _blockTermsReader._postingsReader.Docs(_fieldReader._fieldInfo, _state, liveDocs, reuse, flags);
+                }
+
+                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
+                    int flags)
+                {
+                    if (_fieldReader._fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                    {
+                        // Positions were not indexed:
+                        return null;
+                    }
+
+                    DecodeMetaData();
+                    return _blockTermsReader._postingsReader.DocsAndPositions(_fieldReader._fieldInfo, _state, liveDocs, reuse, flags);
+                }
+
+                public override void SeekExact(BytesRef target, TermState otherState)
+                {
+                    //System.out.println("BTR.seekExact termState target=" + target.utf8ToString() + " " + target + " this=" + this);
+                    Debug.Assert(otherState is BlockTermState);
+                    Debug.Assert(!_doOrd || ((BlockTermState) otherState).Ord < _fieldReader._numTerms);
+                    _state.CopyFrom(otherState);
+                    _seekPending = true;
+                    _indexIsCurrent = false;
+                    _term.CopyBytes(target);
+                }
+
+                public override TermState TermState()
+                {
+                    DecodeMetaData();
+                    return (TermState) _state.Clone();
+                }
+
+                public override void SeekExact(long ord)
+                {
+                    if (_indexEnum == null)
+                        throw new InvalidOperationException("terms index was not loaded");
+
+                    Debug.Assert(ord < _fieldReader._numTerms);
+
+                    // TODO: if ord is in same terms block and
+                    // after current ord, we should avoid this seek just
+                    // like we do in the seek(BytesRef) case
+                    _input.Seek(_indexEnum.Seek(ord));
+                    bool result = NextBlock();
+
+                    // Block must exist since ord < numTerms:
+                    Debug.Assert(result);
+
+                    _indexIsCurrent = true;
+                    _didIndexNext = false;
+                    _blocksSinceSeek = 0;
+                    _seekPending = false;
+
+                    _state.Ord = _indexEnum.Ord - 1;
+                    Debug.Assert(_state.Ord >= -1, "Ord=" + _state.Ord);
+                    _term.CopyBytes(_indexEnum.Term);
+
+                    // Now, scan:
+                    var left = (int) (ord - _state.Ord);
+                    while (left > 0)
+                    {
+                        var term = _next();
+                        Debug.Assert(term != null);
+                        left--;
+                        Debug.Assert(_indexIsCurrent);
+                    }
+
+                }
+
+                public override long Ord()
+                {
+                    if (!_doOrd)
+                        throw new NotSupportedException();
+
+                    return _state.Ord;
+                }
+
+                // Does initial decode of next block of terms; this
+                // doesn't actually decode the docFreq, totalTermFreq,
+                // postings details (frq/prx offset, etc.) metadata;
+                // it just loads them as byte[] blobs which are then      
+                // decoded on-demand if the metadata is ever requested
+                // for any term in this block.  This enables terms-only
+                // intensive consumes (eg certain MTQs, respelling) to
+                // not pay the price of decoding metadata they won't
+                // use.
+
+                private bool NextBlock()
+                {
+                    // TODO: we still lazy-decode the byte[] for each
+                    // term (the suffix), but, if we decoded
+                    // all N terms up front then seeking could do a fast
+                    // bsearch w/in the block...
+
+                    _state.BlockFilePointer = _input.FilePointer;
+                    _blockTermCount = _input.ReadVInt();
+
+                    if (_blockTermCount == 0)
+                        return false;
+
+                    _termBlockPrefix = _input.ReadVInt();
+
+                    // term suffixes:
+                    int len = _input.ReadVInt();
+                    if (_termSuffixes.Length < len)
+                    {
+                        _termSuffixes = new byte[ArrayUtil.Oversize(len, 1)];
+                    }
+                    //System.out.println("  termSuffixes len=" + len);
+                    _input.ReadBytes(_termSuffixes, 0, len);
+
+                    _termSuffixesReader.Reset(_termSuffixes, 0, len);
+
+                    // docFreq, totalTermFreq
+                    len = _input.ReadVInt();
+                    if (_docFreqBytes.Length < len)
+                        _docFreqBytes = new byte[ArrayUtil.Oversize(len, 1)];
+
+                    _input.ReadBytes(_docFreqBytes, 0, len);
+                    _freqReader.Reset(_docFreqBytes, 0, len);
+
+                    // metadata
+                    len = _input.ReadVInt();
+                    if (_bytes == null)
+                    {
+                        _bytes = new byte[ArrayUtil.Oversize(len, 1)];
+                        _bytesReader = new ByteArrayDataInput();
+                    }
+                    else if (_bytes.Length < len)
+                    {
+                        _bytes = new byte[ArrayUtil.Oversize(len, 1)];
+                    }
+
+                    _input.ReadBytes(_bytes, 0, len);
+                    _bytesReader.Reset(_bytes, 0, len);
+
+                    _metaDataUpto = 0;
+                    _state.TermBlockOrd = 0;
+
+                    _blocksSinceSeek++;
+                    _indexIsCurrent = _indexIsCurrent && (_blocksSinceSeek < _blockTermsReader._indexReader.Divisor);
+
+                    return true;
+                }
+
+                private void DecodeMetaData()
+                {
+                    //System.out.println("BTR.decodeMetadata mdUpto=" + metaDataUpto + " vs termCount=" + state.TermBlockOrd + " state=" + state);
+                    if (!_seekPending)
+                    {
+                        // TODO: cutover to random-access API
+                        // here.... really stupid that we have to decode N
+                        // wasted term metadata just to get to the N+1th
+                        // that we really need...
+
+                        // lazily catch up on metadata decode:
+
+                        var limit = _state.TermBlockOrd;
+                        var absolute = _metaDataUpto == 0;
+                        // TODO: better API would be "jump straight to term=N"???
+                        while (_metaDataUpto < limit)
+                        {
+                            //System.out.println("  decode mdUpto=" + metaDataUpto);
+                            // TODO: we could make "tiers" of metadata, ie,
+                            // decode docFreq/totalTF but don't decode postings
+                            // metadata; this way caller could get
+                            // docFreq/totalTF w/o paying decode cost for
+                            // postings
+
+                            // TODO: if docFreq were bulk decoded we could
+                            // just skipN here:
+
+                            _state.DocFreq = _freqReader.ReadVInt();
+                            if (_fieldReader._fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+                            {
+                                _state.TotalTermFreq = _state.DocFreq + _freqReader.ReadVLong();
+                            }
+                            // metadata
+                            for (int i = 0; i < _longs.Length; i++)
+                            {
+                                _longs[i] = _bytesReader.ReadVLong();
+                            }
+                            _blockTermsReader._postingsReader.DecodeTerm(_longs, _bytesReader, _fieldReader._fieldInfo, _state, absolute);
+                            _metaDataUpto++;
+                            absolute = false;
+                        }
+                    }
+                }
+
+            }
         }
-        termSuffixesReader.readBytes(term.bytes, termBlockPrefix, suffix);
-        state.termBlockOrd++;
 
-        // NOTE: meaningless in the non-ord case
-        state.ord++;
-
-        //System.out.println("  return term=" + fieldInfo.name + ":" + term.utf8ToString() + " " + term + " tbOrd=" + state.termBlockOrd);
-        return term;
-      }
-
-      @Override
-      public BytesRef term() {
-        return term;
-      }
-
-      @Override
-      public int docFreq()  {
-        //System.out.println("BTR.docFreq");
-        decodeMetaData();
-        //System.out.println("  return " + state.docFreq);
-        return state.docFreq;
-      }
-
-      @Override
-      public long totalTermFreq()  {
-        decodeMetaData();
-        return state.totalTermFreq;
-      }
-
-      @Override
-      public DocsEnum docs(Bits liveDocs, DocsEnum reuse, int flags)  {
-        //System.out.println("BTR.docs this=" + this);
-        decodeMetaData();
-        //System.out.println("BTR.docs:  state.docFreq=" + state.docFreq);
-        return postingsReader.docs(fieldInfo, state, liveDocs, reuse, flags);
-      }
-
-      @Override
-      public DocsAndPositionsEnum docsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)  {
-        if (fieldInfo.getIndexOptions().compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0) {
-          // Positions were not indexed:
-          return null;
-        }
-
-        decodeMetaData();
-        return postingsReader.docsAndPositions(fieldInfo, state, liveDocs, reuse, flags);
-      }
-
-      @Override
-      public void seekExact(BytesRef target, TermState otherState) {
-        //System.out.println("BTR.seekExact termState target=" + target.utf8ToString() + " " + target + " this=" + this);
-        Debug.Assert( otherState != null && otherState instanceof BlockTermState;
-        Debug.Assert( !doOrd || ((BlockTermState) otherState).ord < numTerms;
-        state.copyFrom(otherState);
-        seekPending = true;
-        indexIsCurrent = false;
-        term.copyBytes(target);
-      }
-      
-      @Override
-      public TermState termState()  {
-        //System.out.println("BTR.termState this=" + this);
-        decodeMetaData();
-        TermState ts = state.clone();
-        //System.out.println("  return ts=" + ts);
-        return ts;
-      }
-
-      @Override
-      public void seekExact(long ord)  {
-        //System.out.println("BTR.seek by ord ord=" + ord);
-        if (indexEnum == null) {
-          throw new IllegalStateException("terms index was not loaded");
-        }
-
-        Debug.Assert( ord < numTerms;
-
-        // TODO: if ord is in same terms block and
-        // after current ord, we should avoid this seek just
-        // like we do in the seek(BytesRef) case
-        in.seek(indexEnum.seek(ord));
-        bool result = nextBlock();
-
-        // Block must exist since ord < numTerms:
-        Debug.Assert( result;
-
-        indexIsCurrent = true;
-        didIndexNext = false;
-        blocksSinceSeek = 0;
-        seekPending = false;
-
-        state.ord = indexEnum.ord()-1;
-        Debug.Assert( state.ord >= -1: "ord=" + state.ord;
-        term.copyBytes(indexEnum.term());
-
-        // Now, scan:
-        int left = (int) (ord - state.ord);
-        while(left > 0) {
-          readonly BytesRef term = _next();
-          Debug.Assert( term != null;
-          left--;
-          Debug.Assert( indexIsCurrent;
-        }
-      }
-
-      @Override
-      public long ord() {
-        if (!doOrd) {
-          throw new UnsupportedOperationException();
-        }
-        return state.ord;
-      }
-
-      /* Does initial decode of next block of terms; this
-         doesn't actually decode the docFreq, totalTermFreq,
-         postings details (frq/prx offset, etc.) metadata;
-         it just loads them as byte[] blobs which are then      
-         decoded on-demand if the metadata is ever requested
-         for any term in this block.  This enables terms-only
-         intensive consumes (eg certain MTQs, respelling) to
-         not pay the price of decoding metadata they won't
-         use. */
-      private bool nextBlock()  {
-
-        // TODO: we still lazy-decode the byte[] for each
-        // term (the suffix), but, if we decoded
-        // all N terms up front then seeking could do a fast
-        // bsearch w/in the block...
-
-        //System.out.println("BTR.nextBlock() fp=" + in.getFilePointer() + " this=" + this);
-        state.blockFilePointer = in.getFilePointer();
-        blockTermCount = in.readVInt();
-        //System.out.println("  blockTermCount=" + blockTermCount);
-        if (blockTermCount == 0) {
-          return false;
-        }
-        termBlockPrefix = in.readVInt();
-
-        // term suffixes:
-        int len = in.readVInt();
-        if (termSuffixes.length < len) {
-          termSuffixes = new byte[ArrayUtil.oversize(len, 1)];
-        }
-        //System.out.println("  termSuffixes len=" + len);
-        in.readBytes(termSuffixes, 0, len);
-        termSuffixesReader.reset(termSuffixes, 0, len);
-
-        // docFreq, totalTermFreq
-        len = in.readVInt();
-        if (docFreqBytes.length < len) {
-          docFreqBytes = new byte[ArrayUtil.oversize(len, 1)];
-        }
-        //System.out.println("  freq bytes len=" + len);
-        in.readBytes(docFreqBytes, 0, len);
-        freqReader.reset(docFreqBytes, 0, len);
-
-        // metadata
-        len = in.readVInt();
-        if (bytes == null) {
-          bytes = new byte[ArrayUtil.oversize(len, 1)];
-          bytesReader = new ByteArrayDataInput();
-        } else if (bytes.length < len) {
-          bytes = new byte[ArrayUtil.oversize(len, 1)];
-        }
-        in.readBytes(bytes, 0, len);
-        bytesReader.reset(bytes, 0, len);
-
-        metaDataUpto = 0;
-        state.termBlockOrd = 0;
-
-        blocksSinceSeek++;
-        indexIsCurrent = indexIsCurrent && (blocksSinceSeek < indexReader.getDivisor());
-        //System.out.println("  indexIsCurrent=" + indexIsCurrent);
-
-        return true;
-      }
      
-      private void decodeMetaData()  {
-        //System.out.println("BTR.decodeMetadata mdUpto=" + metaDataUpto + " vs termCount=" + state.termBlockOrd + " state=" + state);
-        if (!seekPending) {
-          // TODO: cutover to random-access API
-          // here.... really stupid that we have to decode N
-          // wasted term metadata just to get to the N+1th
-          // that we really need...
-
-          // lazily catch up on metadata decode:
-          readonly int limit = state.termBlockOrd;
-          bool absolute = metaDataUpto == 0;
-          // TODO: better API would be "jump straight to term=N"???
-          while (metaDataUpto < limit) {
-            //System.out.println("  decode mdUpto=" + metaDataUpto);
-            // TODO: we could make "tiers" of metadata, ie,
-            // decode docFreq/totalTF but don't decode postings
-            // metadata; this way caller could get
-            // docFreq/totalTF w/o paying decode cost for
-            // postings
-
-            // TODO: if docFreq were bulk decoded we could
-            // just skipN here:
-
-            // docFreq, totalTermFreq
-            state.docFreq = freqReader.readVInt();
-            //System.out.println("    dF=" + state.docFreq);
-            if (fieldInfo.getIndexOptions() != IndexOptions.DOCS_ONLY) {
-              state.totalTermFreq = state.docFreq + freqReader.readVLong();
-              //System.out.println("    totTF=" + state.totalTermFreq);
-            }
-            // metadata
-            for (int i = 0; i < longs.length; i++) {
-              longs[i] = bytesReader.readVLong();
-            }
-            postingsReader.decodeTerm(longs, bytesReader, fieldInfo, state, absolute);
-            metaDataUpto++;
-            absolute = false;
-          }
-        } else {
-          //System.out.println("  skip! seekPending");
-        }
-      }
     }
-  }
-
-  @Override
-  public long ramBytesUsed() {
-    long sizeInBytes = (postingsReader!=null) ? postingsReader.ramBytesUsed() : 0;
-    sizeInBytes += (indexReader!=null) ? indexReader.ramBytesUsed() : 0;
-    return sizeInBytes;
-  }
-
-  @Override
-  public void checkIntegrity()  {   
-    // verify terms
-    if (version >= BlockTermsWriter.VERSION_CHECKSUM) {
-      CodecUtil.checksumEntireFile(in);
-    }
-    // verify postings
-    postingsReader.checkIntegrity();
-  }
 }

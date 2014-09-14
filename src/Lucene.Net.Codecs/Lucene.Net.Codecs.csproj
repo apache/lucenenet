@@ -43,7 +43,6 @@
     <Compile Include="Appending\AppendingCodec.cs" />
     <Compile Include="Appending\AppendingPostingsFormat.cs" />
     <Compile Include="Appending\AppendingTermsReader.cs" />
-    <Compile Include="BlockTerms\BlockTermsFieldAndTerm.cs" />
     <Compile Include="BlockTerms\BlockTermsReader.cs" />
     <Compile Include="BlockTerms\BlockTermsWriter.cs" />
     <Compile Include="BlockTerms\FixedGapTermsIndexReader.cs" />
@@ -122,7 +121,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
