@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Lucene.Net.Index;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
-
 namespace Lucene.Net.Codecs.Pulsing
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using Index;
+    using Store;
+    using Util;
 
     /// <summary>
     /// TODO: we now inline based on total TF of the term,
@@ -53,36 +52,36 @@ namespace Lucene.Net.Codecs.Pulsing
         internal static readonly int VERSION_META_ARRAY = 1;
         internal static readonly int VERSION_CURRENT = VERSION_META_ARRAY;
 
-        private SegmentWriteState segmentState;
-        private IndexOutput termsOut;
-        private List<FieldMetaData> fields;
-        private FieldInfo.IndexOptions_e? indexOptions;
-        private bool storePayloads;
+        private readonly SegmentWriteState _segmentState;
+        private IndexOutput _termsOut;
+        private readonly List<FieldMetaData> _fields;
+        private FieldInfo.IndexOptions? _indexOptions;
+        private bool _storePayloads;
 
         // information for wrapped PF, in current field
-        private int longsSize;
-        private long[] longs;
-        private bool absolute;
+        private int _longsSize;
+        private long[] _longs;
+        private bool _absolute;
 
         private class PulsingTermState : BlockTermState
         {
-            internal byte[] bytes;
-            internal BlockTermState wrappedState;
+            internal byte[] BYTES;
+            internal BlockTermState WRAPPED_STATE;
 
             public override String ToString()
             {
-                if (bytes != null)
+                if (BYTES != null)
                 {
                     return "inlined";
                 }
-                return "not inlined wrapped=" + wrappedState;
+                return "not inlined wrapped=" + WRAPPED_STATE;
             }
         }
 
         // one entry per position
-        private Position[] pending;
-        private int pendingCount = 0;   // -1 once we've hit too many positions
-        private Position currentDoc;    // first Position entry of current doc
+        private readonly Position[] _pending;
+        private int _pendingCount = 0;   // -1 once we've hit too many positions
+        private Position _currentDoc;    // first Position entry of current doc
 
         private sealed class Position
         {
@@ -114,43 +113,42 @@ namespace Lucene.Net.Codecs.Pulsing
 
         /// <summary>
         /// If the total number of positions (summed across all docs
-        /// for this term) is <= maxPositions, then the postings are
+        /// for this term) is less than or equal maxPositions, then the postings are
         /// inlined into terms dict
         /// </summary>
         public PulsingPostingsWriter(SegmentWriteState state, int maxPositions, PostingsWriterBase wrappedPostingsWriter)
         {
 
-            pending = new Position[maxPositions];
-            for (int i = 0; i < maxPositions; i++)
+            _pending = new Position[maxPositions];
+            for (var i = 0; i < maxPositions; i++)
             {
-                pending[i] = new Position();
+                _pending[i] = new Position();
             }
-            fields = new List<FieldMetaData>();
+            _fields = new List<FieldMetaData>();
 
             // We simply wrap another postings writer, but only call
             // on it when tot positions is >= the cutoff:
-            this._wrappedPostingsWriter = wrappedPostingsWriter;
-            this.segmentState = state;
+            _wrappedPostingsWriter = wrappedPostingsWriter;
+            _segmentState = state;
         }
 
         public override void Init(IndexOutput termsOut)
         {
-            this.termsOut = termsOut;
+            _termsOut = termsOut;
             CodecUtil.WriteHeader(termsOut, CODEC, VERSION_CURRENT);
-            termsOut.WriteVInt(pending.Length); // encode maxPositions in header
+            termsOut.WriteVInt(_pending.Length); // encode maxPositions in header
             _wrappedPostingsWriter.Init(termsOut);
         }
 
         public override BlockTermState NewTermState()
         {
-            PulsingTermState state = new PulsingTermState();
-            state.wrappedState = _wrappedPostingsWriter.NewTermState();
+            var state = new PulsingTermState {WRAPPED_STATE = _wrappedPostingsWriter.NewTermState()};
             return state;
         }
 
         public override void StartTerm()
         {
-            Debug.Debug.Assert((pendingCount == 0);
+            Debug.Assert(_pendingCount == 0);
         }
 
         /// <summary>
@@ -163,61 +161,61 @@ namespace Lucene.Net.Codecs.Pulsing
         /// <returns></returns>
         public override int SetField(FieldInfo fieldInfo)
         {
-            this.indexOptions = fieldInfo.IndexOptions;
-            storePayloads = fieldInfo.HasPayloads();
-            absolute = false;
-            longsSize = _wrappedPostingsWriter.SetField(fieldInfo);
-            longs = new long[longsSize];
-            fields.Add(new FieldMetaData(fieldInfo.Number, longsSize));
+            _indexOptions = fieldInfo.FieldIndexOptions;
+            _storePayloads = fieldInfo.HasPayloads();
+            _absolute = false;
+            _longsSize = _wrappedPostingsWriter.SetField(fieldInfo);
+            _longs = new long[_longsSize];
+            _fields.Add(new FieldMetaData(fieldInfo.Number, _longsSize));
             return 0;
         }
 
-        public override void StartDoc(int docID, int termDocFreq)
+        public override void StartDoc(int docId, int termDocFreq)
         {
-            Debug.Debug.Assert((docID >= 0, "Got DocID=" + docID);
+            Debug.Assert(docId >= 0, "Got DocID=" + docId);
 
-            if (pendingCount == pending.Length)
+            if (_pendingCount == _pending.Length)
             {
-                push();
+                Push();
                 _wrappedPostingsWriter.FinishDoc();
             }
 
-            if (pendingCount != -1)
+            if (_pendingCount != -1)
             {
-                Debug.Debug.Assert((pendingCount < pending.Length);
-                currentDoc = pending[pendingCount];
-                currentDoc.docID = docID;
-                if (indexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
+                Debug.Assert(_pendingCount < _pending.Length);
+                _currentDoc = _pending[_pendingCount];
+                _currentDoc.docID = docId;
+                if (_indexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
                 {
-                    pendingCount++;
+                    _pendingCount++;
                 }
-                else if (indexOptions == FieldInfo.IndexOptions_e.DOCS_AND_FREQS)
+                else if (_indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS)
                 {
-                    pendingCount++;
-                    currentDoc.termFreq = termDocFreq;
+                    _pendingCount++;
+                    _currentDoc.termFreq = termDocFreq;
                 }
                 else
                 {
-                    currentDoc.termFreq = termDocFreq;
+                    _currentDoc.termFreq = termDocFreq;
                 }
             }
             else
             {
                 // We've already seen too many docs for this term --
                 // just forward to our fallback writer
-                _wrappedPostingsWriter.StartDoc(docID, termDocFreq);
+                _wrappedPostingsWriter.StartDoc(docId, termDocFreq);
             }
         }
 
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
 
-            if (pendingCount == pending.Length)
+            if (_pendingCount == _pending.Length)
             {
-                push();
+                Push();
             }
 
-            if (pendingCount == -1)
+            if (_pendingCount == -1)
             {
                 // We've already seen too many docs for this term --
                 // just forward to our fallback writer
@@ -226,11 +224,11 @@ namespace Lucene.Net.Codecs.Pulsing
             else
             {
                 // buffer up
-                Position pos = pending[pendingCount++];
+                Position pos = _pending[_pendingCount++];
                 pos.pos = position;
                 pos.startOffset = startOffset;
                 pos.endOffset = endOffset;
-                pos.docID = currentDoc.docID;
+                pos.docID = _currentDoc.docID;
                 if (payload != null && payload.Length > 0)
                 {
                     if (pos.payload == null)
@@ -251,13 +249,13 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override void FinishDoc()
         {
-            if (pendingCount == -1)
+            if (_pendingCount == -1)
             {
                 _wrappedPostingsWriter.FinishDoc();
             }
         }
 
-        private readonly RAMOutputStream buffer = new RAMOutputStream();
+        private readonly RAMOutputStream _buffer = new RAMOutputStream();
 
         /// <summary>
         /// Called when we are done adding docs to this term
@@ -265,16 +263,16 @@ namespace Lucene.Net.Codecs.Pulsing
         /// <param name="_state"></param>
         public override void FinishTerm(BlockTermState _state)
         {
-            PulsingTermState state = (PulsingTermState) _state;
+            var state = (PulsingTermState) _state;
 
-            Debug.Debug.Assert((pendingCount > 0 || pendingCount == -1);
+            Debug.Assert(_pendingCount > 0 || _pendingCount == -1);
 
-            if (pendingCount == -1)
+            if (_pendingCount == -1)
             {
-                state.wrappedState.DocFreq = state.DocFreq;
-                state.wrappedState.TotalTermFreq = state.TotalTermFreq;
-                state.bytes = null;
-                _wrappedPostingsWriter.FinishTerm(state.wrappedState);
+                state.WRAPPED_STATE.DocFreq = state.DocFreq;
+                state.WRAPPED_STATE.TotalTermFreq = state.TotalTermFreq;
+                state.BYTES = null;
+                _wrappedPostingsWriter.FinishTerm(state.WRAPPED_STATE);
             }
             else
             {
@@ -288,72 +286,72 @@ namespace Lucene.Net.Codecs.Pulsing
                 // given codec wants to store other interesting
                 // stuff, it could use this pulsing codec to do so
 
-                if (indexOptions.Value.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+                if (_indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
-                    int lastDocID = 0;
-                    int pendingIDX = 0;
-                    int lastPayloadLength = -1;
-                    int lastOffsetLength = -1;
-                    while (pendingIDX < pendingCount)
+                    var lastDocID = 0;
+                    var pendingIDX = 0;
+                    var lastPayloadLength = -1;
+                    var lastOffsetLength = -1;
+                    while (pendingIDX < _pendingCount)
                     {
-                        Position doc = pending[pendingIDX];
+                        var doc = _pending[pendingIDX];
 
-                        int delta = doc.docID - lastDocID;
+                        var delta = doc.docID - lastDocID;
                         lastDocID = doc.docID;
 
                         // if (DEBUG) System.out.println("  write doc=" + doc.docID + " freq=" + doc.termFreq);
 
                         if (doc.termFreq == 1)
                         {
-                            buffer.WriteVInt((delta << 1) | 1);
+                            _buffer.WriteVInt((delta << 1) | 1);
                         }
                         else
                         {
-                            buffer.WriteVInt(delta << 1);
-                            buffer.WriteVInt(doc.termFreq);
+                            _buffer.WriteVInt(delta << 1);
+                            _buffer.WriteVInt(doc.termFreq);
                         }
 
-                        int lastPos = 0;
-                        int lastOffset = 0;
-                        for (int posIDX = 0; posIDX < doc.termFreq; posIDX++)
+                        var lastPos = 0;
+                        var lastOffset = 0;
+                        for (var posIDX = 0; posIDX < doc.termFreq; posIDX++)
                         {
-                            Position pos = pending[pendingIDX++];
-                            Debug.Debug.Assert((pos.docID == doc.docID);
-                            int posDelta = pos.pos - lastPos;
+                            var pos = _pending[pendingIDX++];
+                            Debug.Assert(pos.docID == doc.docID);
+                            var posDelta = pos.pos - lastPos;
                             lastPos = pos.pos;
                             
-                            int payloadLength = pos.payload == null ? 0 : pos.payload.Length;
-                            if (storePayloads)
+                            var payloadLength = pos.payload == null ? 0 : pos.payload.Length;
+                            if (_storePayloads)
                             {
                                 if (payloadLength != lastPayloadLength)
                                 {
-                                    buffer.WriteVInt((posDelta << 1) | 1);
-                                    buffer.WriteVInt(payloadLength);
+                                    _buffer.WriteVInt((posDelta << 1) | 1);
+                                    _buffer.WriteVInt(payloadLength);
                                     lastPayloadLength = payloadLength;
                                 }
                                 else
                                 {
-                                    buffer.WriteVInt(posDelta << 1);
+                                    _buffer.WriteVInt(posDelta << 1);
                                 }
                             }
                             else
                             {
-                                buffer.WriteVInt(posDelta);
+                                _buffer.WriteVInt(posDelta);
                             }
 
-                            if (indexOptions.Value.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+                            if (_indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
                             {
                                 //System.out.println("write=" + pos.startOffset + "," + pos.endOffset);
-                                int offsetDelta = pos.startOffset - lastOffset;
-                                int offsetLength = pos.endOffset - pos.startOffset;
+                                var offsetDelta = pos.startOffset - lastOffset;
+                                var offsetLength = pos.endOffset - pos.startOffset;
                                 if (offsetLength != lastOffsetLength)
                                 {
-                                    buffer.WriteVInt(offsetDelta << 1 | 1);
-                                    buffer.WriteVInt(offsetLength);
+                                    _buffer.WriteVInt(offsetDelta << 1 | 1);
+                                    _buffer.WriteVInt(offsetLength);
                                 }
                                 else
                                 {
-                                    buffer.WriteVInt(offsetDelta << 1);
+                                    _buffer.WriteVInt(offsetDelta << 1);
                                 }
                                 lastOffset = pos.startOffset;
                                 lastOffsetLength = offsetLength;
@@ -361,73 +359,79 @@ namespace Lucene.Net.Codecs.Pulsing
 
                             if (payloadLength > 0)
                             {
-                                Debug.Debug.Assert((storePayloads);
-                                buffer.WriteBytes(pos.payload.Bytes, 0, pos.payload.Length);
+                                Debug.Assert(_storePayloads);
+                                _buffer.WriteBytes(pos.payload.Bytes, 0, pos.payload.Length);
                             }
                         }
                     }
                 }
-                else if (indexOptions == FieldInfo.IndexOptions_e.DOCS_AND_FREQS)
+                else switch (_indexOptions)
                 {
-                    int lastDocID = 0;
-                    for (int posIDX = 0; posIDX < pendingCount; posIDX++)
+                    case FieldInfo.IndexOptions.DOCS_AND_FREQS:
                     {
-                        Position doc = pending[posIDX];
-                        int delta = doc.docID - lastDocID;
-                        Debug.Debug.Assert((doc.termFreq != 0);
+                        var lastDocId = 0;
+                        for (var posIdx = 0; posIdx < _pendingCount; posIdx++)
+                        {
+                            var doc = _pending[posIdx];
+                            var delta = doc.docID - lastDocId;
 
-                        if (doc.termFreq == 1)
-                        {
-                            buffer.WriteVInt((delta << 1) | 1);
+                            Debug.Assert(doc.termFreq != 0);
+
+                            if (doc.termFreq == 1)
+                            {
+                                _buffer.WriteVInt((delta << 1) | 1);
+                            }
+                            else
+                            {
+                                _buffer.WriteVInt(delta << 1);
+                                _buffer.WriteVInt(doc.termFreq);
+                            }
+                            lastDocId = doc.docID;
                         }
-                        else
-                        {
-                            buffer.WriteVInt(delta << 1);
-                            buffer.WriteVInt(doc.termFreq);
-                        }
-                        lastDocID = doc.docID;
                     }
-                }
-                else if (indexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
-                {
-                    int lastDocID = 0;
-                    for (int posIDX = 0; posIDX < pendingCount; posIDX++)
+                        break;
+                    case FieldInfo.IndexOptions.DOCS_ONLY:
                     {
-                        Position doc = pending[posIDX];
-                        buffer.WriteVInt(doc.docID - lastDocID);
-                        lastDocID = doc.docID;
+                        var lastDocId = 0;
+                        for (var posIdx = 0; posIdx < _pendingCount; posIdx++)
+                        {
+                            var doc = _pending[posIdx];
+                            _buffer.WriteVInt(doc.docID - lastDocId);
+                            lastDocId = doc.docID;
+                        }
                     }
+                        break;
                 }
 
-                state.bytes = new byte[(int) buffer.FilePointer];
-                buffer.WriteTo((sbyte[])(Array)state.bytes, 0);
-                buffer.Reset();
+                state.BYTES = new byte[(int) _buffer.FilePointer];
+                _buffer.WriteTo((sbyte[])(Array)state.BYTES, 0);
+                _buffer.Reset();
             }
-            pendingCount = 0;
+            _pendingCount = 0;
         }
 
-        public override void EncodeTerm(long[] empty, DataOutput output, FieldInfo fieldInfo, BlockTermState _state,
-            bool absolute)
+        public override void EncodeTerm(long[] empty, DataOutput output, FieldInfo fieldInfo, BlockTermState state,
+            bool abs)
         {
-            PulsingTermState state = (PulsingTermState) _state;
-            Debug.Debug.Assert((empty.Length == 0);
-            this.absolute = this.absolute || absolute;
-            if (state.bytes == null)
+            var _state = (PulsingTermState) state;
+            Debug.Assert(empty.Length == 0);
+            _absolute = _absolute || abs;
+            if (_state.BYTES == null)
             {
-                _wrappedPostingsWriter.EncodeTerm(longs, buffer, fieldInfo, state.wrappedState, this.absolute);
-                for (int i = 0; i < longsSize; i++)
+                _wrappedPostingsWriter.EncodeTerm(_longs, _buffer, fieldInfo, _state.WRAPPED_STATE, _absolute);
+                for (var i = 0; i < _longsSize; i++)
                 {
-                    output.WriteVLong(longs[i]);
+                    output.WriteVLong(_longs[i]);
                 }
-                buffer.WriteTo(output);
-                buffer.Reset();
-                this.absolute = false;
+                _buffer.WriteTo(output);
+                _buffer.Reset();
+                _absolute = false;
             }
             else
             {
-                output.WriteVInt(state.bytes.Length);
-                output.WriteBytes(state.bytes, 0, state.bytes.Length);
-                this.absolute = this.absolute || absolute;
+                output.WriteVInt(_state.BYTES.Length);
+                output.WriteBytes(_state.BYTES, 0, _state.BYTES.Length);
+                _absolute = _absolute || abs;
             }
         }
 
@@ -441,16 +445,16 @@ namespace Lucene.Net.Codecs.Pulsing
                 return;
             }
 
-            String summaryFileName = IndexFileNames.SegmentFileName(segmentState.SegmentInfo.Name,
-                segmentState.SegmentSuffix, SUMMARY_EXTENSION);
+            var summaryFileName = IndexFileNames.SegmentFileName(_segmentState.SegmentInfo.Name,
+                _segmentState.SegmentSuffix, SUMMARY_EXTENSION);
             IndexOutput output = null;
             try
             {
                 output =
-                    segmentState.Directory.CreateOutput(summaryFileName, segmentState.Context);
+                    _segmentState.Directory.CreateOutput(summaryFileName, _segmentState.Context);
                 CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
-                output.WriteVInt(fields.Count);
-                foreach (FieldMetaData field in fields)
+                output.WriteVInt(_fields.Count);
+                foreach (var field in _fields)
                 {
                     output.WriteVInt(field.FieldNumber);
                     output.WriteVInt(field.LongsSize);
@@ -464,48 +468,43 @@ namespace Lucene.Net.Codecs.Pulsing
         }
 
         // Pushes pending positions to the wrapped codec
-        private void push()
+        private void Push()
         {
-            // if (DEBUG) System.out.println("PW now push @ " + pendingCount + " wrapped=" + wrappedPostingsWriter);
-            Debug.Debug.Assert((pendingCount == pending.Length);
+            Debug.Assert(_pendingCount == _pending.Length);
 
             _wrappedPostingsWriter.StartTerm();
 
             // Flush all buffered docs
-            if (indexOptions.Value.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+            if (_indexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
                 Position doc = null;
 
-                foreach(Position pos in pending)
+                foreach(var pos in _pending)
                 {
                     if (doc == null)
                     {
                         doc = pos;
-                        // if (DEBUG) System.out.println("PW: wrapped.startDoc docID=" + doc.docID + " tf=" + doc.termFreq);
                         _wrappedPostingsWriter.StartDoc(doc.docID, doc.termFreq);
                     }
                     else if (doc.docID != pos.docID)
                     {
-                        Debug.Debug.Assert((pos.docID > doc.docID);
-                        // if (DEBUG) System.out.println("PW: wrapped.finishDoc");
+                        Debug.Assert(pos.docID > doc.docID);
                         _wrappedPostingsWriter.FinishDoc();
                         doc = pos;
-                        // if (DEBUG) System.out.println("PW: wrapped.startDoc docID=" + doc.docID + " tf=" + doc.termFreq);
                         _wrappedPostingsWriter.StartDoc(doc.docID, doc.termFreq);
                     }
-                    // if (DEBUG) System.out.println("PW:   wrapped.addPos pos=" + pos.pos);
                     _wrappedPostingsWriter.AddPosition(pos.pos, pos.payload, pos.startOffset, pos.endOffset);
                 }
                 //wrappedPostingsWriter.finishDoc();
             }
             else
             {
-                foreach(Position doc in pending)
+                foreach(var doc in _pending)
                 {
-                    _wrappedPostingsWriter.StartDoc(doc.docID, indexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY ? 0 : doc.termFreq);
+                    _wrappedPostingsWriter.StartDoc(doc.docID, _indexOptions == FieldInfo.IndexOptions.DOCS_ONLY ? 0 : doc.termFreq);
                 }
             }
-            pendingCount = -1;
+            _pendingCount = -1;
         }
     }
 }

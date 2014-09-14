@@ -21,9 +21,9 @@ namespace Lucene.Net.Codecs.Pulsing
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Lucene.Net.Index;
-    using Lucene.Net.Store;
-    using Lucene.Net.Util;
+    using Index;
+    using Store;
+    using Util;
 
     /// <summary>
     /// Concrete class that reads the current doc/freq/skip postings format 
@@ -39,52 +39,52 @@ namespace Lucene.Net.Codecs.Pulsing
 
         // Fallback reader for non-pulsed terms:
         private readonly PostingsReaderBase _wrappedPostingsReader;
-        private readonly SegmentReadState segmentState;
-        private int maxPositions;
-        private int version;
-        private SortedDictionary<int, int> fields;
+        private readonly SegmentReadState _segmentState;
+        private int _maxPositions;
+        private int _version;
+        private SortedDictionary<int, int> _fields;
 
         public PulsingPostingsReader(SegmentReadState state, PostingsReaderBase wrappedPostingsReader)
         {
-            this._wrappedPostingsReader = wrappedPostingsReader;
-            this.segmentState = state;
+            _wrappedPostingsReader = wrappedPostingsReader;
+            _segmentState = state;
         }
 
         public override void Init(IndexInput termsIn)
         {
-            version = CodecUtil.CheckHeader(termsIn, PulsingPostingsWriter.CODEC,
+            _version = CodecUtil.CheckHeader(termsIn, PulsingPostingsWriter.CODEC,
                 PulsingPostingsWriter.VERSION_START,
                 PulsingPostingsWriter.VERSION_CURRENT);
 
-            maxPositions = termsIn.ReadVInt();
+            _maxPositions = termsIn.ReadVInt();
             _wrappedPostingsReader.Init(termsIn);
 
-            if (_wrappedPostingsReader is PulsingPostingsReader || version < PulsingPostingsWriter.VERSION_META_ARRAY)
+            if (_wrappedPostingsReader is PulsingPostingsReader || _version < PulsingPostingsWriter.VERSION_META_ARRAY)
             {
-                fields = null;
+                _fields = null;
             }
             else
             {
-                fields = new SortedDictionary<int, int>();
-                String summaryFileName = IndexFileNames.SegmentFileName(segmentState.SegmentInfo.Name,
-                    segmentState.SegmentSuffix, PulsingPostingsWriter.SUMMARY_EXTENSION);
+                _fields = new SortedDictionary<int, int>();
+                var summaryFileName = IndexFileNames.SegmentFileName(_segmentState.SegmentInfo.Name,
+                    _segmentState.SegmentSuffix, PulsingPostingsWriter.SUMMARY_EXTENSION);
                 IndexInput input = null;
 
                 try
                 {
                     input =
-                        segmentState.Directory.OpenInput(summaryFileName, segmentState.Context);
+                        _segmentState.Directory.OpenInput(summaryFileName, _segmentState.Context);
                     CodecUtil.CheckHeader(input,
                         PulsingPostingsWriter.CODEC,
-                        version,
+                        _version,
                         PulsingPostingsWriter.VERSION_CURRENT);
 
-                    int numField = input.ReadVInt();
-                    for (int i = 0; i < numField; i++)
+                    var numField = input.ReadVInt();
+                    for (var i = 0; i < numField; i++)
                     {
-                        int fieldNum = input.ReadVInt();
-                        int longsSize = input.ReadVInt();
-                        fields.Add(fieldNum, longsSize);
+                        var fieldNum = input.ReadVInt();
+                        var longsSize = input.ReadVInt();
+                        _fields.Add(fieldNum, longsSize);
                     }
                 }
                 finally
@@ -96,25 +96,24 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override BlockTermState NewTermState()
         {
-            var state = new PulsingTermState {WrappedTermState = _wrappedPostingsReader.NewTermState()};
-            return state;
+            return new PulsingTermState {WrappedTermState = _wrappedPostingsReader.NewTermState()};
         }
 
         public override void DecodeTerm(long[] empty, DataInput input, FieldInfo fieldInfo, BlockTermState _termState,
             bool absolute)
         {
-            PulsingTermState termState = (PulsingTermState) _termState;
+            var termState = (PulsingTermState) _termState;
 
-            Debug.Debug.Assert((empty.Length == 0);
+            Debug.Assert(empty.Length == 0);
+
             termState.Absolute = termState.Absolute || absolute;
             // if we have positions, its total TF, otherwise its computed based on docFreq.
             // TODO Double check this is right..
-            long count = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(fieldInfo.IndexOptions) <= 0
+            long count = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(fieldInfo.FieldIndexOptions) <= 0
                 ? termState.TotalTermFreq
                 : termState.DocFreq;
-            //System.out.println("  count=" + count + " threshold=" + maxPositions);
-
-            if (count <= maxPositions)
+           
+            if (count <= _maxPositions)
             {
                 // Inlined into terms dict -- just read the byte[] blob in,
                 // but don't decode it now (we only decode when a DocsEnum
@@ -134,12 +133,12 @@ namespace Lucene.Net.Codecs.Pulsing
             }
             else
             {
-                int longsSize = fields == null ? 0 : fields[fieldInfo.Number];
+                var longsSize = _fields == null ? 0 : _fields[fieldInfo.Number];
                 if (termState.Longs == null)
                 {
                     termState.Longs = new long[longsSize];
                 }
-                for (int i = 0; i < longsSize; i++)
+                for (var i = 0; i < longsSize; i++)
                 {
                     termState.Longs[i] = input.ReadVLong();
                 }
@@ -156,7 +155,7 @@ namespace Lucene.Net.Codecs.Pulsing
         public override DocsEnum Docs(FieldInfo field, BlockTermState _termState, Bits liveDocs, DocsEnum reuse,
             int flags)
         {
-            PulsingTermState termState = (PulsingTermState) _termState;
+            var termState = (PulsingTermState) _termState;
             if (termState.PostingsSize != -1)
             {
                 PulsingDocsEnum postings;
@@ -171,7 +170,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 else
                 {
                     // the 'reuse' is actually the wrapped enum
-                    PulsingDocsEnum previous = (PulsingDocsEnum) GetOther(reuse);
+                    var previous = (PulsingDocsEnum) GetOther(reuse);
                     if (previous != null && previous.CanReuse(field))
                     {
                         postings = previous;
@@ -181,26 +180,21 @@ namespace Lucene.Net.Codecs.Pulsing
                         postings = new PulsingDocsEnum(field);
                     }
                 }
+                
                 if (reuse != postings)
-                {
                     SetOther(postings, reuse); // postings.other = reuse
-                }
+                
                 return postings.Reset(liveDocs, termState);
             }
-            else
-            {
-                if (reuse is PulsingDocsEnum)
-                {
-                    DocsEnum wrapped = _wrappedPostingsReader.Docs(field, termState.WrappedTermState, liveDocs,
-                        GetOther(reuse), flags);
-                    SetOther(wrapped, reuse); // wrapped.other = reuse
-                    return wrapped;
-                }
-                else
-                {
-                    return _wrappedPostingsReader.Docs(field, termState.WrappedTermState, liveDocs, reuse, flags);
-                }
-            }
+
+            if (!(reuse is PulsingDocsEnum))
+                return _wrappedPostingsReader.Docs(field, termState.WrappedTermState, liveDocs, reuse, flags);
+
+            var wrapped = _wrappedPostingsReader.Docs(field, termState.WrappedTermState, liveDocs,
+                GetOther(reuse), flags);
+
+            SetOther(wrapped, reuse); // wrapped.other = reuse
+            return wrapped;
         }
 
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo field, BlockTermState _termState, Bits liveDocs,
@@ -208,7 +202,7 @@ namespace Lucene.Net.Codecs.Pulsing
             int flags)
         {
 
-            PulsingTermState termState = (PulsingTermState) _termState;
+            var termState = (PulsingTermState) _termState;
 
             if (termState.PostingsSize != -1)
             {
@@ -224,7 +218,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 else
                 {
                     // the 'reuse' is actually the wrapped enum
-                    PulsingDocsAndPositionsEnum previous = (PulsingDocsAndPositionsEnum) GetOther(reuse);
+                    var previous = (PulsingDocsAndPositionsEnum) GetOther(reuse);
                     if (previous != null && previous.CanReuse(field))
                     {
                         postings = previous;
@@ -238,25 +232,19 @@ namespace Lucene.Net.Codecs.Pulsing
                 {
                     SetOther(postings, reuse); // postings.other = reuse 
                 }
-                return postings.reset(liveDocs, termState);
+                return postings.Reset(liveDocs, termState);
             }
-            else
-            {
-                if (reuse is PulsingDocsAndPositionsEnum)
-                {
-                    DocsAndPositionsEnum wrapped = _wrappedPostingsReader.DocsAndPositions(field,
-                        termState.WrappedTermState,
-                        liveDocs, (DocsAndPositionsEnum) GetOther(reuse),
-                        flags);
-                    SetOther(wrapped, reuse); // wrapped.other = reuse
-                    return wrapped;
-                }
-                else
-                {
-                    return _wrappedPostingsReader.DocsAndPositions(field, termState.WrappedTermState, liveDocs, reuse,
-                        flags);
-                }
-            }
+
+            if (!(reuse is PulsingDocsAndPositionsEnum))
+                return _wrappedPostingsReader.DocsAndPositions(field, termState.WrappedTermState, liveDocs, reuse,
+                    flags);
+
+            var wrapped = _wrappedPostingsReader.DocsAndPositions(field,
+                termState.WrappedTermState,
+                liveDocs, (DocsAndPositionsEnum) GetOther(reuse),
+                flags);
+            SetOther(wrapped, reuse); // wrapped.other = reuse
+            return wrapped;
         }
 
         public override long RamBytesUsed()
@@ -287,14 +275,10 @@ namespace Lucene.Net.Codecs.Pulsing
         private DocsEnum GetOther(DocsEnum de)
         {
             if (de == null)
-            {
                 return null;
-            }
-            else
-            {
-                AttributeSource atts = de.Attributes();
-                return atts.AddAttribute(PulsingEnumAttribute.Enums().get(this);
-            }
+            
+            var atts = de.Attributes();
+            return atts.AddAttribute(PulsingEnumAttribute.class).Enums().get(this);
         }
 
         /// <summary>
@@ -303,8 +287,8 @@ namespace Lucene.Net.Codecs.Pulsing
         /// </summary>
         private DocsEnum SetOther(DocsEnum de, DocsEnum other)
         {
-            AttributeSource atts = de.Attributes();
-            return atts.AddAttribute(PulsingEnumAttributeImpl.Enums().put(this, other));
+            var atts = de.Attributes();
+            return atts.AddAttribute(PulsingEnumAttribute.class).Enums().put(this, other);
         }
 
         ///<summary>
@@ -329,7 +313,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             public override object Clone()
             {
-                PulsingTermState clone = (PulsingTermState) base.Clone();
+                var clone = (PulsingTermState) base.Clone();
                 if (PostingsSize != -1)
                 {
                     clone.Postings = new byte[PostingsSize];
@@ -337,14 +321,14 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
                 else
                 {
-                    Debug.Debug.Assert((WrappedTermState != null);
+                    Debug.Assert(WrappedTermState != null);
                     clone.WrappedTermState = (BlockTermState) WrappedTermState.Clone();
                     clone.Absolute = Absolute;
-                    if (Longs != null)
-                    {
-                        clone.Longs = new long[Longs.Length];
-                        Array.Copy(Longs, 0, clone.Longs, 0, Longs.Length);
-                    }
+                    
+                    if (Longs == null) return clone;
+
+                    clone.Longs = new long[Longs.Length];
+                    Array.Copy(Longs, 0, clone.Longs, 0, Longs.Length);
                 }
                 return clone;
             }
@@ -360,7 +344,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     {
                         Postings = new byte[ArrayUtil.Oversize(_other.PostingsSize, 1)];
                     }
-                    System.Array.Copy(_other.Postings, 0, Postings, 0, _other.PostingsSize);
+                    Array.Copy(_other.Postings, 0, Postings, 0, _other.PostingsSize);
                 }
                 else
                 {
@@ -371,373 +355,341 @@ namespace Lucene.Net.Codecs.Pulsing
             public override String ToString()
             {
                 if (PostingsSize == -1)
-                {
                     return "PulsingTermState: not inlined: wrapped=" + WrappedTermState;
-                }
-                else
-                {
-                    return "PulsingTermState: inlined size=" + PostingsSize + " " + base.ToString();
-                }
+                
+                return "PulsingTermState: inlined size=" + PostingsSize + " " + base.ToString();
             }
         }
 
         internal class PulsingDocsEnum : DocsEnum
         {
-            private byte[] postingsBytes;
-            private readonly ByteArrayDataInput postings = new ByteArrayDataInput();
-            private readonly FieldInfo.IndexOptions_e? indexOptions;
-            private readonly bool storePayloads;
-            private readonly bool storeOffsets;
-            private Bits liveDocs;
+            private byte[] _postingsBytes;
+            private readonly ByteArrayDataInput _postings = new ByteArrayDataInput();
+            private readonly FieldInfo.IndexOptions? _indexOptions;
+            private readonly bool _storePayloads;
+            private readonly bool _storeOffsets;
+            private Bits _liveDocs;
 
-            private int docID = -1;
-            private int accum;
-            private int freq;
-            private int payloadLength;
-            private int cost;
+            private int _docId = -1;
+            private int _accum;
+            private int _freq;
+            private int _payloadLength;
+            private int _cost;
 
             public PulsingDocsEnum(FieldInfo fieldInfo)
             {
-                indexOptions = fieldInfo.IndexOptions;
-                storePayloads = fieldInfo.HasPayloads();
-                storeOffsets = indexOptions.Value.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                _indexOptions = fieldInfo.FieldIndexOptions;
+                _storePayloads = fieldInfo.HasPayloads();
+                _storeOffsets = _indexOptions.Value.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public PulsingDocsEnum Reset(Bits liveDocs, PulsingTermState termState)
             {
-                Debug.Debug.Assert((termState.PostingsSize != -1);
+                Debug.Assert(termState.PostingsSize != -1);
 
                 // Must make a copy of termState's byte[] so that if
                 // app does TermsEnum.next(), this DocsEnum is not affected
-                if (postingsBytes == null)
+                if (_postingsBytes == null)
                 {
-                    postingsBytes = new byte[termState.PostingsSize];
+                    _postingsBytes = new byte[termState.PostingsSize];
                 }
-                else if (postingsBytes.Length < termState.PostingsSize)
+                else if (_postingsBytes.Length < termState.PostingsSize)
                 {
-                    postingsBytes = ArrayUtil.Grow(postingsBytes, termState.PostingsSize);
+                    _postingsBytes = ArrayUtil.Grow(_postingsBytes, termState.PostingsSize);
                 }
-                System.Array.Copy(termState.Postings, 0, postingsBytes, 0, termState.PostingsSize);
-                postings.Reset(postingsBytes, 0, termState.PostingsSize);
-                docID = -1;
-                accum = 0;
-                freq = 1;
-                cost = termState.DocFreq;
-                payloadLength = 0;
-                this.liveDocs = liveDocs;
+                System.Array.Copy(termState.Postings, 0, _postingsBytes, 0, termState.PostingsSize);
+                _postings.Reset(_postingsBytes, 0, termState.PostingsSize);
+                _docId = -1;
+                _accum = 0;
+                _freq = 1;
+                _cost = termState.DocFreq;
+                _payloadLength = 0;
+                this._liveDocs = liveDocs;
                 return this;
             }
 
             public bool CanReuse(FieldInfo fieldInfo)
             {
-                return indexOptions == fieldInfo.IndexOptions && storePayloads == fieldInfo.HasPayloads();
+                return _indexOptions == fieldInfo.FieldIndexOptions && _storePayloads == fieldInfo.HasPayloads();
             }
 
             public override int DocID()
             {
-                return docID;
+                return _docId;
             }
 
             public override int NextDoc()
             {
-                //System.out.println("PR nextDoc this= "+ this);
                 while (true)
                 {
-                    if (postings.Eof())
+                    if (_postings.Eof())
+                        return _docId = NO_MORE_DOCS;
+                    
+                    var code = _postings.ReadVInt();
+                    if (_indexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
                     {
-                        return docID = NO_MORE_DOCS;
-                    }
-
-                    int code = postings.ReadVInt();
-                    if (indexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
-                    {
-                        accum += code;
+                        _accum += code;
                     }
                     else
                     {
-                        accum += (int)((uint)code >> 1); ; // shift off low bit
-                        if ((code & 1) != 0)
-                        {
-                            // if low bit is set
-                            freq = 1; // freq is one
-                        }
-                        else
-                        {
-                            freq = postings.ReadVInt(); // else read freq
-                        }
+                        _accum += (int)((uint)code >> 1); ; // shift off low bit
+                        _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt();
 
-                        if (indexOptions.Value.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+                        if (_indexOptions.Value.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
                         {
                             // Skip positions
-                            if (storePayloads)
+                            if (_storePayloads)
                             {
-                                for (int pos = 0; pos < freq; pos++)
+                                for (var pos = 0; pos < _freq; pos++)
                                 {
-                                    int posCode = postings.ReadVInt();
+                                    var posCode = _postings.ReadVInt();
                                     if ((posCode & 1) != 0)
                                     {
-                                        payloadLength = postings.ReadVInt();
+                                        _payloadLength = _postings.ReadVInt();
                                     }
-                                    if (storeOffsets && (postings.ReadVInt() & 1) != 0)
+                                    if (_storeOffsets && (_postings.ReadVInt() & 1) != 0)
                                     {
                                         // new offset length
-                                        postings.ReadVInt();
+                                        _postings.ReadVInt();
                                     }
-                                    if (payloadLength != 0)
+                                    if (_payloadLength != 0)
                                     {
-                                        postings.SkipBytes(payloadLength);
+                                        _postings.SkipBytes(_payloadLength);
                                     }
                                 }
                             }
                             else
                             {
-                                for (int pos = 0; pos < freq; pos++)
+                                for (var pos = 0; pos < _freq; pos++)
                                 {
                                     // TODO: skipVInt
-                                    postings.ReadVInt();
-                                    if (storeOffsets && (postings.ReadVInt() & 1) != 0)
+                                    _postings.ReadVInt();
+                                    if (_storeOffsets && (_postings.ReadVInt() & 1) != 0)
                                     {
                                         // new offset length
-                                        postings.ReadVInt();
+                                        _postings.ReadVInt();
                                     }
                                 }
                             }
                         }
                     }
 
-                    if (liveDocs == null || liveDocs.Get(accum))
-                    {
-                        return (docID = accum);
-                    }
-
+                    if (_liveDocs == null || _liveDocs.Get(_accum))
+                        return (_docId = _accum);
                 }
             }
 
             public override int Advance(int target)
             {
-                return docID = SlowAdvance(target);
+                return _docId = SlowAdvance(target);
             }
 
             public override long Cost()
             {
-                return cost;
+                return _cost;
             }
 
             public override int Freq()
             {
-                return freq;
+                return _freq;
             }
         }
 
         internal class PulsingDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            private byte[] postingsBytes;
-            private readonly ByteArrayDataInput postings = new ByteArrayDataInput();
-            private readonly bool storePayloads;
-            private readonly bool storeOffsets;
+            private byte[] _postingsBytes;
+            private readonly ByteArrayDataInput _postings = new ByteArrayDataInput();
+            private readonly bool _storePayloads;
+            private readonly bool _storeOffsets;
             // note: we could actually reuse across different options, if we passed this to reset()
             // and re-init'ed storeOffsets accordingly (made it non-final)
-            private readonly FieldInfo.IndexOptions_e? indexOptions;
+            private readonly FieldInfo.IndexOptions? _indexOptions;
 
-            private Bits liveDocs;
-            private int docID = -1;
-            private int accum;
-            private int freq;
-            private int posPending;
-            private int position;
-            private int payloadLength;
-            private BytesRef payload;
-            private int startOffset;
-            private int offsetLength;
+            private Bits _liveDocs;
+            private int _docId = -1;
+            private int _accum;
+            private int _freq;
+            private int _posPending;
+            private int _position;
+            private int _payloadLength;
+            private BytesRef _payload;
+            private int _startOffset;
+            private int _offsetLength;
 
-            private bool payloadRetrieved;
-            private int cost;
+            private bool _payloadRetrieved;
+            private int _cost;
 
             public PulsingDocsAndPositionsEnum(FieldInfo fieldInfo)
             {
-                indexOptions = fieldInfo.IndexOptions;
-                storePayloads = fieldInfo.HasPayloads();
-                storeOffsets =
-                    indexOptions.Value.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                _indexOptions = fieldInfo.FieldIndexOptions;
+                _storePayloads = fieldInfo.HasPayloads();
+                _storeOffsets =
+                    _indexOptions.Value.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
-            public PulsingDocsAndPositionsEnum reset(Bits liveDocs, PulsingTermState termState)
+            public PulsingDocsAndPositionsEnum Reset(Bits liveDocs, PulsingTermState termState)
             {
-                Debug.Debug.Assert((termState.PostingsSize != -1);
+                Debug.Assert(termState.PostingsSize != -1);
 
-                if (postingsBytes == null)
+                if (_postingsBytes == null)
                 {
-                    postingsBytes = new byte[termState.PostingsSize];
+                    _postingsBytes = new byte[termState.PostingsSize];
                 }
-                else if (postingsBytes.Length < termState.PostingsSize)
+                else if (_postingsBytes.Length < termState.PostingsSize)
                 {
-                    postingsBytes = ArrayUtil.Grow(postingsBytes, termState.PostingsSize);
+                    _postingsBytes = ArrayUtil.Grow(_postingsBytes, termState.PostingsSize);
                 }
 
-                System.Array.Copy(termState.Postings, 0, postingsBytes, 0, termState.PostingsSize);
-                postings.Reset(postingsBytes, 0, termState.PostingsSize);
-                this.liveDocs = liveDocs;
-                payloadLength = 0;
-                posPending = 0;
-                docID = -1;
-                accum = 0;
-                cost = termState.DocFreq;
-                startOffset = storeOffsets ? 0 : -1; // always return -1 if no offsets are stored
-                offsetLength = 0;
+                Array.Copy(termState.Postings, 0, _postingsBytes, 0, termState.PostingsSize);
+                _postings.Reset(_postingsBytes, 0, termState.PostingsSize);
+                this._liveDocs = liveDocs;
+                _payloadLength = 0;
+                _posPending = 0;
+                _docId = -1;
+                _accum = 0;
+                _cost = termState.DocFreq;
+                _startOffset = _storeOffsets ? 0 : -1; // always return -1 if no offsets are stored
+                _offsetLength = 0;
                 //System.out.println("PR d&p reset storesPayloads=" + storePayloads + " bytes=" + bytes.length + " this=" + this);
                 return this;
             }
 
             public bool CanReuse(FieldInfo fieldInfo)
             {
-                return indexOptions == fieldInfo.IndexOptions && storePayloads == fieldInfo.HasPayloads();
+                return _indexOptions == fieldInfo.FieldIndexOptions && _storePayloads == fieldInfo.HasPayloads();
             }
 
             public override int NextDoc()
             {
-
                 while (true)
                 {
-
                     SkipPositions();
 
-                    if (postings.Eof())
+                    if (_postings.Eof())
                     {
-                        return docID = NO_MORE_DOCS;
+                        return _docId = NO_MORE_DOCS;
                     }
 
-                    int code = postings.ReadVInt();
-                    accum += (int)((uint)code >> 1); // shift off low bit 
-                    if ((code & 1) != 0)
-                    {
-                        // if low bit is set
-                        freq = 1; // freq is one
-                    }
-                    else
-                    {
-                        freq = postings.ReadVInt(); // else read freq
-                    }
-                    posPending = freq;
-                    startOffset = storeOffsets ? 0 : -1; // always return -1 if no offsets are stored
+                    var code = _postings.ReadVInt();
+                    _accum += (int)((uint)code >> 1); // shift off low bit 
+                    _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt();
+                    _posPending = _freq;
+                    _startOffset = _storeOffsets ? 0 : -1; // always return -1 if no offsets are stored
 
-                    if (liveDocs == null || liveDocs.Get(accum))
-                    {
-                        position = 0;
-                        return (docID = accum);
-                    }
+                    if (_liveDocs != null && !_liveDocs.Get(_accum)) continue;
+
+                    _position = 0;
+                    return (_docId = _accum);
                 }
             }
 
             public override int Freq()
             {
-                return freq;
+                return _freq;
             }
 
             public override int DocID()
             {
-                return docID;
+                return _docId;
             }
 
             public override int Advance(int target)
             {
-                return docID = SlowAdvance(target);
+                return _docId = SlowAdvance(target);
             }
 
             public override int NextPosition()
             {
-                Debug.Debug.Assert((posPending > 0);
+                Debug.Assert(_posPending > 0);
 
-                posPending--;
+                _posPending--;
 
-                if (storePayloads)
+                if (_storePayloads)
                 {
-                    if (!payloadRetrieved)
+                    if (!_payloadRetrieved)
                     {
-                        postings.SkipBytes(payloadLength);
+                        _postings.SkipBytes(_payloadLength);
                     }
-                    int code = postings.ReadVInt();
+                    int code = _postings.ReadVInt();
                     if ((code & 1) != 0)
                     {
-                        payloadLength = postings.ReadVInt();
+                        _payloadLength = _postings.ReadVInt();
                     }
-                    position += (int)((uint)code >> 1);
-                    payloadRetrieved = false;
+                    _position += (int)((uint)code >> 1);
+                    _payloadRetrieved = false;
                 }
                 else
                 {
-                    position += postings.ReadVInt();
+                    _position += _postings.ReadVInt();
                 }
 
-                if (storeOffsets)
+                if (_storeOffsets)
                 {
-                    int offsetCode = postings.ReadVInt();
+                    int offsetCode = _postings.ReadVInt();
                     if ((offsetCode & 1) != 0)
                     {
                         // new offset length
-                        offsetLength = postings.ReadVInt();
+                        _offsetLength = _postings.ReadVInt();
                     }
-                    startOffset += (int)((uint)offsetCode >> 1);
+                    _startOffset += (int)((uint)offsetCode >> 1);
                 }
 
-                return position;
+                return _position;
             }
 
             public override int StartOffset()
             {
-                return startOffset;
+                return _startOffset;
             }
 
             public override int EndOffset()
             {
-                return startOffset + offsetLength;
+                return _startOffset + _offsetLength;
             }
 
             public override BytesRef Payload
             {
                 get
                 {
-                    if (payloadRetrieved)
+                    if (_payloadRetrieved)
+                        return _payload;
+                    
+                    if (_storePayloads && _payloadLength > 0)
                     {
-                        return payload;
-                    }
-                    else if (storePayloads && payloadLength > 0)
-                    {
-                        payloadRetrieved = true;
-                        if (payload == null)
+                        _payloadRetrieved = true;
+                        if (_payload == null)
                         {
-                            payload = new BytesRef(payloadLength);
+                            _payload = new BytesRef(_payloadLength);
                         }
                         else
                         {
-                            payload.Grow(payloadLength);
+                            _payload.Grow(_payloadLength);
                         }
-                        postings.ReadBytes(payload.Bytes, 0, payloadLength);
-                        payload.Length = payloadLength;
-                        return payload;
+                        _postings.ReadBytes(_payload.Bytes, 0, _payloadLength);
+                        _payload.Length = _payloadLength;
+                        return _payload;
                     }
-                    else
-                    {
-                        return null;
-                    }
+                    
+                    return null;
                 }
             }
 
             private void SkipPositions()
             {
-                while (posPending != 0)
+                while (_posPending != 0)
                 {
                     NextPosition();
                 }
-                if (storePayloads && !payloadRetrieved)
+                if (_storePayloads && !_payloadRetrieved)
                 {
-                    postings.SkipBytes(payloadLength);
-                    payloadRetrieved = true;
+                    _postings.SkipBytes(_payloadLength);
+                    _payloadRetrieved = true;
                 }
             }
             
             public override long Cost()
             {
-                return cost;
+                return _cost;
             }
         }
         
