@@ -18,10 +18,10 @@
 namespace Lucene.Net.Codecs.DiskDV
 {
     using System;
-    using Lucene.Net.Codecs.Lucene45;
-    using Lucene.Net.Index;
-    using Lucene.Net.Store;
-    using Lucene.Net.Util.Packed;
+    using Lucene45;
+    using Index;
+    using Store;
+    using Util.Packed;
 
     public class DiskDocValuesProducer : Lucene45DocValuesProducer
     {

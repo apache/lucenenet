@@ -18,9 +18,9 @@
 
 namespace Lucene.Net.Codecs.DiskDV
 {
-    using Lucene.Net.Codecs;
-    using Lucene.Net.Codecs.Lucene45;
-    using Lucene.Net.Index;
+    using Codecs;
+    using Lucene45;
+    using Index;
     using System;
 
     /// <summary>

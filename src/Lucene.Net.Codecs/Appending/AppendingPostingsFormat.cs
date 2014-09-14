@@ -18,8 +18,8 @@
 namespace Lucene.Net.Codecs.Appending
 {
     using System;
-    using Lucene.Net.Codecs.Lucene40;
-    using Lucene.Net.Index;
+    using Lucene40;
+    using Index;
 
     /// <summary>
     /// Appending Postigns Implementation
@@ -38,26 +38,21 @@ namespace Lucene.Net.Codecs.Appending
 
         public override FieldsProducer FieldsProducer(SegmentReadState state)
         {
-            PostingsReaderBase postings = new Lucene40PostingsReader(state.Directory, state.FieldInfos,
+            using (var postings = new Lucene40PostingsReader(state.Directory, state.FieldInfos,
                 state.SegmentInfo,
-                state.Context, state.SegmentSuffix);
-
-            var success = false;
-            FieldsProducer ret;
-            using (ret = new AppendingTermsReader(
-                state.Directory,
-                state.FieldInfos,
-                state.SegmentInfo,
-                postings,
-                state.Context,
-                state.SegmentSuffix,
-                state.TermsIndexDivisor))
+                state.Context, state.SegmentSuffix))
             {
-                success = true;
-            }
+                var ret = new AppendingTermsReader(
+                    state.Directory,
+                    state.FieldInfos,
+                    state.SegmentInfo,
+                    postings,
+                    state.Context,
+                    state.SegmentSuffix,
+                    state.TermsIndexDivisor);
 
-            return ret;
-            
+                return ret;
+            }
         }
     }
 }

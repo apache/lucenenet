@@ -17,7 +17,7 @@
 
 namespace Lucene.Net.Codecs.Bloom
 {
-    using Lucene.Net.Util;
+    using Util;
 
     /// <summary>
     /// Base class for hashing functions that can be referred to by name.

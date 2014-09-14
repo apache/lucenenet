@@ -18,7 +18,7 @@
 namespace Lucene.Net.Codecs.Bloom
 {
 
-    using Lucene.Net.Index;
+    using Index;
 
     /// <summary>
     /// Class used to create index-time {@link FuzzySet} appropriately configured for

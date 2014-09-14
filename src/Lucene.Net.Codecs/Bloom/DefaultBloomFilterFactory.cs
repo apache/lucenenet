@@ -17,7 +17,7 @@
 
 namespace Lucene.Net.Codecs.Bloom
 {
-    using Lucene.Net.Index;
+    using Index;
 
     /// <summary>
     /// Default policy is to allocate a bitset with 10% saturation given a unique term per document.

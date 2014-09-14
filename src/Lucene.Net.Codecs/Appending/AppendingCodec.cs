@@ -18,7 +18,7 @@
 namespace Lucene.Net.Codecs.Appending
 {
     using System;
-    using Lucene.Net.Codecs.Lucene40;
+    using Lucene40;
 
     /// <summary>
     /// This codec uses an index format that is very similar to Lucene40Codec 

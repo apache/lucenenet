@@ -19,9 +19,9 @@ namespace Lucene.Net.Codecs.DiskDV
 {
 
     using System;
-    using Lucene.Net.Codecs;
-    using Lucene.Net.Codecs.Lucene45;
-    using Lucene.Net.Index;
+    using Codecs;
+    using Lucene45;
+    using Index;
 
     /// <summary>
     /// Norms format that keeps all norms on disk

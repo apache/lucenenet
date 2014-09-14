@@ -18,8 +18,8 @@
 namespace Lucene.Net.Codecs.Appending
 {
     using System;
-    using Lucene.Net.Index;
-    using Lucene.Net.Store;
+    using Index;
+    using Store;
 
     /// <summary>
     /// Reads append-only terms from AppendingTermsWriter.

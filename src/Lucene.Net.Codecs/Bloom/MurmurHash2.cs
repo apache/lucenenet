@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-using System;
-
 namespace Lucene.Net.Codecs.Bloom
 {
 
-    using Lucene.Net.Util;
+    using System;
+    using Util;
 
     /// <summary>
     /// This is a very fast, non-cryptographic hash suitable for general hash-based
@@ -66,8 +65,8 @@ namespace Lucene.Net.Codecs.Bloom
                 h *= m;
                 h ^= k;
             }
-            int len_m = len_4 << 2;
-            int left = len - len_m;
+            var len_m = len_4 << 2;
+            var left = len - len_m;
             if (left != 0)
             {
                 if (left >= 3)
