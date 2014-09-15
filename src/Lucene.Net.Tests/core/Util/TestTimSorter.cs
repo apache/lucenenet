@@ -28,10 +28,5 @@ namespace Lucene.Net.Util
         {
             return new ArrayTimSorter<Entry>(arr, ArrayUtil.naturalComparator<Entry>(), TestUtil.NextInt(Random(), 0, arr.Length));
         }
-
-        public override void Set(Entry[] arr, int i)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.JavaCompatibility;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -41,51 +44,168 @@ namespace Lucene.Net.Util
         }
 
         private readonly bool Stable;
+        private readonly Random random;
 
         protected BaseSortTestCase(bool stable)
         {
             this.Stable = stable;
+            this.random = Random();
         }
 
         public abstract Sorter NewSorter(Entry[] arr);
 
+        public class StableEntryComparer : IComparer<Entry>
+        {
+            public int Compare(Entry a, Entry b)
+            {
+                if (a.Value < b.Value) return -1;
+                else if (a.Value > b.Value) return 1;
+
+                //required for stable sorting
+                return a.Ord < b.Ord ? -1 : a.Ord == b.Ord ? 0 : 1;
+            }
+        }
+
         public virtual void AssertSorted(Entry[] original, Entry[] sorted)
         {
             Assert.AreEqual(original.Length, sorted.Length);
-            Entry[] actuallySorted = Arrays.CopyOf(original, original.Length);
-            Array.Sort(actuallySorted);
+            Entry[] stableSorted = original.OrderBy(e => e, new StableEntryComparer()).ToArray();
             for (int i = 0; i < original.Length; ++i)
             {
-                Assert.AreEqual(actuallySorted[i].Value, sorted[i].Value);
+                Assert.AreEqual(stableSorted[i].Value, sorted[i].Value);
                 if (Stable)
                 {
-                    Assert.AreEqual(actuallySorted[i].Ord, sorted[i].Ord);
+                    Assert.AreEqual(stableSorted[i].Ord, sorted[i].Ord);
                 }
             }
         }
 
-        [Test]
-        public virtual void Test(Entry[] arr)
+        public virtual void SortTest(Entry[] arr)
         {
-            int o = Random().Next(1000);
-            var toSort = new Entry[o + arr.Length + Random().Next(3)];
+            int o = random.Next(1000);
+            var toSort = new Entry[o + arr.Length + random.Next(3)];
             Array.Copy(arr, 0, toSort, o, arr.Length);
             Sorter sorter = NewSorter(toSort);
             sorter.Sort(o, o + arr.Length);
             AssertSorted(arr, Arrays.CopyOfRange(toSort, o, o + arr.Length));
         }
 
-        internal enum Strategy
+        private delegate void Strategy(Entry[] arr, int i);
+
+        private void RandomStrategy(Entry[] arr, int i)
         {
-            RANDOM,
-            RANDOM_LOW_CARDINALITY,
-            ASCENDING,
-            DESCENDING,
-            STRICTLY_DESCENDING,
-            ASCENDING_SEQUENCES,
-            MOSTLY_ASCENDING
+            arr[i] = new Entry(random.Next(), i);
         }
 
-        public abstract void Set(Entry[] arr, int i);
+        private void RandomLowCardinalityStrategy(Entry[] arr, int i)
+        {
+            arr[i] = new Entry(random.nextInt(6), i);
+        }
+
+        private void AscendingStrategy(Entry[] arr, int i)
+        {
+            arr[i] = i == 0
+            ? new Entry(random.nextInt(6), 0)
+            : new Entry(arr[i - 1].Value + random.nextInt(6), i);
+        }
+
+        private void DescendingStrategy(Entry[] arr, int i)
+        {
+            arr[i] = i == 0
+            ? new Entry(random.nextInt(6), 0)
+            : new Entry(arr[i - 1].Value - random.nextInt(6), i);
+        }
+        
+        private void StrictlyDescendingStrategy(Entry[] arr, int i)
+        {
+            arr[i] = i == 0
+            ? new Entry(random.nextInt(6), 0)
+            : new Entry(arr[i - 1].Value - TestUtil.NextInt(random, 1, 5), i);
+            
+        }
+
+        private void AscendingSequencesStrategy(Entry[] arr, int i)
+        {
+            arr[i] = i == 0
+            ? new Entry(random.nextInt(6), 0)
+            : new Entry(Rarely(random) ? random.nextInt(1000) : arr[i - 1].Value + random.nextInt(6), i);
+            
+        }
+        
+        private void MostlyAscendingStrategy(Entry[] arr, int i)
+        {
+            arr[i] = i == 0
+            ? new Entry(random.nextInt(6), 0)
+            : new Entry(arr[i - 1].Value + TestUtil.NextInt(random, -8, 10), i);
+            
+        }
+
+        private void DoTest(Strategy strategy, int length)
+        {
+            Entry[] arr = new Entry[length];
+            for (int i = 0; i < arr.Length; ++i) {
+                strategy(arr, i);
+            }
+            SortTest(arr);
+        }
+
+        private void DoTest(Strategy strategy)
+        {
+            DoTest(strategy, Random().Next(20000));
+        }
+
+        [Test]
+        public void TestEmpty()
+        {
+            SortTest(new Entry[0]);
+        }
+
+        [Test]
+        public void TestOne()
+        {
+            DoTest(RandomStrategy, 1);
+        }
+
+        [Test]
+        public void TestTwo()
+        {
+            DoTest(RandomStrategy, 2);
+        }
+
+        [Test]
+        public void TestRandom()
+        {
+            DoTest(RandomStrategy);
+        }
+
+        [Test]
+        public void TestRandomLowCardinality()
+        {
+            DoTest(RandomLowCardinalityStrategy, 2);
+        }
+
+        [Test]
+        public void TestAscending()
+        {
+            DoTest(AscendingStrategy, 2);
+        }
+
+        [Test]
+        public void TestAscendingSequences()
+        {
+            DoTest(AscendingSequencesStrategy, 2);
+        }
+
+        [Test]
+        public void TestDescending()
+        {
+            DoTest(DescendingStrategy, 2);
+        }
+
+        [Test]
+        public void TestStrictlyDescendingStrategy()
+        {
+            DoTest(StrictlyDescendingStrategy, 2);
+        }
     }
 }

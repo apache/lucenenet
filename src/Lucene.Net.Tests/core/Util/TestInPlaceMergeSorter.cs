@@ -32,10 +32,5 @@ namespace Lucene.Net.Util
         {
             return new ArrayInPlaceMergeSorter<Entry>(arr, ArrayUtil.naturalComparator<Entry>());
         }
-
-        public override void Set(Entry[] arr, int i)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

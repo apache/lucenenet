@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
     ///   new VirtualMethod&lt;BaseClass&gt;(BaseClass.class, "oldName", parameters...);
     /// </pre>
     /// <p>this enforces the singleton status of these objects, as the maintenance of the cache would be too costly else.
-    /// If you try to create a second instance of for the same method/{@code baseClass} combination, an exception is thrown.
+    /// If you try to create a second instance of for the same method/{@code baseClass} combination, an exception is thrown.</p>
     /// <p>To detect if e.g. the old method was overridden by a more far subclass on the inheritance path to the current
     /// instance's class, use a <strong>non-static</strong> field:</p>
     /// <pre class="prettyprint">
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
     ///  final boolean isDeprecatedMethodOverridden =
     ///   VirtualMethod.compareImplementationDistance(this.getClass(), oldMethod, newMethod) > 0
     /// </pre>
-    /// <p><seealso cref="#getImplementationDistance"/> returns the distance of the subclass that overrides this method.
+    /// <p><seealso cref="getImplementationDistance"/> returns the distance of the subclass that overrides this method.
     /// The one with the larger distance should be used preferable.
     /// this way also more complicated method rename scenarios can be handled
     /// (think of 2.9 {@code TokenStream} deprecations).</p>
