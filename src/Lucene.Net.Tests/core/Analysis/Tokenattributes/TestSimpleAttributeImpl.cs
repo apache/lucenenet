@@ -31,10 +31,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
     {
         // this checks using reflection API if the defaults are correct
         [Test]
-        [Ignore("ReflectWith test helper method doesn't work and needs fixing")]
         public virtual void TestAttributes()
         {
-            TestUtil.AssertAttributeReflection(new PositionIncrementAttribute(), CollectionsHelper.SingletonMap(typeof(IPositionIncrementAttribute).Name + "#PositionIncrement", (object)1));
+            TestUtil.AssertAttributeReflection(new PositionIncrementAttribute(), CollectionsHelper.SingletonMap(typeof(IPositionIncrementAttribute).Name + "#positionIncrement", (object)1));
             TestUtil.AssertAttributeReflection(new PositionLengthAttribute(), CollectionsHelper.SingletonMap(typeof(IPositionLengthAttribute).Name + "#positionLength", (object)1));
             TestUtil.AssertAttributeReflection(new FlagsAttribute(), CollectionsHelper.SingletonMap(typeof(IFlagsAttribute).Name + "#flags", (object)0));
             TestUtil.AssertAttributeReflection(new TypeAttribute(), CollectionsHelper.SingletonMap(typeof(ITypeAttribute).Name + "#type", (object)TypeAttribute_Fields.DEFAULT_TYPE));

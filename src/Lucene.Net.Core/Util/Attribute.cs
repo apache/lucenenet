@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
                 throw new NotSupportedException(clazz.Name + " implements more than one Attribute interface, the default ReflectWith() implementation cannot handle this.");
             }
 
-            var interf = interfaces.First().GetType();
+            Type interf = (System.Type)interfaces.First().Target;
 
             /*object target = interfaces.First.Value;
 
@@ -100,7 +100,9 @@ namespace Lucene.Net.Util
 
             Type interf = target.GetType();// as Type;*/
 
-            FieldInfo[] fields = clazz.GetFields();// GetFields(BindingFlags.Instance | BindingFlags.Public);
+            //problem: the interfaces list has weak references that could have expired already
+
+            FieldInfo[] fields = clazz.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
             try
             {
                 for (int i = 0; i < fields.Length; i++)

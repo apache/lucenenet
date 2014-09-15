@@ -126,12 +126,13 @@ namespace Lucene.Net.Util
 
             // test some constants
             Assert.AreEqual(0, SmallFloat.FloatToByte315(0));
-            Assert.AreEqual(1, SmallFloat.FloatToByte315(float.MinValue)); // underflow rounds up to smallest positive
+            //Java's Float.MIN_VALUE equals C#'s float.Epsilon
+            Assert.AreEqual(1, SmallFloat.FloatToByte315(float.Epsilon)); // underflow rounds up to smallest positive
             Assert.AreEqual(255, SmallFloat.FloatToByte315(float.MaxValue) & 0xff); // overflow rounds down to largest positive
             Assert.AreEqual(255, SmallFloat.FloatToByte315(float.PositiveInfinity) & 0xff);
 
             // all negatives map to 0
-            Assert.AreEqual(0, SmallFloat.FloatToByte315(-float.MinValue));
+            Assert.AreEqual(0, SmallFloat.FloatToByte315(-float.Epsilon));
             Assert.AreEqual(0, SmallFloat.FloatToByte315(-float.MaxValue));
             Assert.AreEqual(0, SmallFloat.FloatToByte315(float.NegativeInfinity));
 

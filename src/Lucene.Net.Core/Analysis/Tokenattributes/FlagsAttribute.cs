@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
     /// Default implementation of <seealso cref="FlagsAttribute"/>. </summary>
     public class FlagsAttribute : Attribute, IFlagsAttribute, ICloneable
     {
-        private int Flags_Renamed = 0;
+        private int flags = 0;
 
         /// <summary>
         /// Initialize this attribute with no bits set </summary>
@@ -37,17 +37,17 @@ namespace Lucene.Net.Analysis.Tokenattributes
         {
             get
             {
-                return Flags_Renamed;
+                return flags;
             }
             set
             {
-                this.Flags_Renamed = value;
+                this.flags = value;
             }
         }
 
         public override void Clear()
         {
-            Flags_Renamed = 0;
+            flags = 0;
         }
 
         public override bool Equals(object other)
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
             if (other is FlagsAttribute)
             {
-                return ((FlagsAttribute)other).Flags_Renamed == Flags_Renamed;
+                return ((FlagsAttribute)other).flags == flags;
             }
 
             return false;
@@ -67,13 +67,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override int GetHashCode()
         {
-            return Flags_Renamed;
+            return flags;
         }
 
         public override void CopyTo(Attribute target)
         {
             FlagsAttribute t = (FlagsAttribute)target;
-            t.Flags = Flags_Renamed;
+            t.Flags = flags;
         }
     }
 }

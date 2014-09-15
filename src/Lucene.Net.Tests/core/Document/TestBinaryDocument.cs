@@ -60,7 +60,7 @@ namespace Lucene.Net.Document
             /// <summary>
             /// add the doc to a ram index </summary>
             Directory dir = NewDirectory();
-            Random r = new Random();
+            Random r = Random();
             RandomIndexWriter writer = new RandomIndexWriter(r, dir);
             writer.AddDocument(doc);
 

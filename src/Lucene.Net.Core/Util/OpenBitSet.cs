@@ -344,7 +344,7 @@ namespace Lucene.Net.Util
             int endWord = ExpandingWordNum(endIndex - 1);
 
             long startmask = -1L << (int)startIndex;
-            long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long endmask = (long)(0xffffffffffffffffUL >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
             {
@@ -611,6 +611,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
+
             int startWord = (int)(startIndex >> 6);
 
             // since endIndex is one past the end, this is index of the last
@@ -628,7 +629,7 @@ namespace Lucene.Net.Util
 
             //LUCENE TO-DO
             long startmask = -1L << (int)startIndex;
-            long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long endmask = (long)(0xffffffffffffffffUL >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
             if (startWord == endWord)
             {

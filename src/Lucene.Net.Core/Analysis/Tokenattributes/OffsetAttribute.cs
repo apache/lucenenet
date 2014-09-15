@@ -25,8 +25,8 @@ namespace Lucene.Net.Analysis.Tokenattributes
     /// Default implementation of <seealso cref="OffsetAttribute"/>. </summary>
     public class OffsetAttribute : Attribute, IOffsetAttribute, ICloneable
     {
-        private int StartOffset_Renamed;
-        private int EndOffset_Renamed;
+        private int startOffset;
+        private int endOffset;
 
         /// <summary>
         /// Initialize this attribute with startOffset and endOffset of 0. </summary>
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public int StartOffset()
         {
-            return StartOffset_Renamed;
+            return startOffset;
         }
 
         public void SetOffset(int startOffset, int endOffset)
@@ -52,21 +52,21 @@ namespace Lucene.Net.Analysis.Tokenattributes
                 throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset);
             }
 
-            this.StartOffset_Renamed = startOffset;
-            this.EndOffset_Renamed = endOffset;
+            this.startOffset = startOffset;
+            this.endOffset = endOffset;
         }
 
         public int EndOffset()
         {
-            return EndOffset_Renamed;
+            return endOffset;
         }
 
         public override void Clear()
         {
             // TODO: we could use -1 as default here?  Then we can
             // assert in setOffset...
-            StartOffset_Renamed = 0;
-            EndOffset_Renamed = 0;
+            startOffset = 0;
+            endOffset = 0;
         }
 
         public override bool Equals(object other)
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
             if (other is OffsetAttribute)
             {
                 OffsetAttribute o = (OffsetAttribute)other;
-                return o.StartOffset_Renamed == StartOffset_Renamed && o.EndOffset_Renamed == EndOffset_Renamed;
+                return o.startOffset == startOffset && o.endOffset == endOffset;
             }
 
             return false;
@@ -87,15 +87,15 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
         public override int GetHashCode()
         {
-            int code = StartOffset_Renamed;
-            code = code * 31 + EndOffset_Renamed;
+            int code = startOffset;
+            code = code * 31 + endOffset;
             return code;
         }
 
         public override void CopyTo(Attribute target)
         {
             OffsetAttribute t = (OffsetAttribute)target;
-            t.SetOffset(StartOffset_Renamed, EndOffset_Renamed);
+            t.SetOffset(startOffset, endOffset);
         }
     }
 }

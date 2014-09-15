@@ -1018,7 +1018,10 @@ namespace Lucene.Net.Util
         {
             IDictionary<string, object> map = new Dictionary<string, object>();
             att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
-            Assert.AreEqual(reflectedValues, map, "Reflection does not produce same map");
+            IDictionary<string, object> newReflectedObjects = new Dictionary<string, object>();
+            foreach (KeyValuePair<string, object> de in reflectedValues)
+                newReflectedObjects.Add(de.Key, (object)de.Value);
+            Assert.IsTrue(CollectionsHelper.DictEquals(newReflectedObjects, map), "Reflection does not produce same map");
         }
 
         private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
