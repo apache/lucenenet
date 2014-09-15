@@ -1,0 +1,178 @@
+﻿namespace org.apache.lucene.queries
+{
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	using IndexReader = org.apache.lucene.index.IndexReader;
+	using org.apache.lucene.search;
+
+	/// <summary>
+	/// The BoostingQuery class can be used to effectively demote results that match a given query. 
+	/// Unlike the "NOT" clause, this still selects documents that contain undesirable terms, 
+	/// but reduces their overall score:
+	/// 
+	///     Query balancedQuery = new BoostingQuery(positiveQuery, negativeQuery, 0.01f);
+	/// In this scenario the positiveQuery contains the mandatory, desirable criteria which is used to 
+	/// select all matching documents, and the negativeQuery contains the undesirable elements which 
+	/// are simply used to lessen the scores. Documents that match the negativeQuery have their score 
+	/// multiplied by the supplied "boost" parameter, so this should be less than 1 to achieve a 
+	/// demoting effect
+	/// 
+	/// This code was originally made available here: [WWW] http://marc.theaimsgroup.com/?l=lucene-user&m=108058407130459&w=2
+	/// and is documented here: http://wiki.apache.org/lucene-java/CommunityContributions
+	/// </summary>
+	public class BoostingQuery : Query
+	{
+		private readonly float boost; // the amount to boost by
+		private readonly Query match; // query to match
+		private readonly Query context; // boost when matches too
+
+		public BoostingQuery(Query match, Query context, float boost)
+		{
+		  this.match = match;
+		  this.context = context.clone(); // clone before boost
+		  this.boost = boost;
+		  this.context.Boost = 0.0f; // ignore context-only matches
+		}
+
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: @Override public Query rewrite(org.apache.lucene.index.IndexReader reader) throws java.io.IOException
+		public override Query rewrite(IndexReader reader)
+		{
+		  BooleanQuery result = new BooleanQueryAnonymousInnerClassHelper(this);
+
+		  result.add(match, BooleanClause.Occur.MUST);
+		  result.add(context, BooleanClause.Occur.SHOULD);
+
+		  return result;
+		}
+
+		private class BooleanQueryAnonymousInnerClassHelper : BooleanQuery
+		{
+			private readonly BoostingQuery outerInstance;
+
+			public BooleanQueryAnonymousInnerClassHelper(BoostingQuery outerInstance)
+			{
+				this.outerInstance = outerInstance;
+			}
+
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: @Override public Weight createWeight(IndexSearcher searcher) throws java.io.IOException
+			public override Weight createWeight(IndexSearcher searcher)
+			{
+			  return new BooleanWeightAnonymousInnerClassHelper(this, searcher);
+			}
+
+			private class BooleanWeightAnonymousInnerClassHelper : BooleanWeight
+			{
+				private readonly BooleanQueryAnonymousInnerClassHelper outerInstance;
+
+				public BooleanWeightAnonymousInnerClassHelper(BooleanQueryAnonymousInnerClassHelper outerInstance, IndexSearcher searcher) : base(searcher, false)
+				{
+					this.outerInstance = outerInstance;
+				}
+
+
+				public override float coord(int overlap, int max)
+				{
+				  switch (overlap)
+				  {
+
+				  case 1: // matched only one clause
+					return 1.0f; // use the score as-is
+
+				  case 2: // matched both clauses
+					return outerInstance.outerInstance.boost; // multiply by boost
+
+				  default:
+					return 0.0f;
+
+				  }
+				}
+			}
+		}
+
+		public override int GetHashCode()
+		{
+		  const int prime = 31;
+		  int result = base.GetHashCode();
+		  result = prime * result + float.floatToIntBits(boost);
+		  result = prime * result + ((context == null) ? 0 : context.GetHashCode());
+		  result = prime * result + ((match == null) ? 0 : match.GetHashCode());
+		  return result;
+		}
+
+		public override bool Equals(object obj)
+		{
+		  if (this == obj)
+		  {
+			return true;
+		  }
+		  if (obj == null)
+		  {
+			return false;
+		  }
+		  if (this.GetType() != obj.GetType())
+		  {
+			return false;
+		  }
+
+		  if (!base.Equals(obj))
+		  {
+			return false;
+		  }
+
+		  BoostingQuery other = (BoostingQuery) obj;
+		  if (float.floatToIntBits(boost) != float.floatToIntBits(other.boost))
+		  {
+			return false;
+		  }
+
+		  if (context == null)
+		  {
+			if (other.context != null)
+			{
+			  return false;
+			}
+		  }
+		  else if (!context.Equals(other.context))
+		  {
+			return false;
+		  }
+
+		  if (match == null)
+		  {
+			if (other.match != null)
+			{
+			  return false;
+			}
+		  }
+		  else if (!match.Equals(other.match))
+		  {
+			return false;
+		  }
+		  return true;
+		}
+
+		public override string ToString(string field)
+		{
+		  return match.ToString(field) + "/" + context.ToString(field);
+		}
+	}
+
+}
