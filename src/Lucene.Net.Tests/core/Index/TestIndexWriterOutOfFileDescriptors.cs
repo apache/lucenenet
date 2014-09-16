@@ -129,8 +129,8 @@ namespace Lucene.Net.Index
                             r2 = r3;
                         }
                     }
-                    Assert.IsTrue(r2.NumDocs() >= lastNumDocs, "before=" + lastNumDocs + " after=" + r2.NumDocs());
-                    lastNumDocs = r2.NumDocs();
+                    Assert.IsTrue(r2.NumDocs >= lastNumDocs, "before=" + lastNumDocs + " after=" + r2.NumDocs);
+                    lastNumDocs = r2.NumDocs;
                     //System.out.println("numDocs=" + lastNumDocs);
                     dir.RandomIOExceptionRateOnOpen = rate;
 

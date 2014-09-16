@@ -35,16 +35,19 @@ namespace Lucene.Net.Index
             : base(@in)
         {
             // check some basic reader sanity
-            Debug.Assert(@in.MaxDoc() >= 0);
-            Debug.Assert(@in.NumDocs() <= @in.MaxDoc());
-            Debug.Assert(@in.NumDeletedDocs() + @in.NumDocs() == @in.MaxDoc());
-            Debug.Assert(!@in.HasDeletions() || @in.NumDeletedDocs() > 0 && @in.NumDocs() < @in.MaxDoc());
+            Debug.Assert(@in.MaxDoc >= 0);
+            Debug.Assert(@in.NumDocs <= @in.MaxDoc);
+            Debug.Assert(@in.NumDeletedDocs + @in.NumDocs == @in.MaxDoc);
+            Debug.Assert(!@in.HasDeletions || @in.NumDeletedDocs > 0 && @in.NumDocs < @in.MaxDoc);
         }
 
-        public override Fields Fields()
+        public override Fields Fields
         {
-            Fields fields = base.Fields();
-            return fields == null ? null : new AssertingFields(fields);
+            get
+            {
+                Fields fields = base.Fields;
+                return fields == null ? null : new AssertingFields(fields);
+            }
         }
 
         public override Fields GetTermVectors(int docID)
@@ -622,7 +625,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(fi != null);
                 Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType_e.NUMERIC);
-                return new AssertingNumericDocValues(dv, MaxDoc());
+                return new AssertingNumericDocValues(dv, MaxDoc);
             }
             else
             {
@@ -639,7 +642,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(fi != null);
                 Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType_e.BINARY);
-                return new AssertingBinaryDocValues(dv, MaxDoc());
+                return new AssertingBinaryDocValues(dv, MaxDoc);
             }
             else
             {
@@ -656,7 +659,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(fi != null);
                 Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType_e.SORTED);
-                return new AssertingSortedDocValues(dv, MaxDoc());
+                return new AssertingSortedDocValues(dv, MaxDoc);
             }
             else
             {
@@ -673,7 +676,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(fi != null);
                 Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType_e.SORTED_SET);
-                return new AssertingSortedSetDocValues(dv, MaxDoc());
+                return new AssertingSortedSetDocValues(dv, MaxDoc);
             }
             else
             {
@@ -690,7 +693,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(fi != null);
                 Debug.Assert(fi.HasNorms());
-                return new AssertingNumericDocValues(dv, MaxDoc());
+                return new AssertingNumericDocValues(dv, MaxDoc);
             }
             else
             {
@@ -729,13 +732,13 @@ namespace Lucene.Net.Index
                 Bits liveDocs = base.LiveDocs;
                 if (liveDocs != null)
                 {
-                    Debug.Assert(MaxDoc() == liveDocs.Length());
+                    Debug.Assert(MaxDoc == liveDocs.Length());
                     liveDocs = new AssertingBits(liveDocs);
                 }
                 else
                 {
-                    Debug.Assert(MaxDoc() == NumDocs());
-                    Debug.Assert(!HasDeletions());
+                    Debug.Assert(MaxDoc == NumDocs);
+                    Debug.Assert(!HasDeletions);
                 }
                 return liveDocs;
             }
@@ -749,7 +752,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(fi != null);
                 Debug.Assert(fi.HasDocValues());
-                Debug.Assert(MaxDoc() == docsWithField.Length());
+                Debug.Assert(MaxDoc == docsWithField.Length());
                 docsWithField = new AssertingBits(docsWithField);
             }
             else

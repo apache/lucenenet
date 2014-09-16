@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
         private readonly AtomicReader[] ParallelReaders, StoredFieldsReaders;
         private readonly ISet<AtomicReader> CompleteReaderSet = new IdentityHashSet<AtomicReader>();
         private readonly bool CloseSubReaders;
-        private readonly int MaxDoc_Renamed, NumDocs_Renamed;
+        private readonly int maxDoc, numDocs;
         private readonly bool hasDeletions;
         private readonly IDictionary<string, AtomicReader> FieldToReader = new SortedDictionary<string, AtomicReader>();
         private readonly IDictionary<string, AtomicReader> TvFieldToReader = new SortedDictionary<string, AtomicReader>();
@@ -113,13 +113,13 @@ namespace Lucene.Net.Index
             if (ParallelReaders.Length > 0)
             {
                 AtomicReader first = ParallelReaders[0];
-                this.MaxDoc_Renamed = first.MaxDoc();
-                this.NumDocs_Renamed = first.NumDocs();
-                this.hasDeletions = first.HasDeletions();
+                this.maxDoc = first.MaxDoc;
+                this.numDocs = first.NumDocs;
+                this.hasDeletions = first.HasDeletions;
             }
             else
             {
-                this.MaxDoc_Renamed = this.NumDocs_Renamed = 0;
+                this.maxDoc = this.numDocs = 0;
                 this.hasDeletions = false;
             }
             CollectionsHelper.AddAll(CompleteReaderSet, this.ParallelReaders);
@@ -128,9 +128,9 @@ namespace Lucene.Net.Index
             // check compatibility:
             foreach (AtomicReader reader in CompleteReaderSet)
             {
-                if (reader.MaxDoc() != MaxDoc_Renamed)
+                if (reader.MaxDoc != maxDoc)
                 {
-                    throw new System.ArgumentException("All readers must have same maxDoc: " + MaxDoc_Renamed + "!=" + reader.MaxDoc());
+                    throw new System.ArgumentException("All readers must have same maxDoc: " + maxDoc + "!=" + reader.MaxDoc);
                 }
             }
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
             // build Fields instance
             foreach (AtomicReader reader in this.ParallelReaders)
             {
-                Fields readerFields = reader.Fields();
+                Fields readerFields = reader.Fields;
                 if (readerFields != null)
                 {
                     foreach (string field in readerFields)
@@ -232,9 +232,9 @@ namespace Lucene.Net.Index
                 return ret;
             }
 
-            public override int Size()
+            public override int Size
             {
-                return Fields.Count;
+                get { return Fields.Count; }
             }
         }
 
@@ -263,22 +263,31 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override Fields Fields()
+        public override Fields Fields
         {
-            EnsureOpen();
-            return Fields_Renamed;
+            get
+            {
+                EnsureOpen();
+                return Fields_Renamed;
+            }
         }
 
-        public override int NumDocs()
+        public override int NumDocs
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return NumDocs_Renamed;
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return numDocs;
+            }
         }
 
-        public override int MaxDoc()
+        public override int MaxDoc
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return MaxDoc_Renamed;
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return maxDoc;
+            }
         }
 
         public override void Document(int docID, StoredFieldVisitor visitor)

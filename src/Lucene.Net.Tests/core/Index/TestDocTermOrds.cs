@@ -170,13 +170,13 @@ namespace Lucene.Net.Index
                 Console.WriteLine("TEST: reader=" + r);
             }
 
-            foreach (AtomicReaderContext ctx in r.Leaves())
+            foreach (AtomicReaderContext ctx in r.Leaves)
             {
                 if (VERBOSE)
                 {
-                    Console.WriteLine("\nTEST: sub=" + ctx.Reader());
+                    Console.WriteLine("\nTEST: sub=" + ctx.Reader);
                 }
-                Verify((AtomicReader)ctx.Reader(), idToOrds, termsArray, null);
+                Verify((AtomicReader)ctx.Reader, idToOrds, termsArray, null);
             }
 
             // Also test top-level reader: its enum does not support
@@ -309,13 +309,13 @@ namespace Lucene.Net.Index
                     idToOrdsPrefix[id] = newOrdsArray;
                 }
 
-                foreach (AtomicReaderContext ctx in r.Leaves())
+                foreach (AtomicReaderContext ctx in r.Leaves)
                 {
                     if (VERBOSE)
                     {
-                        Console.WriteLine("\nTEST: sub=" + ctx.Reader());
+                        Console.WriteLine("\nTEST: sub=" + ctx.Reader);
                     }
-                    Verify((AtomicReader)ctx.Reader(), idToOrdsPrefix, termsArray, prefixRef);
+                    Verify((AtomicReader)ctx.Reader, idToOrdsPrefix, termsArray, prefixRef);
                 }
 
                 // Also test top-level reader: its enum does not support
@@ -339,7 +339,7 @@ namespace Lucene.Net.Index
 
             FieldCache_Fields.Ints docIDToID = FieldCache_Fields.DEFAULT.GetInts(r, "id", false);
             /*
-              for(int docID=0;docID<subR.MaxDoc();docID++) {
+              for(int docID=0;docID<subR.MaxDoc;docID++) {
               System.out.println("  docID=" + docID + " id=" + docIDToID[docID]);
               }
             */
@@ -356,7 +356,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            //final TermsEnum te = subR.Fields().Terms("field").iterator();
+            //final TermsEnum te = subR.Fields.Terms("field").iterator();
             TermsEnum te = dto.GetOrdTermsEnum(r);
             if (dto.NumTerms() == 0)
             {
@@ -403,11 +403,11 @@ namespace Lucene.Net.Index
             }
 
             SortedSetDocValues iter = dto.GetIterator(r);
-            for (int docID = 0; docID < r.MaxDoc(); docID++)
+            for (int docID = 0; docID < r.MaxDoc; docID++)
             {
                 if (VERBOSE)
                 {
-                    Console.WriteLine("TEST: docID=" + docID + " of " + r.MaxDoc() + " (id=" + docIDToID.Get(docID) + ")");
+                    Console.WriteLine("TEST: docID=" + docID + " of " + r.MaxDoc + " (id=" + docIDToID.Get(docID) + ")");
                 }
                 iter.Document = docID;
                 int[] answers = idToOrds[docIDToID.Get(docID)];

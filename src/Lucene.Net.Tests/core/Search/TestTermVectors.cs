@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
 
             Fields vectors = searcher.IndexReader.GetTermVectors(hits[0].Doc);
             Assert.IsNotNull(vectors);
-            Assert.AreEqual(1, vectors.Size());
+            Assert.AreEqual(1, vectors.Size);
             Terms vector = vectors.Terms("field");
             Assert.IsNotNull(vector);
             Assert.AreEqual(1, vector.Size());
@@ -195,7 +195,7 @@ namespace Lucene.Net.Search
         private void VerifyIndex(Directory dir)
         {
             IndexReader r = DirectoryReader.Open(dir);
-            int numDocs = r.NumDocs();
+            int numDocs = r.NumDocs;
             for (int i = 0; i < numDocs; i++)
             {
                 Assert.IsNotNull(r.GetTermVectors(i).Terms("c"), "term vectors should not have been null for document " + i);

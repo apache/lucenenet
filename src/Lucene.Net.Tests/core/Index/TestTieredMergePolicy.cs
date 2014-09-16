@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            Assert.AreEqual(numDocs, w.MaxDoc());
+            Assert.AreEqual(numDocs, w.MaxDoc);
             Assert.AreEqual(numDocs, w.NumDocs());
         }
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                 doc.Add(NewTextField("content", "aaa " + (i % 4), Field.Store.NO));
                 w.AddDocument(doc);
             }
-            Assert.AreEqual(80, w.MaxDoc());
+            Assert.AreEqual(80, w.MaxDoc);
             Assert.AreEqual(80, w.NumDocs());
 
             if (VERBOSE)
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
             w.DeleteDocuments(new Term("content", "0"));
             w.ForceMergeDeletes();
 
-            Assert.AreEqual(80, w.MaxDoc());
+            Assert.AreEqual(80, w.MaxDoc);
             Assert.AreEqual(60, w.NumDocs());
 
             if (VERBOSE)
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             ((TieredMergePolicy)w.Config.MergePolicy).ForceMergeDeletesPctAllowed = 10.0;
             w.ForceMergeDeletes();
             Assert.AreEqual(60, w.NumDocs());
-            Assert.AreEqual(60, w.MaxDoc());
+            Assert.AreEqual(60, w.MaxDoc);
             w.Dispose();
             dir.Dispose();
         }
@@ -178,8 +178,8 @@ namespace Lucene.Net.Index
 
             w.ForceMerge(1);
             IndexReader r = w.Reader;
-            Assert.AreEqual(numDocs, r.MaxDoc());
-            Assert.AreEqual(numDocs, r.NumDocs());
+            Assert.AreEqual(numDocs, r.MaxDoc);
+            Assert.AreEqual(numDocs, r.NumDocs);
             r.Dispose();
 
             if (VERBOSE)
@@ -190,15 +190,15 @@ namespace Lucene.Net.Index
             w.DeleteDocuments(new Term("id", "" + (42 + 17)));
 
             r = w.Reader;
-            Assert.AreEqual(numDocs, r.MaxDoc());
-            Assert.AreEqual(numDocs - 1, r.NumDocs());
+            Assert.AreEqual(numDocs, r.MaxDoc);
+            Assert.AreEqual(numDocs - 1, r.NumDocs);
             r.Dispose();
 
             w.ForceMergeDeletes();
 
             r = w.Reader;
-            Assert.AreEqual(numDocs - 1, r.MaxDoc());
-            Assert.AreEqual(numDocs - 1, r.NumDocs());
+            Assert.AreEqual(numDocs - 1, r.MaxDoc);
+            Assert.AreEqual(numDocs - 1, r.NumDocs);
             r.Dispose();
 
             w.Dispose();

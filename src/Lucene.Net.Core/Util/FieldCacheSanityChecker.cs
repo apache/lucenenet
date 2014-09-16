@@ -296,12 +296,12 @@ namespace Lucene.Net.Util
                 {
                     try
                     {
-                        IList<IndexReaderContext> childs = reader.Context.Children();
+                        IList<IndexReaderContext> childs = reader.Context.Children;
                         if (childs != null) // it is composite reader
                         {
                             foreach (IndexReaderContext ctx in childs)
                             {
-                                all.Add(ctx.Reader().CoreCacheKey);
+                                all.Add(ctx.Reader.CoreCacheKey);
                             }
                         }
                     }

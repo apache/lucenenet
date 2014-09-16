@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
             IndexSearcher s = new IndexSearcher(r);
             try
             {
-                s.SearchAfter(new ScoreDoc(r.MaxDoc(), 0.54f), new MatchAllDocsQuery(), 10);
+                s.SearchAfter(new ScoreDoc(r.MaxDoc, 0.54f), new MatchAllDocsQuery(), 10);
                 Assert.Fail("should have hit IllegalArgumentException when searchAfter exceeds maxDoc");
             }
             catch (System.ArgumentException e)

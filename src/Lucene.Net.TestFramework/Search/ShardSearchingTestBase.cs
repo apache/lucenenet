@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
         {
             if (VERBOSE)
             {
-                Console.WriteLine("REOPEN: nodeID=" + nodeID + " version=" + version + " maxDoc=" + newSearcher.IndexReader.MaxDoc());
+                Console.WriteLine("REOPEN: nodeID=" + nodeID + " version=" + version + " maxDoc=" + newSearcher.IndexReader.MaxDoc);
             }
 
             // Broadcast new collection stats for this node to all
@@ -406,8 +406,8 @@ namespace Lucene.Net.Search
                             sumDocFreq = -1;
                         }
 
-                        Debug.Assert(nodeStats.MaxDoc() >= 0);
-                        maxDoc += nodeStats.MaxDoc();
+                        Debug.Assert(nodeStats.MaxDoc >= 0);
+                        maxDoc += nodeStats.MaxDoc;
                     }
 
                     return new CollectionStatistics(field, maxDoc, docCount, sumTotalTermFreq, sumDocFreq);
@@ -463,7 +463,7 @@ namespace Lucene.Net.Search
                                 // request to a remote shard won't have reader.MaxDoc at hand, so
                                 // it will send some arbitrary value which will be fixed on the
                                 // other end.
-                                shardAfter.Doc = s.IndexReader.MaxDoc() - 1;
+                                shardAfter.Doc = s.IndexReader.MaxDoc - 1;
                             }
                             finally
                             {

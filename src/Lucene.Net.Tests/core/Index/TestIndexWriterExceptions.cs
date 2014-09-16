@@ -815,11 +815,11 @@ namespace Lucene.Net.Index
                 {
                     int expected = 5;
                     Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")));
-                    Assert.AreEqual(expected, reader.MaxDoc());
+                    Assert.AreEqual(expected, reader.MaxDoc);
                     int numDel = 0;
                     Bits liveDocs = MultiFields.GetLiveDocs(reader);
                     Assert.IsNotNull(liveDocs);
-                    for (int j = 0; j < reader.MaxDoc(); j++)
+                    for (int j = 0; j < reader.MaxDoc; j++)
                     {
                         if (!liveDocs.Get(j))
                         {
@@ -848,10 +848,10 @@ namespace Lucene.Net.Index
                 reader = DirectoryReader.Open(dir);
                 int expected_ = 19 + (1 - i) * 2;
                 Assert.AreEqual(expected_, reader.DocFreq(new Term("contents", "here")));
-                Assert.AreEqual(expected_, reader.MaxDoc());
+                Assert.AreEqual(expected_, reader.MaxDoc);
                 int numDel_ = 0;
                 Assert.IsNull(MultiFields.GetLiveDocs(reader));
-                for (int j = 0; j < reader.MaxDoc(); j++)
+                for (int j = 0; j < reader.MaxDoc; j++)
                 {
                     reader.Document(j);
                     reader.GetTermVectors(j);
@@ -916,11 +916,11 @@ namespace Lucene.Net.Index
                 IndexReader reader = DirectoryReader.Open(dir);
                 int expected = (3 + (1 - i) * 2) * NUM_THREAD * NUM_ITER;
                 Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")), "i=" + i);
-                Assert.AreEqual(expected, reader.MaxDoc());
+                Assert.AreEqual(expected, reader.MaxDoc);
                 int numDel = 0;
                 Bits liveDocs = MultiFields.GetLiveDocs(reader);
                 Assert.IsNotNull(liveDocs);
-                for (int j = 0; j < reader.MaxDoc(); j++)
+                for (int j = 0; j < reader.MaxDoc; j++)
                 {
                     if (!liveDocs.Get(j))
                     {
@@ -949,9 +949,9 @@ namespace Lucene.Net.Index
                 reader = DirectoryReader.Open(dir);
                 expected += 17 - NUM_THREAD * NUM_ITER;
                 Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")));
-                Assert.AreEqual(expected, reader.MaxDoc());
+                Assert.AreEqual(expected, reader.MaxDoc);
                 Assert.IsNull(MultiFields.GetLiveDocs(reader));
-                for (int j = 0; j < reader.MaxDoc(); j++)
+                for (int j = 0; j < reader.MaxDoc; j++)
                 {
                     reader.Document(j);
                     reader.GetTermVectors(j);
@@ -1109,7 +1109,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(23, reader.NumDocs());
+            Assert.AreEqual(23, reader.NumDocs);
             reader.Dispose();
             dir.Dispose();
         }
@@ -1643,12 +1643,12 @@ namespace Lucene.Net.Index
                     w.AddDocument(document);
                     w.Dispose();
                     IndexReader reader = DirectoryReader.Open(dir);
-                    Assert.IsTrue(reader.NumDocs() > 0);
+                    Assert.IsTrue(reader.NumDocs > 0);
                     SegmentInfos sis = new SegmentInfos();
                     sis.Read(dir);
-                    foreach (AtomicReaderContext context in reader.Leaves())
+                    foreach (AtomicReaderContext context in reader.Leaves)
                     {
-                        Assert.IsFalse(((AtomicReader)context.Reader()).FieldInfos.HasVectors());
+                        Assert.IsFalse((context.AtomicReader).FieldInfos.HasVectors());
                     }
                     reader.Dispose();
                     dir.Dispose();
@@ -1961,7 +1961,7 @@ namespace Lucene.Net.Index
                 // expected
             }
             DirectoryReader ir = DirectoryReader.Open(iw, false);
-            Assert.AreEqual(1, ir.NumDocs());
+            Assert.AreEqual(1, ir.NumDocs);
             Assert.AreEqual("sometext", ir.Document(0).Get("field1"));
             ir.Dispose();
             iw.Dispose();
@@ -2048,7 +2048,7 @@ namespace Lucene.Net.Index
             iw.AddDocument(doc); // add a document
             iw.Commit();
             DirectoryReader ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(1, ir.NumDocs());
+            Assert.AreEqual(1, ir.NumDocs);
             ir.Dispose();
             iw.Dispose();
 
@@ -2073,14 +2073,14 @@ namespace Lucene.Net.Index
                 failure.ClearDoFail();
                 iw.Dispose();
                 ir = DirectoryReader.Open(dir);
-                Assert.AreEqual(1, ir.NumDocs(), "lost document after iteration: " + i);
+                Assert.AreEqual(1, ir.NumDocs, "lost document after iteration: " + i);
                 ir.Dispose();
             }
 
             // Check if document is still there
             failure.ClearDoFail();
             ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(1, ir.NumDocs());
+            Assert.AreEqual(1, ir.NumDocs);
             ir.Dispose();
 
             dir.Dispose();
@@ -2232,7 +2232,7 @@ namespace Lucene.Net.Index
 
                     // Sometimes we will make it here (we only randomly
                     // throw the exc):
-                    Assert.AreEqual(docCount - deleteCount, r.NumDocs());
+                    Assert.AreEqual(docCount - deleteCount, r.NumDocs);
                     r.Dispose();
 
                     // Sometimes close, so the disk full happens on close:
@@ -2301,19 +2301,19 @@ namespace Lucene.Net.Index
                     }
                     ir = w.Reader;
                 }
-                Assert.AreEqual(docCount - deleteCount, ir.NumDocs());
+                Assert.AreEqual(docCount - deleteCount, ir.NumDocs);
                 if (DefaultCodecSupportsDocValues())
                 {
                     BytesRef scratch = new BytesRef();
-                    foreach (AtomicReaderContext context in ir.Leaves())
+                    foreach (AtomicReaderContext context in ir.Leaves)
                     {
-                        AtomicReader reader = (AtomicReader)context.Reader();
+                        AtomicReader reader = context.AtomicReader;
                         Bits liveDocs = reader.LiveDocs;
                         NumericDocValues f = reader.GetNumericDocValues("f");
                         NumericDocValues cf = reader.GetNumericDocValues("cf");
                         BinaryDocValues bf = reader.GetBinaryDocValues("bf");
                         BinaryDocValues bcf = reader.GetBinaryDocValues("bcf");
-                        for (int i = 0; i < reader.MaxDoc(); i++)
+                        for (int i = 0; i < reader.MaxDoc; i++)
                         {
                             if (liveDocs == null || liveDocs.Get(i))
                             {
@@ -2347,7 +2347,7 @@ namespace Lucene.Net.Index
 
             // Final verify:
             IndexReader indRdr = DirectoryReader.Open(dir);
-            Assert.AreEqual(docCount - deleteCount, indRdr.NumDocs());
+            Assert.AreEqual(docCount - deleteCount, indRdr.NumDocs);
             indRdr.Dispose();
 
             dir.Dispose();
@@ -2471,7 +2471,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(IndexWriter.IsLocked(dir));
 
             r = DirectoryReader.Open(dir);
-            Assert.AreEqual(10, r.MaxDoc());
+            Assert.AreEqual(10, r.MaxDoc);
             r.Dispose();
 
             // no leaks
@@ -2553,7 +2553,7 @@ namespace Lucene.Net.Index
                 Assert.IsFalse(IndexWriter.IsLocked(dir));
 
                 r = DirectoryReader.Open(dir);
-                Assert.AreEqual(10, r.MaxDoc());
+                Assert.AreEqual(10, r.MaxDoc);
                 r.Dispose();
 
                 // no leaks

@@ -50,24 +50,24 @@ namespace Lucene.Net.Index
             /// Returns the total number of documents, ignoring
             ///  deletions.
             /// </summary>
-            public abstract int MaxDoc();
+            public abstract int MaxDoc { get; }
 
             /// <summary>
             /// Returns the number of not-deleted documents. </summary>
-            public int NumDocs()
+            public int NumDocs
             {
-                return MaxDoc() - NumDeletedDocs();
+                get { return MaxDoc - NumDeletedDocs; }
             }
 
             /// <summary>
             /// Returns the number of deleted documents. </summary>
-            public abstract int NumDeletedDocs();
+            public abstract int NumDeletedDocs { get; }
 
             /// <summary>
             /// Returns true if there are any deletions. </summary>
             public virtual bool HasDeletions()
             {
-                return NumDeletedDocs() > 0;
+                return NumDeletedDocs > 0;
             }
 
             /// <summary>
@@ -76,8 +76,8 @@ namespace Lucene.Net.Index
             /// </summary>
             public static DocMap Build(AtomicReader reader)
             {
-                int maxDoc = reader.MaxDoc();
-                if (!reader.HasDeletions())
+                int maxDoc = reader.MaxDoc;
+                if (!reader.HasDeletions)
                 {
                     return new NoDelDocMap(maxDoc);
                 }
@@ -128,25 +128,25 @@ namespace Lucene.Net.Index
                     return (int)DocMap.Get(docID);
                 }
 
-                public override int MaxDoc()
+                public override int MaxDoc
                 {
-                    return maxDoc;
+                    get { return maxDoc; }
                 }
 
-                public override int NumDeletedDocs()
+                public override int NumDeletedDocs
                 {
-                    return numDeletedDocs;
+                    get { return numDeletedDocs; }
                 }
             }
         }
 
         private sealed class NoDelDocMap : DocMap
         {
-            internal readonly int MaxDoc_Renamed;
+            internal readonly int maxDoc;
 
             internal NoDelDocMap(int maxDoc)
             {
-                this.MaxDoc_Renamed = maxDoc;
+                this.maxDoc = maxDoc;
             }
 
             public override int Get(int docID)
@@ -154,14 +154,14 @@ namespace Lucene.Net.Index
                 return docID;
             }
 
-            public override int MaxDoc()
+            public override int MaxDoc
             {
-                return MaxDoc_Renamed;
+                get { return maxDoc; }
             }
 
-            public override int NumDeletedDocs()
+            public override int NumDeletedDocs
             {
-                return 0;
+                get { return 0; }
             }
         }
 

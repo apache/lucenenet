@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
             DirectoryReader r3 = w.Reader;
             w.Dispose();
             AtomicReader sr = GetOnlySegmentReader(r3);
-            Assert.AreEqual(2, sr.NumDocs());
+            Assert.AreEqual(2, sr.NumDocs);
             NumericDocValues docValues = sr.GetNumericDocValues("dv");
             Assert.IsNotNull(docValues);
             r3.Dispose();
@@ -895,8 +895,8 @@ namespace Lucene.Net.Index
             DirectoryReader r = writer.Reader;
             writer.Dispose();
 
-            AtomicReader subR = (AtomicReader)r.Leaves()[0].Reader();
-            Assert.AreEqual(2, subR.NumDocs());
+            AtomicReader subR = (AtomicReader)r.Leaves[0].Reader;
+            Assert.AreEqual(2, subR.NumDocs);
 
             Bits bits = FieldCache_Fields.DEFAULT.GetDocsWithField(subR, "dv");
             Assert.IsTrue(bits.Get(0));

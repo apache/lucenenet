@@ -344,7 +344,7 @@ namespace Lucene.Net.Search
                 : base(weight)
             {
                 this.Dv = reader.GetSortedSetDocValues("dv");
-                this.MaxDoc = reader.MaxDoc();
+                this.MaxDoc = reader.MaxDoc;
                 BooleanQuery bq = (BooleanQuery)weight.Query;
                 this.MinNrShouldMatch = bq.MinimumNumberShouldMatch;
                 this.Sims = new SimScorer[(int)Dv.ValueCount];

@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
                 ignore.Add(Convert.ToInt32(results[i]));
             }
 
-            int maxDoc = searcher.IndexReader.MaxDoc();
+            int maxDoc = searcher.IndexReader.MaxDoc;
             for (int doc = 0; doc < maxDoc; doc++)
             {
                 if (ignore.Contains(Convert.ToInt32(doc)))

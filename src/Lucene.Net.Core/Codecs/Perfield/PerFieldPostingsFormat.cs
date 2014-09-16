@@ -243,9 +243,9 @@ namespace Lucene.Net.Codecs.Perfield
                 return fieldsProducer == null ? null : fieldsProducer.Terms(field);
             }
 
-            public override int Size()
+            public override int Size
             {
-                return Fields.Count;
+                get { return Fields.Count; }
             }
 
             public override void Dispose()

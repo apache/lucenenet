@@ -316,7 +316,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                for (int docID = 0; docID < ir1.MaxDoc(); docID++)
+                for (int docID = 0; docID < ir1.MaxDoc; docID++)
                 {
                     Assert.AreEqual(norms1.Get(docID), norms2.Get(docID));
                 }

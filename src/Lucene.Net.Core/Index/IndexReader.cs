@@ -467,20 +467,20 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the number of documents in this index. </summary>
-        public abstract int NumDocs();
+        public abstract int NumDocs { get; }
 
         /// <summary>
         /// Returns one greater than the largest possible document number.
         /// this may be used to, e.g., determine how big to allocate an array which
         /// will have an element for every document number in an index.
         /// </summary>
-        public abstract int MaxDoc();
+        public abstract int MaxDoc { get; }
 
         /// <summary>
         /// Returns the number of deleted documents. </summary>
-        public int NumDeletedDocs()
+        public int NumDeletedDocs
         {
-            return MaxDoc() - NumDocs();
+            get { return MaxDoc - NumDocs; }
         }
 
         /// <summary>
@@ -536,9 +536,14 @@ namespace Lucene.Net.Index
         ///  consider overriding this method if <seealso cref="#maxDoc()"/> or <seealso cref="#numDocs()"/>
         ///  are not constant-time operations.
         /// </summary>
-        public virtual bool HasDeletions()
+        public virtual bool HasDeletions
         {
-            return NumDeletedDocs() > 0;
+            get
+            {
+                {
+                    return NumDeletedDocs > 0;
+                }
+            }
         }
 
         /// <summary> Closes files associated with this index.
@@ -595,9 +600,9 @@ namespace Lucene.Net.Index
         /// Returns the reader's leaves, or itself if this reader is atomic.
         /// this is a convenience method calling {@code this.getContext().leaves()}. </summary>
         /// <seealso cref= IndexReaderContext#leaves() </seealso>
-        public IList<AtomicReaderContext> Leaves()
+        public IList<AtomicReaderContext> Leaves
         {
-            return Context.Leaves();
+            get { return Context.Leaves; }
         }
 
         /// <summary>

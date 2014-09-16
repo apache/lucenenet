@@ -53,24 +53,27 @@ namespace Lucene.Net.Index
         {
         }
 
-        public override IList<AtomicReaderContext> Leaves()
+        public override IList<AtomicReaderContext> Leaves
         {
-            if (!IsTopLevel)
+            get
             {
-                throw new System.NotSupportedException("this is not a top-level context.");
+                if (!IsTopLevel)
+                {
+                    throw new System.NotSupportedException("this is not a top-level context.");
+                }
+                Debug.Assert(leaves != null);
+                return leaves;
             }
-            Debug.Assert(leaves != null);
-            return leaves;
         }
 
-        public override IList<IndexReaderContext> Children()
+        public override IList<IndexReaderContext> Children
         {
-            return null;
+            get { return null; }
         }
 
-        public override IndexReader Reader()
+        public override IndexReader Reader
         {
-            return reader;
+            get { return reader; }
         }
 
         // .NET Port: Can't change return type on override like Java, so adding helper property

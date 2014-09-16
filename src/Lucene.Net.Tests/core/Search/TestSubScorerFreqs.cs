@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
             TermQuery q = new TermQuery(new Term("f", "d"));
             CountingCollector c = new CountingCollector(TopScoreDocCollector.Create(10, true));
             s.Search(q, null, c);
-            int maxDocs = s.IndexReader.MaxDoc();
+            int maxDocs = s.IndexReader.MaxDoc;
             Assert.AreEqual(maxDocs, c.DocCounts.Count);
             for (int i = 0; i < maxDocs; i++)
             {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
             {
                 CountingCollector c = new CountingCollector(TopScoreDocCollector.Create(10, true), occur);
                 s.Search(query, null, c);
-                int maxDocs = s.IndexReader.MaxDoc();
+                int maxDocs = s.IndexReader.MaxDoc;
                 Assert.AreEqual(maxDocs, c.DocCounts.Count);
                 bool includeOptional = occur.Contains("SHOULD");
                 for (int i = 0; i < maxDocs; i++)
@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
             q.Add(new Term("f", "c"));
             CountingCollector c = new CountingCollector(TopScoreDocCollector.Create(10, true));
             s.Search(q, null, c);
-            int maxDocs = s.IndexReader.MaxDoc();
+            int maxDocs = s.IndexReader.MaxDoc;
             Assert.AreEqual(maxDocs, c.DocCounts.Count);
             for (int i = 0; i < maxDocs; i++)
             {

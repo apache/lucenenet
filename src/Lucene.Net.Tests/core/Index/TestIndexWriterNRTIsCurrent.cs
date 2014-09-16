@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
                                 currentReader.DecRef();
                                 currentReader = newReader;
                             }
-                            if (currentReader.NumDocs() == 0)
+                            if (currentReader.NumDocs == 0)
                             {
                                 Writer.AddDocument(doc);
                             }

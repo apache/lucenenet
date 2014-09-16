@@ -321,12 +321,12 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             string[] terms = new string[] { "a", "b", "c", "d" };
-            foreach (AtomicReaderContext ctx in r.Leaves())
+            foreach (AtomicReaderContext ctx in r.Leaves)
             {
                 // TODO: improve this
-                AtomicReader sub = (AtomicReader)ctx.Reader();
+                AtomicReader sub = (AtomicReader)ctx.Reader;
                 //System.out.println("\nsub=" + sub);
-                TermsEnum termsEnum = sub.Fields().Terms("content").Iterator(null);
+                TermsEnum termsEnum = sub.Fields.Terms("content").Iterator(null);
                 DocsEnum docs = null;
                 DocsAndPositionsEnum docsAndPositions = null;
                 DocsAndPositionsEnum docsAndPositionsAndOffsets = null;

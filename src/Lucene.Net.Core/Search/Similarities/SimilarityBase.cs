@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Similarities
         {
             // #positions(field) must be >= #positions(term)
             Debug.Assert(collectionStats.SumTotalTermFreq() == -1 || collectionStats.SumTotalTermFreq() >= termStats.TotalTermFreq());
-            long numberOfDocuments = collectionStats.MaxDoc();
+            long numberOfDocuments = collectionStats.MaxDoc;
 
             long docFreq = termStats.DocFreq();
             long totalTermFreq = termStats.TotalTermFreq();

@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
                 {
                     sort = new Sort(sf, SortField.FIELD_DOC);
                 }
-                int hitCount = TestUtil.NextInt(random, 1, r.MaxDoc() + 20);
+                int hitCount = TestUtil.NextInt(random, 1, r.MaxDoc + 20);
                 RandomFilter f = new RandomFilter(random, (float)random.NextDouble(), docValues);
                 int queryType = random.Next(3);
                 if (queryType == 0)
@@ -345,8 +345,8 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                int maxDoc = context.Reader().MaxDoc();
-                FieldCache_Fields.Ints idSource = FieldCache_Fields.DEFAULT.GetInts((AtomicReader)context.Reader(), "id", false);
+                int maxDoc = context.Reader.MaxDoc;
+                FieldCache_Fields.Ints idSource = FieldCache_Fields.DEFAULT.GetInts(context.AtomicReader, "id", false);
                 Assert.IsNotNull(idSource);
                 FixedBitSet bits = new FixedBitSet(maxDoc);
                 for (int docID = 0; docID < maxDoc; docID++)

@@ -449,9 +449,9 @@ namespace Lucene.Net.Index
                             // Verify 1) IW is correctly setting
                             // diagnostics, and 2) segment warming for
                             // merged segments is actually happening:
-                            foreach (AtomicReaderContext sub in s.IndexReader.Leaves())
+                            foreach (AtomicReaderContext sub in s.IndexReader.Leaves)
                             {
-                                SegmentReader segReader = (SegmentReader)sub.Reader();
+                                SegmentReader segReader = (SegmentReader)sub.Reader;
                                 IDictionary<string, string> diagnostics = segReader.SegmentInfo.Info.Diagnostics;
                                 Assert.IsNotNull(diagnostics);
                                 string source = diagnostics["source"];
@@ -461,7 +461,7 @@ namespace Lucene.Net.Index
                                     Assert.IsTrue(!OuterInstance.AssertMergedSegmentsWarmed || OuterInstance.Warmed.ContainsKey((SegmentCoreReaders)segReader.CoreCacheKey), "sub reader " + sub + " wasn't warmed: warmed=" + OuterInstance.Warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo);
                                 }
                             }
-                            if (s.IndexReader.NumDocs() > 0)
+                            if (s.IndexReader.NumDocs > 0)
                             {
                                 OuterInstance.SmokeTestSearcher(s);
                                 Fields fields = MultiFields.GetFields(s.IndexReader);
@@ -742,7 +742,7 @@ namespace Lucene.Net.Index
             }
             Assert.IsFalse(doFail);
 
-            Assert.AreEqual(AddCount.Get() - DelCount.Get(), s.IndexReader.NumDocs(), "index=" + Writer.SegString() + " addCount=" + AddCount + " delCount=" + DelCount);
+            Assert.AreEqual(AddCount.Get() - DelCount.Get(), s.IndexReader.NumDocs, "index=" + Writer.SegString() + " addCount=" + AddCount + " delCount=" + DelCount);
             ReleaseSearcher(s);
 
             Writer.Commit();
@@ -787,7 +787,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: now warm merged reader=" + reader);
                 }
                 OuterInstance.Warmed[(SegmentCoreReaders)reader.CoreCacheKey] = true;
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
                 Bits liveDocs = reader.LiveDocs;
                 int sum = 0;
                 int inc = Math.Max(1, maxDoc / 50);

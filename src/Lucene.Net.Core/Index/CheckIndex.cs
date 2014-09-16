@@ -717,17 +717,17 @@ namespace Lucene.Net.Index
                     {
                         infoStream.Write("    test: check live docs.....");
                     }
-                    int numDocs = reader.NumDocs();
+                    int numDocs = reader.NumDocs;
                     toLoseDocCount = numDocs;
-                    if (reader.HasDeletions())
+                    if (reader.HasDeletions)
                     {
-                        if (reader.NumDocs() != info.Info.DocCount - info.DelCount)
+                        if (reader.NumDocs != info.Info.DocCount - info.DelCount)
                         {
-                            throw new Exception("delete count mismatch: info=" + (info.Info.DocCount - info.DelCount) + " vs reader=" + reader.NumDocs());
+                            throw new Exception("delete count mismatch: info=" + (info.Info.DocCount - info.DelCount) + " vs reader=" + reader.NumDocs);
                         }
-                        if ((info.Info.DocCount - reader.NumDocs()) > reader.MaxDoc())
+                        if ((info.Info.DocCount - reader.NumDocs) > reader.MaxDoc)
                         {
-                            throw new Exception("too many deleted docs: maxDoc()=" + reader.MaxDoc() + " vs del count=" + (info.Info.DocCount - reader.NumDocs()));
+                            throw new Exception("too many deleted docs: maxDoc()=" + reader.MaxDoc + " vs del count=" + (info.Info.DocCount - reader.NumDocs));
                         }
                         if (info.Info.DocCount - numDocs != info.DelCount)
                         {
@@ -777,9 +777,9 @@ namespace Lucene.Net.Index
                         }
                         Msg(infoStream, "OK");
                     }
-                    if (reader.MaxDoc() != info.Info.DocCount)
+                    if (reader.MaxDoc != info.Info.DocCount)
                     {
-                        throw new Exception("SegmentReader.maxDoc() " + reader.MaxDoc() + " != SegmentInfos.docCount " + info.Info.DocCount);
+                        throw new Exception("SegmentReader.maxDoc() " + reader.MaxDoc + " != SegmentInfos.docCount " + info.Info.DocCount);
                     }
 
                     // Test getFieldInfos()
@@ -1539,7 +1539,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            int fieldCount = fields.Size();
+            int fieldCount = fields.Size;
 
             if (fieldCount != -1)
             {
@@ -1599,7 +1599,7 @@ namespace Lucene.Net.Index
             // crossCheckTermVectors is on...
 
             Status.TermIndexStatus status;
-            int maxDoc = reader.MaxDoc();
+            int maxDoc = reader.MaxDoc;
             Bits liveDocs = reader.LiveDocs;
 
             try
@@ -1609,7 +1609,7 @@ namespace Lucene.Net.Index
                     infoStream.Write("    test: terms, freq, prox...");
                 }
 
-                Fields fields = reader.Fields();
+                Fields fields = reader.Fields;
                 FieldInfos fieldInfos = reader.FieldInfos;
                 status = CheckFields(fields, liveDocs, maxDoc, fieldInfos, true, false, infoStream, verbose);
                 if (liveDocs != null)
@@ -1652,7 +1652,7 @@ namespace Lucene.Net.Index
 
                 // Scan stored fields for all documents
                 Bits liveDocs = reader.LiveDocs;
-                for (int j = 0; j < reader.MaxDoc(); ++j)
+                for (int j = 0; j < reader.MaxDoc; ++j)
                 {
                     // Intentionally pull even deleted documents to
                     // make sure they too are not corrupt:
@@ -1665,7 +1665,7 @@ namespace Lucene.Net.Index
                 }
 
                 // Validate docCount
-                if (status.DocCount != reader.NumDocs())
+                if (status.DocCount != reader.NumDocs)
                 {
                     throw new Exception("docCount=" + status.DocCount + " but saw " + status.DocCount + " undeleted docs");
                 }
@@ -1731,7 +1731,7 @@ namespace Lucene.Net.Index
         private static void CheckBinaryDocValues(string fieldName, AtomicReader reader, BinaryDocValues dv, Bits docsWithField)
         {
             BytesRef scratch = new BytesRef();
-            for (int i = 0; i < reader.MaxDoc(); i++)
+            for (int i = 0; i < reader.MaxDoc; i++)
             {
                 dv.Get(i, scratch);
                 Debug.Assert(scratch.Valid);
@@ -1748,7 +1748,7 @@ namespace Lucene.Net.Index
             int maxOrd = dv.ValueCount - 1;
             FixedBitSet seenOrds = new FixedBitSet(dv.ValueCount);
             int maxOrd2 = -1;
-            for (int i = 0; i < reader.MaxDoc(); i++)
+            for (int i = 0; i < reader.MaxDoc; i++)
             {
                 int ord = dv.GetOrd(i);
                 if (ord == -1)
@@ -1802,7 +1802,7 @@ namespace Lucene.Net.Index
             long maxOrd = dv.ValueCount - 1;
             LongBitSet seenOrds = new LongBitSet(dv.ValueCount);
             long maxOrd2 = -1;
-            for (int i = 0; i < reader.MaxDoc(); i++)
+            for (int i = 0; i < reader.MaxDoc; i++)
             {
                 dv.Document = i;
                 long lastOrd = -1;
@@ -1891,7 +1891,7 @@ namespace Lucene.Net.Index
 
         private static void CheckNumericDocValues(string fieldName, AtomicReader reader, NumericDocValues ndv, Bits docsWithField)
         {
-            for (int i = 0; i < reader.MaxDoc(); i++)
+            for (int i = 0; i < reader.MaxDoc; i++)
             {
                 long value = ndv.Get(i);
                 if (docsWithField.Get(i) == false && value != 0)
@@ -1908,9 +1908,9 @@ namespace Lucene.Net.Index
             {
                 throw new Exception(fi.Name + " docsWithField does not exist");
             }
-            else if (docsWithField.Length() != reader.MaxDoc())
+            else if (docsWithField.Length() != reader.MaxDoc)
             {
-                throw new Exception(fi.Name + " docsWithField has incorrect length: " + docsWithField.Length() + ",expected: " + reader.MaxDoc());
+                throw new Exception(fi.Name + " docsWithField has incorrect length: " + docsWithField.Length() + ",expected: " + reader.MaxDoc);
             }
             switch (fi.DocValuesType)
             {
@@ -1960,7 +1960,7 @@ namespace Lucene.Net.Index
             switch (fi.NormType)
             {
                 case FieldInfo.DocValuesType_e.NUMERIC:
-                    CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc()));
+                    CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
                     break;
 
                 default:
@@ -2007,7 +2007,7 @@ namespace Lucene.Net.Index
                 // TODO: testTermsIndex
                 if (crossCheckTermVectors)
                 {
-                    postingsFields = reader.Fields();
+                    postingsFields = reader.Fields;
                 }
                 else
                 {
@@ -2017,7 +2017,7 @@ namespace Lucene.Net.Index
                 TermsEnum termsEnum = null;
                 TermsEnum postingsTermsEnum = null;
 
-                for (int j = 0; j < reader.MaxDoc(); ++j)
+                for (int j = 0; j < reader.MaxDoc; ++j)
                 {
                     // Intentionally pull/visit (but don't count in
                     // stats) deleted documents to make sure they too

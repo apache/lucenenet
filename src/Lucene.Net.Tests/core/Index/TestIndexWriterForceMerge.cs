@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
                 {
                     writer.Dispose();
                     DirectoryReader reader = DirectoryReader.Open(dir);
-                    Assert.AreEqual(1, reader.Leaves().Count);
+                    Assert.AreEqual(1, reader.Leaves.Count);
                     reader.Dispose();
                 }
                 else
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
                     writer.Dispose();
 
                     DirectoryReader reader = DirectoryReader.Open(dir);
-                    Assert.IsTrue(reader.Leaves().Count > 1);
+                    Assert.IsTrue(reader.Leaves.Count > 1);
                     reader.Dispose();
 
                     SegmentInfos infos = new SegmentInfos();

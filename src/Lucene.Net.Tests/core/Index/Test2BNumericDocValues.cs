@@ -74,11 +74,11 @@ namespace Lucene.Net.Index
 
             DirectoryReader r = DirectoryReader.Open(dir);
             long expectedValue = 0;
-            foreach (AtomicReaderContext context in r.Leaves())
+            foreach (AtomicReaderContext context in r.Leaves)
             {
-                AtomicReader reader = (AtomicReader)context.Reader();
+                AtomicReader reader = context.AtomicReader;
                 NumericDocValues dv = reader.GetNumericDocValues("dv");
-                for (int i = 0; i < reader.MaxDoc(); i++)
+                for (int i = 0; i < reader.MaxDoc; i++)
                 {
                     Assert.AreEqual(expectedValue, dv.Get(i));
                     expectedValue++;

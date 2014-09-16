@@ -192,9 +192,9 @@ namespace Lucene.Net.Search.Payloads
             {
                 termContexts[term] = TermContext.Build(Context, term);
             }
-            foreach (AtomicReaderContext atomicReaderContext in Context.Leaves())
+            foreach (AtomicReaderContext atomicReaderContext in Context.Leaves)
             {
-                Spans spans = query.GetSpans(atomicReaderContext, ((AtomicReader)atomicReaderContext.Reader()).LiveDocs, termContexts);
+                Spans spans = query.GetSpans(atomicReaderContext, atomicReaderContext.AtomicReader.LiveDocs, termContexts);
                 while (spans.Next() == true)
                 {
                     if (spans.PayloadAvailable)

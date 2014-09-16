@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         // Normally set to si.docCount - si.delDocCount, unless we
         // were created as an NRT reader from IW, in which case IW
         // tells us the docCount:
-        private readonly int NumDocs_Renamed;
+        private readonly int numDocs;
 
         internal readonly SegmentCoreReaders Core;
         internal readonly SegmentDocValues SegDocValues;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
                     Debug.Assert(si.DelCount == 0);
                     LiveDocs_Renamed = null;
                 }
-                NumDocs_Renamed = si.Info.DocCount - si.DelCount;
+                numDocs = si.Info.DocCount - si.DelCount;
 
                 if (FieldInfos_Renamed.HasDocValues())
                 {
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
         {
             this.Si = si;
             this.LiveDocs_Renamed = liveDocs;
-            this.NumDocs_Renamed = numDocs;
+            this.numDocs = numDocs;
             this.Core = sr.Core;
             Core.IncRef();
             this.SegDocValues = sr.SegDocValues;
@@ -351,22 +351,31 @@ namespace Lucene.Net.Index
             FieldsReader.VisitDocument(docID, visitor);
         }
 
-        public override Fields Fields()
+        public override Fields Fields
         {
-            EnsureOpen();
-            return Core.Fields;
+            get
+            {
+                EnsureOpen();
+                return Core.Fields;
+            }
         }
 
-        public override int NumDocs()
+        public override int NumDocs
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return NumDocs_Renamed;
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return numDocs;
+            }
         }
 
-        public override int MaxDoc()
+        public override int MaxDoc
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return Si.Info.DocCount;
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return Si.Info.DocCount;
+            }
         }
 
         /// <summary>
@@ -396,9 +405,9 @@ namespace Lucene.Net.Index
 
         private void CheckBounds(int docID)
         {
-            if (docID < 0 || docID >= MaxDoc())
+            if (docID < 0 || docID >= MaxDoc)
             {
-                throw new System.IndexOutOfRangeException("docID must be >= 0 and < maxDoc=" + MaxDoc() + " (got docID=" + docID + ")");
+                throw new System.IndexOutOfRangeException("docID must be >= 0 and < maxDoc=" + MaxDoc + " (got docID=" + docID + ")");
             }
         }
 
@@ -406,7 +415,7 @@ namespace Lucene.Net.Index
         {
             // SegmentInfo.toString takes dir and number of
             // *pending* deletions; so we reverse compute that here:
-            return Si.ToString(Si.Info.Dir, Si.Info.DocCount - NumDocs_Renamed - Si.DelCount);
+            return Si.ToString(Si.Info.Dir, Si.Info.DocCount - numDocs - Si.DelCount);
         }
 
         /// <summary>

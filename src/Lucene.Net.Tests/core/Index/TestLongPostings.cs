@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
             }
             */
 
-            Assert.AreEqual(NUM_DOCS, r.NumDocs());
+            Assert.AreEqual(NUM_DOCS, r.NumDocs);
             Assert.IsTrue(r.DocFreq(new Term("field", s1)) > 0);
             Assert.IsTrue(r.DocFreq(new Term("field", s2)) > 0);
 
@@ -422,7 +422,7 @@ namespace Lucene.Net.Index
             }
             */
 
-            Assert.AreEqual(NUM_DOCS, r.NumDocs());
+            Assert.AreEqual(NUM_DOCS, r.NumDocs);
             Assert.IsTrue(r.DocFreq(new Term("field", s1)) > 0);
             Assert.IsTrue(r.DocFreq(new Term("field", s2)) > 0);
 

@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 int docCount = terms.DocCount;
-                FixedBitSet visited = new FixedBitSet(ir.MaxDoc());
+                FixedBitSet visited = new FixedBitSet(ir.MaxDoc);
                 TermsEnum te = terms.Iterator(null);
                 while (te.Next() != null)
                 {

@@ -86,8 +86,8 @@ namespace Lucene.Net.Index
             Arrays.Fill(subReaders, ir);
             subReaders[subReaders.Length - 1] = ir2;
             MultiReader mr = new MultiReader(subReaders);
-            Assert.AreEqual(int.MaxValue, mr.MaxDoc());
-            Assert.AreEqual(int.MaxValue, mr.NumDocs());
+            Assert.AreEqual(int.MaxValue, mr.MaxDoc);
+            Assert.AreEqual(int.MaxValue, mr.NumDocs);
             ir.Dispose();
             ir2.Dispose();
             dir2.Dispose();

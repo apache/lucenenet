@@ -217,11 +217,11 @@ namespace Lucene.Net.Search
         {
             AtomicReaderContext context = (AtomicReaderContext)SlowCompositeReaderWrapper.Wrap(Reader).Context;
             NumericRangeFilter<int> f = NumericRangeFilter.NewIntRange("field8", 8, 1000, -1000, true, true);
-            Assert.IsNull(f.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs), "A inverse range should return the null instance");
+            Assert.IsNull(f.GetDocIdSet(context, (context.AtomicReader).LiveDocs), "A inverse range should return the null instance");
             f = NumericRangeFilter.NewIntRange("field8", 8, int.MaxValue, null, false, false);
-            Assert.IsNull(f.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs), "A exclusive range starting with Integer.MAX_VALUE should return the null instance");
+            Assert.IsNull(f.GetDocIdSet(context, (context.AtomicReader).LiveDocs), "A exclusive range starting with Integer.MAX_VALUE should return the null instance");
             f = NumericRangeFilter.NewIntRange("field8", 8, null, int.MinValue, false, false);
-            Assert.IsNull(f.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs), "A exclusive range ending with Integer.MIN_VALUE should return the null instance");
+            Assert.IsNull(f.GetDocIdSet(context, (context.AtomicReader).LiveDocs), "A exclusive range ending with Integer.MIN_VALUE should return the null instance");
         }
 
         [Test]

@@ -185,7 +185,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                PayloadTermSpanScorer scorer = (PayloadTermSpanScorer)Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
+                PayloadTermSpanScorer scorer = (PayloadTermSpanScorer)Scorer(context, (context.AtomicReader).LiveDocs);
                 if (scorer != null)
                 {
                     int newDoc = scorer.Advance(doc);

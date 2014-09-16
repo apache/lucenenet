@@ -81,7 +81,7 @@ namespace Lucene.Net.Store
                             r = r2;
                         }
                     }
-                    Assert.AreEqual(1 + docCount, r.NumDocs());
+                    Assert.AreEqual(1 + docCount, r.NumDocs);
                     IndexSearcher s = NewSearcher(r);
                     // Just make sure search can run; we can't assert
                     // totHits since it could be 0

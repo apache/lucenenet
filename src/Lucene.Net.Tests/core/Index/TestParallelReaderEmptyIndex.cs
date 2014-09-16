@@ -118,8 +118,8 @@ namespace Lucene.Net.Index
                 writer.DeleteDocuments(new Term("id", "1"));
                 writer.Dispose();
                 IndexReader ir = DirectoryReader.Open(rd1);
-                Assert.AreEqual(2, ir.MaxDoc());
-                Assert.AreEqual(1, ir.NumDocs());
+                Assert.AreEqual(2, ir.MaxDoc);
+                Assert.AreEqual(1, ir.NumDocs);
                 ir.Dispose();
 
                 iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));

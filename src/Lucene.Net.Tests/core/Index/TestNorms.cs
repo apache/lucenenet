@@ -130,13 +130,13 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             NumericDocValues fooNorms = MultiDocValues.GetNormValues(reader, "foo");
-            for (int i = 0; i < reader.MaxDoc(); i++)
+            for (int i = 0; i < reader.MaxDoc; i++)
             {
                 Assert.AreEqual(0, fooNorms.Get(i));
             }
 
             NumericDocValues barNorms = MultiDocValues.GetNormValues(reader, "bar");
-            for (int i = 0; i < reader.MaxDoc(); i++)
+            for (int i = 0; i < reader.MaxDoc; i++)
             {
                 Assert.AreEqual(1, barNorms.Get(i));
             }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
             AtomicReader open = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
             NumericDocValues normValues = open.GetNormValues(ByteTestField);
             Assert.IsNotNull(normValues);
-            for (int i = 0; i < open.MaxDoc(); i++)
+            for (int i = 0; i < open.MaxDoc; i++)
             {
                 Document document = open.Document(i);
                 int expected = Convert.ToInt32(document.Get(ByteTestField));

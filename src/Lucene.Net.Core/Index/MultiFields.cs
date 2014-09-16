@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static Fields GetFields(IndexReader reader)
         {
-            IList<AtomicReaderContext> leaves = reader.Leaves();
+            var leaves = reader.Leaves;
             switch (leaves.Count)
             {
                 case 0:
@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
 
                 case 1:
                     // already an atomic reader / reader with one leave
-                    return leaves[0].AtomicReader.Fields();
+                    return leaves[0].AtomicReader.Fields;
 
                 default:
                     IList<Fields> fields = new List<Fields>();
@@ -78,11 +78,11 @@ namespace Lucene.Net.Index
                     foreach (AtomicReaderContext ctx in leaves)
                     {
                         AtomicReader r = ctx.AtomicReader;
-                        Fields f = r.Fields();
+                        Fields f = r.Fields;
                         if (f != null)
                         {
                             fields.Add(f);
-                            slices.Add(new ReaderSlice(ctx.DocBase, r.MaxDoc(), fields.Count - 1));
+                            slices.Add(new ReaderSlice(ctx.DocBase, r.MaxDoc, fields.Count - 1));
                         }
                     }
                     if (fields.Count == 0)
@@ -113,16 +113,16 @@ namespace Lucene.Net.Index
         /// </summary>
         public static Bits GetLiveDocs(IndexReader reader)
         {
-            if (reader.HasDeletions())
+            if (reader.HasDeletions)
             {
-                IList<AtomicReaderContext> leaves = reader.Leaves();
+                IList<AtomicReaderContext> leaves = reader.Leaves;
                 int size = leaves.Count;
                 Debug.Assert(size > 0, "A reader with deletions must have at least one leave");
                 if (size == 1)
                 {
                     return leaves[0].AtomicReader.LiveDocs;
                 }
-                Bits[] liveDocs = new Bits[size];
+                var liveDocs = new Bits[size];
                 int[] starts = new int[size + 1];
                 for (int i = 0; i < size; i++)
                 {
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
                     liveDocs[i] = ctx.AtomicReader.LiveDocs;
                     starts[i] = ctx.DocBase;
                 }
-                starts[size] = reader.MaxDoc();
+                starts[size] = reader.MaxDoc;
                 return new MultiBits(liveDocs, starts, true);
             }
             else
@@ -284,9 +284,9 @@ namespace Lucene.Net.Index
             return result;
         }
 
-        public override int Size()
+        public override int Size
         {
-            return -1;
+            get { return -1; }
         }
 
         /// <summary>
@@ -300,8 +300,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public static FieldInfos GetMergedFieldInfos(IndexReader reader)
         {
-            FieldInfos.Builder builder = new FieldInfos.Builder();
-            foreach (AtomicReaderContext ctx in reader.Leaves())
+            var builder = new FieldInfos.Builder();
+            foreach (AtomicReaderContext ctx in reader.Leaves)
             {
                 builder.Add(ctx.AtomicReader.FieldInfos);
             }

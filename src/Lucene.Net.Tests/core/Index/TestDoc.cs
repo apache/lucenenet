@@ -240,12 +240,12 @@ namespace Lucene.Net.Index
         {
             SegmentReader reader = new SegmentReader(si, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 
-            for (int i = 0; i < reader.NumDocs(); i++)
+            for (int i = 0; i < reader.NumDocs; i++)
             {
                 @out.WriteLine(reader.Document(i));
             }
 
-            Fields fields = reader.Fields();
+            Fields fields = reader.Fields;
             foreach (string field in fields)
             {
                 Terms terms = fields.Terms(field);

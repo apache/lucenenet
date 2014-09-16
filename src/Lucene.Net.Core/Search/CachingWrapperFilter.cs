@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected internal virtual DocIdSet CacheImpl(DocIdSetIterator iterator, AtomicReader reader)
         {
-            WAH8DocIdSet.Builder builder = new WAH8DocIdSet.Builder();
+            var builder = new WAH8DocIdSet.Builder();
             builder.Add(iterator);
             return builder.Build();
         }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            AtomicReader reader = (AtomicReader)context.Reader();
+            var reader = context.AtomicReader;
             object key = reader.CoreCacheKey;
 
             DocIdSet docIdSet = Cache[key];
@@ -137,11 +137,11 @@ namespace Lucene.Net.Search
 
         public override bool Equals(object o)
         {
-            if (o == null || !this.GetType().Equals(o.GetType()))
+            var other = o as CachingWrapperFilter;
+            if (other == null)
             {
                 return false;
             }
-            CachingWrapperFilter other = (CachingWrapperFilter)o;
             return this.Filter_Renamed.Equals(other.Filter_Renamed);
         }
 

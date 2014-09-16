@@ -372,7 +372,7 @@ namespace Lucene.Net.Index
 
         public virtual int MaxDoc()
         {
-            return w.MaxDoc();
+            return w.MaxDoc;
         }
 
         public virtual void DeleteAll()

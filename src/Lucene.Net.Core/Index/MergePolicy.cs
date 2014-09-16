@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
                     IList<AtomicReader> readers = new List<AtomicReader>(this.Readers.Count);
                     foreach (AtomicReader reader in this.Readers)
                     {
-                        if (reader.NumDocs() > 0)
+                        if (reader.NumDocs > 0)
                         {
                             readers.Add(reader);
                         }

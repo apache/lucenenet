@@ -85,9 +85,9 @@ namespace Lucene.Net.Codecs.asserting
                 return terms == null ? null : new AssertingAtomicReader.AssertingTerms(terms);
             }
 
-            public override int Size()
+            public override int Size
             {
-                return @in.Size();
+                get { return @in.Size; }
             }
 
             public override long UniqueTermCount

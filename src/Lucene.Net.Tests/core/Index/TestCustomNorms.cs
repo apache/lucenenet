@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
             AtomicReader open = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
             NumericDocValues norms = open.GetNormValues(FloatTestField);
             Assert.IsNotNull(norms);
-            for (int i = 0; i < open.MaxDoc(); i++)
+            for (int i = 0; i < open.MaxDoc; i++)
             {
                 Document document = open.Document(i);
                 float expected = Convert.ToSingle(document.Get(FloatTestField));

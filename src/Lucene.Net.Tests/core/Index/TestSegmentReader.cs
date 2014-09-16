@@ -67,8 +67,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDocument()
         {
-            Assert.IsTrue(Reader.NumDocs() == 1);
-            Assert.IsTrue(Reader.MaxDoc() >= 1);
+            Assert.IsTrue(Reader.NumDocs == 1);
+            Assert.IsTrue(Reader.MaxDoc >= 1);
             Document result = Reader.Document(0);
             Assert.IsTrue(result != null);
             //There are 2 unstored fields on the document that are not preserved across writing
@@ -220,13 +220,13 @@ namespace Lucene.Net.Index
 
             Fields results = Reader.GetTermVectors(0);
             Assert.IsTrue(results != null);
-            Assert.AreEqual(3, results.Size(), "We do not have 3 term freq vectors");
+            Assert.AreEqual(3, results.Size, "We do not have 3 term freq vectors");
         }
 
         [Test]
         public virtual void TestOutOfBoundsAccess()
         {
-            int numDocs = Reader.MaxDoc();
+            int numDocs = Reader.MaxDoc;
             try
             {
                 Reader.Document(-1);

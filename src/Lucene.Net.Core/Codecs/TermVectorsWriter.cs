@@ -221,7 +221,7 @@ namespace Lucene.Net.Codecs
             for (int i = 0; i < mergeState.Readers.Count; i++)
             {
                 AtomicReader reader = mergeState.Readers[i];
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
                 Bits liveDocs = reader.LiveDocs;
 
                 for (int docID = 0; docID < maxDoc; docID++)
@@ -256,7 +256,7 @@ namespace Lucene.Net.Codecs
                 return;
             }
 
-            int numFields = vectors.Size();
+            int numFields = vectors.Size;
             if (numFields == -1)
             {
                 // count manually! TODO: Maybe enforce that Fields.size() returns something valid?

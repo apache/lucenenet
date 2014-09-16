@@ -128,8 +128,8 @@ namespace Lucene.Net.Index
 
             iw.ForceMerge(1);
             DirectoryReader ir = iw.Reader;
-            Assert.AreEqual(1, ir.Leaves().Count);
-            AtomicReader air = (AtomicReader)ir.Leaves()[0].Reader();
+            Assert.AreEqual(1, ir.Leaves.Count);
+            AtomicReader air = (AtomicReader)ir.Leaves[0].Reader;
             Terms terms = air.Terms("field");
             // numTerms-1 because there cannot be a term 0 with 0 postings:
             Assert.AreEqual(numTerms - 1, terms.Size());

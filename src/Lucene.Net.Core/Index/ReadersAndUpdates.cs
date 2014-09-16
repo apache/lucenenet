@@ -671,7 +671,7 @@ namespace Lucene.Net.Index
 
         private IEnumerable<long> GetLongEnumerable(SegmentReader reader, string field, NumericDocValuesFieldUpdates fieldUpdates)
         {
-            int maxDoc = reader.MaxDoc();
+            int maxDoc = reader.MaxDoc;
             Bits DocsWithField = reader.GetDocsWithField(field);
             NumericDocValues currentValues = reader.GetNumericDocValues(field);
             NumericDocValuesFieldUpdates.Iterator iter = (NumericDocValuesFieldUpdates.Iterator)fieldUpdates.GetIterator();
@@ -704,8 +704,8 @@ namespace Lucene.Net.Index
         {
             BinaryDocValues currentValues = reader.GetBinaryDocValues(field);
             Bits DocsWithField = reader.GetDocsWithField(field);
-            int maxDoc = reader.MaxDoc();
-            BinaryDocValuesFieldUpdates.Iterator iter = (BinaryDocValuesFieldUpdates.Iterator)fieldUpdates.GetIterator();
+            int maxDoc = reader.MaxDoc;
+            var iter = (BinaryDocValuesFieldUpdates.Iterator)fieldUpdates.GetIterator();
             BytesRef scratch = new BytesRef();
             int updateDoc = iter.NextDoc();
 
@@ -750,7 +750,7 @@ namespace Lucene.Net.Index
 			  this.FieldUpdates = fieldUpdates;
 			  currentValues = reader.GetNumericDocValues(field);
 			  docsWithField = reader.GetDocsWithField(field);
-			  maxDoc = reader.MaxDoc();
+			  maxDoc = reader.MaxDoc;
 			  updatesIter = fieldUpdates.Iterator();
 		  }
 
@@ -834,7 +834,7 @@ namespace Lucene.Net.Index
 			  this.DvFieldUpdates = dvFieldUpdates;
 			  currentValues = reader.GetBinaryDocValues(field);
 			  docsWithField = reader.GetDocsWithField(field);
-			  maxDoc = reader.MaxDoc();
+			  maxDoc = reader.MaxDoc;
 			  updatesIter = dvFieldUpdates.Iterator();
 		  }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -75,12 +76,12 @@ namespace Lucene.Net.Index
             {
                 Starts[i] = maxDoc;
                 IndexReader r = subReaders[i];
-                maxDoc += r.MaxDoc(); // compute maxDocs
+                maxDoc += r.MaxDoc; // compute maxDocs
                 if (maxDoc < 0) // overflow
                 {
-                    throw new System.ArgumentException("Too many documents, composite IndexReaders cannot exceed " + int.MaxValue);
+                    throw new ArgumentException("Too many documents, composite IndexReaders cannot exceed " + int.MaxValue);
                 }
-                numDocs += r.NumDocs(); // compute numDocs
+                numDocs += r.NumDocs; // compute numDocs
                 r.RegisterParentReader(this);
             }
             Starts[subReaders.Length] = maxDoc;
@@ -95,16 +96,22 @@ namespace Lucene.Net.Index
             return SubReaders[i].GetTermVectors(docID - Starts[i]); // dispatch to subreader
         }
 
-        public override sealed int NumDocs()
+        public override sealed int NumDocs
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return numDocs;
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return numDocs;
+            }
         }
 
-        public override sealed int MaxDoc()
+        public override sealed int MaxDoc
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return maxDoc;
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return maxDoc;
+            }
         }
 
         public override sealed void Document(int docID, StoredFieldVisitor visitor)

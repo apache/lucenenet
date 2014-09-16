@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs
             int docCount = 0;
             foreach (AtomicReader reader in mergeState.Readers)
             {
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
                 Bits liveDocs = reader.LiveDocs;
                 for (int i = 0; i < maxDoc; i++)
                 {

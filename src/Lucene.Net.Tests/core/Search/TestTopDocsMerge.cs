@@ -165,16 +165,16 @@ namespace Lucene.Net.Search
             else
             {
                 CompositeReaderContext compCTX = (CompositeReaderContext)ctx;
-                int size = compCTX.Leaves().Count;
+                int size = compCTX.Leaves.Count;
                 subSearchers = new ShardSearcher[size];
                 docStarts = new int[size];
                 int docBase = 0;
                 for (int searcherIDX = 0; searcherIDX < subSearchers.Length; searcherIDX++)
                 {
-                    AtomicReaderContext leave = compCTX.Leaves()[searcherIDX];
+                    AtomicReaderContext leave = compCTX.Leaves[searcherIDX];
                     subSearchers[searcherIDX] = new ShardSearcher(leave, compCTX);
                     docStarts[searcherIDX] = docBase;
-                    docBase += leave.Reader().MaxDoc();
+                    docBase += leave.Reader.MaxDoc;
                 }
             }
 

@@ -154,10 +154,13 @@ namespace Lucene.Net.Codecs.Lucene3x
             return ret;
         }
 
-        public override int Size()
+        public override int Size
         {
-            Debug.Assert(PreTerms_.Count == Fields.Count);
-            return Fields.Count;
+            get
+            {
+                Debug.Assert(PreTerms_.Count == Fields.Count);
+                return Fields.Count;
+            }
         }
 
         public override long UniqueTermCount

@@ -384,7 +384,7 @@ namespace Lucene.Net.Search
 
             public virtual void DoUninvert(AtomicReader reader, string field, bool setDocsWithField)
             {
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
                 Terms terms = reader.Terms(field);
                 if (terms != null)
                 {
@@ -445,7 +445,7 @@ namespace Lucene.Net.Search
         // null Bits means no docs matched
         internal virtual void SetDocsWithField(AtomicReader reader, string field, Bits docsWithField)
         {
-            int maxDoc = reader.MaxDoc();
+            int maxDoc = reader.MaxDoc;
             Bits bits;
             if (docsWithField == null)
             {
@@ -548,7 +548,7 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
                 sbyte[] values;
                 FieldCache_Fields.IByteParser parser = (FieldCache_Fields.IByteParser)key.Custom;
                 if (parser == null)
@@ -683,7 +683,7 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
                 short[] values;
                 FieldCache_Fields.IShortParser parser = (FieldCache_Fields.IShortParser)key.Custom;
                 if (parser == null)
@@ -877,7 +877,7 @@ namespace Lucene.Net.Search
                 GrowableWriterAndMinValue values = valuesRef.Get();
                 if (values == null)
                 {
-                    return new IntsFromArray(new PackedInts.NullReader(reader.MaxDoc()), 0);
+                    return new IntsFromArray(new PackedInts.NullReader(reader.MaxDoc), 0);
                 }
                 return new IntsFromArray(values.Writer.Mutable, (int)values.MinValue);
             }
@@ -923,7 +923,7 @@ namespace Lucene.Net.Search
                             minValue = 0;
                             startBitsPerValue = PackedInts.BitsRequired(currentValue);
                         }
-                        values = new GrowableWriter(startBitsPerValue, Reader.MaxDoc(), PackedInts.FAST);
+                        values = new GrowableWriter(startBitsPerValue, Reader.MaxDoc, PackedInts.FAST);
                         if (minValue != 0)
                         {
                             values.Fill(0, values.Size(), (-minValue) & 0xFFFFFFFFL); // default value must be 0
@@ -950,7 +950,7 @@ namespace Lucene.Net.Search
             if (fieldInfo == null)
             {
                 // field does not exist or has no value
-                return new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc());
+                return new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
             }
             else if (fieldInfo.HasDocValues())
             {
@@ -958,7 +958,7 @@ namespace Lucene.Net.Search
             }
             else if (!fieldInfo.Indexed)
             {
-                return new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc());
+                return new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
             }
             return (Bits)Caches[typeof(DocsWithFieldCache)].Get(reader, new CacheKey(field, null), false);
         }
@@ -973,7 +973,7 @@ namespace Lucene.Net.Search
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
             {
                 string field = key.Field;
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
 
                 // Visit all docs that have terms for this field
                 FixedBitSet res = null;
@@ -1137,7 +1137,7 @@ namespace Lucene.Net.Search
                 float[] values = valuesRef.Get();
                 if (values == null)
                 {
-                    values = new float[reader.MaxDoc()];
+                    values = new float[reader.MaxDoc];
                 }
                 return new FloatsFromArray(values);
             }
@@ -1170,7 +1170,7 @@ namespace Lucene.Net.Search
                         // (which will hit a System.FormatException
                         // when we first try the DEFAULT_INT_PARSER),
                         // we don't double-alloc:
-                        values = new float[Reader.MaxDoc()];
+                        values = new float[Reader.MaxDoc];
                         ValuesRef.Set(values);
                     }
                 }
@@ -1295,7 +1295,7 @@ namespace Lucene.Net.Search
                 GrowableWriterAndMinValue values = valuesRef.Get();
                 if (values == null)
                 {
-                    return new LongsFromArray(new PackedInts.NullReader(reader.MaxDoc()), 0L);
+                    return new LongsFromArray(new PackedInts.NullReader(reader.MaxDoc), 0L);
                 }
                 return new LongsFromArray(values.Writer.Mutable, values.MinValue);
             }
@@ -1341,7 +1341,7 @@ namespace Lucene.Net.Search
                             minValue = 0;
                             startBitsPerValue = PackedInts.BitsRequired(currentValue);
                         }
-                        values = new GrowableWriter(startBitsPerValue, Reader.MaxDoc(), PackedInts.FAST);
+                        values = new GrowableWriter(startBitsPerValue, Reader.MaxDoc, PackedInts.FAST);
                         if (minValue != 0)
                         {
                             values.Fill(0, values.Size(), -minValue); // default value must be 0
@@ -1468,7 +1468,7 @@ namespace Lucene.Net.Search
                 double[] values = valuesRef.Get();
                 if (values == null)
                 {
-                    values = new double[reader.MaxDoc()];
+                    values = new double[reader.MaxDoc];
                 }
                 return new DoublesFromArray(values);
             }
@@ -1501,7 +1501,7 @@ namespace Lucene.Net.Search
                         // (which will hit a System.FormatException
                         // when we first try the DEFAULT_INT_PARSER),
                         // we don't double-alloc:
-                        values = new double[Reader.MaxDoc()];
+                        values = new double[Reader.MaxDoc];
                         ValuesRef.Set(values);
                     }
                 }
@@ -1603,7 +1603,7 @@ namespace Lucene.Net.Search
 
             protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
             {
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
 
                 Terms terms = reader.Terms(key.Field);
 
@@ -1777,7 +1777,7 @@ namespace Lucene.Net.Search
                 // was already cached for this field and then return
                 // that instead, to avoid insanity
 
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
                 Terms terms = reader.Terms(key.Field);
 
                 float acceptableOverheadRatio = (float)((float?)key.Custom);

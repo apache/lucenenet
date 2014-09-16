@@ -143,8 +143,8 @@ namespace Lucene.Net.Index
                 writer.Dispose();
             }
 
-            Assert.AreEqual(1, reader.Leaves().Count);
-            AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+            Assert.AreEqual(1, reader.Leaves.Count);
+            AtomicReader r = (AtomicReader)reader.Leaves[0].Reader;
             BinaryDocValues bdv = r.GetBinaryDocValues("val");
             BytesRef scratch = new BytesRef();
             Assert.AreEqual(2, GetValue(bdv, 0, scratch));
@@ -195,12 +195,12 @@ namespace Lucene.Net.Index
             }
 
             BytesRef scratch = new BytesRef();
-            foreach (AtomicReaderContext context in reader.Leaves())
+            foreach (AtomicReaderContext context in reader.Leaves)
             {
-                AtomicReader r = (AtomicReader)context.Reader();
+                AtomicReader r = context.AtomicReader;
                 BinaryDocValues bdv = r.GetBinaryDocValues("val");
                 Assert.IsNotNull(bdv);
-                for (int i = 0; i < r.MaxDoc(); i++)
+                for (int i = 0; i < r.MaxDoc; i++)
                 {
                     long expected = expectedValues[i + context.DocBase];
                     long actual = GetValue(bdv, i, scratch);
@@ -246,8 +246,8 @@ namespace Lucene.Net.Index
             Assert.IsTrue(reader1 != reader2);
 
             BytesRef scratch = new BytesRef();
-            BinaryDocValues bdv1 = ((AtomicReader)reader1.Leaves()[0].Reader()).GetBinaryDocValues("val");
-            BinaryDocValues bdv2 = ((AtomicReader)reader2.Leaves()[0].Reader()).GetBinaryDocValues("val");
+            BinaryDocValues bdv1 = ((AtomicReader)reader1.Leaves[0].Reader).GetBinaryDocValues("val");
+            BinaryDocValues bdv2 = ((AtomicReader)reader2.Leaves[0].Reader).GetBinaryDocValues("val");
             Assert.AreEqual(1, GetValue(bdv1, 0, scratch));
             Assert.AreEqual(10, GetValue(bdv2, 0, scratch));
 
@@ -346,7 +346,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
             }
 
-            AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+            AtomicReader r = (AtomicReader)reader.Leaves[0].Reader;
             Assert.IsFalse(r.LiveDocs.Get(0));
             Assert.AreEqual(17, GetValue(r.GetBinaryDocValues("val"), 1, new BytesRef()));
 
@@ -386,7 +386,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
             }
 
-            AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+            AtomicReader r = (AtomicReader)reader.Leaves[0].Reader;
             Assert.IsFalse(r.LiveDocs.Get(0));
             Assert.AreEqual(1, GetValue(r.GetBinaryDocValues("val"), 0, new BytesRef())); // deletes are currently applied first
 
@@ -420,13 +420,13 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+            AtomicReader r = (AtomicReader)reader.Leaves[0].Reader;
             NumericDocValues ndv = r.GetNumericDocValues("ndv");
             BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
             SortedDocValues sdv = r.GetSortedDocValues("sdv");
             SortedSetDocValues ssdv = r.GetSortedSetDocValues("ssdv");
             BytesRef scratch = new BytesRef();
-            for (int i = 0; i < r.MaxDoc(); i++)
+            for (int i = 0; i < r.MaxDoc; i++)
             {
                 Assert.AreEqual(i, ndv.Get(i));
                 Assert.AreEqual(17, GetValue(bdv, i, scratch));
@@ -472,12 +472,12 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+            AtomicReader r = (AtomicReader)reader.Leaves[0].Reader;
 
             BinaryDocValues bdv1 = r.GetBinaryDocValues("bdv1");
             BinaryDocValues bdv2 = r.GetBinaryDocValues("bdv2");
             BytesRef scratch = new BytesRef();
-            for (int i = 0; i < r.MaxDoc(); i++)
+            for (int i = 0; i < r.MaxDoc; i++)
             {
                 Assert.AreEqual(17, GetValue(bdv1, i, scratch));
                 Assert.AreEqual(i, GetValue(bdv2, i, scratch));
@@ -511,10 +511,10 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+            AtomicReader r = (AtomicReader)reader.Leaves[0].Reader;
             BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
             BytesRef scratch = new BytesRef();
-            for (int i = 0; i < r.MaxDoc(); i++)
+            for (int i = 0; i < r.MaxDoc; i++)
             {
                 Assert.AreEqual(17, GetValue(bdv, i, scratch));
             }
@@ -545,10 +545,10 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+            AtomicReader r = (AtomicReader)reader.Leaves[0].Reader;
             BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
             BytesRef scratch = new BytesRef();
-            for (int i = 0; i < r.MaxDoc(); i++)
+            for (int i = 0; i < r.MaxDoc; i++)
             {
                 if (i == 0)
                 {
@@ -591,10 +591,10 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+            AtomicReader r = (AtomicReader)reader.Leaves[0].Reader;
             BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
             BytesRef scratch = new BytesRef();
-            for (int i = 0; i < r.MaxDoc(); i++)
+            for (int i = 0; i < r.MaxDoc; i++)
             {
                 bdv.Get(i, scratch);
                 Assert.AreEqual(0, scratch.Length);
@@ -673,7 +673,7 @@ namespace Lucene.Net.Index
             BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
             SortedDocValues sdv = r.GetSortedDocValues("sorted");
             BytesRef scratch = new BytesRef();
-            for (int i = 0; i < r.MaxDoc(); i++)
+            for (int i = 0; i < r.MaxDoc; i++)
             {
                 Assert.AreEqual(17, GetValue(bdv, i, scratch));
                 sdv.Get(i, scratch);
@@ -721,7 +721,7 @@ namespace Lucene.Net.Index
             AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
             BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
             BytesRef scratch = new BytesRef();
-            for (int i = 0; i < r.MaxDoc(); i++)
+            for (int i = 0; i < r.MaxDoc; i++)
             {
                 Assert.AreEqual(3, GetValue(bdv, i, scratch));
             }
@@ -795,13 +795,13 @@ namespace Lucene.Net.Index
                     reader = DirectoryReader.Open(writer, true);
                 }
 
-                Assert.AreEqual(1, reader.Leaves().Count);
-                AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+                Assert.AreEqual(1, reader.Leaves.Count);
+                AtomicReader r = (AtomicReader)reader.Leaves[0].Reader;
                 Assert.IsNull(r.LiveDocs, "index should have no deletes after forceMerge");
                 BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
                 Assert.IsNotNull(bdv);
                 BytesRef scratch = new BytesRef();
-                for (int i = 0; i < r.MaxDoc(); i++)
+                for (int i = 0; i < r.MaxDoc; i++)
                 {
                     Assert.AreEqual(value, GetValue(bdv, i, scratch));
                 }
@@ -836,7 +836,7 @@ namespace Lucene.Net.Index
             AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
             BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
             BytesRef scratch = new BytesRef();
-            for (int i = 0; i < r.MaxDoc(); i++)
+            for (int i = 0; i < r.MaxDoc; i++)
             {
                 Assert.AreEqual(3, GetValue(bdv, i, scratch));
             }
@@ -939,11 +939,11 @@ namespace Lucene.Net.Index
                 reader.Dispose();
                 reader = newReader;
                 //      System.out.println("[" + Thread.currentThread().getName() + "]: reopened reader: " + reader);
-                Assert.IsTrue(reader.NumDocs() > 0); // we delete at most one document per round
+                Assert.IsTrue(reader.NumDocs > 0); // we delete at most one document per round
                 BytesRef scratch = new BytesRef();
-                foreach (AtomicReaderContext context in reader.Leaves())
+                foreach (AtomicReaderContext context in reader.Leaves)
                 {
-                    AtomicReader r = (AtomicReader)context.Reader();
+                    AtomicReader r = context.AtomicReader;
                     //        System.out.println(((SegmentReader) r).getSegmentName());
                     Bits liveDocs = r.LiveDocs;
                     for (int field = 0; field < fieldValues.Length; field++)
@@ -952,7 +952,7 @@ namespace Lucene.Net.Index
                         BinaryDocValues bdv = r.GetBinaryDocValues(f);
                         Bits docsWithField = r.GetDocsWithField(f);
                         Assert.IsNotNull(bdv);
-                        int maxDoc = r.MaxDoc();
+                        int maxDoc = r.MaxDoc;
                         for (int doc = 0; doc < maxDoc; doc++)
                         {
                             if (liveDocs == null || liveDocs.Get(doc))
@@ -1018,9 +1018,9 @@ namespace Lucene.Net.Index
 
             DirectoryReader reader = DirectoryReader.Open(dir);
             BytesRef scratch = new BytesRef();
-            foreach (AtomicReaderContext context in reader.Leaves())
+            foreach (AtomicReaderContext context in reader.Leaves)
             {
-                AtomicReader r = (AtomicReader)context.Reader();
+                AtomicReader r = context.AtomicReader;
                 BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
                 Bits docsWithField = r.GetDocsWithField("bdv");
                 Assert.IsNotNull(docsWithField);
@@ -1066,11 +1066,11 @@ namespace Lucene.Net.Index
 
             DirectoryReader reader = DirectoryReader.Open(dir);
             BytesRef scratch = new BytesRef();
-            foreach (AtomicReaderContext context in reader.Leaves())
+            foreach (AtomicReaderContext context in reader.Leaves)
             {
-                AtomicReader r = (AtomicReader)context.Reader();
+                AtomicReader r = context.AtomicReader;
                 BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
-                for (int i = 0; i < r.MaxDoc(); i++)
+                for (int i = 0; i < r.MaxDoc; i++)
                 {
                     Assert.AreEqual(5L, GetValue(bdv, i, scratch));
                 }
@@ -1098,7 +1098,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader r = DirectoryReader.Open(dir);
-            BinaryDocValues bdv = ((AtomicReader)r.Leaves()[0].Reader()).GetBinaryDocValues("f");
+            BinaryDocValues bdv = ((AtomicReader)r.Leaves[0].Reader).GetBinaryDocValues("f");
             Assert.AreEqual(17, GetValue(bdv, 0, new BytesRef()));
             r.Dispose();
 
@@ -1207,9 +1207,9 @@ namespace Lucene.Net.Index
 
             DirectoryReader reader = DirectoryReader.Open(dir);
             BytesRef scratch = new BytesRef();
-            foreach (AtomicReaderContext context in reader.Leaves())
+            foreach (AtomicReaderContext context in reader.Leaves)
             {
-                AtomicReader r = (AtomicReader)context.Reader();
+                AtomicReader r = context.AtomicReader;
                 for (int i = 0; i < numThreads; i++)
                 {
                     BinaryDocValues bdv = r.GetBinaryDocValues("f" + i);
@@ -1217,7 +1217,7 @@ namespace Lucene.Net.Index
                     Bits docsWithBdv = r.GetDocsWithField("f" + i);
                     Bits docsWithControl = r.GetDocsWithField("cf" + i);
                     Bits liveDocs = r.LiveDocs;
-                    for (int j = 0; j < r.MaxDoc(); j++)
+                    for (int j = 0; j < r.MaxDoc; j++)
                     {
                         if (liveDocs == null || liveDocs.Get(j))
                         {
@@ -1388,12 +1388,12 @@ namespace Lucene.Net.Index
                 writer.UpdateBinaryDocValue(t, "f", ToBytes(value));
                 writer.UpdateBinaryDocValue(t, "cf", ToBytes(value * 2));
                 DirectoryReader reader = DirectoryReader.Open(writer, true);
-                foreach (AtomicReaderContext context in reader.Leaves())
+                foreach (AtomicReaderContext context in reader.Leaves)
                 {
-                    AtomicReader r = (AtomicReader)context.Reader();
+                    AtomicReader r = context.AtomicReader;
                     BinaryDocValues fbdv = r.GetBinaryDocValues("f");
                     BinaryDocValues cfbdv = r.GetBinaryDocValues("cf");
-                    for (int j = 0; j < r.MaxDoc(); j++)
+                    for (int j = 0; j < r.MaxDoc; j++)
                     {
                         Assert.AreEqual(GetValue(cfbdv, j, scratch), GetValue(fbdv, j, scratch) * 2);
                     }
@@ -1527,12 +1527,12 @@ namespace Lucene.Net.Index
 
             DirectoryReader reader_ = DirectoryReader.Open(dir2);
             BytesRef scratch = new BytesRef();
-            foreach (AtomicReaderContext context in reader_.Leaves())
+            foreach (AtomicReaderContext context in reader_.Leaves)
             {
-                AtomicReader r = (AtomicReader)context.Reader();
+                AtomicReader r = context.AtomicReader;
                 BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
                 BinaryDocValues control = r.GetBinaryDocValues("control");
-                for (int i = 0; i < r.MaxDoc(); i++)
+                for (int i = 0; i < r.MaxDoc; i++)
                 {
                     Assert.AreEqual(GetValue(bdv, i, scratch) * 2, GetValue(control, i, scratch));
                 }
@@ -1561,7 +1561,7 @@ namespace Lucene.Net.Index
 
             DirectoryReader r = DirectoryReader.Open(dir);
             BytesRef scratch = new BytesRef();
-            Assert.AreEqual(2L, GetValue(((AtomicReader)r.Leaves()[0].Reader()).GetBinaryDocValues("f"), 0, scratch));
+            Assert.AreEqual(2L, GetValue(((AtomicReader)r.Leaves[0].Reader).GetBinaryDocValues("f"), 0, scratch));
             r.Dispose();
 
             // create second gen of update files, first gen should be deleted
@@ -1570,7 +1570,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(numFiles, dir.ListAll().Length);
 
             r = DirectoryReader.Open(dir);
-            Assert.AreEqual(5L, GetValue(((AtomicReader)r.Leaves()[0].Reader()).GetBinaryDocValues("f"), 0, scratch));
+            Assert.AreEqual(5L, GetValue(((AtomicReader)r.Leaves[0].Reader).GetBinaryDocValues("f"), 0, scratch));
             r.Dispose();
 
             writer.Dispose();
@@ -1638,14 +1638,14 @@ namespace Lucene.Net.Index
 
             DirectoryReader reader = DirectoryReader.Open(dir);
             BytesRef scratch = new BytesRef();
-            foreach (AtomicReaderContext context in reader.Leaves())
+            foreach (AtomicReaderContext context in reader.Leaves)
             {
                 for (int i = 0; i < numBinaryFields; i++)
                 {
-                    AtomicReader r = (AtomicReader)context.Reader();
+                    AtomicReader r = context.AtomicReader;
                     BinaryDocValues f = r.GetBinaryDocValues("f" + i);
                     BinaryDocValues cf = r.GetBinaryDocValues("cf" + i);
-                    for (int j = 0; j < r.MaxDoc(); j++)
+                    for (int j = 0; j < r.MaxDoc; j++)
                     {
                         Assert.AreEqual(GetValue(cf, j, scratch), GetValue(f, j, scratch) * 2, "reader=" + r + ", field=f" + i + ", doc=" + j);
                     }
@@ -1678,8 +1678,8 @@ namespace Lucene.Net.Index
 
             DirectoryReader reader = DirectoryReader.Open(dir);
             BytesRef scratch = new BytesRef();
-            Assert.AreEqual(4, GetValue(((AtomicReader)reader.Leaves()[0].Reader()).GetBinaryDocValues("f1"), 0, scratch));
-            Assert.AreEqual(3, GetValue(((AtomicReader)reader.Leaves()[0].Reader()).GetBinaryDocValues("f2"), 0, scratch));
+            Assert.AreEqual(4, GetValue(((AtomicReader)reader.Leaves[0].Reader).GetBinaryDocValues("f1"), 0, scratch));
+            Assert.AreEqual(3, GetValue(((AtomicReader)reader.Leaves[0].Reader).GetBinaryDocValues("f2"), 0, scratch));
             reader.Dispose();
 
             dir.Dispose();
@@ -1704,8 +1704,8 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(1, reader.Leaves().Count);
-            Assert.AreEqual(2L, GetValue(((AtomicReader)reader.Leaves()[0].Reader()).GetBinaryDocValues("f1"), 0, new BytesRef()));
+            Assert.AreEqual(1, reader.Leaves.Count);
+            Assert.AreEqual(2L, GetValue(((AtomicReader)reader.Leaves[0].Reader).GetBinaryDocValues("f1"), 0, new BytesRef()));
             reader.Dispose();
 
             dir.Dispose();
@@ -1728,8 +1728,8 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(1, reader.Leaves().Count);
-            Assert.AreEqual(1L, GetValue(((AtomicReader)reader.Leaves()[0].Reader()).GetBinaryDocValues("f1"), 0, new BytesRef()));
+            Assert.AreEqual(1, reader.Leaves.Count);
+            Assert.AreEqual(1L, GetValue(((AtomicReader)reader.Leaves[0].Reader).GetBinaryDocValues("f1"), 0, new BytesRef()));
             reader.Dispose();
 
             dir.Dispose();

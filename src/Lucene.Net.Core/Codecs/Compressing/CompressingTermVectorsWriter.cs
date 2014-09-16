@@ -882,7 +882,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                 }
 
-                int maxDoc = reader.MaxDoc();
+                int maxDoc = reader.MaxDoc;
                 Bits liveDocs = reader.LiveDocs;
 
                 if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != CompressionMode || matchingVectorsReader.ChunkSize != ChunkSize || matchingVectorsReader.PackedIntsVersion != PackedInts.VERSION_CURRENT)
@@ -916,8 +916,8 @@ namespace Lucene.Net.Codecs.Compressing
                         {
                             int docBase = vectorsStream.ReadVInt();
                             int chunkDocs = vectorsStream.ReadVInt();
-                            Debug.Assert(docBase + chunkDocs <= matchingSegmentReader.MaxDoc());
-                            if (docBase + chunkDocs < matchingSegmentReader.MaxDoc() && NextDeletedDoc(docBase, liveDocs, docBase + chunkDocs) == docBase + chunkDocs)
+                            Debug.Assert(docBase + chunkDocs <= matchingSegmentReader.MaxDoc);
+                            if (docBase + chunkDocs < matchingSegmentReader.MaxDoc && NextDeletedDoc(docBase, liveDocs, docBase + chunkDocs) == docBase + chunkDocs)
                             {
                                 long chunkEnd = index.GetStartPointer(docBase + chunkDocs);
                                 long chunkLength = chunkEnd - vectorsStream.FilePointer;

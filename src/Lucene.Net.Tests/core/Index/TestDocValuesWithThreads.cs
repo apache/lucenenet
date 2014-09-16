@@ -70,8 +70,8 @@ namespace Lucene.Net.Index
             IndexReader r = w.Reader;
             w.Dispose();
 
-            Assert.AreEqual(1, r.Leaves().Count);
-            AtomicReader ar = (AtomicReader)r.Leaves()[0].Reader();
+            Assert.AreEqual(1, r.Leaves.Count);
+            AtomicReader ar = (AtomicReader)r.Leaves[0].Reader;
 
             int numThreads = TestUtil.NextInt(Random(), 2, 5);
             IList<ThreadClass> threads = new List<ThreadClass>();
@@ -299,7 +299,7 @@ namespace Lucene.Net.Index
 
                     for (int iter = 0; iter < 100; iter++)
                     {
-                        int docID = random.Next(Sr.MaxDoc());
+                        int docID = random.Next(Sr.MaxDoc);
                         source.Get(docID, scratch);
                         Assert.AreEqual(DocValues[(int)docIDToID.Get(docID)], scratch);
                     }

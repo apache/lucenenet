@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.ForceMerge(1);
             DirectoryReader r = w.Reader;
-            TermsEnum terms = GetOnlySegmentReader(r).Fields().Terms("f").Iterator(null);
+            TermsEnum terms = GetOnlySegmentReader(r).Fields.Terms("f").Iterator(null);
             Assert.IsTrue(terms.Next() != null);
             try
             {

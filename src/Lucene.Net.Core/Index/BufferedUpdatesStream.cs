@@ -459,7 +459,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 long delCount = 0;
-                Fields fields = reader.Fields();
+                Fields fields = reader.Fields;
                 if (fields == null)
                 {
                     // this reader has no postings
@@ -548,7 +548,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Fields fields = reader.Fields();
+                Fields fields = reader.Fields;
                 if (fields == null)
                 {
                     // this reader has no postings
@@ -618,7 +618,7 @@ namespace Lucene.Net.Index
                         DocValuesFieldUpdates dvUpdates = dvUpdatesContainer.GetUpdates(update.Field, update.Type);
                         if (dvUpdates == null)
                         {
-                            dvUpdates = dvUpdatesContainer.NewUpdates(update.Field, update.Type, reader.MaxDoc());
+                            dvUpdates = dvUpdatesContainer.NewUpdates(update.Field, update.Type, reader.MaxDoc);
                         }
                         int doc;
                         while ((doc = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)

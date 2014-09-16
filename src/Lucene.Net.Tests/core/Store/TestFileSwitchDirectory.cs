@@ -59,7 +59,7 @@ namespace Lucene.Net.Store
             IndexWriter writer = new IndexWriter(fsd, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NewLogMergePolicy(false)).SetCodec(Codec.ForName("Lucene40")).SetUseCompoundFile(false));
             TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
             IndexReader reader = DirectoryReader.Open(writer, true);
-            Assert.AreEqual(100, reader.MaxDoc());
+            Assert.AreEqual(100, reader.MaxDoc);
             writer.Commit();
             // we should see only fdx,fdt files here
             string[] files = primaryDir.ListAll();

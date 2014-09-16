@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
                                 throw new SearcherExpiredException("nodeID=" + nodeID + " version=" + subVersion);
                             }
                             subs[nodeID] = sub.IndexReader;
-                            docCount += subs[nodeID].MaxDoc();
+                            docCount += subs[nodeID].MaxDoc;
                         }
                     }
                     catch (SearcherExpiredException see)
@@ -215,7 +215,7 @@ namespace Lucene.Net.Search
 
                         if (VERBOSE)
                         {
-                            Console.WriteLine("  maxDoc=" + mockReader.MaxDoc());
+                            Console.WriteLine("  maxDoc=" + mockReader.MaxDoc);
                         }
 
                         if (terms != null)
@@ -387,7 +387,7 @@ namespace Lucene.Net.Search
 
             int numNodes = shardSearcher.NodeVersions.Length;
             int[] @base = new int[numNodes];
-            IList<IndexReaderContext> subs = mockSearcher.TopReaderContext.Children();
+            IList<IndexReaderContext> subs = mockSearcher.TopReaderContext.Children;
             Assert.AreEqual(numNodes, subs.Count);
 
             for (int nodeID = 0; nodeID < numNodes; nodeID++)
@@ -399,7 +399,7 @@ namespace Lucene.Net.Search
             {
                 /*
                 for(int shardID=0;shardID<shardSearchers.Length;shardID++) {
-                  System.out.println("  shard=" + shardID + " maxDoc=" + shardSearchers[shardID].searcher.getIndexReader().MaxDoc());
+                  System.out.println("  shard=" + shardID + " maxDoc=" + shardSearchers[shardID].searcher.getIndexReader().MaxDoc);
                 }
                 */
                 Console.WriteLine("  single searcher: " + hits.TotalHits + " totalHits maxScore=" + hits.MaxScore);

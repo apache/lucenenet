@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
                 //System.out.println("  bytes=" + charsIndexed + " add: " + doc);
             }
             IndexReader r = w.Reader;
-            //System.out.println("numDocs=" + r.NumDocs());
+            //System.out.println("numDocs=" + r.NumDocs);
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);

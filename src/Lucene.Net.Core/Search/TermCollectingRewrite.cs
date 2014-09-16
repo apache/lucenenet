@@ -51,9 +51,9 @@ namespace Lucene.Net.Search
         {
             IndexReaderContext topReaderContext = reader.Context;
             IComparer<BytesRef> lastTermComp = null;
-            foreach (AtomicReaderContext context in topReaderContext.Leaves())
+            foreach (AtomicReaderContext context in topReaderContext.Leaves)
             {
-                Fields fields = context.AtomicReader.Fields();
+                Fields fields = context.AtomicReader.Fields;
                 if (fields == null)
                 {
                     // reader has no fields

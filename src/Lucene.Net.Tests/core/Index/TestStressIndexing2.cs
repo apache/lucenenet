@@ -316,13 +316,13 @@ namespace Lucene.Net.Index
 
         private static void PrintDocs(DirectoryReader r)
         {
-            foreach (AtomicReaderContext ctx in r.Leaves())
+            foreach (AtomicReaderContext ctx in r.Leaves)
             {
                 // TODO: improve this
-                AtomicReader sub = (AtomicReader)ctx.Reader();
+                AtomicReader sub = (AtomicReader)ctx.Reader;
                 Bits liveDocs = sub.LiveDocs;
                 Console.WriteLine("  " + ((SegmentReader)sub).SegmentInfo);
-                for (int docID = 0; docID < sub.MaxDoc(); docID++)
+                for (int docID = 0; docID < sub.MaxDoc; docID++)
                 {
                     Document doc = sub.Document(docID);
                     if (liveDocs == null || liveDocs.Get(docID))
@@ -346,13 +346,13 @@ namespace Lucene.Net.Index
                 Console.WriteLine("\nr2 docs:");
                 PrintDocs(r2);
             }
-            if (r1.NumDocs() != r2.NumDocs())
+            if (r1.NumDocs != r2.NumDocs)
             {
-                Debug.Assert(false, "r1.NumDocs()=" + r1.NumDocs() + " vs r2.NumDocs()=" + r2.NumDocs());
+                Debug.Assert(false, "r1.NumDocs=" + r1.NumDocs + " vs r2.NumDocs=" + r2.NumDocs);
             }
-            bool hasDeletes = !(r1.MaxDoc() == r2.MaxDoc() && r1.NumDocs() == r1.MaxDoc());
+            bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.NumDocs == r1.MaxDoc);
 
-            int[] r2r1 = new int[r2.MaxDoc()]; // r2 id to r1 id mapping
+            int[] r2r1 = new int[r2.MaxDoc]; // r2 id to r1 id mapping
 
             // create mapping from id2 space to id2 based on idField
             Fields f1 = MultiFields.GetFields(r1);
@@ -549,8 +549,8 @@ namespace Lucene.Net.Index
             DocsEnum docs1 = null, docs2 = null;
 
             // pack both doc and freq into single element for easy sorting
-            long[] info1 = new long[r1.NumDocs()];
-            long[] info2 = new long[r2.NumDocs()];
+            long[] info1 = new long[r1.NumDocs];
+            long[] info2 = new long[r2.NumDocs];
 
             for (; ; )
             {
@@ -698,7 +698,7 @@ namespace Lucene.Net.Index
         {
             if (d1 == null)
             {
-                Assert.IsTrue(d2 == null || d2.Size() == 0);
+                Assert.IsTrue(d2 == null || d2.Size == 0);
                 return;
             }
             Assert.IsTrue(d2 != null);

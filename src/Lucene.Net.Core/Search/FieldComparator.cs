@@ -338,7 +338,7 @@ namespace Lucene.Net.Search
             {
                 if (MissingValue != null)
                 {
-                    DocsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader()), Field);
+                    DocsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField((context.AtomicReader), Field);
                     // optimization to remove unneeded checks on the bit interface:
                     if (DocsWithField is Lucene.Net.Util.Bits_MatchAllBits)
                     {
@@ -408,7 +408,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetBytes(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetBytes((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -501,7 +501,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetDoubles(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetDoubles((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -594,7 +594,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetFloats(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetFloats((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -689,7 +689,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetShorts(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetShorts((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -780,7 +780,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetInts(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetInts((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -874,7 +874,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetLongs(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetLongs((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -1259,7 +1259,7 @@ namespace Lucene.Net.Search
             /// Retrieves the SortedDocValues for the field in this segment </summary>
             protected internal virtual SortedDocValues GetSortedDocValues(AtomicReaderContext context, string field)
             {
-                return FieldCache_Fields.DEFAULT.GetTermsIndex(((AtomicReader)context.Reader()), field);
+                return FieldCache_Fields.DEFAULT.GetTermsIndex((context.AtomicReader), field);
             }
 
             public override FieldComparator SetNextReader(AtomicReaderContext context)
@@ -1473,8 +1473,8 @@ namespace Lucene.Net.Search
 
             public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
-                DocTerms = FieldCache_Fields.DEFAULT.GetTerms(((AtomicReader)context.Reader()), Field, true);
-                DocsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader()), Field);
+                DocTerms = FieldCache_Fields.DEFAULT.GetTerms((context.AtomicReader), Field, true);
+                DocsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField((context.AtomicReader), Field);
                 return this;
             }
 

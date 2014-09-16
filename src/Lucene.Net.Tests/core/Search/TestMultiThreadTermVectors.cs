@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
         private void TestTermVectors()
         {
             // check:
-            int numDocs = Reader.NumDocs();
+            int numDocs = Reader.NumDocs;
             long start = 0L;
             for (int docId = 0; docId < numDocs; docId++)
             {

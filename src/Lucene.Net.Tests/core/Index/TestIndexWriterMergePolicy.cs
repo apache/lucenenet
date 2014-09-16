@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
             writer.WaitForMerges();
             writer.Commit();
             CheckInvariants(writer);
-            Assert.AreEqual(10, writer.MaxDoc());
+            Assert.AreEqual(10, writer.MaxDoc);
 
             writer.Dispose();
             dir.Dispose();

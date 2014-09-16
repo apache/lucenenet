@@ -115,10 +115,10 @@ namespace Lucene.Net.Codecs.Perfield
             {
                 Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                 Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves().Count == 1);
-                NumericDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetNumericDocValues("dv1");
+                Debug.Assert(ireader.Leaves.Count == 1);
+                NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv1");
                 Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
-                BinaryDocValues dv2 = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv2");
+                BinaryDocValues dv2 = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv2");
                 dv2.Get(hits.ScoreDocs[i].Doc, scratch);
                 Assert.AreEqual(new BytesRef("hello world"), scratch);
             }

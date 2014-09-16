@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs
                         Current = Subs_Renamed[Upto].DocsEnum;
                         CurrentBase = MergeState_Renamed.DocBase[reader];
                         CurrentMap = MergeState_Renamed.DocMaps[reader];
-                        Debug.Assert(CurrentMap.MaxDoc() == Subs_Renamed[Upto].Slice.Length, "readerIndex=" + reader + " subs.len=" + Subs_Renamed.Length + " len1=" + CurrentMap.MaxDoc() + " vs " + Subs_Renamed[Upto].Slice.Length);
+                        Debug.Assert(CurrentMap.MaxDoc == Subs_Renamed[Upto].Slice.Length, "readerIndex=" + reader + " subs.len=" + Subs_Renamed.Length + " len1=" + CurrentMap.MaxDoc + " vs " + Subs_Renamed[Upto].Slice.Length);
                     }
                 }
 

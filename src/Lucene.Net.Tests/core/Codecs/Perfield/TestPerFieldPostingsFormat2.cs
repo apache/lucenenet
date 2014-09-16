@@ -281,7 +281,7 @@ namespace Lucene.Net.Codecs.Perfield
                     writer.ForceMerge(1);
                 }
                 writer.Commit();
-                Assert.AreEqual((i + 1) * docsPerRound, writer.MaxDoc());
+                Assert.AreEqual((i + 1) * docsPerRound, writer.MaxDoc);
                 writer.Dispose();
             }
             dir.Dispose();

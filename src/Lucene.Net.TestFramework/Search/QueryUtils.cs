@@ -253,7 +253,7 @@ namespace Lucene.Net.Search
         public static void CheckSkipTo(Query q, IndexSearcher s)
         {
             //System.out.println("Checking "+q);
-            IList<AtomicReaderContext> readerContextArray = s.TopReaderContext.Leaves();
+            IList<AtomicReaderContext> readerContextArray = s.TopReaderContext.Leaves;
             if (s.CreateNormalizedWeight(q).ScoresDocsOutOfOrder()) // in this case order of skipTo() might differ from that of next().
             {
                 return;
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
                     indexSearcher.Similarity = s.Similarity;
                     Weight w = indexSearcher.CreateNormalizedWeight(q);
                     AtomicReaderContext ctx = (AtomicReaderContext)previousReader.Context;
-                    Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader()).LiveDocs);
+                    Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
                     if (scorer != null)
                     {
                         bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
@@ -344,7 +344,7 @@ namespace Lucene.Net.Search
                     {
                         Weight w = s.CreateNormalizedWeight(q);
                         AtomicReaderContext context = ReaderContextArray[leafPtr];
-                        scorer = w.Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
+                        scorer = w.Scorer(context, (context.AtomicReader).LiveDocs);
                     }
 
                     int op = Order[(Opidx[0]++) % Order.Length];
@@ -385,7 +385,7 @@ namespace Lucene.Net.Search
                         indexSearcher.Similarity = s.Similarity;
                         Weight w = indexSearcher.CreateNormalizedWeight(q);
                         AtomicReaderContext ctx = (AtomicReaderContext)indexSearcher.TopReaderContext;
-                        Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader()).LiveDocs);
+                        Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
                         if (scorer != null)
                         {
                             bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
@@ -393,8 +393,8 @@ namespace Lucene.Net.Search
                         }
                         leafPtr++;
                     }
-                    LastReader[0] = (AtomicReader)value.Reader();
-                    Debug.Assert(ReaderContextArray[leafPtr].Reader() == value.Reader());
+                    LastReader[0] = (AtomicReader)value.Reader;
+                    Debug.Assert(ReaderContextArray[leafPtr].Reader == value.Reader);
                     this.scorer = null;
                     LastDoc[0] = -1;
                 }
@@ -414,7 +414,7 @@ namespace Lucene.Net.Search
             const float maxDiff = 1e-3f;
             int[] lastDoc = new int[] { -1 };
             AtomicReader[] lastReader = new AtomicReader[] { null };
-            IList<AtomicReaderContext> context = s.TopReaderContext.Leaves();
+            IList<AtomicReaderContext> context = s.TopReaderContext.Leaves;
             s.Search(q, new CollectorAnonymousInnerClassHelper2(q, s, maxDiff, lastDoc, lastReader, context));
 
             if (lastReader[0] != null)
@@ -517,9 +517,9 @@ namespace Lucene.Net.Search
                         leafPtr++;
                     }
 
-                    LastReader[0] = (AtomicReader)value.Reader();
+                    LastReader[0] = (AtomicReader)value.Reader;
                     LastDoc[0] = -1;
-                    liveDocs = ((AtomicReader)value.Reader()).LiveDocs;
+                    liveDocs = ((AtomicReader)value.Reader).LiveDocs;
                 }
             }
 

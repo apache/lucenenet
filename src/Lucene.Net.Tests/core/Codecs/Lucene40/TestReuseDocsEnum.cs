@@ -63,16 +63,16 @@ namespace Lucene.Net.Codecs.Lucene40
             writer.Commit();
 
             DirectoryReader open = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext ctx in open.Leaves())
+            foreach (AtomicReaderContext ctx in open.Leaves)
             {
-                AtomicReader indexReader = (AtomicReader)ctx.Reader();
+                AtomicReader indexReader = (AtomicReader)ctx.Reader;
                 Terms terms = indexReader.Terms("body");
                 TermsEnum iterator = terms.Iterator(null);
                 IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
-                MatchNoBits bits = new MatchNoBits(indexReader.MaxDoc());
+                MatchNoBits bits = new MatchNoBits(indexReader.MaxDoc);
                 while ((iterator.Next()) != null)
                 {
-                    DocsEnum docs = iterator.Docs(Random().NextBoolean() ? bits : new MatchNoBits(indexReader.MaxDoc()), null, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+                    DocsEnum docs = iterator.Docs(Random().NextBoolean() ? bits : new MatchNoBits(indexReader.MaxDoc), null, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
                     enums[docs] = true;
                 }
 
@@ -93,12 +93,12 @@ namespace Lucene.Net.Codecs.Lucene40
             writer.Commit();
 
             DirectoryReader open = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext ctx in open.Leaves())
+            foreach (AtomicReaderContext ctx in open.Leaves)
             {
-                Terms terms = ((AtomicReader)ctx.Reader()).Terms("body");
+                Terms terms = ((AtomicReader)ctx.Reader).Terms("body");
                 TermsEnum iterator = terms.Iterator(null);
                 IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
-                MatchNoBits bits = new MatchNoBits(open.MaxDoc());
+                MatchNoBits bits = new MatchNoBits(open.MaxDoc);
                 DocsEnum docs = null;
                 while ((iterator.Next()) != null)
                 {
@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 docs = null;
                 while ((iterator.Next()) != null)
                 {
-                    docs = iterator.Docs(new MatchNoBits(open.MaxDoc()), docs, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+                    docs = iterator.Docs(new MatchNoBits(open.MaxDoc), docs, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
                     enums[docs] = true;
                 }
                 Assert.AreEqual(terms.Size(), enums.Count);
@@ -146,15 +146,15 @@ namespace Lucene.Net.Codecs.Lucene40
 
             DirectoryReader firstReader = DirectoryReader.Open(dir);
             DirectoryReader secondReader = DirectoryReader.Open(dir);
-            IList<AtomicReaderContext> leaves = firstReader.Leaves();
-            IList<AtomicReaderContext> leaves2 = secondReader.Leaves();
+            IList<AtomicReaderContext> leaves = firstReader.Leaves;
+            IList<AtomicReaderContext> leaves2 = secondReader.Leaves;
 
             foreach (AtomicReaderContext ctx in leaves)
             {
-                Terms terms = ((AtomicReader)ctx.Reader()).Terms("body");
+                Terms terms = ((AtomicReader)ctx.Reader).Terms("body");
                 TermsEnum iterator = terms.Iterator(null);
                 IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
-                MatchNoBits bits = new MatchNoBits(firstReader.MaxDoc());
+                MatchNoBits bits = new MatchNoBits(firstReader.MaxDoc);
                 iterator = terms.Iterator(null);
                 DocsEnum docs = null;
                 BytesRef term = null;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 return null;
             }
-            AtomicReader indexReader = (AtomicReader)readers[Random().Next(readers.Count)].Reader();
+            AtomicReader indexReader = (AtomicReader)readers[Random().Next(readers.Count)].Reader;
             Terms terms = indexReader.Terms(field);
             if (terms == null)
             {

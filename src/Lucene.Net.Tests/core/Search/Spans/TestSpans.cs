@@ -406,7 +406,7 @@ namespace Lucene.Net.Search.Spans
             bool ordered = true;
             int slop = 1;
             IndexReaderContext topReaderContext = Searcher.TopReaderContext;
-            IList<AtomicReaderContext> leaves = topReaderContext.Leaves();
+            IList<AtomicReaderContext> leaves = topReaderContext.Leaves;
             int subIndex = ReaderUtil.SubIndex(11, leaves);
             for (int i = 0, c = leaves.Count; i < c; i++)
             {
@@ -421,7 +421,7 @@ namespace Lucene.Net.Search.Spans
                     Searcher.Similarity = sim;
                     SpanNearQuery snq = new SpanNearQuery(new SpanQuery[] { MakeSpanTermQuery("t1"), MakeSpanTermQuery("t2") }, slop, ordered);
 
-                    spanScorer = Searcher.CreateNormalizedWeight(snq).Scorer(ctx, ((AtomicReader)ctx.Reader()).LiveDocs);
+                    spanScorer = Searcher.CreateNormalizedWeight(snq).Scorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
                 }
                 finally
                 {

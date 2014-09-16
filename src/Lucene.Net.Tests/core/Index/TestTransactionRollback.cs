@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             //Perhaps not the most efficient approach but meets our
             //needs here.
             Bits liveDocs = MultiFields.GetLiveDocs(r);
-            for (int i = 0; i < r.MaxDoc(); i++)
+            for (int i = 0; i < r.MaxDoc; i++)
             {
                 if (liveDocs == null || liveDocs.Get(i))
                 {
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
                 // should not work:
                 (new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new DeleteLastCommitPolicy<IndexCommit>(this)))).Dispose();
                 IndexReader r = DirectoryReader.Open(Dir);
-                Assert.AreEqual(100, r.NumDocs());
+                Assert.AreEqual(100, r.NumDocs);
                 r.Dispose();
             }
         }

@@ -31,8 +31,8 @@ namespace Lucene.Net.Index
         public AllDeletedFilterReader(AtomicReader @in)
             : base(@in)
         {
-            LiveDocs_Renamed = new Bits_MatchNoBits(@in.MaxDoc());
-            Debug.Assert(MaxDoc() == 0 || HasDeletions());
+            LiveDocs_Renamed = new Bits_MatchNoBits(@in.MaxDoc);
+            Debug.Assert(MaxDoc == 0 || HasDeletions);
         }
 
         public override Bits LiveDocs
@@ -43,9 +43,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override int NumDocs()
+        public override int NumDocs
         {
-            return 0;
+            get { return 0; }
         }
     }
 }

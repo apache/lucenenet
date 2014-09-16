@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             bool fail = false;
             IndexReader reader = DirectoryReader.Open(directory);
 
-            int max = reader.MaxDoc();
+            int max = reader.MaxDoc;
             for (int i = 0; i < max; i++)
             {
                 Document temp = reader.Document(i);
@@ -146,8 +146,8 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             IndexReader ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(10, ir.MaxDoc());
-            Assert.AreEqual(10, ir.NumDocs());
+            Assert.AreEqual(10, ir.MaxDoc);
+            Assert.AreEqual(10, ir.NumDocs);
             ir.Dispose();
 
             IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
@@ -157,18 +157,18 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(8, ir.NumDocs());
+            Assert.AreEqual(8, ir.NumDocs);
             ir.Dispose();
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
             Assert.AreEqual(8, writer.NumDocs());
-            Assert.AreEqual(10, writer.MaxDoc());
+            Assert.AreEqual(10, writer.MaxDoc);
             writer.ForceMergeDeletes();
             Assert.AreEqual(8, writer.NumDocs());
             writer.Dispose();
             ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(8, ir.MaxDoc());
-            Assert.AreEqual(8, ir.NumDocs());
+            Assert.AreEqual(8, ir.MaxDoc);
+            Assert.AreEqual(8, ir.NumDocs);
             ir.Dispose();
             dir.Dispose();
         }
@@ -205,8 +205,8 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             IndexReader ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(98, ir.MaxDoc());
-            Assert.AreEqual(98, ir.NumDocs());
+            Assert.AreEqual(98, ir.MaxDoc);
+            Assert.AreEqual(98, ir.NumDocs);
             ir.Dispose();
 
             IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(49, ir.NumDocs());
+            Assert.AreEqual(49, ir.NumDocs);
             ir.Dispose();
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(3)));
@@ -226,8 +226,8 @@ namespace Lucene.Net.Index
             writer.ForceMergeDeletes();
             writer.Dispose();
             ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(49, ir.MaxDoc());
-            Assert.AreEqual(49, ir.NumDocs());
+            Assert.AreEqual(49, ir.MaxDoc);
+            Assert.AreEqual(49, ir.NumDocs);
             ir.Dispose();
             dir.Dispose();
         }
@@ -264,8 +264,8 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             IndexReader ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(98, ir.MaxDoc());
-            Assert.AreEqual(98, ir.NumDocs());
+            Assert.AreEqual(98, ir.MaxDoc);
+            Assert.AreEqual(98, ir.NumDocs);
             ir.Dispose();
 
             IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
@@ -276,15 +276,15 @@ namespace Lucene.Net.Index
             }
             writer.Dispose();
             ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(49, ir.NumDocs());
+            Assert.AreEqual(49, ir.NumDocs);
             ir.Dispose();
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(3)));
             writer.ForceMergeDeletes(false);
             writer.Dispose();
             ir = DirectoryReader.Open(dir);
-            Assert.AreEqual(49, ir.MaxDoc());
-            Assert.AreEqual(49, ir.NumDocs());
+            Assert.AreEqual(49, ir.MaxDoc);
+            Assert.AreEqual(49, ir.NumDocs);
             ir.Dispose();
             dir.Dispose();
         }

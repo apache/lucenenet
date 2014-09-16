@@ -320,15 +320,18 @@ namespace Lucene.Net.Codecs.Lucene40
                 return new TVTerms(OuterInstance, FieldFPs[fieldIndex]);
             }
 
-            public override int Size()
+            public override int Size
             {
-                if (FieldNumbers == null)
+                get
                 {
-                    return 0;
-                }
-                else
-                {
-                    return FieldNumbers.Length;
+                    if (FieldNumbers == null)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return FieldNumbers.Length;
+                    }
                 }
             }
         }
@@ -439,17 +442,17 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             private readonly Lucene40TermVectorsReader OuterInstance;
 
-            internal readonly IndexInput OrigTVF;
-            internal readonly IndexInput Tvf;
-            internal int NumTerms;
-            internal int NextTerm;
-            internal int Freq;
-            internal BytesRef LastTerm = new BytesRef();
-            internal BytesRef Term_Renamed = new BytesRef();
-            internal bool StorePositions;
-            internal bool StoreOffsets;
-            internal bool StorePayloads;
-            internal long TvfFP;
+            private readonly IndexInput OrigTVF;
+            private readonly IndexInput Tvf;
+            private int NumTerms;
+            private int NextTerm;
+            private int Freq;
+            private BytesRef LastTerm = new BytesRef();
+            private BytesRef Term_Renamed = new BytesRef();
+            private bool StorePositions;
+            private bool StoreOffsets;
+            private bool StorePayloads;
+            private long TvfFP;
 
             internal int[] Positions;
             internal int[] StartOffsets;
@@ -848,7 +851,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (Tvx != null)
             {
                 Fields fields = new TVFields(this, docID);
-                if (fields.Size() == 0)
+                if (fields.Size == 0)
                 {
                     // TODO: we can improve writer here, eg write 0 into
                     // tvx file, so we know on first read from tvx that

@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                SortedSetDocValues docTermOrds = FieldCache_Fields.DEFAULT.GetDocTermOrds(((AtomicReader)context.Reader()), Field);
+                SortedSetDocValues docTermOrds = FieldCache_Fields.DEFAULT.GetDocTermOrds(context.AtomicReader, Field);
                 long lowerPoint = LowerVal == null ? -1 : docTermOrds.LookupTerm(LowerVal);
                 long upperPoint = UpperVal == null ? -1 : docTermOrds.LookupTerm(UpperVal);
 
@@ -138,16 +138,16 @@ namespace Lucene.Net.Search
 
                 Debug.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
-                return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, docTermOrds, inclusiveLowerPoint, inclusiveUpperPoint);
+                return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.AtomicReader.MaxDoc, acceptDocs, docTermOrds, inclusiveLowerPoint, inclusiveUpperPoint);
             }
 
             private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
             {
                 private readonly DocTermOrdsRangeFilterAnonymousInnerClassHelper OuterInstance;
 
-                private SortedSetDocValues DocTermOrds;
-                private long InclusiveLowerPoint;
-                private long InclusiveUpperPoint;
+                private readonly SortedSetDocValues DocTermOrds;
+                private readonly long InclusiveLowerPoint;
+                private readonly long InclusiveUpperPoint;
 
                 public FieldCacheDocIdSetAnonymousInnerClassHelper(DocTermOrdsRangeFilterAnonymousInnerClassHelper outerInstance, int maxDoc, Bits acceptDocs, SortedSetDocValues docTermOrds, long inclusiveLowerPoint, long inclusiveUpperPoint)
                     : base(maxDoc, acceptDocs)

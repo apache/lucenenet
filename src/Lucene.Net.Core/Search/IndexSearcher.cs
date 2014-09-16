@@ -149,11 +149,11 @@ namespace Lucene.Net.Search
         /// @lucene.experimental </seealso>
         public IndexSearcher(IndexReaderContext context, TaskScheduler executor)
         {
-            Debug.Assert(context.IsTopLevel, "IndexSearcher's ReaderContext must be topLevel for reader" + context.Reader());
-            Reader = context.Reader();
+            Debug.Assert(context.IsTopLevel, "IndexSearcher's ReaderContext must be topLevel for reader" + context.Reader);
+            Reader = context.Reader;
             this.Executor = executor;
             this.ReaderContext = context;
-            LeafContexts = context.Leaves();
+            LeafContexts = context.Leaves;
             this.LeafSlices = executor == null ? null : Slices(LeafContexts);
         }
 
@@ -458,7 +458,7 @@ namespace Lucene.Net.Search
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected internal virtual TopDocs Search(Weight weight, ScoreDoc after, int nDocs)
         {
-            int limit = Reader.MaxDoc();
+            int limit = Reader.MaxDoc;
             if (limit == 0)
             {
                 limit = 1;
@@ -495,7 +495,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
+                var scoreDocs = new ScoreDoc[hq.Size()];
                 for (int i = hq.Size() - 1; i >= 0; i--) // put docs in array
                 {
                     scoreDocs[i] = hq.Pop();
@@ -516,7 +516,7 @@ namespace Lucene.Net.Search
         protected internal virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc after, int nDocs)
         {
             // single thread
-            int limit = Reader.MaxDoc();
+            int limit = Reader.MaxDoc;
             if (limit == 0)
             {
                 limit = 1;
@@ -556,7 +556,7 @@ namespace Lucene.Net.Search
                 throw new System.NullReferenceException("Sort must not be null");
             }
 
-            int limit = Reader.MaxDoc();
+            int limit = Reader.MaxDoc;
             if (limit == 0)
             {
                 limit = 1;
@@ -603,7 +603,7 @@ namespace Lucene.Net.Search
         protected internal virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
             // single thread
-            int limit = Reader.MaxDoc();
+            int limit = Reader.MaxDoc;
             if (limit == 0)
             {
                 limit = 1;
@@ -650,7 +650,7 @@ namespace Lucene.Net.Search
                     // continue with the following leaf
                     continue;
                 }
-                BulkScorer scorer = weight.BulkScorer(ctx, !collector.AcceptsDocsOutOfOrder(), ((AtomicReader)ctx.Reader()).LiveDocs);
+                BulkScorer scorer = weight.BulkScorer(ctx, !collector.AcceptsDocsOutOfOrder(), ctx.AtomicReader.LiveDocs);
                 if (scorer != null)
                 {
                     try
@@ -1031,7 +1031,7 @@ namespace Lucene.Net.Search
                 sumTotalTermFreq = terms.SumTotalTermFreq;
                 sumDocFreq = terms.SumDocFreq;
             }
-            return new CollectionStatistics(field, Reader.MaxDoc(), docCount, sumTotalTermFreq, sumDocFreq);
+            return new CollectionStatistics(field, Reader.MaxDoc, docCount, sumTotalTermFreq, sumDocFreq);
         }
     }
 }

@@ -235,8 +235,8 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(dirReader.Current);
             Assert.IsTrue(nrtReader.Current); // nothing was committed yet so we are still current
-            Assert.AreEqual(2, nrtReader.MaxDoc()); // sees the actual document added
-            Assert.AreEqual(1, dirReader.MaxDoc());
+            Assert.AreEqual(2, nrtReader.MaxDoc); // sees the actual document added
+            Assert.AreEqual(1, dirReader.MaxDoc);
             writer.Dispose(); // close is actually a commit both should see the changes
             Assert.IsTrue(nrtReader.Current);
             Assert.IsFalse(dirReader.Current); // this reader has been opened before the writer was closed / committed
@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
             writer.Commit();
             Assert.IsTrue(r1.Current); // we have seen all changes - no change after opening the NRT reader
 
-            Assert.AreEqual(200, r1.MaxDoc());
+            Assert.AreEqual(200, r1.MaxDoc);
 
             int index2df = r1.DocFreq(new Term("indexname", "index2"));
 
@@ -356,7 +356,7 @@ namespace Lucene.Net.Index
             writer.AddIndexes(dir2);
 
             IndexReader r1 = writer.Reader;
-            Assert.AreEqual(500, r1.MaxDoc());
+            Assert.AreEqual(500, r1.MaxDoc);
 
             r1.Dispose();
             writer.Dispose();
@@ -434,7 +434,7 @@ namespace Lucene.Net.Index
             addDirThreads.JoinThreads();
 
             //Assert.AreEqual(100 + numDirs * (3 * numIter / 4) * addDirThreads.numThreads
-            //    * addDirThreads.NUM_INIT_DOCS, addDirThreads.mainWriter.NumDocs());
+            //    * addDirThreads.NUM_INIT_DOCS, addDirThreads.mainWriter.NumDocs);
             Assert.AreEqual(addDirThreads.Count.Get(), addDirThreads.MainWriter.NumDocs());
 
             addDirThreads.Close(true);
@@ -444,9 +444,9 @@ namespace Lucene.Net.Index
             TestUtil.CheckIndex(mainDir);
 
             IndexReader reader = DirectoryReader.Open(mainDir);
-            Assert.AreEqual(addDirThreads.Count.Get(), reader.NumDocs());
+            Assert.AreEqual(addDirThreads.Count.Get(), reader.NumDocs);
             //Assert.AreEqual(100 + numDirs * (3 * numIter / 4) * addDirThreads.numThreads
-            //    * addDirThreads.NUM_INIT_DOCS, reader.NumDocs());
+            //    * addDirThreads.NUM_INIT_DOCS, reader.NumDocs);
             reader.Dispose();
 
             addDirThreads.CloseDir();
@@ -649,15 +649,15 @@ namespace Lucene.Net.Index
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
             IndexWriter writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             IndexReader r1 = writer.Reader;
-            Assert.AreEqual(0, r1.MaxDoc());
+            Assert.AreEqual(0, r1.MaxDoc);
             CreateIndexNoClose(false, "index1", writer);
             writer.Flush(!doFullMerge, true);
 
             IndexReader iwr1 = writer.Reader;
-            Assert.AreEqual(100, iwr1.MaxDoc());
+            Assert.AreEqual(100, iwr1.MaxDoc);
 
             IndexReader r2 = writer.Reader;
-            Assert.AreEqual(r2.MaxDoc(), 100);
+            Assert.AreEqual(r2.MaxDoc, 100);
             // add 100 documents
             for (int x = 10000; x < 10000 + 100; x++)
             {
@@ -668,11 +668,11 @@ namespace Lucene.Net.Index
             // verify the reader was reopened internally
             IndexReader iwr2 = writer.Reader;
             Assert.IsTrue(iwr2 != r1);
-            Assert.AreEqual(200, iwr2.MaxDoc());
+            Assert.AreEqual(200, iwr2.MaxDoc);
             // should have flushed out a segment
             IndexReader r3 = writer.Reader;
             Assert.IsTrue(r2 != r3);
-            Assert.AreEqual(200, r3.MaxDoc());
+            Assert.AreEqual(200, r3.MaxDoc);
 
             // dec ref the readers rather than close them because
             // closing flushes changes to the writer
@@ -687,7 +687,7 @@ namespace Lucene.Net.Index
             writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             IndexReader w2r1 = writer.Reader;
             // insure the deletes were actually flushed to the directory
-            Assert.AreEqual(200, w2r1.MaxDoc());
+            Assert.AreEqual(200, w2r1.MaxDoc);
             w2r1.Dispose();
             writer.Dispose();
 
@@ -789,7 +789,7 @@ namespace Lucene.Net.Index
             TestUtil.CheckIndex(dir1);
             writer.Commit();
             TestUtil.CheckIndex(dir1);
-            Assert.AreEqual(100, r1.NumDocs());
+            Assert.AreEqual(100, r1.NumDocs);
 
             for (int i = 0; i < 10; i++)
             {
@@ -803,7 +803,7 @@ namespace Lucene.Net.Index
                 r1.Dispose();
                 r1 = r2;
             }
-            Assert.AreEqual(110, r1.NumDocs());
+            Assert.AreEqual(110, r1.NumDocs);
             writer.Dispose();
             r1.Dispose();
             dir1.Dispose();
@@ -825,7 +825,7 @@ namespace Lucene.Net.Index
             TestUtil.CheckIndex(dir1);
 
             // reader should remain usable even after IndexWriter is closed:
-            Assert.AreEqual(100, r.NumDocs());
+            Assert.AreEqual(100, r.NumDocs);
             Query q = new TermQuery(new Term("indexname", "test"));
             IndexSearcher searcher = NewSearcher(r);
             Assert.AreEqual(100, searcher.Search(q, 10).TotalHits);
@@ -1098,8 +1098,8 @@ namespace Lucene.Net.Index
             w.Dispose();
             r.Dispose();
             r = DirectoryReader.Open(dir);
-            Assert.AreEqual(1, r.NumDocs());
-            Assert.IsFalse(r.HasDeletions());
+            Assert.AreEqual(1, r.NumDocs);
+            Assert.IsFalse(r.HasDeletions);
             r.Dispose();
             dir.Dispose();
         }
@@ -1118,17 +1118,17 @@ namespace Lucene.Net.Index
             id.StringValue = "1";
             w.AddDocument(doc);
             IndexReader r = w.Reader;
-            Assert.AreEqual(2, r.NumDocs());
+            Assert.AreEqual(2, r.NumDocs);
             r.Dispose();
 
             w.DeleteDocuments(new Term("id", "0"));
             r = w.Reader;
-            Assert.AreEqual(1, r.NumDocs());
+            Assert.AreEqual(1, r.NumDocs);
             r.Dispose();
 
             w.DeleteDocuments(new Term("id", "1"));
             r = w.Reader;
-            Assert.AreEqual(0, r.NumDocs());
+            Assert.AreEqual(0, r.NumDocs);
             r.Dispose();
 
             w.Dispose();
@@ -1142,7 +1142,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             IndexReader r = w.Reader;
-            Assert.AreEqual(0, r.NumDocs());
+            Assert.AreEqual(0, r.NumDocs);
             r.Dispose();
             w.Dispose();
             dir.Dispose();
@@ -1410,7 +1410,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 IndexReader r = DirectoryReader.Open(w, true);
                 // Make sure segment count never exceeds 100:
-                Assert.IsTrue(r.Leaves().Count < 100);
+                Assert.IsTrue(r.Leaves.Count < 100);
                 r.Dispose();
             }
             w.Dispose();

@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
             /// </summary>
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex(((AtomicReader)context.Reader()), Query.field);
+                SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex((context.AtomicReader), Query.field);
                 // Cannot use FixedBitSet because we require long index (ord):
                 LongBitSet termSet = new LongBitSet(fcsi.ValueCount);
                 TermsEnum termsEnum = Query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, fcsi));
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
 
-                return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, fcsi, termSet);
+                return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader.MaxDoc, acceptDocs, fcsi, termSet);
             }
 
             private class TermsAnonymousInnerClassHelper : Terms

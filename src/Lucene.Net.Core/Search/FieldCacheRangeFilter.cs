@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex((AtomicReader)context.Reader(), field);
+                SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex(context.AtomicReader, field);
                 int lowerPoint = lowerVal == null ? -1 : fcsi.LookupTerm(new BytesRef(lowerVal));
                 int upperPoint = upperVal == null ? -1 : fcsi.LookupTerm(new BytesRef(upperVal));
 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
 
                 Debug.Assert(inclusiveLowerPoint > 0 && inclusiveUpperPoint > 0);
 
-                return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
+                return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
         }
 
@@ -182,7 +182,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex((AtomicReader)context.Reader(), field);
+                SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex(context.AtomicReader, field);
                 int lowerPoint = lowerVal == null ? -1 : fcsi.LookupTerm(lowerVal);
                 int upperPoint = upperVal == null ? -1 : fcsi.LookupTerm(upperVal);
 
@@ -232,7 +232,7 @@ namespace Lucene.Net.Search
                 }
 
                 //assert inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0;
-                return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
+                return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.AtomicReader.MaxDoc, acceptDocs);
             }
         }
 
@@ -294,10 +294,10 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache_Fields.Bytes values = FieldCache_Fields.DEFAULT.GetBytes((AtomicReader)context.Reader(), field, (FieldCache_Fields.IByteParser)parser, false);
+                var values = FieldCache_Fields.DEFAULT.GetBytes(context.AtomicReader, field, (FieldCache_Fields.IByteParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
-                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
+                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.AtomicReader.MaxDoc, acceptDocs);
             }
         }
 
@@ -360,10 +360,10 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache_Fields.Shorts values = FieldCache_Fields.DEFAULT.GetShorts((AtomicReader)context.Reader(), field, (FieldCache_Fields.IShortParser)parser, false);
+                FieldCache_Fields.Shorts values = FieldCache_Fields.DEFAULT.GetShorts(context.AtomicReader, field, (FieldCache_Fields.IShortParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
-                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
+                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
         }
 
@@ -426,9 +426,9 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache_Fields.Ints values = FieldCache_Fields.DEFAULT.GetInts((AtomicReader)context.Reader(), field, (FieldCache_Fields.IIntParser)parser, false);
+                FieldCache_Fields.Ints values = FieldCache_Fields.DEFAULT.GetInts(context.AtomicReader, field, (FieldCache_Fields.IIntParser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
-                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
+                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
         }
 
@@ -491,9 +491,9 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache_Fields.Longs values = FieldCache_Fields.DEFAULT.GetLongs((AtomicReader)context.Reader(), field, (FieldCache_Fields.ILongParser)parser, false);
+                FieldCache_Fields.Longs values = FieldCache_Fields.DEFAULT.GetLongs(context.AtomicReader, field, (FieldCache_Fields.ILongParser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
-                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
+                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
         }
 
@@ -560,10 +560,10 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache_Fields.Floats values = FieldCache_Fields.DEFAULT.GetFloats((AtomicReader)context.Reader(), field, (FieldCache_Fields.IFloatParser)parser, false);
+                FieldCache_Fields.Floats values = FieldCache_Fields.DEFAULT.GetFloats(context.AtomicReader, field, (FieldCache_Fields.IFloatParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
-                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
+                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
         }
 
@@ -630,10 +630,10 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache_Fields.Doubles values = FieldCache_Fields.DEFAULT.GetDoubles((AtomicReader)context.Reader(), field, (FieldCache_Fields.IDoubleParser)parser, false);
+                FieldCache_Fields.Doubles values = FieldCache_Fields.DEFAULT.GetDoubles(context.AtomicReader, field, (FieldCache_Fields.IDoubleParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
-                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader().MaxDoc(), acceptDocs);
+                return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
         }
 
@@ -838,7 +838,7 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-			SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex(((AtomicReader)context.Reader()), Field);
+			SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex((context.AtomicReader), Field);
 			int lowerPoint = LowerVal == null ? - 1 : fcsi.LookupTerm(new BytesRef(LowerVal));
 			int upperPoint = UpperVal == null ? - 1 : fcsi.LookupTerm(new BytesRef(UpperVal));
 
@@ -889,7 +889,7 @@ namespace Lucene.Net.Search
 
 			Debug.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, fcsi, inclusiveLowerPoint, inclusiveUpperPoint);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader.MaxDoc, acceptDocs, fcsi, inclusiveLowerPoint, inclusiveUpperPoint);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
@@ -946,7 +946,7 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-			SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex(((AtomicReader)context.Reader()), Field);
+			SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex((context.AtomicReader), Field);
 			int lowerPoint = LowerVal == null ? - 1 : fcsi.LookupTerm(LowerVal);
 			int upperPoint = UpperVal == null ? - 1 : fcsi.LookupTerm(UpperVal);
 
@@ -997,7 +997,7 @@ namespace Lucene.Net.Search
 
 			Debug.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.Reader().MaxDoc(), acceptDocs, fcsi, inclusiveLowerPoint, inclusiveUpperPoint);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.Reader.MaxDoc, acceptDocs, fcsi, inclusiveLowerPoint, inclusiveUpperPoint);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper2 : FieldCacheDocIdSet
@@ -1101,8 +1101,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-            FieldCache_Fields.Bytes values = FieldCache_Fields.DEFAULT.GetBytes(((AtomicReader)context.Reader()), Field, (FieldCache_Fields.IByteParser)Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper3(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+            FieldCache_Fields.Bytes values = FieldCache_Fields.DEFAULT.GetBytes((context.AtomicReader), Field, (FieldCache_Fields.IByteParser)Parser, false);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper3(this, context.Reader.MaxDoc, acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper3 : FieldCacheDocIdSet
@@ -1207,8 +1207,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-            FieldCache_Fields.Shorts values = FieldCache_Fields.DEFAULT.GetShorts(((AtomicReader)context.Reader()), Field, (FieldCache_Fields.IShortParser)Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper4(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+            FieldCache_Fields.Shorts values = FieldCache_Fields.DEFAULT.GetShorts((context.AtomicReader), Field, (FieldCache_Fields.IShortParser)Parser, false);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper4(this, context.Reader.MaxDoc, acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper4 : FieldCacheDocIdSet
@@ -1311,8 +1311,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-            FieldCache_Fields.Ints values = FieldCache_Fields.DEFAULT.GetInts(((AtomicReader)context.Reader()), Field, (FieldCache_Fields.IIntParser)Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper5(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+            FieldCache_Fields.Ints values = FieldCache_Fields.DEFAULT.GetInts((context.AtomicReader), Field, (FieldCache_Fields.IIntParser)Parser, false);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper5(this, context.Reader.MaxDoc, acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper5 : FieldCacheDocIdSet
@@ -1415,8 +1415,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-            FieldCache_Fields.Longs values = FieldCache_Fields.DEFAULT.GetLongs(((AtomicReader)context.Reader()), Field, (FieldCache_Fields.ILongParser)Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper6(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+            FieldCache_Fields.Longs values = FieldCache_Fields.DEFAULT.GetLongs((context.AtomicReader), Field, (FieldCache_Fields.ILongParser)Parser, false);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper6(this, context.Reader.MaxDoc, acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper6 : FieldCacheDocIdSet
@@ -1523,8 +1523,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-            FieldCache_Fields.Floats values = FieldCache_Fields.DEFAULT.GetFloats(((AtomicReader)context.Reader()), Field, (FieldCache_Fields.IFloatParser)Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper7(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+            FieldCache_Fields.Floats values = FieldCache_Fields.DEFAULT.GetFloats((context.AtomicReader), Field, (FieldCache_Fields.IFloatParser)Parser, false);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper7(this, context.Reader.MaxDoc, acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper7 : FieldCacheDocIdSet
@@ -1631,9 +1631,9 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-            FieldCache_Fields.Doubles values = FieldCache_Fields.DEFAULT.GetDoubles(((AtomicReader)context.Reader()), Field, (FieldCache_Fields.IDoubleParser)Parser, false);
+            FieldCache_Fields.Doubles values = FieldCache_Fields.DEFAULT.GetDoubles((context.AtomicReader), Field, (FieldCache_Fields.IDoubleParser)Parser, false);
 			// ignore deleted docs if range doesn't contain 0
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper8(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper8(this, context.Reader.MaxDoc, acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper8 : FieldCacheDocIdSet

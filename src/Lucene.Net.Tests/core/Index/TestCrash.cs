@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
             Crash(writer);
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.IsTrue(reader.NumDocs() < 157);
+            Assert.IsTrue(reader.NumDocs < 157);
             reader.Dispose();
 
             // Make a new dir, copying from the crashed dir, and
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.IsTrue(reader.NumDocs() < 314);
+            Assert.IsTrue(reader.NumDocs < 314);
             reader.Dispose();
 
             // Make a new dir, copying from the crashed dir, and
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
 
             writer.Dispose();
             writer = InitIndex(Random(), dir, false);
-            Assert.AreEqual(314, writer.MaxDoc());
+            Assert.AreEqual(314, writer.MaxDoc);
             Crash(writer);
 
             /*
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
             */
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.IsTrue(reader.NumDocs() >= 157);
+            Assert.IsTrue(reader.NumDocs >= 157);
             reader.Dispose();
 
             // Make a new dir, copying from the crashed dir, and
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
             */
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(157, reader.NumDocs());
+            Assert.AreEqual(157, reader.NumDocs);
             reader.Dispose();
             dir.Dispose();
         }
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
               System.out.println("file " + i + " = " + l[i] + " " + dir.FileLength(l[i]) + " bytes");
             */
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(157, reader.NumDocs());
+            Assert.AreEqual(157, reader.NumDocs);
             reader.Dispose();
             dir.Dispose();
         }

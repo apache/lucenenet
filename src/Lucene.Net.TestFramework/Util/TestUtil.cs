@@ -273,9 +273,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public static void CheckReader(IndexReader reader)
         {
-            foreach (AtomicReaderContext context in reader.Leaves())
+            foreach (AtomicReaderContext context in reader.Leaves)
             {
-                CheckReader((AtomicReader)context.Reader(), true);
+                CheckReader(context.AtomicReader, true);
             }
         }
 

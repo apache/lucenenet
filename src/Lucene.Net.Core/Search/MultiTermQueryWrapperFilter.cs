@@ -99,8 +99,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            AtomicReader reader = ((AtomicReader)context.Reader());
-            Fields fields = reader.Fields();
+            AtomicReader reader = (context.AtomicReader);
+            Fields fields = reader.Fields;
             if (fields == null)
             {
                 // reader has no fields
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
             if (termsEnum.Next() != null)
             {
                 // fill into a FixedBitSet
-                FixedBitSet bitSet = new FixedBitSet(context.Reader().MaxDoc());
+                FixedBitSet bitSet = new FixedBitSet(context.AtomicReader.MaxDoc);
                 DocsEnum docsEnum = null;
                 do
                 {

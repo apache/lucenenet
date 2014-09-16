@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
                                 if (values == null)
                                 {
                                     values = DocValues.EMPTY_NUMERIC;
-                                    bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc());
+                                    bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
                                 }
                                 toMerge.Add(values);
                                 //docsWithField.Add(bits);
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
                                 if (values == null)
                                 {
                                     values = DocValues.EMPTY_BINARY;
-                                    bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc());
+                                    bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
                                 }
                                 toMerge.Add(values);
                                 //docsWithField.Add(bits);
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
                                 norms = DocValues.EMPTY_NUMERIC;
                             }
                             toMerge.Add(norms);
-                            //docsWithField.Add(new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc()));
+                            //docsWithField.Add(new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
                         }
                         consumer.MergeNumericField(field, MergeState, toMerge/*, docsWithField*/);
                     }
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
                 MergeState.DocBase[i] = docBase;
                 MergeState.DocMap docMap = MergeState.DocMap.Build(reader);
                 MergeState.DocMaps[i] = docMap;
-                docBase += docMap.NumDocs();
+                docBase += docMap.NumDocs;
 
                 i++;
             }
@@ -448,8 +448,8 @@ namespace Lucene.Net.Index
             for (int readerIndex = 0; readerIndex < MergeState.Readers.Count; readerIndex++)
             {
                 AtomicReader reader = MergeState.Readers[readerIndex];
-                Fields f = reader.Fields();
-                int maxDoc = reader.MaxDoc();
+                Fields f = reader.Fields;
+                int maxDoc = reader.MaxDoc;
                 if (f != null)
                 {
                     slices.Add(new ReaderSlice(docBase, maxDoc, readerIndex));

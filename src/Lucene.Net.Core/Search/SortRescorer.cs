@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = (ScoreDoc[])firstPassTopDocs.ScoreDocs.Clone();
             Array.Sort(hits, new ComparatorAnonymousInnerClassHelper(this));
 
-            IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves();
+            IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves;
 
             TopFieldCollector collector = TopFieldCollector.Create(sort, topN, true, true, true, false);
 
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
                 {
                     readerUpto++;
                     readerContext = leaves[readerUpto];
-                    endDoc = readerContext.DocBase + readerContext.Reader().MaxDoc();
+                    endDoc = readerContext.DocBase + readerContext.Reader.MaxDoc;
                 }
 
                 if (readerContext != null)

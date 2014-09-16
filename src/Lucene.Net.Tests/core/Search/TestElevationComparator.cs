@@ -222,7 +222,7 @@ namespace Lucene.Net.Search
 
             public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
-                idIndex = FieldCache_Fields.DEFAULT.GetTermsIndex((AtomicReader)context.Reader(), Fieldname);
+                idIndex = FieldCache_Fields.DEFAULT.GetTermsIndex(context.AtomicReader, Fieldname);
                 return this;
             }
 
