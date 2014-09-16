@@ -79,10 +79,10 @@ namespace Lucene.Net.Util
 
             internal readonly CloneableObject[] Objs;
             internal readonly DoubleBarrelLRUCache<CloneableObject, object> c;
-            internal readonly long EndTime;
+            internal readonly DateTime EndTime;
             internal volatile bool Failed;
 
-            public CacheThread(TestDoubleBarrelLRUCache outerInstance, DoubleBarrelLRUCache<CloneableObject, object> c, CloneableObject[] objs, long endTime)
+            public CacheThread(TestDoubleBarrelLRUCache outerInstance, DoubleBarrelLRUCache<CloneableObject, object> c, CloneableObject[] objs, DateTime endTime)
             {
                 this.OuterInstance = outerInstance;
                 this.c = c;
@@ -115,7 +115,7 @@ namespace Lucene.Net.Util
                         }
                         if ((++count % 10000) == 0)
                         {
-                            if (DateTime.Now.Millisecond >= EndTime)
+                            if (DateTime.Now.CompareTo(EndTime) > 0)
                             {
                                 break;
                             }
@@ -156,7 +156,7 @@ namespace Lucene.Net.Util
             }
 
             CacheThread[] threads = new CacheThread[NUM_THREADS];
-            long endTime = DateTime.Now.Millisecond + 1000L;
+            DateTime endTime = DateTime.Now.AddSeconds(1);
             for (int i = 0; i < NUM_THREADS; i++)
             {
                 threads[i] = new CacheThread(this, c, objs, endTime);
@@ -181,7 +181,10 @@ namespace Lucene.Net.Util
 
             public override bool Equals(object other)
             {
-                return this.Value.Equals(((CloneableObject)other).Value);
+                if (other.GetType().Equals(typeof (CloneableObject)))
+                    return this.Value.Equals(((CloneableObject) other).Value);
+                else
+                    return false;
             }
 
             public override int GetHashCode()
