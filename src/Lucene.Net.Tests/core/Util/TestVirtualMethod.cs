@@ -40,6 +40,7 @@ namespace Lucene.Net.Util
         {
         }
 
+        [Ignore]
         internal class TestClass1 : TestVirtualMethod
         {
             public override void PublicTest(string test)
@@ -51,6 +52,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [Ignore]
         internal class TestClass2 : TestClass1
         {
             protected override void ProtectedTest(int test) // make it public here
@@ -58,6 +60,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [Ignore]
         internal class TestClass3 : TestClass2
         {
             public override void PublicTest(string test)
@@ -65,10 +68,12 @@ namespace Lucene.Net.Util
             }
         }
 
+        [Ignore]
         internal class TestClass4 : TestVirtualMethod
         {
         }
 
+        [Ignore]
         internal class TestClass5 : TestClass4
         {
         }
@@ -110,7 +115,7 @@ namespace Lucene.Net.Util
 
             try
             {
-                new VirtualMethod<Type>(typeof(TestVirtualMethod), "bogus");
+                new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "bogus");
                 Assert.Fail("Method bogus() does not exist, so IAE should be thrown");
             }
             catch (System.ArgumentException arg)
@@ -120,7 +125,7 @@ namespace Lucene.Net.Util
 
             try
             {
-                new VirtualMethod<Type>(typeof(TestClass2), "PublicTest", typeof(string));
+                new VirtualMethod<TestClass2>(typeof(TestClass2), "PublicTest", typeof(string));
             }
             catch (System.ArgumentException arg)
             {
@@ -130,10 +135,10 @@ namespace Lucene.Net.Util
             try
             {
                 // try to create a second instance of the same baseClass / method combination
-                new VirtualMethod<Type>(typeof(TestVirtualMethod), "PublicTest", typeof(string));
+                new VirtualMethod<TestVirtualMethod>(typeof(TestVirtualMethod), "PublicTest", typeof(string));
                 Assert.Fail("Violating singleton status succeeded");
             }
-            catch (System.NotSupportedException arg)
+            catch (System.ArgumentException arg)
             {
                 // pass
             }
