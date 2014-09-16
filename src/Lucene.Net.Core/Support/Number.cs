@@ -394,7 +394,7 @@ namespace Lucene.Net.Support
 
         public static string ToBinaryString(int value)
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            var sb = new System.Text.StringBuilder();
 
             var uval = (uint)value;
 
@@ -419,6 +419,11 @@ namespace Lucene.Net.Support
         public static int FloatToIntBits(float value)
         {
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+        }
+
+        public static long FloatToLongBits(float value)
+        {
+            return BitConverter.ToInt64(BitConverter.GetBytes(value), 0);
         }
 
         //Flips the endianness from Little-Endian to Big-Endian
