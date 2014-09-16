@@ -252,16 +252,26 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// adds a Throwable to the list of suppressed Exceptions of the first Throwable </summary>
+        /// Since there's no C# equivalent of Java's Exception.AddSuppressed, we add the
+        /// suppressed exceptions to a data field. </summary>
         /// <param name="exception"> this exception should get the suppressed one added </param>
         /// <param name="suppressed"> the suppressed exception </param>
         private static void AddSuppressed(Exception exception, Exception suppressed)
         {
-            //LUCENE TO-DO I don't think there is a .NET equivalent
-            /*if (exception != null && suppressed != null)
+            if (exception != null && suppressed != null)
             {
-              exception.AddSuppressed(suppressed);
-            }*/
+                List<Exception> suppressedExceptions;
+                if (!exception.Data.Contains("SuppressedExceptions"))
+                {
+                    suppressedExceptions = new List<Exception>();
+                    exception.Data.Add("SuppressedExceptions", suppressedExceptions);
+                }
+                else
+                {
+                    suppressedExceptions = (List<Exception>) exception.Data["SuppressedExceptions"];
+                }
+                suppressedExceptions.Add(suppressed);
+            }
         }
 
         /// <summary>
