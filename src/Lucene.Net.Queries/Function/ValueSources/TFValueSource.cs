@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
+using Lucene.Net.Index;
+using Lucene.Net.Queries.Function.DocValues;
+using Lucene.Net.Search;
+using Lucene.Net.Search.Similarities;
+using Lucene.Net.Util;
 using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -42,18 +47,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		return "tf";
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
-		Fields fields = readerContext.reader().fields();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(indexedField);
-		Terms terms = fields.terms(indexedField);
+		Fields fields = readerContext.AtomicReader.Fields;
+		Terms terms = fields.Terms(indexedField);
 		IndexSearcher searcher = (IndexSearcher)context["searcher"];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.search.similarities.TFIDFSimilarity similarity = IDFValueSource.asTFIDF(searcher.getSimilarity(), indexedField);
-		TFIDFSimilarity similarity = IDFValueSource.asTFIDF(searcher.Similarity, indexedField);
+		TFIDFSimilarity similarity = IDFValueSource.AsTFIDF(searcher.Similarity, indexedField);
 		if (similarity == null)
 		{
 		  throw new System.NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
@@ -69,7 +68,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		  private Terms terms;
 		  private TFIDFSimilarity similarity;
 
-		  public FloatDocValuesAnonymousInnerClassHelper(TFValueSource outerInstance, TFValueSource this, Terms terms, TFIDFSimilarity similarity) : base(this)
+		  public FloatDocValuesAnonymousInnerClassHelper(TFValueSource outerInstance, TFValueSource @this, Terms terms, TFIDFSimilarity similarity) : base(@this)
 		  {
 			  this.outerInstance = outerInstance;
 			  this.terms = terms;
@@ -88,7 +87,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
 //ORIGINAL LINE: public void reset() throws java.io.IOException
-		  public virtual void reset()
+		  public virtual void Reset()
 		  {
 			// no one should call us for deleted docs?
 
@@ -96,10 +95,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
-			  TermsEnum termsEnum = terms.iterator(null);
-			  if (termsEnum.seekExact(outerInstance.indexedBytes))
+			  TermsEnum termsEnum = terms.Iterator(null);
+			  if (termsEnum.SeekExact(outerInstance.indexedBytes))
 			  {
-				docs = termsEnum.docs(null, null);
+				docs = termsEnum.Docs(null, null);
 			  }
 			  else
 			  {
@@ -127,57 +126,57 @@ namespace Lucene.Net.Queries.Function.ValueSources
 				  this.outerInstance = outerInstance;
 			  }
 
-			  public override int freq()
+			  public override int Freq()
 			  {
 				return 0;
 			  }
 
-			  public override int docID()
+			  public override int DocID()
 			  {
 				return DocIdSetIterator.NO_MORE_DOCS;
 			  }
 
-			  public override int nextDoc()
+			  public override int NextDoc()
 			  {
 				return DocIdSetIterator.NO_MORE_DOCS;
 			  }
 
-			  public override int advance(int target)
+			  public override int Advance(int target)
 			  {
 				return DocIdSetIterator.NO_MORE_DOCS;
 			  }
 
-			  public override long cost()
+			  public override long Cost()
 			  {
 				return 0;
 			  }
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
 			try
 			{
 			  if (doc < lastDocRequested)
 			  {
 				// out-of-order access.... reset
-				reset();
+				Reset();
 			  }
 			  lastDocRequested = doc;
 
 			  if (atDoc < doc)
 			  {
-				atDoc = docs.advance(doc);
+				atDoc = docs.Advance(doc);
 			  }
 
 			  if (atDoc > doc)
 			  {
 				// term doesn't match this document... either because we hit the
 				// end, or because the next doc is after this doc.
-				return similarity.tf(0);
+				return similarity.Tf(0);
 			  }
 
 			  // a match!
-			  return similarity.tf(docs.freq());
+			  return similarity.Tf(docs.Freq());
 			}
 			catch (IOException e)
 			{

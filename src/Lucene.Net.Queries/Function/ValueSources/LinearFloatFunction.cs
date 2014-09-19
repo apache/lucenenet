@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Queries.Function.DocValues;
 using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -47,12 +47,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues vals = source.getValues(context, readerContext);
-		FunctionValues vals = source.getValues(context, readerContext);
+//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues vals = source.GetValues(context, readerContext);
+		FunctionValues vals = source.GetValues(context, readerContext);
 		return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
 	  }
 
@@ -68,9 +68,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.vals = vals;
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
-			return vals.floatVal(doc) * outerInstance.slope + outerInstance.intercept;
+			return vals.FloatVal(doc) * outerInstance.slope + outerInstance.intercept;
 		  }
 		  public override string ToString(int doc)
 		  {
@@ -79,17 +79,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void createWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void createWeight(IDictionary context, IndexSearcher searcher)
+//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
+	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
 	  {
-		source.createWeight(context, searcher);
+		source.CreateWeight(context, searcher);
 	  }
 
 	  public override int GetHashCode()
 	  {
-		int h = float.floatToIntBits(slope);
+		int h = Number.FloatToIntBits(slope);
 		h = ((int)((uint)h >> 2)) | (h << 30);
-		h += float.floatToIntBits(intercept);
+		h += Number.FloatToIntBits(intercept);
 		h ^= (h << 14) | ((int)((uint)h >> 19));
 		return h + source.GetHashCode();
 	  }

@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
+using System.Globalization;
+using Lucene.Net.Index;
+using Lucene.Net.Queries.Function.DocValues;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Mutable;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -26,13 +30,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
 	/// Obtains int field values from <seealso cref="FieldCache#getInts"/> and makes
 	/// those values available as other numeric types, casting as needed.
-	/// strVal of the value is not the int value, but its string (displayed) value
+	/// StrVal of the value is not the int value, but its string (displayed) value
 	/// </summary>
 	public class EnumFieldSource : FieldCacheSource
 	{
-	  internal const int? DEFAULT_VALUE = -1;
+	  internal const int DEFAULT_VALUE = -1;
 
-	  internal readonly FieldCache.IntParser parser;
+	  internal readonly FieldCache_Fields.IntParser parser;
 	  internal readonly IDictionary<int?, string> enumIntToStringMap;
 	  internal readonly IDictionary<string, int?> enumStringToIntMap;
 
@@ -43,20 +47,20 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		this.enumStringToIntMap = enumStringToIntMap;
 	  }
 
-	  private static int? tryParseInt(string valueStr)
+	  private static int? TryParseInt(string valueStr)
 	  {
 		int? intValue = null;
 		try
 		{
 		  intValue = Convert.ToInt32(valueStr);
 		}
-		catch (NumberFormatException)
+		catch (FormatException)
 		{
 		}
 		return intValue;
 	  }
 
-	  private string intValueToStringValue(int? intVal)
+	  private string IntValueToStringValue(int? intVal)
 	  {
 		if (intVal == null)
 		{
@@ -71,10 +75,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		  return enumString;
 		}
 		// can't find matching enum name - return DEFAULT_VALUE.toString()
-		return DEFAULT_VALUE.ToString();
+		return DEFAULT_VALUE.ToString(CultureInfo.InvariantCulture);
 	  }
 
-	  private int? stringValueToIntValue(string stringVal)
+	  private int? StringValueToIntValue(string stringVal)
 	  {
 		if (stringVal == null)
 		{
@@ -91,7 +95,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		}
 
 		//enum int not found for string
-		intValue = tryParseInt(stringVal);
+		intValue = TryParseInt(stringVal);
 		if (intValue == null) //not Integer
 		{
 		  intValue = DEFAULT_VALUE;
@@ -114,8 +118,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.search.FieldCache.Ints arr = cache.getInts(readerContext.reader(), field, parser, true);
@@ -144,7 +148,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 		  internal readonly MutableValueInt val;
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
 			return (float) arr.get(doc);
 		  }
@@ -154,17 +158,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			return arr.get(doc);
 		  }
 
-		  public override long longVal(int doc)
+		  public override long LongVal(int doc)
 		  {
 			return (long) arr.get(doc);
 		  }
 
-		  public override double doubleVal(int doc)
+		  public override double DoubleVal(int doc)
 		  {
 			return (double) arr.get(doc);
 		  }
 
-		  public override string strVal(int doc)
+		  public override string StrVal(int doc)
 		  {
 			int? intValue = arr.get(doc);
 			return outerInstance.intValueToStringValue(intValue);
@@ -182,14 +186,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 		  public override string ToString(int doc)
 		  {
-			return outerInstance.description() + '=' + strVal(doc);
+			return outerInstance.description() + '=' + StrVal(doc);
 		  }
 
 
-		  public override ValueSourceScorer getRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
+		  public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
 		  {
-			int? lower = outerInstance.stringValueToIntValue(lowerVal);
-			int? upper = outerInstance.stringValueToIntValue(upperVal);
+			int? lower = outerInstance.StringValueToIntValue(lowerVal);
+			int? upper = outerInstance.StringValueToIntValue(upperVal);
 
 			// instead of using separate comparison functions, adjust the endpoints.
 
@@ -241,7 +245,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 				  this.uu = uu;
 			  }
 
-			  public override bool matchesValue(int doc)
+			  public override bool MatchesValue(int doc)
 			  {
 				int val = outerInstance.arr.get(doc);
 				// only check for deleted if it's the default value

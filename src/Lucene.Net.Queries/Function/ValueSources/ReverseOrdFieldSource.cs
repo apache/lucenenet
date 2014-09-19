@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Queries.Function.DocValues;
 using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -58,8 +58,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 	  // TODO: this is trappy? perhaps this query instead should make you pass a slow reader yourself?
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.index.IndexReader topReader = org.apache.lucene.index.ReaderUtil.getTopLevelContext(readerContext).reader();

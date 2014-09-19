@@ -1,6 +1,4 @@
-﻿using System;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,219 +14,202 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Mutable;
 
-namespace org.apache.lucene.queries.function.docvalues
+namespace Lucene.Net.Queries.Function.DocValues
 {
+    /// <summary>
+    /// Serves as base class for FunctionValues based on DocTermsIndex.
+    /// @lucene.internal
+    /// </summary>
+    public abstract class DocTermsIndexDocValues : FunctionValues
+    {
+        protected internal readonly SortedDocValues termsIndex;
+        protected internal readonly ValueSource vs;
+        protected internal readonly MutableValueStr val = new MutableValueStr();
+        protected internal readonly BytesRef spare = new BytesRef();
+        protected internal readonly CharsRef spareChars = new CharsRef();
 
-	using AtomicReaderContext = org.apache.lucene.index.AtomicReaderContext;
-	using IndexReader = org.apache.lucene.index.IndexReader;
-	using SortedDocValues = org.apache.lucene.index.SortedDocValues;
-	using FieldCache = org.apache.lucene.search.FieldCache;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using CharsRef = org.apache.lucene.util.CharsRef;
-	using UnicodeUtil = org.apache.lucene.util.UnicodeUtil;
-	using MutableValue = org.apache.lucene.util.mutable.MutableValue;
-	using MutableValueStr = org.apache.lucene.util.mutable.MutableValueStr;
+        protected DocTermsIndexDocValues(ValueSource vs, AtomicReaderContext context, string field)
+        {
+            try
+            {
+                termsIndex = FieldCache_Fields.DEFAULT.GetTermsIndex(context.AtomicReader, field);
+            }
+            catch (Exception e)
+            {
+                throw new DocTermsIndexException(field, e);
+            }
+            this.vs = vs;
+        }
 
-	/// <summary>
-	/// Serves as base class for FunctionValues based on DocTermsIndex.
-	/// @lucene.internal
-	/// </summary>
-	public abstract class DocTermsIndexDocValues : FunctionValues
-	{
-	  protected internal readonly SortedDocValues termsIndex;
-	  protected internal readonly ValueSource vs;
-	  protected internal readonly MutableValueStr val = new MutableValueStr();
-	  protected internal readonly BytesRef spare = new BytesRef();
-	  protected internal readonly CharsRef spareChars = new CharsRef();
+        protected internal abstract string toTerm(string readableValue);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public DocTermsIndexDocValues(org.apache.lucene.queries.function.ValueSource vs, org.apache.lucene.index.AtomicReaderContext context, String field) throws java.io.IOException
-	  public DocTermsIndexDocValues(ValueSource vs, AtomicReaderContext context, string field)
-	  {
-		try
-		{
-		  termsIndex = FieldCache.DEFAULT.getTermsIndex(context.reader(), field);
-		}
-		catch (Exception e)
-		{
-		  throw new DocTermsIndexException(field, e);
-		}
-		this.vs = vs;
-	  }
+        public override bool Exists(int doc)
+        {
+            return OrdVal(doc) >= 0;
+        }
 
-	  protected internal abstract string toTerm(string readableValue);
+        public override int OrdVal(int doc)
+        {
+            return termsIndex.GetOrd(doc);
+        }
 
-	  public override bool exists(int doc)
-	  {
-		return ordVal(doc) >= 0;
-	  }
+        public override int NumOrd()
+        {
+            return termsIndex.ValueCount;
+        }
 
-	  public override int ordVal(int doc)
-	  {
-		return termsIndex.getOrd(doc);
-	  }
+        public override bool BytesVal(int doc, BytesRef target)
+        {
+            termsIndex.Get(doc, target);
+            return target.Length > 0;
+        }
 
-	  public override int numOrd()
-	  {
-		return termsIndex.ValueCount;
-	  }
+        public override string StrVal(int doc)
+        {
+            termsIndex.Get(doc, spare);
+            if (spare.Length == 0)
+            {
+                return null;
+            }
+            UnicodeUtil.UTF8toUTF16(spare, spareChars);
+            return spareChars.ToString();
+        }
 
-	  public override bool bytesVal(int doc, BytesRef target)
-	  {
-		termsIndex.get(doc, target);
-		return target.length > 0;
-	  }
+        public override bool BoolVal(int doc)
+        {
+            return Exists(doc);
+        }
 
-	  public override string strVal(int doc)
-	  {
-		termsIndex.get(doc, spare);
-		if (spare.length == 0)
-		{
-		  return null;
-		}
-		UnicodeUtil.UTF8toUTF16(spare, spareChars);
-		return spareChars.ToString();
-	  }
+        public override abstract object ObjectVal(int doc); // force subclasses to override
 
-	  public override bool boolVal(int doc)
-	  {
-		return exists(doc);
-	  }
+        public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
+        {
+            // TODO: are lowerVal and upperVal in indexed form or not?
+            lowerVal = lowerVal == null ? null : toTerm(lowerVal);
+            upperVal = upperVal == null ? null : toTerm(upperVal);
 
-	  public override abstract object objectVal(int doc); // force subclasses to override
+            int lower = int.MinValue;
+            if (lowerVal != null)
+            {
+                lower = termsIndex.LookupTerm(new BytesRef(lowerVal));
+                if (lower < 0)
+                {
+                    lower = -lower - 1;
+                }
+                else if (!includeLower)
+                {
+                    lower++;
+                }
+            }
 
-	  public override ValueSourceScorer getRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
-	  {
-		// TODO: are lowerVal and upperVal in indexed form or not?
-		lowerVal = lowerVal == null ? null : toTerm(lowerVal);
-		upperVal = upperVal == null ? null : toTerm(upperVal);
+            int upper = int.MaxValue;
+            if (upperVal != null)
+            {
+                upper = termsIndex.LookupTerm(new BytesRef(upperVal));
+                if (upper < 0)
+                {
+                    upper = -upper - 2;
+                }
+                else if (!includeUpper)
+                {
+                    upper--;
+                }
+            }
+            int ll = lower;
+            int uu = upper;
 
-		int lower = int.MinValue;
-		if (lowerVal != null)
-		{
-		  lower = termsIndex.lookupTerm(new BytesRef(lowerVal));
-		  if (lower < 0)
-		  {
-			lower = -lower - 1;
-		  }
-		  else if (!includeLower)
-		  {
-			lower++;
-		  }
-		}
+            return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, this, ll, uu);
+        }
 
-		int upper = int.MaxValue;
-		if (upperVal != null)
-		{
-		  upper = termsIndex.lookupTerm(new BytesRef(upperVal));
-		  if (upper < 0)
-		  {
-			upper = -upper - 2;
-		  }
-		  else if (!includeUpper)
-		  {
-			upper--;
-		  }
-		}
+        private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
+        {
+            private readonly DocTermsIndexDocValues outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ll = lower;
-		int ll = lower;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int uu = upper;
-		int uu = upper;
+            private int ll;
+            private int uu;
 
-		return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, this, ll, uu);
-	  }
+            public ValueSourceScorerAnonymousInnerClassHelper(DocTermsIndexDocValues outerInstance, IndexReader reader,
+                DocTermsIndexDocValues @this, int ll, int uu)
+                : base(reader, @this)
+            {
+                this.outerInstance = outerInstance;
+                this.ll = ll;
+                this.uu = uu;
+            }
 
-	  private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
-	  {
-		  private readonly DocTermsIndexDocValues outerInstance;
+            public override bool MatchesValue(int doc)
+            {
+                int ord = outerInstance.termsIndex.GetOrd(doc);
+                return ord >= ll && ord <= uu;
+            }
+        }
 
-		  private int ll;
-		  private int uu;
+        public override string ToString(int doc)
+        {
+            return vs.Description + '=' + StrVal(doc);
+        }
 
-		  public ValueSourceScorerAnonymousInnerClassHelper(DocTermsIndexDocValues outerInstance, IndexReader reader, org.apache.lucene.queries.function.docvalues.DocTermsIndexDocValues this, int ll, int uu) : base(reader, this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.ll = ll;
-			  this.uu = uu;
-		  }
+        public override AbstractValueFiller ValueFiller
+        {
+            get
+            {
+                return new ValueFillerAnonymousInnerClassHelper(this);
+            }
+        }
 
-		  public override bool matchesValue(int doc)
-		  {
-			int ord = outerInstance.termsIndex.getOrd(doc);
-			return ord >= ll && ord <= uu;
-		  }
-	  }
+        private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+        {
+            private readonly DocTermsIndexDocValues outerInstance;
 
-	  public override string ToString(int doc)
-	  {
-		return vs.description() + '=' + strVal(doc);
-	  }
+            public ValueFillerAnonymousInnerClassHelper(DocTermsIndexDocValues outerInstance)
+            {
+                this.outerInstance = outerInstance;
+                mval = new MutableValueStr();
+            }
 
-	  public override ValueFiller ValueFiller
-	  {
-		  get
-		  {
-			return new ValueFillerAnonymousInnerClassHelper(this);
-		  }
-	  }
+            private readonly MutableValueStr mval;
 
-	  private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-	  {
-		  private readonly DocTermsIndexDocValues outerInstance;
+            public override MutableValue Value
+            {
+                get
+                {
+                    return mval;
+                }
+            }
 
-		  public ValueFillerAnonymousInnerClassHelper(DocTermsIndexDocValues outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-			  mval = new MutableValueStr();
-		  }
+            public override void FillValue(int doc)
+            {
+                int ord = outerInstance.termsIndex.GetOrd(doc);
+                if (ord == -1)
+                {
+                    mval.Value.Bytes = BytesRef.EMPTY_BYTES;
+                    mval.Value.Offset = 0;
+                    mval.Value.Length = 0;
+                    mval.Exists = false;
+                }
+                else
+                {
+                    outerInstance.termsIndex.LookupOrd(ord, mval.Value);
+                    mval.Exists = true;
+                }
+            }
+        }
 
-		  private readonly MutableValueStr mval;
-
-		  public override MutableValue Value
-		  {
-			  get
-			  {
-				return mval;
-			  }
-		  }
-
-		  public override void fillValue(int doc)
-		  {
-			int ord = outerInstance.termsIndex.getOrd(doc);
-			if (ord == -1)
-			{
-			  mval.value.bytes = BytesRef.EMPTY_BYTES;
-			  mval.value.offset = 0;
-			  mval.value.length = 0;
-			  mval.exists = false;
-			}
-			else
-			{
-			  outerInstance.termsIndex.lookupOrd(ord, mval.value);
-			  mval.exists = true;
-			}
-		  }
-	  }
-
-	  /// <summary>
-	  /// Custom Exception to be thrown when the DocTermsIndex for a field cannot be generated
-	  /// </summary>
-	  public sealed class DocTermsIndexException : Exception
-	  {
-
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public DocTermsIndexException(final String fieldName, final RuntimeException cause)
-		public DocTermsIndexException(string fieldName, Exception cause) : base("Can't initialize DocTermsIndex to generate (function) FunctionValues for field: " + fieldName, cause)
-		{
-		}
-
-	  }
-
-
-	}
-
+        /// <summary>
+        /// Custom Exception to be thrown when the DocTermsIndex for a field cannot be generated
+        /// </summary>
+        public sealed class DocTermsIndexException : Exception
+        {
+            public DocTermsIndexException(string fieldName, Exception cause)
+                : base("Can't initialize DocTermsIndex to generate (function) FunctionValues for field: " + fieldName, cause)
+            {
+            }
+        }
+    }
 }

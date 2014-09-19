@@ -44,7 +44,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		float val = float.NegativeInfinity;
 		foreach (FunctionValues vals in valsArr)
 		{
-		  val = Math.Max(vals.floatVal(doc), val);
+		  val = Math.Max(vals.FloatVal(doc), val);
 		}
 		return val;
 	  }

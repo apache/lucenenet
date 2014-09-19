@@ -47,8 +47,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.search.FieldCache.Shorts arr = cache.getShorts(readerContext.reader(), field, parser, false);
@@ -69,17 +69,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.arr = arr;
 		  }
 
-		  public override sbyte byteVal(int doc)
+		  public override sbyte ByteVal(int doc)
 		  {
 			return (sbyte) arr.get(doc);
 		  }
 
-		  public override short shortVal(int doc)
+		  public override short ShortVal(int doc)
 		  {
 			return arr.get(doc);
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
 			return (float) arr.get(doc);
 		  }
@@ -89,24 +89,24 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			return (int) arr.get(doc);
 		  }
 
-		  public override long longVal(int doc)
+		  public override long LongVal(int doc)
 		  {
 			return (long) arr.get(doc);
 		  }
 
-		  public override double doubleVal(int doc)
+		  public override double DoubleVal(int doc)
 		  {
 			return (double) arr.get(doc);
 		  }
 
-		  public override string strVal(int doc)
+		  public override string StrVal(int doc)
 		  {
 			return Convert.ToString(arr.get(doc));
 		  }
 
 		  public override string ToString(int doc)
 		  {
-			return outerInstance.description() + '=' + shortVal(doc);
+			return outerInstance.description() + '=' + ShortVal(doc);
 		  }
 
 	  }

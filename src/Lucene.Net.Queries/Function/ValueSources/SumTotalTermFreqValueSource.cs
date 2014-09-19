@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Queries.Function.DocValues;
 using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -47,15 +47,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 		return (FunctionValues)context[this];
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void createWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void createWeight(IDictionary context, IndexSearcher searcher)
+//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
+	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
 	  {
 		long sumTotalTermFreq = 0;
 		foreach (AtomicReaderContext readerContext in searcher.TopReaderContext.leaves())
@@ -99,7 +99,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.ttf = ttf;
 		  }
 
-		  public override long longVal(int doc)
+		  public override long LongVal(int doc)
 		  {
 			return ttf;
 		  }

@@ -15,60 +15,60 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Search;
+
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// A base class for ValueSource implementations that retrieve values for
-	/// a single field from the <seealso cref="org.apache.lucene.search.FieldCache"/>.
-	/// 
-	/// 
-	/// </summary>
-	public abstract class FieldCacheSource : ValueSource
-	{
-	  protected internal readonly string field;
-	  protected internal readonly FieldCache cache = FieldCache.DEFAULT;
+    /// A base class for ValueSource implementations that retrieve values for
+    /// a single field from the <seealso cref="org.apache.lucene.search.FieldCache"/>.
+    /// 
+    /// 
+    /// </summary>
+    public abstract class FieldCacheSource : ValueSource
+    {
+        protected internal readonly string field;
+        protected internal readonly FieldCache cache = FieldCache_Fields.DEFAULT;
 
-	  public FieldCacheSource(string field)
-	  {
-		this.field = field;
-	  }
+        public FieldCacheSource(string field)
+        {
+            this.field = field;
+        }
 
-	  public virtual FieldCache FieldCache
-	  {
-		  get
-		  {
-			return cache;
-		  }
-	  }
+        public virtual FieldCache FieldCache
+        {
+            get
+            {
+                return cache;
+            }
+        }
 
-	  public virtual string Field
-	  {
-		  get
-		  {
-			return field;
-		  }
-	  }
+        public virtual string Field
+        {
+            get
+            {
+                return field;
+            }
+        }
 
-	  public override string description()
-	  {
-		return field;
-	  }
+        public override string Description
+        {
+            get { return field; }
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (!(o is FieldCacheSource))
-		{
-			return false;
-		}
-		FieldCacheSource other = (FieldCacheSource)o;
-		return this.field.Equals(other.field) && this.cache == other.cache;
-	  }
+        public override bool Equals(object o)
+        {
+            var other = o as FieldCacheSource;
+            if (other == null)
+            {
+                return false;
+            }
+            return field.Equals(other.field) && cache == other.cache;
+        }
 
-	  public override int GetHashCode()
-	  {
-		return cache.GetHashCode() + field.GetHashCode();
-	  }
-
-	}
-
+        public override int GetHashCode()
+        {
+            return cache.GetHashCode() + field.GetHashCode();
+        }
+    }
 }

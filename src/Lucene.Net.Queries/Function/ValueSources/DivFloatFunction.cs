@@ -15,32 +15,30 @@
  * limitations under the License.
  */
 
-using org.apache.lucene.queries.function;
-
 namespace Lucene.Net.Queries.Function.ValueSources
 {
 
 
-	/// <summary>
-	/// Function to divide "a" by "b"
-	/// </summary>
-	public class DivFloatFunction : DualFloatFunction
-	{
-	 /// <param name="a">  the numerator. </param>
-	 /// <param name="b">  the denominator. </param>
-	  public DivFloatFunction(ValueSource a, ValueSource b) : base(a,b)
-	  {
-	  }
+    /// <summary>
+    /// Function to divide "a" by "b"
+    /// </summary>
+    public class DivFloatFunction : DualFloatFunction
+    {
+        /// <param name="a">  the numerator. </param>
+        /// <param name="b">  the denominator. </param>
+        public DivFloatFunction(ValueSource a, ValueSource b)
+            : base(a, b)
+        {
+        }
 
-	  protected internal override string name()
-	  {
-		return "div";
-	  }
+        protected override string Name
+        {
+            get { return "div"; }
+        }
 
-	  protected internal override float func(int doc, FunctionValues aVals, FunctionValues bVals)
-	  {
-		return aVals.floatVal(doc) / bVals.floatVal(doc);
-	  }
-	}
-
+        protected override float Func(int doc, FunctionValues aVals, FunctionValues bVals)
+        {
+            return aVals.FloatVal(doc) / bVals.FloatVal(doc);
+        }
+    }
 }

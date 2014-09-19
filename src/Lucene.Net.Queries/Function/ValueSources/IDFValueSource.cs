@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Search.Similarities;
 using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -40,8 +41,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 		IndexSearcher searcher = (IndexSearcher)context["searcher"];
 		TFIDFSimilarity sim = asTFIDF(searcher.Similarity, field);
@@ -55,7 +56,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 	  // tries extra hard to cast the sim to TFIDFSimilarity
-	  internal static TFIDFSimilarity asTFIDF(Similarity sim, string field)
+	  internal static TFIDFSimilarity AsTFIDF(Similarity sim, string field)
 	  {
 		while (sim is PerFieldSimilarityWrapper)
 		{

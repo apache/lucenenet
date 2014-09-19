@@ -16,8 +16,8 @@
  */
 using System;
 using System.Collections;
-using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
+using Lucene.Net.Index;
+using Lucene.Net.Queries.Function.DocValues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -37,14 +37,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		this.lv = (long)constant;
 	  }
 
-	  public override string description()
-	  {
-		return "const(" + constant + ")";
-	  }
+        public override string Description
+        {
+            get { return "const(" + constant + ")"; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 		return new DoubleDocValuesAnonymousInnerClassHelper(this, this);
 	  }
@@ -53,60 +51,60 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  {
 		  private readonly DoubleConstValueSource outerInstance;
 
-		  public DoubleDocValuesAnonymousInnerClassHelper(DoubleConstValueSource outerInstance, DoubleConstValueSource this) : base(this)
+		  public DoubleDocValuesAnonymousInnerClassHelper(DoubleConstValueSource outerInstance, DoubleConstValueSource @this) : base(@this)
 		  {
 			  this.outerInstance = outerInstance;
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
 			return outerInstance.fv;
 		  }
 
-		  public override int intVal(int doc)
+		  public override int IntVal(int doc)
 		  {
 			return (int) outerInstance.lv;
 		  }
 
-		  public override long longVal(int doc)
+		  public override long LongVal(int doc)
 		  {
 			return outerInstance.lv;
 		  }
 
-		  public override double doubleVal(int doc)
+		  public override double DoubleVal(int doc)
 		  {
 			return outerInstance.constant;
 		  }
 
-		  public override string strVal(int doc)
+		  public override string StrVal(int doc)
 		  {
 			return Convert.ToString(outerInstance.constant);
 		  }
 
-		  public override object objectVal(int doc)
+		  public override object ObjectVal(int doc)
 		  {
 			return outerInstance.constant;
 		  }
 
 		  public override string ToString(int doc)
 		  {
-			return outerInstance.description();
+			return outerInstance.Description;
 		  }
 	  }
 
 	  public override int GetHashCode()
 	  {
-		long bits = double.doubleToRawLongBits(constant);
+		long bits = NumberUtil.DoubleToRawLongBits(constant);
 		return (int)(bits ^ ((long)((ulong)bits >> 32)));
 	  }
 
 	  public override bool Equals(object o)
 	  {
-		if (!(o is DoubleConstValueSource))
+	      var other = o as DoubleConstValueSource;
+		if (other == null)
 		{
 			return false;
 		}
-		DoubleConstValueSource other = (DoubleConstValueSource) o;
 		return this.constant == other.constant;
 	  }
 
@@ -158,5 +156,4 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		  }
 	  }
 	}
-
 }

@@ -17,14 +17,12 @@
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
-
-	/// <summary>
-	/// Abstract parent class for those <seealso cref="ValueSource"/> implementations which
-	/// apply boolean logic to their values
-	/// </summary>
-	public abstract class BoolFunction : ValueSource
-	{
-	  // TODO: placeholder to return type, among other common future functionality
-	}
-
+    /// <summary>
+    /// Abstract parent class for those <seealso cref="ValueSource"/> implementations which
+    /// apply boolean logic to their values
+    /// </summary>
+    public abstract class BoolFunction : ValueSource
+    {
+        // TODO: placeholder to return type, among other common future functionality
+    }
 }

@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.queries
+namespace Lucene.Net.Queries
 {
 
 	/*
@@ -21,18 +26,7 @@ namespace org.apache.lucene.queries
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using org.apache.lucene.index;
-	using DocIdSet = org.apache.lucene.search.DocIdSet;
-	using DocIdSetIterator = org.apache.lucene.search.DocIdSetIterator;
-	using Filter = org.apache.lucene.search.Filter;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using Bits = org.apache.lucene.util.Bits;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using FixedBitSet = org.apache.lucene.util.FixedBitSet;
-
-
-	/// <summary>
+    /// <summary>
 	/// Constructs a filter for docs matching any of the terms added to this class.
 	/// Unlike a RangeFilter this can be used for filtering on multiple terms that are not necessarily in
 	/// a sequence. An example might be a collection of primary keys from a database query result or perhaps
@@ -62,8 +56,6 @@ namespace org.apache.lucene.queries
 	  /// Creates a new <seealso cref="TermsFilter"/> from the given list. The list
 	  /// can contain duplicate terms and multiple fields.
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public TermsFilter(final java.util.List<Term> terms)
 	  public TermsFilter(IList<Term> terms) : this(new FieldAndTermEnumAnonymousInnerClassHelper(this, terms), terms.Count)
 	  {
 	  }
@@ -82,10 +74,10 @@ namespace org.apache.lucene.queries
 		  }
 
 			// we need to sort for deduplication and to have a common cache key
-		  internal readonly IEnumerator<Term> iter;
-		  public override BytesRef next()
+		  readonly IEnumerator<Term> iter;
+		  public override BytesRef Next()
 		  {
-			if (iter.hasNext())
+			if (iter.HasNext())
 			{
 			  Term next = iter.next();
 			  field = next.field();
@@ -99,8 +91,6 @@ namespace org.apache.lucene.queries
 	  /// Creates a new <seealso cref="TermsFilter"/> from the given <seealso cref="BytesRef"/> list for
 	  /// a single field.
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public TermsFilter(final String field, final java.util.List<org.apache.lucene.util.BytesRef> terms)
 	  public TermsFilter(string field, IList<BytesRef> terms) : this(new FieldAndTermEnumAnonymousInnerClassHelper2(this, field, terms), terms.Count)
 	  {
 	  }
@@ -115,16 +105,16 @@ namespace org.apache.lucene.queries
 		  {
 			  this.outerInstance = outerInstance;
 			  this.terms = terms;
-			  iter = sort(terms).GetEnumerator();
+			  iter = Sort(terms).GetEnumerator();
 		  }
 
 			// we need to sort for deduplication and to have a common cache key
-		  internal readonly IEnumerator<BytesRef> iter;
-		  public override BytesRef next()
+		  readonly IEnumerator<BytesRef> iter;
+		  public override BytesRef Next()
 		  {
-			if (iter.hasNext())
+			if (iter.HasNext())
 			{
-			  return iter.next();
+			  return iter.Next();
 			}
 			return null;
 		  }
@@ -134,9 +124,7 @@ namespace org.apache.lucene.queries
 	  /// Creates a new <seealso cref="TermsFilter"/> from the given <seealso cref="BytesRef"/> array for
 	  /// a single field.
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public TermsFilter(final String field, final org.apache.lucene.util.BytesRef...terms)
-	  public TermsFilter(string field, params BytesRef[] terms) : this(field, Arrays.asList(terms))
+	  public TermsFilter(string field, params BytesRef[] terms) : this(field, Arrays.AsList(terms))
 	  {
 		// this ctor prevents unnecessary Term creations
 	  }
@@ -145,9 +133,7 @@ namespace org.apache.lucene.queries
 	  /// Creates a new <seealso cref="TermsFilter"/> from the given array. The array can
 	  /// contain duplicate terms and multiple fields.
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public TermsFilter(final Term... terms)
-	  public TermsFilter(params Term[] terms) : this(Arrays.asList(terms))
+	  public TermsFilter(params Term[] terms) : this(terms.ToList())
 	  {
 	  }
 
@@ -175,7 +161,7 @@ namespace org.apache.lucene.queries
 		string previousField = null;
 		BytesRef currentTerm;
 		string currentField;
-		while ((currentTerm = iter.next()) != null)
+		while ((currentTerm = iter.Next()) != null)
 		{
 		  currentField = iter.field();
 		  if (currentField == null)
@@ -187,15 +173,13 @@ namespace org.apache.lucene.queries
 			// deduplicate
 			if (previousField.Equals(currentField))
 			{
-			  if (previousTerm.bytesEquals(currentTerm))
+			  if (previousTerm.BytesEquals(currentTerm))
 			  {
 				continue;
 			  }
 			}
 			else
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int start = lastTermsAndField == null ? 0 : lastTermsAndField.end;
 			  int start = lastTermsAndField == null ? 0 : lastTermsAndField.end;
 			  lastTermsAndField = new TermsAndField(start, index, previousField);
 			  termsAndFields.Add(lastTermsAndField);
@@ -215,31 +199,20 @@ namespace org.apache.lucene.queries
 		  previousField = currentField;
 		}
 		offsets[index] = lastEndOffset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int start = lastTermsAndField == null ? 0 : lastTermsAndField.end;
 		int start = lastTermsAndField == null ? 0 : lastTermsAndField.end;
 		lastTermsAndField = new TermsAndField(start, index, previousField);
 		termsAndFields.Add(lastTermsAndField);
-		this.termsBytes = ArrayUtil.shrink(serializedTerms, lastEndOffset);
+		this.termsBytes = ArrayUtil.Shrink(serializedTerms, lastEndOffset);
 		this.termsAndFields = termsAndFields.ToArray();
 		this.hashCode_Renamed = hash;
 
 	  }
 
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.search.DocIdSet getDocIdSet(AtomicReaderContext context, org.apache.lucene.util.Bits acceptDocs) throws java.io.IOException
-	  public override DocIdSet getDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final AtomicReader reader = context.reader();
-		AtomicReader reader = context.reader();
+		AtomicReader reader = context.AtomicReader;
 		FixedBitSet result = null; // lazy init if needed - no need to create a big bitset ahead of time
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = reader.fields();
-		Fields fields = reader.fields();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.BytesRef spare = new org.apache.lucene.util.BytesRef(this.termsBytes);
+		Fields fields = reader.Fields;
 		BytesRef spare = new BytesRef(this.termsBytes);
 		if (fields == null)
 		{
@@ -250,7 +223,7 @@ namespace org.apache.lucene.queries
 		DocsEnum docs = null;
 		foreach (TermsAndField termsAndField in this.termsAndFields)
 		{
-		  if ((terms = fields.terms(termsAndField.field)) != null)
+		  if ((terms = fields.Terms(termsAndField.field)) != null)
 		  {
 			termsEnum = terms.iterator(termsEnum); // this won't return null
 			for (int i = termsAndField.start; i < termsAndField.end; i++)
@@ -321,15 +294,15 @@ namespace org.apache.lucene.queries
 		  TermsAndField current = termsAndFields[i];
 		  for (int j = current.start; j < current.end; j++)
 		  {
-			spare.offset = offsets[j];
-			spare.length = offsets[j + 1] - offsets[j];
+			spare.Offset = offsets[j];
+			spare.Length = offsets[j + 1] - offsets[j];
 			if (!first)
 			{
 			  builder.Append(' ');
 			}
 			first = false;
 			builder.Append(current.field).Append(':');
-			builder.Append(spare.utf8ToString());
+			builder.Append(spare.Utf8ToString());
 		  }
 		}
 
@@ -401,9 +374,9 @@ namespace org.apache.lucene.queries
 
 	  private abstract class FieldAndTermEnum
 	  {
-		protected internal string field_Renamed;
+		protected internal string field;
 
-		public abstract BytesRef next();
+		public abstract BytesRef Next();
 
 		public FieldAndTermEnum()
 		{
@@ -411,13 +384,13 @@ namespace org.apache.lucene.queries
 
 		public FieldAndTermEnum(string field)
 		{
-			this.field_Renamed = field;
+			this.field = field;
 		}
 
-		public virtual string field()
-		{
-		  return field_Renamed;
-		}
+	      public virtual string Field
+	      {
+	          get { return field; }
+	      }
 	  }
 
 	  /*
@@ -425,7 +398,7 @@ namespace org.apache.lucene.queries
 	   */
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
 //ORIGINAL LINE: private static <T extends Comparable<? base T>> java.util.List<T> sort(java.util.List<T> toSort)
-	  private static IList<T> sort<T>(IList<T> toSort) where T : Comparable<? base T>
+	  private static IList<T> Sort<T>(IList<T> toSort) where T : Comparable<? base T>
 	  {
 		if (toSort.Count == 0)
 		{

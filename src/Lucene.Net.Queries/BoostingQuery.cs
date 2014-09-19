@@ -72,8 +72,8 @@
 			}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public Weight createWeight(IndexSearcher searcher) throws java.io.IOException
-			public override Weight createWeight(IndexSearcher searcher)
+//ORIGINAL LINE: @Override public Weight CreateWeight(IndexSearcher searcher) throws java.io.IOException
+			public override Weight CreateWeight(IndexSearcher searcher)
 			{
 			  return new BooleanWeightAnonymousInnerClassHelper(this, searcher);
 			}
@@ -111,7 +111,7 @@
 		{
 		  const int prime = 31;
 		  int result = base.GetHashCode();
-		  result = prime * result + float.floatToIntBits(boost);
+		  result = prime * result + Number.FloatToIntBits(boost);
 		  result = prime * result + ((context == null) ? 0 : context.GetHashCode());
 		  result = prime * result + ((match == null) ? 0 : match.GetHashCode());
 		  return result;
@@ -138,7 +138,7 @@
 		  }
 
 		  BoostingQuery other = (BoostingQuery) obj;
-		  if (float.floatToIntBits(boost) != float.floatToIntBits(other.boost))
+		  if (Number.FloatToIntBits(boost) != Number.FloatToIntBits(other.boost))
 		  {
 			return false;
 		  }

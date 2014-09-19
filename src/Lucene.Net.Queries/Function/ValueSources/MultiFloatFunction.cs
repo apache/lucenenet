@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Text;
-using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
+using Lucene.Net.Queries.Function.DocValues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -60,15 +59,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues[] valsArr = new org.apache.lucene.queries.function.FunctionValues[sources.length];
 		FunctionValues[] valsArr = new FunctionValues[sources.Length];
 		for (int i = 0; i < sources.Length; i++)
 		{
-		  valsArr[i] = sources[i].getValues(context, readerContext);
+		  valsArr[i] = sources[i].GetValues(context, readerContext);
 		}
 
 		return new FloatDocValuesAnonymousInnerClassHelper(this, this, valsArr);
@@ -86,7 +85,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.valsArr = valsArr;
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
 			return outerInstance.func(doc, valsArr);
 		  }
@@ -113,12 +112,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void createWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void createWeight(IDictionary context, IndexSearcher searcher)
+//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
+	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
 	  {
 		foreach (ValueSource source in sources)
 		{
-		  source.createWeight(context, searcher);
+		  source.CreateWeight(context, searcher);
 		}
 	  }
 

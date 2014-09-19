@@ -16,9 +16,9 @@
  */
 using System.Collections;
 using System.Collections.Generic;
+using Lucene.Net.Index;
+using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Support;
-using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -48,12 +48,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		this.max = max;
 	  }
 
-	  public override string description()
-	  {
-		return "scale(" + source.description() + "," + min + "," + max + ")";
-	  }
+        public override string Description
+        {
+            get { return "scale(" + source.Description() + "," + min + "," + max + ")"; }
+        }
 
-	  private class ScaleInfo
+        private class ScaleInfo
 	  {
 		internal float minVal;
 		internal float maxVal;
@@ -61,11 +61,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
 //ORIGINAL LINE: private ScaleInfo createScaleInfo(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  private ScaleInfo createScaleInfo(IDictionary context, AtomicReaderContext readerContext)
+	  private ScaleInfo CreateScaleInfo(IDictionary context, AtomicReaderContext readerContext)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.List<org.apache.lucene.index.AtomicReaderContext> leaves = org.apache.lucene.index.ReaderUtil.getTopLevelContext(readerContext).leaves();
-		IList<AtomicReaderContext> leaves = ReaderUtil.getTopLevelContext(readerContext).leaves();
+		IList<AtomicReaderContext> leaves = ReaderUtil.GetTopLevelContext(readerContext).leaves();
 
 		float minVal = float.PositiveInfinity;
 		float maxVal = float.NegativeInfinity;
@@ -73,11 +73,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		foreach (AtomicReaderContext leaf in leaves)
 		{
 		  int maxDoc = leaf.reader().maxDoc();
-		  FunctionValues vals = source.getValues(context, leaf);
+		  FunctionValues vals = source.GetValues(context, leaf);
 		  for (int i = 0; i < maxDoc; i++)
 		  {
 
-		  float val = vals.floatVal(i);
+		  float val = vals.FloatVal(i);
 		  if ((float.floatToRawIntBits(val) & (0xff << 23)) == 0xff << 23)
 		  {
 			// if the exponent in the float is all ones, then this is +Inf, -Inf or NaN
@@ -109,8 +109,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 
 		ScaleInfo scaleInfo = (ScaleInfo)context[ScaleFloatFunction.this];
@@ -130,8 +130,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		float maxSource = scaleInfo.maxVal;
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues vals = source.getValues(context, readerContext);
-		FunctionValues vals = source.getValues(context, readerContext);
+//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues vals = source.GetValues(context, readerContext);
+		FunctionValues vals = source.GetValues(context, readerContext);
 
 		return new FloatDocValuesAnonymousInnerClassHelper(this, this, scale, minSource, maxSource, vals);
 	  }
@@ -154,9 +154,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.vals = vals;
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
-			return (vals.floatVal(doc) - minSource) * scale + outerInstance.min;
+			return (vals.FloatVal(doc) - minSource) * scale + outerInstance.min;
 		  }
 		  public override string ToString(int doc)
 		  {
@@ -165,10 +165,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void createWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void createWeight(IDictionary context, IndexSearcher searcher)
+//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
+	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
 	  {
-		source.createWeight(context, searcher);
+		source.CreateWeight(context, searcher);
 	  }
 
 	  public override int GetHashCode()

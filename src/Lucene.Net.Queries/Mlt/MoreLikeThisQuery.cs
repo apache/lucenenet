@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-
 /*
  * Created on 25-Jan-2006
  */
+using Lucene.Net.Queries.Mlt;
+
 namespace org.apache.lucene.queries.mlt
 {
 
@@ -206,7 +207,7 @@ namespace org.apache.lucene.queries.mlt
 		result = prime * result + minDocFreq;
 		result = prime * result + minTermFrequency;
 		result = prime * result + Arrays.GetHashCode(moreLikeFields);
-		result = prime * result + float.floatToIntBits(percentTermsToMatch);
+		result = prime * result + Number.FloatToIntBits(percentTermsToMatch);
 		result = prime * result + ((stopWords == null) ? 0 : stopWords.GetHashCode());
 		return result;
 	  }
@@ -275,7 +276,7 @@ namespace org.apache.lucene.queries.mlt
 		{
 			return false;
 		}
-		if (float.floatToIntBits(percentTermsToMatch) != float.floatToIntBits(other.percentTermsToMatch))
+		if (Number.FloatToIntBits(percentTermsToMatch) != Number.FloatToIntBits(other.percentTermsToMatch))
 		{
 			return false;
 		}

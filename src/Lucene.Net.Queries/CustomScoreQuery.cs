@@ -1,7 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Index;
+using Lucene.Net.Queries.Function;
+using Lucene.Net.Search;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.queries
+namespace Lucene.Net.Queries
 {
 
 	/*
@@ -20,23 +25,7 @@ namespace org.apache.lucene.queries
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using AtomicReaderContext = org.apache.lucene.index.AtomicReaderContext;
-	using IndexReader = org.apache.lucene.index.IndexReader;
-	using Term = org.apache.lucene.index.Term;
-	using FunctionQuery = org.apache.lucene.queries.function.FunctionQuery;
-	using ValueSource = org.apache.lucene.queries.function.ValueSource;
-	using ComplexExplanation = org.apache.lucene.search.ComplexExplanation;
-	using Explanation = org.apache.lucene.search.Explanation;
-	using Query = org.apache.lucene.search.Query;
-	using Weight = org.apache.lucene.search.Weight;
-	using Scorer = org.apache.lucene.search.Scorer;
-	using IndexSearcher = org.apache.lucene.search.IndexSearcher;
-	using Bits = org.apache.lucene.util.Bits;
-	using ToStringUtils = org.apache.lucene.util.ToStringUtils;
-
-	/// <summary>
+    /// <summary>
 	/// Query that sets document score as a programmatic function of several (sub) scores:
 	/// <ol>
 	///    <li>the score of its subQuery (any query)</li>
@@ -61,16 +50,16 @@ namespace org.apache.lucene.queries
 	  }
 
 	  /// <summary>
-	  /// Create a CustomScoreQuery over input subQuery and a <seealso cref="org.apache.lucene.queries.function.FunctionQuery"/>. </summary>
+	  /// Create a CustomScoreQuery over input subQuery and a <seealso cref="FunctionQuery"/>. </summary>
 	  /// <param name="subQuery"> the sub query whose score is being customized. Must not be null. </param>
 	  /// <param name="scoringQuery"> a value source query whose scores are used in the custom score
 	  /// computation.  This parameter is optional - it can be null. </param>
-	  public CustomScoreQuery(Query subQuery, FunctionQuery scoringQuery) : this(subQuery, scoringQuery != null ? new FunctionQuery[] {scoringQuery} : new FunctionQuery[0]); / / don't want an array that contains a single null..
+	  public CustomScoreQuery(Query subQuery, FunctionQuery scoringQuery) : this(subQuery, scoringQuery != null ? new FunctionQuery[] {scoringQuery} : new FunctionQuery[0]) // don't want an array that contains a single null..
 	  {
 	  }
 
 	  /// <summary>
-	  /// Create a CustomScoreQuery over input subQuery and a <seealso cref="org.apache.lucene.queries.function.FunctionQuery"/>. </summary>
+	  /// Create a CustomScoreQuery over input subQuery and a <seealso cref="FunctionQuery"/>. </summary>
 	  /// <param name="subQuery"> the sub query whose score is being customized. Must not be null. </param>
 	  /// <param name="scoringQueries"> value source queries whose scores are used in the custom score
 	  /// computation.  This parameter is optional - it can be null or even an empty array. </param>
@@ -85,58 +74,52 @@ namespace org.apache.lucene.queries
 	  }
 
 	  /*(non-Javadoc) @see org.apache.lucene.search.Query#rewrite(org.apache.lucene.index.IndexReader) */
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.search.Query rewrite(org.apache.lucene.index.IndexReader reader) throws java.io.IOException
-	  public override Query rewrite(IndexReader reader)
+	  public override Query Rewrite(IndexReader reader)
 	  {
 		CustomScoreQuery clone = null;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.search.Query sq = subQuery.rewrite(reader);
-		Query sq = subQuery.rewrite(reader);
+		Query sq = subQuery.Rewrite(reader);
 		if (sq != subQuery)
 		{
-		  clone = clone();
+		  clone = Clone();
 		  clone.subQuery = sq;
 		}
 
 		for (int i = 0; i < scoringQueries.Length; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.search.Query v = scoringQueries[i].rewrite(reader);
-		  Query v = scoringQueries[i].rewrite(reader);
+		  Query v = scoringQueries[i].Rewrite(reader);
 		  if (v != scoringQueries[i])
 		  {
 			if (clone == null)
 			{
-				clone = clone();
+				clone = Clone();
 			}
 			clone.scoringQueries[i] = v;
 		  }
 		}
 
-		return (clone == null) ? this : clone;
+		return clone ?? this;
 	  }
 
 	  /*(non-Javadoc) @see org.apache.lucene.search.Query#extractTerms(java.util.Set) */
-	  public override void extractTerms(HashSet<Term> terms)
+	  public override void ExtractTerms(HashSet<Term> terms)
 	  {
-		subQuery.extractTerms(terms);
+		subQuery.ExtractTerms(terms);
 		foreach (Query scoringQuery in scoringQueries)
 		{
-		  scoringQuery.extractTerms(terms);
+		  scoringQuery.ExtractTerms(terms);
 		}
 	  }
 
 	  /*(non-Javadoc) @see org.apache.lucene.search.Query#clone() */
-	  public override CustomScoreQuery clone()
+	  public override CustomScoreQuery Clone()
 	  {
-		CustomScoreQuery clone = (CustomScoreQuery)base.clone();
-		clone.subQuery = subQuery.clone();
+		CustomScoreQuery clone = (CustomScoreQuery)base.Clone();
+		clone.subQuery = subQuery.Clone();
 		clone.scoringQueries = new Query[scoringQueries.Length];
 		for (int i = 0; i < scoringQueries.Length; i++)
 		{
-		  clone.scoringQueries[i] = scoringQueries[i].clone();
+		  clone.scoringQueries[i] = scoringQueries[i].Clone();
 		}
 		return clone;
 	  }
@@ -152,7 +135,7 @@ namespace org.apache.lucene.queries
 		}
 		sb.Append(")");
 		sb.Append(strict?" STRICT" : "");
-		return sb.ToString() + ToStringUtils.boost(Boost);
+		return sb.ToString() + ToStringUtils.Boost(Boost);
 	  }
 
 	  /// <summary>
@@ -183,7 +166,7 @@ namespace org.apache.lucene.queries
 	  /// Returns a hash code value for this object. </summary>
 	  public override int GetHashCode()
 	  {
-		return (this.GetType().GetHashCode() + subQuery.GetHashCode() + Arrays.GetHashCode(scoringQueries)) ^ float.floatToIntBits(Boost) ^ (strict ? 1234 : 4321);
+		return (this.GetType().GetHashCode() + subQuery.GetHashCode() + Arrays.GetHashCode(scoringQueries)) ^ Number.FloatToIntBits(Boost) ^ (strict ? 1234 : 4321);
 	  }
 
 	  /// <summary>
@@ -192,9 +175,7 @@ namespace org.apache.lucene.queries
 	  /// implementation as specified in the docs of <seealso cref="CustomScoreProvider"/>.
 	  /// @since 2.9.2
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected CustomScoreProvider getCustomScoreProvider(org.apache.lucene.index.AtomicReaderContext context) throws java.io.IOException
-	  protected internal virtual CustomScoreProvider getCustomScoreProvider(AtomicReaderContext context)
+	  protected internal virtual CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
 	  {
 		return new CustomScoreProvider(context);
 	  }
@@ -210,16 +191,14 @@ namespace org.apache.lucene.queries
 		internal bool qStrict;
 		internal float queryWeight;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public CustomWeight(org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
 		public CustomWeight(CustomScoreQuery outerInstance, IndexSearcher searcher)
 		{
 			this.outerInstance = outerInstance;
-		  this.subQueryWeight = outerInstance.subQuery.createWeight(searcher);
+		  this.subQueryWeight = outerInstance.subQuery.CreateWeight(searcher);
 		  this.valSrcWeights = new Weight[outerInstance.scoringQueries.Length];
 		  for (int i = 0; i < outerInstance.scoringQueries.Length; i++)
 		  {
-			this.valSrcWeights[i] = outerInstance.scoringQueries[i].createWeight(searcher);
+			this.valSrcWeights[i] = outerInstance.scoringQueries[i].CreateWeight(searcher);
 		  }
 		  this.qStrict = outerInstance.strict;
 		}
@@ -233,8 +212,6 @@ namespace org.apache.lucene.queries
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public float getValueForNormalization() throws java.io.IOException
 		public override float ValueForNormalization
 		{
 			get
@@ -256,33 +233,31 @@ namespace org.apache.lucene.queries
 		}
 
 		/*(non-Javadoc) @see org.apache.lucene.search.Weight#normalize(float) */
-		public override void normalize(float norm, float topLevelBoost)
+		public override void Normalize(float norm, float topLevelBoost)
 		{
 		  // note we DONT incorporate our boost, nor pass down any topLevelBoost 
 		  // (e.g. from outer BQ), as there is no guarantee that the CustomScoreProvider's 
 		  // function obeys the distributive law... it might call sqrt() on the subQuery score
 		  // or some other arbitrary function other than multiplication.
 		  // so, instead boosts are applied directly in score()
-		  subQueryWeight.normalize(norm, 1f);
+		  subQueryWeight.Normalize(norm, 1f);
 		  foreach (Weight valSrcWeight in valSrcWeights)
 		  {
 			if (qStrict)
 			{
-			  valSrcWeight.normalize(1, 1); // do not normalize the ValueSource part
+			  valSrcWeight.Normalize(1, 1); // do not normalize the ValueSource part
 			}
 			else
 			{
-			  valSrcWeight.normalize(norm, 1f);
+			  valSrcWeight.Normalize(norm, 1f);
 			}
 		  }
 		  queryWeight = topLevelBoost * Boost;
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.search.Scorer scorer(org.apache.lucene.index.AtomicReaderContext context, org.apache.lucene.util.Bits acceptDocs) throws java.io.IOException
-		public override Scorer scorer(AtomicReaderContext context, Bits acceptDocs)
+		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  Scorer subQueryScorer = subQueryWeight.scorer(context, acceptDocs);
+		  Scorer subQueryScorer = subQueryWeight.Scorer(context, acceptDocs);
 		  if (subQueryScorer == null)
 		  {
 			return null;
@@ -290,24 +265,20 @@ namespace org.apache.lucene.queries
 		  Scorer[] valSrcScorers = new Scorer[valSrcWeights.Length];
 		  for (int i = 0; i < valSrcScorers.Length; i++)
 		  {
-			 valSrcScorers[i] = valSrcWeights[i].scorer(context, acceptDocs);
+			 valSrcScorers[i] = valSrcWeights[i].Scorer(context, acceptDocs);
 		  }
-		  return new CustomScorer(outerInstance, outerInstance.getCustomScoreProvider(context), this, queryWeight, subQueryScorer, valSrcScorers);
+		  return new CustomScorer(outerInstance, outerInstance.GetCustomScoreProvider(context), this, queryWeight, subQueryScorer, valSrcScorers);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.search.Explanation explain(org.apache.lucene.index.AtomicReaderContext context, int doc) throws java.io.IOException
-		public override Explanation explain(AtomicReaderContext context, int doc)
-		{
-		  Explanation explain = doExplain(context, doc);
-		  return explain == null ? new Explanation(0.0f, "no matching docs") : explain;
-		}
+	      public override Explanation Explain(AtomicReaderContext context, int doc)
+	      {
+	          Explanation explain = DoExplain(context, doc);
+	          return explain ?? new Explanation(0.0f, "no matching docs");
+	      }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private org.apache.lucene.search.Explanation doExplain(org.apache.lucene.index.AtomicReaderContext info, int doc) throws java.io.IOException
-		internal virtual Explanation doExplain(AtomicReaderContext info, int doc)
+		internal virtual Explanation DoExplain(AtomicReaderContext info, int doc)
 		{
-		  Explanation subQueryExpl = subQueryWeight.explain(info, doc);
+		  Explanation subQueryExpl = subQueryWeight.Explain(info, doc);
 		  if (!subQueryExpl.Match)
 		  {
 			return subQueryExpl;
@@ -316,22 +287,21 @@ namespace org.apache.lucene.queries
 		  Explanation[] valSrcExpls = new Explanation[valSrcWeights.Length];
 		  for (int i = 0; i < valSrcWeights.Length; i++)
 		  {
-			valSrcExpls[i] = valSrcWeights[i].explain(info, doc);
+			valSrcExpls[i] = valSrcWeights[i].Explain(info, doc);
 		  }
-		  Explanation customExp = outerInstance.getCustomScoreProvider(info).customExplain(doc,subQueryExpl,valSrcExpls);
+		  Explanation customExp = outerInstance.GetCustomScoreProvider(info).CustomExplain(doc,subQueryExpl,valSrcExpls);
 		  float sc = Boost * customExp.Value;
 		  Explanation res = new ComplexExplanation(true, sc, outerInstance.ToString() + ", product of:");
-		  res.addDetail(customExp);
-		  res.addDetail(new Explanation(Boost, "queryBoost")); // actually using the q boost as q weight (== weight value)
+		  res.AddDetail(customExp);
+		  res.AddDetail(new Explanation(Boost, "queryBoost")); // actually using the q boost as q weight (== weight value)
 		  return res;
 		}
 
-		public override bool scoresDocsOutOfOrder()
+		public override bool ScoresDocsOutOfOrder()
 		{
 		  return false;
 		}
-
-	  }
+	  
 
 
 	  //=========================== S C O R E R ============================
@@ -360,77 +330,67 @@ namespace org.apache.lucene.queries
 		  this.provider = provider;
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int nextDoc() throws java.io.IOException
-		public override int nextDoc()
+		public override int NextDoc()
 		{
-		  int doc = subQueryScorer.nextDoc();
+		  int doc = subQueryScorer.NextDoc();
 		  if (doc != NO_MORE_DOCS)
 		  {
 			foreach (Scorer valSrcScorer in valSrcScorers)
 			{
-			  valSrcScorer.advance(doc);
+			  valSrcScorer.Advance(doc);
 			}
 		  }
 		  return doc;
 		}
 
-		public override int docID()
+		public override int DocID()
 		{
-		  return subQueryScorer.docID();
+		  return subQueryScorer.DocID();
 		}
 
 		/*(non-Javadoc) @see org.apache.lucene.search.Scorer#score() */
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public float score() throws java.io.IOException
-		public override float score()
+		public override float Score()
 		{
 		  for (int i = 0; i < valSrcScorers.Length; i++)
 		  {
-			vScores[i] = valSrcScorers[i].score();
+			vScores[i] = valSrcScorers[i].Score();
 		  }
 		  return qWeight * provider.customScore(subQueryScorer.docID(), subQueryScorer.score(), vScores);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int freq() throws java.io.IOException
-		public override int freq()
+		public override int Freq()
 		{
-		  return subQueryScorer.freq();
+		  return subQueryScorer.Freq();
 		}
 
 		public override ICollection<ChildScorer> Children
 		{
 			get
 			{
-			  return Collections.singleton(new ChildScorer(subQueryScorer, "CUSTOM"));
+			  return Collections.Singleton(new ChildScorer(subQueryScorer, "CUSTOM"));
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int advance(int target) throws java.io.IOException
-		public override int advance(int target)
+		public override int Advance(int target)
 		{
-		  int doc = subQueryScorer.advance(target);
+		  int doc = subQueryScorer.Advance(target);
 		  if (doc != NO_MORE_DOCS)
 		  {
 			foreach (Scorer valSrcScorer in valSrcScorers)
 			{
-			  valSrcScorer.advance(doc);
+			  valSrcScorer.Advance(doc);
 			}
 		  }
 		  return doc;
 		}
 
-		public override long cost()
+		public override long Cost()
 		{
-		  return subQueryScorer.cost();
+		  return subQueryScorer.Cost();
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.search.Weight createWeight(org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override Weight createWeight(IndexSearcher searcher)
+	  public override Weight CreateWeight(IndexSearcher searcher)
 	  {
 		return new CustomWeight(this, searcher);
 	  }
@@ -444,17 +404,7 @@ namespace org.apache.lucene.queries
 	  /// <P>
 	  /// Note: only has effect when the <seealso cref="ValueSource"/> part is not null.
 	  /// </summary>
-	  public virtual bool Strict
-	  {
-		  get
-		  {
-			return strict;
-		  }
-		  set
-		  {
-			this.strict = value;
-		  }
-	  }
+	  public virtual bool Strict { get; set; }
 
 
 	  /// <summary>
@@ -477,14 +427,13 @@ namespace org.apache.lucene.queries
 		  }
 	  }
 
-	  /// <summary>
-	  /// A short name of this query, used in <seealso cref="#toString(String)"/>.
-	  /// </summary>
-	  public virtual string name()
-	  {
-		return "custom";
+	      /// <summary>
+	      /// A short name of this query, used in <seealso cref="#toString(String)"/>.
+	      /// </summary>
+	      public virtual string Name
+	      {
+	          get { return "custom"; }
+	      }
 	  }
-
-	}
 
 }

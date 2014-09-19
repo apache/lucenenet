@@ -40,7 +40,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		float val = 1.0f;
 		foreach (FunctionValues vals in valsArr)
 		{
-		  val *= vals.floatVal(doc);
+		  val *= vals.FloatVal(doc);
 		}
 		return val;
 	  }

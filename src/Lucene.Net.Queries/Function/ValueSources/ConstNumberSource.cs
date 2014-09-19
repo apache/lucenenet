@@ -15,20 +15,22 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Queries.Function.ValueSources
 {
 
-	/// <summary>
-	/// <code>ConstNumberSource</code> is the base class for all constant numbers
-	/// </summary>
-	public abstract class ConstNumberSource : ValueSource
-	{
-	  public abstract int Int {get;}
-	  public abstract long Long {get;}
-	  public abstract float Float {get;}
-	  public abstract double Double {get;}
-	  public abstract Number Number {get;}
-	  public abstract bool Bool {get;}
-	}
+    /// <summary>
+    /// <code>ConstNumberSource</code> is the base class for all constant numbers
+    /// </summary>
+    public abstract class ConstNumberSource : ValueSource
+    {
+        public abstract int Int { get; }
+        public abstract long Long { get; }
+        public abstract float Float { get; }
+        public abstract double Double { get; }
+        public abstract Number Number { get; }
+        public abstract bool Bool { get; }
+    }
 
 }

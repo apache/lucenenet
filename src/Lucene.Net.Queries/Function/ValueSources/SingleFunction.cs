@@ -53,10 +53,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void createWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void createWeight(IDictionary context, IndexSearcher searcher)
+//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
+	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
 	  {
-		source.createWeight(context, searcher);
+		source.CreateWeight(context, searcher);
 	  }
 	 }
 }

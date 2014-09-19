@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -37,13 +38,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		return "def";
 	  }
 
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map fcontext, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary fcontext, AtomicReaderContext readerContext)
+	  public override FunctionValues GetValues(IDictionary fcontext, AtomicReaderContext readerContext)
 	  {
-
-
 		return new ValuesAnonymousInnerClassHelper(this, valsArr(sources, fcontext, readerContext));
 	  }
 
@@ -59,12 +55,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 		  internal readonly int upto;
 
-		  private FunctionValues get(int doc)
+		  private FunctionValues Get(int doc)
 		  {
 			for (int i = 0; i < upto; i++)
 			{
 			  FunctionValues vals = valsArr[i];
-			  if (vals.exists(doc))
+			  if (vals.Exists(doc))
 			  {
 				return vals;
 			  }
@@ -72,76 +68,67 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			return valsArr[upto];
 		  }
 
-		  public override sbyte byteVal(int doc)
+		  public override sbyte ByteVal(int doc)
 		  {
-			return get(doc).byteVal(doc);
+			return Get(doc).ByteVal(doc);
 		  }
 
-		  public override short shortVal(int doc)
+		  public override short ShortVal(int doc)
 		  {
-			return get(doc).shortVal(doc);
+			return Get(doc).ShortVal(doc);
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
-			return get(doc).floatVal(doc);
+			return Get(doc).FloatVal(doc);
 		  }
 
-		  public override int intVal(int doc)
+		  public override int IntVal(int doc)
 		  {
-			return get(doc).intVal(doc);
+			return Get(doc).IntVal(doc);
 		  }
 
-		  public override long longVal(int doc)
+		  public override long LongVal(int doc)
 		  {
-			return get(doc).longVal(doc);
+			return Get(doc).LongVal(doc);
 		  }
 
-		  public override double doubleVal(int doc)
+		  public override double DoubleVal(int doc)
 		  {
-			return get(doc).doubleVal(doc);
+			return Get(doc).DoubleVal(doc);
 		  }
 
-		  public override string strVal(int doc)
+		  public override string StrVal(int doc)
 		  {
-			return get(doc).strVal(doc);
+			return Get(doc).StrVal(doc);
 		  }
 
-		  public override bool boolVal(int doc)
+		  public override bool BoolVal(int doc)
 		  {
-			return get(doc).boolVal(doc);
+			return Get(doc).BoolVal(doc);
 		  }
 
-		  public override bool bytesVal(int doc, BytesRef target)
+		  public override bool BytesVal(int doc, BytesRef target)
 		  {
-			return get(doc).bytesVal(doc, target);
+			return Get(doc).BytesVal(doc, target);
 		  }
 
-		  public override object objectVal(int doc)
+		  public override object ObjectVal(int doc)
 		  {
-			return get(doc).objectVal(doc);
+			return Get(doc).ObjectVal(doc);
 		  }
 
-		  public override bool exists(int doc)
+		  public override bool Exists(int doc)
 		  {
 			// return true if any source is exists?
 			foreach (FunctionValues vals in valsArr)
 			{
-			  if (vals.exists(doc))
+			  if (vals.Exists(doc))
 			  {
 				return true;
 			  }
 			}
 			return false;
-		  }
-
-		  public override ValueFiller ValueFiller
-		  {
-			  get
-			  {
-				// TODO: need ValueSource.type() to determine correct type
-				return base.ValueFiller;
-			  }
 		  }
 	  }
 	}

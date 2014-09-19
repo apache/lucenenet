@@ -16,162 +16,160 @@
  */
 using System;
 using System.Collections;
-using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
+using Lucene.Net.Index;
+using Lucene.Net.Queries.Function.DocValues;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     internal class ConstIntDocValues : IntDocValues
-	{
-	  internal readonly int ival;
-	  internal readonly float fval;
-	  internal readonly double dval;
-	  internal readonly long lval;
-	  internal readonly string sval;
-	  internal readonly ValueSource parent;
+    {
+        internal readonly int ival;
+        internal readonly float fval;
+        internal readonly double dval;
+        internal readonly long lval;
+        internal readonly string sval;
+        internal readonly ValueSource parent;
 
-	  internal ConstIntDocValues(int val, ValueSource parent) : base(parent)
-	  {
-		ival = val;
-		fval = val;
-		dval = val;
-		lval = val;
-		sval = Convert.ToString(val);
-		this.parent = parent;
-	  }
+        internal ConstIntDocValues(int val, ValueSource parent)
+            : base(parent)
+        {
+            ival = val;
+            fval = val;
+            dval = val;
+            lval = val;
+            sval = Convert.ToString(val);
+            this.parent = parent;
+        }
 
-	  public override float floatVal(int doc)
-	  {
-		return fval;
-	  }
-	  public override int intVal(int doc)
-	  {
-		return ival;
-	  }
-	  public override long longVal(int doc)
-	  {
-		return lval;
-	  }
-	  public override double doubleVal(int doc)
-	  {
-		return dval;
-	  }
-	  public override string strVal(int doc)
-	  {
-		return sval;
-	  }
-	  public override string ToString(int doc)
-	  {
-		return parent.description() + '=' + sval;
-	  }
-	}
+        public override float FloatVal(int doc)
+        {
+            return fval;
+        }
+        public override int IntVal(int doc)
+        {
+            return ival;
+        }
+        public override long LongVal(int doc)
+        {
+            return lval;
+        }
+        public override double DoubleVal(int doc)
+        {
+            return dval;
+        }
+        public override string StrVal(int doc)
+        {
+            return sval;
+        }
+        public override string ToString(int doc)
+        {
+            return parent.Description + '=' + sval;
+        }
+    }
 
-	internal class ConstDoubleDocValues : DoubleDocValues
-	{
-	  internal readonly int ival;
-	  internal readonly float fval;
-	  internal readonly double dval;
-	  internal readonly long lval;
-	  internal readonly string sval;
-	  internal readonly ValueSource parent;
+    internal class ConstDoubleDocValues : DoubleDocValues
+    {
+        internal readonly int ival;
+        internal readonly float fval;
+        internal readonly double dval;
+        internal readonly long lval;
+        internal readonly string sval;
+        internal readonly ValueSource parent;
 
-	  internal ConstDoubleDocValues(double val, ValueSource parent) : base(parent)
-	  {
-		ival = (int)val;
-		fval = (float)val;
-		dval = val;
-		lval = (long)val;
-		sval = Convert.ToString(val);
-		this.parent = parent;
-	  }
+        internal ConstDoubleDocValues(double val, ValueSource parent)
+            : base(parent)
+        {
+            ival = (int)val;
+            fval = (float)val;
+            dval = val;
+            lval = (long)val;
+            sval = Convert.ToString(val);
+            this.parent = parent;
+        }
 
-	  public override float floatVal(int doc)
-	  {
-		return fval;
-	  }
-	  public override int intVal(int doc)
-	  {
-		return ival;
-	  }
-	  public override long longVal(int doc)
-	  {
-		return lval;
-	  }
-	  public override double doubleVal(int doc)
-	  {
-		return dval;
-	  }
-	  public override string strVal(int doc)
-	  {
-		return sval;
-	  }
-	  public override string ToString(int doc)
-	  {
-		return parent.description() + '=' + sval;
-	  }
-	}
-
-
-	/// <summary>
-	/// <code>DocFreqValueSource</code> returns the number of documents containing the term.
-	/// @lucene.internal
-	/// </summary>
-	public class DocFreqValueSource : ValueSource
-	{
-	  protected internal readonly string field;
-	  protected internal readonly string indexedField;
-	  protected internal readonly string val;
-	  protected internal readonly BytesRef indexedBytes;
-
-	  public DocFreqValueSource(string field, string val, string indexedField, BytesRef indexedBytes)
-	  {
-		this.field = field;
-		this.val = val;
-		this.indexedField = indexedField;
-		this.indexedBytes = indexedBytes;
-	  }
-
-	  public virtual string name()
-	  {
-		return "docfreq";
-	  }
-
-	  public override string description()
-	  {
-		return name() + '(' + field + ',' + val + ')';
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-		IndexSearcher searcher = (IndexSearcher)context["searcher"];
-		int docfreq = searcher.IndexReader.docFreq(new Term(indexedField, indexedBytes));
-		return new ConstIntDocValues(docfreq, this);
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void createWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void createWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		context["searcher"] = searcher;
-	  }
-
-	  public override int GetHashCode()
-	  {
-		return this.GetType().GetHashCode() + indexedField.GetHashCode() * 29 + indexedBytes.GetHashCode();
-	  }
-
-	  public override bool Equals(object o)
-	  {
-		if (this.GetType() != o.GetType())
-		{
-			return false;
-		}
-		DocFreqValueSource other = (DocFreqValueSource)o;
-		return this.indexedField.Equals(other.indexedField) && this.indexedBytes.Equals(other.indexedBytes);
-	  }
-	}
+        public override float FloatVal(int doc)
+        {
+            return fval;
+        }
+        public override int IntVal(int doc)
+        {
+            return ival;
+        }
+        public override long LongVal(int doc)
+        {
+            return lval;
+        }
+        public override double DoubleVal(int doc)
+        {
+            return dval;
+        }
+        public override string StrVal(int doc)
+        {
+            return sval;
+        }
+        public override string ToString(int doc)
+        {
+            return parent.Description + '=' + sval;
+        }
+    }
 
 
+    /// <summary>
+    /// <code>DocFreqValueSource</code> returns the number of documents containing the term.
+    /// @lucene.internal
+    /// </summary>
+    public class DocFreqValueSource : ValueSource
+    {
+        protected internal readonly string field;
+        protected internal readonly string indexedField;
+        protected internal readonly string val;
+        protected internal readonly BytesRef indexedBytes;
+
+        public DocFreqValueSource(string field, string val, string indexedField, BytesRef indexedBytes)
+        {
+            this.field = field;
+            this.val = val;
+            this.indexedField = indexedField;
+            this.indexedBytes = indexedBytes;
+        }
+
+        public virtual string Name
+        {
+            get { return "docfreq"; }
+        }
+
+        public override string Description
+        {
+            get { return Name + '(' + field + ',' + val + ')'; }
+        }
+
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            var searcher = (IndexSearcher)context["searcher"];
+            int docfreq = searcher.IndexReader.DocFreq(new Term(indexedField, indexedBytes));
+            return new ConstIntDocValues(docfreq, this);
+        }
+
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            context["searcher"] = searcher;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.GetType().GetHashCode() + indexedField.GetHashCode() * 29 + indexedBytes.GetHashCode();
+        }
+
+        public override bool Equals(object o)
+        {
+            if (this.GetType() != o.GetType())
+            {
+                return false;
+            }
+            var other = (DocFreqValueSource)o;
+            return this.indexedField.Equals(other.indexedField) && this.indexedBytes.Equals(other.indexedBytes);
+        }
+    }
 }

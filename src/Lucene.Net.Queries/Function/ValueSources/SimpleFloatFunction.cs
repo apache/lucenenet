@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 using Lucene.Net.Index;
+using Lucene.Net.Queries.Function.DocValues;
 using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	/// </summary>
 	 public abstract class SimpleFloatFunction : SingleFunction
 	 {
-	  public SimpleFloatFunction(org.apache.lucene.queries.function.ValueSource source) : base(source)
+	  public SimpleFloatFunction(ValueSource source) : base(source)
 	  {
 	  }
 
@@ -34,7 +34,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
-		FunctionValues vals = source.getValues(context, readerContext);
+		FunctionValues vals = source.GetValues(context, readerContext);
 		return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
 	  }
 
@@ -50,7 +50,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.vals = vals;
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
 			return outerInstance.func(doc, vals);
 		  }

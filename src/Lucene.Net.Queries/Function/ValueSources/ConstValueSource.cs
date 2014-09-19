@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Queries.Function.DocValues;
 using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -40,8 +40,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 		return new FloatDocValuesAnonymousInnerClassHelper(this, this);
 	  }
@@ -55,7 +55,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.outerInstance = outerInstance;
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
 			return outerInstance.constant;
 		  }
@@ -63,11 +63,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		  {
 			return (int)outerInstance.constant;
 		  }
-		  public override long longVal(int doc)
+		  public override long LongVal(int doc)
 		  {
 			return (long)outerInstance.constant;
 		  }
-		  public override double doubleVal(int doc)
+		  public override double DoubleVal(int doc)
 		  {
 			return outerInstance.dv;
 		  }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 	  public override int GetHashCode()
 	  {
-		return float.floatToIntBits(constant) * 31;
+		return Number.FloatToIntBits(constant) * 31;
 	  }
 
 	  public override bool Equals(object o)

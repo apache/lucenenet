@@ -15,8 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
+using Lucene.Net.Index;
+using Lucene.Net.Queries.Function.DocValues;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Mutable;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -27,7 +30,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	public class DoubleFieldSource : FieldCacheSource
 	{
 
-	  protected internal readonly FieldCache.DoubleParser parser;
+	  protected internal readonly FieldCache_Fields.DoubleParser parser;
 
 	  public DoubleFieldSource(string field) : this(field, null)
 	  {
@@ -38,21 +41,21 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		this.parser = parser;
 	  }
 
-	  public override string description()
-	  {
-		return "double(" + field + ')';
-	  }
+        public override string Description
+        {
+            get { return "double(" + field + ')'; }
+        }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.search.FieldCache.Doubles arr = cache.getDoubles(readerContext.reader(), field, parser, true);
 		FieldCache.Doubles arr = cache.getDoubles(readerContext.reader(), field, parser, true);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.util.Bits valid = cache.getDocsWithField(readerContext.reader(), field);
-		Bits valid = cache.getDocsWithField(readerContext.reader(), field);
+		var valid = cache.getDocsWithField(readerContext.reader(), field);
 		return new DoubleDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
 
 	  }
@@ -71,7 +74,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.valid = valid;
 		  }
 
-		  public override double doubleVal(int doc)
+		  public override double DoubleVal(int doc)
 		  {
 			return arr.get(doc);
 		  }
@@ -89,7 +92,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  }
 		  }
 
-		  private class ValueFillerAnonymousInnerClassHelper : ValueFiller
+		  private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
 		  {
 			  private readonly DoubleDocValuesAnonymousInnerClassHelper outerInstance;
 
@@ -109,10 +112,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 				  }
 			  }
 
-			  public override void fillValue(int doc)
+			  public override void FillValue(int doc)
 			  {
-				mval.value = outerInstance.arr.get(doc);
-				mval.exists = mval.value != 0 || outerInstance.valid.get(doc);
+				mval.Value = outerInstance.arr.Get(doc);
+				mval.Exists = mval.Value != 0 || outerInstance.valid.Get(doc);
 			  }
 		  }
 

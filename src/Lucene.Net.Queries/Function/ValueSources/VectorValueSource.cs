@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -23,7 +25,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	 */
     /// <summary>
 	/// Converts individual ValueSource instances to leverage the FunctionValues *Val functions that work with multiple values,
-	/// i.e. <seealso cref="org.apache.lucene.queries.function.FunctionValues#doubleVal(int, double[])"/>
+	/// i.e. <seealso cref="FunctionValues#DoubleVal(int, double[])"/>
 	/// </summary>
 	//Not crazy about the name, but...
 	public class VectorValueSource : MultiValueSource
@@ -55,8 +57,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 		int size = sources.Count;
 
@@ -64,11 +66,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		if (size == 2)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues x = sources.get(0).getValues(context, readerContext);
-		  FunctionValues x = sources[0].getValues(context, readerContext);
+//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues x = sources.get(0).GetValues(context, readerContext);
+		  FunctionValues x = sources[0].GetValues(context, readerContext);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues y = sources.get(1).getValues(context, readerContext);
-		  FunctionValues y = sources[1].getValues(context, readerContext);
+//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues y = sources.get(1).GetValues(context, readerContext);
+		  FunctionValues y = sources[1].GetValues(context, readerContext);
 		  return new FunctionValuesAnonymousInnerClassHelper(this, x, y);
 		}
 
@@ -78,7 +80,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		FunctionValues[] valsArr = new FunctionValues[size];
 		for (int i = 0; i < size; i++)
 		{
-		  valsArr[i] = sources[i].getValues(context, readerContext);
+		  valsArr[i] = sources[i].GetValues(context, readerContext);
 		}
 
 		return new FunctionValuesAnonymousInnerClassHelper2(this, valsArr);
@@ -98,41 +100,41 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.y = y;
 		  }
 
-		  public override void byteVal(int doc, sbyte[] vals)
+		  public override void ByteVal(int doc, sbyte[] vals)
 		  {
-			vals[0] = x.byteVal(doc);
-			vals[1] = y.byteVal(doc);
+			vals[0] = x.ByteVal(doc);
+			vals[1] = y.ByteVal(doc);
 		  }
 
-		  public override void shortVal(int doc, short[] vals)
+		  public override void ShortVal(int doc, short[] vals)
 		  {
-			vals[0] = x.shortVal(doc);
-			vals[1] = y.shortVal(doc);
+			vals[0] = x.ShortVal(doc);
+			vals[1] = y.ShortVal(doc);
 		  }
-		  public override void intVal(int doc, int[] vals)
+		  public override void IntVal(int doc, int[] vals)
 		  {
-			vals[0] = x.intVal(doc);
-			vals[1] = y.intVal(doc);
+			vals[0] = x.IntVal(doc);
+			vals[1] = y.IntVal(doc);
 		  }
-		  public override void longVal(int doc, long[] vals)
+		  public override void LongVal(int doc, long[] vals)
 		  {
-			vals[0] = x.longVal(doc);
-			vals[1] = y.longVal(doc);
+			vals[0] = x.LongVal(doc);
+			vals[1] = y.LongVal(doc);
 		  }
-		  public override void floatVal(int doc, float[] vals)
+		  public override void FloatVal(int doc, float[] vals)
 		  {
-			vals[0] = x.floatVal(doc);
-			vals[1] = y.floatVal(doc);
+			vals[0] = x.FloatVal(doc);
+			vals[1] = y.FloatVal(doc);
 		  }
-		  public override void doubleVal(int doc, double[] vals)
+		  public override void DoubleVal(int doc, double[] vals)
 		  {
-			vals[0] = x.doubleVal(doc);
-			vals[1] = y.doubleVal(doc);
+			vals[0] = x.DoubleVal(doc);
+			vals[1] = y.DoubleVal(doc);
 		  }
-		  public override void strVal(int doc, string[] vals)
+		  public override void StrVal(int doc, string[] vals)
 		  {
-			vals[0] = x.strVal(doc);
-			vals[1] = y.strVal(doc);
+			vals[0] = x.StrVal(doc);
+			vals[1] = y.StrVal(doc);
 		  }
 		  public override string ToString(int doc)
 		  {
@@ -152,59 +154,59 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.valsArr = valsArr;
 		  }
 
-		  public override void byteVal(int doc, sbyte[] vals)
+		  public override void ByteVal(int doc, sbyte[] vals)
 		  {
 			for (int i = 0; i < valsArr.Length; i++)
 			{
-			  vals[i] = valsArr[i].byteVal(doc);
+			  vals[i] = valsArr[i].ByteVal(doc);
 			}
 		  }
 
-		  public override void shortVal(int doc, short[] vals)
+		  public override void ShortVal(int doc, short[] vals)
 		  {
 			for (int i = 0; i < valsArr.Length; i++)
 			{
-			  vals[i] = valsArr[i].shortVal(doc);
+			  vals[i] = valsArr[i].ShortVal(doc);
 			}
 		  }
 
-		  public override void floatVal(int doc, float[] vals)
+		  public override void FloatVal(int doc, float[] vals)
 		  {
 			for (int i = 0; i < valsArr.Length; i++)
 			{
-			  vals[i] = valsArr[i].floatVal(doc);
+			  vals[i] = valsArr[i].FloatVal(doc);
 			}
 		  }
 
-		  public override void intVal(int doc, int[] vals)
+		  public override void IntVal(int doc, int[] vals)
 		  {
 			for (int i = 0; i < valsArr.Length; i++)
 			{
-			  vals[i] = valsArr[i].intVal(doc);
+			  vals[i] = valsArr[i].IntVal(doc);
 			}
 		  }
 
-		  public override void longVal(int doc, long[] vals)
+		  public override void LongVal(int doc, long[] vals)
 		  {
 			for (int i = 0; i < valsArr.Length; i++)
 			{
-			  vals[i] = valsArr[i].longVal(doc);
+			  vals[i] = valsArr[i].LongVal(doc);
 			}
 		  }
 
-		  public override void doubleVal(int doc, double[] vals)
+		  public override void DoubleVal(int doc, double[] vals)
 		  {
 			for (int i = 0; i < valsArr.Length; i++)
 			{
-			  vals[i] = valsArr[i].doubleVal(doc);
+			  vals[i] = valsArr[i].DoubleVal(doc);
 			}
 		  }
 
-		  public override void strVal(int doc, string[] vals)
+		  public override void StrVal(int doc, string[] vals)
 		  {
 			for (int i = 0; i < valsArr.Length; i++)
 			{
-			  vals[i] = valsArr[i].strVal(doc);
+			  vals[i] = valsArr[i].StrVal(doc);
 			}
 		  }
 
@@ -230,18 +232,16 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void createWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void createWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		foreach (ValueSource source in sources)
-		{
-		  source.createWeight(context, searcher);
-		}
-	  }
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            foreach (ValueSource source in sources)
+            {
+                source.CreateWeight(context, searcher);
+            }
+        }
 
 
-	  public override string description()
+        public override string description()
 	  {
 		StringBuilder sb = new StringBuilder();
 		sb.Append(name()).Append('(');

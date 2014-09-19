@@ -16,8 +16,8 @@
  */
 using System;
 using System.Collections;
+using Lucene.Net.Queries.Function.DocValues;
 using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -56,8 +56,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map fcontext, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary fcontext, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map fcontext, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary fcontext, AtomicReaderContext readerContext)
 	  {
 		return new QueryDocValues(this, readerContext, fcontext);
 	  }
@@ -78,8 +78,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void createWeight(java.util.Map context, IndexSearcher searcher) throws java.io.IOException
-	  public override void createWeight(IDictionary context, IndexSearcher searcher)
+//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, IndexSearcher searcher) throws java.io.IOException
+	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
 	  {
 		Weight w = searcher.createNormalizedWeight(q);
 		context[this] = w;
@@ -132,13 +132,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  weightSearcher = new IndexSearcher(ReaderUtil.getTopLevelContext(readerContext));
 			}
 		  }
-		  vs.createWeight(fcontext, weightSearcher);
+		  vs.CreateWeight(fcontext, weightSearcher);
 		  w = (Weight)fcontext[vs];
 		}
 		weight = w;
 	  }
 
-	  public override float floatVal(int doc)
+	  public override float FloatVal(int doc)
 	  {
 		try
 		{
@@ -313,7 +313,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 	  public override string ToString(int doc)
 	  {
-		return "query(" + q + ",def=" + defVal + ")=" + floatVal(doc);
+		return "query(" + q + ",def=" + defVal + ")=" + FloatVal(doc);
 	  }
 	}
 }

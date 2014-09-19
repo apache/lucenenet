@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Queries.Function.DocValues;
 using org.apache.lucene.queries.function;
-using org.apache.lucene.queries.function.docvalues;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -55,18 +55,18 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues getValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues getValues(IDictionary context, AtomicReaderContext readerContext)
+//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
+	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues vals = source.getValues(context, readerContext);
-		FunctionValues vals = source.getValues(context, readerContext);
+//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues vals = source.GetValues(context, readerContext);
+		FunctionValues vals = source.GetValues(context, readerContext);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues targets = target.getValues(context, readerContext);
-		FunctionValues targets = target.getValues(context, readerContext);
+//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues targets = target.GetValues(context, readerContext);
+		FunctionValues targets = target.GetValues(context, readerContext);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues defaults = (this.defaultVal == null) ? null : defaultVal.getValues(context, readerContext);
-		FunctionValues defaults = (this.defaultVal == null) ? null : defaultVal.getValues(context, readerContext);
+//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues defaults = (this.defaultVal == null) ? null : defaultVal.GetValues(context, readerContext);
+		FunctionValues defaults = (this.defaultVal == null) ? null : defaultVal.GetValues(context, readerContext);
 		return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals, targets, defaults);
 	  }
 
@@ -86,10 +86,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  this.defaults = defaults;
 		  }
 
-		  public override float floatVal(int doc)
+		  public override float FloatVal(int doc)
 		  {
-			float val = vals.floatVal(doc);
-			return (val >= outerInstance.min && val <= outerInstance.max) ? targets.floatVal(doc) : (outerInstance.defaultVal == null ? val : defaults.floatVal(doc));
+			float val = vals.FloatVal(doc);
+			return (val >= outerInstance.min && val <= outerInstance.max) ? targets.FloatVal(doc) : (outerInstance.defaultVal == null ? val : defaults.FloatVal(doc));
 		  }
 		  public override string ToString(int doc)
 		  {
@@ -98,19 +98,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void createWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void createWeight(IDictionary context, IndexSearcher searcher)
+//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
+	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
 	  {
-		source.createWeight(context, searcher);
+		source.CreateWeight(context, searcher);
 	  }
 
 	  public override int GetHashCode()
 	  {
 		int h = source.GetHashCode();
 		h ^= (h << 10) | ((int)((uint)h >> 23));
-		h += float.floatToIntBits(min);
+		h += Number.FloatToIntBits(min);
 		h ^= (h << 14) | ((int)((uint)h >> 19));
-		h += float.floatToIntBits(max);
+		h += Number.FloatToIntBits(max);
 		h += target.GetHashCode();
 		if (defaultVal != null)
 		{
