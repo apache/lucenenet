@@ -49,9 +49,7 @@ namespace Lucene.Net.Search
     /// <p>Created: May 19, 2004 11:13:14 AM
     ///
     /// @since   lucene 1.4 </summary>
-    /// <seealso cref= Lucene.Net.Util.FieldCacheSanityChecker
-    ///
-    /// @lucene.internal </seealso>
+    /// <seealso cref=Lucene.Net.Util.FieldCacheSanityChecker</seealso>
     public interface FieldCache
     {
         /// <summary>
@@ -121,7 +119,7 @@ namespace Lucene.Net.Search
         FieldCache_Fields.Shorts GetShorts(AtomicReader reader, string field, FieldCache_Fields.IShortParser parser, bool setDocsWithField);
 
         /// <summary>
-        /// Returns an <seealso cref="Ints"/> over the values found in documents in the given
+        /// Returns an <seealso cref="FieldCache_Fields.Ints"/> over the values found in documents in the given
         /// field.
         /// </summary>
         /// <seealso cref= #getInts(AtomicReader, String, IntParser, boolean) </seealso>

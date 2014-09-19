@@ -1,3 +1,5 @@
+using Lucene.Net.Index;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -17,7 +19,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    // javadocs
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Bits = Lucene.Net.Util.Bits;
 
