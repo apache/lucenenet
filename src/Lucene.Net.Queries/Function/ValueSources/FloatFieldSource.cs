@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Obtains float field values from <seealso cref="FieldCache#getFloats"/> and makes those
+	/// Obtains float field values from <seealso cref="IFieldCache#getFloats"/> and makes those
 	/// values available as other numeric types, casting as needed.
 	/// </summary>
 	public class FloatFieldSource : FieldCacheSource
@@ -33,15 +35,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  {
 	  }
 
-	  public FloatFieldSource(string field, FieldCache.FloatParser parser) : base(field)
+	  public FloatFieldSource(string field, IFieldCache.FloatParser parser) : base(field)
 	  {
 		this.parser = parser;
 	  }
 
-	  public override string description()
-	  {
-		return "float(" + field + ')';
-	  }
+        public override string Description
+        {
+            get { return "float(" + field + ')'; }
+        }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
 //ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
@@ -49,10 +51,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.search.FieldCache.Floats arr = cache.getFloats(readerContext.reader(), field, parser, true);
-		FieldCache.Floats arr = cache.getFloats(readerContext.reader(), field, parser, true);
+		FieldCache.Floats arr = cache.GetFloats(readerContext.AtomicReader, field, parser, true);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.util.Bits valid = cache.getDocsWithField(readerContext.reader(), field);
-		Bits valid = cache.getDocsWithField(readerContext.reader(), field);
+		Bits valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
 
 		return new FloatDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
 	  }
@@ -61,8 +63,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  {
 		  private readonly FloatFieldSource outerInstance;
 
-		  private FieldCache.Floats arr;
-		  private Bits valid;
+		  private readonly FieldCache.Floats arr;
+		  private readonly Bits valid;
 
 		  public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource outerInstance, FloatFieldSource this, FieldCache.Floats arr, Bits valid) : base(this)
 		  {

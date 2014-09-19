@@ -32,14 +32,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
     public class ByteFieldSource : FieldCacheSource
     {
 
-        private readonly FieldCache_Fields.IByteParser parser;
+        private readonly FieldCache.IByteParser parser;
 
         public ByteFieldSource(string field)
             : this(field, null)
         {
         }
 
-        public ByteFieldSource(string field, FieldCache_Fields.IByteParser parser)
+        public ByteFieldSource(string field, FieldCache.IByteParser parser)
             : base(field)
         {
             this.parser = parser;
@@ -52,7 +52,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FieldCache_Fields.Bytes arr = cache.GetBytes(readerContext.AtomicReader, field, parser, false);
+            FieldCache.Bytes arr = cache.GetBytes(readerContext.AtomicReader, field, parser, false);
 
             return new FunctionValuesAnonymousInnerClassHelper(this, arr);
         }
@@ -60,9 +60,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         private class FunctionValuesAnonymousInnerClassHelper : FunctionValues
         {
             private readonly ByteFieldSource outerInstance;
-            private readonly FieldCache_Fields.Bytes arr;
+            private readonly FieldCache.Bytes arr;
 
-            public FunctionValuesAnonymousInnerClassHelper(ByteFieldSource outerInstance, FieldCache_Fields.Bytes arr)
+            public FunctionValuesAnonymousInnerClassHelper(ByteFieldSource outerInstance, FieldCache.Bytes arr)
             {
                 this.outerInstance = outerInstance;
                 this.arr = arr;

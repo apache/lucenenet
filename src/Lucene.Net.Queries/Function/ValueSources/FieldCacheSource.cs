@@ -28,14 +28,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
     public abstract class FieldCacheSource : ValueSource
     {
         protected internal readonly string field;
-        protected internal readonly FieldCache cache = FieldCache_Fields.DEFAULT;
+        protected internal readonly IFieldCache cache = Search.FieldCache.DEFAULT;
 
-        public FieldCacheSource(string field)
+        protected FieldCacheSource(string field)
         {
             this.field = field;
         }
 
-        public virtual FieldCache FieldCache
+        public virtual IFieldCache FieldCache
         {
             get
             {

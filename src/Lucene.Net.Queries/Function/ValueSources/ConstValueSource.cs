@@ -15,138 +15,137 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// <code>ConstValueSource</code> returns a constant for all documents
-	/// </summary>
-	public class ConstValueSource : ConstNumberSource
-	{
-	  internal readonly float constant;
-	  private readonly double dv;
+    /// <code>ConstValueSource</code> returns a constant for all documents
+    /// </summary>
+    public class ConstValueSource : ConstNumberSource
+    {
+        internal readonly float constant;
+        private readonly double dv;
 
-	  public ConstValueSource(float constant)
-	  {
-		this.constant = constant;
-		this.dv = constant;
-	  }
+        public ConstValueSource(float constant)
+        {
+            this.constant = constant;
+            this.dv = constant;
+        }
 
-	  public override string description()
-	  {
-		return "const(" + constant + ")";
-	  }
+        public override string Description
+        {
+            get { return "const(" + constant + ")"; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-		return new FloatDocValuesAnonymousInnerClassHelper(this, this);
-	  }
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            return new FloatDocValuesAnonymousInnerClassHelper(this, this);
+        }
 
-	  private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
-	  {
-		  private readonly ConstValueSource outerInstance;
+        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        {
+            private readonly ConstValueSource outerInstance;
 
-		  public FloatDocValuesAnonymousInnerClassHelper(ConstValueSource outerInstance, ConstValueSource this) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+            public FloatDocValuesAnonymousInnerClassHelper(ConstValueSource outerInstance, ConstValueSource @this)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-		  public override float FloatVal(int doc)
-		  {
-			return outerInstance.constant;
-		  }
-		  public override int intVal(int doc)
-		  {
-			return (int)outerInstance.constant;
-		  }
-		  public override long LongVal(int doc)
-		  {
-			return (long)outerInstance.constant;
-		  }
-		  public override double DoubleVal(int doc)
-		  {
-			return outerInstance.dv;
-		  }
-		  public override string ToString(int doc)
-		  {
-			return outerInstance.description();
-		  }
-		  public override object objectVal(int doc)
-		  {
-			return outerInstance.constant;
-		  }
-		  public override bool boolVal(int doc)
-		  {
-			return outerInstance.constant != 0.0f;
-		  }
-	  }
+            public override float FloatVal(int doc)
+            {
+                return outerInstance.constant;
+            }
+            public override int IntVal(int doc)
+            {
+                return (int)outerInstance.constant;
+            }
+            public override long LongVal(int doc)
+            {
+                return (long)outerInstance.constant;
+            }
+            public override double DoubleVal(int doc)
+            {
+                return outerInstance.dv;
+            }
+            public override string ToString(int doc)
+            {
+                return outerInstance.Description;
+            }
+            public override object ObjectVal(int doc)
+            {
+                return outerInstance.constant;
+            }
+            public override bool BoolVal(int doc)
+            {
+                return outerInstance.constant != 0.0f;
+            }
+        }
 
-	  public override int GetHashCode()
-	  {
-		return Number.FloatToIntBits(constant) * 31;
-	  }
+        public override int GetHashCode()
+        {
+            return Number.FloatToIntBits(constant) * 31;
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (!(o is ConstValueSource))
-		{
-			return false;
-		}
-		ConstValueSource other = (ConstValueSource)o;
-		return this.constant == other.constant;
-	  }
+        public override bool Equals(object o)
+        {
+            var other = o as ConstValueSource;
+            if (other == null)
+            {
+                return false;
+            }
+            return this.constant == other.constant;
+        }
 
-	  public override int Int
-	  {
-		  get
-		  {
-			return (int)constant;
-		  }
-	  }
+        public override int Int
+        {
+            get
+            {
+                return (int)constant;
+            }
+        }
 
-	  public override long Long
-	  {
-		  get
-		  {
-			return (long)constant;
-		  }
-	  }
+        public override long Long
+        {
+            get
+            {
+                return (long)constant;
+            }
+        }
 
-	  public override float Float
-	  {
-		  get
-		  {
-			return constant;
-		  }
-	  }
+        public override float Float
+        {
+            get
+            {
+                return constant;
+            }
+        }
 
-	  public override double Double
-	  {
-		  get
-		  {
-			return dv;
-		  }
-	  }
+        public override double Double
+        {
+            get
+            {
+                return dv;
+            }
+        }
 
-	  public override Number Number
-	  {
-		  get
-		  {
-			return constant;
-		  }
-	  }
+        public override Number Number
+        {
+            get
+            {
+                return constant;
+            }
+        }
 
-	  public override bool Bool
-	  {
-		  get
-		  {
-			return constant != 0.0f;
-		  }
-	  }
-	}
-
+        public override bool Bool
+        {
+            get
+            {
+                return constant != 0.0f;
+            }
+        }
+    }
 }

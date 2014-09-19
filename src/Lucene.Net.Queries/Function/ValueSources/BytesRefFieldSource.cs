@@ -41,8 +41,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
             // TODO: do it cleaner?
             if (fieldInfo != null && fieldInfo.DocValuesType == FieldInfo.DocValuesType_e.BINARY)
             {
-                BinaryDocValues binaryValues = FieldCache_Fields.DEFAULT.GetTerms(readerContext.AtomicReader, field, true);
-                Bits docsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(readerContext.AtomicReader, field);
+                BinaryDocValues binaryValues = Search.FieldCache.DEFAULT.GetTerms(readerContext.AtomicReader, field, true);
+                Bits docsWithField = Search.FieldCache.DEFAULT.GetDocsWithField(readerContext.AtomicReader, field);
                 return new FunctionValuesAnonymousInnerClassHelper(this, binaryValues, docsWithField);
             }
             else
@@ -55,8 +55,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             private readonly BytesRefFieldSource outerInstance;
 
-            private BinaryDocValues binaryValues;
-            private Bits docsWithField;
+            private readonly BinaryDocValues binaryValues;
+            private readonly Bits docsWithField;
 
             public FunctionValuesAnonymousInnerClassHelper(BytesRefFieldSource outerInstance, BinaryDocValues binaryValues, Bits docsWithField)
             {

@@ -32,5 +32,4 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public abstract Number Number { get; }
         public abstract bool Bool { get; }
     }
-
 }

@@ -27,7 +27,7 @@ namespace Lucene.Net.Queries.Function.DocValues
     {
         protected internal readonly ValueSource vs;
 
-        public StrDocValues(ValueSource vs)
+        protected StrDocValues(ValueSource vs)
         {
             this.vs = vs;
         }

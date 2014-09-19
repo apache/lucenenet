@@ -38,7 +38,7 @@ namespace Lucene.Net.Queries.Function.DocValues
         {
             try
             {
-                termsIndex = FieldCache_Fields.DEFAULT.GetTermsIndex(context.AtomicReader, field);
+                termsIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, field);
             }
             catch (Exception e)
             {

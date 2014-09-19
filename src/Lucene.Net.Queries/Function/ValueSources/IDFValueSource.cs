@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {

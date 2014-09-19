@@ -31,7 +31,7 @@ namespace Lucene.Net.Queries
     /// <para>Since Lucene 2.9, queries operate on each segment of an index separately,
     /// so the protected <seealso cref="#context"/> field can be used to resolve doc IDs,
     /// as the supplied <code>doc</code> ID is per-segment and without knowledge
-    /// of the IndexReader you cannot access the document or <seealso cref="FieldCache"/>.
+    /// of the IndexReader you cannot access the document or <seealso cref="IFieldCache"/>.
     /// 
     /// @lucene.experimental
     /// @since 2.9.2

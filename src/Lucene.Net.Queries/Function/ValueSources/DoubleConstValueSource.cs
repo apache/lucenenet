@@ -94,7 +94,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 	  public override int GetHashCode()
 	  {
-		long bits = NumberUtil.DoubleToRawLongBits(constant);
+		long bits = Number.DoubleToRawLongBits(constant);
 		return (int)(bits ^ ((long)((ulong)bits >> 32)));
 	  }
 

@@ -28,7 +28,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	 * limitations under the License.
 	 */
     /// <summary>
-	/// Obtains int field values from <seealso cref="FieldCache#getInts"/> and makes
+	/// Obtains int field values from <seealso cref="IFieldCache#getInts"/> and makes
 	/// those values available as other numeric types, casting as needed.
 	/// StrVal of the value is not the int value, but its string (displayed) value
 	/// </summary>
@@ -36,11 +36,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	{
 	  internal const int DEFAULT_VALUE = -1;
 
-	  internal readonly FieldCache_Fields.IntParser parser;
+	  internal readonly FieldCache.IIntParser parser;
 	  internal readonly IDictionary<int?, string> enumIntToStringMap;
 	  internal readonly IDictionary<string, int?> enumStringToIntMap;
 
-	  public EnumFieldSource(string field, FieldCache.IntParser parser, IDictionary<int?, string> enumIntToStringMap, IDictionary<string, int?> enumStringToIntMap) : base(field)
+	  public EnumFieldSource(string field, FieldCache.IIntParser parser, IDictionary<int?, string> enumIntToStringMap, IDictionary<string, int?> enumStringToIntMap) : base(field)
 	  {
 		this.parser = parser;
 		this.enumIntToStringMap = enumIntToStringMap;
@@ -67,8 +67,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		  return null;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String enumString = enumIntToStringMap.get(intVal);
 		string enumString = enumIntToStringMap[intVal];
 		if (enumString != null)
 		{
@@ -86,8 +84,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		}
 
 		int? intValue;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Integer enumInt = enumStringToIntMap.get(stringVal);
 		int? enumInt = enumStringToIntMap[stringVal];
 		if (enumInt != null) //enum int found for string
 		{
@@ -100,8 +96,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		{
 		  intValue = DEFAULT_VALUE;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String enumString = enumIntToStringMap.get(intValue);
 		string enumString = enumIntToStringMap[intValue];
 		if (enumString != null) //has matching string
 		{
@@ -111,10 +105,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		return DEFAULT_VALUE;
 	  }
 
-	  public override string description()
-	  {
-		return "enum(" + field + ')';
-	  }
+        public override string Description
+        {
+            get { return "enum(" + field + ')'; }
+        }
 
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
@@ -123,10 +117,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.search.FieldCache.Ints arr = cache.getInts(readerContext.reader(), field, parser, true);
-		FieldCache.Ints arr = cache.getInts(readerContext.reader(), field, parser, true);
+		FieldCache.Ints arr = cache.GetInts(readerContext.AtomicReader, field, parser, true);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.util.Bits valid = cache.getDocsWithField(readerContext.reader(), field);
-		Bits valid = cache.getDocsWithField(readerContext.reader(), field);
+		Bits valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
 
 		return new IntDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
 	  }
@@ -135,10 +129,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  {
 		  private readonly EnumFieldSource outerInstance;
 
-		  private FieldCache.Ints arr;
-		  private Bits valid;
+		  private readonly FieldCache.Ints arr;
+		  private readonly Bits valid;
 
-		  public IntDocValuesAnonymousInnerClassHelper(EnumFieldSource outerInstance, EnumFieldSource this, FieldCache.Ints arr, Bits valid) : base(this)
+		  public IntDocValuesAnonymousInnerClassHelper(EnumFieldSource outerInstance, EnumFieldSource @this, FieldCache.Ints arr, Bits valid) : base(@this)
 		  {
 			  this.outerInstance = outerInstance;
 			  this.arr = arr;
@@ -146,47 +140,47 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  val = new MutableValueInt();
 		  }
 
-		  internal readonly MutableValueInt val;
+	      private readonly MutableValueInt val;
 
 		  public override float FloatVal(int doc)
 		  {
-			return (float) arr.get(doc);
+			return (float) arr.Get(doc);
 		  }
 
-		  public override int intVal(int doc)
+		  public override int IntVal(int doc)
 		  {
-			return arr.get(doc);
+			return arr.Get(doc);
 		  }
 
 		  public override long LongVal(int doc)
 		  {
-			return (long) arr.get(doc);
+			return (long) arr.Get(doc);
 		  }
 
 		  public override double DoubleVal(int doc)
 		  {
-			return (double) arr.get(doc);
+			return (double) arr.Get(doc);
 		  }
 
 		  public override string StrVal(int doc)
 		  {
-			int? intValue = arr.get(doc);
-			return outerInstance.intValueToStringValue(intValue);
+			int? intValue = arr.Get(doc);
+			return outerInstance.IntValueToStringValue(intValue);
 		  }
 
-		  public override object objectVal(int doc)
+		  public override object ObjectVal(int doc)
 		  {
-			return valid.get(doc) ? arr.get(doc) : null;
+			return valid.Get(doc) ? (object) arr.Get(doc) : null;
 		  }
 
-		  public override bool exists(int doc)
+		  public override bool Exists(int doc)
 		  {
-			return valid.get(doc);
+			return valid.Get(doc);
 		  }
 
 		  public override string ToString(int doc)
 		  {
-			return outerInstance.description() + '=' + StrVal(doc);
+			return outerInstance.Description + '=' + StrVal(doc);
 		  }
 
 
@@ -221,11 +215,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  }
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ll = lower;
 			int ll = lower.Value;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int uu = upper;
 			int uu = upper.Value;
 
 			return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, this, ll, uu);
@@ -235,10 +225,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		  {
 			  private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
 
-			  private int ll;
-			  private int uu;
+			  private readonly int ll;
+			  private readonly int uu;
 
-			  public ValueSourceScorerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance, IndexReader reader, EnumFieldSource this, int ll, int uu) : base(reader, this)
+			  public ValueSourceScorerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance, IndexReader reader, EnumFieldSource @this, int ll, int uu) : base(reader, @this)
 			  {
 				  this.outerInstance = outerInstance;
 				  this.ll = ll;
@@ -247,14 +237,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 			  public override bool MatchesValue(int doc)
 			  {
-				int val = outerInstance.arr.get(doc);
+				int val = outerInstance.arr.Get(doc);
 				// only check for deleted if it's the default value
 				// if (val==0 && reader.isDeleted(doc)) return false;
 				return val >= ll && val <= uu;
 			  }
 		  }
 
-		  public override ValueFiller ValueFiller
+		  public override AbstractValueFiller ValueFiller
 		  {
 			  get
 			  {
@@ -262,7 +252,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  }
 		  }
 
-		  private class ValueFillerAnonymousInnerClassHelper : ValueFiller
+		  private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
 		  {
 			  private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
 
@@ -282,14 +272,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 				  }
 			  }
 
-			  public override void fillValue(int doc)
+			  public override void FillValue(int doc)
 			  {
-				mval.value = outerInstance.arr.get(doc);
-				mval.exists = outerInstance.valid.get(doc);
+				mval.Value = outerInstance.arr.Get(doc);
+				mval.Exists = outerInstance.valid.Get(doc);
 			  }
 		  }
-
-
 	  }
 
 	  public override bool Equals(object o)

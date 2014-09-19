@@ -128,8 +128,8 @@ namespace Lucene.Net.Queries.Function.DocValues
         {
             private readonly LongDocValues outerInstance;
 
-            private long ll;
-            private long uu;
+            private readonly long ll;
+            private readonly long uu;
 
             public ValueSourceScorerAnonymousInnerClassHelper(LongDocValues outerInstance, IndexReader reader, LongDocValues @this, long ll, long uu)
                 : base(reader, @this)

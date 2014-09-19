@@ -17,8 +17,6 @@
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
-
-
     /// <summary>
     /// Function to divide "a" by "b"
     /// </summary>
