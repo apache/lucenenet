@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -14,7 +15,6 @@ namespace Lucene.Net.Index
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldType = FieldType;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -793,7 +793,7 @@ namespace Lucene.Net.Index
             // Open reader1
             DirectoryReader r = DirectoryReader.Open(dir);
             AtomicReader r1 = GetOnlySegmentReader(r);
-            FieldCache_Fields.Ints ints = FieldCache_Fields.DEFAULT.GetInts(r1, "number", false);
+            FieldCache.Ints ints = FieldCache.DEFAULT.GetInts(r1, "number", false);
             Assert.AreEqual(17, ints.Get(0));
 
             // Add new segment
@@ -805,7 +805,7 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(r2);
             r.Dispose();
             AtomicReader sub0 = (AtomicReader)r2.Leaves[0].Reader;
-            FieldCache_Fields.Ints ints2 = FieldCache_Fields.DEFAULT.GetInts(sub0, "number", false);
+            FieldCache.Ints ints2 = FieldCache.DEFAULT.GetInts(sub0, "number", false);
             r2.Dispose();
             Assert.IsTrue(ints == ints2);
 

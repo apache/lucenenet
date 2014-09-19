@@ -4,6 +4,7 @@ using Lucene.Net.Randomized.Generators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -37,7 +38,6 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FloatDocValuesField = FloatDocValuesField;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Lucene42DocValuesFormat = Lucene.Net.Codecs.Lucene42.Lucene42DocValuesFormat;
@@ -1480,8 +1480,8 @@ namespace Lucene.Net.Index
             foreach (AtomicReaderContext context in ir.Leaves)
             {
                 AtomicReader r = context.AtomicReader;
-                Bits expected = FieldCache_Fields.DEFAULT.GetDocsWithField(r, "indexed");
-                Bits actual = FieldCache_Fields.DEFAULT.GetDocsWithField(r, "dv");
+                Bits expected = FieldCache.DEFAULT.GetDocsWithField(r, "indexed");
+                Bits actual = FieldCache.DEFAULT.GetDocsWithField(r, "dv");
                 Assert.AreEqual(expected, actual);
             }
             ir.Dispose();
@@ -1780,7 +1780,7 @@ namespace Lucene.Net.Index
             foreach (AtomicReaderContext context in ir.Leaves)
             {
                 AtomicReader r = context.AtomicReader;
-                SortedDocValues expected = FieldCache_Fields.DEFAULT.GetTermsIndex(r, "indexed");
+                SortedDocValues expected = FieldCache.DEFAULT.GetTermsIndex(r, "indexed");
                 SortedDocValues actual = r.GetSortedDocValues("dv");
                 AssertEquals(r.MaxDoc, expected, actual);
             }
@@ -2628,7 +2628,7 @@ namespace Lucene.Net.Index
             foreach (AtomicReaderContext context in ir.Leaves)
             {
                 AtomicReader r = context.AtomicReader;
-                SortedSetDocValues expected = FieldCache_Fields.DEFAULT.GetDocTermOrds(r, "indexed");
+                SortedSetDocValues expected = FieldCache.DEFAULT.GetDocTermOrds(r, "indexed");
                 SortedSetDocValues actual = r.GetSortedSetDocValues("dv");
                 AssertEquals(r.MaxDoc, expected, actual);
             }
@@ -2639,7 +2639,7 @@ namespace Lucene.Net.Index
             // now compare again after the merge
             ir = writer.Reader;
             AtomicReader ar = GetOnlySegmentReader(ir);
-            SortedSetDocValues expected_ = FieldCache_Fields.DEFAULT.GetDocTermOrds(ar, "indexed");
+            SortedSetDocValues expected_ = FieldCache.DEFAULT.GetDocTermOrds(ar, "indexed");
             SortedSetDocValues actual_ = ar.GetSortedSetDocValues("dv");
             AssertEquals(ir.MaxDoc, expected_, actual_);
             ir.Dispose();
@@ -3052,7 +3052,7 @@ namespace Lucene.Net.Index
 
             AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
 
-            BinaryDocValues s = FieldCache_Fields.DEFAULT.GetTerms(ar, "field", false);
+            BinaryDocValues s = FieldCache.DEFAULT.GetTerms(ar, "field", false);
             for (int docID = 0; docID < docBytes.Count; docID++)
             {
                 Document doc = ar.Document(docID);
@@ -3137,7 +3137,7 @@ namespace Lucene.Net.Index
 
             AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
 
-            BinaryDocValues s = FieldCache_Fields.DEFAULT.GetTerms(ar, "field", false);
+            BinaryDocValues s = FieldCache.DEFAULT.GetTerms(ar, "field", false);
             for (int docID = 0; docID < docBytes.Count; docID++)
             {
                 Document doc = ar.Document(docID);

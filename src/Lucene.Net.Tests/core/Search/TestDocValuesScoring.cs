@@ -183,7 +183,7 @@ namespace Lucene.Net.Search
             public override SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
             {
                 SimScorer sub = Sim.DoSimScorer(stats, context);
-                FieldCache_Fields.Floats values = FieldCache_Fields.DEFAULT.GetFloats(context.AtomicReader, BoostField, false);
+                FieldCache.Floats values = FieldCache.DEFAULT.GetFloats(context.AtomicReader, BoostField, false);
 
                 return new SimScorerAnonymousInnerClassHelper(this, sub, values);
             }
@@ -193,9 +193,9 @@ namespace Lucene.Net.Search
                 private readonly BoostingSimilarity OuterInstance;
 
                 private SimScorer Sub;
-                private FieldCache_Fields.Floats Values;
+                private FieldCache.Floats Values;
 
-                public SimScorerAnonymousInnerClassHelper(BoostingSimilarity outerInstance, SimScorer sub, FieldCache_Fields.Floats values)
+                public SimScorerAnonymousInnerClassHelper(BoostingSimilarity outerInstance, SimScorer sub, FieldCache.Floats values)
                 {
                     this.OuterInstance = outerInstance;
                     this.Sub = sub;

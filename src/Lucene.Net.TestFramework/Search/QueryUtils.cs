@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
         public static void PurgeFieldCache(IndexReader r)
         {
             // this is just a hack, to get an atomic reader that contains all subreaders for insanity checks
-            FieldCache_Fields.DEFAULT.PurgeByCacheKey(SlowCompositeReaderWrapper.Wrap(r).CoreCacheKey);
+            FieldCache.DEFAULT.PurgeByCacheKey(SlowCompositeReaderWrapper.Wrap(r).CoreCacheKey);
         }
 
         /// <summary>

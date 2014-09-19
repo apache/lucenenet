@@ -20,6 +20,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -44,7 +45,7 @@ namespace Lucene.Net.Util
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using CacheEntry = Lucene.Net.Search.FieldCache_Fields.CacheEntry;
+    using CacheEntry = Lucene.Net.Search.FieldCache.CacheEntry;
     using Codec = Lucene.Net.Codecs.Codec;
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using CompositeReader = Lucene.Net.Index.CompositeReader;
@@ -57,7 +58,6 @@ namespace Lucene.Net.Util
     using Document = Documents.Document;
     using FCInvisibleMultiReader = Lucene.Net.Search.QueryUtils.FCInvisibleMultiReader;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldFilterAtomicReader = Lucene.Net.Index.FieldFilterAtomicReader;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -745,7 +745,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= Lucene.Net.Util.FieldCacheSanityChecker </seealso>
         protected static void AssertSaneFieldCaches(string msg)
         {
-            CacheEntry[] entries = FieldCache_Fields.DEFAULT.CacheEntries;
+            CacheEntry[] entries = FieldCache.DEFAULT.CacheEntries;
             Insanity[] insanity = null;
             try
             {

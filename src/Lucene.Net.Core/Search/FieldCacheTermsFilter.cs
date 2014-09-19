@@ -118,11 +118,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual FieldCache FieldCache
+        public virtual IFieldCache FieldCache
         {
             get
             {
-                return FieldCache_Fields.DEFAULT;
+                return Search.FieldCache.DEFAULT;
             }
         }
 

@@ -59,7 +59,7 @@ namespace Lucene.Net.Documents
     /// NumericRangeFilter}.  To sort according to a
     /// <code>FloatField</code>, use the normal numeric sort types, eg
     /// <seealso cref="Lucene.Net.Search.SortField.Type#FLOAT"/>. <code>FloatField</code>
-    /// values can also be loaded directly from <seealso cref="FieldCache"/>.</p>
+    /// values can also be loaded directly from <seealso cref="IFieldCache"/>.</p>
     ///
     /// <p>You may add the same field name as an <code>FloatField</code> to
     /// the same document more than once.  Range querying and

@@ -29,7 +29,7 @@ namespace Lucene.Net.Documents
     /// via <seealso cref="Double#doubleToRawLongBits(double)"/>.
     /// <p>
     /// Per-document double values can be retrieved via
-    /// <seealso cref="FieldCache#getDoubles(AtomicReader, String, boolean)"/>.
+    /// <seealso cref="IFieldCache#getDoubles(AtomicReader, String, boolean)"/>.
     /// <p>
     /// <b>NOTE</b>: In most all cases this will be rather inefficient,
     /// requiring eight bytes per document. Consider encoding double

@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
         private string field;
         private Type_e type; // defaults to determining type dynamically
         internal bool reverse = false; // defaults to natural order
-        private FieldCache_Fields.IParser parser;
+        private FieldCache.IParser parser;
 
         // Used for CUSTOM sort
         private FieldComparatorSource comparatorSource;
@@ -166,53 +166,53 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Creates a sort by terms in the given field, parsed
-        /// to numeric values using a custom <seealso cref="FieldCache.Parser"/>. </summary>
+        /// to numeric values using a custom <seealso cref="IFieldCache.Parser"/>. </summary>
         /// <param name="field">  Name of field to sort by.  Must not be null. </param>
-        /// <param name="parser"> Instance of a <seealso cref="FieldCache.Parser"/>,
+        /// <param name="parser"> Instance of a <seealso cref="IFieldCache.Parser"/>,
         ///  which must subclass one of the existing numeric
-        ///  parsers from <seealso cref="FieldCache"/>. Sort type is inferred
+        ///  parsers from <seealso cref="IFieldCache"/>. Sort type is inferred
         ///  by testing which numeric parser the parser subclasses. </param>
         /// <exception cref="IllegalArgumentException"> if the parser fails to
         ///  subclass an existing numeric parser, or field is null </exception>
-        public SortField(string field, FieldCache_Fields.IParser parser)
+        public SortField(string field, FieldCache.IParser parser)
             : this(field, parser, false)
         {
         }
 
         /// <summary>
         /// Creates a sort, possibly in reverse, by terms in the given field, parsed
-        /// to numeric values using a custom <seealso cref="FieldCache.Parser"/>. </summary>
+        /// to numeric values using a custom <seealso cref="IFieldCache.Parser"/>. </summary>
         /// <param name="field">  Name of field to sort by.  Must not be null. </param>
-        /// <param name="parser"> Instance of a <seealso cref="FieldCache.Parser"/>,
+        /// <param name="parser"> Instance of a <seealso cref="IFieldCache.Parser"/>,
         ///  which must subclass one of the existing numeric
-        ///  parsers from <seealso cref="FieldCache"/>. Sort type is inferred
+        ///  parsers from <seealso cref="IFieldCache"/>. Sort type is inferred
         ///  by testing which numeric parser the parser subclasses. </param>
         /// <param name="reverse"> True if natural order should be reversed. </param>
         /// <exception cref="IllegalArgumentException"> if the parser fails to
         ///  subclass an existing numeric parser, or field is null </exception>
-        public SortField(string field, FieldCache_Fields.IParser parser, bool reverse)
+        public SortField(string field, FieldCache.IParser parser, bool reverse)
         {
-            if (parser is FieldCache_Fields.IIntParser)
+            if (parser is FieldCache.IIntParser)
             {
                 InitFieldType(field, Type_e.INT);
             }
-            else if (parser is FieldCache_Fields.IFloatParser)
+            else if (parser is FieldCache.IFloatParser)
             {
                 InitFieldType(field, Type_e.FLOAT);
             }
-            else if (parser is FieldCache_Fields.IShortParser)
+            else if (parser is FieldCache.IShortParser)
             {
                 InitFieldType(field, Type_e.SHORT);
             }
-            else if (parser is FieldCache_Fields.IByteParser)
+            else if (parser is FieldCache.IByteParser)
             {
                 InitFieldType(field, Type_e.BYTE);
             }
-            else if (parser is FieldCache_Fields.ILongParser)
+            else if (parser is FieldCache.ILongParser)
             {
                 InitFieldType(field, Type_e.LONG);
             }
-            else if (parser is FieldCache_Fields.IDoubleParser)
+            else if (parser is FieldCache.IDoubleParser)
             {
                 InitFieldType(field, Type_e.DOUBLE);
             }
@@ -344,10 +344,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the instance of a <seealso cref="FieldCache"/> parser that fits to the given sort type.
+        /// Returns the instance of a <seealso cref="IFieldCache"/> parser that fits to the given sort type.
         /// May return <code>null</code> if no parser was specified. Sorting is using the default parser then. </summary>
-        /// <returns> An instance of a <seealso cref="FieldCache"/> parser, or <code>null</code>. </returns>
-        public virtual FieldCache_Fields.IParser Parser
+        /// <returns> An instance of a <seealso cref="IFieldCache"/> parser, or <code>null</code>. </returns>
+        public virtual FieldCache.IParser Parser
         {
             get
             {

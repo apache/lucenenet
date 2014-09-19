@@ -2,6 +2,7 @@ using Apache.NMS.Util;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -19,7 +20,6 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using DoubleField = DoubleField;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldType = FieldType;
     using FloatField = FloatField;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index
             foreach (AtomicReaderContext ctx in r.Leaves)
             {
                 AtomicReader sub = (AtomicReader)ctx.Reader;
-                FieldCache_Fields.Ints ids = FieldCache_Fields.DEFAULT.GetInts(sub, "id", false);
+                FieldCache.Ints ids = FieldCache.DEFAULT.GetInts(sub, "id", false);
                 for (int docID = 0; docID < sub.NumDocs; docID++)
                 {
                     Document doc = sub.Document(docID);

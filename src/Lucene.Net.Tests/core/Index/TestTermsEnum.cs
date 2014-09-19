@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Lucene.Net.Documents;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -15,7 +16,6 @@ namespace Lucene.Net.Index
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using IntField = IntField;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -279,7 +279,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             // NOTE: intentional insanity!!
-            FieldCache_Fields.Ints docIDToID = FieldCache_Fields.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(r), "id", false);
+            FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(r), "id", false);
 
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {

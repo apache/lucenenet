@@ -2,6 +2,7 @@ using Apache.NMS.Util;
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -13,7 +14,6 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
@@ -124,10 +124,10 @@ namespace Lucene.Net.Index
                 try
                 {
                     //NumericDocValues ndv = ar.GetNumericDocValues("number");
-                    FieldCache_Fields.Longs ndv = FieldCache_Fields.DEFAULT.GetLongs(Ar, "number", false);
+                    FieldCache.Longs ndv = FieldCache.DEFAULT.GetLongs(Ar, "number", false);
                     //BinaryDocValues bdv = ar.GetBinaryDocValues("bytes");
-                    BinaryDocValues bdv = FieldCache_Fields.DEFAULT.GetTerms(Ar, "bytes", false);
-                    SortedDocValues sdv = FieldCache_Fields.DEFAULT.GetTermsIndex(Ar, "sorted");
+                    BinaryDocValues bdv = FieldCache.DEFAULT.GetTerms(Ar, "bytes", false);
+                    SortedDocValues sdv = FieldCache.DEFAULT.GetTermsIndex(Ar, "sorted");
                     StartingGun.@await();
                     int iters = AtLeast(1000);
                     BytesRef scratch = new BytesRef();
@@ -138,27 +138,27 @@ namespace Lucene.Net.Index
                         switch (ThreadRandom.Next(6))
                         {
                             case 0:
-                                Assert.AreEqual((long)(sbyte)Numbers[docID], FieldCache_Fields.DEFAULT.GetBytes(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)(sbyte)Numbers[docID], FieldCache.DEFAULT.GetBytes(Ar, "number", false).Get(docID));
                                 break;
 
                             case 1:
-                                Assert.AreEqual((long)(short)Numbers[docID], FieldCache_Fields.DEFAULT.GetShorts(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)(short)Numbers[docID], FieldCache.DEFAULT.GetShorts(Ar, "number", false).Get(docID));
                                 break;
 
                             case 2:
-                                Assert.AreEqual((long)(int)Numbers[docID], FieldCache_Fields.DEFAULT.GetInts(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)(int)Numbers[docID], FieldCache.DEFAULT.GetInts(Ar, "number", false).Get(docID));
                                 break;
 
                             case 3:
-                                Assert.AreEqual((long)Numbers[docID], FieldCache_Fields.DEFAULT.GetLongs(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)Numbers[docID], FieldCache.DEFAULT.GetLongs(Ar, "number", false).Get(docID));
                                 break;
 
                             case 4:
-                                Assert.AreEqual(Number.IntBitsToFloat((int)Numbers[docID]), FieldCache_Fields.DEFAULT.GetFloats(Ar, "number", false).Get(docID), 0.0f);
+                                Assert.AreEqual(Number.IntBitsToFloat((int)Numbers[docID]), FieldCache.DEFAULT.GetFloats(Ar, "number", false).Get(docID), 0.0f);
                                 break;
 
                             case 5:
-                                Assert.AreEqual(BitConverter.Int64BitsToDouble((long)Numbers[docID]), FieldCache_Fields.DEFAULT.GetDoubles(Ar, "number", false).Get(docID), 0.0);
+                                Assert.AreEqual(BitConverter.Int64BitsToDouble((long)Numbers[docID]), FieldCache.DEFAULT.GetDoubles(Ar, "number", false).Get(docID), 0.0);
                                 break;
                         }
                         bdv.Get(docID, scratch);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -32,7 +33,6 @@ namespace Lucene.Net.Index
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
     using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-    using FieldCache = Lucene.Net.Search.FieldCache;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using StoredFieldsReader = Lucene.Net.Codecs.StoredFieldsReader;
@@ -668,7 +668,7 @@ namespace Lucene.Net.Index
         /// sharing the same core are closed.  At this point it
         /// is safe for apps to evict this reader from any caches
         /// keyed on <seealso cref="#getCoreCacheKey"/>.  this is the same
-        /// interface that <seealso cref="FieldCache"/> uses, internally,
+        /// interface that <seealso cref="IFieldCache"/> uses, internally,
         /// to evict entries.</p>
         ///
         /// @lucene.experimental

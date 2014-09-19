@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
 
     /// <summary>
-    /// A range filter built on top of a cached multi-valued term field (in <seealso cref="FieldCache"/>).
+    /// A range filter built on top of a cached multi-valued term field (in <seealso cref="IFieldCache"/>).
     ///
     /// <p>Like <seealso cref="FieldCacheRangeFilter"/>, this is just a specialized range query versus
     ///    using a TermRangeQuery with <seealso cref="DocTermOrdsRewriteMethod"/>: it will only do
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
         public override abstract DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs);
 
         /// <summary>
-        /// Creates a BytesRef range filter using <seealso cref="FieldCache#getTermsIndex"/>. this works with all
+        /// Creates a BytesRef range filter using <seealso cref="IFieldCache#getTermsIndex"/>. this works with all
         /// fields containing zero or one term in the field. The range can be half-open by setting one
         /// of the values to <code>null</code>.
         /// </summary>
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                SortedSetDocValues docTermOrds = FieldCache_Fields.DEFAULT.GetDocTermOrds(context.AtomicReader, Field);
+                SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, Field);
                 long lowerPoint = LowerVal == null ? -1 : docTermOrds.LookupTerm(LowerVal);
                 long upperPoint = UpperVal == null ? -1 : docTermOrds.LookupTerm(UpperVal);
 

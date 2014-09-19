@@ -1,6 +1,7 @@
 using Apache.NMS.Util;
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -31,7 +32,6 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValuesField = NumericDocValuesField;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
             w.ForceMerge(1);
             DirectoryReader r = w.Reader;
             w.Dispose();
-            Assert.AreEqual(17, FieldCache_Fields.DEFAULT.GetInts(GetOnlySegmentReader(r), "field", false).Get(0));
+            Assert.AreEqual(17, FieldCache.DEFAULT.GetInts(GetOnlySegmentReader(r), "field", false).Get(0));
             r.Dispose();
             d.Dispose();
         }
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
             w.ForceMerge(1);
             DirectoryReader r = w.Reader;
             w.Dispose();
-            Assert.AreEqual(17, FieldCache_Fields.DEFAULT.GetInts(GetOnlySegmentReader(r), "field", false).Get(0));
+            Assert.AreEqual(17, FieldCache.DEFAULT.GetInts(GetOnlySegmentReader(r), "field", false).Get(0));
             r.Dispose();
             d.Dispose();
         }
@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.ForceMerge(1);
             DirectoryReader r = w.Reader;
-            BinaryDocValues s = FieldCache_Fields.DEFAULT.GetTerms(GetOnlySegmentReader(r), "field", false);
+            BinaryDocValues s = FieldCache.DEFAULT.GetTerms(GetOnlySegmentReader(r), "field", false);
 
             BytesRef bytes1 = new BytesRef();
             s.Get(0, bytes1);
@@ -898,7 +898,7 @@ namespace Lucene.Net.Index
             AtomicReader subR = (AtomicReader)r.Leaves[0].Reader;
             Assert.AreEqual(2, subR.NumDocs);
 
-            Bits bits = FieldCache_Fields.DEFAULT.GetDocsWithField(subR, "dv");
+            Bits bits = FieldCache.DEFAULT.GetDocsWithField(subR, "dv");
             Assert.IsTrue(bits.Get(0));
             Assert.IsTrue(bits.Get(1));
             r.Dispose();

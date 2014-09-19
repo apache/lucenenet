@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// A <seealso cref="Filter"/> that accepts all documents that have one or more values in a
     /// given field. this <seealso cref="Filter"/> request <seealso cref="Bits"/> from the
-    /// <seealso cref="FieldCache"/> and build the bits if not present.
+    /// <seealso cref="IFieldCache"/> and build the bits if not present.
     /// </summary>
     public class FieldValueFilter : Filter
     {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            Bits docsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader), Field_Renamed);
+            Bits docsWithField = FieldCache.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader), Field_Renamed);
             if (Negate_Renamed)
             {
                 if (docsWithField is Bits_MatchAllBits)

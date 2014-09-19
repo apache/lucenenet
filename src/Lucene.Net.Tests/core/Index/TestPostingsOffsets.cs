@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Lucene.Net.Documents;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -34,7 +35,6 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldType = FieldType;
     using IntField = IntField;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index
                 DocsEnum docs = null;
                 DocsAndPositionsEnum docsAndPositions = null;
                 DocsAndPositionsEnum docsAndPositionsAndOffsets = null;
-                FieldCache_Fields.Ints docIDToID = FieldCache_Fields.DEFAULT.GetInts(sub, "id", false);
+                FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInts(sub, "id", false);
                 foreach (string term in terms)
                 {
                     //System.out.println("  term=" + term);

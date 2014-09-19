@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using Lucene.Net.Documents;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Search
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Search
     ///
     /// @since   lucene 1.4 </summary>
     /// <seealso cref=Lucene.Net.Util.FieldCacheSanityChecker</seealso>
-    public interface FieldCache
+    public interface IFieldCache
     {
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is found,
@@ -72,7 +73,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
-        FieldCache_Fields.Bytes GetBytes(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Bytes GetBytes(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is found,
@@ -87,7 +88,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
-        FieldCache_Fields.Bytes GetBytes(AtomicReader reader, string field, FieldCache_Fields.IByteParser parser, bool setDocsWithField);
+        FieldCache.Bytes GetBytes(AtomicReader reader, string field, FieldCache.IByteParser parser, bool setDocsWithField);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is
@@ -101,7 +102,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
-        FieldCache_Fields.Shorts GetShorts(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Shorts GetShorts(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is found,
@@ -116,17 +117,17 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
-        FieldCache_Fields.Shorts GetShorts(AtomicReader reader, string field, FieldCache_Fields.IShortParser parser, bool setDocsWithField);
+        FieldCache.Shorts GetShorts(AtomicReader reader, string field, FieldCache.IShortParser parser, bool setDocsWithField);
 
         /// <summary>
-        /// Returns an <seealso cref="FieldCache_Fields.Ints"/> over the values found in documents in the given
+        /// Returns an <seealso cref="FieldCache.Ints"/> over the values found in documents in the given
         /// field.
         /// </summary>
         /// <seealso cref= #getInts(AtomicReader, String, IntParser, boolean) </seealso>
-        FieldCache_Fields.Ints GetInts(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Ints GetInts(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
-        /// Returns an <seealso cref="Ints"/> over the values found in documents in the given
+        /// Returns an <seealso cref="FieldCache.Ints"/> over the values found in documents in the given
         /// field. If the field was indexed as <seealso cref="NumericDocValuesField"/>, it simply
         /// uses <seealso cref="AtomicReader#getNumericDocValues(String)"/> to read the values.
         /// Otherwise, it checks the internal cache for an appropriate entry, and if
@@ -148,14 +149,14 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache_Fields.Ints GetInts(AtomicReader reader, string field, FieldCache_Fields.IIntParser parser, bool setDocsWithField);
+        FieldCache.Ints GetInts(AtomicReader reader, string field, FieldCache.IIntParser parser, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
         /// field.
         /// </summary>
         /// <seealso cref= #getFloats(AtomicReader, String, FloatParser, boolean) </seealso>
-        FieldCache_Fields.Floats GetFloats(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Floats GetFloats(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
@@ -180,14 +181,14 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache_Fields.Floats GetFloats(AtomicReader reader, string field, FieldCache_Fields.IFloatParser parser, bool setDocsWithField);
+        FieldCache.Floats GetFloats(AtomicReader reader, string field, FieldCache.IFloatParser parser, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
         /// field.
         /// </summary>
         /// <seealso cref= #getLongs(AtomicReader, String, LongParser, boolean) </seealso>
-        FieldCache_Fields.Longs GetLongs(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Longs GetLongs(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
@@ -212,14 +213,14 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache_Fields.Longs GetLongs(AtomicReader reader, string field, FieldCache_Fields.ILongParser parser, bool setDocsWithField);
+        FieldCache.Longs GetLongs(AtomicReader reader, string field, FieldCache.ILongParser parser, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Doubles"/> over the values found in documents in the given
         /// field.
         /// </summary>
         /// <seealso cref= #getDoubles(AtomicReader, String, DoubleParser, boolean) </seealso>
-        FieldCache_Fields.Doubles GetDoubles(AtomicReader reader, string field, bool setDocsWithField);
+        FieldCache.Doubles GetDoubles(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Returns a <seealso cref="Doubles"/> over the values found in documents in the given
@@ -244,7 +245,7 @@ namespace Lucene.Net.Search
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
-        FieldCache_Fields.Doubles GetDoubles(AtomicReader reader, string field, FieldCache_Fields.IDoubleParser parser, bool setDocsWithField);
+        FieldCache.Doubles GetDoubles(AtomicReader reader, string field, FieldCache.IDoubleParser parser, bool setDocsWithField);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none
@@ -318,7 +319,7 @@ namespace Lucene.Net.Search
         /// </p>
         /// @lucene.experimental
         /// </summary>
-        FieldCache_Fields.CacheEntry[] CacheEntries { get; }
+        FieldCache.CacheEntry[] CacheEntries { get; }
 
         /// <summary>
         /// <p>
@@ -351,7 +352,7 @@ namespace Lucene.Net.Search
         StreamWriter InfoStream { set; get; }
     }
 
-    public static class FieldCache_Fields
+    public static class FieldCache
     {
         public abstract class Bytes
         {
@@ -483,7 +484,7 @@ namespace Lucene.Net.Search
             double ParseDouble(BytesRef term);
         }
 
-        public static FieldCache DEFAULT = new FieldCacheImpl();
+        public static IFieldCache DEFAULT = new FieldCacheImpl();
 
         public static readonly IByteParser DEFAULT_BYTE_PARSER = new AnonymousByteParser();
 
@@ -500,7 +501,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".DEFAULT_BYTE_PARSER";
+                return typeof(IFieldCache).FullName + ".DEFAULT_BYTE_PARSER";
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -524,7 +525,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".DEFAULT_SHORT_PARSER";
+                return typeof(IFieldCache).FullName + ".DEFAULT_SHORT_PARSER";
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -553,7 +554,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".DEFAULT_INT_PARSER";
+                return typeof(IFieldCache).FullName + ".DEFAULT_INT_PARSER";
             }
         }
 
@@ -577,7 +578,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".DEFAULT_FLOAT_PARSER";
+                return typeof(IFieldCache).FullName + ".DEFAULT_FLOAT_PARSER";
             }
         }
 
@@ -601,7 +602,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".DEFAULT_LONG_PARSER";
+                return typeof(IFieldCache).FullName + ".DEFAULT_LONG_PARSER";
             }
         }
 
@@ -625,7 +626,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".DEFAULT_DOUBLE_PARSER";
+                return typeof(IFieldCache).FullName + ".DEFAULT_DOUBLE_PARSER";
             }
         }
 
@@ -645,7 +646,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".NUMERIC_UTILS_INT_PARSER";
+                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_INT_PARSER";
             }
         }
 
@@ -660,7 +661,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".NUMERIC_UTILS_FLOAT_PARSER";
+                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_FLOAT_PARSER";
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -680,7 +681,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".NUMERIC_UTILS_LONG_PARSER";
+                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_LONG_PARSER";
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -700,7 +701,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(FieldCache).FullName + ".NUMERIC_UTILS_DOUBLE_PARSER";
+                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_DOUBLE_PARSER";
             }
 
             public TermsEnum TermsEnum(Terms terms)
