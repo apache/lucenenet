@@ -64,6 +64,7 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        [ExpectedException(typeof(SetOnce<int?>.AlreadySetException))]
         public virtual void TestSettingCtor()
         {
             SetOnce<int?> set = new SetOnce<int?>(new int?(5));
@@ -72,6 +73,7 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        [ExpectedException(typeof(SetOnce<int?>.AlreadySetException))]
         public virtual void TestSetOnce_mem()
         {
             SetOnce<int?> set = new SetOnce<int?>();
@@ -85,9 +87,10 @@ namespace Lucene.Net.Util
         {
             SetOnce<int?> set = new SetOnce<int?>();
             SetOnceThread[] threads = new SetOnceThread[10];
+            Random random = Random();
             for (int i = 0; i < threads.Length; i++)
             {
-                threads[i] = new SetOnceThread(Random());
+                threads[i] = new SetOnceThread(random);
                 threads[i].Name = "t-" + (i + 1);
                 threads[i].Set = set;
             }

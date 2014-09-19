@@ -33,11 +33,9 @@ namespace Lucene.Net.Support
 
         public static void Fill<T>(T[] a, int fromIndex, int toIndex, T val)
         {
-            if (fromIndex < 0 || fromIndex >= a.Length)
+            //Java Arrays.fill exception logic
+            if(fromIndex > toIndex || fromIndex < 0 || toIndex > a.Length)
                 throw new ArgumentOutOfRangeException("fromIndex");
-
-            if (toIndex < 0 || toIndex > a.Length || toIndex < fromIndex)
-                throw new ArgumentOutOfRangeException("toIndex");
 
             for (int i = fromIndex; i < toIndex; i++)
             {

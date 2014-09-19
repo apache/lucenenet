@@ -1,3 +1,4 @@
+using System.Linq;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -77,7 +78,12 @@ namespace Lucene.Net.Util
             this.Parameters = parameters;
             try
             {
-                if (!SingletonSet.Add(baseClass.GetMethod(method, parameters)))
+                MethodInfo mi = baseClass.GetMethod(method, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parameters, null);
+                if (mi == null)
+                {
+                    throw new System.ArgumentException(baseClass.Name + " has no such method.");
+                }
+                else if (!SingletonSet.Add(mi))
                 {
                     throw new System.NotSupportedException("VirtualMethod instances must be singletons and therefore " + "assigned to static final members in the same class, they use as baseClass ctor param.");
                 }
@@ -127,14 +133,12 @@ namespace Lucene.Net.Util
                 // lookup method, if success mark as overridden
                 if (!overridden)
                 {
-                    try
-                    {
-                        clazz.GetMethod(Method, Parameters);
+                    MethodInfo mi = clazz.GetMethod(Method, 
+                        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly, 
+                        null, Parameters, null);
+
+                    if (mi != null)
                         overridden = true;
-                    }
-                    catch (NotSupportedException nsme)
-                    {
-                    }
                 }
 
                 // increment distance if overridden
