@@ -15,54 +15,47 @@
  * limitations under the License.
  */
 using System.Collections;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
-    // javadocs
-
-
     /// <summary>
-	/// Returns the value of <seealso cref="IndexReader#maxDoc()"/>
-	/// for every document. This is the number of documents
-	/// including deletions.
-	/// </summary>
-	public class MaxDocValueSource : ValueSource
-	{
-	  public virtual string name()
-	  {
-		return "maxdoc";
-	  }
+    /// Returns the value of <seealso cref="IndexReader#maxDoc()"/>
+    /// for every document. This is the number of documents
+    /// including deletions.
+    /// </summary>
+    public class MaxDocValueSource : ValueSource
+    {
+        public virtual string Name
+        {
+            get { return "maxdoc"; }
+        }
 
-	  public override string description()
-	  {
-		return name() + "()";
-	  }
+        public override string Description
+        {
+            get { return Name + "()"; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		context["searcher"] = searcher;
-	  }
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            context["searcher"] = searcher;
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-		IndexSearcher searcher = (IndexSearcher)context["searcher"];
-		return new ConstIntDocValues(searcher.IndexReader.maxDoc(), this);
-	  }
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            var searcher = (IndexSearcher)context["searcher"];
+            return new ConstIntDocValues(searcher.IndexReader.MaxDoc, this);
+        }
 
-	  public override bool Equals(object o)
-	  {
-		return this.GetType() == o.GetType();
-	  }
+        public override bool Equals(object o)
+        {
+            return this.GetType() == o.GetType();
+        }
 
-	  public override int GetHashCode()
-	  {
-		return this.GetType().GetHashCode();
-	  }
-	}
-
+        public override int GetHashCode()
+        {
+            return this.GetType().GetHashCode();
+        }
+    }
 }

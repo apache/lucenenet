@@ -15,148 +15,140 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
+using Lucene.Net.Util.Mutable;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Obtains the ordinal of the field value from the default Lucene <seealso cref="org.apache.lucene.search.FieldCache"/> using getStringIndex().
-	/// <br>
-	/// The native lucene index order is used to assign an ordinal value for each field value.
-	/// <br>Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
-	/// <br>
-	/// Example:<br>
-	///  If there were only three field values: "apple","banana","pear"
-	/// <br>then ord("apple")=1, ord("banana")=2, ord("pear")=3
-	/// <para>
-	/// WARNING: ord() depends on the position in an index and can thus change when other documents are inserted or deleted,
-	///  or if a MultiSearcher is used.
-	/// <br>WARNING: as of Solr 1.4, ord() and rord() can cause excess memory use since they must use a FieldCache entry
-	/// at the top level reader, while sorting and function queries now use entries at the segment level.  Hence sorting
-	/// or using a different function query, in addition to ord()/rord() will double memory use.
-	/// 
-	/// </para>
-	/// </summary>
+    /// Obtains the ordinal of the field value from the default Lucene <seealso cref="FieldCache"/> using getStringIndex().
+    /// <br>
+    /// The native lucene index order is used to assign an ordinal value for each field value.
+    /// <br>Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
+    /// <br>
+    /// Example:<br>
+    ///  If there were only three field values: "apple","banana","pear"
+    /// <br>then ord("apple")=1, ord("banana")=2, ord("pear")=3
+    /// <para>
+    /// WARNING: ord() depends on the position in an index and can thus change when other documents are inserted or deleted,
+    ///  or if a MultiSearcher is used.
+    /// <br>WARNING: as of Solr 1.4, ord() and rord() can cause excess memory use since they must use a FieldCache entry
+    /// at the top level reader, while sorting and function queries now use entries at the segment level.  Hence sorting
+    /// or using a different function query, in addition to ord()/rord() will double memory use.
+    /// 
+    /// </para>
+    /// </summary>
 
-	public class OrdFieldSource : ValueSource
-	{
-	  protected internal readonly string field;
+    public class OrdFieldSource : ValueSource
+    {
+        protected readonly string field;
 
-	  public OrdFieldSource(string field)
-	  {
-		this.field = field;
-	  }
+        public OrdFieldSource(string field)
+        {
+            this.field = field;
+        }
 
-	  public override string description()
-	  {
-		return "ord(" + field + ')';
-	  }
+        public override string Description
+        {
+            get { return "ord(" + field + ')'; }
+        }
 
 
-	  // TODO: this is trappy? perhaps this query instead should make you pass a slow reader yourself?
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int off = readerContext.docBase;
-		int off = readerContext.docBase;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.IndexReader topReader = org.apache.lucene.index.ReaderUtil.getTopLevelContext(readerContext).reader();
-		IndexReader topReader = ReaderUtil.getTopLevelContext(readerContext).reader();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.AtomicReader r = org.apache.lucene.index.SlowCompositeReaderWrapper.wrap(topReader);
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(topReader);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.SortedDocValues sindex = org.apache.lucene.search.FieldCache.DEFAULT.getTermsIndex(r, field);
-		SortedDocValues sindex = FieldCache.DEFAULT.getTermsIndex(r, field);
-		return new IntDocValuesAnonymousInnerClassHelper(this, this, off, sindex);
-	  }
+        // TODO: this is trappy? perhaps this query instead should make you pass a slow reader yourself?
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            int off = readerContext.DocBase;
+            IndexReader topReader = ReaderUtil.GetTopLevelContext(readerContext).Reader;
+            AtomicReader r = SlowCompositeReaderWrapper.Wrap(topReader);
+            SortedDocValues sindex = FieldCache.DEFAULT.GetTermsIndex(r, field);
+            return new IntDocValuesAnonymousInnerClassHelper(this, this, off, sindex);
+        }
 
-	  private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
-	  {
-		  private readonly OrdFieldSource outerInstance;
+        private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
+        {
+            private readonly OrdFieldSource outerInstance;
 
-		  private int off;
-		  private SortedDocValues sindex;
+            private readonly int off;
+            private readonly SortedDocValues sindex;
 
-		  public IntDocValuesAnonymousInnerClassHelper(OrdFieldSource outerInstance, OrdFieldSource this, int off, SortedDocValues sindex) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.off = off;
-			  this.sindex = sindex;
-		  }
+            public IntDocValuesAnonymousInnerClassHelper(OrdFieldSource outerInstance, OrdFieldSource @this, int off, SortedDocValues sindex)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.off = off;
+                this.sindex = sindex;
+            }
 
-		  protected internal virtual string toTerm(string readableValue)
-		  {
-			return readableValue;
-		  }
-		  public override int intVal(int doc)
-		  {
-			return sindex.getOrd(doc + off);
-		  }
-		  public override int ordVal(int doc)
-		  {
-			return sindex.getOrd(doc + off);
-		  }
-		  public override int numOrd()
-		  {
-			return sindex.ValueCount;
-		  }
+            protected virtual string ToTerm(string readableValue)
+            {
+                return readableValue;
+            }
+            public override int IntVal(int doc)
+            {
+                return sindex.GetOrd(doc + off);
+            }
+            public override int OrdVal(int doc)
+            {
+                return sindex.GetOrd(doc + off);
+            }
+            public override int NumOrd()
+            {
+                return sindex.ValueCount;
+            }
 
-		  public override bool exists(int doc)
-		  {
-			return sindex.getOrd(doc + off) != 0;
-		  }
+            public override bool Exists(int doc)
+            {
+                return sindex.GetOrd(doc + off) != 0;
+            }
 
-		  public override ValueFiller ValueFiller
-		  {
-			  get
-			  {
-				return new ValueFillerAnonymousInnerClassHelper(this);
-			  }
-		  }
+            public override AbstractValueFiller ValueFiller
+            {
+                get
+                {
+                    return new ValueFillerAnonymousInnerClassHelper(this);
+                }
+            }
 
-		  private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-		  {
-			  private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
+            private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+            {
+                private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
 
-			  public ValueFillerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance)
-			  {
-				  this.outerInstance = outerInstance;
-				  mval = new MutableValueInt();
-			  }
+                public ValueFillerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance)
+                {
+                    this.outerInstance = outerInstance;
+                    mval = new MutableValueInt();
+                }
 
-			  private readonly MutableValueInt mval;
+                private readonly MutableValueInt mval;
 
-			  public override MutableValue Value
-			  {
-				  get
-				  {
-					return mval;
-				  }
-			  }
+                public override MutableValue Value
+                {
+                    get
+                    {
+                        return mval;
+                    }
+                }
 
-			  public override void fillValue(int doc)
-			  {
-				mval.value = outerInstance.sindex.getOrd(doc);
-				mval.exists = mval.value != 0;
-			  }
-		  }
-	  }
+                public override void FillValue(int doc)
+                {
+                    mval.Value = outerInstance.sindex.GetOrd(doc);
+                    mval.Exists = mval.Value != 0;
+                }
+            }
+        }
 
-	  public override bool Equals(object o)
-	  {
-		return o != null && o.GetType() == typeof(OrdFieldSource) && this.field.Equals(((OrdFieldSource)o).field);
-	  }
+        public override bool Equals(object o)
+        {
+            return o != null && o.GetType() == typeof(OrdFieldSource) && this.field.Equals(((OrdFieldSource)o).field);
+        }
 
-	  private static readonly int hcode = typeof(OrdFieldSource).GetHashCode();
-	  public override int GetHashCode()
-	  {
-		return hcode + field.GetHashCode();
-	  }
+        private static readonly int hcode = typeof(OrdFieldSource).GetHashCode();
 
-	}
-
+        public override int GetHashCode()
+        {
+            return hcode + field.GetHashCode();
+        }
+    }
 }

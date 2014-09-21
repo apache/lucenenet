@@ -15,34 +15,29 @@
  * limitations under the License.
  */
 
-using org.apache.lucene.queries.function;
+using System.Linq;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
 
 
-	/// <summary>
-	/// <code>SumFloatFunction</code> returns the sum of it's components.
-	/// </summary>
-	public class SumFloatFunction : MultiFloatFunction
-	{
-	  public SumFloatFunction(ValueSource[] sources) : base(sources)
-	  {
-	  }
+    /// <summary>
+    /// <code>SumFloatFunction</code> returns the sum of it's components.
+    /// </summary>
+    public class SumFloatFunction : MultiFloatFunction
+    {
+        public SumFloatFunction(ValueSource[] sources)
+            : base(sources)
+        {
+        }
+        protected override string Name
+        {
+            get { return "sum"; }
+        }
 
-	  protected internal override string name()
-	  {
-		return "sum";
-	  }
-
-	  protected internal override float func(int doc, FunctionValues[] valsArr)
-	  {
-		float val = 0.0f;
-		foreach (FunctionValues vals in valsArr)
-		{
-		  val += vals.FloatVal(doc);
-		}
-		return val;
-	  }
-	}
+        protected override float Func(int doc, FunctionValues[] valsArr)
+        {
+            return valsArr.Sum(vals => vals.FloatVal(doc));
+        }
+    }
 }

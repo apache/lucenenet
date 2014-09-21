@@ -15,110 +15,103 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// <code>SumTotalTermFreqValueSource</code> returns the number of tokens.
-	/// (sum of term freqs across all documents, across all terms).
-	/// Returns -1 if frequencies were omitted for the field, or if 
-	/// the codec doesn't support this statistic.
-	/// @lucene.internal
-	/// </summary>
-	public class SumTotalTermFreqValueSource : ValueSource
-	{
-	  protected internal readonly string indexedField;
+    /// <code>SumTotalTermFreqValueSource</code> returns the number of tokens.
+    /// (sum of term freqs across all documents, across all terms).
+    /// Returns -1 if frequencies were omitted for the field, or if 
+    /// the codec doesn't support this statistic.
+    /// @lucene.internal
+    /// </summary>
+    public class SumTotalTermFreqValueSource : ValueSource
+    {
+        protected internal readonly string indexedField;
 
-	  public SumTotalTermFreqValueSource(string indexedField)
-	  {
-		this.indexedField = indexedField;
-	  }
+        public SumTotalTermFreqValueSource(string indexedField)
+        {
+            this.indexedField = indexedField;
+        }
 
-	  public virtual string name()
-	  {
-		return "sumtotaltermfreq";
-	  }
+        public virtual string Name
+        {
+            get { return "sumtotaltermfreq"; }
+        }
 
-	  public override string description()
-	  {
-		return name() + '(' + indexedField + ')';
-	  }
+        public override string Description
+        {
+            get { return Name + '(' + indexedField + ')'; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-		return (FunctionValues)context[this];
-	  }
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            return (FunctionValues)context[this];
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		long sumTotalTermFreq = 0;
-		foreach (AtomicReaderContext readerContext in searcher.TopReaderContext.leaves())
-		{
-		  Fields fields = readerContext.reader().fields();
-		  if (fields == null)
-		  {
-			  continue;
-		  }
-		  Terms terms = fields.terms(indexedField);
-		  if (terms == null)
-		  {
-			  continue;
-		  }
-		  long v = terms.SumTotalTermFreq;
-		  if (v == -1)
-		  {
-			sumTotalTermFreq = -1;
-			break;
-		  }
-		  else
-		  {
-			sumTotalTermFreq += v;
-		  }
-		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long ttf = sumTotalTermFreq;
-		long ttf = sumTotalTermFreq;
-		context[this] = new LongDocValuesAnonymousInnerClassHelper(this, this, ttf);
-	  }
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            long sumTotalTermFreq = 0;
+            foreach (AtomicReaderContext readerContext in searcher.TopReaderContext.Leaves)
+            {
+                Fields fields = readerContext.AtomicReader.Fields;
+                if (fields == null)
+                {
+                    continue;
+                }
+                Terms terms = fields.Terms(indexedField);
+                if (terms == null)
+                {
+                    continue;
+                }
+                long v = terms.SumTotalTermFreq;
+                if (v == -1)
+                {
+                    sumTotalTermFreq = -1;
+                    break;
+                }
+                else
+                {
+                    sumTotalTermFreq += v;
+                }
+            }
+            long ttf = sumTotalTermFreq;
+            context[this] = new LongDocValuesAnonymousInnerClassHelper(this, this, ttf);
+        }
 
-	  private class LongDocValuesAnonymousInnerClassHelper : LongDocValues
-	  {
-		  private readonly SumTotalTermFreqValueSource outerInstance;
+        private class LongDocValuesAnonymousInnerClassHelper : LongDocValues
+        {
+            private readonly SumTotalTermFreqValueSource outerInstance;
 
-		  private long ttf;
+            private long ttf;
 
-		  public LongDocValuesAnonymousInnerClassHelper(SumTotalTermFreqValueSource outerInstance, SumTotalTermFreqValueSource this, long ttf) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.ttf = ttf;
-		  }
+            public LongDocValuesAnonymousInnerClassHelper(SumTotalTermFreqValueSource outerInstance, SumTotalTermFreqValueSource @this, long ttf)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.ttf = ttf;
+            }
 
-		  public override long LongVal(int doc)
-		  {
-			return ttf;
-		  }
-	  }
+            public override long LongVal(int doc)
+            {
+                return ttf;
+            }
+        }
 
-	  public override int GetHashCode()
-	  {
-		return this.GetType().GetHashCode() + indexedField.GetHashCode();
-	  }
+        public override int GetHashCode()
+        {
+            return this.GetType().GetHashCode() + indexedField.GetHashCode();
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (this.GetType() != o.GetType())
-		{
-			return false;
-		}
-		SumTotalTermFreqValueSource other = (SumTotalTermFreqValueSource)o;
-		return this.indexedField.Equals(other.indexedField);
-	  }
-	}
-
+        public override bool Equals(object o)
+        {
+            var other = o as SumTotalTermFreqValueSource;
+            if (other == null)
+                return false;
+            return this.indexedField.Equals(other.indexedField);
+        }
+    }
 }

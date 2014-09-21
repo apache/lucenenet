@@ -15,110 +15,100 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Obtains the ordinal of the field value from the default Lucene <seealso cref="org.apache.lucene.search.FieldCache"/> using getTermsIndex()
-	/// and reverses the order.
-	/// <br>
-	/// The native lucene index order is used to assign an ordinal value for each field value.
-	/// <br>Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
-	/// <br>
-	/// Example of reverse ordinal (rord):<br>
-	///  If there were only three field values: "apple","banana","pear"
-	/// <br>then rord("apple")=3, rord("banana")=2, ord("pear")=1
-	/// <para>
-	///  WARNING: ord() depends on the position in an index and can thus change when other documents are inserted or deleted,
-	///  or if a MultiSearcher is used.
-	/// <br>
-	///  WARNING: as of Solr 1.4, ord() and rord() can cause excess memory use since they must use a FieldCache entry
-	/// at the top level reader, while sorting and function queries now use entries at the segment level.  Hence sorting
-	/// or using a different function query, in addition to ord()/rord() will double memory use.
-	/// 
-	/// 
-	/// </para>
-	/// </summary>
+    /// Obtains the ordinal of the field value from the default Lucene <seealso cref="FieldCache"/> using getTermsIndex()
+    /// and reverses the order.
+    /// <br>
+    /// The native lucene index order is used to assign an ordinal value for each field value.
+    /// <br>Field values (terms) are lexicographically ordered by unicode value, and numbered starting at 1.
+    /// <br>
+    /// Example of reverse ordinal (rord):<br>
+    ///  If there were only three field values: "apple","banana","pear"
+    /// <br>then rord("apple")=3, rord("banana")=2, ord("pear")=1
+    /// <para>
+    ///  WARNING: ord() depends on the position in an index and can thus change when other documents are inserted or deleted,
+    ///  or if a MultiSearcher is used.
+    /// <br>
+    ///  WARNING: as of Solr 1.4, ord() and rord() can cause excess memory use since they must use a FieldCache entry
+    /// at the top level reader, while sorting and function queries now use entries at the segment level.  Hence sorting
+    /// or using a different function query, in addition to ord()/rord() will double memory use.
+    /// 
+    /// 
+    /// </para>
+    /// </summary>
 
-	public class ReverseOrdFieldSource : ValueSource
-	{
-	  public readonly string field;
+    public class ReverseOrdFieldSource : ValueSource
+    {
+        public readonly string field;
 
-	  public ReverseOrdFieldSource(string field)
-	  {
-		this.field = field;
-	  }
+        public ReverseOrdFieldSource(string field)
+        {
+            this.field = field;
+        }
 
-	  public override string description()
-	  {
-		return "rord(" + field + ')';
-	  }
+        public override string Description
+        {
+            get { return "rord(" + field + ')'; }
+        }
 
-	  // TODO: this is trappy? perhaps this query instead should make you pass a slow reader yourself?
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.IndexReader topReader = org.apache.lucene.index.ReaderUtil.getTopLevelContext(readerContext).reader();
-		IndexReader topReader = ReaderUtil.getTopLevelContext(readerContext).reader();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.AtomicReader r = org.apache.lucene.index.SlowCompositeReaderWrapper.wrap(topReader);
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(topReader);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int off = readerContext.docBase;
-		int off = readerContext.docBase;
+        // TODO: this is trappy? perhaps this query instead should make you pass a slow reader yourself?
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            IndexReader topReader = ReaderUtil.GetTopLevelContext(readerContext).Reader;
+            AtomicReader r = SlowCompositeReaderWrapper.Wrap(topReader);
+            int off = readerContext.DocBase;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.SortedDocValues sindex = org.apache.lucene.search.FieldCache.DEFAULT.getTermsIndex(r, field);
-		SortedDocValues sindex = FieldCache.DEFAULT.getTermsIndex(r, field);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = sindex.getValueCount();
-		int end = sindex.ValueCount;
+            var sindex = FieldCache.DEFAULT.GetTermsIndex(r, field);
+            var end = sindex.ValueCount;
 
-		return new IntDocValuesAnonymousInnerClassHelper(this, this, off, sindex, end);
-	  }
+            return new IntDocValuesAnonymousInnerClassHelper(this, this, off, sindex, end);
+        }
 
-	  private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
-	  {
-		  private readonly ReverseOrdFieldSource outerInstance;
+        private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
+        {
+            private readonly ReverseOrdFieldSource outerInstance;
 
-		  private int off;
-		  private SortedDocValues sindex;
-		  private int end;
+            private readonly int off;
+            private readonly SortedDocValues sindex;
+            private readonly int end;
 
-		  public IntDocValuesAnonymousInnerClassHelper(ReverseOrdFieldSource outerInstance, ReverseOrdFieldSource this, int off, SortedDocValues sindex, int end) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.off = off;
-			  this.sindex = sindex;
-			  this.end = end;
-		  }
+            public IntDocValuesAnonymousInnerClassHelper(ReverseOrdFieldSource outerInstance, ReverseOrdFieldSource @this, int off, SortedDocValues sindex, int end)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.off = off;
+                this.sindex = sindex;
+                this.end = end;
+            }
 
-		  public override int intVal(int doc)
-		  {
-			 return (end - sindex.getOrd(doc + off) - 1);
-		  }
-	  }
+            public override int IntVal(int doc)
+            {
+                return (end - sindex.GetOrd(doc + off) - 1);
+            }
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (o == null || (o.GetType() != typeof(ReverseOrdFieldSource)))
-		{
-			return false;
-		}
-		ReverseOrdFieldSource other = (ReverseOrdFieldSource)o;
-		return this.field.Equals(other.field);
-	  }
+        public override bool Equals(object o)
+        {
+            if (o == null || (o.GetType() != typeof(ReverseOrdFieldSource)))
+            {
+                return false;
+            }
+            var other = o as ReverseOrdFieldSource;
+            if (other == null)
+                return false;
+            return this.field.Equals(other.field);
+        }
 
-	  private static readonly int hcode = typeof(ReverseOrdFieldSource).GetHashCode();
-	  public override int GetHashCode()
-	  {
-		return hcode + field.GetHashCode();
-	  }
-
-	}
-
+        private static readonly int hcode = typeof(ReverseOrdFieldSource).GetHashCode();
+        public override int GetHashCode()
+        {
+            return hcode + field.GetHashCode();
+        }
+    }
 }

@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
         /// Expert: adds all terms occurring in this query to the terms set. Only
         /// works if this query is in its <seealso cref="#rewrite rewritten"/> form.
         /// </summary>
-        /// <exception cref="UnsupportedOperationException"> if this query is not yet rewritten </exception>
+        /// <exception cref="InvalidOperationException"> if this query is not yet rewritten </exception>
         public virtual void ExtractTerms(ISet<Term> terms)
         {
             // needs to be implemented by query subclasses
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            Query other = (Query)obj;
+            var other = (Query)obj;
             if (Number.FloatToIntBits(boost) != Number.FloatToIntBits(other.boost))
             {
                 return false;

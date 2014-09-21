@@ -15,89 +15,82 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// <seealso cref="BoolFunction"/> implementation which applies an extendible boolean
-	/// function to the values of a single wrapped <seealso cref="ValueSource"/>.
-	/// 
-	/// Functions this can be used for include whether a field has a value or not,
-	/// or inverting the boolean value of the wrapped ValueSource.
-	/// </summary>
-	public abstract class SimpleBoolFunction : BoolFunction
-	{
-	  protected internal readonly ValueSource source;
+    /// <seealso cref="BoolFunction"/> implementation which applies an extendible boolean
+    /// function to the values of a single wrapped <seealso cref="ValueSource"/>.
+    /// 
+    /// Functions this can be used for include whether a field has a value or not,
+    /// or inverting the boolean value of the wrapped ValueSource.
+    /// </summary>
+    public abstract class SimpleBoolFunction : BoolFunction
+    {
+        protected internal readonly ValueSource source;
 
-	  public SimpleBoolFunction(ValueSource source)
-	  {
-		this.source = source;
-	  }
+        protected SimpleBoolFunction(ValueSource source)
+        {
+            this.source = source;
+        }
 
-	  protected internal abstract string name();
+        protected abstract string Name { get; }
 
-	  protected internal abstract bool func(int doc, FunctionValues vals);
+        protected abstract bool Func(int doc, FunctionValues vals);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.docvalues.BoolDocValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override BoolDocValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues vals = source.GetValues(context, readerContext);
-		FunctionValues vals = source.GetValues(context, readerContext);
-		return new BoolDocValuesAnonymousInnerClassHelper(this, this, vals);
-	  }
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            FunctionValues vals = source.GetValues(context, readerContext);
+            return new BoolDocValuesAnonymousInnerClassHelper(this, this, vals);
+        }
 
-	  private class BoolDocValuesAnonymousInnerClassHelper : BoolDocValues
-	  {
-		  private readonly SimpleBoolFunction outerInstance;
+        private class BoolDocValuesAnonymousInnerClassHelper : BoolDocValues
+        {
+            private readonly SimpleBoolFunction outerInstance;
 
-		  private FunctionValues vals;
+            private FunctionValues vals;
 
-		  public BoolDocValuesAnonymousInnerClassHelper(SimpleBoolFunction outerInstance, SimpleBoolFunction this, FunctionValues vals) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.vals = vals;
-		  }
+            public BoolDocValuesAnonymousInnerClassHelper(SimpleBoolFunction outerInstance, SimpleBoolFunction @this, FunctionValues vals)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.vals = vals;
+            }
 
-		  public override bool boolVal(int doc)
-		  {
-			return outerInstance.func(doc, vals);
-		  }
-		  public override string ToString(int doc)
-		  {
-			return outerInstance.name() + '(' + vals.ToString(doc) + ')';
-		  }
-	  }
+            public override bool BoolVal(int doc)
+            {
+                return outerInstance.Func(doc, vals);
+            }
+            public override string ToString(int doc)
+            {
+                return outerInstance.Name + '(' + vals.ToString(doc) + ')';
+            }
+        }
 
-	  public override string description()
-	  {
-		return name() + '(' + source.description() + ')';
-	  }
+        public override string Description
+        {
+            get { return Name + '(' + source.Description + ')'; }
+        }
 
-	  public override int GetHashCode()
-	  {
-		return source.GetHashCode() + name().GetHashCode();
-	  }
+        public override int GetHashCode()
+        {
+            return source.GetHashCode() + Name.GetHashCode();
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (this.GetType() != o.GetType())
-		{
-			return false;
-		}
-		SimpleBoolFunction other = (SimpleBoolFunction)o;
-		return this.source.Equals(other.source);
-	  }
+        public override bool Equals(object o)
+        {
+            var other = o as SimpleBoolFunction;
+            if (other == null)
+                return false;
+            return this.source.Equals(other.source);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		source.CreateWeight(context, searcher);
-	  }
-	}
-
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            source.CreateWeight(context, searcher);
+        }
+    }
 }

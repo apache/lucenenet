@@ -82,7 +82,7 @@ namespace Lucene.Net.Queries.Function
         }
 
         /// <summary>
-        /// returns the bytes representation of the string val - TODO: should this return the indexed raw bytes not? </summary>
+        /// returns the bytes representation of the str val - TODO: should this return the indexed raw bytes not? </summary>
         public virtual bool BytesVal(int doc, BytesRef target)
         {
             string s = StrVal(doc);
@@ -274,8 +274,8 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly FunctionValues outerInstance;
 
-            private float l;
-            private float u;
+            private readonly float l;
+            private readonly float u;
 
             public ValueSourceScorerAnonymousInnerClassHelper(FunctionValues outerInstance, IndexReader reader,
                 FunctionValues @this, float l, float u)
@@ -297,8 +297,8 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly FunctionValues outerInstance;
 
-            private float l;
-            private float u;
+            private readonly float l;
+            private readonly float u;
 
             public ValueSourceScorerAnonymousInnerClassHelper2(FunctionValues outerInstance, IndexReader reader,
                 FunctionValues @this, float l, float u)
@@ -320,8 +320,8 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly FunctionValues outerInstance;
 
-            private float l;
-            private float u;
+            private readonly float l;
+            private readonly float u;
 
             public ValueSourceScorerAnonymousInnerClassHelper3(FunctionValues outerInstance, IndexReader reader,
                 FunctionValues @this, float l, float u)
@@ -343,8 +343,8 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly FunctionValues outerInstance;
 
-            private float l;
-            private float u;
+            private readonly float l;
+            private readonly float u;
 
             public ValueSourceScorerAnonymousInnerClassHelper4(FunctionValues outerInstance, IndexReader reader,
                 FunctionValues @this, float l, float u)

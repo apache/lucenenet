@@ -22,138 +22,139 @@ using Lucene.Net.Queries.Function.DocValues;
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Function that returns a constant double value for every document.
-	/// </summary>
-	public class DoubleConstValueSource : ConstNumberSource
-	{
-	  internal readonly double constant;
-	  private readonly float fv;
-	  private readonly long lv;
+    /// Function that returns a constant double value for every document.
+    /// </summary>
+    public class DoubleConstValueSource : ConstNumberSource
+    {
+        internal readonly double constant;
+        private readonly float fv;
+        private readonly long lv;
 
-	  public DoubleConstValueSource(double constant)
-	  {
-		this.constant = constant;
-		this.fv = (float)constant;
-		this.lv = (long)constant;
-	  }
+        public DoubleConstValueSource(double constant)
+        {
+            this.constant = constant;
+            this.fv = (float)constant;
+            this.lv = (long)constant;
+        }
 
         public override string Description
         {
             get { return "const(" + constant + ")"; }
         }
 
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-		return new DoubleDocValuesAnonymousInnerClassHelper(this, this);
-	  }
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            return new DoubleDocValuesAnonymousInnerClassHelper(this, this);
+        }
 
-	  private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
-	  {
-		  private readonly DoubleConstValueSource outerInstance;
+        private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
+        {
+            private readonly DoubleConstValueSource outerInstance;
 
-		  public DoubleDocValuesAnonymousInnerClassHelper(DoubleConstValueSource outerInstance, DoubleConstValueSource @this) : base(@this)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+            public DoubleDocValuesAnonymousInnerClassHelper(DoubleConstValueSource outerInstance, DoubleConstValueSource @this)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-		  public override float FloatVal(int doc)
-		  {
-			return outerInstance.fv;
-		  }
+            public override float FloatVal(int doc)
+            {
+                return outerInstance.fv;
+            }
 
-		  public override int IntVal(int doc)
-		  {
-			return (int) outerInstance.lv;
-		  }
+            public override int IntVal(int doc)
+            {
+                return (int)outerInstance.lv;
+            }
 
-		  public override long LongVal(int doc)
-		  {
-			return outerInstance.lv;
-		  }
+            public override long LongVal(int doc)
+            {
+                return outerInstance.lv;
+            }
 
-		  public override double DoubleVal(int doc)
-		  {
-			return outerInstance.constant;
-		  }
+            public override double DoubleVal(int doc)
+            {
+                return outerInstance.constant;
+            }
 
-		  public override string StrVal(int doc)
-		  {
-			return Convert.ToString(outerInstance.constant);
-		  }
+            public override string StrVal(int doc)
+            {
+                return Convert.ToString(outerInstance.constant);
+            }
 
-		  public override object ObjectVal(int doc)
-		  {
-			return outerInstance.constant;
-		  }
+            public override object ObjectVal(int doc)
+            {
+                return outerInstance.constant;
+            }
 
-		  public override string ToString(int doc)
-		  {
-			return outerInstance.Description;
-		  }
-	  }
+            public override string ToString(int doc)
+            {
+                return outerInstance.Description;
+            }
+        }
 
-	  public override int GetHashCode()
-	  {
-		long bits = Number.DoubleToRawLongBits(constant);
-		return (int)(bits ^ ((long)((ulong)bits >> 32)));
-	  }
+        public override int GetHashCode()
+        {
+            long bits = Number.DoubleToRawLongBits(constant);
+            return (int)(bits ^ ((long)((ulong)bits >> 32)));
+        }
 
-	  public override bool Equals(object o)
-	  {
-	      var other = o as DoubleConstValueSource;
-		if (other == null)
-		{
-			return false;
-		}
-		return this.constant == other.constant;
-	  }
+        public override bool Equals(object o)
+        {
+            var other = o as DoubleConstValueSource;
+            if (other == null)
+            {
+                return false;
+            }
+            return this.constant == other.constant;
+        }
 
-	  public override int Int
-	  {
-		  get
-		  {
-			return (int)lv;
-		  }
-	  }
+        public override int Int
+        {
+            get
+            {
+                return (int)lv;
+            }
+        }
 
-	  public override long Long
-	  {
-		  get
-		  {
-			return lv;
-		  }
-	  }
+        public override long Long
+        {
+            get
+            {
+                return lv;
+            }
+        }
 
-	  public override float Float
-	  {
-		  get
-		  {
-			return fv;
-		  }
-	  }
+        public override float Float
+        {
+            get
+            {
+                return fv;
+            }
+        }
 
-	  public override double Double
-	  {
-		  get
-		  {
-			return constant;
-		  }
-	  }
+        public override double Double
+        {
+            get
+            {
+                return constant;
+            }
+        }
 
-	  public override Number Number
-	  {
-		  get
-		  {
-			return constant;
-		  }
-	  }
+        public override Number Number
+        {
+            get
+            {
+                return constant;
+            }
+        }
 
-	  public override bool Bool
-	  {
-		  get
-		  {
-			return constant != 0;
-		  }
-	  }
-	}
+        public override bool Bool
+        {
+            get
+            {
+                return constant != 0;
+            }
+        }
+    }
 }

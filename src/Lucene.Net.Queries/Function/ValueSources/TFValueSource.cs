@@ -6,7 +6,6 @@ using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
 using Lucene.Net.Util;
-using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -65,8 +64,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  {
 		  private readonly TFValueSource outerInstance;
 
-		  private Terms terms;
-		  private TFIDFSimilarity similarity;
+		  private readonly Terms terms;
+		  private readonly TFIDFSimilarity similarity;
 
 		  public FloatDocValuesAnonymousInnerClassHelper(TFValueSource outerInstance, TFValueSource @this, Terms terms, TFIDFSimilarity similarity) : base(@this)
 		  {
@@ -76,9 +75,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			  lastDocRequested = -1;
 		  }
 
-		  internal DocsEnum docs;
-		  internal int atDoc;
-		  internal int lastDocRequested;
+	      private DocsEnum docs;
+	      private int atDoc;
+	      private int lastDocRequested;
 
 //JAVA TO C# CONVERTER TODO TASK: Initialization blocks declared within anonymous inner classes are not converted:
 	//	  {
@@ -93,8 +92,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 			if (terms != null)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
 			  TermsEnum termsEnum = terms.Iterator(null);
 			  if (termsEnum.SeekExact(outerInstance.indexedBytes))
 			  {
@@ -180,10 +177,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 			}
 			catch (IOException e)
 			{
-			  throw new Exception("caught exception in function " + outerInstance.description() + " : doc=" + doc, e);
+			  throw new Exception("caught exception in function " + outerInstance.Description + " : doc=" + doc, e);
 			}
 		  }
 	  }
 	}
-
 }

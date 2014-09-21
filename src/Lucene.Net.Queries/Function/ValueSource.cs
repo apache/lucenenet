@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
@@ -65,9 +66,9 @@ namespace Lucene.Net.Queries.Function
         /// <summary>
         /// Returns a new non-threadsafe context map.
         /// </summary>
-        public static IDictionary NewContext(IndexSearcher searcher)
+        public static IDictionary<string, IndexSearcher> NewContext(IndexSearcher searcher)
         {
-            IDictionary context = new IdentityHashMap<,>();
+            var context = new IdentityHashMap<string, IndexSearcher>();
             context["searcher"] = searcher;
             return context;
         }
@@ -104,7 +105,7 @@ namespace Lucene.Net.Queries.Function
 
             public override SortField Rewrite(IndexSearcher searcher)
             {
-                IDictionary context = NewContext(searcher);
+                var context = NewContext(searcher);
                 outerInstance.CreateWeight(context, searcher);
                 return new SortField(Field, new ValueSourceComparatorSource(outerInstance, context), Reverse);
             }

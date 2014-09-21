@@ -16,160 +16,159 @@
  */
 using System;
 using System.Collections;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Mutable;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Obtains long field values from <seealso cref="FieldCache#getLongs"/> and makes those
-	/// values available as other numeric types, casting as needed.
-	/// </summary>
-	public class LongFieldSource : FieldCacheSource
-	{
+    /// Obtains long field values from <seealso cref="FieldCache#getLongs"/> and makes those
+    /// values available as other numeric types, casting as needed.
+    /// </summary>
+    public class LongFieldSource : FieldCacheSource
+    {
 
-	  protected internal readonly FieldCache.LongParser parser;
+        protected readonly FieldCache.ILongParser parser;
 
-	  public LongFieldSource(string field) : this(field, null)
-	  {
-	  }
+        public LongFieldSource(string field)
+            : this(field, null)
+        {
+        }
 
-	  public LongFieldSource(string field, FieldCache.LongParser parser) : base(field)
-	  {
-		this.parser = parser;
-	  }
+        public LongFieldSource(string field, FieldCache.ILongParser parser)
+            : base(field)
+        {
+            this.parser = parser;
+        }
 
-	  public override string description()
-	  {
-		return "long(" + field + ')';
-	  }
+        public override string Description
+        {
+            get { return "long(" + field + ')'; }
+        }
 
-	  public virtual long externalToLong(string extVal)
-	  {
-		return Convert.ToInt64(extVal);
-	  }
+        public virtual long ExternalToLong(string extVal)
+        {
+            return Convert.ToInt64(extVal);
+        }
 
-	  public virtual object longToObject(long val)
-	  {
-		return val;
-	  }
+        public virtual object LongToObject(long val)
+        {
+            return val;
+        }
 
-	  public virtual string longToString(long val)
-	  {
-		return longToObject(val).ToString();
-	  }
+        public virtual string LongToString(long val)
+        {
+            return LongToObject(val).ToString();
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.search.FieldCache.Longs arr = cache.getLongs(readerContext.reader(), field, parser, true);
-		FieldCache.Longs arr = cache.getLongs(readerContext.reader(), field, parser, true);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.Bits valid = cache.getDocsWithField(readerContext.reader(), field);
-		Bits valid = cache.getDocsWithField(readerContext.reader(), field);
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            var arr = cache.GetLongs(readerContext.AtomicReader, field, parser, true);
+            var valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
+            return new LongDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
+        }
 
-		return new LongDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
-	  }
+        private class LongDocValuesAnonymousInnerClassHelper : LongDocValues
+        {
+            private readonly LongFieldSource outerInstance;
 
-	  private class LongDocValuesAnonymousInnerClassHelper : LongDocValues
-	  {
-		  private readonly LongFieldSource outerInstance;
+            private readonly FieldCache.Longs arr;
+            private readonly Bits valid;
 
-		  private FieldCache.Longs arr;
-		  private Bits valid;
+            public LongDocValuesAnonymousInnerClassHelper(LongFieldSource outerInstance, LongFieldSource @this, FieldCache.Longs arr, Bits valid)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.arr = arr;
+                this.valid = valid;
+            }
 
-		  public LongDocValuesAnonymousInnerClassHelper(LongFieldSource outerInstance, LongFieldSource this, FieldCache.Longs arr, Bits valid) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.arr = arr;
-			  this.valid = valid;
-		  }
+            public override long LongVal(int doc)
+            {
+                return arr.Get(doc);
+            }
 
-		  public override long LongVal(int doc)
-		  {
-			return arr.get(doc);
-		  }
+            public override bool Exists(int doc)
+            {
+                return arr.Get(doc) != 0 || valid.Get(doc);
+            }
 
-		  public override bool exists(int doc)
-		  {
-			return arr.get(doc) != 0 || valid.get(doc);
-		  }
+            public override object ObjectVal(int doc)
+            {
+                return valid.Get(doc) ? outerInstance.LongToObject(arr.Get(doc)) : null;
+            }
 
-		  public override object objectVal(int doc)
-		  {
-			return valid.get(doc) ? outerInstance.longToObject(arr.get(doc)) : null;
-		  }
+            public override string StrVal(int doc)
+            {
+                return valid.Get(doc) ? outerInstance.LongToString(arr.Get(doc)) : null;
+            }
 
-		  public override string StrVal(int doc)
-		  {
-			return valid.get(doc) ? outerInstance.longToString(arr.get(doc)) : null;
-		  }
+            protected override long ExternalToLong(string extVal)
+            {
+                return outerInstance.ExternalToLong(extVal);
+            }
 
-		  protected internal override long externalToLong(string extVal)
-		  {
-			return outerInstance.externalToLong(extVal);
-		  }
+            public override AbstractValueFiller ValueFiller
+            {
+                get
+                {
+                    return new ValueFillerAnonymousInnerClassHelper(this);
+                }
+            }
 
-		  public override ValueFiller ValueFiller
-		  {
-			  get
-			  {
-				return new ValueFillerAnonymousInnerClassHelper(this);
-			  }
-		  }
+            private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+            {
+                private readonly LongDocValuesAnonymousInnerClassHelper outerInstance;
 
-		  private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-		  {
-			  private readonly LongDocValuesAnonymousInnerClassHelper outerInstance;
+                public ValueFillerAnonymousInnerClassHelper(LongDocValuesAnonymousInnerClassHelper outerInstance)
+                {
+                    this.outerInstance = outerInstance;
+                    mval = outerInstance.outerInstance.NewMutableValueLong();
+                }
 
-			  public ValueFillerAnonymousInnerClassHelper(LongDocValuesAnonymousInnerClassHelper outerInstance)
-			  {
-				  this.outerInstance = outerInstance;
-				  mval = outerInstance.outerInstance.newMutableValueLong();
-			  }
+                private readonly MutableValueLong mval;
 
-			  private readonly MutableValueLong mval;
+                public override MutableValue Value
+                {
+                    get
+                    {
+                        return mval;
+                    }
+                }
 
-			  public override MutableValue Value
-			  {
-				  get
-				  {
-					return mval;
-				  }
-			  }
+                public override void FillValue(int doc)
+                {
+                    mval.Value = outerInstance.arr.Get(doc);
+                    mval.Exists = mval.Value != 0 || outerInstance.valid.Get(doc);
+                }
+            }
+        }
 
-			  public override void fillValue(int doc)
-			  {
-				mval.value = outerInstance.arr.get(doc);
-				mval.exists = mval.value != 0 || outerInstance.valid.get(doc);
-			  }
-		  }
+        protected virtual MutableValueLong NewMutableValueLong()
+        {
+            return new MutableValueLong();
+        }
 
-	  }
+        public override bool Equals(object o)
+        {
+            if (o.GetType() != this.GetType())
+            {
+                return false;
+            }
+            var other = o as LongFieldSource;
+            if (other == null)
+                return false;
+            return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
+        }
 
-	  protected internal virtual MutableValueLong newMutableValueLong()
-	  {
-		return new MutableValueLong();
-	  }
-
-	  public override bool Equals(object o)
-	  {
-		if (o.GetType() != this.GetType())
-		{
-			return false;
-		}
-		LongFieldSource other = (LongFieldSource) o;
-		return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
-	  }
-
-	  public override int GetHashCode()
-	  {
-		int h = parser == null ? this.GetType().GetHashCode() : parser.GetType().GetHashCode();
-		h += base.GetHashCode();
-		return h;
-	  }
-	}
-
+        public override int GetHashCode()
+        {
+            int h = parser == null ? this.GetType().GetHashCode() : parser.GetType().GetHashCode();
+            h += base.GetHashCode();
+            return h;
+        }
+    }
 }

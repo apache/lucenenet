@@ -15,48 +15,45 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// A function with a single argument
-	/// </summary>
-	 public abstract class SingleFunction : ValueSource
-	 {
-	  protected internal readonly ValueSource source;
+    /// A function with a single argument
+    /// </summary>
+    public abstract class SingleFunction : ValueSource
+    {
+        protected internal readonly ValueSource source;
 
-	  public SingleFunction(ValueSource source)
-	  {
-		this.source = source;
-	  }
+        protected SingleFunction(ValueSource source)
+        {
+            this.source = source;
+        }
 
-	  protected internal abstract string name();
+        protected internal abstract string Name { get; }
 
-	  public override string description()
-	  {
-		return name() + '(' + source.description() + ')';
-	  }
+        public override string Description
+        {
+            get { return Name + '(' + source.Description + ')'; }
+        }
 
-	  public override int GetHashCode()
-	  {
-		return source.GetHashCode() + name().GetHashCode();
-	  }
+        public override int GetHashCode()
+        {
+            return source.GetHashCode() + Name.GetHashCode();
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (this.GetType() != o.GetType())
-		{
-			return false;
-		}
-		SingleFunction other = (SingleFunction)o;
-		return this.name().Equals(other.name()) && this.source.Equals(other.source);
-	  }
+        public override bool Equals(object o)
+        {
+            var other = o as SingleFunction;
+            if (other == null)
+                return false;
+            return Name.Equals(other.Name) && source.Equals(other.source);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		source.CreateWeight(context, searcher);
-	  }
-	 }
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            source.CreateWeight(context, searcher);
+        }
+    }
 }

@@ -25,8 +25,6 @@
 	/// </summary>
 	public abstract class MultiValueSource : ValueSource
 	{
-
-	  public abstract int dimension();
+        public abstract int Dimension { get; }
 	}
-
 }

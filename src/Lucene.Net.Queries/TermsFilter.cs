@@ -70,7 +70,7 @@ namespace Lucene.Net.Queries
 		  {
 			  this.outerInstance = outerInstance;
 			  this.terms = terms;
-			  iter = sort(terms).GetEnumerator();
+			  iter = Sort(terms).GetEnumerator();
 		  }
 
 			// we need to sort for deduplication and to have a common cache key
@@ -163,7 +163,7 @@ namespace Lucene.Net.Queries
 		string currentField;
 		while ((currentTerm = iter.Next()) != null)
 		{
-		  currentField = iter.field();
+		  currentField = iter.Field();
 		  if (currentField == null)
 		  {
 			throw new System.ArgumentException("Field must not be null");

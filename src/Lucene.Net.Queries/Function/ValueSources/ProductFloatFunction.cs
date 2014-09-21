@@ -15,35 +15,28 @@
  * limitations under the License.
  */
 
-using org.apache.lucene.queries.function;
+using System.Linq;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
+    /// <summary>
+    /// <code>ProductFloatFunction</code> returns the product of it's components.
+    /// </summary>
+    public class ProductFloatFunction : MultiFloatFunction
+    {
+        public ProductFloatFunction(ValueSource[] sources)
+            : base(sources)
+        {
+        }
 
+        protected override string Name
+        {
+            get { return "product"; }
+        }
 
-	/// <summary>
-	/// <code>ProductFloatFunction</code> returns the product of it's components.
-	/// </summary>
-	public class ProductFloatFunction : MultiFloatFunction
-	{
-	  public ProductFloatFunction(ValueSource[] sources) : base(sources)
-	  {
-	  }
-
-	  protected internal override string name()
-	  {
-		return "product";
-	  }
-
-	  protected internal override float func(int doc, FunctionValues[] valsArr)
-	  {
-		float val = 1.0f;
-		foreach (FunctionValues vals in valsArr)
-		{
-		  val *= vals.FloatVal(doc);
-		}
-		return val;
-	  }
-	}
-
+        protected override float Func(int doc, FunctionValues[] valsArr)
+        {
+            return valsArr.Aggregate(1.0f, (current, vals) => current * vals.FloatVal(doc));
+        }
+    }
 }

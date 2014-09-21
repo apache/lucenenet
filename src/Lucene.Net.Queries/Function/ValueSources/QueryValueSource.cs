@@ -16,304 +16,304 @@
  */
 using System;
 using System.Collections;
+using System.IO;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Mutable;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// <code>QueryValueSource</code> returns the relevance score of the query
-	/// </summary>
-	public class QueryValueSource : ValueSource
-	{
-	  internal readonly Query q;
-	  internal readonly float defVal;
+    /// <code>QueryValueSource</code> returns the relevance score of the query
+    /// </summary>
+    public class QueryValueSource : ValueSource
+    {
+        internal readonly Query q;
+        internal readonly float defVal;
 
-	  public QueryValueSource(Query q, float defVal)
-	  {
-		this.q = q;
-		this.defVal = defVal;
-	  }
+        public QueryValueSource(Query q, float defVal)
+        {
+            this.q = q;
+            this.defVal = defVal;
+        }
 
-	  public virtual Query Query
-	  {
-		  get
-		  {
-			  return q;
-		  }
-	  }
-	  public virtual float DefaultValue
-	  {
-		  get
-		  {
-			  return defVal;
-		  }
-	  }
+        public virtual Query Query
+        {
+            get
+            {
+                return q;
+            }
+        }
+        public virtual float DefaultValue
+        {
+            get
+            {
+                return defVal;
+            }
+        }
 
-	  public override string description()
-	  {
-		return "query(" + q + ",def=" + defVal + ")";
-	  }
+        public override string Description
+        {
+            get { return "query(" + q + ",def=" + defVal + ")"; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map fcontext, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary fcontext, AtomicReaderContext readerContext)
-	  {
-		return new QueryDocValues(this, readerContext, fcontext);
-	  }
+        public override FunctionValues GetValues(IDictionary fcontext, AtomicReaderContext readerContext)
+        {
+            return new QueryDocValues(this, readerContext, fcontext);
+        }
 
-	  public override int GetHashCode()
-	  {
-		return q.GetHashCode() * 29;
-	  }
+        public override int GetHashCode()
+        {
+            return q.GetHashCode() * 29;
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (typeof(QueryValueSource) != o.GetType())
-		{
-			return false;
-		}
-		QueryValueSource other = (QueryValueSource)o;
-		return this.q.Equals(other.q) && this.defVal == other.defVal;
-	  }
+        public override bool Equals(object o)
+        {
+            if (typeof(QueryValueSource) != o.GetType())
+            {
+                return false;
+            }
+            var other = o as QueryValueSource;
+            if (other == null)
+                return false;
+            return this.q.Equals(other.q) && this.defVal == other.defVal;
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, IndexSearcher searcher) throws java.io.IOException
-	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		Weight w = searcher.createNormalizedWeight(q);
-		context[this] = w;
-	  }
-	}
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            Weight w = searcher.CreateNormalizedWeight(q);
+            context[this] = w;
+        }
+    }
 
 
-	internal class QueryDocValues : FloatDocValues
-	{
-	  internal readonly AtomicReaderContext readerContext;
-	  internal readonly Bits acceptDocs;
-	  internal readonly Weight weight;
-	  internal readonly float defVal;
-	  internal readonly IDictionary fcontext;
-	  internal readonly Query q;
+    internal class QueryDocValues : FloatDocValues
+    {
+        internal readonly AtomicReaderContext readerContext;
+        internal readonly Bits acceptDocs;
+        internal readonly Weight weight;
+        internal readonly float defVal;
+        internal readonly IDictionary fcontext;
+        internal readonly Query q;
 
-	  internal Scorer scorer;
-	  internal int scorerDoc; // the document the scorer is on
-	  internal bool noMatches = false;
+        internal Scorer scorer;
+        internal int scorerDoc; // the document the scorer is on
+        internal bool noMatches = false;
 
-	  // the last document requested... start off with high value
-	  // to trigger a scorer reset on first access.
-	  internal int lastDocRequested = int.MaxValue;
+        // the last document requested... start off with high value
+        // to trigger a scorer reset on first access.
+        internal int lastDocRequested = int.MaxValue;
 
+        public QueryDocValues(QueryValueSource vs, AtomicReaderContext readerContext, IDictionary fcontext)
+            : base(vs)
+        {
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public QueryDocValues(QueryValueSource vs, org.apache.lucene.index.AtomicReaderContext readerContext, java.util.Map fcontext) throws java.io.IOException
-	  public QueryDocValues(QueryValueSource vs, AtomicReaderContext readerContext, IDictionary fcontext) : base(vs)
-	  {
+            this.readerContext = readerContext;
+            this.acceptDocs = readerContext.AtomicReader.LiveDocs;
+            this.defVal = vs.defVal;
+            this.q = vs.q;
+            this.fcontext = fcontext;
 
-		this.readerContext = readerContext;
-		this.acceptDocs = readerContext.reader().LiveDocs;
-		this.defVal = vs.defVal;
-		this.q = vs.q;
-		this.fcontext = fcontext;
+            Weight w = fcontext == null ? null : (Weight)fcontext[vs];
+            if (w == null)
+            {
+                IndexSearcher weightSearcher;
+                if (fcontext == null)
+                {
+                    weightSearcher = new IndexSearcher(ReaderUtil.GetTopLevelContext(readerContext));
+                }
+                else
+                {
+                    weightSearcher = (IndexSearcher)fcontext["searcher"];
+                    if (weightSearcher == null)
+                    {
+                        weightSearcher = new IndexSearcher(ReaderUtil.GetTopLevelContext(readerContext));
+                    }
+                }
+                vs.CreateWeight(fcontext, weightSearcher);
+                w = (Weight)fcontext[vs];
+            }
+            weight = w;
+        }
 
-		Weight w = fcontext == null ? null : (Weight)fcontext[vs];
-		if (w == null)
-		{
-		  IndexSearcher weightSearcher;
-		  if (fcontext == null)
-		  {
-			weightSearcher = new IndexSearcher(ReaderUtil.getTopLevelContext(readerContext));
-		  }
-		  else
-		  {
-			weightSearcher = (IndexSearcher)fcontext["searcher"];
-			if (weightSearcher == null)
-			{
-			  weightSearcher = new IndexSearcher(ReaderUtil.getTopLevelContext(readerContext));
-			}
-		  }
-		  vs.CreateWeight(fcontext, weightSearcher);
-		  w = (Weight)fcontext[vs];
-		}
-		weight = w;
-	  }
+        public override float FloatVal(int doc)
+        {
+            try
+            {
+                if (doc < lastDocRequested)
+                {
+                    if (noMatches)
+                    {
+                        return defVal;
+                    }
+                    scorer = weight.Scorer(readerContext, acceptDocs);
+                    if (scorer == null)
+                    {
+                        noMatches = true;
+                        return defVal;
+                    }
+                    scorerDoc = -1;
+                }
+                lastDocRequested = doc;
 
-	  public override float FloatVal(int doc)
-	  {
-		try
-		{
-		  if (doc < lastDocRequested)
-		  {
-			if (noMatches)
-			{
-				return defVal;
-			}
-			scorer = weight.scorer(readerContext, acceptDocs);
-			if (scorer == null)
-			{
-			  noMatches = true;
-			  return defVal;
-			}
-			scorerDoc = -1;
-		  }
-		  lastDocRequested = doc;
+                if (scorerDoc < doc)
+                {
+                    scorerDoc = scorer.Advance(doc);
+                }
 
-		  if (scorerDoc < doc)
-		  {
-			scorerDoc = scorer.advance(doc);
-		  }
+                if (scorerDoc > doc)
+                {
+                    // query doesn't match this document... either because we hit the
+                    // end, or because the next doc is after this doc.
+                    return defVal;
+                }
 
-		  if (scorerDoc > doc)
-		  {
-			// query doesn't match this document... either because we hit the
-			// end, or because the next doc is after this doc.
-			return defVal;
-		  }
+                // a match!
+                return scorer.Score();
+            }
+            catch (IOException e)
+            {
+                throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+            }
+        }
 
-		  // a match!
-		  return scorer.score();
-		}
-		catch (IOException e)
-		{
-		  throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
-		}
-	  }
+        public override bool Exists(int doc)
+        {
+            try
+            {
+                if (doc < lastDocRequested)
+                {
+                    if (noMatches)
+                    {
+                        return false;
+                    }
+                    scorer = weight.Scorer(readerContext, acceptDocs);
+                    scorerDoc = -1;
+                    if (scorer == null)
+                    {
+                        noMatches = true;
+                        return false;
+                    }
+                }
+                lastDocRequested = doc;
 
-	  public override bool exists(int doc)
-	  {
-		try
-		{
-		  if (doc < lastDocRequested)
-		  {
-			if (noMatches)
-			{
-				return false;
-			}
-			scorer = weight.scorer(readerContext, acceptDocs);
-			scorerDoc = -1;
-			if (scorer == null)
-			{
-			  noMatches = true;
-			  return false;
-			}
-		  }
-		  lastDocRequested = doc;
+                if (scorerDoc < doc)
+                {
+                    scorerDoc = scorer.Advance(doc);
+                }
 
-		  if (scorerDoc < doc)
-		  {
-			scorerDoc = scorer.advance(doc);
-		  }
+                if (scorerDoc > doc)
+                {
+                    // query doesn't match this document... either because we hit the
+                    // end, or because the next doc is after this doc.
+                    return false;
+                }
 
-		  if (scorerDoc > doc)
-		  {
-			// query doesn't match this document... either because we hit the
-			// end, or because the next doc is after this doc.
-			return false;
-		  }
+                // a match!
+                return true;
+            }
+            catch (IOException e)
+            {
+                throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+            }
+        }
 
-		  // a match!
-		  return true;
-		}
-		catch (IOException e)
-		{
-		  throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
-		}
-	  }
+        public override object ObjectVal(int doc)
+        {
+            try
+            {
+                return Exists(doc) ? scorer.Score() : (float?)null;
+            }
+            catch (IOException e)
+            {
+                throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
+            }
+        }
 
-	   public override object objectVal(int doc)
-	   {
-		 try
-		 {
-		   return exists(doc) ? scorer.score() : null;
-		 }
-		 catch (IOException e)
-		 {
-		   throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
-		 }
-	   }
+        public override AbstractValueFiller ValueFiller
+        {
+            get
+            {
+                //
+                // TODO: if we want to support more than one value-filler or a value-filler in conjunction with
+                // the FunctionValues, then members like "scorer" should be per ValueFiller instance.
+                // Or we can say that the user should just instantiate multiple FunctionValues.
+                //
+                return new ValueFillerAnonymousInnerClassHelper(this);
+            }
+        }
 
-	  public override ValueFiller ValueFiller
-	  {
-		  get
-		  {
-			//
-			// TODO: if we want to support more than one value-filler or a value-filler in conjunction with
-			// the FunctionValues, then members like "scorer" should be per ValueFiller instance.
-			// Or we can say that the user should just instantiate multiple FunctionValues.
-			//
-			return new ValueFillerAnonymousInnerClassHelper(this);
-		  }
-	  }
+        private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+        {
+            private readonly QueryDocValues outerInstance;
 
-	  private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-	  {
-		  private readonly QueryDocValues outerInstance;
+            public ValueFillerAnonymousInnerClassHelper(QueryDocValues outerInstance)
+            {
+                this.outerInstance = outerInstance;
+                mval = new MutableValueFloat();
+            }
 
-		  public ValueFillerAnonymousInnerClassHelper(QueryDocValues outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-			  mval = new MutableValueFloat();
-		  }
+            private readonly MutableValueFloat mval;
 
-		  private readonly MutableValueFloat mval;
+            public override MutableValue Value
+            {
+                get
+                {
+                    return mval;
+                }
+            }
 
-		  public override MutableValue Value
-		  {
-			  get
-			  {
-				return mval;
-			  }
-		  }
+            public override void FillValue(int doc)
+            {
+                try
+                {
+                    if (outerInstance.noMatches)
+                    {
+                        mval.Value = outerInstance.defVal;
+                        mval.Exists = false;
+                        return;
+                    }
+                    outerInstance.scorer = outerInstance.weight.Scorer(outerInstance.readerContext, outerInstance.acceptDocs);
+                    outerInstance.scorerDoc = -1;
+                    if (outerInstance.scorer == null)
+                    {
+                        outerInstance.noMatches = true;
+                        mval.Value = outerInstance.defVal;
+                        mval.Exists = false;
+                        return;
+                    }
+                    outerInstance.lastDocRequested = doc;
 
-		  public override void fillValue(int doc)
-		  {
-			try
-			{
-			  if (outerInstance.noMatches)
-			  {
-				mval.value = outerInstance.defVal;
-				mval.exists = false;
-				return;
-			  }
-			  outerInstance.scorer = outerInstance.weight.scorer(outerInstance.readerContext, outerInstance.acceptDocs);
-			  outerInstance.scorerDoc = -1;
-			  if (outerInstance.scorer == null)
-			  {
-				outerInstance.noMatches = true;
-				mval.value = outerInstance.defVal;
-				mval.exists = false;
-				return;
-			  }
-			  outerInstance.lastDocRequested = doc;
+                    if (outerInstance.scorerDoc < doc)
+                    {
+                        outerInstance.scorerDoc = outerInstance.scorer.Advance(doc);
+                    }
 
-			  if (outerInstance.scorerDoc < doc)
-			  {
-				outerInstance.scorerDoc = outerInstance.scorer.advance(doc);
-			  }
+                    if (outerInstance.scorerDoc > doc)
+                    {
+                        // query doesn't match this document... either because we hit the
+                        // end, or because the next doc is after this doc.
+                        mval.Value = outerInstance.defVal;
+                        mval.Exists = false;
+                        return;
+                    }
 
-			  if (outerInstance.scorerDoc > doc)
-			  {
-				// query doesn't match this document... either because we hit the
-				// end, or because the next doc is after this doc.
-				mval.value = outerInstance.defVal;
-				mval.exists = false;
-				return;
-			  }
+                    // a match!
+                    mval.Value = outerInstance.scorer.Score();
+                    mval.Exists = true;
+                }
+                catch (IOException e)
+                {
+                    throw new Exception("caught exception in QueryDocVals(" + outerInstance.q + ") doc=" + doc, e);
+                }
+            }
+        }
 
-			  // a match!
-			  mval.value = outerInstance.scorer.score();
-			  mval.exists = true;
-			}
-			catch (IOException e)
-			{
-			  throw new Exception("caught exception in QueryDocVals(" + outerInstance.q + ") doc=" + doc, e);
-			}
-		  }
-	  }
-
-	  public override string ToString(int doc)
-	  {
-		return "query(" + q + ",def=" + defVal + ")=" + FloatVal(doc);
-	  }
-	}
+        public override string ToString(int doc)
+        {
+            return "query(" + q + ",def=" + defVal + ")=" + FloatVal(doc);
+        }
+    }
 }

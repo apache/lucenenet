@@ -15,104 +15,97 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
+using Lucene.Net.Search.Similarities;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Function that returns <seealso cref="TFIDFSimilarity#decodeNormValue(long)"/>
-	/// for every document.
-	/// <para>
-	/// Note that the configured Similarity for the field must be
-	/// a subclass of <seealso cref="TFIDFSimilarity"/>
-	/// @lucene.internal 
-	/// </para>
-	/// </summary>
-	public class NormValueSource : ValueSource
-	{
-	  protected internal readonly string field;
-	  public NormValueSource(string field)
-	  {
-		this.field = field;
-	  }
+    /// Function that returns <seealso cref="TFIDFSimilarity#decodeNormValue(long)"/>
+    /// for every document.
+    /// <para>
+    /// Note that the configured Similarity for the field must be
+    /// a subclass of <seealso cref="TFIDFSimilarity"/>
+    /// @lucene.internal 
+    /// </para>
+    /// </summary>
+    public class NormValueSource : ValueSource
+    {
+        protected internal readonly string field;
 
-	  public virtual string name()
-	  {
-		return "norm";
-	  }
+        public NormValueSource(string field)
+        {
+            this.field = field;
+        }
 
-	  public override string description()
-	  {
-		return name() + '(' + field + ')';
-	  }
+        public virtual string Name
+        {
+            get { return "norm"; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		context["searcher"] = searcher;
-	  }
+        public override string Description
+        {
+            get { return Name + '(' + field + ')'; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-		IndexSearcher searcher = (IndexSearcher)context["searcher"];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.search.similarities.TFIDFSimilarity similarity = IDFValueSource.asTFIDF(searcher.getSimilarity(), field);
-		TFIDFSimilarity similarity = IDFValueSource.asTFIDF(searcher.Similarity, field);
-		if (similarity == null)
-		{
-		  throw new System.NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
-		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.NumericDocValues norms = readerContext.reader().getNormValues(field);
-		NumericDocValues norms = readerContext.reader().getNormValues(field);
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            context["searcher"] = searcher;
+        }
 
-		if (norms == null)
-		{
-		  return new ConstDoubleDocValues(0.0, this);
-		}
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            var searcher = (IndexSearcher)context["searcher"];
+            TFIDFSimilarity similarity = IDFValueSource.AsTFIDF(searcher.Similarity, field);
+            if (similarity == null)
+            {
+                throw new System.NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
+            }
 
-		return new FloatDocValuesAnonymousInnerClassHelper(this, this, similarity, norms);
-	  }
+            NumericDocValues norms = readerContext.AtomicReader.GetNormValues(field);
+            if (norms == null)
+            {
+                return new ConstDoubleDocValues(0.0, this);
+            }
 
-	  private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
-	  {
-		  private readonly NormValueSource outerInstance;
+            return new FloatDocValuesAnonymousInnerClassHelper(this, this, similarity, norms);
+        }
 
-		  private TFIDFSimilarity similarity;
-		  private NumericDocValues norms;
+        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        {
+            private readonly NormValueSource outerInstance;
 
-		  public FloatDocValuesAnonymousInnerClassHelper(NormValueSource outerInstance, NormValueSource this, TFIDFSimilarity similarity, NumericDocValues norms) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.similarity = similarity;
-			  this.norms = norms;
-		  }
+            private readonly TFIDFSimilarity similarity;
+            private readonly NumericDocValues norms;
 
-		  public override float FloatVal(int doc)
-		  {
-			return similarity.decodeNormValue(norms.get(doc));
-		  }
-	  }
+            public FloatDocValuesAnonymousInnerClassHelper(NormValueSource outerInstance, NormValueSource @this, TFIDFSimilarity similarity, NumericDocValues norms)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.similarity = similarity;
+                this.norms = norms;
+            }
 
-	  public override bool Equals(object o)
-	  {
-		if (this.GetType() != o.GetType())
-		{
-		  return false;
-		}
-		return this.field.Equals(((NormValueSource)o).field);
-	  }
+            public override float FloatVal(int doc)
+            {
+                return similarity.DecodeNormValue(norms.Get(doc));
+            }
+        }
 
-	  public override int GetHashCode()
-	  {
-		return this.GetType().GetHashCode() + field.GetHashCode();
-	  }
-	}
+        public override bool Equals(object o)
+        {
+            if (this.GetType() != o.GetType())
+            {
+                return false;
+            }
+            return this.field.Equals(((NormValueSource)o).field);
+        }
 
-
-
+        public override int GetHashCode()
+        {
+            return this.GetType().GetHashCode() + field.GetHashCode();
+        }
+    }
 }

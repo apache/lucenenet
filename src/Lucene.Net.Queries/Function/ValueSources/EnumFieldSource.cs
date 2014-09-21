@@ -30,7 +30,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
 	/// Obtains int field values from <seealso cref="IFieldCache#getInts"/> and makes
 	/// those values available as other numeric types, casting as needed.
-	/// StrVal of the value is not the int value, but its string (displayed) value
+	/// StrVal of the value is not the int value, but its str (displayed) value
 	/// </summary>
 	public class EnumFieldSource : FieldCacheSource
 	{
@@ -85,19 +85,19 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 		int? intValue;
 		int? enumInt = enumStringToIntMap[stringVal];
-		if (enumInt != null) //enum int found for string
+		if (enumInt != null) //enum int found for str
 		{
 		  return enumInt;
 		}
 
-		//enum int not found for string
+		//enum int not found for str
 		intValue = TryParseInt(stringVal);
 		if (intValue == null) //not Integer
 		{
 		  intValue = DEFAULT_VALUE;
 		}
 		string enumString = enumIntToStringMap[intValue];
-		if (enumString != null) //has matching string
+		if (enumString != null) //has matching str
 		{
 		  return intValue;
 		}

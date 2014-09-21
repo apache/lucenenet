@@ -16,165 +16,159 @@
  */
 using System;
 using System.Collections;
+using System.IO;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Function that returns <seealso cref="DocsEnum#freq()"/> for the
-	/// supplied term in every document.
-	/// <para>
-	/// If the term does not exist in the document, returns 0.
-	/// If frequencies are omitted, returns 1.
-	/// </para>
-	/// </summary>
-	public class TermFreqValueSource : DocFreqValueSource
-	{
-	  public TermFreqValueSource(string field, string val, string indexedField, BytesRef indexedBytes) : base(field, val, indexedField, indexedBytes)
-	  {
-	  }
+    /// Function that returns <seealso cref="DocsEnum#freq()"/> for the
+    /// supplied term in every document.
+    /// <para>
+    /// If the term does not exist in the document, returns 0.
+    /// If frequencies are omitted, returns 1.
+    /// </para>
+    /// </summary>
+    public class TermFreqValueSource : DocFreqValueSource
+    {
+        public TermFreqValueSource(string field, string val, string indexedField, BytesRef indexedBytes)
+            : base(field, val, indexedField, indexedBytes)
+        {
+        }
 
-	  public override string name()
-	  {
-		return "termfreq";
-	  }
+        public override string Name
+        {
+            get { return "termfreq"; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-		Fields fields = readerContext.reader().fields();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(indexedField);
-		Terms terms = fields.terms(indexedField);
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            Fields fields = readerContext.AtomicReader.Fields;
+            Terms terms = fields.Terms(indexedField);
 
-		return new IntDocValuesAnonymousInnerClassHelper(this, this, terms);
-	  }
+            return new IntDocValuesAnonymousInnerClassHelper(this, this, terms);
+        }
 
-	  private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
-	  {
-		  private readonly TermFreqValueSource outerInstance;
+        private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
+        {
+            private readonly TermFreqValueSource outerInstance;
 
-		  private Terms terms;
+            private Terms terms;
 
-		  public IntDocValuesAnonymousInnerClassHelper(TermFreqValueSource outerInstance, TermFreqValueSource this, Terms terms) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.terms = terms;
-			  lastDocRequested = -1;
-		  }
+            public IntDocValuesAnonymousInnerClassHelper(TermFreqValueSource outerInstance, TermFreqValueSource @this, Terms terms)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.terms = terms;
+                lastDocRequested = -1;
+            }
 
-		  internal DocsEnum docs;
-		  internal int atDoc;
-		  internal int lastDocRequested;
+            private DocsEnum docs;
+            private int atDoc;
+            private int lastDocRequested;
 
-//JAVA TO C# CONVERTER TODO TASK: Initialization blocks declared within anonymous inner classes are not converted:
-	//	  {
-	//		  reset();
-	//	  }
+            //JAVA TO C# CONVERTER TODO TASK: Initialization blocks declared within anonymous inner classes are not converted:
+            //	  {
+            //		  reset();
+            //	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void reset() throws java.io.IOException
-		  public virtual void reset()
-		  {
-			// no one should call us for deleted docs?
+            public virtual void Reset()
+            {
+                // no one should call us for deleted docs?
 
-			if (terms != null)
-			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
-			  TermsEnum termsEnum = terms.iterator(null);
-			  if (termsEnum.seekExact(outerInstance.indexedBytes))
-			  {
-				docs = termsEnum.docs(null, null);
-			  }
-			  else
-			  {
-				docs = null;
-			  }
-			}
-			else
-			{
-			  docs = null;
-			}
+                if (terms != null)
+                {
+                    TermsEnum termsEnum = terms.Iterator(null);
+                    if (termsEnum.SeekExact(outerInstance.indexedBytes))
+                    {
+                        docs = termsEnum.Docs(null, null);
+                    }
+                    else
+                    {
+                        docs = null;
+                    }
+                }
+                else
+                {
+                    docs = null;
+                }
 
-			if (docs == null)
-			{
-			  docs = new DocsEnumAnonymousInnerClassHelper(this);
-			}
-			atDoc = -1;
-		  }
+                if (docs == null)
+                {
+                    docs = new DocsEnumAnonymousInnerClassHelper(this);
+                }
+                atDoc = -1;
+            }
 
-		  private class DocsEnumAnonymousInnerClassHelper : DocsEnum
-		  {
-			  private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
+            private class DocsEnumAnonymousInnerClassHelper : DocsEnum
+            {
+                private readonly IntDocValuesAnonymousInnerClassHelper outerInstance;
 
-			  public DocsEnumAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance)
-			  {
-				  this.outerInstance = outerInstance;
-			  }
+                public DocsEnumAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance)
+                {
+                    this.outerInstance = outerInstance;
+                }
 
-			  public override int freq()
-			  {
-				return 0;
-			  }
+                public override int Freq()
+                {
+                    return 0;
+                }
 
-			  public override int docID()
-			  {
-				return DocIdSetIterator.NO_MORE_DOCS;
-			  }
+                public override int DocID()
+                {
+                    return DocIdSetIterator.NO_MORE_DOCS;
+                }
 
-			  public override int nextDoc()
-			  {
-				return DocIdSetIterator.NO_MORE_DOCS;
-			  }
+                public override int NextDoc()
+                {
+                    return DocIdSetIterator.NO_MORE_DOCS;
+                }
 
-			  public override int advance(int target)
-			  {
-				return DocIdSetIterator.NO_MORE_DOCS;
-			  }
+                public override int Advance(int target)
+                {
+                    return DocIdSetIterator.NO_MORE_DOCS;
+                }
 
-			  public override long cost()
-			  {
-				return 0;
-			  }
-		  }
+                public override long Cost()
+                {
+                    return 0;
+                }
+            }
 
-		  public override int intVal(int doc)
-		  {
-			try
-			{
-			  if (doc < lastDocRequested)
-			  {
-				// out-of-order access.... reset
-				reset();
-			  }
-			  lastDocRequested = doc;
+            public override int IntVal(int doc)
+            {
+                try
+                {
+                    if (doc < lastDocRequested)
+                    {
+                        // out-of-order access.... reset
+                        Reset();
+                    }
+                    lastDocRequested = doc;
 
-			  if (atDoc < doc)
-			  {
-				atDoc = docs.advance(doc);
-			  }
+                    if (atDoc < doc)
+                    {
+                        atDoc = docs.Advance(doc);
+                    }
 
-			  if (atDoc > doc)
-			  {
-				// term doesn't match this document... either because we hit the
-				// end, or because the next doc is after this doc.
-				return 0;
-			  }
+                    if (atDoc > doc)
+                    {
+                        // term doesn't match this document... either because we hit the
+                        // end, or because the next doc is after this doc.
+                        return 0;
+                    }
 
-			  // a match!
-			  return docs.freq();
-			}
-			catch (IOException e)
-			{
-			  throw new Exception("caught exception in function " + outerInstance.description() + " : doc=" + doc, e);
-			}
-		  }
-	  }
-	}
-
-
-
+                    // a match!
+                    return docs.Freq();
+                }
+                catch (IOException e)
+                {
+                    throw new Exception("caught exception in function " + outerInstance.Description + " : doc=" + doc, e);
+                }
+            }
+        }
+    }
 }
