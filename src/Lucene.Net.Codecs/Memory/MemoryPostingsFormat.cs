@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,41 +25,41 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.lucene.codecs.CodecUtil;
-import org.apache.lucene.codecs.FieldsConsumer;
-import org.apache.lucene.codecs.FieldsProducer;
-import org.apache.lucene.codecs.PostingsConsumer;
-import org.apache.lucene.codecs.PostingsFormat;
-import org.apache.lucene.codecs.TermStats;
-import org.apache.lucene.codecs.TermsConsumer;
-import org.apache.lucene.index.DocsAndPositionsEnum;
-import org.apache.lucene.index.DocsEnum;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.store.ByteArrayDataInput;
-import org.apache.lucene.store.ChecksumIndexInput;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.store.RAMOutputStream;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.IOUtils;
-import org.apache.lucene.util.IntsRef;
-import org.apache.lucene.util.RamUsageEstimator;
-import org.apache.lucene.util.fst.Builder;
-import org.apache.lucene.util.fst.ByteSequenceOutputs;
-import org.apache.lucene.util.fst.BytesRefFSTEnum;
-import org.apache.lucene.util.fst.FST;
-import org.apache.lucene.util.fst.Util;
-import org.apache.lucene.util.packed.PackedInts;
+import codecs.CodecUtil;
+import codecs.FieldsConsumer;
+import codecs.FieldsProducer;
+import codecs.PostingsConsumer;
+import codecs.PostingsFormat;
+import codecs.TermStats;
+import codecs.TermsConsumer;
+import index.DocsAndPositionsEnum;
+import index.DocsEnum;
+import index.FieldInfo.IndexOptions;
+import index.FieldInfo;
+import index.FieldInfos;
+import index.IndexFileNames;
+import index.SegmentReadState;
+import index.SegmentWriteState;
+import index.Terms;
+import index.TermsEnum;
+import store.ByteArrayDataInput;
+import store.ChecksumIndexInput;
+import store.IOContext;
+import store.IndexInput;
+import store.IndexOutput;
+import store.RAMOutputStream;
+import util.ArrayUtil;
+import util.Bits;
+import util.BytesRef;
+import util.IOUtils;
+import util.IntsRef;
+import util.RamUsageEstimator;
+import util.fst.Builder;
+import util.fst.ByteSequenceOutputs;
+import util.fst.BytesRefFSTEnum;
+import util.fst.FST;
+import util.fst.Util;
+import util.packed.PackedInts;
 
 // TODO: would be nice to somehow allow this to act like
 // InstantiatedIndex, by never writing to disk; ie you write

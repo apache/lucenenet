@@ -1,6 +1,4 @@
-package org.apache.lucene.codecs.simpletext;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,43 +15,49 @@ package org.apache.lucene.codecs.simpletext;
  * limitations under the License.
  */
 
-import java.io.IOException;
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-import org.apache.lucene.codecs.FieldsConsumer;
-import org.apache.lucene.codecs.FieldsProducer;
-import org.apache.lucene.codecs.PostingsFormat;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.IndexFileNames;
+	using SegmentWriteState = Index.SegmentWriteState;
+	using SegmentReadState = Index.SegmentReadState;
+	using IndexFileNames = Index.IndexFileNames;
 
-/** For debugging, curiosity, transparency only!!  Do not
- *  use this codec in production.
- *
- *  <p>This codec stores all postings data in a single
- *  human-readable text file (_N.pst).  You can view this in
- *  any text editor, and even edit it to alter your index.
- *
- *  @lucene.experimental */
-public final class SimpleTextPostingsFormat extends PostingsFormat {
-  
-  public SimpleTextPostingsFormat() {
-    super("SimpleText");
-  }
+    /// <summary>
+    /// For debugging, curiosity, transparency only!!  Do not
+    ///  use this codec in production.
+    /// 
+    ///  <para>This codec stores all postings data in a single
+    ///  human-readable text file (_N.pst).  You can view this in
+    ///  any text editor, and even edit it to alter your index.
+    /// 
+    ///  @lucene.experimental 
+    /// </para>
+    /// </summary>
+    public sealed class SimpleTextPostingsFormat : PostingsFormat
+    {
 
-  @Override
-  public FieldsConsumer fieldsConsumer(SegmentWriteState state)  {
-    return new SimpleTextFieldsWriter(state);
-  }
+        /// <summary>
+        /// Extension of freq postings file </summary>
+        internal const string POSTINGS_EXTENSION = "pst";
 
-  @Override
-  public FieldsProducer fieldsProducer(SegmentReadState state)  {
-    return new SimpleTextFieldsReader(state);
-  }
+        public SimpleTextPostingsFormat() : base("SimpleText")
+        {
+        }
 
-  /** Extension of freq postings file */
-  static final String POSTINGS_EXTENSION = "pst";
+        public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
+        {
+            return new SimpleTextFieldsWriter(state);
+        }
 
-  static String getPostingsFileName(String segment, String segmentSuffix) {
-    return IndexFileNames.segmentFileName(segment, segmentSuffix, POSTINGS_EXTENSION);
-  }
+        public override FieldsProducer FieldsProducer(SegmentReadState state)
+        {
+            return new SimpleTextFieldsReader(state);
+        }
+
+        internal static string GetPostingsFileName(string segment, string segmentSuffix)
+        {
+            return IndexFileNames.SegmentFileName(segment, segmentSuffix, POSTINGS_EXTENSION);
+        }
+    }
+
 }

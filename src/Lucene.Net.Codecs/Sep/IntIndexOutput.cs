@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.sep;
+package codecs.sep;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,7 +20,7 @@ package org.apache.lucene.codecs.sep;
 // TODO: we may want tighter integration w/ IndexOutput --
 // may give better perf:
 
-import org.apache.lucene.store.DataOutput;
+import store.DataOutput;
 
 import java.io.IOException;
 import java.io.Closeable;

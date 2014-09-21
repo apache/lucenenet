@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,13 +19,13 @@ package org.apache.lucene.codecs.memory;
 
 import java.io.IOException;
 
-import org.apache.lucene.codecs.DocValuesConsumer;
-import org.apache.lucene.codecs.DocValuesFormat;
-import org.apache.lucene.codecs.DocValuesProducer;
-import org.apache.lucene.document.SortedSetDocValuesField; // javadocs
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.util.ArrayUtil;
+import codecs.DocValuesConsumer;
+import codecs.DocValuesFormat;
+import codecs.DocValuesProducer;
+import document.SortedSetDocValuesField; // javadocs
+import index.SegmentReadState;
+import index.SegmentWriteState;
+import util.ArrayUtil;
 
 /** In-memory docvalues format that does no (or very little)
  *  compression.  Indexed values are stored on disk, but

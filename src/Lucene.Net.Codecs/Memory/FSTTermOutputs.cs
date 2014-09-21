@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,12 +20,12 @@ package org.apache.lucene.codecs.memory;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
-import org.apache.lucene.store.DataInput;
-import org.apache.lucene.store.DataOutput;
-import org.apache.lucene.util.fst.Outputs;
-import org.apache.lucene.util.LongsRef;
+import index.FieldInfo;
+import index.FieldInfo.IndexOptions;
+import store.DataInput;
+import store.DataOutput;
+import util.fst.Outputs;
+import util.LongsRef;
 
 /**
  * An FST {@link Outputs} implementation for 

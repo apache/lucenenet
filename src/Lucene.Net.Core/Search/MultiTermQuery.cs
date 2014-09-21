@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
     /// a priority queue to only collect competitive terms
     /// and not hit this limitation.
     ///
-    /// Note that org.apache.lucene.queryparser.classic.QueryParser produces
+    /// Note that queryparser.classic.QueryParser produces
     /// MultiTermQueries using {@link
     /// #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} by default.
     /// </summary>

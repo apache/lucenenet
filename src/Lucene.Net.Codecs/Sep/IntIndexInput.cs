@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.sep;
+package codecs.sep;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,7 +20,7 @@ package org.apache.lucene.codecs.sep;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.apache.lucene.store.DataInput;
+import store.DataInput;
 
 /** Defines basic API for writing ints to an IndexOutput.
  *  IntBlockCodec interacts with this API. @see

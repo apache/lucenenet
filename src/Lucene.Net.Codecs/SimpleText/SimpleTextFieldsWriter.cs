@@ -1,6 +1,4 @@
-package org.apache.lucene.codecs.simpletext;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,175 +15,200 @@ package org.apache.lucene.codecs.simpletext;
  * limitations under the License.
  */
 
-import java.io.IOException;
-import java.util.Comparator;
+using System;
+using System.Diagnostics;
+using System.Collections.Generic;
 
-import org.apache.lucene.codecs.FieldsConsumer;
-import org.apache.lucene.codecs.PostingsConsumer;
-import org.apache.lucene.codecs.TermStats;
-import org.apache.lucene.codecs.TermsConsumer;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.util.BytesRef;
+namespace Lucene.Net.Codecs.SimpleText
+{
+    using IndexOptions = Index.FieldInfo.IndexOptions;
+    using FieldInfo = Index.FieldInfo;
+    using SegmentWriteState = Index.SegmentWriteState;
+    using IndexOutput = Store.IndexOutput;
+    using BytesRef = Util.BytesRef;
 
-class SimpleTextFieldsWriter extends FieldsConsumer {
-  
-  private IndexOutput out;
-  private final BytesRef scratch = new BytesRef(10);
+    internal class SimpleTextFieldsWriter : FieldsConsumer
+    {
 
-  final static BytesRef END          = new BytesRef("END");
-  final static BytesRef FIELD        = new BytesRef("field ");
-  final static BytesRef TERM         = new BytesRef("  term ");
-  final static BytesRef DOC          = new BytesRef("    doc ");
-  final static BytesRef FREQ         = new BytesRef("      freq ");
-  final static BytesRef POS          = new BytesRef("      pos ");
-  final static BytesRef START_OFFSET = new BytesRef("      startOffset ");
-  final static BytesRef END_OFFSET   = new BytesRef("      endOffset ");
-  final static BytesRef PAYLOAD      = new BytesRef("        payload ");
+        private IndexOutput _output;
+        private readonly BytesRef _scratch = new BytesRef(10);
 
-  public SimpleTextFieldsWriter(SegmentWriteState state)  {
-    final String fileName = SimpleTextPostingsFormat.getPostingsFileName(state.segmentInfo.name, state.segmentSuffix);
-    out = state.directory.createOutput(fileName, state.context);
-  }
+        internal static readonly BytesRef END = new BytesRef("END");
+        internal static readonly BytesRef FIELD = new BytesRef("field ");
+        internal static readonly BytesRef TERM = new BytesRef("  term ");
+        internal static readonly BytesRef DOC = new BytesRef("    doc ");
+        internal static readonly BytesRef FREQ = new BytesRef("      freq ");
+        internal static readonly BytesRef POS = new BytesRef("      pos ");
+        internal static readonly BytesRef START_OFFSET = new BytesRef("      startOffset ");
+        internal static readonly BytesRef END_OFFSET = new BytesRef("      endOffset ");
+        internal static readonly BytesRef PAYLOAD = new BytesRef("        payload ");
 
-  private void write(String s)  {
-    SimpleTextUtil.write(out, s, scratch);
-  }
+        public SimpleTextFieldsWriter(SegmentWriteState state)
+        {
+            var fileName = SimpleTextPostingsFormat.GetPostingsFileName(state.SegmentInfo.Name, state.SegmentSuffix);
+            _output = state.Directory.CreateOutput(fileName, state.Context);
+        }
 
-  private void write(BytesRef b)  {
-    SimpleTextUtil.write(out, b);
-  }
+        private void Write(string s)
+        {
+            SimpleTextUtil.Write(_output, s, _scratch);
+        }
 
-  private void newline()  {
-    SimpleTextUtil.writeNewline(out);
-  }
+        private void Write(BytesRef b)
+        {
+            SimpleTextUtil.Write(_output, b);
+        }
 
-  @Override
-  public TermsConsumer addField(FieldInfo field)  {
-    write(FIELD);
-    write(field.name);
-    newline();
-    return new SimpleTextTermsWriter(field);
-  }
+        private void Newline()
+        {
+            SimpleTextUtil.WriteNewline(_output);
+        }
 
-  private class SimpleTextTermsWriter extends TermsConsumer {
-    private final SimpleTextPostingsWriter postingsWriter;
-    
-    public SimpleTextTermsWriter(FieldInfo field) {
-      postingsWriter = new SimpleTextPostingsWriter(field);
+        public override TermsConsumer AddField(FieldInfo field)
+        {
+            Write(FIELD);
+            Write(field.Name);
+            Newline();
+            return new SimpleTextTermsWriter(this, field);
+        }
+
+        public override void Dispose()
+        {
+            if (_output != null)
+            {
+                try
+                {
+                    Write(END);
+                    Newline();
+                    SimpleTextUtil.WriteChecksum(_output, _scratch);
+                }
+                finally
+                {
+                    _output.Dispose();
+                    _output = null;
+                }
+            }
+        }
+
+        private class SimpleTextTermsWriter : TermsConsumer
+        {
+            private readonly SimpleTextFieldsWriter _outerInstance;
+            private readonly SimpleTextPostingsWriter _postingsWriter;
+
+            public SimpleTextTermsWriter(SimpleTextFieldsWriter outerInstance, FieldInfo field)
+            {
+                this._outerInstance = outerInstance;
+                _postingsWriter = new SimpleTextPostingsWriter(outerInstance, field);
+            }
+
+            public override PostingsConsumer StartTerm(BytesRef term)
+            {
+                return _postingsWriter.Reset(term);
+            }
+
+            public override void FinishTerm(BytesRef term, TermStats stats)
+            {
+            }
+
+            public override void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
+            {
+            }
+
+            public override IComparer<BytesRef> Comparator
+            {
+                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
+            }
+        }
+
+        private sealed class SimpleTextPostingsWriter : PostingsConsumer
+        {
+            private readonly SimpleTextFieldsWriter _outerInstance;
+
+            private BytesRef _term;
+            private bool _wroteTerm;
+            private readonly IndexOptions _indexOptions;
+            private readonly bool _writePositions;
+            private readonly bool _writeOffsets;
+
+            // for assert:
+            private int _lastStartOffset = 0;
+
+            public SimpleTextPostingsWriter(SimpleTextFieldsWriter outerInstance, FieldInfo field)
+            {
+                _outerInstance = outerInstance;
+                _indexOptions = field.FieldIndexOptions.Value;
+                _writePositions = _indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                _writeOffsets = _indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            }
+
+            public override void StartDoc(int docID, int termDocFreq)
+            {
+                if (!_wroteTerm)
+                {
+                    // we lazily do this, in case the term had zero docs
+                    _outerInstance.Write(TERM);
+                    _outerInstance.Write(_term);
+                    _outerInstance.Newline();
+                    _wroteTerm = true;
+                }
+
+                _outerInstance.Write(DOC);
+                _outerInstance.Write(Convert.ToString(docID));
+                _outerInstance.Newline();
+                if (_indexOptions != IndexOptions.DOCS_ONLY)
+                {
+                    _outerInstance.Write(FREQ);
+                    _outerInstance.Write(Convert.ToString(termDocFreq));
+                    _outerInstance.Newline();
+                }
+
+                _lastStartOffset = 0;
+            }
+
+            public PostingsConsumer Reset(BytesRef term)
+            {
+                this._term = term;
+                _wroteTerm = false;
+                return this;
+            }
+
+            public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
+            {
+                if (_writePositions)
+                {
+                    _outerInstance.Write(POS);
+                    _outerInstance.Write(Convert.ToString(position));
+                    _outerInstance.Newline();
+                }
+
+                if (_writeOffsets)
+                {
+                    Debug.Assert(endOffset >= startOffset);
+                    Debug.Assert(startOffset >= _lastStartOffset,
+                        "startOffset=" + startOffset + " lastStartOffset=" + _lastStartOffset);
+                    _lastStartOffset = startOffset;
+                    _outerInstance.Write(START_OFFSET);
+                    _outerInstance.Write(Convert.ToString(startOffset));
+                    _outerInstance.Newline();
+                    _outerInstance.Write(END_OFFSET);
+                    _outerInstance.Write(Convert.ToString(endOffset));
+                    _outerInstance.Newline();
+                }
+
+                if (payload != null && payload.Length > 0)
+                {
+                    Debug.Assert(payload.Length != 0);
+                    _outerInstance.Write(PAYLOAD);
+                    _outerInstance.Write(payload);
+                    _outerInstance.Newline();
+                }
+            }
+
+            public override void FinishDoc()
+            {
+            }
+        }
+
     }
 
-    @Override
-    public PostingsConsumer startTerm(BytesRef term)  {
-      return postingsWriter.reset(term);
-    }
-
-    @Override
-    public void finishTerm(BytesRef term, TermStats stats)  {
-    }
-
-    @Override
-    public void finish(long sumTotalTermFreq, long sumDocFreq, int docCount)  {
-    }
-
-    @Override
-    public Comparator<BytesRef> getComparator() {
-      return BytesRef.getUTF8SortedAsUnicodeComparator();
-    }
-  }
-
-  private class SimpleTextPostingsWriter extends PostingsConsumer {
-    private BytesRef term;
-    private bool wroteTerm;
-    private final IndexOptions indexOptions;
-    private final bool writePositions;
-    private final bool writeOffsets;
-
-    // for Debug.Assert(:
-    private int lastStartOffset = 0;
-
-    public SimpleTextPostingsWriter(FieldInfo field) {
-      this.indexOptions = field.getIndexOptions();
-      writePositions = indexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-      writeOffsets = indexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-      //System.out.println("writeOffsets=" + writeOffsets);
-      //System.out.println("writePos=" + writePositions);
-    }
-
-    @Override
-    public void startDoc(int docID, int termDocFreq)  {
-      if (!wroteTerm) {
-        // we lazily do this, in case the term had zero docs
-        write(TERM);
-        write(term);
-        newline();
-        wroteTerm = true;
-      }
-
-      write(DOC);
-      write(Integer.toString(docID));
-      newline();
-      if (indexOptions != IndexOptions.DOCS_ONLY) {
-        write(FREQ);
-        write(Integer.toString(termDocFreq));
-        newline();
-      }
-
-      lastStartOffset = 0;
-    }
-    
-    public PostingsConsumer reset(BytesRef term) {
-      this.term = term;
-      wroteTerm = false;
-      return this;
-    }
-
-    @Override
-    public void addPosition(int position, BytesRef payload, int startOffset, int endOffset)  {
-      if (writePositions) {
-        write(POS);
-        write(Integer.toString(position));
-        newline();
-      }
-
-      if (writeOffsets) {
-        Debug.Assert( endOffset >= startOffset;
-        Debug.Assert( startOffset >= lastStartOffset: "startOffset=" + startOffset + " lastStartOffset=" + lastStartOffset;
-        lastStartOffset = startOffset;
-        write(START_OFFSET);
-        write(Integer.toString(startOffset));
-        newline();
-        write(END_OFFSET);
-        write(Integer.toString(endOffset));
-        newline();
-      }
-
-      if (payload != null && payload.length > 0) {
-        Debug.Assert( payload.length != 0;
-        write(PAYLOAD);
-        write(payload);
-        newline();
-      }
-    }
-
-    @Override
-    public void finishDoc() {
-    }
-  }
-
-  @Override
-  public void close()  {
-    if (out != null) {
-      try {
-        write(END);
-        newline();
-        SimpleTextUtil.writeChecksum(out, scratch);
-      } finally {
-        out.close();
-        out = null;
-      }
-    }
-  }
 }

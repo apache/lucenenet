@@ -1,489 +1,768 @@
-package org.apache.lucene.codecs.simpletext;
+﻿using System;
+using System.Diagnostics;
+using System.Collections.Generic;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.END;
-import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.FIELD;
-import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.LENGTH;
-import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.MAXLENGTH;
-import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.MINVALUE;
-import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.NUMVALUES;
-import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.ORDPATTERN;
-import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.PATTERN;
-import static org.apache.lucene.codecs.simpletext.SimpleTextDocValuesWriter.TYPE;
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesWriter.END;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesWriter.FIELD;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesWriter.LENGTH;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesWriter.MAXLENGTH;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesWriter.MINVALUE;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesWriter.NUMVALUES;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesWriter.ORDPATTERN;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesWriter.PATTERN;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesWriter.TYPE;
 
-import org.apache.lucene.codecs.DocValuesProducer;
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.DocValues;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FieldInfo.DocValuesType;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.store.BufferedChecksumIndexInput;
-import org.apache.lucene.store.ChecksumIndexInput;
-import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.StringHelper;
 
-class SimpleTextDocValuesReader extends DocValuesProducer {
+	using BinaryDocValues = Index.BinaryDocValues;
+	using CorruptIndexException = Index.CorruptIndexException;
+	using DocValues = Index.DocValues;
+	using FieldInfo = Index.FieldInfo;
+	using DocValuesType = Index.FieldInfo.DocValuesType;
+	using IndexFileNames = Index.IndexFileNames;
+	using NumericDocValues = Index.NumericDocValues;
+	using SegmentReadState = Index.SegmentReadState;
+	using SortedDocValues = Index.SortedDocValues;
+	using SortedSetDocValues = Index.SortedSetDocValues;
+	using BufferedChecksumIndexInput = Store.BufferedChecksumIndexInput;
+	using ChecksumIndexInput = Store.ChecksumIndexInput;
+	using IndexInput = Store.IndexInput;
+	using Bits = Util.Bits;
+	using BytesRef = Util.BytesRef;
+	using StringHelper = Util.StringHelper;
 
-  static class OneField {
-    long dataStartFilePointer;
-    String pattern;
-    String ordPattern;
-    int maxLength;
-    bool fixedLength;
-    long minValue;
-    long numValues;
-  }
+	public class SimpleTextDocValuesReader : DocValuesProducer
+	{
 
-  final int maxDoc;
-  final IndexInput data;
-  final BytesRef scratch = new BytesRef();
-  final Map<String,OneField> fields = new HashMap<>();
-  
-  public SimpleTextDocValuesReader(SegmentReadState state, String ext)  {
-    // System.out.println("dir=" + state.directory + " seg=" + state.segmentInfo.name + " file=" + IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, ext));
-    data = state.directory.openInput(IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, ext), state.context);
-    maxDoc = state.segmentInfo.getDocCount();
-    while(true) {
-      readLine();
-      //System.out.println("READ field=" + scratch.utf8ToString());
-      if (scratch.equals(END)) {
-        break;
-      }
-      Debug.Assert( startsWith(FIELD) : scratch.utf8ToString();
-      String fieldName = stripPrefix(FIELD);
-      //System.out.println("  field=" + fieldName);
+	  internal class OneField
+	  {
+		internal long dataStartFilePointer;
+		internal string pattern;
+		internal string ordPattern;
+		internal int maxLength;
+		internal bool fixedLength;
+		internal long minValue;
+		internal long numValues;
+	  }
 
-      OneField field = new OneField();
-      fields.put(fieldName, field);
+	  internal readonly int maxDoc;
+	  internal readonly IndexInput data;
+	  internal readonly BytesRef scratch = new BytesRef();
+	  internal readonly IDictionary<string, OneField> fields = new Dictionary<string, OneField>();
 
-      readLine();
-      Debug.Assert( startsWith(TYPE) : scratch.utf8ToString();
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: public SimpleTextDocValuesReader(index.SegmentReadState state, String ext) throws java.io.IOException
+	  public SimpleTextDocValuesReader(SegmentReadState state, string ext)
+	  {
+		// System.out.println("dir=" + state.directory + " seg=" + state.segmentInfo.name + " file=" + IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, ext));
+		data = state.directory.openInput(IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, ext), state.context);
+		maxDoc = state.segmentInfo.DocCount;
+		while (true)
+		{
+		  readLine();
+		  //System.out.println("READ field=" + scratch.utf8ToString());
+		  if (scratch.Equals(END))
+		  {
+			break;
+		  }
+		  Debug.Assert(startsWith(FIELD), scratch.utf8ToString());
+		  string fieldName = stripPrefix(FIELD);
+		  //System.out.println("  field=" + fieldName);
 
-      DocValuesType dvType = DocValuesType.valueOf(stripPrefix(TYPE));
-      Debug.Assert( dvType != null;
-      if (dvType == DocValuesType.NUMERIC) {
-        readLine();
-        Debug.Assert( startsWith(MINVALUE): "got " + scratch.utf8ToString() + " field=" + fieldName + " ext=" + ext;
-        field.minValue = Long.parseLong(stripPrefix(MINVALUE));
-        readLine();
-        Debug.Assert( startsWith(PATTERN);
-        field.pattern = stripPrefix(PATTERN);
-        field.dataStartFilePointer = data.getFilePointer();
-        data.seek(data.getFilePointer() + (1+field.pattern.length()+2) * maxDoc);
-      } else if (dvType == DocValuesType.BINARY) {
-        readLine();
-        Debug.Assert( startsWith(MAXLENGTH);
-        field.maxLength = Integer.parseInt(stripPrefix(MAXLENGTH));
-        readLine();
-        Debug.Assert( startsWith(PATTERN);
-        field.pattern = stripPrefix(PATTERN);
-        field.dataStartFilePointer = data.getFilePointer();
-        data.seek(data.getFilePointer() + (9+field.pattern.length()+field.maxLength+2) * maxDoc);
-      } else if (dvType == DocValuesType.SORTED || dvType == DocValuesType.SORTED_SET) {
-        readLine();
-        Debug.Assert( startsWith(NUMVALUES);
-        field.numValues = Long.parseLong(stripPrefix(NUMVALUES));
-        readLine();
-        Debug.Assert( startsWith(MAXLENGTH);
-        field.maxLength = Integer.parseInt(stripPrefix(MAXLENGTH));
-        readLine();
-        Debug.Assert( startsWith(PATTERN);
-        field.pattern = stripPrefix(PATTERN);
-        readLine();
-        Debug.Assert( startsWith(ORDPATTERN);
-        field.ordPattern = stripPrefix(ORDPATTERN);
-        field.dataStartFilePointer = data.getFilePointer();
-        data.seek(data.getFilePointer() + (9+field.pattern.length()+field.maxLength) * field.numValues + (1+field.ordPattern.length())*maxDoc);
-      } else {
-        throw new Debug.Assert(ionError();
-      }
-    }
+		  OneField field = new OneField();
+		  fields[fieldName] = field;
 
-    // We should only be called from above if at least one
-    // field has DVs:
-    Debug.Assert( !fields.isEmpty();
-  }
+		  readLine();
+		  Debug.Assert(startsWith(TYPE), scratch.utf8ToString());
 
-  @Override
-  public NumericDocValues getNumeric(FieldInfo fieldInfo)  {
-    final OneField field = fields.get(fieldInfo.name);
-    Debug.Assert( field != null;
+		  FieldInfo.DocValuesType dvType = FieldInfo.DocValuesType.valueOf(stripPrefix(TYPE));
+		  Debug.Assert(dvType != null);
+		  if (dvType == FieldInfo.DocValuesType.NUMERIC)
+		  {
+			readLine();
+			Debug.Assert(startsWith(MINVALUE), "got " + scratch.utf8ToString() + " field=" + fieldName + " ext=" + ext);
+			field.minValue = Convert.ToInt64(stripPrefix(MINVALUE));
+			readLine();
+			Debug.Assert(startsWith(PATTERN));
+			field.pattern = stripPrefix(PATTERN);
+			field.dataStartFilePointer = data.FilePointer;
+			data.seek(data.FilePointer + (1 + field.pattern.Length + 2) * maxDoc);
+		  }
+		  else if (dvType == FieldInfo.DocValuesType.BINARY)
+		  {
+			readLine();
+			Debug.Assert(startsWith(MAXLENGTH));
+			field.maxLength = Convert.ToInt32(stripPrefix(MAXLENGTH));
+			readLine();
+			Debug.Assert(startsWith(PATTERN));
+			field.pattern = stripPrefix(PATTERN);
+			field.dataStartFilePointer = data.FilePointer;
+			data.seek(data.FilePointer + (9 + field.pattern.Length + field.maxLength + 2) * maxDoc);
+		  }
+		  else if (dvType == FieldInfo.DocValuesType.SORTED || dvType == FieldInfo.DocValuesType.SORTED_SET)
+		  {
+			readLine();
+			Debug.Assert(startsWith(NUMVALUES));
+			field.numValues = Convert.ToInt64(stripPrefix(NUMVALUES));
+			readLine();
+			Debug.Assert(startsWith(MAXLENGTH));
+			field.maxLength = Convert.ToInt32(stripPrefix(MAXLENGTH));
+			readLine();
+			Debug.Assert(startsWith(PATTERN));
+			field.pattern = stripPrefix(PATTERN);
+			readLine();
+			Debug.Assert(startsWith(ORDPATTERN));
+			field.ordPattern = stripPrefix(ORDPATTERN);
+			field.dataStartFilePointer = data.FilePointer;
+			data.seek(data.FilePointer + (9 + field.pattern.Length + field.maxLength) * field.numValues + (1 + field.ordPattern.Length) * maxDoc);
+		  }
+		  else
+		  {
+			throw new AssertionError();
+		  }
+		}
 
-    // SegmentCoreReaders already verifies this field is
-    // valid:
-    Debug.Assert( field != null: "field=" + fieldInfo.name + " fields=" + fields;
+		// We should only be called from above if at least one
+		// field has DVs:
+		Debug.Assert(fields.Count > 0);
+	  }
 
-    final IndexInput in = data.clone();
-    final BytesRef scratch = new BytesRef();
-    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: @Override public index.NumericDocValues getNumeric(index.FieldInfo fieldInfo) throws java.io.IOException
+	  public override NumericDocValues getNumeric(FieldInfo fieldInfo)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final OneField field = fields.get(fieldInfo.name);
+		OneField field = fields[fieldInfo.name];
+		Debug.Assert(field != null);
 
-    decoder.setParseBigDecimal(true);
+		// SegmentCoreReaders already verifies this field is
+		// valid:
+		Debug.Assert(field != null, "field=" + fieldInfo.name + " fields=" + fields);
 
-    return new NumericDocValues() {
-      @Override
-      public long get(int docID) {
-        try {
-          //System.out.println(Thread.currentThread().getName() + ": get docID=" + docID + " in=" + in);
-          if (docID < 0 || docID >= maxDoc) {
-            throw new IndexOutOfBoundsException("docID must be 0 .. " + (maxDoc-1) + "; got " + docID);
-          }
-          in.seek(field.dataStartFilePointer + (1+field.pattern.length()+2)*docID);
-          SimpleTextUtil.readLine(in, scratch);
-          //System.out.println("parsing delta: " + scratch.utf8ToString());
-          BigDecimal bd;
-          try {
-            bd = (BigDecimal) decoder.parse(scratch.utf8ToString());
-          } catch (ParseException pe) {
-            CorruptIndexException e = new CorruptIndexException("failed to parse BigDecimal value (resource=" + in + ")");
-            e.initCause(pe);
-            throw e;
-          }
-          SimpleTextUtil.readLine(in, scratch); // read the line telling us if its real or not
-          return BigInteger.valueOf(field.minValue).add(bd.toBigIntegerExact()).longValue();
-        } catch (IOException ioe) {
-          throw new RuntimeException(ioe);
-        }
-      }
-    };
-  }
-  
-  private Bits getNumericDocsWithField(FieldInfo fieldInfo)  {
-    final OneField field = fields.get(fieldInfo.name);
-    final IndexInput in = data.clone();
-    final BytesRef scratch = new BytesRef();
-    return new Bits() {
-      @Override
-      public bool get(int index) {
-        try {
-          in.seek(field.dataStartFilePointer + (1+field.pattern.length()+2)*index);
-          SimpleTextUtil.readLine(in, scratch); // data
-          SimpleTextUtil.readLine(in, scratch); // 'T' or 'F'
-          return scratch.bytes[scratch.offset] == (byte) 'T';
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      }
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final store.IndexInput in = data.clone();
+		IndexInput @in = data.clone();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final util.BytesRef scratch = new util.BytesRef();
+		BytesRef scratch = new BytesRef();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.text.DecimalFormat decoder = new java.text.DecimalFormat(field.pattern, new java.text.DecimalFormatSymbols(java.util.Locale.ROOT));
+		DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
 
-      @Override
-      public int length() {
-        return maxDoc;
-      }
-    };
-  }
+		decoder.ParseBigDecimal = true;
 
-  @Override
-  public BinaryDocValues getBinary(FieldInfo fieldInfo)  {
-    final OneField field = fields.get(fieldInfo.name);
+		return new NumericDocValuesAnonymousInnerClassHelper(this, field, @in, scratch, decoder);
+	  }
 
-    // SegmentCoreReaders already verifies this field is
-    // valid:
-    Debug.Assert( field != null;
+	  private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+	  {
+		  private readonly SimpleTextDocValuesReader outerInstance;
 
-    final IndexInput in = data.clone();
-    final BytesRef scratch = new BytesRef();
-    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+		  private Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field;
+		  private IndexInput @in;
+		  private BytesRef scratch;
+		  private DecimalFormat decoder;
 
-    return new BinaryDocValues() {
-      @Override
-      public void get(int docID, BytesRef result) {
-        try {
-          if (docID < 0 || docID >= maxDoc) {
-            throw new IndexOutOfBoundsException("docID must be 0 .. " + (maxDoc-1) + "; got " + docID);
-          }
-          in.seek(field.dataStartFilePointer + (9+field.pattern.length() + field.maxLength+2)*docID);
-          SimpleTextUtil.readLine(in, scratch);
-          Debug.Assert( StringHelper.startsWith(scratch, LENGTH);
-          int len;
-          try {
-            len = decoder.parse(new String(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8)).intValue();
-          } catch (ParseException pe) {
-            CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + in + ")");
-            e.initCause(pe);
-            throw e;
-          }
-          result.bytes = new byte[len];
-          result.offset = 0;
-          result.length = len;
-          in.readBytes(result.bytes, 0, len);
-        } catch (IOException ioe) {
-          throw new RuntimeException(ioe);
-        }
-      }
-    };
-  }
-  
-  private Bits getBinaryDocsWithField(FieldInfo fieldInfo)  {
-    final OneField field = fields.get(fieldInfo.name);
-    final IndexInput in = data.clone();
-    final BytesRef scratch = new BytesRef();
-    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+		  public NumericDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field, IndexInput @in, BytesRef scratch, DecimalFormat decoder)
+		  {
+			  this.outerInstance = outerInstance;
+			  this.field = field;
+			  this.@in = @in;
+			  this.scratch = scratch;
+			  this.decoder = decoder;
+		  }
 
-    return new Bits() {
-      @Override
-      public bool get(int index) {
-        try {
-          in.seek(field.dataStartFilePointer + (9+field.pattern.length() + field.maxLength+2)*index);
-          SimpleTextUtil.readLine(in, scratch);
-          Debug.Assert( StringHelper.startsWith(scratch, LENGTH);
-          int len;
-          try {
-            len = decoder.parse(new String(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8)).intValue();
-          } catch (ParseException pe) {
-            CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + in + ")");
-            e.initCause(pe);
-            throw e;
-          }
-          // skip past bytes
-          byte bytes[] = new byte[len];
-          in.readBytes(bytes, 0, len);
-          SimpleTextUtil.readLine(in, scratch); // newline
-          SimpleTextUtil.readLine(in, scratch); // 'T' or 'F'
-          return scratch.bytes[scratch.offset] == (byte) 'T';
-        } catch (IOException ioe) {
-          throw new RuntimeException(ioe);
-        }
-      }
+		  public override long get(int docID)
+		  {
+			try
+			{
+			  //System.out.println(Thread.currentThread().getName() + ": get docID=" + docID + " in=" + in);
+			  if (docID < 0 || docID >= outerInstance.maxDoc)
+			  {
+				throw new System.IndexOutOfRangeException("docID must be 0 .. " + (outerInstance.maxDoc - 1) + "; got " + docID);
+			  }
+			  @in.seek(field.dataStartFilePointer + (1 + field.pattern.Length + 2) * docID);
+			  SimpleTextUtil.ReadLine(@in, scratch);
+			  //System.out.println("parsing delta: " + scratch.utf8ToString());
+			  decimal bd;
+			  try
+			  {
+				bd = (decimal) decoder.parse(scratch.utf8ToString());
+			  }
+			  catch (ParseException pe)
+			  {
+				CorruptIndexException e = new CorruptIndexException("failed to parse BigDecimal value (resource=" + @in + ")");
+				e.initCause(pe);
+				throw e;
+			  }
+			  SimpleTextUtil.ReadLine(@in, scratch); // read the line telling us if its real or not
+			  return System.Numerics.BigInteger.valueOf(field.minValue) + (long)bd.toBigIntegerExact();
+			}
+			catch (IOException ioe)
+			{
+			  throw new Exception(ioe);
+			}
+		  }
+	  }
 
-      @Override
-      public int length() {
-        return maxDoc;
-      }
-    };
-  }
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private util.Bits getNumericDocsWithField(index.FieldInfo fieldInfo) throws java.io.IOException
+	  private Bits getNumericDocsWithField(FieldInfo fieldInfo)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final OneField field = fields.get(fieldInfo.name);
+		OneField field = fields[fieldInfo.name];
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final store.IndexInput in = data.clone();
+		IndexInput @in = data.clone();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final util.BytesRef scratch = new util.BytesRef();
+		BytesRef scratch = new BytesRef();
+		return new BitsAnonymousInnerClassHelper(this, field, @in, scratch);
+	  }
 
-  @Override
-  public SortedDocValues getSorted(FieldInfo fieldInfo)  {
-    final OneField field = fields.get(fieldInfo.name);
+	  private class BitsAnonymousInnerClassHelper : Bits
+	  {
+		  private readonly SimpleTextDocValuesReader outerInstance;
 
-    // SegmentCoreReaders already verifies this field is
-    // valid:
-    Debug.Assert( field != null;
+		  private Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field;
+		  private IndexInput @in;
+		  private BytesRef scratch;
 
-    final IndexInput in = data.clone();
-    final BytesRef scratch = new BytesRef();
-    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
-    final DecimalFormat ordDecoder = new DecimalFormat(field.ordPattern, new DecimalFormatSymbols(Locale.ROOT));
+		  public BitsAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field, IndexInput @in, BytesRef scratch)
+		  {
+			  this.outerInstance = outerInstance;
+			  this.field = field;
+			  this.@in = @in;
+			  this.scratch = scratch;
+		  }
 
-    return new SortedDocValues() {
-      @Override
-      public int getOrd(int docID) {
-        if (docID < 0 || docID >= maxDoc) {
-          throw new IndexOutOfBoundsException("docID must be 0 .. " + (maxDoc-1) + "; got " + docID);
-        }
-        try {
-          in.seek(field.dataStartFilePointer + field.numValues * (9 + field.pattern.length() + field.maxLength) + docID * (1 + field.ordPattern.length()));
-          SimpleTextUtil.readLine(in, scratch);
-          try {
-            return (int) ordDecoder.parse(scratch.utf8ToString()).longValue()-1;
-          } catch (ParseException pe) {
-            CorruptIndexException e = new CorruptIndexException("failed to parse ord (resource=" + in + ")");
-            e.initCause(pe);
-            throw e;
-          }
-        } catch (IOException ioe) {
-          throw new RuntimeException(ioe);
-        }
-      }
+		  public override bool get(int index)
+		  {
+			try
+			{
+			  @in.seek(field.dataStartFilePointer + (1 + field.pattern.Length + 2) * index);
+			  SimpleTextUtil.ReadLine(@in, scratch); // data
+			  SimpleTextUtil.ReadLine(@in, scratch); // 'T' or 'F'
+			  return scratch.bytes[scratch.offset] == (sbyte) 'T';
+			}
+			catch (IOException e)
+			{
+			  throw new Exception(e);
+			}
+		  }
 
-      @Override
-      public void lookupOrd(int ord, BytesRef result) {
-        try {
-          if (ord < 0 || ord >= field.numValues) {
-            throw new IndexOutOfBoundsException("ord must be 0 .. " + (field.numValues-1) + "; got " + ord);
-          }
-          in.seek(field.dataStartFilePointer + ord * (9 + field.pattern.length() + field.maxLength));
-          SimpleTextUtil.readLine(in, scratch);
-          Debug.Assert( StringHelper.startsWith(scratch, LENGTH): "got " + scratch.utf8ToString() + " in=" + in;
-          int len;
-          try {
-            len = decoder.parse(new String(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8)).intValue();
-          } catch (ParseException pe) {
-            CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + in + ")");
-            e.initCause(pe);
-            throw e;
-          }
-          result.bytes = new byte[len];
-          result.offset = 0;
-          result.length = len;
-          in.readBytes(result.bytes, 0, len);
-        } catch (IOException ioe) {
-          throw new RuntimeException(ioe);
-        }
-      }
+		  public override int length()
+		  {
+			return outerInstance.maxDoc;
+		  }
+	  }
 
-      @Override
-      public int getValueCount() {
-        return (int)field.numValues;
-      }
-    };
-  }
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: @Override public index.BinaryDocValues getBinary(index.FieldInfo fieldInfo) throws java.io.IOException
+	  public override BinaryDocValues getBinary(FieldInfo fieldInfo)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final OneField field = fields.get(fieldInfo.name);
+		OneField field = fields[fieldInfo.name];
 
-  @Override
-  public SortedSetDocValues getSortedSet(FieldInfo fieldInfo)  {
-    final OneField field = fields.get(fieldInfo.name);
+		// SegmentCoreReaders already verifies this field is
+		// valid:
+		Debug.Assert(field != null);
 
-    // SegmentCoreReaders already verifies this field is
-    // valid:
-    Debug.Assert( field != null;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final store.IndexInput in = data.clone();
+		IndexInput @in = data.clone();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final util.BytesRef scratch = new util.BytesRef();
+		BytesRef scratch = new BytesRef();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.text.DecimalFormat decoder = new java.text.DecimalFormat(field.pattern, new java.text.DecimalFormatSymbols(java.util.Locale.ROOT));
+		DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
 
-    final IndexInput in = data.clone();
-    final BytesRef scratch = new BytesRef();
-    final DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
-    
-    return new SortedSetDocValues() {
-      String[] currentOrds = new String[0];
-      int currentIndex = 0;
-      
-      @Override
-      public long nextOrd() {
-        if (currentIndex == currentOrds.length) {
-          return NO_MORE_ORDS;
-        } else {
-          return Long.parseLong(currentOrds[currentIndex++]);
-        }
-      }
+		return new BinaryDocValuesAnonymousInnerClassHelper(this, field, @in, scratch, decoder);
+	  }
 
-      @Override
-      public void setDocument(int docID) {
-        if (docID < 0 || docID >= maxDoc) {
-          throw new IndexOutOfBoundsException("docID must be 0 .. " + (maxDoc-1) + "; got " + docID);
-        }
-        try {
-          in.seek(field.dataStartFilePointer + field.numValues * (9 + field.pattern.length() + field.maxLength) + docID * (1 + field.ordPattern.length()));
-          SimpleTextUtil.readLine(in, scratch);
-          String ordList = scratch.utf8ToString().trim();
-          if (ordList.isEmpty()) {
-            currentOrds = new String[0];
-          } else {
-            currentOrds = ordList.split(",");
-          }
-          currentIndex = 0;
-        } catch (IOException ioe) {
-          throw new RuntimeException(ioe);
-        }
-      }
+	  private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+	  {
+		  private readonly SimpleTextDocValuesReader outerInstance;
 
-      @Override
-      public void lookupOrd(long ord, BytesRef result) {
-        try {
-          if (ord < 0 || ord >= field.numValues) {
-            throw new IndexOutOfBoundsException("ord must be 0 .. " + (field.numValues-1) + "; got " + ord);
-          }
-          in.seek(field.dataStartFilePointer + ord * (9 + field.pattern.length() + field.maxLength));
-          SimpleTextUtil.readLine(in, scratch);
-          Debug.Assert( StringHelper.startsWith(scratch, LENGTH): "got " + scratch.utf8ToString() + " in=" + in;
-          int len;
-          try {
-            len = decoder.parse(new String(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8)).intValue();
-          } catch (ParseException pe) {
-            CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + in + ")");
-            e.initCause(pe);
-            throw e;
-          }
-          result.bytes = new byte[len];
-          result.offset = 0;
-          result.length = len;
-          in.readBytes(result.bytes, 0, len);
-        } catch (IOException ioe) {
-          throw new RuntimeException(ioe);
-        }
-      }
+		  private Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field;
+		  private IndexInput @in;
+		  private BytesRef scratch;
+		  private DecimalFormat decoder;
 
-      @Override
-      public long getValueCount() {
-        return field.numValues;
-      }
-    };
-  }
-  
-  @Override
-  public Bits getDocsWithField(FieldInfo field)  {
-    switch (field.getDocValuesType()) {
-      case SORTED_SET:
-        return DocValues.docsWithValue(getSortedSet(field), maxDoc);
-      case SORTED:
-        return DocValues.docsWithValue(getSorted(field), maxDoc);
-      case BINARY:
-        return getBinaryDocsWithField(field);
-      case NUMERIC:
-        return getNumericDocsWithField(field);
-      default:
-        throw new Debug.Assert(ionError();
-    }
-  }
+		  public BinaryDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field, IndexInput @in, BytesRef scratch, DecimalFormat decoder)
+		  {
+			  this.outerInstance = outerInstance;
+			  this.field = field;
+			  this.@in = @in;
+			  this.scratch = scratch;
+			  this.decoder = decoder;
+		  }
 
-  @Override
-  public void close()  {
-    data.close();
-  }
+		  public override void get(int docID, BytesRef result)
+		  {
+			try
+			{
+			  if (docID < 0 || docID >= outerInstance.maxDoc)
+			  {
+				throw new System.IndexOutOfRangeException("docID must be 0 .. " + (outerInstance.maxDoc - 1) + "; got " + docID);
+			  }
+			  @in.seek(field.dataStartFilePointer + (9 + field.pattern.Length + field.maxLength + 2) * docID);
+			  SimpleTextUtil.ReadLine(@in, scratch);
+			  Debug.Assert(StringHelper.StartsWith(scratch, LENGTH));
+			  int len;
+			  try
+			  {
+				len = (int)decoder.parse(new string(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8));
+			  }
+			  catch (ParseException pe)
+			  {
+				CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + @in + ")");
+				e.initCause(pe);
+				throw e;
+			  }
+			  result.bytes = new sbyte[len];
+			  result.offset = 0;
+			  result.length = len;
+			  @in.readBytes(result.bytes, 0, len);
+			}
+			catch (IOException ioe)
+			{
+			  throw new Exception(ioe);
+			}
+		  }
+	  }
 
-  /** Used only in ctor: */
-  private void readLine()  {
-    SimpleTextUtil.readLine(data, scratch);
-    //System.out.println("line: " + scratch.utf8ToString());
-  }
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private util.Bits getBinaryDocsWithField(index.FieldInfo fieldInfo) throws java.io.IOException
+	  private Bits getBinaryDocsWithField(FieldInfo fieldInfo)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final OneField field = fields.get(fieldInfo.name);
+		OneField field = fields[fieldInfo.name];
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final store.IndexInput in = data.clone();
+		IndexInput @in = data.clone();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final util.BytesRef scratch = new util.BytesRef();
+		BytesRef scratch = new BytesRef();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.text.DecimalFormat decoder = new java.text.DecimalFormat(field.pattern, new java.text.DecimalFormatSymbols(java.util.Locale.ROOT));
+		DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
 
-  /** Used only in ctor: */
-  private bool startsWith(BytesRef prefix) {
-    return StringHelper.startsWith(scratch, prefix);
-  }
+		return new BitsAnonymousInnerClassHelper2(this, field, @in, scratch, decoder);
+	  }
 
-  /** Used only in ctor: */
-  private String stripPrefix(BytesRef prefix)  {
-    return new String(scratch.bytes, scratch.offset + prefix.length, scratch.length - prefix.length, StandardCharsets.UTF_8);
-  }
+	  private class BitsAnonymousInnerClassHelper2 : Bits
+	  {
+		  private readonly SimpleTextDocValuesReader outerInstance;
 
-  @Override
-  public long ramBytesUsed() {
-    return 0;
-  }
+		  private Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field;
+		  private IndexInput @in;
+		  private BytesRef scratch;
+		  private DecimalFormat decoder;
 
-  @Override
-  public void checkIntegrity()  {
-    BytesRef scratch = new BytesRef();
-    IndexInput clone = data.clone();
-    clone.seek(0);
-    ChecksumIndexInput input = new BufferedChecksumIndexInput(clone);
-    while(true) {
-      SimpleTextUtil.readLine(input, scratch);
-      if (scratch.equals(END)) {
-        SimpleTextUtil.checkFooter(input);
-        break;
-      }
-    }
-  }
+		  public BitsAnonymousInnerClassHelper2(SimpleTextDocValuesReader outerInstance, Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field, IndexInput @in, BytesRef scratch, DecimalFormat decoder)
+		  {
+			  this.outerInstance = outerInstance;
+			  this.field = field;
+			  this.@in = @in;
+			  this.scratch = scratch;
+			  this.decoder = decoder;
+		  }
+
+		  public override bool get(int index)
+		  {
+			try
+			{
+			  @in.seek(field.dataStartFilePointer + (9 + field.pattern.Length + field.maxLength + 2) * index);
+			  SimpleTextUtil.ReadLine(@in, scratch);
+			  Debug.Assert(StringHelper.StartsWith(scratch, LENGTH));
+			  int len;
+			  try
+			  {
+				len = (int)decoder.parse(new string(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8));
+			  }
+			  catch (ParseException pe)
+			  {
+				CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + @in + ")");
+				e.initCause(pe);
+				throw e;
+			  }
+			  // skip past bytes
+			  sbyte[] bytes = new sbyte[len];
+			  @in.readBytes(bytes, 0, len);
+			  SimpleTextUtil.ReadLine(@in, scratch); // newline
+			  SimpleTextUtil.ReadLine(@in, scratch); // 'T' or 'F'
+			  return scratch.bytes[scratch.offset] == (sbyte) 'T';
+			}
+			catch (IOException ioe)
+			{
+			  throw new Exception(ioe);
+			}
+		  }
+
+		  public override int length()
+		  {
+			return outerInstance.maxDoc;
+		  }
+	  }
+
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: @Override public index.SortedDocValues getSorted(index.FieldInfo fieldInfo) throws java.io.IOException
+	  public override SortedDocValues getSorted(FieldInfo fieldInfo)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final OneField field = fields.get(fieldInfo.name);
+		OneField field = fields[fieldInfo.name];
+
+		// SegmentCoreReaders already verifies this field is
+		// valid:
+		Debug.Assert(field != null);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final store.IndexInput in = data.clone();
+		IndexInput @in = data.clone();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final util.BytesRef scratch = new util.BytesRef();
+		BytesRef scratch = new BytesRef();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.text.DecimalFormat decoder = new java.text.DecimalFormat(field.pattern, new java.text.DecimalFormatSymbols(java.util.Locale.ROOT));
+		DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.text.DecimalFormat ordDecoder = new java.text.DecimalFormat(field.ordPattern, new java.text.DecimalFormatSymbols(java.util.Locale.ROOT));
+		DecimalFormat ordDecoder = new DecimalFormat(field.ordPattern, new DecimalFormatSymbols(Locale.ROOT));
+
+		return new SortedDocValuesAnonymousInnerClassHelper(this, field, @in, scratch, decoder, ordDecoder);
+	  }
+
+	  private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
+	  {
+		  private readonly SimpleTextDocValuesReader outerInstance;
+
+		  private Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field;
+		  private IndexInput @in;
+		  private BytesRef scratch;
+		  private DecimalFormat decoder;
+		  private DecimalFormat ordDecoder;
+
+		  public SortedDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field, IndexInput @in, BytesRef scratch, DecimalFormat decoder, DecimalFormat ordDecoder)
+		  {
+			  this.outerInstance = outerInstance;
+			  this.field = field;
+			  this.@in = @in;
+			  this.scratch = scratch;
+			  this.decoder = decoder;
+			  this.ordDecoder = ordDecoder;
+		  }
+
+		  public override int getOrd(int docID)
+		  {
+			if (docID < 0 || docID >= outerInstance.maxDoc)
+			{
+			  throw new System.IndexOutOfRangeException("docID must be 0 .. " + (outerInstance.maxDoc - 1) + "; got " + docID);
+			}
+			try
+			{
+			  @in.seek(field.dataStartFilePointer + field.numValues * (9 + field.pattern.Length + field.maxLength) + docID * (1 + field.ordPattern.Length));
+			  SimpleTextUtil.ReadLine(@in, scratch);
+			  try
+			  {
+				return (long)(int) ordDecoder.parse(scratch.utf8ToString()) - 1;
+			  }
+			  catch (ParseException pe)
+			  {
+				CorruptIndexException e = new CorruptIndexException("failed to parse ord (resource=" + @in + ")");
+				e.initCause(pe);
+				throw e;
+			  }
+			}
+			catch (IOException ioe)
+			{
+			  throw new Exception(ioe);
+			}
+		  }
+
+		  public override void lookupOrd(int ord, BytesRef result)
+		  {
+			try
+			{
+			  if (ord < 0 || ord >= field.numValues)
+			  {
+				throw new System.IndexOutOfRangeException("ord must be 0 .. " + (field.numValues - 1) + "; got " + ord);
+			  }
+			  @in.seek(field.dataStartFilePointer + ord * (9 + field.pattern.Length + field.maxLength));
+			  SimpleTextUtil.ReadLine(@in, scratch);
+			  Debug.Assert(StringHelper.StartsWith(scratch, LENGTH), "got " + scratch.utf8ToString() + " in=" + @in);
+			  int len;
+			  try
+			  {
+				len = (int)decoder.parse(new string(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8));
+			  }
+			  catch (ParseException pe)
+			  {
+				CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + @in + ")");
+				e.initCause(pe);
+				throw e;
+			  }
+			  result.bytes = new sbyte[len];
+			  result.offset = 0;
+			  result.length = len;
+			  @in.readBytes(result.bytes, 0, len);
+			}
+			catch (IOException ioe)
+			{
+			  throw new Exception(ioe);
+			}
+		  }
+
+		  public override int ValueCount
+		  {
+			  get
+			  {
+				return (int)field.numValues;
+			  }
+		  }
+	  }
+
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: @Override public index.SortedSetDocValues getSortedSet(index.FieldInfo fieldInfo) throws java.io.IOException
+	  public override SortedSetDocValues getSortedSet(FieldInfo fieldInfo)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final OneField field = fields.get(fieldInfo.name);
+		OneField field = fields[fieldInfo.name];
+
+		// SegmentCoreReaders already verifies this field is
+		// valid:
+		Debug.Assert(field != null);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final store.IndexInput in = data.clone();
+		IndexInput @in = data.clone();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final util.BytesRef scratch = new util.BytesRef();
+		BytesRef scratch = new BytesRef();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.text.DecimalFormat decoder = new java.text.DecimalFormat(field.pattern, new java.text.DecimalFormatSymbols(java.util.Locale.ROOT));
+		DecimalFormat decoder = new DecimalFormat(field.pattern, new DecimalFormatSymbols(Locale.ROOT));
+
+		return new SortedSetDocValuesAnonymousInnerClassHelper(this, field, @in, scratch, decoder);
+	  }
+
+	  private class SortedSetDocValuesAnonymousInnerClassHelper : SortedSetDocValues
+	  {
+		  private readonly SimpleTextDocValuesReader outerInstance;
+
+		  private Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field;
+		  private IndexInput @in;
+		  private BytesRef scratch;
+		  private DecimalFormat decoder;
+
+		  public SortedSetDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field, IndexInput @in, BytesRef scratch, DecimalFormat decoder)
+		  {
+			  this.outerInstance = outerInstance;
+			  this.field = field;
+			  this.@in = @in;
+			  this.scratch = scratch;
+			  this.decoder = decoder;
+			  currentOrds = new string[0];
+			  currentIndex = 0;
+		  }
+
+		  internal string[] currentOrds;
+		  internal int currentIndex;
+
+		  public override long nextOrd()
+		  {
+			if (currentIndex == currentOrds.length)
+			{
+			  return NO_MORE_ORDS;
+			}
+			else
+			{
+			  return Convert.ToInt64(currentOrds[currentIndex++]);
+			}
+		  }
+
+		  public override int Document
+		  {
+			  set
+			  {
+				if (value < 0 || value >= outerInstance.maxDoc)
+				{
+				  throw new System.IndexOutOfRangeException("docID must be 0 .. " + (outerInstance.maxDoc - 1) + "; got " + value);
+				}
+				try
+				{
+				  @in.seek(field.dataStartFilePointer + field.numValues * (9 + field.pattern.Length + field.maxLength) + value * (1 + field.ordPattern.Length));
+				  SimpleTextUtil.ReadLine(@in, scratch);
+				  string ordList = scratch.utf8ToString().Trim();
+				  if (ordList.Length == 0)
+				  {
+					currentOrds = new string[0];
+				  }
+				  else
+				  {
+					currentOrds = ordList.Split(",", true);
+				  }
+				  currentIndex = 0;
+				}
+				catch (IOException ioe)
+				{
+				  throw new Exception(ioe);
+				}
+			  }
+		  }
+
+		  public override void lookupOrd(long ord, BytesRef result)
+		  {
+			try
+			{
+			  if (ord < 0 || ord >= field.numValues)
+			  {
+				throw new System.IndexOutOfRangeException("ord must be 0 .. " + (field.numValues - 1) + "; got " + ord);
+			  }
+			  @in.seek(field.dataStartFilePointer + ord * (9 + field.pattern.Length + field.maxLength));
+			  SimpleTextUtil.ReadLine(@in, scratch);
+			  Debug.Assert(StringHelper.StartsWith(scratch, LENGTH), "got " + scratch.utf8ToString() + " in=" + @in);
+			  int len;
+			  try
+			  {
+				len = (int)decoder.parse(new string(scratch.bytes, scratch.offset + LENGTH.length, scratch.length - LENGTH.length, StandardCharsets.UTF_8));
+			  }
+			  catch (ParseException pe)
+			  {
+				CorruptIndexException e = new CorruptIndexException("failed to parse int length (resource=" + @in + ")");
+				e.initCause(pe);
+				throw e;
+			  }
+			  result.bytes = new sbyte[len];
+			  result.offset = 0;
+			  result.length = len;
+			  @in.readBytes(result.bytes, 0, len);
+			}
+			catch (IOException ioe)
+			{
+			  throw new Exception(ioe);
+			}
+		  }
+
+		  public override long ValueCount
+		  {
+			  get
+			  {
+				return field.numValues;
+			  }
+		  }
+	  }
+
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: @Override public util.Bits getDocsWithField(index.FieldInfo field) throws java.io.IOException
+	  public override Bits getDocsWithField(FieldInfo field)
+	  {
+		switch (field.DocValuesType)
+		{
+		  case SORTED_SET:
+			return DocValues.docsWithValue(getSortedSet(field), maxDoc);
+		  case SORTED:
+			return DocValues.docsWithValue(getSorted(field), maxDoc);
+		  case BINARY:
+			return getBinaryDocsWithField(field);
+		  case NUMERIC:
+			return getNumericDocsWithField(field);
+		  default:
+			throw new AssertionError();
+		}
+	  }
+
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: @Override public void close() throws java.io.IOException
+	  public override void close()
+	  {
+		data.close();
+	  }
+
+	  /// <summary>
+	  /// Used only in ctor: </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private void readLine() throws java.io.IOException
+	  private void readLine()
+	  {
+		SimpleTextUtil.ReadLine(data, scratch);
+		//System.out.println("line: " + scratch.utf8ToString());
+	  }
+
+	  /// <summary>
+	  /// Used only in ctor: </summary>
+	  private bool StartsWith(BytesRef prefix)
+	  {
+		return StringHelper.StartsWith(scratch, prefix);
+	  }
+
+	  /// <summary>
+	  /// Used only in ctor: </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private String stripPrefix(util.BytesRef prefix) throws java.io.IOException
+	  private string stripPrefix(BytesRef prefix)
+	  {
+		return new string(scratch.bytes, scratch.offset + prefix.length, scratch.length - prefix.length, StandardCharsets.UTF_8);
+	  }
+
+	  public override long ramBytesUsed()
+	  {
+		return 0;
+	  }
+
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: @Override public void checkIntegrity() throws java.io.IOException
+	  public override void checkIntegrity()
+	  {
+		BytesRef scratch = new BytesRef();
+		IndexInput clone = data.clone();
+		clone.seek(0);
+		ChecksumIndexInput input = new BufferedChecksumIndexInput(clone);
+		while (true)
+		{
+		  SimpleTextUtil.ReadLine(input, scratch);
+		  if (scratch.Equals(END))
+		  {
+			SimpleTextUtil.CheckFooter(input);
+			break;
+		  }
+		}
+	  }
+	}
+
 }

@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,30 +24,30 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.lucene.codecs.FieldsConsumer;
-import org.apache.lucene.codecs.FieldsProducer;
-import org.apache.lucene.codecs.PostingsFormat;
-import org.apache.lucene.codecs.lucene41.Lucene41PostingsFormat; // javadocs
-import org.apache.lucene.index.DocsAndPositionsEnum;
-import org.apache.lucene.index.DocsEnum;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.Fields;
-import org.apache.lucene.index.OrdTermState;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.index.TermState;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.RAMOutputStream;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.RamUsageEstimator;
-import org.apache.lucene.util.automaton.CompiledAutomaton;
-import org.apache.lucene.util.automaton.RunAutomaton;
-import org.apache.lucene.util.automaton.Transition;
+import codecs.FieldsConsumer;
+import codecs.FieldsProducer;
+import codecs.PostingsFormat;
+import codecs.lucene41.Lucene41PostingsFormat; // javadocs
+import index.DocsAndPositionsEnum;
+import index.DocsEnum;
+import index.FieldInfo.IndexOptions;
+import index.FieldInfo;
+import index.Fields;
+import index.OrdTermState;
+import index.SegmentReadState;
+import index.SegmentWriteState;
+import index.TermState;
+import index.Terms;
+import index.TermsEnum;
+import store.IOContext;
+import store.RAMOutputStream;
+import util.ArrayUtil;
+import util.Bits;
+import util.BytesRef;
+import util.RamUsageEstimator;
+import util.automaton.CompiledAutomaton;
+import util.automaton.RunAutomaton;
+import util.automaton.Transition;
 
 // TODO: 
 //   - build depth-N prefix hash?

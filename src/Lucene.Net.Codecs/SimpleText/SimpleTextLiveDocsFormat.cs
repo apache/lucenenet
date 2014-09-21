@@ -1,188 +1,215 @@
-package org.apache.lucene.codecs.simpletext;
+﻿/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-import java.io.IOException;
-import java.util.BitSet;
-import java.util.Collection;
+    using System;
+    using System.Diagnostics;
+    using System.Collections;
+    using System.Collections.Generic;
+    using Support;
 
-import org.apache.lucene.codecs.LiveDocsFormat;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.SegmentCommitInfo;
-import org.apache.lucene.store.ChecksumIndexInput;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.CharsRef;
-import org.apache.lucene.util.IOUtils;
-import org.apache.lucene.util.MutableBits;
-import org.apache.lucene.util.StringHelper;
-import org.apache.lucene.util.UnicodeUtil;
+	using IndexFileNames = Index.IndexFileNames;
+	using SegmentCommitInfo = Index.SegmentCommitInfo;
+	using ChecksumIndexInput = Store.ChecksumIndexInput;
+	using Directory = Store.Directory;
+	using IOContext = Store.IOContext;
+	using IndexOutput = Store.IndexOutput;
+	using ArrayUtil = Util.ArrayUtil;
+	using Bits = Util.Bits;
+	using BytesRef = Util.BytesRef;
+	using CharsRef = Util.CharsRef;
+	using IOUtils = Util.IOUtils;
+	using MutableBits = Util.MutableBits;
+	using StringHelper = Util.StringHelper;
+	using UnicodeUtil = Util.UnicodeUtil;
 
-/**
- * reads/writes plaintext live docs
- * <p>
- * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
- * @lucene.experimental
- */
-public class SimpleTextLiveDocsFormat extends LiveDocsFormat {
+    /// <summary>
+    /// reads/writes plaintext live docs
+    /// <para>
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    public class SimpleTextLiveDocsFormat : LiveDocsFormat
+    {
 
-  static final String LIVEDOCS_EXTENSION = "liv";
-  
-  final static BytesRef SIZE             = new BytesRef("size ");
-  final static BytesRef DOC              = new BytesRef("  doc ");
-  final static BytesRef END              = new BytesRef("END");
-  
-  @Override
-  public MutableBits newLiveDocs(int size)  {
-    return new SimpleTextMutableBits(size);
-  }
+        internal const string LIVEDOCS_EXTENSION = "liv";
 
-  @Override
-  public MutableBits newLiveDocs(Bits existing)  {
-    final SimpleTextBits bits = (SimpleTextBits) existing;
-    return new SimpleTextMutableBits((BitSet)bits.bits.clone(), bits.size);
-  }
+        internal static readonly BytesRef SIZE = new BytesRef("size ");
+        internal static readonly BytesRef DOC = new BytesRef("  doc ");
+        internal static readonly BytesRef END = new BytesRef("END");
 
-  @Override
-  public Bits readLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)  {
-    Debug.Assert( info.hasDeletions();
-    BytesRef scratch = new BytesRef();
-    CharsRef scratchUTF16 = new CharsRef();
-    
-    String fileName = IndexFileNames.fileNameFromGeneration(info.info.name, LIVEDOCS_EXTENSION, info.getDelGen());
-    ChecksumIndexInput in = null;
-    bool success = false;
-    try {
-      in = dir.openChecksumInput(fileName, context);
-      
-      SimpleTextUtil.readLine(in, scratch);
-      Debug.Assert( StringHelper.startsWith(scratch, SIZE);
-      int size = parseIntAt(scratch, SIZE.length, scratchUTF16);
-      
-      BitSet bits = new BitSet(size);
-      
-      SimpleTextUtil.readLine(in, scratch);
-      while (!scratch.equals(END)) {
-        Debug.Assert( StringHelper.startsWith(scratch, DOC);
-        int docid = parseIntAt(scratch, DOC.length, scratchUTF16);
-        bits.set(docid);
-        SimpleTextUtil.readLine(in, scratch);
-      }
-      
-      SimpleTextUtil.checkFooter(in);
-      
-      success = true;
-      return new SimpleTextBits(bits, size);
-    } finally {
-      if (success) {
-        IOUtils.close(in);
-      } else {
-        IOUtils.closeWhileHandlingException(in);
-      }
+        public override MutableBits NewLiveDocs(int size)
+        {
+            return new SimpleTextMutableBits(size);
+        }
+
+        public override MutableBits NewLiveDocs(Bits existing)
+        {
+            var bits = (SimpleTextBits) existing;
+            return new SimpleTextMutableBits((BitArray) bits.BITS.Clone(), bits.SIZE);
+        }
+
+        public override Bits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
+        {
+            Debug.Assert(info.HasDeletions());
+            var scratch = new BytesRef();
+            var scratchUtf16 = new CharsRef();
+
+            var fileName = IndexFileNames.FileNameFromGeneration(info.Info.Name, LIVEDOCS_EXTENSION, info.DelGen);
+            ChecksumIndexInput input = null;
+            var success = false;
+
+            try
+            {
+                input = dir.OpenChecksumInput(fileName, context);
+
+                SimpleTextUtil.ReadLine(input, scratch);
+                Debug.Assert(StringHelper.StartsWith(scratch, SIZE));
+                var size = ParseIntAt(scratch, SIZE.Length, scratchUtf16);
+
+                var bits = new BitArray(size);
+
+                SimpleTextUtil.ReadLine(input, scratch);
+                while (!scratch.Equals(END))
+                {
+                    Debug.Assert(StringHelper.StartsWith(scratch, DOC));
+                    var docid = ParseIntAt(scratch, DOC.Length, scratchUtf16);
+                    bits.Set(docid, true);
+                    SimpleTextUtil.ReadLine(input, scratch);
+                }
+
+                SimpleTextUtil.CheckFooter(input);
+
+                success = true;
+                return new SimpleTextBits(bits, size);
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Close(input);
+                }
+                else
+                {
+                    IOUtils.CloseWhileHandlingException(input);
+                }
+            }
+        }
+
+        private static int ParseIntAt(BytesRef bytes, int offset, CharsRef scratch)
+        {
+            UnicodeUtil.UTF8toUTF16(bytes.Bytes, bytes.Offset + offset, bytes.Length - offset, scratch);
+            return ArrayUtil.ParseInt(scratch.Chars, 0, scratch.length);
+        }
+
+        public override void WriteLiveDocs(MutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount,
+            IOContext context)
+        {
+            var set = ((SimpleTextBits) bits).BITS;
+            var size = bits.Length();
+            var scratch = new BytesRef();
+
+            var fileName = IndexFileNames.FileNameFromGeneration(info.Info.Name, LIVEDOCS_EXTENSION, info.NextDelGen);
+            IndexOutput output = null;
+            var success = false;
+            try
+            {
+                output = dir.CreateOutput(fileName, context);
+                SimpleTextUtil.Write(output, SIZE);
+                SimpleTextUtil.Write(output, Convert.ToString(size), scratch);
+                SimpleTextUtil.WriteNewline(output);
+
+                for (int i = set.NextSetBit(0); i >= 0; i = set.NextSetBit(i + 1))
+                {
+                    SimpleTextUtil.Write(output, DOC);
+                    SimpleTextUtil.Write(output, Convert.ToString(i), scratch);
+                    SimpleTextUtil.WriteNewline(output);
+                }
+
+                SimpleTextUtil.Write(output, END);
+                SimpleTextUtil.WriteNewline(output);
+                SimpleTextUtil.WriteChecksum(output, scratch);
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Close(output);
+                }
+                else
+                {
+                    IOUtils.CloseWhileHandlingException(output);
+                }
+            }
+        }
+
+        public override void Files(SegmentCommitInfo info, ICollection<string> files)
+        {
+            if (info.HasDeletions())
+            {
+                files.Add(IndexFileNames.FileNameFromGeneration(info.Info.Name, LIVEDOCS_EXTENSION, info.DelGen));
+            }
+        }
+
+        // read-only
+        internal class SimpleTextBits : Bits
+        {
+            internal readonly BitArray BITS;
+            internal readonly int SIZE;
+
+            internal SimpleTextBits(BitArray bits, int size)
+            {
+                BITS = bits;
+                SIZE = size;
+            }
+
+            public bool Get(int index)
+            {
+                return BITS.Get(index);
+            }
+
+            public int Length()
+            {
+                return SIZE;
+            }
+        }
+
+        // read-write
+        internal class SimpleTextMutableBits : SimpleTextBits, MutableBits
+        {
+
+            internal SimpleTextMutableBits(int size) : this(new BitArray(size), size)
+            {
+                BITS.Set(0, size);
+            }
+
+            internal SimpleTextMutableBits(BitArray bits, int size) : base(bits, size)
+            {
+            }
+
+            public void Clear(int bit)
+            {
+                BITS.Set(bit, false);
+            }
+        }
     }
-  }
-  
-  private int parseIntAt(BytesRef bytes, int offset, CharsRef scratch) {
-    UnicodeUtil.UTF8toUTF16(bytes.bytes, bytes.offset+offset, bytes.length-offset, scratch);
-    return ArrayUtil.parseInt(scratch.chars, 0, scratch.length);
-  }
 
-  @Override
-  public void writeLiveDocs(MutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context)  {
-    BitSet set = ((SimpleTextBits) bits).bits;
-    int size = bits.length();
-    BytesRef scratch = new BytesRef();
-    
-    String fileName = IndexFileNames.fileNameFromGeneration(info.info.name, LIVEDOCS_EXTENSION, info.getNextDelGen());
-    IndexOutput out = null;
-    bool success = false;
-    try {
-      out = dir.createOutput(fileName, context);
-      SimpleTextUtil.write(out, SIZE);
-      SimpleTextUtil.write(out, Integer.toString(size), scratch);
-      SimpleTextUtil.writeNewline(out);
-      
-      for (int i = set.nextSetBit(0); i >= 0; i=set.nextSetBit(i + 1)) { 
-        SimpleTextUtil.write(out, DOC);
-        SimpleTextUtil.write(out, Integer.toString(i), scratch);
-        SimpleTextUtil.writeNewline(out);
-      }
-      
-      SimpleTextUtil.write(out, END);
-      SimpleTextUtil.writeNewline(out);
-      SimpleTextUtil.writeChecksum(out, scratch);
-      success = true;
-    } finally {
-      if (success) {
-        IOUtils.close(out);
-      } else {
-        IOUtils.closeWhileHandlingException(out);
-      }
-    }
-  }
-
-  @Override
-  public void files(SegmentCommitInfo info, Collection<String> files)  {
-    if (info.hasDeletions()) {
-      files.add(IndexFileNames.fileNameFromGeneration(info.info.name, LIVEDOCS_EXTENSION, info.getDelGen()));
-    }
-  }
-  
-  // read-only
-  static class SimpleTextBits implements Bits {
-    final BitSet bits;
-    final int size;
-    
-    SimpleTextBits(BitSet bits, int size) {
-      this.bits = bits;
-      this.size = size;
-    }
-    
-    @Override
-    public bool get(int index) {
-      return bits.get(index);
-    }
-
-    @Override
-    public int length() {
-      return size;
-    }
-  }
-  
-  // read-write
-  static class SimpleTextMutableBits extends SimpleTextBits implements MutableBits {
-
-    SimpleTextMutableBits(int size) {
-      this(new BitSet(size), size);
-      bits.set(0, size);
-    }
-    
-    SimpleTextMutableBits(BitSet bits, int size) {
-      super(bits, size);
-    }
-    
-    @Override
-    public void clear(int bit) {
-      bits.clear(bit);
-    }
-  }
 }

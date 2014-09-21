@@ -1,6 +1,4 @@
-package org.apache.lucene.codecs.simpletext;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,29 +15,29 @@ package org.apache.lucene.codecs.simpletext;
  * limitations under the License.
  */
 
-import java.io.IOException;
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-import org.apache.lucene.codecs.FieldInfosFormat;
-import org.apache.lucene.codecs.FieldInfosReader;
-import org.apache.lucene.codecs.FieldInfosWriter;
+    /// <summary>
+    /// plaintext field infos format
+    /// <para>
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    public class SimpleTextFieldInfosFormat : FieldInfosFormat
+    {
+        private readonly FieldInfosReader _reader = new SimpleTextFieldInfosReader();
+        private readonly FieldInfosWriter _writer = new SimpleTextFieldInfosWriter();
 
-/**
- * plaintext field infos format
- * <p>
- * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
- * @lucene.experimental
- */
-public class SimpleTextFieldInfosFormat extends FieldInfosFormat {
-  private final FieldInfosReader reader = new SimpleTextFieldInfosReader();
-  private final FieldInfosWriter writer = new SimpleTextFieldInfosWriter();
+        public override FieldInfosReader FieldInfosReader
+        {
+            get { return _reader; }
+        }
 
-  @Override
-  public FieldInfosReader getFieldInfosReader()  {
-    return reader;
-  }
-
-  @Override
-  public FieldInfosWriter getFieldInfosWriter()  {
-    return writer;
-  }
+        public override FieldInfosWriter FieldInfosWriter
+        {
+            get { return _writer; }
+        }
+    }
 }

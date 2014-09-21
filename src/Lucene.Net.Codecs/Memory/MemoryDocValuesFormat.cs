@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,12 +19,12 @@ package org.apache.lucene.codecs.memory;
 
 import java.io.IOException;
 
-import org.apache.lucene.codecs.DocValuesConsumer;
-import org.apache.lucene.codecs.DocValuesProducer;
-import org.apache.lucene.codecs.DocValuesFormat;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.util.packed.PackedInts;
+import codecs.DocValuesConsumer;
+import codecs.DocValuesProducer;
+import codecs.DocValuesFormat;
+import index.SegmentReadState;
+import index.SegmentWriteState;
+import util.packed.PackedInts;
 
 /** In-memory docvalues format */
 public class MemoryDocValuesFormat extends DocValuesFormat {

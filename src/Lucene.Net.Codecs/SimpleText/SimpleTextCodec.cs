@@ -1,6 +1,4 @@
-package org.apache.lucene.codecs.simpletext;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,73 +15,70 @@ package org.apache.lucene.codecs.simpletext;
  * limitations under the License.
  */
 
-import org.apache.lucene.codecs.Codec;
-import org.apache.lucene.codecs.FieldInfosFormat;
-import org.apache.lucene.codecs.LiveDocsFormat;
-import org.apache.lucene.codecs.PostingsFormat;
-import org.apache.lucene.codecs.SegmentInfoFormat;
-import org.apache.lucene.codecs.DocValuesFormat;
-import org.apache.lucene.codecs.NormsFormat;
-import org.apache.lucene.codecs.StoredFieldsFormat;
-import org.apache.lucene.codecs.TermVectorsFormat;
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-/**
- * plain text index format.
- * <p>
- * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
- * @lucene.experimental
- */
-public final class SimpleTextCodec extends Codec {
-  private final PostingsFormat postings = new SimpleTextPostingsFormat();
-  private final StoredFieldsFormat storedFields = new SimpleTextStoredFieldsFormat();
-  private final SegmentInfoFormat segmentInfos = new SimpleTextSegmentInfoFormat();
-  private final FieldInfosFormat fieldInfosFormat = new SimpleTextFieldInfosFormat();
-  private final TermVectorsFormat vectorsFormat = new SimpleTextTermVectorsFormat();
-  private final NormsFormat normsFormat = new SimpleTextNormsFormat();
-  private final LiveDocsFormat liveDocs = new SimpleTextLiveDocsFormat();
-  private final DocValuesFormat dvFormat = new SimpleTextDocValuesFormat();
-  
-  public SimpleTextCodec() {
-    super("SimpleText");
-  }
-  
-  @Override
-  public PostingsFormat postingsFormat() {
-    return postings;
-  }
+	/// <summary>
+	/// plain text index format.
+	/// <para>
+	/// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+	/// @lucene.experimental
+	/// </para>
+	/// </summary>
+	public sealed class SimpleTextCodec : Codec
+	{
+	  private readonly PostingsFormat _postings = new SimpleTextPostingsFormat();
+	  private readonly StoredFieldsFormat _storedFields = new SimpleTextStoredFieldsFormat();
+	  private readonly SegmentInfoFormat _segmentInfos = new SimpleTextSegmentInfoFormat();
+	  private readonly FieldInfosFormat _fieldInfosFormatRenamed = new SimpleTextFieldInfosFormat();
+	  private readonly TermVectorsFormat _vectorsFormat = new SimpleTextTermVectorsFormat();
+	  private readonly NormsFormat _normsFormatRenamed = new SimpleTextNormsFormat();
+	  private readonly LiveDocsFormat _liveDocs = new SimpleTextLiveDocsFormat();
+	  private readonly DocValuesFormat _dvFormat = new SimpleTextDocValuesFormat();
 
-  @Override
-  public StoredFieldsFormat storedFieldsFormat() {
-    return storedFields;
-  }
-  
-  @Override
-  public TermVectorsFormat termVectorsFormat() {
-    return vectorsFormat;
-  }
-  
-  @Override
-  public FieldInfosFormat fieldInfosFormat() {
-    return fieldInfosFormat;
-  }
+	  public SimpleTextCodec() : base("SimpleText")
+	  {
+	  }
 
-  @Override
-  public SegmentInfoFormat segmentInfoFormat() {
-    return segmentInfos;
-  }
+	  public override PostingsFormat PostingsFormat()
+	  {
+		return _postings;
+	  }
 
-  @Override
-  public NormsFormat normsFormat() {
-    return normsFormat;
-  }
-  
-  @Override
-  public LiveDocsFormat liveDocsFormat() {
-    return liveDocs;
-  }
+	  public override StoredFieldsFormat StoredFieldsFormat()
+	  {
+		return _storedFields;
+	  }
 
-  @Override
-  public DocValuesFormat docValuesFormat() {
-    return dvFormat;
-  }
+	  public override TermVectorsFormat TermVectorsFormat()
+	  {
+		return _vectorsFormat;
+	  }
+
+	  public override FieldInfosFormat FieldInfosFormat()
+	  {
+		return _fieldInfosFormatRenamed;
+	  }
+
+	  public override SegmentInfoFormat SegmentInfoFormat()
+	  {
+		return _segmentInfos;
+	  }
+
+	  public override NormsFormat NormsFormat()
+	  {
+		return _normsFormatRenamed;
+	  }
+
+	  public override LiveDocsFormat LiveDocsFormat()
+	  {
+		return _liveDocs;
+	  }
+
+	  public override DocValuesFormat DocValuesFormat()
+	  {
+		return _dvFormat;
+	  }
+	}
+
 }

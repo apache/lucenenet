@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,28 +22,28 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import org.apache.lucene.index.FieldInfo.IndexOptions;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.store.DataOutput;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.store.RAMOutputStream;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.IOUtils;
-import org.apache.lucene.util.IntsRef;
-import org.apache.lucene.util.fst.Builder;
-import org.apache.lucene.util.fst.FST;
-import org.apache.lucene.util.fst.Util;
-import org.apache.lucene.codecs.BlockTermState;
-import org.apache.lucene.codecs.PostingsWriterBase;
-import org.apache.lucene.codecs.PostingsConsumer;
-import org.apache.lucene.codecs.FieldsConsumer;
-import org.apache.lucene.codecs.TermsConsumer;
-import org.apache.lucene.codecs.TermStats;
-import org.apache.lucene.codecs.CodecUtil;
+import index.FieldInfo.IndexOptions;
+import index.FieldInfo;
+import index.FieldInfos;
+import index.IndexFileNames;
+import index.SegmentWriteState;
+import store.DataOutput;
+import store.IndexOutput;
+import store.RAMOutputStream;
+import util.ArrayUtil;
+import util.BytesRef;
+import util.IOUtils;
+import util.IntsRef;
+import util.fst.Builder;
+import util.fst.FST;
+import util.fst.Util;
+import codecs.BlockTermState;
+import codecs.PostingsWriterBase;
+import codecs.PostingsConsumer;
+import codecs.FieldsConsumer;
+import codecs.TermsConsumer;
+import codecs.TermStats;
+import codecs.CodecUtil;
 
 /**
  * FST-based term dict, using metadata as FST output.

@@ -1,6 +1,4 @@
-package org.apache.lucene.codecs.simpletext;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,31 +15,33 @@ package org.apache.lucene.codecs.simpletext;
  * limitations under the License.
  */
 
-import java.io.IOException;
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-import org.apache.lucene.codecs.StoredFieldsFormat;
-import org.apache.lucene.codecs.StoredFieldsReader;
-import org.apache.lucene.codecs.StoredFieldsWriter;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.SegmentInfo;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.IOContext;
+    using FieldInfos = Index.FieldInfos;
+    using SegmentInfo = Index.SegmentInfo;
+    using Directory = Store.Directory;
+    using IOContext = Store.IOContext;
 
-/**
- * plain text stored fields format.
- * <p>
- * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
- * @lucene.experimental
- */
-public class SimpleTextStoredFieldsFormat extends StoredFieldsFormat {
+    /// <summary>
+    /// plain text stored fields format.
+    /// <para>
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    public class SimpleTextStoredFieldsFormat : StoredFieldsFormat
+    {
 
-  @Override
-  public StoredFieldsReader fieldsReader(Directory directory, SegmentInfo si, FieldInfos fn, IOContext context)  {;
-    return new SimpleTextStoredFieldsReader(directory, si, fn, context);
-  }
+        public override StoredFieldsReader FieldsReader(Directory directory, SegmentInfo si, FieldInfos fn,
+            IOContext context)
+        {
+            return new SimpleTextStoredFieldsReader(directory, si, fn, context);
+        }
 
-  @Override
-  public StoredFieldsWriter fieldsWriter(Directory directory, SegmentInfo si, IOContext context)  {
-    return new SimpleTextStoredFieldsWriter(directory, si.name, context);
-  }
+        public override StoredFieldsWriter FieldsWriter(Directory directory, SegmentInfo si, IOContext context)
+        {
+            return new SimpleTextStoredFieldsWriter(directory, si.Name, context);
+        }
+    }
 }

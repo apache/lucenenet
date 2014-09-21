@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,36 +25,36 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-import org.apache.lucene.codecs.BlockTermState;
-import org.apache.lucene.codecs.CodecUtil;
-import org.apache.lucene.codecs.FieldsProducer;
-import org.apache.lucene.codecs.PostingsReaderBase;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.DocsAndPositionsEnum;
-import org.apache.lucene.index.DocsEnum;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.SegmentInfo;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.TermState;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.store.ByteArrayDataInput;
-import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.IOUtils;
-import org.apache.lucene.util.RamUsageEstimator;
-import org.apache.lucene.util.automaton.ByteRunAutomaton;
-import org.apache.lucene.util.automaton.CompiledAutomaton;
-import org.apache.lucene.util.fst.BytesRefFSTEnum.InputOutput;
-import org.apache.lucene.util.fst.BytesRefFSTEnum;
-import org.apache.lucene.util.fst.FST;
-import org.apache.lucene.util.fst.Outputs;
-import org.apache.lucene.util.fst.Util;
+import codecs.BlockTermState;
+import codecs.CodecUtil;
+import codecs.FieldsProducer;
+import codecs.PostingsReaderBase;
+import index.CorruptIndexException;
+import index.DocsAndPositionsEnum;
+import index.DocsEnum;
+import index.FieldInfo.IndexOptions;
+import index.FieldInfo;
+import index.FieldInfos;
+import index.IndexFileNames;
+import index.SegmentInfo;
+import index.SegmentReadState;
+import index.TermState;
+import index.Terms;
+import index.TermsEnum;
+import store.ByteArrayDataInput;
+import store.IndexInput;
+import util.ArrayUtil;
+import util.Bits;
+import util.BytesRef;
+import util.IOUtils;
+import util.RamUsageEstimator;
+import util.automaton.ByteRunAutomaton;
+import util.automaton.CompiledAutomaton;
+import util.fst.BytesRefFSTEnum.InputOutput;
+import util.fst.BytesRefFSTEnum;
+import util.fst.FST;
+import util.fst.Outputs;
+import util.fst.Util;
 
 /**
  * FST-based terms dictionary reader.

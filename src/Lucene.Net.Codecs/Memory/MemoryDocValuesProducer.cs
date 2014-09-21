@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,41 +23,41 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.lucene.codecs.CodecUtil;
-import org.apache.lucene.codecs.DocValuesProducer;
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.DocValues;
-import org.apache.lucene.index.DocsAndPositionsEnum;
-import org.apache.lucene.index.DocsEnum;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.store.ByteArrayDataInput;
-import org.apache.lucene.store.ChecksumIndexInput;
-import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.FixedBitSet;
-import org.apache.lucene.util.IOUtils;
-import org.apache.lucene.util.IntsRef;
-import org.apache.lucene.util.PagedBytes;
-import org.apache.lucene.util.RamUsageEstimator;
-import org.apache.lucene.util.fst.BytesRefFSTEnum;
-import org.apache.lucene.util.fst.BytesRefFSTEnum.InputOutput;
-import org.apache.lucene.util.fst.FST;
-import org.apache.lucene.util.fst.FST.Arc;
-import org.apache.lucene.util.fst.FST.BytesReader;
-import org.apache.lucene.util.fst.PositiveIntOutputs;
-import org.apache.lucene.util.fst.Util;
-import org.apache.lucene.util.packed.BlockPackedReader;
-import org.apache.lucene.util.packed.MonotonicBlockPackedReader;
-import org.apache.lucene.util.packed.PackedInts;
+import codecs.CodecUtil;
+import codecs.DocValuesProducer;
+import index.BinaryDocValues;
+import index.CorruptIndexException;
+import index.DocValues;
+import index.DocsAndPositionsEnum;
+import index.DocsEnum;
+import index.FieldInfo;
+import index.FieldInfos;
+import index.IndexFileNames;
+import index.NumericDocValues;
+import index.SegmentReadState;
+import index.SortedDocValues;
+import index.SortedSetDocValues;
+import index.TermsEnum;
+import store.ByteArrayDataInput;
+import store.ChecksumIndexInput;
+import store.IndexInput;
+import util.Bits;
+import util.BytesRef;
+import util.FixedBitSet;
+import util.IOUtils;
+import util.IntsRef;
+import util.PagedBytes;
+import util.RamUsageEstimator;
+import util.fst.BytesRefFSTEnum;
+import util.fst.BytesRefFSTEnum.InputOutput;
+import util.fst.FST;
+import util.fst.FST.Arc;
+import util.fst.FST.BytesReader;
+import util.fst.PositiveIntOutputs;
+import util.fst.Util;
+import util.packed.BlockPackedReader;
+import util.packed.MonotonicBlockPackedReader;
+import util.packed.PackedInts;
 
 /**
  * Reader for {@link MemoryDocValuesFormat}

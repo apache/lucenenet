@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,28 +18,32 @@
 namespace Lucene.Net.Codecs.SimpleText
 {
 
-    using System;
-    using Lucene.Net.Index;
-    using Lucene.Net.Store;
-    using Lucene.Net.Util;
+    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using ChecksumIndexInput = Store.ChecksumIndexInput;
+    using DataInput = Store.DataInput;
+    using DataOutput = Store.DataOutput;
+    using IndexOutput = Store.IndexOutput;
+    using BytesRef = Util.BytesRef;
+    using StringHelper = Util.StringHelper;
+    using UnicodeUtil = Util.UnicodeUtil;
 
-    public static class SimpleTextUtil
+    internal class SimpleTextUtil
     {
-        public const byte NEWLINE = 10;
-        public const byte ESCAPE = 92;
-        public static BytesRef CHECKSUM = new BytesRef("checksum ");
+        public const sbyte NEWLINE = 10;
+        public const sbyte ESCAPE = 92;
+        internal static readonly BytesRef CHECKSUM = new BytesRef("checksum ");
 
-        public static void Write(DataOutput output, String s, BytesRef scratch)
+        public static void Write(DataOutput output, string s, BytesRef scratch)
         {
-            UnicodeUtil.UTF16toUTF8(s, 0, s.Length, scratch);
+            UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, scratch);
             Write(output, scratch);
         }
 
         public static void Write(DataOutput output, BytesRef b)
         {
-            for (int i = 0; i < b.Length; i++)
+            for (var i = 0; i < b.Length; i++)
             {
-                sbyte bx = b.Bytes[b.Offset + i];
+                var bx = b.Bytes[b.Offset + i];
                 if (bx == NEWLINE || bx == ESCAPE)
                 {
                     output.WriteByte(ESCAPE);
@@ -55,17 +59,17 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public static void ReadLine(DataInput input, BytesRef scratch)
         {
-            int upto = 0;
+            var upto = 0;
             while (true)
             {
-                byte b = input.ReadByte();
+                var b = input.ReadSByte();
                 if (scratch.Bytes.Length == upto)
                 {
                     scratch.Grow(1 + upto);
                 }
                 if (b == ESCAPE)
                 {
-                    scratch.Bytes[upto++] = input.ReadByte();
+                    scratch.Bytes[upto++] = input.ReadSByte();
                 }
                 else
                 {
@@ -88,29 +92,29 @@ namespace Lucene.Net.Codecs.SimpleText
             // Pad with zeros so different checksum values use the
             // same number of bytes
             // (BaseIndexFileFormatTestCase.testMergeStability cares):
-            String checksum = String.Format(Locale.ROOT, "%020d", output.Checksum);
-            SimpleTextUtil.Write(output, CHECKSUM);
-            SimpleTextUtil.Write(output, checksum, scratch);
-            SimpleTextUtil.WriteNewline(output);
+            var checksum = string.Format("{0:D}", output.Checksum);
+            Write(output, CHECKSUM);
+            Write(output, checksum, scratch);
+            WriteNewline(output);
         }
 
         public static void CheckFooter(ChecksumIndexInput input)
         {
-            BytesRef scratch = new BytesRef();
-            String expectedChecksum = String.Format(Locale.ROOT, "%020d", input.Checksum);
-            SimpleTextUtil.ReadLine(input, scratch);
+            var scratch = new BytesRef();
+            var expectedChecksum = string.Format("{0:D}", input.Checksum);
+            ReadLine(input, scratch);
+
             if (StringHelper.StartsWith(scratch, CHECKSUM) == false)
             {
                 throw new CorruptIndexException("SimpleText failure: expected checksum line but got " +
                                                 scratch.Utf8ToString() + " (resource=" + input + ")");
             }
-            String actualChecksum =
-                new BytesRef(scratch.Bytes, CHECKSUM.Length, scratch.Length - CHECKSUM.Length).Utf8ToString();
+            var actualChecksum =
+                (new BytesRef(scratch.Bytes, CHECKSUM.Length, scratch.Length - CHECKSUM.Length)).Utf8ToString();
             if (!expectedChecksum.Equals(actualChecksum))
             {
                 throw new CorruptIndexException("SimpleText checksum failure: " + actualChecksum + " != " +
-                                                expectedChecksum +
-                                                " (resource=" + input + ")");
+                                                expectedChecksum + " (resource=" + input + ")");
             }
             if (input.Length() != input.FilePointer)
             {

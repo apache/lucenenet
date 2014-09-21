@@ -27,16 +27,16 @@ namespace Lucene.Net.Store
     /// are created.  Once a file is created it may only be opened for read, or
     /// deleted.  Random access is permitted both when reading and writing.
     ///
-    /// <p> Java's i/o APIs not used directly, but rather all i/o is
+    /// Java's i/o APIs not used directly, but rather all i/o is
     /// through this API.  this permits things such as: <ul>
-    /// <li> implementation of RAM-based indices;
-    /// <li> implementation indices stored in a database, via JDBC;
-    /// <li> implementation of an index as a single file;
+    /// <li> implementation of RAM-based indices;</li>
+    /// <li> implementation indices stored in a database, via JDBC;</li>
+    /// <li> implementation of an index as a single file;</li>
     /// </ul>
     ///
     /// Directory locking is implemented by an instance of {@link
     /// LockFactory}, and can be changed for each Directory
-    /// instance using <seealso cref="#setLockFactory"/>.
+    /// instance using <seealso cref="setLockFactory"/>.
     ///
     /// </summary>
     public abstract class Directory : IDisposable

@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.sep;
+package codecs.sep;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,9 +20,9 @@ package org.apache.lucene.codecs.sep;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.codecs.MultiLevelSkipListWriter;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
+import store.IndexOutput;
+import codecs.MultiLevelSkipListWriter;
+import index.FieldInfo.IndexOptions;
 
 // TODO: -- skip data should somehow be more local to the
 // particular stream (doc, freq, pos, payload)

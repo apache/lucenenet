@@ -118,6 +118,7 @@
     <Compile Include="SimpleText\SimpleTextTermVectorsReader.cs" />
     <Compile Include="SimpleText\SimpleTextTermVectorsWriter.cs" />
     <Compile Include="SimpleText\SimpleTextUtil.cs" />
+    <Compile Include="StringHelperClass.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

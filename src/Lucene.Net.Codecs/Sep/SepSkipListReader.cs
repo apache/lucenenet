@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.sep;
+package codecs.sep;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,9 +20,9 @@ package org.apache.lucene.codecs.sep;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.codecs.MultiLevelSkipListReader;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
+import store.IndexInput;
+import codecs.MultiLevelSkipListReader;
+import index.FieldInfo.IndexOptions;
 
 /**
  * Implements the skip list reader for the default posting list format

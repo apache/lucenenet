@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.sep;
+package codecs.sep;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,26 +19,26 @@ package org.apache.lucene.codecs.sep;
 
 import java.io.IOException;
 
-import org.apache.lucene.codecs.BlockTermState;
-import org.apache.lucene.codecs.CodecUtil;
-import org.apache.lucene.codecs.PostingsReaderBase;
-import org.apache.lucene.index.DocsAndPositionsEnum;
-import org.apache.lucene.index.DocsEnum;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.SegmentInfo;
-import org.apache.lucene.index.TermState;
-import org.apache.lucene.store.ByteArrayDataInput;
-import org.apache.lucene.store.DataInput;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.IOUtils;
+import codecs.BlockTermState;
+import codecs.CodecUtil;
+import codecs.PostingsReaderBase;
+import index.DocsAndPositionsEnum;
+import index.DocsEnum;
+import index.FieldInfo.IndexOptions;
+import index.FieldInfo;
+import index.FieldInfos;
+import index.IndexFileNames;
+import index.SegmentInfo;
+import index.TermState;
+import store.ByteArrayDataInput;
+import store.DataInput;
+import store.Directory;
+import store.IOContext;
+import store.IndexInput;
+import util.ArrayUtil;
+import util.Bits;
+import util.BytesRef;
+import util.IOUtils;
 
 /** Concrete class that reads the current doc/freq/skip
  *  postings format.    

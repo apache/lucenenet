@@ -1,6 +1,4 @@
-package org.apache.lucene.codecs.simpletext;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,29 +15,33 @@ package org.apache.lucene.codecs.simpletext;
  * limitations under the License.
  */
 
-import org.apache.lucene.codecs.SegmentInfoFormat;
-import org.apache.lucene.codecs.SegmentInfoReader;
-import org.apache.lucene.codecs.SegmentInfoWriter;
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-/**
- * plain text segments file format.
- * <p>
- * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
- * @lucene.experimental
- */
-public class SimpleTextSegmentInfoFormat extends SegmentInfoFormat {
-  private final SegmentInfoReader reader = new SimpleTextSegmentInfoReader();
-  private final SegmentInfoWriter writer = new SimpleTextSegmentInfoWriter();
+	/// <summary>
+	/// plain text segments file format.
+	/// <para>
+	/// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+	/// @lucene.experimental
+	/// </para>
+	/// </summary>
+	public class SimpleTextSegmentInfoFormat : SegmentInfoFormat
+	{
+	  private readonly SegmentInfoReader _reader = new SimpleTextSegmentInfoReader();
+	  private readonly SegmentInfoWriter _writer = new SimpleTextSegmentInfoWriter();
 
-  public static final String SI_EXTENSION = "si";
-  
-  @Override
-  public SegmentInfoReader getSegmentInfoReader() {
-    return reader;
-  }
+	  public const string SI_EXTENSION = "si";
 
-  @Override
-  public SegmentInfoWriter getSegmentInfoWriter() {
-    return writer;
-  }
+	  public override SegmentInfoReader SegmentInfoReader
+	  {
+	      get { return _reader; }
+	  }
+
+	  public override SegmentInfoWriter SegmentInfoWriter
+	  {
+	      get { return _writer; }
+	  }
+
+	}
+
 }

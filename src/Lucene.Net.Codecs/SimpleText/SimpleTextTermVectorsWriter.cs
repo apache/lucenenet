@@ -1,6 +1,4 @@
-package org.apache.lucene.codecs.simpletext;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,193 +15,224 @@ package org.apache.lucene.codecs.simpletext;
  * limitations under the License.
  */
 
-import java.io.IOException;
-import java.util.Comparator;
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-import org.apache.lucene.codecs.TermVectorsWriter;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.IOUtils;
+    using System;
+    using System.Diagnostics;
+    using System.Collections.Generic;
+    using FieldInfo = Index.FieldInfo;
+    using FieldInfos = Index.FieldInfos;
+    using IndexFileNames = Index.IndexFileNames;
+    using Directory = Store.Directory;
+    using IOContext = Store.IOContext;
+    using IndexOutput = Store.IndexOutput;
+    using BytesRef = Util.BytesRef;
+    using IOUtils = Util.IOUtils;
 
-/**
- * Writes plain-text term vectors.
- * <p>
- * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
- * @lucene.experimental
- */
-public class SimpleTextTermVectorsWriter extends TermVectorsWriter {
-  
-  static final BytesRef END                = new BytesRef("END");
-  static final BytesRef DOC                = new BytesRef("doc ");
-  static final BytesRef NUMFIELDS          = new BytesRef("  numfields ");
-  static final BytesRef FIELD              = new BytesRef("  field ");
-  static final BytesRef FIELDNAME          = new BytesRef("    name ");
-  static final BytesRef FIELDPOSITIONS     = new BytesRef("    positions ");
-  static final BytesRef FIELDOFFSETS       = new BytesRef("    offsets   ");
-  static final BytesRef FIELDPAYLOADS      = new BytesRef("    payloads  ");
-  static final BytesRef FIELDTERMCOUNT     = new BytesRef("    numterms ");
-  static final BytesRef TERMTEXT           = new BytesRef("    term ");
-  static final BytesRef TERMFREQ           = new BytesRef("      freq ");
-  static final BytesRef POSITION           = new BytesRef("      position ");
-  static final BytesRef PAYLOAD            = new BytesRef("        payload ");
-  static final BytesRef STARTOFFSET        = new BytesRef("        startoffset ");
-  static final BytesRef ENDOFFSET          = new BytesRef("        endoffset ");
+    /// <summary>
+    /// Writes plain-text term vectors.
+    /// <para>
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    public class SimpleTextTermVectorsWriter : TermVectorsWriter
+    {
 
-  static final String VECTORS_EXTENSION = "vec";
-  
-  private final Directory directory;
-  private final String segment;
-  private IndexOutput out;
-  private int numDocsWritten = 0;
-  private final BytesRef scratch = new BytesRef();
-  private bool offsets;
-  private bool positions;
-  private bool payloads;
+        internal static readonly BytesRef END = new BytesRef("END");
+        internal static readonly BytesRef DOC = new BytesRef("doc ");
+        internal static readonly BytesRef NUMFIELDS = new BytesRef("  numfields ");
+        internal static readonly BytesRef FIELD = new BytesRef("  field ");
+        internal static readonly BytesRef FIELDNAME = new BytesRef("    name ");
+        internal static readonly BytesRef FIELDPOSITIONS = new BytesRef("    positions ");
+        internal static readonly BytesRef FIELDOFFSETS = new BytesRef("    offsets   ");
+        internal static readonly BytesRef FIELDPAYLOADS = new BytesRef("    payloads  ");
+        internal static readonly BytesRef FIELDTERMCOUNT = new BytesRef("    numterms ");
+        internal static readonly BytesRef TERMTEXT = new BytesRef("    term ");
+        internal static readonly BytesRef TERMFREQ = new BytesRef("      freq ");
+        internal static readonly BytesRef POSITION = new BytesRef("      position ");
+        internal static readonly BytesRef PAYLOAD = new BytesRef("        payload ");
+        internal static readonly BytesRef STARTOFFSET = new BytesRef("        startoffset ");
+        internal static readonly BytesRef ENDOFFSET = new BytesRef("        endoffset ");
 
-  public SimpleTextTermVectorsWriter(Directory directory, String segment, IOContext context)  {
-    this.directory = directory;
-    this.segment = segment;
-    bool success = false;
-    try {
-      out = directory.createOutput(IndexFileNames.segmentFileName(segment, "", VECTORS_EXTENSION), context);
-      success = true;
-    } finally {
-      if (!success) {
-        abort();
-      }
-    }
-  }
-  
-  @Override
-  public void startDocument(int numVectorFields)  {
-    write(DOC);
-    write(Integer.toString(numDocsWritten));
-    newLine();
-    
-    write(NUMFIELDS);
-    write(Integer.toString(numVectorFields));
-    newLine();
-    numDocsWritten++;
-  }
+        internal const string VECTORS_EXTENSION = "vec";
 
-  @Override
-  public void startField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)  {  
-    write(FIELD);
-    write(Integer.toString(info.number));
-    newLine();
-    
-    write(FIELDNAME);
-    write(info.name);
-    newLine();
-    
-    write(FIELDPOSITIONS);
-    write(bool.toString(positions));
-    newLine();
-    
-    write(FIELDOFFSETS);
-    write(bool.toString(offsets));
-    newLine();
-    
-    write(FIELDPAYLOADS);
-    write(bool.toString(payloads));
-    newLine();
-    
-    write(FIELDTERMCOUNT);
-    write(Integer.toString(numTerms));
-    newLine();
-    
-    this.positions = positions;
-    this.offsets = offsets;
-    this.payloads = payloads;
-  }
+        private readonly Directory directory;
+        private readonly string segment;
+        private IndexOutput _output;
+        private int numDocsWritten = 0;
+        private readonly BytesRef scratch = new BytesRef();
+        private bool offsets;
+        private bool positions;
+        private bool payloads;
 
-  @Override
-  public void startTerm(BytesRef term, int freq)  {
-    write(TERMTEXT);
-    write(term);
-    newLine();
-    
-    write(TERMFREQ);
-    write(Integer.toString(freq));
-    newLine();
-  }
-
-  @Override
-  public void addPosition(int position, int startOffset, int endOffset, BytesRef payload)  {
-    Debug.Assert( positions || offsets;
-    
-    if (positions) {
-      write(POSITION);
-      write(Integer.toString(position));
-      newLine();
-      
-      if (payloads) {
-        write(PAYLOAD);
-        if (payload != null) {
-          Debug.Assert( payload.length > 0;
-          write(payload);
+        public SimpleTextTermVectorsWriter(Directory directory, string segment, IOContext context)
+        {
+            this.directory = directory;
+            this.segment = segment;
+            bool success = false;
+            try
+            {
+                _output = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", VECTORS_EXTENSION), context);
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    Abort();
+                }
+            }
         }
-        newLine();
-      }
-    }
-    
-    if (offsets) {
-      write(STARTOFFSET);
-      write(Integer.toString(startOffset));
-      newLine();
-      
-      write(ENDOFFSET);
-      write(Integer.toString(endOffset));
-      newLine();
-    }
-  }
 
-  @Override
-  public void abort() {
-    try {
-      close();
-    } catch (Throwable ignored) {}
-    IOUtils.deleteFilesIgnoringExceptions(directory, IndexFileNames.segmentFileName(segment, "", VECTORS_EXTENSION));
-  }
+        public override void StartDocument(int numVectorFields)
+        {
+            Write(DOC);
+            Write(Convert.ToString(numDocsWritten));
+            NewLine();
 
-  @Override
-  public void finish(FieldInfos fis, int numDocs)  {
-    if (numDocsWritten != numDocs) {
-      throw new RuntimeException("mergeVectors produced an invalid result: mergedDocs is " + numDocs + " but vec numDocs is " + numDocsWritten + " file=" + out.toString() + "; now aborting this merge to prevent index corruption");
+            Write(NUMFIELDS);
+            Write(Convert.ToString(numVectorFields));
+            NewLine();
+            numDocsWritten++;
+        }
+
+        public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
+        {
+            Write(FIELD);
+            Write(Convert.ToString(info.Number));
+            NewLine();
+
+            Write(FIELDNAME);
+            Write(info.Name);
+            NewLine();
+
+            Write(FIELDPOSITIONS);
+            Write(Convert.ToString(positions));
+            NewLine();
+
+            Write(FIELDOFFSETS);
+            Write(Convert.ToString(offsets));
+            NewLine();
+
+            Write(FIELDPAYLOADS);
+            Write(Convert.ToString(payloads));
+            NewLine();
+
+            Write(FIELDTERMCOUNT);
+            Write(Convert.ToString(numTerms));
+            NewLine();
+
+            this.positions = positions;
+            this.offsets = offsets;
+            this.payloads = payloads;
+        }
+
+        public override void StartTerm(BytesRef term, int freq)
+        {
+            Write(TERMTEXT);
+            Write(term);
+            NewLine();
+
+            Write(TERMFREQ);
+            Write(Convert.ToString(freq));
+            NewLine();
+        }
+
+        public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
+        {
+            Debug.Assert(positions || offsets);
+
+            if (positions)
+            {
+                Write(POSITION);
+                Write(Convert.ToString(position));
+                NewLine();
+
+                if (payloads)
+                {
+                    Write(PAYLOAD);
+                    if (payload != null)
+                    {
+                        Debug.Assert(payload.Length > 0);
+                        Write(payload);
+                    }
+                    NewLine();
+                }
+            }
+
+            if (offsets)
+            {
+                Write(STARTOFFSET);
+                Write(Convert.ToString(startOffset));
+                NewLine();
+
+                Write(ENDOFFSET);
+                Write(Convert.ToString(endOffset));
+                NewLine();
+            }
+        }
+
+        public override void Abort()
+        {
+            try
+            {
+                Dispose();
+            }
+            finally
+            {
+
+                IOUtils.DeleteFilesIgnoringExceptions(directory,
+                    IndexFileNames.SegmentFileName(segment, "", VECTORS_EXTENSION));
+            }
+        }
+
+        public override void Finish(FieldInfos fis, int numDocs)
+        {
+            if (numDocsWritten != numDocs)
+            {
+                throw new Exception("mergeVectors produced an invalid result: mergedDocs is " + numDocs +
+                                    " but vec numDocs is " + numDocsWritten + " file=" + _output.ToString() +
+                                    "; now aborting this merge to prevent index corruption");
+            }
+            Write(END);
+            NewLine();
+            SimpleTextUtil.WriteChecksum(_output, scratch);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) return;
+
+            try
+            {
+                IOUtils.Close(_output);
+            }
+            finally
+            {
+                _output = null;
+            }
+        }
+
+        public override IComparer<BytesRef> Comparator
+        {
+            get { return BytesRef.UTF8SortedAsUnicodeComparer; }
+        }
+
+        private void Write(string s)
+        {
+            SimpleTextUtil.Write(_output, s, scratch);
+        }
+
+        private void Write(BytesRef bytes)
+        {
+            SimpleTextUtil.Write(_output, bytes);
+        }
+
+        private void NewLine()
+        {
+            SimpleTextUtil.WriteNewline(_output);
+        }
     }
-    write(END);
-    newLine();
-    SimpleTextUtil.writeChecksum(out, scratch);
-  }
-  
-  @Override
-  public void close()  {
-    try {
-      IOUtils.close(out);
-    } finally {
-      out = null;
-    }
-  }
-  
-  @Override
-  public Comparator<BytesRef> getComparator()  {
-    return BytesRef.getUTF8SortedAsUnicodeComparator();
-  }
-  
-  private void write(String s)  {
-    SimpleTextUtil.write(out, s, scratch);
-  }
-  
-  private void write(BytesRef bytes)  {
-    SimpleTextUtil.write(out, bytes);
-  }
-  
-  private void newLine()  {
-    SimpleTextUtil.writeNewline(out);
-  }
 }

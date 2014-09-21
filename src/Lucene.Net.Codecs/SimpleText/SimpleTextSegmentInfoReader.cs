@@ -1,6 +1,4 @@
-package org.apache.lucene.codecs.simpletext;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,104 +15,125 @@ package org.apache.lucene.codecs.simpletext;
  * limitations under the License.
  */
 
-import static org.apache.lucene.codecs.simpletext.SimpleTextSegmentInfoWriter.SI_DIAG_KEY;
-import static org.apache.lucene.codecs.simpletext.SimpleTextSegmentInfoWriter.SI_DIAG_VALUE;
-import static org.apache.lucene.codecs.simpletext.SimpleTextSegmentInfoWriter.SI_DOCCOUNT;
-import static org.apache.lucene.codecs.simpletext.SimpleTextSegmentInfoWriter.SI_FILE;
-import static org.apache.lucene.codecs.simpletext.SimpleTextSegmentInfoWriter.SI_NUM_DIAG;
-import static org.apache.lucene.codecs.simpletext.SimpleTextSegmentInfoWriter.SI_NUM_FILES;
-import static org.apache.lucene.codecs.simpletext.SimpleTextSegmentInfoWriter.SI_USECOMPOUND;
-import static org.apache.lucene.codecs.simpletext.SimpleTextSegmentInfoWriter.SI_VERSION;
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_DIAG_KEY;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_DIAG_VALUE;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_DOCCOUNT;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_FILE;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_NUM_DIAG;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_NUM_FILES;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_USECOMPOUND;
+////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
+//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_VERSION;
 
-import org.apache.lucene.codecs.SegmentInfoReader;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.SegmentInfo;
-import org.apache.lucene.store.ChecksumIndexInput;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.IOUtils;
-import org.apache.lucene.util.StringHelper;
 
-/**
- * reads plaintext segments files
- * <p>
- * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
- * @lucene.experimental
- */
-public class SimpleTextSegmentInfoReader extends SegmentInfoReader {
+    using System;
+    using System.Diagnostics;
+    using System.Collections.Generic;
 
-  @Override
-  public SegmentInfo read(Directory directory, String segmentName, IOContext context)  {
-    BytesRef scratch = new BytesRef();
-    String segFileName = IndexFileNames.segmentFileName(segmentName, "", SimpleTextSegmentInfoFormat.SI_EXTENSION);
-    ChecksumIndexInput input = directory.openChecksumInput(segFileName, context);
-    bool success = false;
-    try {
-      SimpleTextUtil.readLine(input, scratch);
-      Debug.Assert( StringHelper.startsWith(scratch, SI_VERSION);
-      final String version = readString(SI_VERSION.length, scratch);
-    
-      SimpleTextUtil.readLine(input, scratch);
-      Debug.Assert( StringHelper.startsWith(scratch, SI_DOCCOUNT);
-      final int docCount = Integer.parseInt(readString(SI_DOCCOUNT.length, scratch));
-    
-      SimpleTextUtil.readLine(input, scratch);
-      Debug.Assert( StringHelper.startsWith(scratch, SI_USECOMPOUND);
-      final bool isCompoundFile = bool.parsebool(readString(SI_USECOMPOUND.length, scratch));
-    
-      SimpleTextUtil.readLine(input, scratch);
-      Debug.Assert( StringHelper.startsWith(scratch, SI_NUM_DIAG);
-      int numDiag = Integer.parseInt(readString(SI_NUM_DIAG.length, scratch));
-      Map<String,String> diagnostics = new HashMap<>();
+    using IndexFileNames = Index.IndexFileNames;
+    using SegmentInfo = Index.SegmentInfo;
+    using ChecksumIndexInput = Store.ChecksumIndexInput;
+    using Directory = Store.Directory;
+    using IOContext = Store.IOContext;
+    using BytesRef = Util.BytesRef;
+    using IOUtils = Util.IOUtils;
+    using StringHelper = Util.StringHelper;
 
-      for (int i = 0; i < numDiag; i++) {
-        SimpleTextUtil.readLine(input, scratch);
-        Debug.Assert( StringHelper.startsWith(scratch, SI_DIAG_KEY);
-        String key = readString(SI_DIAG_KEY.length, scratch);
-      
-        SimpleTextUtil.readLine(input, scratch);
-        Debug.Assert( StringHelper.startsWith(scratch, SI_DIAG_VALUE);
-        String value = readString(SI_DIAG_VALUE.length, scratch);
-        diagnostics.put(key, value);
-      }
-      
-      SimpleTextUtil.readLine(input, scratch);
-      Debug.Assert( StringHelper.startsWith(scratch, SI_NUM_FILES);
-      int numFiles = Integer.parseInt(readString(SI_NUM_FILES.length, scratch));
-      Set<String> files = new HashSet<>();
+    /// <summary>
+    /// reads plaintext segments files
+    /// <para>
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    public class SimpleTextSegmentInfoReader : SegmentInfoReader
+    {
 
-      for (int i = 0; i < numFiles; i++) {
-        SimpleTextUtil.readLine(input, scratch);
-        Debug.Assert( StringHelper.startsWith(scratch, SI_FILE);
-        String fileName = readString(SI_FILE.length, scratch);
-        files.add(fileName);
-      }
-      
-      SimpleTextUtil.checkFooter(input);
+        public override SegmentInfo Read(Directory directory, string segmentName, IOContext context)
+        {
+            BytesRef scratch = new BytesRef();
+            string segFileName = IndexFileNames.SegmentFileName(segmentName, "",
+                SimpleTextSegmentInfoFormat.SI_EXTENSION);
+            ChecksumIndexInput input = directory.OpenChecksumInput(segFileName, context);
+            bool success = false;
+            try
+            {
+                SimpleTextUtil.ReadLine(input, scratch);
+                Debug.Assert(StringHelper.StartsWith(scratch, SI_VERSION));
+                string version = ReadString(SI_VERSION.length, scratch);
 
-      SegmentInfo info = new SegmentInfo(directory, version, segmentName, docCount, 
-                                         isCompoundFile, null, diagnostics);
-      info.setFiles(files);
-      success = true;
-      return info;
-    } finally {
-      if (!success) {
-        IOUtils.closeWhileHandlingException(input);
-      } else {
-        input.close();
-      }
+                SimpleTextUtil.ReadLine(input, scratch);
+                Debug.Assert(StringHelper.StartsWith(scratch, SI_DOCCOUNT));
+                int docCount = Convert.ToInt32(ReadString(SI_DOCCOUNT.length, scratch));
+
+                SimpleTextUtil.ReadLine(input, scratch);
+                Debug.Assert(StringHelper.StartsWith(scratch, SI_USECOMPOUND));
+                bool isCompoundFile = Convert.ToBoolean(ReadString(SI_USECOMPOUND.length, scratch));
+
+                SimpleTextUtil.ReadLine(input, scratch);
+                Debug.Assert(StringHelper.StartsWith(scratch, SI_NUM_DIAG));
+                int numDiag = Convert.ToInt32(ReadString(SI_NUM_DIAG.length, scratch));
+                IDictionary<string, string> diagnostics = new Dictionary<string, string>();
+
+                for (int i = 0; i < numDiag; i++)
+                {
+                    SimpleTextUtil.ReadLine(input, scratch);
+                    Debug.Assert(StringHelper.StartsWith(scratch, SI_DIAG_KEY));
+                    string key = ReadString(SI_DIAG_KEY.length, scratch);
+
+                    SimpleTextUtil.ReadLine(input, scratch);
+                    Debug.Assert(StringHelper.StartsWith(scratch, SI_DIAG_VALUE));
+                    string value = ReadString(SI_DIAG_VALUE.length, scratch);
+                    diagnostics[key] = value;
+                }
+
+                SimpleTextUtil.ReadLine(input, scratch);
+                Debug.Assert(StringHelper.StartsWith(scratch, SI_NUM_FILES));
+                int numFiles = Convert.ToInt32(ReadString(SI_NUM_FILES.length, scratch));
+                HashSet<string> files = new HashSet<string>();
+
+                for (int i = 0; i < numFiles; i++)
+                {
+                    SimpleTextUtil.ReadLine(input, scratch);
+                    Debug.Assert(StringHelper.StartsWith(scratch, SI_FILE));
+                    string fileName = ReadString(SI_FILE.length, scratch);
+                    files.Add(fileName);
+                }
+
+                SimpleTextUtil.CheckFooter(input);
+
+                SegmentInfo info = new SegmentInfo(directory, version, segmentName, docCount, isCompoundFile, null,
+                    diagnostics);
+                info.Files = files;
+                success = true;
+                return info;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException(input);
+                }
+                else
+                {
+                    input.Close();
+                }
+            }
+        }
+
+        private string ReadString(int offset, BytesRef scratch)
+        {
+            return new string(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset, StandardCharsets.UTF_8);
+        }
     }
-  }
-
-  private String readString(int offset, BytesRef scratch) {
-    return new String(scratch.bytes, scratch.offset+offset, scratch.length-offset, StandardCharsets.UTF_8);
-  }
 }

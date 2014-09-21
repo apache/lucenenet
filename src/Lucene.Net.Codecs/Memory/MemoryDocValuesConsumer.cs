@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,37 +23,37 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.lucene.codecs.CodecUtil;
-import org.apache.lucene.codecs.DocValuesConsumer;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.store.ByteArrayDataOutput;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.IOUtils;
-import org.apache.lucene.util.IntsRef;
-import org.apache.lucene.util.MathUtil;
-import org.apache.lucene.util.fst.Builder;
-import org.apache.lucene.util.fst.FST.INPUT_TYPE;
-import org.apache.lucene.util.fst.FST;
-import org.apache.lucene.util.fst.PositiveIntOutputs;
-import org.apache.lucene.util.fst.Util;
-import org.apache.lucene.util.packed.BlockPackedWriter;
-import org.apache.lucene.util.packed.MonotonicBlockPackedWriter;
-import org.apache.lucene.util.packed.PackedInts.FormatAndBits;
-import org.apache.lucene.util.packed.PackedInts;
+import codecs.CodecUtil;
+import codecs.DocValuesConsumer;
+import index.FieldInfo;
+import index.IndexFileNames;
+import index.SegmentWriteState;
+import store.ByteArrayDataOutput;
+import store.IndexOutput;
+import util.ArrayUtil;
+import util.BytesRef;
+import util.IOUtils;
+import util.IntsRef;
+import util.MathUtil;
+import util.fst.Builder;
+import util.fst.FST.INPUT_TYPE;
+import util.fst.FST;
+import util.fst.PositiveIntOutputs;
+import util.fst.Util;
+import util.packed.BlockPackedWriter;
+import util.packed.MonotonicBlockPackedWriter;
+import util.packed.PackedInts.FormatAndBits;
+import util.packed.PackedInts;
 
-import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.VERSION_CURRENT;
-import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.BLOCK_SIZE;
-import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.BYTES;
-import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.NUMBER;
-import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.FST;
-import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.DELTA_COMPRESSED;
-import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.GCD_COMPRESSED;
-import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.TABLE_COMPRESSED;
-import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.UNCOMPRESSED;
+import static codecs.memory.MemoryDocValuesProducer.VERSION_CURRENT;
+import static codecs.memory.MemoryDocValuesProducer.BLOCK_SIZE;
+import static codecs.memory.MemoryDocValuesProducer.BYTES;
+import static codecs.memory.MemoryDocValuesProducer.NUMBER;
+import static codecs.memory.MemoryDocValuesProducer.FST;
+import static codecs.memory.MemoryDocValuesProducer.DELTA_COMPRESSED;
+import static codecs.memory.MemoryDocValuesProducer.GCD_COMPRESSED;
+import static codecs.memory.MemoryDocValuesProducer.TABLE_COMPRESSED;
+import static codecs.memory.MemoryDocValuesProducer.UNCOMPRESSED;
 
 /**
  * Writer for {@link MemoryDocValuesFormat}

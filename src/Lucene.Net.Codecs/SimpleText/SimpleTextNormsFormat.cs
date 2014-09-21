@@ -1,6 +1,4 @@
-package org.apache.lucene.codecs.simpletext;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,61 +15,67 @@ package org.apache.lucene.codecs.simpletext;
  * limitations under the License.
  */
 
-import java.io.IOException;
+namespace Lucene.Net.Codecs.SimpleText
+{
 
-import org.apache.lucene.codecs.DocValuesConsumer;
-import org.apache.lucene.codecs.DocValuesProducer;
-import org.apache.lucene.codecs.NormsFormat;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.SegmentWriteState;
+    using SegmentReadState = Index.SegmentReadState;
+    using SegmentWriteState = Index.SegmentWriteState;
 
-/**
- * plain-text norms format.
- * <p>
- * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
- * 
- * @lucene.experimental
- */
-public class SimpleTextNormsFormat extends NormsFormat {
-  private static final String NORMS_SEG_EXTENSION = "len";
-  
-  @Override
-  public DocValuesConsumer normsConsumer(SegmentWriteState state)  {
-    return new SimpleTextNormsConsumer(state);
-  }
-  
-  @Override
-  public DocValuesProducer normsProducer(SegmentReadState state)  {
-    return new SimpleTextNormsProducer(state);
-  }
-  
-  /**
-   * Reads plain-text norms.
-   * <p>
-   * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-   * 
-   * @lucene.experimental
-   */
-  public static class SimpleTextNormsProducer extends SimpleTextDocValuesReader {
-    public SimpleTextNormsProducer(SegmentReadState state)  {
-      // All we do is change the extension from .dat -> .len;
-      // otherwise this is a normal simple doc values file:
-      super(state, NORMS_SEG_EXTENSION);
+    /// <summary>
+    /// plain-text norms format.
+    /// <para>
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+    /// 
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    public class SimpleTextNormsFormat : NormsFormat
+    {
+        private const string NORMS_SEG_EXTENSION = "len";
+
+        public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
+        {
+            return new SimpleTextNormsConsumer(state);
+        }
+
+        public override DocValuesProducer NormsProducer(SegmentReadState state)
+        {
+            return new SimpleTextNormsProducer(state);
+        }
+
+        /// <summary>
+        /// Reads plain-text norms.
+        /// <para>
+        /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+        /// 
+        /// @lucene.experimental
+        /// </para>
+        /// </summary>
+        public class SimpleTextNormsProducer : SimpleTextDocValuesReader
+        {
+            public SimpleTextNormsProducer(SegmentReadState state) : base(state, NORMS_SEG_EXTENSION)
+            {
+                // All we do is change the extension from .dat -> .len;
+                // otherwise this is a normal simple doc values file:
+            }
+        }
+
+        /// <summary>
+        /// Writes plain-text norms.
+        /// <para>
+        /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+        /// 
+        /// @lucene.experimental
+        /// </para>
+        /// </summary>
+        public class SimpleTextNormsConsumer : SimpleTextDocValuesWriter
+        {
+            public SimpleTextNormsConsumer(SegmentWriteState state) : base(state, NORMS_SEG_EXTENSION)
+            {
+                // All we do is change the extension from .dat -> .len;
+                // otherwise this is a normal simple doc values file:
+            }
+        }
     }
-  }
-  
-  /**
-   * Writes plain-text norms.
-   * <p>
-   * <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-   * 
-   * @lucene.experimental
-   */
-  public static class SimpleTextNormsConsumer extends SimpleTextDocValuesWriter {
-    public SimpleTextNormsConsumer(SegmentWriteState state)  {
-      // All we do is change the extension from .dat -> .len;
-      // otherwise this is a normal simple doc values file:
-      super(state, NORMS_SEG_EXTENSION);
-    }
-  }
+
 }

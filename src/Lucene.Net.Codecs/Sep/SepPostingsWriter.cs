@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.sep;
+package codecs.sep;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,20 +19,20 @@ package org.apache.lucene.codecs.sep;
 
 import java.io.IOException;
 
-import org.apache.lucene.codecs.BlockTermState;
-import org.apache.lucene.codecs.CodecUtil;
-import org.apache.lucene.codecs.PostingsWriterBase;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.DocsEnum;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.FieldInfo.IndexOptions;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.store.DataOutput;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.store.RAMOutputStream;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.IOUtils;
+import codecs.BlockTermState;
+import codecs.CodecUtil;
+import codecs.PostingsWriterBase;
+import index.CorruptIndexException;
+import index.DocsEnum;
+import index.FieldInfo;
+import index.FieldInfo.IndexOptions;
+import index.IndexFileNames;
+import index.SegmentWriteState;
+import store.DataOutput;
+import store.IndexOutput;
+import store.RAMOutputStream;
+import util.BytesRef;
+import util.IOUtils;
 
 /** Writes frq to .frq, docs to .doc, pos to .pos, payloads
  *  to .pyl, skip data to .skp

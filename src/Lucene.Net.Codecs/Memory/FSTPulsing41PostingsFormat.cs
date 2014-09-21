@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,21 +19,21 @@ package org.apache.lucene.codecs.memory;
 
 import java.io.IOException;
 
-import org.apache.lucene.codecs.FieldsConsumer;
-import org.apache.lucene.codecs.FieldsProducer;
-import org.apache.lucene.codecs.PostingsBaseFormat;
-import org.apache.lucene.codecs.PostingsFormat;
-import org.apache.lucene.codecs.PostingsReaderBase;
-import org.apache.lucene.codecs.PostingsWriterBase;
-import org.apache.lucene.codecs.lucene41.Lucene41PostingsWriter;
-import org.apache.lucene.codecs.lucene41.Lucene41PostingsReader;
-import org.apache.lucene.codecs.lucene41.Lucene41PostingsBaseFormat;
-import org.apache.lucene.codecs.lucene41.Lucene41PostingsFormat;
-import org.apache.lucene.codecs.pulsing.PulsingPostingsWriter;
-import org.apache.lucene.codecs.pulsing.PulsingPostingsReader;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.util.IOUtils;
+import codecs.FieldsConsumer;
+import codecs.FieldsProducer;
+import codecs.PostingsBaseFormat;
+import codecs.PostingsFormat;
+import codecs.PostingsReaderBase;
+import codecs.PostingsWriterBase;
+import codecs.lucene41.Lucene41PostingsWriter;
+import codecs.lucene41.Lucene41PostingsReader;
+import codecs.lucene41.Lucene41PostingsBaseFormat;
+import codecs.lucene41.Lucene41PostingsFormat;
+import codecs.pulsing.PulsingPostingsWriter;
+import codecs.pulsing.PulsingPostingsReader;
+import index.SegmentReadState;
+import index.SegmentWriteState;
+import util.IOUtils;
 
 /** FST + Pulsing41, test only, since
  *  FST does no delta encoding here!

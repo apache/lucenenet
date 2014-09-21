@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,20 +20,20 @@ package org.apache.lucene.codecs.memory;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.lucene.codecs.CodecUtil;
-import org.apache.lucene.codecs.DocValuesConsumer;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.SegmentWriteState;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.IOUtils;
+import codecs.CodecUtil;
+import codecs.DocValuesConsumer;
+import index.FieldInfo;
+import index.IndexFileNames;
+import index.SegmentWriteState;
+import store.IndexOutput;
+import util.BytesRef;
+import util.IOUtils;
 
-import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.VERSION_CURRENT;
-import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.BYTES;
-import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.SORTED;
-import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.SORTED_SET;
-import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.NUMBER;
+import static codecs.memory.DirectDocValuesProducer.VERSION_CURRENT;
+import static codecs.memory.DirectDocValuesProducer.BYTES;
+import static codecs.memory.DirectDocValuesProducer.SORTED;
+import static codecs.memory.DirectDocValuesProducer.SORTED_SET;
+import static codecs.memory.DirectDocValuesProducer.NUMBER;
 
 /**
  * Writer for {@link DirectDocValuesFormat}

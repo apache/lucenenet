@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.memory;
+package codecs.memory;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,25 +22,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.lucene.codecs.CodecUtil;
-import org.apache.lucene.codecs.DocValuesProducer;
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.DocValues;
-import org.apache.lucene.index.FieldInfo;
-import org.apache.lucene.index.IndexFileNames;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.RandomAccessOrds;
-import org.apache.lucene.index.SegmentReadState;
-import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.store.ChecksumIndexInput;
-import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.FixedBitSet;
-import org.apache.lucene.util.IOUtils;
-import org.apache.lucene.util.RamUsageEstimator;
+import codecs.CodecUtil;
+import codecs.DocValuesProducer;
+import index.BinaryDocValues;
+import index.CorruptIndexException;
+import index.DocValues;
+import index.FieldInfo;
+import index.IndexFileNames;
+import index.NumericDocValues;
+import index.RandomAccessOrds;
+import index.SegmentReadState;
+import index.SortedDocValues;
+import index.SortedSetDocValues;
+import store.ChecksumIndexInput;
+import store.IndexInput;
+import util.Bits;
+import util.BytesRef;
+import util.FixedBitSet;
+import util.IOUtils;
+import util.RamUsageEstimator;
 
 /**
  * Reader for {@link DirectDocValuesFormat}

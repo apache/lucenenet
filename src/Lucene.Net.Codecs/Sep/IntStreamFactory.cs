@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.sep;
+package codecs.sep;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,8 +17,8 @@ package org.apache.lucene.codecs.sep;
  * limitations under the License.
  */
 
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.IOContext;
+import store.Directory;
+import store.IOContext;
 
 import java.io.IOException;
 

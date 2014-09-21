@@ -1,4 +1,4 @@
-package org.apache.lucene.codecs.intblock;
+package codecs.intblock;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,9 +23,9 @@ package org.apache.lucene.codecs.intblock;
 
 import java.io.IOException;
 
-import org.apache.lucene.codecs.sep.IntIndexOutput;
-import org.apache.lucene.store.DataOutput;
-import org.apache.lucene.store.IndexOutput;
+import codecs.sep.IntIndexOutput;
+import store.DataOutput;
+import store.IndexOutput;
 
 /** Abstract base class that writes fixed-size blocks of ints
  *  to an IndexOutput.  While this is a simple approach, a
