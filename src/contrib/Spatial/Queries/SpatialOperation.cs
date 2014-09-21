@@ -102,9 +102,9 @@ namespace Lucene.Net.Spatial.Queries
 			return targetNeedsArea;
 		}
 
-		public String GetName()
+		public String Name
 		{
-			return name;
+            get { return name; }
 		}
 
 		public override String ToString()

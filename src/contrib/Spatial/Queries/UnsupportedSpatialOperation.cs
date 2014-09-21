@@ -22,7 +22,7 @@ namespace Lucene.Net.Spatial.Queries
 	[Serializable]
 	public class UnsupportedSpatialOperation : InvalidOperationException
 	{
-		public UnsupportedSpatialOperation(SpatialOperation op) : base(op.GetName())
+		public UnsupportedSpatialOperation(SpatialOperation op) : base(op.Name)
 		{
 		}
 	}

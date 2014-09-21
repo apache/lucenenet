@@ -103,7 +103,7 @@ namespace Lucene.Net.Search.Function
         // TODO: should we make a termVal, fills BytesRef[]?
         public virtual void StrVal(int doc, string[] vals) { throw new NotSupportedException(); }
 
-        public Explanation Explain(int doc)
+        public virtual Explanation Explain(int doc)
         {
             return new Explanation(FloatVal(doc), ToString(doc));
         }
