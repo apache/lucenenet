@@ -78,7 +78,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Extension of vectors index file </summary>
         public const string VECTORS_INDEX_EXTENSION = "tvx";
 
-        private FieldInfos FieldInfos;
+        private readonly FieldInfos FieldInfos;
 
         private IndexInput Tvx;
         private IndexInput Tvd;
@@ -336,15 +336,18 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return new TVTerms(OuterInstance, FieldFPs[fieldIndex]);
             }
 
-            public override int Size()
+            public override int Size
             {
-                if (FieldNumbers == null)
+                get
                 {
-                    return 0;
-                }
-                else
-                {
-                    return FieldNumbers.Length;
+                    if (FieldNumbers == null)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return FieldNumbers.Length;
+                    }
                 }
             }
         }
@@ -862,7 +865,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (Tvx != null)
             {
                 Fields fields = new TVFields(this, docID);
-                if (fields.Size() == 0)
+                if (fields.Size == 0)
                 {
                     // TODO: we can improve writer here, eg write 0 into
                     // tvx file, so we know on first read from tvx that

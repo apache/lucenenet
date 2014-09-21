@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             NumericDocValues fooNorms = MultiDocValues.GetNormValues(Reader, "foo");
-            for (int i = 0; i < Reader.MaxDoc(); i++)
+            for (int i = 0; i < Reader.MaxDoc; i++)
             {
                 Assert.AreEqual((int)Expected[i], fooNorms.Get(i) & 0xff);
             }

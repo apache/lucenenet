@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
             public override void DoWork()
             {
                 IndexReader r = DirectoryReader.Open(Directory);
-                Assert.AreEqual(100, r.NumDocs());
+                Assert.AreEqual(100, r.NumDocs);
                 r.Dispose();
             }
         }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
             writer.Commit();
 
             IndexReader r = DirectoryReader.Open(directory);
-            Assert.AreEqual(100, r.NumDocs());
+            Assert.AreEqual(100, r.NumDocs);
             r.Dispose();
 
             IndexerThread indexerThread = new IndexerThread(writer, threads);

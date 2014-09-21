@@ -1,3 +1,4 @@
+using System.Linq;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -766,9 +767,9 @@ namespace Lucene.Net.Codecs.Compressing
                 return new TVTerms(OuterInstance, NumTerms[idx], FieldFlags[idx], PrefixLengths[idx], SuffixLengths[idx], TermFreqs[idx], PositionIndex[idx], Positions[idx], StartOffsets[idx], Lengths[idx], PayloadIndex[idx], PayloadBytes, new BytesRef(SuffixBytes.Bytes, SuffixBytes.Offset + fieldOff, fieldLen));
             }
 
-            public override int Size()
+            public override int Size
             {
-                return FieldNumOffs.Length;
+                get { return FieldNumOffs.Length; }
             }
         }
 
@@ -1192,12 +1193,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private static int Sum(int[] arr)
         {
-            int sum = 0;
-            foreach (int el in arr)
-            {
-                sum += el;
-            }
-            return sum;
+            return arr.Sum();
         }
 
         public override long RamBytesUsed()

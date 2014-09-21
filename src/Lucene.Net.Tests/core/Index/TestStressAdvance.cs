@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 IList<int> bDocIDs = new List<int>();
 
                 DirectoryReader r = w.Reader;
-                int[] idToDocID = new int[r.MaxDoc()];
+                int[] idToDocID = new int[r.MaxDoc];
                 for (int docID = 0; docID < idToDocID.Length; docID++)
                 {
                     int id = Convert.ToInt32(r.Document(docID).Get("id"));
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                         bDocIDs.Add(docID);
                     }
                 }
-                TermsEnum te = GetOnlySegmentReader(r).Fields().Terms("field").Iterator(null);
+                TermsEnum te = GetOnlySegmentReader(r).Fields.Terms("field").Iterator(null);
 
                 DocsEnum de = null;
                 for (int iter2 = 0; iter2 < 10; iter2++)

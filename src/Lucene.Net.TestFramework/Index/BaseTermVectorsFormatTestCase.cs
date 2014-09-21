@@ -479,7 +479,7 @@ namespace Lucene.Net.Index
         {
             // compare field names
             Assert.AreEqual(doc == null, fields == null);
-            Assert.AreEqual(doc.FieldNames.Length, fields.Size());
+            Assert.AreEqual(doc.FieldNames.Length, fields.Size);
             HashSet<string> fields1 = new HashSet<string>();
             HashSet<string> fields2 = new HashSet<string>();
             for (int i = 0; i < doc.FieldNames.Length; ++i)

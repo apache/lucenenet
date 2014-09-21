@@ -118,17 +118,17 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual FieldCache FieldCache
+        public virtual IFieldCache FieldCache
         {
             get
             {
-                return FieldCache_Fields.DEFAULT;
+                return Search.FieldCache.DEFAULT;
             }
         }
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            SortedDocValues fcsi = FieldCache.GetTermsIndex(((AtomicReader)context.Reader()), Field);
+            SortedDocValues fcsi = FieldCache.GetTermsIndex((context.AtomicReader), Field);
             FixedBitSet bits = new FixedBitSet(fcsi.ValueCount);
             for (int i = 0; i < Terms.Length; i++)
             {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
                     bits.Set(ord);
                 }
             }
-            return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, fcsi, bits);
+            return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader.MaxDoc, acceptDocs, fcsi, bits);
         }
 
         private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet

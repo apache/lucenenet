@@ -6,8 +6,6 @@ namespace Lucene.Net.Util
 {
     using Lucene.Net.Search;
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-    using FieldCache = Lucene.Net.Search.FieldCache;
-
     /// <summary>
     /// Copyright 2009 The Apache Software Foundation
     ///
@@ -71,7 +69,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Quick and dirty convenience method </summary>
         /// <seealso cref= #check </seealso>
-        public static Insanity[] CheckSanity(FieldCache cache)
+        public static Insanity[] CheckSanity(IFieldCache cache)
         {
             return CheckSanity(cache.CacheEntries);
         }
@@ -80,7 +78,7 @@ namespace Lucene.Net.Util
         /// Quick and dirty convenience method that instantiates an instance with
         /// "good defaults" and uses it to test the CacheEntrys </summary>
         /// <seealso cref= #check </seealso>
-        public static Insanity[] CheckSanity(params FieldCache_Fields.CacheEntry[] cacheEntries)
+        public static Insanity[] CheckSanity(params FieldCache.CacheEntry[] cacheEntries)
         {
             FieldCacheSanityChecker sanityChecker = new FieldCacheSanityChecker();
             sanityChecker.RamUsageEstimator = true;
@@ -94,7 +92,7 @@ namespace Lucene.Net.Util
         /// (:TODO: is this a bad idea? are we masking a real problem?)
         /// </p>
         /// </summary>
-        public Insanity[] Check(params FieldCache_Fields.CacheEntry[] cacheEntries)
+        public Insanity[] Check(params FieldCache.CacheEntry[] cacheEntries)
         {
             if (null == cacheEntries || 0 == cacheEntries.Length)
             {
@@ -112,7 +110,7 @@ namespace Lucene.Net.Util
             // the indirect mapping lets MapOfSet dedup identical valIds for us
             // maps the (valId) identityhashCode of cache values to
             // sets of CacheEntry instances
-            MapOfSets<int, FieldCache_Fields.CacheEntry> valIdToItems = new MapOfSets<int, FieldCache_Fields.CacheEntry>(new Dictionary<int, HashSet<FieldCache_Fields.CacheEntry>>(17));
+            MapOfSets<int, FieldCache.CacheEntry> valIdToItems = new MapOfSets<int, FieldCache.CacheEntry>(new Dictionary<int, HashSet<FieldCache.CacheEntry>>(17));
             // maps ReaderField keys to Sets of ValueIds
             MapOfSets<ReaderField, int> readerFieldToValIds = new MapOfSets<ReaderField, int>(new Dictionary<ReaderField, HashSet<int>>(17));
 
@@ -122,7 +120,7 @@ namespace Lucene.Net.Util
             // iterate over all the cacheEntries to get the mappings we'll need
             for (int i = 0; i < cacheEntries.Length; i++)
             {
-                FieldCache_Fields.CacheEntry item = cacheEntries[i];
+                FieldCache.CacheEntry item = cacheEntries[i];
                 object val = item.Value;
 
                 // It's OK to have dup entries, where one is eg
@@ -133,7 +131,7 @@ namespace Lucene.Net.Util
                     continue;
                 }
 
-                if (val is Lucene.Net.Search.FieldCache_Fields.CreationPlaceholder)
+                if (val is Lucene.Net.Search.FieldCache.CreationPlaceholder)
                 {
                     continue;
                 }
@@ -164,7 +162,7 @@ namespace Lucene.Net.Util
         /// instances accordingly.  The MapOfSets are used to populate
         /// the Insanity objects. </summary>
         /// <seealso cref= InsanityType#VALUEMISMATCH </seealso>
-        private ICollection<Insanity> CheckValueMismatch(MapOfSets<int, FieldCache_Fields.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds, ISet<ReaderField> valMismatchKeys)
+        private ICollection<Insanity> CheckValueMismatch(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds, ISet<ReaderField> valMismatchKeys)
         {
             List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
 
@@ -173,19 +171,19 @@ namespace Lucene.Net.Util
                 // we have multiple values for some ReaderFields
 
                 IDictionary<ReaderField, HashSet<int>> rfMap = readerFieldToValIds.Map;
-                IDictionary<int, HashSet<FieldCache_Fields.CacheEntry>> valMap = valIdToItems.Map;
+                IDictionary<int, HashSet<FieldCache.CacheEntry>> valMap = valIdToItems.Map;
                 foreach (ReaderField rf in valMismatchKeys)
                 {
-                    IList<FieldCache_Fields.CacheEntry> badEntries = new List<FieldCache_Fields.CacheEntry>(valMismatchKeys.Count * 2);
+                    IList<FieldCache.CacheEntry> badEntries = new List<FieldCache.CacheEntry>(valMismatchKeys.Count * 2);
                     foreach (int value in rfMap[rf])
                     {
-                        foreach (FieldCache_Fields.CacheEntry cacheEntry in valMap[value])
+                        foreach (FieldCache.CacheEntry cacheEntry in valMap[value])
                         {
                             badEntries.Add(cacheEntry);
                         }
                     }
 
-                    FieldCache_Fields.CacheEntry[] badness = new FieldCache_Fields.CacheEntry[badEntries.Count];
+                    FieldCache.CacheEntry[] badness = new FieldCache.CacheEntry[badEntries.Count];
                     badness = badEntries.ToArray(); //LUCENE TO-DO had param of badness before
 
                     insanity.Add(new Insanity(InsanityType.VALUEMISMATCH, "Multiple distinct value objects for " + rf.ToString(), badness));
@@ -201,14 +199,14 @@ namespace Lucene.Net.Util
         /// found that have an ancestry relationships.
         /// </summary>
         /// <seealso cref= InsanityType#SUBREADER </seealso>
-        private ICollection<Insanity> CheckSubreaders(MapOfSets<int, FieldCache_Fields.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds)
+        private ICollection<Insanity> CheckSubreaders(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds)
         {
             List<Insanity> insanity = new List<Insanity>(23);
 
             Dictionary<ReaderField, HashSet<ReaderField>> badChildren = new Dictionary<ReaderField, HashSet<ReaderField>>(17);
             MapOfSets<ReaderField, ReaderField> badKids = new MapOfSets<ReaderField, ReaderField>(badChildren); // wrapper
 
-            IDictionary<int, HashSet<FieldCache_Fields.CacheEntry>> viToItemSets = valIdToItems.Map;
+            IDictionary<int, HashSet<FieldCache.CacheEntry>> viToItemSets = valIdToItems.Map;
             IDictionary<ReaderField, HashSet<int>> rfToValIdSets = readerFieldToValIds.Map;
 
             HashSet<ReaderField> seen = new HashSet<ReaderField>();
@@ -249,7 +247,7 @@ namespace Lucene.Net.Util
             {
                 HashSet<ReaderField> kids = badChildren[parent];
 
-                List<FieldCache_Fields.CacheEntry> badEntries = new List<FieldCache_Fields.CacheEntry>(kids.Count * 2);
+                List<FieldCache.CacheEntry> badEntries = new List<FieldCache.CacheEntry>(kids.Count * 2);
 
                 // put parent entr(ies) in first
                 {
@@ -268,7 +266,7 @@ namespace Lucene.Net.Util
                     }
                 }
 
-                FieldCache_Fields.CacheEntry[] badness = new FieldCache_Fields.CacheEntry[badEntries.Count];
+                FieldCache.CacheEntry[] badness = new FieldCache.CacheEntry[badEntries.Count];
                 badness = badEntries.ToArray();//LUCENE TO-DO had param of badness first
 
                 insanity.Add(new Insanity(InsanityType.SUBREADER, "Found caches for descendants of " + parent.ToString(), badness));
@@ -296,12 +294,12 @@ namespace Lucene.Net.Util
                 {
                     try
                     {
-                        IList<IndexReaderContext> childs = reader.Context.Children();
+                        IList<IndexReaderContext> childs = reader.Context.Children;
                         if (childs != null) // it is composite reader
                         {
                             foreach (IndexReaderContext ctx in childs)
                             {
-                                all.Add(ctx.Reader().CoreCacheKey);
+                                all.Add(ctx.Reader.CoreCacheKey);
                             }
                         }
                     }
@@ -360,9 +358,9 @@ namespace Lucene.Net.Util
         {
             internal readonly InsanityType Type_Renamed;
             internal readonly string Msg_Renamed;
-            internal readonly FieldCache_Fields.CacheEntry[] Entries;
+            internal readonly FieldCache.CacheEntry[] Entries;
 
-            public Insanity(InsanityType type, string msg, params FieldCache_Fields.CacheEntry[] entries)
+            public Insanity(InsanityType type, string msg, params FieldCache.CacheEntry[] entries)
             {
                 if (null == type)
                 {
@@ -402,7 +400,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// CacheEntry objects which suggest a problem
             /// </summary>
-            public FieldCache_Fields.CacheEntry[] CacheEntries
+            public FieldCache.CacheEntry[] CacheEntries
             {
                 get
                 {
@@ -428,7 +426,7 @@ namespace Lucene.Net.Util
 
                 buf.Append('\n');
 
-                FieldCache_Fields.CacheEntry[] ce = CacheEntries;
+                FieldCache.CacheEntry[] ce = CacheEntries;
                 for (int i = 0; i < ce.Length; i++)
                 {
                     buf.Append('\t').Append(ce[i].ToString()).Append('\n');

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -14,7 +15,6 @@ namespace Lucene.Net.Index
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldType = FieldType;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -384,7 +384,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             writer.Dispose();
             DirectoryReader reader = DirectoryReader.Open(dir);
-            Document doc2 = reader.Document(reader.MaxDoc() - 1);
+            Document doc2 = reader.Document(reader.MaxDoc - 1);
             IndexableField[] fields = doc2.GetFields("bin1");
             Assert.IsNotNull(fields);
             Assert.AreEqual(1, fields.Length);
@@ -403,7 +403,7 @@ namespace Lucene.Net.Index
             writer.ForceMerge(1);
             writer.Dispose();
             reader = DirectoryReader.Open(dir);
-            doc2 = reader.Document(reader.MaxDoc() - 1);
+            doc2 = reader.Document(reader.MaxDoc - 1);
             fields = doc2.GetFields("bin1");
             Assert.IsNotNull(fields);
             Assert.AreEqual(1, fields.Length);
@@ -557,10 +557,10 @@ namespace Lucene.Net.Index
         // TODO: maybe this can reuse the logic of test dueling codecs?
         public static void AssertIndexEquals(DirectoryReader index1, DirectoryReader index2)
         {
-            Assert.AreEqual(index1.NumDocs(), index2.NumDocs(), "IndexReaders have different values for numDocs.");
-            Assert.AreEqual(index1.MaxDoc(), index2.MaxDoc(), "IndexReaders have different values for maxDoc.");
-            Assert.AreEqual(index1.HasDeletions(), index2.HasDeletions(), "Only one IndexReader has deletions.");
-            Assert.AreEqual(index1.Leaves().Count == 1, index2.Leaves().Count == 1, "Single segment test differs.");
+            Assert.AreEqual(index1.NumDocs, index2.NumDocs, "IndexReaders have different values for numDocs.");
+            Assert.AreEqual(index1.MaxDoc, index2.MaxDoc, "IndexReaders have different values for maxDoc.");
+            Assert.AreEqual(index1.HasDeletions, index2.HasDeletions, "Only one IndexReader has deletions.");
+            Assert.AreEqual(index1.Leaves.Count == 1, index2.Leaves.Count == 1, "Single segment test differs.");
 
             // check field names
             FieldInfos fieldInfos1 = MultiFields.GetMergedFieldInfos(index1);
@@ -583,7 +583,7 @@ namespace Lucene.Net.Index
                 if (norms1 != null && norms2 != null)
                 {
                     // todo: generalize this (like TestDuelingCodecs assert)
-                    for (int i = 0; i < index1.MaxDoc(); i++)
+                    for (int i = 0; i < index1.MaxDoc; i++)
                     {
                         Assert.AreEqual(norms1.Get(i), norms2.Get(i), "Norm different for doc " + i + " and field '" + curField + "'.");
                     }
@@ -598,13 +598,13 @@ namespace Lucene.Net.Index
             // check deletions
             Bits liveDocs1 = MultiFields.GetLiveDocs(index1);
             Bits liveDocs2 = MultiFields.GetLiveDocs(index2);
-            for (int i = 0; i < index1.MaxDoc(); i++)
+            for (int i = 0; i < index1.MaxDoc; i++)
             {
                 Assert.AreEqual(liveDocs1 == null || !liveDocs1.Get(i), liveDocs2 == null || !liveDocs2.Get(i), "Doc " + i + " only deleted in one index.");
             }
 
             // check stored fields
-            for (int i = 0; i < index1.MaxDoc(); i++)
+            for (int i = 0; i < index1.MaxDoc; i++)
             {
                 if (liveDocs1 == null || liveDocs1.Get(i))
                 {
@@ -793,7 +793,7 @@ namespace Lucene.Net.Index
             // Open reader1
             DirectoryReader r = DirectoryReader.Open(dir);
             AtomicReader r1 = GetOnlySegmentReader(r);
-            FieldCache_Fields.Ints ints = FieldCache_Fields.DEFAULT.GetInts(r1, "number", false);
+            FieldCache.Ints ints = FieldCache.DEFAULT.GetInts(r1, "number", false);
             Assert.AreEqual(17, ints.Get(0));
 
             // Add new segment
@@ -804,8 +804,8 @@ namespace Lucene.Net.Index
             DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
             Assert.IsNotNull(r2);
             r.Dispose();
-            AtomicReader sub0 = (AtomicReader)r2.Leaves()[0].Reader();
-            FieldCache_Fields.Ints ints2 = FieldCache_Fields.DEFAULT.GetInts(sub0, "number", false);
+            AtomicReader sub0 = (AtomicReader)r2.Leaves[0].Reader;
+            FieldCache.Ints ints2 = FieldCache.DEFAULT.GetInts(sub0, "number", false);
             r2.Dispose();
             Assert.IsTrue(ints == ints2);
 
@@ -828,16 +828,16 @@ namespace Lucene.Net.Index
 
             DirectoryReader r = DirectoryReader.Open(dir);
             AtomicReader r1 = GetOnlySegmentReader(r);
-            Assert.AreEqual(36, r1.Fields().UniqueTermCount);
+            Assert.AreEqual(36, r1.Fields.UniqueTermCount);
             writer.AddDocument(doc);
             writer.Commit();
             DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
             Assert.IsNotNull(r2);
             r.Dispose();
 
-            foreach (AtomicReaderContext s in r2.Leaves())
+            foreach (AtomicReaderContext s in r2.Leaves)
             {
-                Assert.AreEqual(36, ((AtomicReader)s.Reader()).Fields().UniqueTermCount);
+                Assert.AreEqual(36, ((AtomicReader)s.Reader).Fields.UniqueTermCount);
             }
             r2.Dispose();
             writer.Dispose();
@@ -868,7 +868,7 @@ namespace Lucene.Net.Index
                 // expected
             }
 
-            Assert.AreEqual(-1, ((SegmentReader)r.Leaves()[0].Reader()).TermInfosIndexDivisor);
+            Assert.AreEqual(-1, ((SegmentReader)r.Leaves[0].Reader).TermInfosIndexDivisor);
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())).SetMergePolicy(NewLogMergePolicy(10)));
             writer.AddDocument(doc);
             writer.Dispose();
@@ -878,13 +878,13 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(r2);
             Assert.IsNull(DirectoryReader.OpenIfChanged(r2));
             r.Dispose();
-            IList<AtomicReaderContext> leaves = r2.Leaves();
+            IList<AtomicReaderContext> leaves = r2.Leaves;
             Assert.AreEqual(2, leaves.Count);
             foreach (AtomicReaderContext ctx in leaves)
             {
                 try
                 {
-                    ctx.Reader().DocFreq(new Term("field", "f"));
+                    ctx.Reader.DocFreq(new Term("field", "f"));
                     Assert.Fail("did not hit expected exception");
                 }
                 catch (InvalidOperationException ise)
@@ -1190,7 +1190,7 @@ namespace Lucene.Net.Index
                 {
                     while (ToInc.TryIncRef())
                     {
-                        Assert.IsFalse(ToInc.HasDeletions());
+                        Assert.IsFalse(ToInc.HasDeletions);
                         ToInc.DecRef();
                     }
                     Assert.IsFalse(ToInc.TryIncRef());
@@ -1265,7 +1265,7 @@ namespace Lucene.Net.Index
             {
                 // expected
             }
-            Assert.AreEqual(-1, ((SegmentReader)r.Leaves()[0].Reader()).TermInfosIndexDivisor);
+            Assert.AreEqual(-1, ((SegmentReader)r.Leaves[0].Reader).TermInfosIndexDivisor);
             r.Dispose();
 
             // open(IndexCommit, int)
@@ -1279,7 +1279,7 @@ namespace Lucene.Net.Index
             {
                 // expected
             }
-            Assert.AreEqual(-1, ((SegmentReader)r.Leaves()[0].Reader()).TermInfosIndexDivisor);
+            Assert.AreEqual(-1, ((SegmentReader)r.Leaves[0].Reader).TermInfosIndexDivisor);
             r.Dispose();
             dir.Dispose();
         }

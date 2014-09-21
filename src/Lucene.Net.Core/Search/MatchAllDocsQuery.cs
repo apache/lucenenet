@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
                 this.LiveDocs = liveDocs;
                 this.Score_Renamed = score;
-                MaxDoc = reader.MaxDoc();
+                MaxDoc = reader.MaxDoc;
             }
 
             public override int DocID()
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
-                return new MatchAllScorer(OuterInstance, context.Reader(), acceptDocs, this, QueryWeight);
+                return new MatchAllScorer(OuterInstance, context.Reader, acceptDocs, this, QueryWeight);
             }
 
             public override Explanation Explain(AtomicReaderContext context, int doc)

@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             IndexReader reader = DirectoryReader.Open(commit);
             try
             {
-                Assert.AreEqual(expectedMaxDoc, reader.MaxDoc());
+                Assert.AreEqual(expectedMaxDoc, reader.MaxDoc);
             }
             finally
             {

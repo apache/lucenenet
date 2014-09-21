@@ -199,8 +199,8 @@ namespace Lucene.Net.Search
             }
 
             // not efficient, but simple!
-            TopDocs td1 = S1.Search(q1, filter, Reader.MaxDoc());
-            TopDocs td2 = S2.Search(q2, filter, Reader.MaxDoc());
+            TopDocs td1 = S1.Search(q1, filter, Reader.MaxDoc);
+            TopDocs td2 = S2.Search(q2, filter, Reader.MaxDoc);
             Assert.IsTrue(td1.TotalHits <= td2.TotalHits);
 
             // fill the superset into a bitset

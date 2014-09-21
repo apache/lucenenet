@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 
             Bits liveDocs = pr.LiveDocs;
 
-            Fields fields = pr.Fields();
+            Fields fields = pr.Fields;
             IEnumerator<string> fe = fields.GetEnumerator();
 
             fe.MoveNext();

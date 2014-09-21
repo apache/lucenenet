@@ -130,10 +130,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override Fields Fields()
+        public override Fields Fields
         {
-            Fields f = base.Fields();
-            return (f == null) ? null : new FieldFilterFields(this, f);
+            get
+            {
+                Fields f = base.Fields;
+                return (f == null) ? null : new FieldFilterFields(this, f);
+            }
         }
 
         public override NumericDocValues GetNumericDocValues(string field)
@@ -182,10 +185,13 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            public override int Size()
+            public override int Size
             {
-                // this information is not cheap, return -1 like MultiFields does:
-                return -1;
+                get
+                {
+                    // this information is not cheap, return -1 like MultiFields does:
+                    return -1;
+                }
             }
 
             public override IEnumerator<string> GetEnumerator()

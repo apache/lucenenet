@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
                         }
 
                         IndexSearcher searcher = NewSearcher(refreshed);
-                        ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field1", "a" + rnd.Next(refreshed.MaxDoc()))), null, 1000).ScoreDocs;
+                        ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field1", "a" + rnd.Next(refreshed.MaxDoc))), null, 1000).ScoreDocs;
                         if (hits.Length > 0)
                         {
                             searcher.Doc(hits[0].Doc);
@@ -583,11 +583,11 @@ namespace Lucene.Net.Index
             DirectoryReader r = DirectoryReader.Open(dir);
             if (multiSegment)
             {
-                Assert.IsTrue(r.Leaves().Count > 1);
+                Assert.IsTrue(r.Leaves.Count > 1);
             }
             else
             {
-                Assert.IsTrue(r.Leaves().Count == 1);
+                Assert.IsTrue(r.Leaves.Count == 1);
             }
             r.Dispose();
         }
@@ -719,7 +719,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             DirectoryReader r = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, r.NumDocs());
+            Assert.AreEqual(0, r.NumDocs);
 
             ICollection<IndexCommit> commits = DirectoryReader.ListCommits(dir);
             foreach (IndexCommit commit in commits)
@@ -741,11 +741,11 @@ namespace Lucene.Net.Index
                 }
                 if (v < 4)
                 {
-                    Assert.AreEqual(1 + v, r2.NumDocs());
+                    Assert.AreEqual(1 + v, r2.NumDocs);
                 }
                 else
                 {
-                    Assert.AreEqual(7 - v, r2.NumDocs());
+                    Assert.AreEqual(7 - v, r2.NumDocs);
                 }
                 r.Dispose();
                 r = r2;
@@ -770,11 +770,11 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             DirectoryReader r = DirectoryReader.Open(w, true);
 
-            Assert.AreEqual(2, r.NumDocs());
+            Assert.AreEqual(2, r.NumDocs);
             IndexReader r2 = DirectoryReader.OpenIfChanged(r, commits[0]);
             Assert.IsNotNull(r2);
             r.Dispose();
-            Assert.AreEqual(1, r2.NumDocs());
+            Assert.AreEqual(1, r2.NumDocs);
             w.Dispose();
             r2.Dispose();
             dir.Dispose();

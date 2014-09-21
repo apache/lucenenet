@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             //Should be able to open a new SegmentReader against the new directory
             SegmentReader mergedReader = new SegmentReader(new SegmentCommitInfo(new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, docsMerged, false, codec, null), 0, -1L, -1L), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
             Assert.IsTrue(mergedReader != null);
-            Assert.IsTrue(mergedReader.NumDocs() == 2);
+            Assert.IsTrue(mergedReader.NumDocs == 2);
             Document newDoc1 = mergedReader.Document(0);
             Assert.IsTrue(newDoc1 != null);
             //There are 2 unstored fields on the document
@@ -148,11 +148,11 @@ namespace Lucene.Net.Index
 
         private static bool Equals(MergeState.DocMap map1, MergeState.DocMap map2)
         {
-            if (map1.MaxDoc() != map2.MaxDoc())
+            if (map1.MaxDoc != map2.MaxDoc)
             {
                 return false;
             }
-            for (int i = 0; i < map1.MaxDoc(); ++i)
+            for (int i = 0; i < map1.MaxDoc; ++i)
             {
                 if (map1.Get(i) != map2.Get(i))
                 {
@@ -184,9 +184,9 @@ namespace Lucene.Net.Index
 
             MergeState.DocMap docMap = MergeState.DocMap.Build(maxDoc, liveDocs);
 
-            Assert.AreEqual(maxDoc, docMap.MaxDoc());
-            Assert.AreEqual(numDocs, docMap.NumDocs());
-            Assert.AreEqual(numDeletedDocs, docMap.NumDeletedDocs());
+            Assert.AreEqual(maxDoc, docMap.MaxDoc);
+            Assert.AreEqual(numDocs, docMap.NumDocs);
+            Assert.AreEqual(numDeletedDocs, docMap.NumDeletedDocs);
             // assert the mapping is compact
             for (int i = 0, del = 0; i < maxDoc; ++i)
             {

@@ -107,13 +107,13 @@ namespace Lucene.Net.Index
                 IList<IndexReader> firstSubReaders = readers[0].GetSequentialSubReaders();
 
                 // check compatibility:
-                int maxDoc = readers[0].MaxDoc(), noSubs = firstSubReaders.Count;
+                int maxDoc = readers[0].MaxDoc, noSubs = firstSubReaders.Count;
                 int[] childMaxDoc = new int[noSubs];
                 bool[] childAtomic = new bool[noSubs];
                 for (int i = 0; i < noSubs; i++)
                 {
                     IndexReader r = firstSubReaders[i];
-                    childMaxDoc[i] = r.MaxDoc();
+                    childMaxDoc[i] = r.MaxDoc;
                     childAtomic[i] = r is AtomicReader;
                 }
                 Validate(readers, maxDoc, childMaxDoc, childAtomic);
@@ -191,9 +191,9 @@ namespace Lucene.Net.Index
             {
                 CompositeReader reader = readers[i];
                 IList<IndexReader> subs = reader.GetSequentialSubReaders();
-                if (reader.MaxDoc() != maxDoc)
+                if (reader.MaxDoc != maxDoc)
                 {
-                    throw new System.ArgumentException("All readers must have same maxDoc: " + maxDoc + "!=" + reader.MaxDoc());
+                    throw new System.ArgumentException("All readers must have same maxDoc: " + maxDoc + "!=" + reader.MaxDoc);
                 }
                 int noSubs = subs.Count;
                 if (noSubs != childMaxDoc.Length)
@@ -203,7 +203,7 @@ namespace Lucene.Net.Index
                 for (int subIDX = 0; subIDX < noSubs; subIDX++)
                 {
                     IndexReader r = subs[subIDX];
-                    if (r.MaxDoc() != childMaxDoc[subIDX])
+                    if (r.MaxDoc != childMaxDoc[subIDX])
                     {
                         throw new System.ArgumentException("All readers must have same corresponding subReader maxDoc");
                     }

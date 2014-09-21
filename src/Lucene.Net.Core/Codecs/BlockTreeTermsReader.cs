@@ -293,9 +293,9 @@ namespace Lucene.Net.Codecs
             return ret;
         }
 
-        public override int Size()
+        public override int Size
         {
-            return Fields.Count;
+            get { return Fields.Count; }
         }
 
         // for debugging
@@ -2651,12 +2651,12 @@ namespace Lucene.Net.Codecs
 
                 public override void SeekExact(long ord)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
 
                 public override long Ord()
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
 
                 // Not static -- references term, postingsReader,

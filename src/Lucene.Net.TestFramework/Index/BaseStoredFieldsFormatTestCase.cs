@@ -2,6 +2,7 @@ using Apache.NMS.Util;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -19,7 +20,6 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using DoubleField = DoubleField;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldType = FieldType;
     using FloatField = FloatField;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
@@ -325,13 +325,13 @@ namespace Lucene.Net.Index
             DirectoryReader r = w.Reader;
             w.Dispose();
 
-            Assert.AreEqual(numDocs, r.NumDocs());
+            Assert.AreEqual(numDocs, r.NumDocs);
 
-            foreach (AtomicReaderContext ctx in r.Leaves())
+            foreach (AtomicReaderContext ctx in r.Leaves)
             {
-                AtomicReader sub = (AtomicReader)ctx.Reader();
-                FieldCache_Fields.Ints ids = FieldCache_Fields.DEFAULT.GetInts(sub, "id", false);
-                for (int docID = 0; docID < sub.NumDocs(); docID++)
+                AtomicReader sub = (AtomicReader)ctx.Reader;
+                FieldCache.Ints ids = FieldCache.DEFAULT.GetInts(sub, "id", false);
+                for (int docID = 0; docID < sub.NumDocs; docID++)
                 {
                     Document doc = sub.Document(docID);
                     Field f = (Field)doc.GetField("nf");
@@ -639,9 +639,9 @@ namespace Lucene.Net.Index
             iw.Commit();
 
             DirectoryReader ir = DirectoryReader.Open(dir);
-            Assert.IsTrue(ir.NumDocs() > 0);
+            Assert.IsTrue(ir.NumDocs > 0);
             int numDocs = 0;
-            for (int i = 0; i < ir.MaxDoc(); ++i)
+            for (int i = 0; i < ir.MaxDoc; ++i)
             {
                 Document doc = ir.Document(i);
                 if (doc == null)
@@ -659,7 +659,7 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(arr, arr2);
                 }
             }
-            Assert.IsTrue(ir.NumDocs() <= numDocs);
+            Assert.IsTrue(ir.NumDocs <= numDocs);
             ir.Dispose();
 
             iw.DeleteAll();

@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            FixedBitSet bits = new FixedBitSet(context.Reader().MaxDoc());
+            FixedBitSet bits = new FixedBitSet(context.Reader.MaxDoc);
             bits.Set(Doc);
             if (acceptDocs != null && !acceptDocs.Get(Doc))
             {

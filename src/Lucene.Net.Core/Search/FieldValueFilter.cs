@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// A <seealso cref="Filter"/> that accepts all documents that have one or more values in a
     /// given field. this <seealso cref="Filter"/> request <seealso cref="Bits"/> from the
-    /// <seealso cref="FieldCache"/> and build the bits if not present.
+    /// <seealso cref="IFieldCache"/> and build the bits if not present.
     /// </summary>
     public class FieldValueFilter : Filter
     {
@@ -77,14 +77,14 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            Bits docsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader()), Field_Renamed);
+            Bits docsWithField = FieldCache.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader), Field_Renamed);
             if (Negate_Renamed)
             {
                 if (docsWithField is Bits_MatchAllBits)
                 {
                     return null;
                 }
-                return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, docsWithField);
+                return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.AtomicReader.MaxDoc, acceptDocs, docsWithField);
             }
             else
             {
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
                     // :-)
                     return BitsFilteredDocIdSet.Wrap((DocIdSet)docsWithField, acceptDocs);
                 }
-                return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.Reader().MaxDoc(), acceptDocs, docsWithField);
+                return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.AtomicReader.MaxDoc, acceptDocs, docsWithField);
             }
         }
 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
         {
             private readonly FieldValueFilter OuterInstance;
 
-            private Bits DocsWithField;
+            private readonly Bits DocsWithField;
 
             public FieldCacheDocIdSetAnonymousInnerClassHelper2(FieldValueFilter outerInstance, int maxDoc, Bits acceptDocs, Bits docsWithField)
                 : base(maxDoc, acceptDocs)

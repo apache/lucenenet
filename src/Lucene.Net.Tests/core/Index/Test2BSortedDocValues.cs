@@ -76,12 +76,12 @@ namespace Lucene.Net.Index
 
             DirectoryReader r = DirectoryReader.Open(dir);
             int expectedValue = 0;
-            foreach (AtomicReaderContext context in r.Leaves())
+            foreach (AtomicReaderContext context in r.Leaves)
             {
-                AtomicReader reader = (AtomicReader)context.Reader();
+                AtomicReader reader = context.AtomicReader;
                 BytesRef scratch = new BytesRef();
                 BinaryDocValues dv = reader.GetSortedDocValues("dv");
-                for (int i = 0; i < reader.MaxDoc(); i++)
+                for (int i = 0; i < reader.MaxDoc; i++)
                 {
                     bytes[0] = (sbyte)(expectedValue >> 8);
                     bytes[1] = (sbyte)expectedValue;
@@ -136,12 +136,12 @@ namespace Lucene.Net.Index
 
             DirectoryReader r = DirectoryReader.Open(dir);
             int counter = 0;
-            foreach (AtomicReaderContext context in r.Leaves())
+            foreach (AtomicReaderContext context in r.Leaves)
             {
-                AtomicReader reader = (AtomicReader)context.Reader();
+                AtomicReader reader = context.AtomicReader;
                 BytesRef scratch = new BytesRef();
                 BinaryDocValues dv = reader.GetSortedDocValues("dv");
-                for (int i = 0; i < reader.MaxDoc(); i++)
+                for (int i = 0; i < reader.MaxDoc; i++)
                 {
                     bytes[0] = (sbyte)(counter >> 24);
                     bytes[1] = (sbyte)(counter >> 16);

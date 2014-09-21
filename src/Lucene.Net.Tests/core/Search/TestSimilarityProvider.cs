@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
             AtomicReader slow = SlowCompositeReaderWrapper.Wrap(Reader);
             NumericDocValues fooNorms = slow.GetNormValues("foo");
             NumericDocValues barNorms = slow.GetNormValues("bar");
-            for (int i = 0; i < slow.MaxDoc(); i++)
+            for (int i = 0; i < slow.MaxDoc; i++)
             {
                 Assert.IsFalse(fooNorms.Get(i) == barNorms.Get(i));
             }

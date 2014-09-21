@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Index
     /// to override <seealso cref="#numDocs()"/> as well and vice-versa.
     /// <p><b>NOTE</b>: If this <seealso cref="FilterAtomicReader"/> does not change the
     /// content the contained reader, you could consider overriding
-    /// <seealso cref="#getCoreCacheKey()"/> so that <seealso cref="FieldCache"/> and
+    /// <seealso cref="#getCoreCacheKey()"/> so that <seealso cref="IFieldCache"/> and
     /// <seealso cref="CachingWrapperFilter"/> share the same entries for this atomic reader
     /// and the wrapped one. <seealso cref="#getCombinedCoreAndDeletesKey()"/> could be
     /// overridden as well if the <seealso cref="#getLiveDocs() live docs"/> are not changed
@@ -66,29 +67,29 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// The underlying Fields instance. </summary>
-            protected internal readonly Fields @in;
+            protected internal readonly Fields input;
 
             /// <summary>
             /// Creates a new FilterFields. </summary>
             /// <param name="in"> the underlying Fields instance. </param>
             public FilterFields(Fields @in)
             {
-                this.@in = @in;
+                this.input = @in;
             }
 
             public override IEnumerator<string> GetEnumerator()
             {
-                return @in.GetEnumerator();
+                return input.GetEnumerator();
             }
 
             public override Terms Terms(string field)
             {
-                return @in.Terms(field);
+                return input.Terms(field);
             }
 
-            public override int Size()
+            public override int Size
             {
-                return @in.Size();
+                get { return input.Size; }
             }
         }
 
@@ -420,16 +421,24 @@ namespace Lucene.Net.Index
             return @in.GetTermVectors(docID);
         }
 
-        public override int NumDocs()
+        public override int NumDocs
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return @in.NumDocs();
+            get
+            {
+                {
+                    // Don't call ensureOpen() here (it could affect performance)
+                    return @in.NumDocs;
+                }
+            }
         }
 
-        public override int MaxDoc()
+        public override int MaxDoc
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return @in.MaxDoc();
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return @in.MaxDoc;
+            }
         }
 
         public override void Document(int docID, StoredFieldVisitor visitor)
@@ -443,10 +452,13 @@ namespace Lucene.Net.Index
             @in.Dispose();
         }
 
-        public override Fields Fields()
+        public override Fields Fields
         {
-            EnsureOpen();
-            return @in.Fields();
+            get
+            {
+                EnsureOpen();
+                return @in.Fields;
+            }
         }
 
         public override string ToString()

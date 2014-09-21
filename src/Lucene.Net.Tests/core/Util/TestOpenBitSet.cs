@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
             {
                 // aa = a.PrevSetBit(aa-1);
                 aa--;
-                while ((aa >= 0) && (!a.Get(aa)))
+                while ((aa >= 0) && (!a.SafeGet(aa)))
                 {
                     aa--;
                 }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Util
             {
                 // aa = a.PrevSetBit(aa-1);
                 aa--;
-                while ((aa >= 0) && (!a.Get(aa)))
+                while ((aa >= 0) && (!a.SafeGet(aa)))
                 {
                     aa--;
                 }
@@ -181,23 +181,23 @@ namespace Lucene.Net.Util
                         int idx;
 
                         idx = Random().Next(sz);
-                        a.Set(idx, true);
+                        a.SafeSet(idx, true);
                         b.FastSet(idx);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, true);
+                        a.SafeSet(idx, true);
                         b.FastSet((long)idx);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, false);
+                        a.SafeSet(idx, false);
                         b.FastClear(idx);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, false);
+                        a.SafeSet(idx, false);
                         b.FastClear((long)idx);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, !a.Get(idx));
+                        a.SafeSet(idx, !a.SafeGet(idx));
                         b.FastFlip(idx);
 
                         bool val = b.FlipAndGet(idx);
@@ -205,7 +205,7 @@ namespace Lucene.Net.Util
                         Assert.IsTrue(val != val2);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, !a.Get(idx));
+                        a.SafeSet(idx, !a.SafeGet(idx));
                         b.FastFlip((long)idx);
 
                         val = b.FlipAndGet((long)idx);
@@ -267,7 +267,7 @@ namespace Lucene.Net.Util
 
                 if (a0 != null)
                 {
-                    Assert.AreEqual(a.Equals(a0), b.Equals(b0));
+                    Assert.AreEqual(a.BitWiseEquals(a0), b.Equals(b0));
 
                     Assert.AreEqual(a.Cardinality(), b.Cardinality());
 
@@ -379,7 +379,7 @@ namespace Lucene.Net.Util
             BitArray bs = new BitArray(a.Length);
             foreach (int e in a)
             {
-                bs.Set(e, true);
+                bs.SafeSet(e, true);
             }
             return bs;
         }

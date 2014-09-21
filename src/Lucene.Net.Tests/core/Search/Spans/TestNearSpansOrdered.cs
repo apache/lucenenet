@@ -183,8 +183,8 @@ namespace Lucene.Net.Search.Spans
             SpanNearQuery q = MakeQuery();
             Weight w = Searcher.CreateNormalizedWeight(q);
             IndexReaderContext topReaderContext = Searcher.TopReaderContext;
-            AtomicReaderContext leave = topReaderContext.Leaves()[0];
-            Scorer s = w.Scorer(leave, ((AtomicReader)leave.Reader()).LiveDocs);
+            AtomicReaderContext leave = topReaderContext.Leaves[0];
+            Scorer s = w.Scorer(leave, ((AtomicReader)leave.Reader).LiveDocs);
             Assert.AreEqual(1, s.Advance(1));
         }
 

@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
             if (IndexedTermsArray == null)
             {
                 //System.out.println("GET normal enum");
-                Fields fields = reader.Fields();
+                Fields fields = reader.Fields;
                 if (fields == null)
                 {
                     return null;
@@ -340,12 +340,12 @@ namespace Lucene.Net.Index
             long startTime = DateTime.Now.Millisecond;
             Prefix = termPrefix == null ? null : BytesRef.DeepCopyOf(termPrefix);
 
-            int maxDoc = reader.MaxDoc();
+            int maxDoc = reader.MaxDoc;
             int[] index = new int[maxDoc]; // immediate term numbers, or the index into the byte[] representing the last number
             int[] lastTerm = new int[maxDoc]; // last term we saw for this document
             sbyte[][] bytes = new sbyte[maxDoc][]; // list of term numbers for the doc (delta encoded vInts)
 
-            Fields fields = reader.Fields();
+            Fields fields = reader.Fields;
             if (fields == null)
             {
                 // No terms
@@ -755,7 +755,7 @@ namespace Lucene.Net.Index
                     InstanceFieldsInitialized = true;
                 }
                 Debug.Assert(outerInstance.IndexedTermsArray != null);
-                TermsEnum = reader.Fields().Terms(outerInstance.Field).Iterator(null);
+                TermsEnum = reader.Fields.Terms(outerInstance.Field).Iterator(null);
             }
 
             public override IComparer<BytesRef> Comparator

@@ -81,10 +81,13 @@ namespace Lucene.Net.Index
             return "SlowCompositeReaderWrapper(" + @in + ")";
         }
 
-        public override Fields Fields()
+        public override Fields Fields
         {
-            EnsureOpen();
-            return fields;
+            get
+            {
+                EnsureOpen();
+                return fields;
+            }
         }
 
         public override NumericDocValues GetNumericDocValues(string field)
@@ -132,17 +135,17 @@ namespace Lucene.Net.Index
             {
                 return null;
             }
-            int size = @in.Leaves().Count;
+            int size = @in.Leaves.Count;
             SortedDocValues[] values = new SortedDocValues[size];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {
-                AtomicReaderContext context = @in.Leaves()[i];
+                AtomicReaderContext context = @in.Leaves[i];
                 SortedDocValues v = context.AtomicReader.GetSortedDocValues(field) ?? DocValues.EMPTY_SORTED;
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
-            starts[size] = MaxDoc();
+            starts[size] = MaxDoc;
             return new MultiSortedDocValues(values, starts, map);
         }
 
@@ -174,17 +177,17 @@ namespace Lucene.Net.Index
                 return null;
             }
             Debug.Assert(map != null);
-            int size = @in.Leaves().Count;
-            SortedSetDocValues[] values = new SortedSetDocValues[size];
+            int size = @in.Leaves.Count;
+            var values = new SortedSetDocValues[size];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {
-                AtomicReaderContext context = @in.Leaves()[i];
+                AtomicReaderContext context = @in.Leaves[i];
                 SortedSetDocValues v = context.AtomicReader.GetSortedSetDocValues(field) ?? DocValues.EMPTY_SORTED_SET;
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
-            starts[size] = MaxDoc();
+            starts[size] = MaxDoc;
             return new MultiSortedSetDocValues(values, starts, map);
         }
 
@@ -204,16 +207,22 @@ namespace Lucene.Net.Index
             return @in.GetTermVectors(docID);
         }
 
-        public override int NumDocs()
+        public override int NumDocs
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return @in.NumDocs();
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return @in.NumDocs;
+            }
         }
 
-        public override int MaxDoc()
+        public override int MaxDoc
         {
-            // Don't call ensureOpen() here (it could affect performance)
-            return @in.MaxDoc();
+            get
+            {
+                // Don't call ensureOpen() here (it could affect performance)
+                return @in.MaxDoc;
+            }
         }
 
         public override void Document(int docID, StoredFieldVisitor visitor)
@@ -265,7 +274,7 @@ namespace Lucene.Net.Index
         public override void CheckIntegrity()
         {
             EnsureOpen();
-            foreach (AtomicReaderContext ctx in @in.Leaves())
+            foreach (AtomicReaderContext ctx in @in.Leaves)
             {
                 ctx.AtomicReader.CheckIntegrity();
             }

@@ -68,7 +68,7 @@ namespace Lucene.Net.Store
                 doc.Add(NewStringField("content", English.IntToEnglish(i).Trim(), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Assert.AreEqual(DocsToAdd, writer.MaxDoc());
+            Assert.AreEqual(DocsToAdd, writer.MaxDoc);
             writer.Dispose();
             dir.Dispose();
         }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Store
 
             // open reader to test document count
             IndexReader reader = DirectoryReader.Open(ramDir);
-            Assert.AreEqual(DocsToAdd, reader.NumDocs());
+            Assert.AreEqual(DocsToAdd, reader.NumDocs);
 
             // open search zo check if all doc's are there
             IndexSearcher searcher = NewSearcher(reader);

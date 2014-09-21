@@ -173,9 +173,9 @@ namespace Lucene.Net.Codecs.Lucene41
         private void Verify(Directory dir)
         {
             DirectoryReader ir = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext leaf in ir.Leaves())
+            foreach (AtomicReaderContext leaf in ir.Leaves)
             {
-                AtomicReader leafReader = (AtomicReader)leaf.Reader();
+                AtomicReader leafReader = (AtomicReader)leaf.Reader;
                 AssertTerms(leafReader.Terms("field1docs"), leafReader.Terms("field2freqs"), true);
                 AssertTerms(leafReader.Terms("field3positions"), leafReader.Terms("field4offsets"), true);
                 AssertTerms(leafReader.Terms("field4offsets"), leafReader.Terms("field5payloadsFixed"), true);

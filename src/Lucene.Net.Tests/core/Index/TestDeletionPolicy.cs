@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
             {
                 IndexCommit lastCommit = commits[commits.Count - 1];
                 DirectoryReader r = DirectoryReader.Open(Dir);
-                Assert.AreEqual(r.Leaves().Count, lastCommit.SegmentCount, "lastCommit.segmentCount()=" + lastCommit.SegmentCount + " vs IndexReader.segmentCount=" + r.Leaves().Count);
+                Assert.AreEqual(r.Leaves.Count, lastCommit.SegmentCount, "lastCommit.segmentCount()=" + lastCommit.SegmentCount + " vs IndexReader.segmentCount=" + r.Leaves.Count);
                 r.Dispose();
                 OuterInstance.VerifyCommitOrder(commits);
                 NumOnCommit++;
@@ -377,7 +377,7 @@ namespace Lucene.Net.Index
                 bool needsMerging;
                 {
                     DirectoryReader r = DirectoryReader.Open(dir);
-                    needsMerging = r.Leaves().Count != 1;
+                    needsMerging = r.Leaves.Count != 1;
                     r.Dispose();
                 }
                 if (needsMerging)
@@ -493,8 +493,8 @@ namespace Lucene.Net.Index
 
             DirectoryReader r = DirectoryReader.Open(dir);
             // Still merged, still 11 docs
-            Assert.AreEqual(1, r.Leaves().Count);
-            Assert.AreEqual(11, r.NumDocs());
+            Assert.AreEqual(1, r.Leaves.Count);
+            Assert.AreEqual(11, r.NumDocs);
             r.Dispose();
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(policy).SetIndexCommit(lastCommit));
@@ -508,8 +508,8 @@ namespace Lucene.Net.Index
             r = DirectoryReader.Open(dir);
             // Not fully merged because we rolled it back, and now only
             // 10 docs
-            Assert.IsTrue(r.Leaves().Count > 1);
-            Assert.AreEqual(10, r.NumDocs());
+            Assert.IsTrue(r.Leaves.Count > 1);
+            Assert.AreEqual(10, r.NumDocs);
             r.Dispose();
 
             // Re-merge
@@ -518,8 +518,8 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             r = DirectoryReader.Open(dir);
-            Assert.AreEqual(1, r.Leaves().Count);
-            Assert.AreEqual(10, r.NumDocs());
+            Assert.AreEqual(1, r.Leaves.Count);
+            Assert.AreEqual(10, r.NumDocs);
             r.Dispose();
 
             // Now open writer on the commit just before merging,
@@ -530,16 +530,16 @@ namespace Lucene.Net.Index
             // Reader still sees fully merged index, because writer
             // opened on the prior commit has not yet committed:
             r = DirectoryReader.Open(dir);
-            Assert.AreEqual(1, r.Leaves().Count);
-            Assert.AreEqual(10, r.NumDocs());
+            Assert.AreEqual(1, r.Leaves.Count);
+            Assert.AreEqual(10, r.NumDocs);
             r.Dispose();
 
             writer.Dispose();
 
             // Now reader sees not-fully-merged index:
             r = DirectoryReader.Open(dir);
-            Assert.IsTrue(r.Leaves().Count > 1);
-            Assert.AreEqual(10, r.NumDocs());
+            Assert.IsTrue(r.Leaves.Count > 1);
+            Assert.AreEqual(10, r.NumDocs);
             r.Dispose();
 
             dir.Dispose();

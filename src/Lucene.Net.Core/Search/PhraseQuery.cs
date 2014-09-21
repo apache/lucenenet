@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
                 Debug.Assert(OuterInstance.Terms_Renamed.Count > 0);
-                AtomicReader reader = ((AtomicReader)context.Reader());
+                AtomicReader reader = context.AtomicReader;
                 Bits liveDocs = acceptDocs;
                 PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[OuterInstance.Terms_Renamed.Count];
 

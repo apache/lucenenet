@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         SegmentReader reader = rld.GetReadOnlyClone(IOContext.READ);
-                        if (reader.NumDocs() > 0 || writer.KeepFullyDeletedSegments)
+                        if (reader.NumDocs > 0 || writer.KeepFullyDeletedSegments)
                         {
                             // Steal the ref:
                             readers.Add(reader);
@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
                             if (newReaders[i].SegmentInfo.DelGen == infos.Info(i).DelGen)
                             {
                                 // only DV updates
-                                newReaders[i] = new SegmentReader(infos.Info(i), newReaders[i], newReaders[i].LiveDocs, newReaders[i].NumDocs());
+                                newReaders[i] = new SegmentReader(infos.Info(i), newReaders[i], newReaders[i].LiveDocs, newReaders[i].NumDocs);
                             }
                             else
                             {
@@ -592,7 +592,7 @@ namespace Lucene.Net.Index
 
             public override void Delete()
             {
-                throw new System.NotSupportedException("this IndexCommit does not support deletions");
+                throw new NotSupportedException("this IndexCommit does not support deletions");
             }
         }
     }

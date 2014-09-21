@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 
                 try
                 {
-                    reader.Fields();
+                    var aaa = reader.Fields;
                     Assert.Fail("we are closed");
                 }
                 catch (AlreadyClosedException ex)

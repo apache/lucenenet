@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static NumericDocValues GetNormValues(IndexReader r, string field)
         {
-            IList<AtomicReaderContext> leaves = r.Leaves();
+            IList<AtomicReaderContext> leaves = r.Leaves;
             int size = leaves.Count;
             if (size == 0)
             {
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
-            starts[size] = r.MaxDoc();
+            starts[size] = r.MaxDoc;
 
             Debug.Assert(anyReal);
 
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static NumericDocValues GetNumericValues(IndexReader r, string field)
         {
-            IList<AtomicReaderContext> leaves = r.Leaves();
+            IList<AtomicReaderContext> leaves = r.Leaves;
             int size = leaves.Count;
             if (size == 0)
             {
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
-            starts[size] = r.MaxDoc();
+            starts[size] = r.MaxDoc;
 
             if (!anyReal)
             {
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static Bits GetDocsWithField(IndexReader r, string field)
         {
-            IList<AtomicReaderContext> leaves = r.Leaves();
+            IList<AtomicReaderContext> leaves = r.Leaves;
             int size = leaves.Count;
             if (size == 0)
             {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                 Bits v = context.AtomicReader.GetDocsWithField(field);
                 if (v == null)
                 {
-                    v = new Lucene.Net.Util.Bits_MatchNoBits(context.Reader().MaxDoc());
+                    v = new Lucene.Net.Util.Bits_MatchNoBits(context.Reader.MaxDoc);
                     anyMissing = true;
                 }
                 else
@@ -233,7 +233,7 @@ namespace Lucene.Net.Index
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
-            starts[size] = r.MaxDoc();
+            starts[size] = r.MaxDoc;
 
             if (!anyReal)
             {
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
             }
             else if (!anyMissing)
             {
-                return new Lucene.Net.Util.Bits_MatchAllBits(r.MaxDoc());
+                return new Lucene.Net.Util.Bits_MatchAllBits(r.MaxDoc);
             }
             else
             {
@@ -258,7 +258,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static BinaryDocValues GetBinaryValues(IndexReader r, string field)
         {
-            IList<AtomicReaderContext> leaves = r.Leaves();
+            IList<AtomicReaderContext> leaves = r.Leaves;
             int size = leaves.Count;
 
             if (size == 0)
@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
-            starts[size] = r.MaxDoc();
+            starts[size] = r.MaxDoc;
 
             if (!anyReal)
             {
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static SortedDocValues GetSortedValues(IndexReader r, string field)
         {
-            IList<AtomicReaderContext> leaves = r.Leaves();
+            IList<AtomicReaderContext> leaves = r.Leaves;
             int size = leaves.Count;
 
             if (size == 0)
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
             }
 
             bool anyReal = false;
-            SortedDocValues[] values = new SortedDocValues[size];
+            var values = new SortedDocValues[size];
             int[] starts = new int[size + 1];
             for (int i = 0; i < size; i++)
             {
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
-            starts[size] = r.MaxDoc();
+            starts[size] = r.MaxDoc;
 
             if (!anyReal)
             {
@@ -384,7 +384,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static SortedSetDocValues GetSortedSetValues(IndexReader r, string field)
         {
-            IList<AtomicReaderContext> leaves = r.Leaves();
+            IList<AtomicReaderContext> leaves = r.Leaves;
             int size = leaves.Count;
 
             if (size == 0)
@@ -414,7 +414,7 @@ namespace Lucene.Net.Index
                 values[i] = v;
                 starts[i] = context.DocBase;
             }
-            starts[size] = r.MaxDoc();
+            starts[size] = r.MaxDoc;
 
             if (!anyReal)
             {

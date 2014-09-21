@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
             AddDoc(writer, "aaa bbb");
             writer.Dispose();
             SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(Dir));
-            TermsEnum terms = reader.Fields().Terms("content").Iterator(null);
+            TermsEnum terms = reader.Fields.Terms("content").Iterator(null);
             Assert.IsNotNull(terms.Next());
             Assert.AreEqual("aaa", terms.Term().Utf8ToString());
             Assert.IsNotNull(terms.Next());

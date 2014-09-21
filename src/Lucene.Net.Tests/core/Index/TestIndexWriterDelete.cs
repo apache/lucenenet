@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(7, reader.NumDocs());
+            Assert.AreEqual(7, reader.NumDocs);
             reader.Dispose();
 
             modifier.DeleteDocuments(new Term("value", Convert.ToString(value)));
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, reader.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
             reader.Dispose();
             modifier.Dispose();
             dir.Dispose();
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
                 modifier.Commit();
 
                 IndexReader reader = DirectoryReader.Open(dir);
-                Assert.AreEqual(1, reader.NumDocs());
+                Assert.AreEqual(1, reader.NumDocs);
 
                 int hitCount = GetHitCount(dir, new Term("id", Convert.ToString(id)));
                 Assert.AreEqual(1, hitCount);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(5, reader.NumDocs());
+            Assert.AreEqual(5, reader.NumDocs);
             modifier.Dispose();
             reader.Dispose();
             dir.Dispose();
@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(7, reader.NumDocs());
+            Assert.AreEqual(7, reader.NumDocs);
             reader.Dispose();
 
             id = 0;
@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(5, reader.NumDocs());
+            Assert.AreEqual(5, reader.NumDocs);
             reader.Dispose();
 
             Term[] terms = new Term[3];
@@ -274,7 +274,7 @@ namespace Lucene.Net.Index
             modifier.DeleteDocuments(terms);
             modifier.Commit();
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(2, reader.NumDocs());
+            Assert.AreEqual(2, reader.NumDocs);
             reader.Dispose();
 
             modifier.Dispose();
@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(7, reader.NumDocs());
+            Assert.AreEqual(7, reader.NumDocs);
             reader.Dispose();
 
             // Add 1 doc (so we will have something buffered)
@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
 
             // Delete all shouldn't be on disk yet
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(7, reader.NumDocs());
+            Assert.AreEqual(7, reader.NumDocs);
             reader.Dispose();
 
             // Add a doc and update a doc (after the deleteAll, before the commit)
@@ -321,7 +321,7 @@ namespace Lucene.Net.Index
 
             // Validate there are no docs left
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(2, reader.NumDocs());
+            Assert.AreEqual(2, reader.NumDocs);
             reader.Dispose();
 
             modifier.Dispose();
@@ -362,9 +362,9 @@ namespace Lucene.Net.Index
 
             modifier.Dispose();
             DirectoryReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(reader.MaxDoc(), 0);
-            Assert.AreEqual(reader.NumDocs(), 0);
-            Assert.AreEqual(reader.NumDeletedDocs(), 0);
+            Assert.AreEqual(reader.MaxDoc, 0);
+            Assert.AreEqual(reader.NumDocs, 0);
+            Assert.AreEqual(reader.NumDeletedDocs, 0);
             reader.Dispose();
 
             dir.Dispose();
@@ -446,7 +446,7 @@ namespace Lucene.Net.Index
             AddDoc(modifier, ++id, value);
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(7, reader.NumDocs());
+            Assert.AreEqual(7, reader.NumDocs);
             reader.Dispose();
 
             // Delete all
@@ -458,7 +458,7 @@ namespace Lucene.Net.Index
 
             // Validate that the docs are still there
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(7, reader.NumDocs());
+            Assert.AreEqual(7, reader.NumDocs);
             reader.Dispose();
 
             dir.Dispose();
@@ -481,7 +481,7 @@ namespace Lucene.Net.Index
             modifier.Commit();
 
             IndexReader reader = modifier.Reader;
-            Assert.AreEqual(7, reader.NumDocs());
+            Assert.AreEqual(7, reader.NumDocs);
             reader.Dispose();
 
             AddDoc(modifier, ++id, value);
@@ -491,7 +491,7 @@ namespace Lucene.Net.Index
             modifier.DeleteAll();
 
             reader = modifier.Reader;
-            Assert.AreEqual(0, reader.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
             reader.Dispose();
 
             // Roll it back
@@ -500,7 +500,7 @@ namespace Lucene.Net.Index
 
             // Validate that the docs are still there
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(7, reader.NumDocs());
+            Assert.AreEqual(7, reader.NumDocs);
             reader.Dispose();
 
             dir.Dispose();
@@ -1123,7 +1123,7 @@ namespace Lucene.Net.Index
                     w.DeleteDocuments(new Term("id", "" + ids[upto++]));
                 }
                 IndexReader r = w.Reader;
-                Assert.AreEqual(NUM_DOCS - upto, r.NumDocs());
+                Assert.AreEqual(NUM_DOCS - upto, r.NumDocs);
                 r.Dispose();
             }
 
@@ -1434,12 +1434,12 @@ namespace Lucene.Net.Index
             w = new IndexWriter(d, iwc);
             IndexReader r = DirectoryReader.Open(w, false);
             Assert.IsTrue(w.TryDeleteDocument(r, 1));
-            Assert.IsTrue(w.TryDeleteDocument(r.Leaves()[0].Reader(), 0));
+            Assert.IsTrue(w.TryDeleteDocument(r.Leaves[0].Reader, 0));
             r.Dispose();
             w.Dispose();
 
             r = DirectoryReader.Open(d);
-            Assert.AreEqual(2, r.NumDeletedDocs());
+            Assert.AreEqual(2, r.NumDeletedDocs);
             Assert.IsNotNull(MultiFields.GetLiveDocs(r));
             r.Dispose();
             d.Dispose();

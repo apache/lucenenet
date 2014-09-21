@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
             {
                 Debug.Assert(OuterInstance.termArrays.Count > 0);
-                AtomicReader reader = ((AtomicReader)context.Reader());
+                AtomicReader reader = (context.AtomicReader);
                 Bits liveDocs = acceptDocs;
 
                 PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[OuterInstance.termArrays.Count];
@@ -321,7 +321,7 @@ namespace Lucene.Net.Search
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                Scorer scorer = Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
+                Scorer scorer = Scorer(context, (context.AtomicReader).LiveDocs);
                 if (scorer != null)
                 {
                     int newDoc = scorer.Advance(doc);

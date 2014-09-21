@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Spans
             {
                 // this happens with span-not query, as it doesn't include the NOT side in extractTerms()
                 // so we seek to the term now in this segment..., this sucks because its ugly mostly!
-                Fields fields = context.AtomicReader.Fields();
+                Fields fields = context.AtomicReader.Fields;
                 if (fields != null)
                 {
                     Terms terms = fields.Terms(term.Field());

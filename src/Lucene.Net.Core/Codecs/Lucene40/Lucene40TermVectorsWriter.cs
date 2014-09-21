@@ -396,7 +396,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private int CopyVectorsWithDeletions(MergeState mergeState, Lucene40TermVectorsReader matchingVectorsReader, AtomicReader reader, int[] rawDocLengths, int[] rawDocLengths2)
         {
-            int maxDoc = reader.MaxDoc();
+            int maxDoc = reader.MaxDoc;
             Bits liveDocs = reader.LiveDocs;
             int totalNumDocs = 0;
             if (matchingVectorsReader != null)
@@ -457,7 +457,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private int CopyVectorsNoDeletions(MergeState mergeState, Lucene40TermVectorsReader matchingVectorsReader, AtomicReader reader, int[] rawDocLengths, int[] rawDocLengths2)
         {
-            int maxDoc = reader.MaxDoc();
+            int maxDoc = reader.MaxDoc;
             if (matchingVectorsReader != null)
             {
                 // We can bulk-copy because the fieldInfos are "congruent"

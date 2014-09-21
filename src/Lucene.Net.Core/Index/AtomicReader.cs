@@ -105,11 +105,11 @@ namespace Lucene.Net.Index
         /// this method may return null if the reader has no
         /// postings.
         /// </summary>
-        public abstract Fields Fields();
+        public abstract Fields Fields { get; }
 
         public override sealed int DocFreq(Term term)
         {
-            Fields fields = Fields();
+            Fields fields = Fields;
             if (fields == null)
             {
                 return 0;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public override sealed long TotalTermFreq(Term term)
         {
-            Fields fields = Fields();
+            Fields fields = Fields;
             if (fields == null)
             {
                 return 0;
@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
         /// this may return null if the field does not exist. </summary>
         public Terms Terms(string field)
         {
-            Fields fields = Fields();
+            Fields fields = Fields;
             if (fields == null)
             {
                 return null;
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(term.Field() != null);
             Debug.Assert(term.Bytes() != null);
-            Fields fields = Fields();
+            Fields fields = Fields;
             if (fields != null)
             {
                 Terms terms = fields.Terms(term.Field());
@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(term.Field() != null);
             Debug.Assert(term.Bytes() != null);
-            Fields fields = Fields();
+            Fields fields = Fields;
             if (fields != null)
             {
                 Terms terms = fields.Terms(term.Field());

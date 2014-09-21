@@ -433,7 +433,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
 
                 IndexReader reader = DirectoryReader.Open(dir);
-                for (int i = 0; i < reader.NumDocs(); i++)
+                for (int i = 0; i < reader.NumDocs; i++)
                 {
                     reader.Document(i);
                     reader.GetTermVectors(i);

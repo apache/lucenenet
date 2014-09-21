@@ -91,10 +91,10 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: got new reader=" + r);
                 }
-                //System.out.println("numDocs=" + r.NumDocs() + "
+                //System.out.println("numDocs=" + r.NumDocs + "
                 //openDelFileCount=" + dir.openDeleteFileCount());
 
-                if (r.NumDocs() > 0)
+                if (r.NumDocs > 0)
                 {
                     FixedSearcher = new IndexSearcher(r, es);
                     SmokeTestSearcher(FixedSearcher);
@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
             }
             r.Dispose();
 
-            //System.out.println("numDocs=" + r.NumDocs() + " openDelFileCount=" + dir.openDeleteFileCount());
+            //System.out.println("numDocs=" + r.NumDocs + " openDelFileCount=" + dir.openDeleteFileCount());
             ISet<string> openDeletedFiles_ = ((MockDirectoryWrapper)Dir).OpenDeletedFiles;
             if (openDeletedFiles_.Count > 0)
             {

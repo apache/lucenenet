@@ -60,9 +60,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            foreach (AtomicReaderContext cxt in r.Leaves())
+            foreach (AtomicReaderContext cxt in r.Leaves)
             {
-                TestUtil.CheckReader(cxt.Reader());
+                TestUtil.CheckReader(cxt.Reader);
             }
 
             r.Dispose();
@@ -99,9 +99,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            foreach (AtomicReaderContext cxt in r.Leaves())
+            foreach (AtomicReaderContext cxt in r.Leaves)
             {
-                TestUtil.CheckReader(cxt.Reader());
+                TestUtil.CheckReader(cxt.Reader);
             }
 
             r.Dispose();

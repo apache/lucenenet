@@ -53,11 +53,11 @@ namespace Lucene.Net.Index
         public abstract Terms Terms(string field);
 
         /// <summary>
-        /// Returns the number of fields or -1 if the number of
+        /// Gets the number of fields or -1 if the number of
         /// distinct field names is unknown. If &gt;= 0,
         /// <seealso cref="#iterator"/> will return as many field names.
         /// </summary>
-        public abstract int Size();
+        public abstract int Size { get; }
 
         /// <summary>
         /// Returns the number of terms for all fields, or -1 if this
@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
         ///   to access this statistic for 3.x indexes, which do not
         ///   have this statistic per-field.
         ///  <seealso cref= Terms#size()  </seealso>
-        [Obsolete("iterate fields and add their size() instead.")]
+        [Obsolete("iterate fields and add their Size() instead.")]
         public virtual long UniqueTermCount
         {
             get
@@ -94,7 +94,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Zero-length {@code Fields} array. </summary>
+        /// Zero-length {@code Fields} array.
+        /// </summary>
         public static readonly Fields[] EMPTY_ARRAY = new Fields[0];
     }
 }

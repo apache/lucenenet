@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
                 if (s == null)
                 {
                     s = Mgr.Acquire();
-                    if (s.IndexReader.NumDocs() != 0)
+                    if (s.IndexReader.NumDocs != 0)
                     {
                         long token = LifetimeMGR.Record(s);
                         lock (PastSearchers)
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = searcherManager.Acquire();
             try
             {
-                Assert.AreEqual(1, searcher.IndexReader.NumDocs());
+                Assert.AreEqual(1, searcher.IndexReader.NumDocs);
             }
             finally
             {

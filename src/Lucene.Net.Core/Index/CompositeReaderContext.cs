@@ -57,35 +57,38 @@ namespace Lucene.Net.Index
             : base(parent, ordInParent, docbaseInParent)
         {
             this.children = children.ToArray();
-            this.leaves = leaves ?? null;
+            this.leaves = leaves;
             this.reader = reader;
         }
 
-        public override IList<AtomicReaderContext> Leaves()
+        public override IList<AtomicReaderContext> Leaves
         {
-            if (!IsTopLevel)
+            get
             {
-                throw new System.NotSupportedException("this is not a top-level context.");
+                if (!IsTopLevel)
+                {
+                    throw new System.NotSupportedException("this is not a top-level context.");
+                }
+                Debug.Assert(leaves != null);
+                return leaves;
             }
-            Debug.Assert(leaves != null);
-            return leaves;
         }
 
-        public override IList<IndexReaderContext> Children()
+        public override IList<IndexReaderContext> Children
         {
-            return children;
+            get { return children; }
         }
 
-        public override IndexReader Reader()
+        public override IndexReader Reader
         {
-            return reader;
+            get { return reader; }
         }
 
         public sealed class Builder
         {
-            internal readonly CompositeReader Reader;
-            internal readonly IList<AtomicReaderContext> Leaves = new List<AtomicReaderContext>();
-            internal int LeafDocBase = 0;
+            private readonly CompositeReader Reader;
+            private readonly IList<AtomicReaderContext> Leaves = new List<AtomicReaderContext>();
+            private int LeafDocBase = 0;
 
             public Builder(CompositeReader reader)
             {
@@ -99,12 +102,12 @@ namespace Lucene.Net.Index
 
             internal IndexReaderContext Build(CompositeReaderContext parent, IndexReader reader, int ord, int docBase)
             {
-                if (reader is AtomicReader)
+                var ar = reader as AtomicReader;
+                if (ar != null)
                 {
-                    AtomicReader ar = (AtomicReader)reader;
-                    AtomicReaderContext atomic = new AtomicReaderContext(parent, ar, ord, docBase, Leaves.Count, LeafDocBase);
+                    var atomic = new AtomicReaderContext(parent, ar, ord, docBase, Leaves.Count, LeafDocBase);
                     Leaves.Add(atomic);
-                    LeafDocBase += reader.MaxDoc();
+                    LeafDocBase += reader.MaxDoc;
                     return atomic;
                 }
                 else
@@ -126,9 +129,9 @@ namespace Lucene.Net.Index
                     {
                         IndexReader r = sequentialSubReaders[i];
                         children[i] = Build(newParent, r, i, newDocBase);
-                        newDocBase += r.MaxDoc();
+                        newDocBase += r.MaxDoc;
                     }
-                    Debug.Assert(newDocBase == cr.MaxDoc());
+                    Debug.Assert(newDocBase == cr.MaxDoc);
                     return newParent;
                 }
             }

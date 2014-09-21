@@ -1054,11 +1054,11 @@ namespace Lucene.Net.Store
                             }
 
                             DirectoryReader ir1 = DirectoryReader.Open(this);
-                            int numDocs1 = ir1.NumDocs();
+                            int numDocs1 = ir1.NumDocs;
                             ir1.Dispose();
                             (new IndexWriter(this, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null))).Dispose();
                             DirectoryReader ir2 = DirectoryReader.Open(this);
-                            int numDocs2 = ir2.NumDocs();
+                            int numDocs2 = ir2.NumDocs;
                             ir2.Dispose();
                             Debug.Assert(numDocs1 == numDocs2, "numDocs changed after opening/closing IW: before=" + numDocs1 + " after=" + numDocs2);
                         }

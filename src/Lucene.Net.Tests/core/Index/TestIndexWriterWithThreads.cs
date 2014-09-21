@@ -337,7 +337,7 @@ namespace Lucene.Net.Index
                 {
                     IndexReader reader = DirectoryReader.Open(dir);
                     Bits delDocs = MultiFields.GetLiveDocs(reader);
-                    for (int j = 0; j < reader.MaxDoc(); j++)
+                    for (int j = 0; j < reader.MaxDoc; j++)
                     {
                         if (delDocs == null || !delDocs.Get(j))
                         {
@@ -574,7 +574,7 @@ namespace Lucene.Net.Index
                 Assert.IsFalse(thread2.Failed, "Failed due to: " + thread2.Failure);
                 // now verify that we have two documents in the index
                 IndexReader reader = DirectoryReader.Open(dir);
-                Assert.AreEqual(2, reader.NumDocs(), "IndexReader should have one document per thread running");
+                Assert.AreEqual(2, reader.NumDocs, "IndexReader should have one document per thread running");
 
                 reader.Dispose();
             }

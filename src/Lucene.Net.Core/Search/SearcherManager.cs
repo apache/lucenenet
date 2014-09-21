@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Search
 {

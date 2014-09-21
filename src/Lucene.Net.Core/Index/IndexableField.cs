@@ -1,3 +1,5 @@
+using Lucene.Net.Search.Similarities;
+
 namespace Lucene.Net.Index
 {
     using System.IO;

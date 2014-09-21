@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <param name="fieldName"> Name of the field which is to be analyzed </param>
         /// <returns> Analyzer for the field with the given name.  Assumed to be non-null </returns>
-        protected internal abstract Analyzer GetWrappedAnalyzer(string fieldName);
+        protected abstract Analyzer GetWrappedAnalyzer(string fieldName);
 
         /// <summary>
         /// Wraps / alters the given TokenStreamComponents, taken from the wrapped
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis
         /// <param name="components">
         ///          TokenStreamComponents taken from the wrapped Analyzer </param>
         /// <returns> Wrapped / altered TokenStreamComponents. </returns>
-        protected internal virtual TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
+        protected virtual TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
         {
             return components;
         }

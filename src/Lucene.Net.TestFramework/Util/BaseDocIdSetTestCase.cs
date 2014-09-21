@@ -43,6 +43,7 @@ namespace Lucene.Net.Util
         {
             Debug.Assert(numBitsSet <= numBits);
             BitArray set = new BitArray(numBits);
+            Random random = Random();
             if (numBitsSet == numBits)
             {
                 set.Set(0, numBits != 0); //convert int to boolean
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util
                 {
                     while (true)
                     {
-                        int o = Random().Next(numBits);
+                        int o = random.Next(numBits);
                         if (!set.Get(o))
                         {
                             set.Set(o, true);

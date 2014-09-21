@@ -371,7 +371,7 @@ namespace Lucene.Net.Search
             string maxIP = Pad(MaxId);
             string medIP = Pad(medId);
 
-            int numDocs = reader.NumDocs();
+            int numDocs = reader.NumDocs;
 
             AssertEquals("num of docs", numDocs, 1 + MaxId - MinId);
 
@@ -497,7 +497,7 @@ namespace Lucene.Net.Search
             string minRP = Pad(SignedIndexDir.MinR);
             string maxRP = Pad(SignedIndexDir.MaxR);
 
-            int numDocs = reader.NumDocs();
+            int numDocs = reader.NumDocs;
 
             AssertEquals("num of docs", numDocs, 1 + MaxId - MinId);
 

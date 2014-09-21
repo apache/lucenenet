@@ -58,9 +58,9 @@ namespace Lucene.Net.Search
         /// returns the total number of documents, regardless of
         /// whether they all contain values for this field. </summary>
         /// <seealso cref= IndexReader#maxDoc()  </seealso>
-        public long MaxDoc()
+        public long MaxDoc
         {
-            return MaxDoc_Renamed;
+            get { return MaxDoc_Renamed; }
         }
 
         /// <summary>

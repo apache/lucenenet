@@ -94,9 +94,9 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
                 Assert.IsNull(acceptDocs, "acceptDocs should be null, as we have an index without deletions");
-                FixedBitSet set = new FixedBitSet(context.Reader().MaxDoc());
+                FixedBitSet set = new FixedBitSet(context.Reader.MaxDoc);
                 int docBase = context.DocBase;
-                int limit = docBase + context.Reader().MaxDoc();
+                int limit = docBase + context.Reader.MaxDoc;
                 for (int index = 0; index < Docs.Length; index++)
                 {
                     int docId = Docs[index];

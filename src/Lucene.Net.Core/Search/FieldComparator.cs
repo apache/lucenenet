@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
     ///       when the search is switching to the next segment.
     ///       You may need to update internal state of the
     ///       comparator, for example retrieving new values from
-    ///       the <seealso cref="FieldCache"/>.
+    ///       the <seealso cref="IFieldCache"/>.
     ///
     ///  <li> <seealso cref="#value"/> Return the sort value stored in
     ///       the specified slot.  this is only called at the end
@@ -338,7 +338,7 @@ namespace Lucene.Net.Search
             {
                 if (MissingValue != null)
                 {
-                    DocsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader()), Field);
+                    DocsWithField = FieldCache.DEFAULT.GetDocsWithField((context.AtomicReader), Field);
                     // optimization to remove unneeded checks on the bit interface:
                     if (DocsWithField is Lucene.Net.Util.Bits_MatchAllBits)
                     {
@@ -361,16 +361,16 @@ namespace Lucene.Net.Search
         public sealed class ByteComparator : NumericComparator<sbyte>
         {
             internal readonly sbyte[] Values;
-            internal readonly FieldCache_Fields.IByteParser Parser;
-            internal FieldCache_Fields.Bytes CurrentReaderValues;
+            internal readonly FieldCache.IByteParser Parser;
+            internal FieldCache.Bytes CurrentReaderValues;
             internal sbyte bottom;
             internal sbyte topValue;
 
-            internal ByteComparator(int numHits, string field, FieldCache_Fields.IParser parser, sbyte? missingValue)
+            internal ByteComparator(int numHits, string field, FieldCache.IParser parser, sbyte? missingValue)
                 : base(field, missingValue)
             {
                 Values = new sbyte[numHits];
-                this.Parser = (FieldCache_Fields.IByteParser)parser;
+                this.Parser = (FieldCache.IByteParser)parser;
             }
 
             public override int Compare(int slot1, int slot2)
@@ -408,7 +408,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetBytes(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache.DEFAULT.GetBytes((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -454,16 +454,16 @@ namespace Lucene.Net.Search
         public sealed class DoubleComparator : NumericComparator<double>
         {
             internal readonly double[] Values;
-            internal readonly FieldCache_Fields.IDoubleParser Parser;
-            internal FieldCache_Fields.Doubles CurrentReaderValues;
+            internal readonly FieldCache.IDoubleParser Parser;
+            internal FieldCache.Doubles CurrentReaderValues;
             internal double Bottom_Renamed;
             internal double TopValue_Renamed;
 
-            internal DoubleComparator(int numHits, string field, FieldCache_Fields.IParser parser, double? missingValue)
+            internal DoubleComparator(int numHits, string field, FieldCache.IParser parser, double? missingValue)
                 : base(field, missingValue)
             {
                 Values = new double[numHits];
-                this.Parser = (FieldCache_Fields.IDoubleParser)parser;
+                this.Parser = (FieldCache.IDoubleParser)parser;
             }
 
             public override int Compare(int slot1, int slot2)
@@ -501,7 +501,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetDoubles(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache.DEFAULT.GetDoubles((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -546,16 +546,16 @@ namespace Lucene.Net.Search
         public sealed class FloatComparator : NumericComparator<float>
         {
             internal readonly float[] Values;
-            internal readonly FieldCache_Fields.IFloatParser Parser;
-            internal FieldCache_Fields.Floats CurrentReaderValues;
+            internal readonly FieldCache.IFloatParser Parser;
+            internal FieldCache.Floats CurrentReaderValues;
             internal float Bottom_Renamed;
             internal float TopValue_Renamed;
 
-            internal FloatComparator(int numHits, string field, FieldCache_Fields.IParser parser, float? missingValue)
+            internal FloatComparator(int numHits, string field, FieldCache.IParser parser, float? missingValue)
                 : base(field, missingValue)
             {
                 Values = new float[numHits];
-                this.Parser = (FieldCache_Fields.IFloatParser)parser;
+                this.Parser = (FieldCache.IFloatParser)parser;
             }
 
             public override int Compare(int slot1, int slot2)
@@ -594,7 +594,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetFloats(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache.DEFAULT.GetFloats((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -640,16 +640,16 @@ namespace Lucene.Net.Search
         public sealed class ShortComparator : NumericComparator<short>
         {
             internal readonly short[] Values;
-            internal readonly FieldCache_Fields.IShortParser Parser;
-            internal FieldCache_Fields.Shorts CurrentReaderValues;
+            internal readonly FieldCache.IShortParser Parser;
+            internal FieldCache.Shorts CurrentReaderValues;
             internal short Bottom_Renamed;
             internal short TopValue_Renamed;
 
-            internal ShortComparator(int numHits, string field, FieldCache_Fields.IParser parser, short? missingValue)
+            internal ShortComparator(int numHits, string field, FieldCache.IParser parser, short? missingValue)
                 : base(field, missingValue)
             {
                 Values = new short[numHits];
-                this.Parser = (FieldCache_Fields.IShortParser)parser;
+                this.Parser = (FieldCache.IShortParser)parser;
             }
 
             public override int Compare(int slot1, int slot2)
@@ -689,7 +689,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetShorts(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache.DEFAULT.GetShorts((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -734,16 +734,16 @@ namespace Lucene.Net.Search
         public sealed class IntComparator : NumericComparator<int>
         {
             internal readonly int[] Values;
-            internal readonly FieldCache_Fields.IIntParser Parser;
-            internal FieldCache_Fields.Ints CurrentReaderValues;
+            internal readonly FieldCache.IIntParser Parser;
+            internal FieldCache.Ints CurrentReaderValues;
             internal int Bottom_Renamed; // Value of bottom of queue
             internal int TopValue_Renamed;
 
-            internal IntComparator(int numHits, string field, FieldCache_Fields.IParser parser, int? missingValue)
+            internal IntComparator(int numHits, string field, FieldCache.IParser parser, int? missingValue)
                 : base(field, missingValue)
             {
                 Values = new int[numHits];
-                this.Parser = (FieldCache_Fields.IIntParser)parser;
+                this.Parser = (FieldCache.IIntParser)parser;
             }
 
             public override int Compare(int slot1, int slot2)
@@ -780,7 +780,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetInts(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache.DEFAULT.GetInts((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -825,16 +825,16 @@ namespace Lucene.Net.Search
         public sealed class LongComparator : NumericComparator<long>
         {
             internal readonly long[] Values;
-            internal readonly FieldCache_Fields.ILongParser Parser;
-            internal FieldCache_Fields.Longs CurrentReaderValues;
+            internal readonly FieldCache.ILongParser Parser;
+            internal FieldCache.Longs CurrentReaderValues;
             internal long Bottom_Renamed;
             internal long TopValue_Renamed;
 
-            internal LongComparator(int numHits, string field, FieldCache_Fields.IParser parser, long? missingValue)
+            internal LongComparator(int numHits, string field, FieldCache.IParser parser, long? missingValue)
                 : base(field, missingValue)
             {
                 Values = new long[numHits];
-                this.Parser = (FieldCache_Fields.ILongParser)parser;
+                this.Parser = (FieldCache.ILongParser)parser;
             }
 
             public override int Compare(int slot1, int slot2)
@@ -874,7 +874,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                CurrentReaderValues = FieldCache_Fields.DEFAULT.GetLongs(((AtomicReader)context.Reader()), Field, Parser, MissingValue != null);
+                CurrentReaderValues = FieldCache.DEFAULT.GetLongs((context.AtomicReader), Field, Parser, MissingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -1083,7 +1083,7 @@ namespace Lucene.Net.Search
         ///  ordinals.  this is functionally equivalent to {@link
         ///  Lucene.Net.Search.FieldComparator.TermValComparator}, but it first resolves the string
         ///  to their relative ordinal positions (using the index
-        ///  returned by <seealso cref="FieldCache#getTermsIndex"/>), and
+        ///  returned by <seealso cref="IFieldCache#getTermsIndex"/>), and
         ///  does most comparisons using the ordinals.  For medium
         ///  to large results, this comparator will be much faster
         ///  than <seealso cref="Lucene.Net.Search.FieldComparator.TermValComparator"/>.  For very small
@@ -1259,7 +1259,7 @@ namespace Lucene.Net.Search
             /// Retrieves the SortedDocValues for the field in this segment </summary>
             protected internal virtual SortedDocValues GetSortedDocValues(AtomicReaderContext context, string field)
             {
-                return FieldCache_Fields.DEFAULT.GetTermsIndex(((AtomicReader)context.Reader()), field);
+                return FieldCache.DEFAULT.GetTermsIndex((context.AtomicReader), field);
             }
 
             public override FieldComparator SetNextReader(AtomicReaderContext context)
@@ -1473,8 +1473,8 @@ namespace Lucene.Net.Search
 
             public override FieldComparator SetNextReader(AtomicReaderContext context)
             {
-                DocTerms = FieldCache_Fields.DEFAULT.GetTerms(((AtomicReader)context.Reader()), Field, true);
-                DocsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(((AtomicReader)context.Reader()), Field);
+                DocTerms = FieldCache.DEFAULT.GetTerms((context.AtomicReader), Field, true);
+                DocsWithField = FieldCache.DEFAULT.GetDocsWithField((context.AtomicReader), Field);
                 return this;
             }
 

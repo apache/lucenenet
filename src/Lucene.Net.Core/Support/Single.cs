@@ -117,20 +117,5 @@ namespace Lucene.Net.Support
         {
             return f.ToString(format).Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
         }
-
-        public static int FloatToIntBits(float value)
-        {
-            return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
-        }
-
-        public static long FloatToLongBits(float value)
-        {
-            return BitConverter.ToInt64(BitConverter.GetBytes(value), 0);
-        }
-
-        public static float IntBitsToFloat(int value)
-        {
-            return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
-        }
     }
 }

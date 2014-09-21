@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using Double = System.Double;
 
 namespace Lucene.Net.Util
 {
@@ -158,6 +159,8 @@ namespace Lucene.Net.Util
         /// Return an approximate value of the diameter of the earth at the given latitude, in kilometers. </summary>
         public static double EarthDiameter(double latitude)
         {
+            if(double.IsNaN(latitude)) 
+                return double.NaN;
             int index = (int)(Math.Abs(latitude) * RADIUS_INDEXER + 0.5) % EarthDiameterPerLatitude.Length;
             return EarthDiameterPerLatitude[index];
         }

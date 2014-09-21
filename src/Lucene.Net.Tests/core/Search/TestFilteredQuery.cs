@@ -516,13 +516,13 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
                 bool nullBitset = Random().Next(10) == 5;
-                AtomicReader reader = (AtomicReader)context.Reader();
+                AtomicReader reader = context.AtomicReader;
                 DocsEnum termDocsEnum = reader.TermDocsEnum(new Term("field", "0"));
                 if (termDocsEnum == null)
                 {
                     return null; // no docs -- return null
                 }
-                BitArray bitSet = new BitArray(reader.MaxDoc());
+                BitArray bitSet = new BitArray(reader.MaxDoc);
                 int d;
                 while ((d = termDocsEnum.NextDoc()) != DocsEnum.NO_MORE_DOCS)
                 {
@@ -656,7 +656,7 @@ namespace Lucene.Net.Search
 
                 public override DocIdSetIterator GetIterator()
                 {
-                    DocsEnum termDocsEnum = ((AtomicReader)Context.Reader()).TermDocsEnum(new Term("field", "0"));
+                    DocsEnum termDocsEnum = ((AtomicReader)Context.Reader).TermDocsEnum(new Term("field", "0"));
                     if (termDocsEnum == null)
                     {
                         return null;

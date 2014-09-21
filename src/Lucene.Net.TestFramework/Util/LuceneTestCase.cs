@@ -20,6 +20,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -44,7 +45,7 @@ namespace Lucene.Net.Util
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using CacheEntry = Lucene.Net.Search.FieldCache_Fields.CacheEntry;
+    using CacheEntry = Lucene.Net.Search.FieldCache.CacheEntry;
     using Codec = Lucene.Net.Codecs.Codec;
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using CompositeReader = Lucene.Net.Index.CompositeReader;
@@ -57,7 +58,6 @@ namespace Lucene.Net.Util
     using Document = Documents.Document;
     using FCInvisibleMultiReader = Lucene.Net.Search.QueryUtils.FCInvisibleMultiReader;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using FieldFilterAtomicReader = Lucene.Net.Index.FieldFilterAtomicReader;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -651,7 +651,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static Random Random()
         {
-            return new Random();
+            return new Random(1);
             //return RandomizedContext.Current.Random;
         }
 
@@ -705,12 +705,12 @@ namespace Lucene.Net.Util
         /// </summary>
         public static SegmentReader GetOnlySegmentReader(DirectoryReader reader)
         {
-            IList<AtomicReaderContext> subReaders = reader.Leaves();
+            IList<AtomicReaderContext> subReaders = reader.Leaves;
             if (subReaders.Count != 1)
             {
                 throw new System.ArgumentException(reader + " has " + subReaders.Count + " segments instead of exactly one");
             }
-            AtomicReader r = (AtomicReader)subReaders[0].Reader();
+            AtomicReader r = (AtomicReader)subReaders[0].Reader;
             Assert.IsTrue(r is SegmentReader);
             return (SegmentReader)r;
         }
@@ -745,7 +745,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= Lucene.Net.Util.FieldCacheSanityChecker </seealso>
         protected static void AssertSaneFieldCaches(string msg)
         {
-            CacheEntry[] entries = FieldCache_Fields.DEFAULT.CacheEntries;
+            CacheEntry[] entries = FieldCache.DEFAULT.CacheEntries;
             Insanity[] insanity = null;
             try
             {
@@ -1748,10 +1748,10 @@ namespace Lucene.Net.Util
         public void AssertReaderStatisticsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             // Somewhat redundant: we never delete docs
-            Assert.AreEqual(leftReader.MaxDoc(), rightReader.MaxDoc(), info);
-            Assert.AreEqual(leftReader.NumDocs(), rightReader.NumDocs(), info);
-            Assert.AreEqual(leftReader.NumDeletedDocs(), rightReader.NumDeletedDocs(), info);
-            Assert.AreEqual(leftReader.HasDeletions(), rightReader.HasDeletions(), info);
+            Assert.AreEqual(leftReader.MaxDoc, rightReader.MaxDoc, info);
+            Assert.AreEqual(leftReader.NumDocs, rightReader.NumDocs, info);
+            Assert.AreEqual(leftReader.NumDeletedDocs, rightReader.NumDeletedDocs, info);
+            Assert.AreEqual(leftReader.HasDeletions, rightReader.HasDeletions, info);
         }
 
         /// <summary>
@@ -1787,9 +1787,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AssertFieldStatisticsEquals(string info, Fields leftFields, Fields rightFields)
         {
-            if (leftFields.Size() != -1 && rightFields.Size() != -1)
+            if (leftFields.Size != -1 && rightFields.Size != -1)
             {
-                Assert.AreEqual(leftFields.Size(), rightFields.Size(), info);
+                Assert.AreEqual(leftFields.Size, rightFields.Size, info);
             }
         }
 
@@ -1891,7 +1891,7 @@ namespace Lucene.Net.Util
         public void AssertTermsEnumEquals(string info, IndexReader leftReader, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
         {
             BytesRef term;
-            Bits randomBits = new RandomBits(leftReader.MaxDoc(), Random().NextDouble(), Random());
+            Bits randomBits = new RandomBits(leftReader.MaxDoc, Random().NextDouble(), Random());
             DocsAndPositionsEnum leftPositions = null;
             DocsAndPositionsEnum rightPositions = null;
             DocsEnum leftDocs = null;
@@ -1994,7 +1994,7 @@ namespace Lucene.Net.Util
                 return;
             }
             int docid = -1;
-            int averageGap = leftReader.MaxDoc() / (1 + docFreq);
+            int averageGap = leftReader.MaxDoc / (1 + docFreq);
             int skipInterval = 16;
 
             while (true)
@@ -2037,7 +2037,7 @@ namespace Lucene.Net.Util
             }
 
             int docid = -1;
-            int averageGap = leftReader.MaxDoc() / (1 + docFreq);
+            int averageGap = leftReader.MaxDoc / (1 + docFreq);
             int skipInterval = 16;
 
             while (true)
@@ -2203,7 +2203,7 @@ namespace Lucene.Net.Util
                 NumericDocValues rightNorms = MultiDocValues.GetNormValues(rightReader, field);
                 if (leftNorms != null && rightNorms != null)
                 {
-                    AssertDocValuesEquals(info, leftReader.MaxDoc(), leftNorms, rightNorms);
+                    AssertDocValuesEquals(info, leftReader.MaxDoc, leftNorms, rightNorms);
                 }
                 else
                 {
@@ -2218,8 +2218,8 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AssertStoredFieldsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
-            Debug.Assert(leftReader.MaxDoc() == rightReader.MaxDoc());
-            for (int i = 0; i < leftReader.MaxDoc(); i++)
+            Debug.Assert(leftReader.MaxDoc == rightReader.MaxDoc);
+            for (int i = 0; i < leftReader.MaxDoc; i++)
             {
                 Document leftDoc = leftReader.Document(i);
                 Document rightDoc = rightReader.Document(i);
@@ -2261,8 +2261,8 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AssertTermVectorsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
-            Debug.Assert(leftReader.MaxDoc() == rightReader.MaxDoc());
-            for (int i = 0; i < leftReader.MaxDoc(); i++)
+            Debug.Assert(leftReader.MaxDoc == rightReader.MaxDoc);
+            for (int i = 0; i < leftReader.MaxDoc; i++)
             {
                 Fields leftFields = leftReader.GetTermVectors(i);
                 Fields rightFields = rightReader.GetTermVectors(i);
@@ -2301,7 +2301,7 @@ namespace Lucene.Net.Util
                     NumericDocValues rightValues = MultiDocValues.GetNumericValues(rightReader, field);
                     if (leftValues != null && rightValues != null)
                     {
-                        AssertDocValuesEquals(info, leftReader.MaxDoc(), leftValues, rightValues);
+                        AssertDocValuesEquals(info, leftReader.MaxDoc, leftValues, rightValues);
                     }
                     else
                     {
@@ -2317,7 +2317,7 @@ namespace Lucene.Net.Util
                     {
                         BytesRef scratchLeft = new BytesRef();
                         BytesRef scratchRight = new BytesRef();
-                        for (int docID = 0; docID < leftReader.MaxDoc(); docID++)
+                        for (int docID = 0; docID < leftReader.MaxDoc; docID++)
                         {
                             leftValues.Get(docID, scratchLeft);
                             rightValues.Get(docID, scratchRight);
@@ -2348,7 +2348,7 @@ namespace Lucene.Net.Util
                             Assert.AreEqual(scratchLeft, scratchRight, info);
                         }
                         // bytes
-                        for (int docID = 0; docID < leftReader.MaxDoc(); docID++)
+                        for (int docID = 0; docID < leftReader.MaxDoc; docID++)
                         {
                             leftValues.Get(docID, scratchLeft);
                             rightValues.Get(docID, scratchRight);
@@ -2379,7 +2379,7 @@ namespace Lucene.Net.Util
                             Assert.AreEqual(scratchLeft, scratchRight, info);
                         }
                         // ord lists
-                        for (int docID = 0; docID < leftReader.MaxDoc(); docID++)
+                        for (int docID = 0; docID < leftReader.MaxDoc; docID++)
                         {
                             leftValues.Document = docID;
                             rightValues.Document = docID;
@@ -2431,7 +2431,7 @@ namespace Lucene.Net.Util
         // TODO: this is kinda stupid, we don't delete documents in the test.
         public void AssertDeletedDocsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
-            Debug.Assert(leftReader.NumDeletedDocs() == rightReader.NumDeletedDocs());
+            Debug.Assert(leftReader.NumDeletedDocs == rightReader.NumDeletedDocs);
             Bits leftBits = MultiFields.GetLiveDocs(leftReader);
             Bits rightBits = MultiFields.GetLiveDocs(rightReader);
 
@@ -2442,9 +2442,9 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            Debug.Assert(leftReader.MaxDoc() == rightReader.MaxDoc());
+            Debug.Assert(leftReader.MaxDoc == rightReader.MaxDoc);
             Assert.AreEqual(leftBits.Length(), rightBits.Length(), info);
-            for (int i = 0; i < leftReader.MaxDoc(); i++)
+            for (int i = 0; i < leftReader.MaxDoc; i++)
             {
                 Assert.AreEqual(leftBits.Get(i), rightBits.Get(i), info);
             }

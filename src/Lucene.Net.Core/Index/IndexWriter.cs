@@ -1329,12 +1329,15 @@ namespace Lucene.Net.Index
         ///  docs not yet flushed (still in the RAM buffer),
         ///  not counting deletions. </summary>
         ///  <seealso> cref= #numDocs  </seealso>
-        public virtual int MaxDoc()
+        public virtual int MaxDoc
         {
-            lock (this)
+            get
             {
-                EnsureOpen();
-                return DocWriter.NumDocs + segmentInfos.TotalDocCount();
+                lock (this)
+                {
+                    EnsureOpen();
+                    return DocWriter.NumDocs + segmentInfos.TotalDocCount();
+                }
             }
         }
 
@@ -1630,12 +1633,12 @@ namespace Lucene.Net.Index
                 else
                 {
                     // Composite reader: lookup sub-reader and re-base docID:
-                    IList<AtomicReaderContext> leaves = readerIn.Leaves();
+                    IList<AtomicReaderContext> leaves = readerIn.Leaves;
                     int subIndex = ReaderUtil.SubIndex(docID, leaves);
                     reader = leaves[subIndex].AtomicReader;
                     docID -= leaves[subIndex].DocBase;
                     Debug.Assert(docID >= 0);
-                    Debug.Assert(docID < reader.MaxDoc());
+                    Debug.Assert(docID < reader.MaxDoc);
                 }
 
                 if (!(reader is SegmentReader))
@@ -3221,8 +3224,8 @@ namespace Lucene.Net.Index
                 IList<AtomicReader> mergeReaders = new List<AtomicReader>();
                 foreach (IndexReader indexReader in readers)
                 {
-                    numDocs += indexReader.NumDocs();
-                    foreach (AtomicReaderContext ctx in indexReader.Leaves())
+                    numDocs += indexReader.NumDocs;
+                    foreach (AtomicReaderContext ctx in indexReader.Leaves)
                     {
                         mergeReaders.Add(ctx.AtomicReader);
                     }
@@ -5012,10 +5015,10 @@ namespace Lucene.Net.Index
                     // before we got a read-only copy of the segment's actual live docs
                     // (taking pending deletes into account). In that case we need to
                     // make a new reader with updated live docs and del count.
-                    if (reader.NumDeletedDocs() != delCount)
+                    if (reader.NumDeletedDocs != delCount)
                     {
                         // fix the reader's live docs and del count
-                        Debug.Assert(delCount > reader.NumDeletedDocs()); // beware of zombies
+                        Debug.Assert(delCount > reader.NumDeletedDocs); // beware of zombies
 
                         SegmentReader newReader = new SegmentReader(info, reader, liveDocs, info.Info.DocCount - delCount);
                         bool released = false;

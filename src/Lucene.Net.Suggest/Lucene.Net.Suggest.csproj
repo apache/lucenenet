@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FBD2EB4D-EAC9-409C-A23D-64D27DF23576}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Search</RootNamespace>
+    <AssemblyName>Lucene.Net.Suggest</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spell\CombineSuggestion.cs" />
+    <Compile Include="Spell\Dictionary.cs" />
+    <Compile Include="Spell\DirectSpellChecker.cs" />
+    <Compile Include="Spell\HighFrequencyDictionary.cs" />
+    <Compile Include="Spell\JaroWinklerDistance.cs" />
+    <Compile Include="Spell\LevensteinDistance.cs" />
+    <Compile Include="Spell\LuceneDictionary.cs" />
+    <Compile Include="Spell\LuceneLevenshteinDistance.cs" />
+    <Compile Include="Spell\NGramDistance.cs" />
+    <Compile Include="Spell\PlainTextDictionary.cs" />
+    <Compile Include="Spell\SpellChecker.cs" />
+    <Compile Include="Spell\StringDistance.cs" />
+    <Compile Include="Spell\SuggestMode.cs" />
+    <Compile Include="Spell\SuggestWord.cs" />
+    <Compile Include="Spell\SuggestWordFrequencyComparator.cs" />
+    <Compile Include="Spell\SuggestWordQueue.cs" />
+    <Compile Include="Spell\SuggestWordScoreComparator.cs" />
+    <Compile Include="Spell\TermFreqIterator.cs" />
+    <Compile Include="Spell\WordBreakSpellChecker.cs" />
+    <Compile Include="Suggest\Analyzing\AnalyzingInfixSuggester.cs" />
+    <Compile Include="Suggest\Analyzing\AnalyzingSuggester.cs" />
+    <Compile Include="Suggest\Analyzing\BlendedInfixSuggester.cs" />
+    <Compile Include="Suggest\Analyzing\FreeTextSuggester.cs" />
+    <Compile Include="Suggest\Analyzing\FSTUtil.cs" />
+    <Compile Include="Suggest\Analyzing\FuzzySuggester.cs" />
+    <Compile Include="Suggest\Analyzing\SuggestStopFilter.cs" />
+    <Compile Include="Suggest\BufferedInputIterator.cs" />
+    <Compile Include="Suggest\BufferingTermFreqIteratorWrapper.cs" />
+    <Compile Include="Suggest\DocumentDictionary.cs" />
+    <Compile Include="Suggest\DocumentValueSourceDictionary.cs" />
+    <Compile Include="Suggest\FileDictionary.cs" />
+    <Compile Include="Suggest\Fst\BytesRefSorter.cs" />
+    <Compile Include="Suggest\Fst\ExternalRefSorter.cs" />
+    <Compile Include="Suggest\Fst\FSTCompletion.cs" />
+    <Compile Include="Suggest\Fst\FSTCompletionBuilder.cs" />
+    <Compile Include="Suggest\Fst\FSTCompletionLookup.cs" />
+    <Compile Include="Suggest\Fst\WFSTCompletionLookup.cs" />
+    <Compile Include="Suggest\InMemorySorter.cs" />
+    <Compile Include="Suggest\InputIterator.cs" />
+    <Compile Include="Suggest\Jaspell\JaspellLookup.cs" />
+    <Compile Include="Suggest\Jaspell\JaspellTernarySearchTrie.cs" />
+    <Compile Include="Suggest\Lookup.cs" />
+    <Compile Include="Suggest\SortedInputIterator.cs" />
+    <Compile Include="Suggest\SortedTermFreqIteratorWrapper.cs" />
+    <Compile Include="Suggest\Tst\TernaryTreeNode.cs" />
+    <Compile Include="Suggest\Tst\TSTAutocomplete.cs" />
+    <Compile Include="Suggest\Tst\TSTLookup.cs" />
+    <Compile Include="Suggest\UnsortedInputIterator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
+      <Name>Lucene.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

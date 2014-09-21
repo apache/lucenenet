@@ -26,19 +26,7 @@ namespace Lucene.Net.Util.Mutable
     /// </summary>
     public abstract class MutableValue : IComparable<MutableValue>
     {
-        private bool exists = true;
-
-        public bool Exists
-        {
-            get
-            {
-                return exists;
-            }
-            set
-            {
-                exists = value;
-            }
-        }
+        public bool Exists { get; set; }
 
         public abstract void Copy(MutableValue source);
 
@@ -49,11 +37,6 @@ namespace Lucene.Net.Util.Mutable
         public abstract int CompareSameType(object other);
 
         public abstract object ToObject();
-
-        /*public virtual bool Exists()
-        {
-          return exists;
-        }*/
 
         public virtual int CompareTo(MutableValue other)
         {

@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
                     {
                         s = null;
                     }
-                    Assert.IsTrue(!applyDeletions || r.NumDocs() == SIZE, "applyDeletions=" + applyDeletions + " r.NumDocs()=" + r.NumDocs() + " vs SIZE=" + SIZE);
+                    Assert.IsTrue(!applyDeletions || r.NumDocs == SIZE, "applyDeletions=" + applyDeletions + " r.NumDocs=" + r.NumDocs + " vs SIZE=" + SIZE);
                     updateCount = 0;
                 }
             }
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
             }
 
             IndexReader open = DirectoryReader.Open(dir);
-            Assert.AreEqual(1, open.NumDocs());
+            Assert.AreEqual(1, open.NumDocs);
             open.Dispose();
             docs.Dispose();
             dir.Dispose();
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                                 open.Dispose();
                                 open = reader;
                             }
-                            Assert.AreEqual(1, open.NumDocs(), "iter: " + i + " numDocs: " + open.NumDocs() + " del: " + open.NumDeletedDocs() + " max: " + open.MaxDoc());
+                            Assert.AreEqual(1, open.NumDocs, "iter: " + i + " numDocs: " + open.NumDocs + " del: " + open.NumDeletedDocs + " max: " + open.MaxDoc);
                         }
                     }
                     if (open != null)

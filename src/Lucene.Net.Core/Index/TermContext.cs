@@ -58,13 +58,13 @@ namespace Lucene.Net.Index
             TopReaderContext = context;
             docFreq = 0;
             int len;
-            if (context.Leaves() == null)
+            if (context.Leaves == null)
             {
                 len = 1;
             }
             else
             {
-                len = context.Leaves().Count;
+                len = context.Leaves.Count;
             }
             States = new TermState[len];
         }
@@ -94,10 +94,10 @@ namespace Lucene.Net.Index
             BytesRef bytes = term.Bytes();
             TermContext perReaderTermState = new TermContext(context);
             //if (DEBUG) System.out.println("prts.build term=" + term);
-            foreach (AtomicReaderContext ctx in context.Leaves())
+            foreach (AtomicReaderContext ctx in context.Leaves)
             {
                 //if (DEBUG) System.out.println("  r=" + leaves[i].reader);
-                Fields fields = ctx.AtomicReader.Fields();
+                Fields fields = ctx.AtomicReader.Fields;
                 if (fields != null)
                 {
                     Terms terms = fields.Terms(field);

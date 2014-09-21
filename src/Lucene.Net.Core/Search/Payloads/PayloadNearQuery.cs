@@ -176,7 +176,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                PayloadNearSpanScorer scorer = (PayloadNearSpanScorer)Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
+                PayloadNearSpanScorer scorer = (PayloadNearSpanScorer)Scorer(context, (context.AtomicReader).LiveDocs);
                 if (scorer != null)
                 {
                     int newDoc = scorer.Advance(doc);

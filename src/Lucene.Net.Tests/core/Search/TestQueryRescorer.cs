@@ -538,7 +538,7 @@ namespace Lucene.Net.Search
                     public override int NextDoc()
                     {
                         docID++;
-                        if (docID >= Context.Reader().MaxDoc())
+                        if (docID >= Context.Reader.MaxDoc)
                         {
                             return NO_MORE_DOCS;
                         }
@@ -553,7 +553,7 @@ namespace Lucene.Net.Search
 
                     public override float Score()
                     {
-                        int num = OuterInstance.OuterInstance.IdToNum[Convert.ToInt32(Context.Reader().Document(docID).Get("id"))];
+                        int num = OuterInstance.OuterInstance.IdToNum[Convert.ToInt32(Context.Reader.Document(docID).Get("id"))];
                         if (OuterInstance.OuterInstance.Reverse)
                         {
                             //System.out.println("score doc=" + docID + " num=" + num);

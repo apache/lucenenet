@@ -231,7 +231,7 @@ namespace Lucene.Net.Search
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
-                Scorer cs = Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
+                Scorer cs = Scorer(context, (context.AtomicReader).LiveDocs);
                 bool exists = (cs != null && cs.Advance(doc) == doc);
 
                 ComplexExplanation result = new ComplexExplanation();

@@ -29,7 +29,7 @@ namespace Lucene.Net.Documents
     /// via <seealso cref="Float#floatToRawIntBits(float)"/>.
     /// <p>
     /// Per-document floating point values can be retrieved via
-    /// <seealso cref="FieldCache#getFloats(AtomicReader, String, boolean)"/>.
+    /// <seealso cref="IFieldCache#getFloats(AtomicReader, String, boolean)"/>.
     /// <p>
     /// <b>NOTE</b>: In most all cases this will be rather inefficient,
     /// requiring four bytes per document. Consider encoding floating
@@ -43,7 +43,7 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 32-bit float value </param>
         /// <exception cref="ArgumentException"> if the field name is null </exception>
         public FloatDocValuesField(string name, float value)
-            : base(name, Support.Single.FloatToIntBits(value))
+            : base(name, Support.Number.FloatToIntBits(value))
         {
         }
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Documents
         {
             set
             {
-                base.LongValue = Support.Single.FloatToIntBits(value);
+                base.LongValue = Support.Number.FloatToIntBits(value);
             }
         }
 

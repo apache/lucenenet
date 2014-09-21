@@ -157,11 +157,11 @@ namespace Lucene.Net.Index
 
             int[] listenerClosedCount = new int[1];
 
-            Assert.AreEqual(3, pr.Leaves().Count);
+            Assert.AreEqual(3, pr.Leaves.Count);
 
-            foreach (AtomicReaderContext cxt in pr.Leaves())
+            foreach (AtomicReaderContext cxt in pr.Leaves)
             {
-                cxt.Reader().AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(this, listenerClosedCount));
+                cxt.Reader.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(this, listenerClosedCount));
             }
             pr.Dispose();
             ir1.Dispose();
@@ -199,11 +199,11 @@ namespace Lucene.Net.Index
 
             int[] listenerClosedCount = new int[1];
 
-            Assert.AreEqual(3, pr.Leaves().Count);
+            Assert.AreEqual(3, pr.Leaves.Count);
 
-            foreach (AtomicReaderContext cxt in pr.Leaves())
+            foreach (AtomicReaderContext cxt in pr.Leaves)
             {
-                cxt.Reader().AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper2(this, listenerClosedCount));
+                cxt.Reader.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper2(this, listenerClosedCount));
             }
             pr.Dispose();
             Assert.AreEqual(3, listenerClosedCount[0]);
@@ -549,15 +549,15 @@ namespace Lucene.Net.Index
             {
                 rd1 = new MultiReader(DirectoryReader.Open(Dir1), DirectoryReader.Open(Dir1));
                 rd2 = new MultiReader(DirectoryReader.Open(Dir2), DirectoryReader.Open(Dir2));
-                Assert.AreEqual(2, rd1.Context.Children().Count);
-                Assert.AreEqual(2, rd2.Context.Children().Count);
+                Assert.AreEqual(2, rd1.Context.Children.Count);
+                Assert.AreEqual(2, rd2.Context.Children.Count);
             }
             else
             {
                 rd1 = DirectoryReader.Open(Dir1);
                 rd2 = DirectoryReader.Open(Dir2);
-                Assert.AreEqual(3, rd1.Context.Children().Count);
-                Assert.AreEqual(3, rd2.Context.Children().Count);
+                Assert.AreEqual(3, rd1.Context.Children.Count);
+                Assert.AreEqual(3, rd2.Context.Children.Count);
             }
             ParallelCompositeReader pr = new ParallelCompositeReader(rd1, rd2);
             return NewSearcher(pr);

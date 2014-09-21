@@ -365,9 +365,9 @@ namespace Lucene.Net.Index
             IndexReader r = writer.Reader;
 
             // Test each sub-segment
-            foreach (AtomicReaderContext ctx in r.Leaves())
+            foreach (AtomicReaderContext ctx in r.Leaves)
             {
-                CheckTermsOrder(ctx.Reader(), allTerms, false);
+                CheckTermsOrder(ctx.Reader, allTerms, false);
             }
             CheckTermsOrder(r, allTerms, true);
 

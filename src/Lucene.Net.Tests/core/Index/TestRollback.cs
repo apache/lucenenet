@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
             w.Rollback();
 
             IndexReader r = DirectoryReader.Open(dir);
-            Assert.AreEqual(5, r.NumDocs(), "index should contain same number of docs post rollback");
+            Assert.AreEqual(5, r.NumDocs, "index should contain same number of docs post rollback");
             r.Dispose();
             dir.Dispose();
         }

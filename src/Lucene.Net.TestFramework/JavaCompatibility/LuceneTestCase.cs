@@ -100,10 +100,5 @@ namespace Lucene.Net
         {
             Assert.Fail(message);
         }
-
-        protected Random Random()
-        {
-            return new Random();
-        }
     }
 }

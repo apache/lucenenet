@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
             WasCalled_Renamed = true;
-            return new FixedBitSet(context.Reader().MaxDoc());
+            return new FixedBitSet(context.Reader.MaxDoc);
         }
 
         public virtual void Clear()

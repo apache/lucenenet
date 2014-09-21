@@ -82,13 +82,13 @@ namespace Lucene.Net.Search
         private void AssertFilterEquals(Filter f1, Filter f2)
         {
             Query query = new MatchAllDocsQuery();
-            TopDocs hits1 = @is.Search(query, f1, Ir.MaxDoc());
-            TopDocs hits2 = @is.Search(query, f2, Ir.MaxDoc());
+            TopDocs hits1 = @is.Search(query, f1, Ir.MaxDoc);
+            TopDocs hits2 = @is.Search(query, f2, Ir.MaxDoc);
             Assert.AreEqual(hits1.TotalHits, hits2.TotalHits);
             CheckHits.CheckEqual(query, hits1.ScoreDocs, hits2.ScoreDocs);
             // now do it again to confirm caching works
-            TopDocs hits3 = @is.Search(query, f1, Ir.MaxDoc());
-            TopDocs hits4 = @is.Search(query, f2, Ir.MaxDoc());
+            TopDocs hits3 = @is.Search(query, f1, Ir.MaxDoc);
+            TopDocs hits4 = @is.Search(query, f2, Ir.MaxDoc);
             Assert.AreEqual(hits3.TotalHits, hits4.TotalHits);
             CheckHits.CheckEqual(query, hits3.ScoreDocs, hits4.ScoreDocs);
         }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
         {
             for (int i = 0; i < 10; i++)
             {
-                int id = Random().Next(Ir.MaxDoc());
+                int id = Random().Next(Ir.MaxDoc);
                 Query query = new TermQuery(new Term("id", Convert.ToString(id)));
                 Filter expected = new QueryWrapperFilter(query);
                 Filter actual = new CachingWrapperFilter(expected);
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
         {
             for (int i = 0; i < 10; i++)
             {
-                int id_start = Random().Next(Ir.MaxDoc() - 1);
+                int id_start = Random().Next(Ir.MaxDoc - 1);
                 int id_end = id_start + 1;
                 Query query = TermRangeQuery.NewStringRange("id", Convert.ToString(id_start), Convert.ToString(id_end), true, true);
                 Filter expected = new QueryWrapperFilter(query);
@@ -182,15 +182,15 @@ namespace Lucene.Net.Search
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // first time, nested filter is called
-            DocIdSet strongRef = cacher.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs);
+            DocIdSet strongRef = cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
             Assert.IsTrue(filter.WasCalled(), "first time");
 
             // make sure no exception if cache is holding the wrong docIdSet
-            cacher.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs);
+            cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
 
             // second time, nested filter should not be called
             filter.Clear();
-            cacher.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs);
+            cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
             Assert.IsFalse(filter.WasCalled(), "second time");
 
             reader.Dispose();
@@ -211,8 +211,8 @@ namespace Lucene.Net.Search
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // the caching filter should return the empty set constant
-            //Assert.IsNull(cacher.GetDocIdSet(context, "second time", ((AtomicReader)context.Reader()).LiveDocs));
-            Assert.IsNull(cacher.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs));
+            //Assert.IsNull(cacher.GetDocIdSet(context, "second time", (context.AtomicReader).LiveDocs));
+            Assert.IsNull(cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs));
 
             reader.Dispose();
             dir.Dispose();
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
             // the caching filter should return the empty set constant
-            Assert.IsNull(cacher.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs));
+            Assert.IsNull(cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs));
 
             reader.Dispose();
             dir.Dispose();
@@ -294,8 +294,8 @@ namespace Lucene.Net.Search
             Assert.IsTrue(reader.Context is AtomicReaderContext);
             AtomicReaderContext context = (AtomicReaderContext)reader.Context;
             CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
-            DocIdSet originalSet = filter.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs);
-            DocIdSet cachedSet = cacher.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs);
+            DocIdSet originalSet = filter.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
+            DocIdSet cachedSet = cacher.GetDocIdSet(context, (context.AtomicReader).LiveDocs);
             if (originalSet == null)
             {
                 Assert.IsNull(cachedSet);
@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
             {
-                return new FixedBitSet(context.Reader().MaxDoc());
+                return new FixedBitSet(context.Reader.MaxDoc);
             }
         }
 

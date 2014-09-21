@@ -310,7 +310,7 @@ namespace Lucene.Net.Search
                     Weight w = wIter.Current;
                     cIter.MoveNext();
                     BooleanClause c = cIter.Current;
-                    if (w.Scorer(context, ((AtomicReader)context.Reader()).LiveDocs) == null)
+                    if (w.Scorer(context, context.AtomicReader.LiveDocs) == null)
                     {
                         if (c.Required)
                         {
@@ -481,7 +481,7 @@ namespace Lucene.Net.Search
                 // simple disjunction
                 if (required.Count == 0 && prohibited.Count == 0 && OuterInstance.MinNrShouldMatch <= 1 && optional.Count > 1)
                 {
-                    float[] coord = new float[optional.Count + 1];
+                    var coord = new float[optional.Count + 1];
                     for (int i = 0; i < coord.Length; i++)
                     {
                         coord[i] = DisableCoord ? 1.0f : Coord(i, maxCoord);

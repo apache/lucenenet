@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
                     if (Random().Next(17) == 6)
                     {
                         IndexReader r = w.Reader;
-                        Assert.AreEqual(NUM_DOCS - deleted.Count, r.NumDocs());
+                        Assert.AreEqual(NUM_DOCS - deleted.Count, r.NumDocs);
                         r.Dispose();
                     }
                 }

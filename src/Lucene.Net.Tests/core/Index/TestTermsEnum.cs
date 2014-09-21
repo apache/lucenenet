@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Lucene.Net.Documents;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -15,7 +16,6 @@ namespace Lucene.Net.Index
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using IntField = IntField;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -279,7 +279,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             // NOTE: intentional insanity!!
-            FieldCache_Fields.Ints docIDToID = FieldCache_Fields.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(r), "id", false);
+            FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(r), "id", false);
 
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {
@@ -605,8 +605,8 @@ namespace Lucene.Net.Index
             w.ForceMerge(1);
             IndexReader r = w.Reader;
             w.Dispose();
-            Assert.AreEqual(1, r.NumDocs());
-            Assert.AreEqual(1, r.MaxDoc());
+            Assert.AreEqual(1, r.NumDocs);
+            Assert.AreEqual(1, r.MaxDoc);
             Terms terms = MultiFields.GetTerms(r, "field");
             if (terms != null)
             {
@@ -902,7 +902,7 @@ namespace Lucene.Net.Index
             DirectoryReader r = w.Reader;
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
-            Terms terms = sub.Fields().Terms("field");
+            Terms terms = sub.Fields.Terms("field");
             Automaton automaton = (new RegExp(".*", RegExp.NONE)).ToAutomaton();
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
             TermsEnum te = terms.Intersect(ca, null);
@@ -959,7 +959,7 @@ namespace Lucene.Net.Index
             DirectoryReader r = w.Reader;
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
-            Terms terms = sub.Fields().Terms("field");
+            Terms terms = sub.Fields.Terms("field");
 
             Automaton automaton = (new RegExp(".*d", RegExp.NONE)).ToAutomaton();
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
@@ -1015,7 +1015,7 @@ namespace Lucene.Net.Index
             DirectoryReader r = w.Reader;
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
-            Terms terms = sub.Fields().Terms("field");
+            Terms terms = sub.Fields.Terms("field");
 
             Automaton automaton = (new RegExp(".*", RegExp.NONE)).ToAutomaton(); // accept ALL
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);

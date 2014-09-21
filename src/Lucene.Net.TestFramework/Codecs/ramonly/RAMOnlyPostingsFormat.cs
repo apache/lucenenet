@@ -111,9 +111,9 @@ namespace Lucene.Net.Codecs.ramonly
                 return FieldToTerms[field];
             }
 
-            public override int Size()
+            public override int Size
             {
-                return FieldToTerms.Count;
+                get { return FieldToTerms.Count; }
             }
 
             public override IEnumerator<string> GetEnumerator()

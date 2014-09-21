@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -59,24 +60,12 @@ namespace Lucene.Net.Util
             }
             catch (TestException e1)
             {
-                Assert.AreEqual("BASE-EXCEPTION", e1.Message);
-                StringBuilder sb = new StringBuilder();
-                //StreamWriter pw = new StreamWriter(sw);
-                //e1.printStackTrace(pw);
-                sb.Append(e1.StackTrace);
-                //pw.Flush();
-                string trace = sb.ToString();
-                if (VERBOSE)
-                {
-                    Console.WriteLine("TestIOUtils.testSuppressedExceptions: Thrown Exception stack trace:");
-                    Console.WriteLine(trace);
-                }
-                Assert.IsTrue(trace.Contains("IOException: TEST-IO-EXCEPTION-1"), "Stack trace does not contain first suppressed Exception: " + trace);
-                Assert.IsTrue(trace.Contains("IOException: TEST-IO-EXCEPTION-2"), "Stack trace does not contain second suppressed Exception: " + trace);
+                Assert.IsTrue(e1.Data.Contains("SuppressedExceptions"));
+                Assert.IsTrue(((List<Exception>) e1.Data["SuppressedExceptions"]).Count == 2);
             }
-            catch (IOException e2)
+            catch (Exception e2)
             {
-                Assert.Fail("IOException should not be thrown here");
+                Assert.Fail("Exception should not be thrown here");
             }
 
             // test without prior exception
@@ -84,25 +73,14 @@ namespace Lucene.Net.Util
             {
                 IOUtils.CloseWhileHandlingException((TestException)null, new BrokenIDisposable(1), new BrokenIDisposable(2));
             }
-            catch (TestException e1)
+            catch (IOException e1)
             {
-                Assert.Fail("TestException should not be thrown here");
+                Assert.IsTrue(e1.Data.Contains("SuppressedExceptions"));
+                Assert.IsTrue(((List<Exception>)e1.Data["SuppressedExceptions"]).Count == 1);
             }
-            catch (IOException e2)
+            catch (Exception e2)
             {
-                Assert.AreEqual("TEST-IO-EXCEPTION-1", e2.Message);
-                StringBuilder sb = new StringBuilder();
-                sb.Append(e2.StackTrace);
-                //StreamWriter pw = new StreamWriter(sw);
-                //e2.printStackTrace(pw);
-                //pw.Flush();
-                string trace = sb.ToString();
-                if (VERBOSE)
-                {
-                    Console.WriteLine("TestIOUtils.TestSuppressedExceptions: Thrown Exception stack trace:");
-                    Console.WriteLine(trace);
-                }
-                Assert.IsTrue(trace.Contains("IOException: TEST-IO-EXCEPTION-2"), "Stack trace does not contain suppressed Exception: " + trace);
+                Assert.Fail("Exception should not be thrown here");
             }
         }
     }

@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal sealed class JustCompileExtendedFieldCacheLongParser : FieldCache_Fields.ILongParser
+        internal sealed class JustCompileExtendedFieldCacheLongParser : FieldCache.ILongParser
         {
             public long ParseLong(BytesRef @string)
             {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal sealed class JustCompileExtendedFieldCacheDoubleParser : FieldCache_Fields.IDoubleParser
+        internal sealed class JustCompileExtendedFieldCacheDoubleParser : FieldCache.IDoubleParser
         {
             public double ParseDouble(BytesRef term)
             {

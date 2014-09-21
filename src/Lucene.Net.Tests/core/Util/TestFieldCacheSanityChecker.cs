@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Search;
 using NUnit.Framework;
 using System;
 
@@ -9,8 +10,6 @@ namespace Lucene.Net.Util
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
     using Field = Field;
-    using FieldCache = Lucene.Net.Search.FieldCache;
-    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using Insanity = Lucene.Net.Util.FieldCacheSanityChecker.Insanity;
     using InsanityType = Lucene.Net.Util.FieldCacheSanityChecker.InsanityType;
@@ -104,16 +103,16 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestSanity()
         {
-            FieldCache cache = FieldCache_Fields.DEFAULT;
+            IFieldCache cache = FieldCache.DEFAULT;
             cache.PurgeAllCaches();
 
             cache.GetDoubles(ReaderA, "theDouble", false);
-            cache.GetDoubles(ReaderA, "theDouble", FieldCache_Fields.DEFAULT_DOUBLE_PARSER, false);
-            cache.GetDoubles(ReaderAclone, "theDouble", FieldCache_Fields.DEFAULT_DOUBLE_PARSER, false);
-            cache.GetDoubles(ReaderB, "theDouble", FieldCache_Fields.DEFAULT_DOUBLE_PARSER, false);
+            cache.GetDoubles(ReaderA, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
+            cache.GetDoubles(ReaderAclone, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
+            cache.GetDoubles(ReaderB, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
 
             cache.GetInts(ReaderX, "theInt", false);
-            cache.GetInts(ReaderX, "theInt", FieldCache_Fields.DEFAULT_INT_PARSER, false);
+            cache.GetInts(ReaderX, "theInt", FieldCache.DEFAULT_INT_PARSER, false);
 
             // // //
 
@@ -131,10 +130,10 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestInsanity1()
         {
-            FieldCache cache = FieldCache_Fields.DEFAULT;
+            IFieldCache cache = FieldCache.DEFAULT;
             cache.PurgeAllCaches();
 
-            cache.GetInts(ReaderX, "theInt", FieldCache_Fields.DEFAULT_INT_PARSER, false);
+            cache.GetInts(ReaderX, "theInt", FieldCache.DEFAULT_INT_PARSER, false);
             cache.GetTerms(ReaderX, "theInt", false);
             cache.GetBytes(ReaderX, "theByte", false);
 
@@ -153,7 +152,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestInsanity2()
         {
-            FieldCache cache = FieldCache_Fields.DEFAULT;
+            IFieldCache cache = FieldCache.DEFAULT;
             cache.PurgeAllCaches();
 
             cache.GetTerms(ReaderA, "theInt", false);

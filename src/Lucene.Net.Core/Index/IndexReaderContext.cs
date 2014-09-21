@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the <seealso cref="IndexReader"/>, this context represents. </summary>
-        public abstract IndexReader Reader();
+        public abstract IndexReader Reader { get; }
 
         /// <summary>
         /// Returns the context's leaves if this context is a top-level context.
@@ -64,14 +64,14 @@ namespace Lucene.Net.Index
         /// returns itself as the only leaf.
         /// <p>Note: this is convenience method since leaves can always be obtained by
         /// walking the context tree using <seealso cref="#children()"/>. </summary>
-        /// <exception cref="UnsupportedOperationException"> if this is not a top-level context. </exception>
+        /// <exception cref="InvalidOperationException"> if this is not a top-level context. </exception>
         /// <seealso cref= #children() </seealso>
-        public abstract IList<AtomicReaderContext> Leaves();
+        public abstract IList<AtomicReaderContext> Leaves { get; }
 
         /// <summary>
         /// Returns the context's children iff this context is a composite context
         /// otherwise <code>null</code>.
         /// </summary>
-        public abstract IList<IndexReaderContext> Children();
+        public abstract IList<IndexReaderContext> Children { get; }
     }
 }

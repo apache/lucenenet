@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             // exhaust the enum before hitting either of the
             // cutoffs, we use ConstantBooleanQueryRewrite; else,
             // ConstantFilterRewrite:
-            int docCountCutoff = (int)((DocCountPercent_Renamed / 100.0) * reader.MaxDoc());
+            int docCountCutoff = (int)((DocCountPercent_Renamed / 100.0) * reader.MaxDoc);
             int termCountLimit = Math.Min(BooleanQuery.MaxClauseCount, TermCountCutoff_Renamed);
 
             CutOffTermCollector col = new CutOffTermCollector(docCountCutoff, termCountLimit);

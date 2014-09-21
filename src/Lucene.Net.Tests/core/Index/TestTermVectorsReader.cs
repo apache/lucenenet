@@ -239,9 +239,9 @@ namespace Lucene.Net.Index
         {
             //Check to see the files were created properly in setup
             DirectoryReader reader = DirectoryReader.Open(Dir);
-            foreach (AtomicReaderContext ctx in reader.Leaves())
+            foreach (AtomicReaderContext ctx in reader.Leaves)
             {
-                SegmentReader sr = (SegmentReader)ctx.Reader();
+                SegmentReader sr = (SegmentReader)ctx.Reader;
                 Assert.IsTrue(sr.FieldInfos.HasVectors());
             }
             reader.Dispose();

@@ -24,9 +24,9 @@ namespace Lucene.Net.Search
     /// Expert: Describes the score computation for document and query. </summary>
     public class Explanation
     {
-        private float Value_Renamed; // the value of this node
-        private string Description_Renamed; // what it represents
-        private List<Explanation> Details_Renamed; // sub-explanations
+        private float val; // the value of this node
+        private string description; // what it represents
+        private List<Explanation> details; // sub-explanations
 
         public Explanation()
         {
@@ -34,8 +34,8 @@ namespace Lucene.Net.Search
 
         public Explanation(float value, string description)
         {
-            this.Value_Renamed = value;
-            this.Description_Renamed = description;
+            this.val = value;
+            this.description = description;
         }
 
         /// <summary>
@@ -59,11 +59,11 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Value_Renamed;
+                return val;
             }
             set
             {
-                this.Value_Renamed = value;
+                this.val = value;
             }
         }
 
@@ -73,11 +73,11 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Description_Renamed;
+                return description;
             }
             set
             {
-                this.Description_Renamed = value;
+                this.description = value;
             }
         }
 
@@ -99,11 +99,11 @@ namespace Lucene.Net.Search
         {
             get
             {
-                if (Details_Renamed == null)
+                if (details == null)
                 {
                     return null;
                 }
-                return Details_Renamed.ToArray();
+                return details.ToArray();
             }
         }
 
@@ -111,11 +111,11 @@ namespace Lucene.Net.Search
         /// Adds a sub-node to this explanation node. </summary>
         public virtual void AddDetail(Explanation detail)
         {
-            if (Details_Renamed == null)
+            if (details == null)
             {
-                Details_Renamed = new List<Explanation>();
+                details = new List<Explanation>();
             }
-            Details_Renamed.Add(detail);
+            details.Add(detail);
         }
 
         /// <summary>

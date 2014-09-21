@@ -574,7 +574,7 @@ namespace Lucene.Net.Search.Similarities
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics termStats)
         {
             long df = termStats.DocFreq();
-            long max = collectionStats.MaxDoc();
+            long max = collectionStats.MaxDoc;
             float idf = Idf(df, max);
             return new Explanation(idf, "idf(docFreq=" + df + ", maxDocs=" + max + ")");
         }
@@ -593,7 +593,7 @@ namespace Lucene.Net.Search.Similarities
         ///         for each term. </returns>
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics[] termStats)
         {
-            long max = collectionStats.MaxDoc();
+            long max = collectionStats.MaxDoc;
             float idf = 0.0f;
             Explanation exp = new Explanation();
             exp.Description = "idf(), sum of:";

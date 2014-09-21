@@ -73,15 +73,15 @@ namespace Lucene.Net.Index
             {
                 BytesRef bytes = new BytesRef("1");
                 IndexReaderContext topReaderContext = reader.Context;
-                foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves())
+                foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves)
                 {
-                    DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions((AtomicReader)atomicReaderContext.Reader(), bytes, null);
+                    DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions((AtomicReader)atomicReaderContext.Reader, bytes, null);
                     Assert.IsNotNull(docsAndPosEnum);
-                    if (atomicReaderContext.Reader().MaxDoc() == 0)
+                    if (atomicReaderContext.Reader.MaxDoc == 0)
                     {
                         continue;
                     }
-                    int advance = docsAndPosEnum.Advance(Random().Next(atomicReaderContext.Reader().MaxDoc()));
+                    int advance = docsAndPosEnum.Advance(Random().Next(atomicReaderContext.Reader.MaxDoc));
                     do
                     {
                         string msg = "Advanced to: " + advance + " current doc: " + docsAndPosEnum.DocID(); // TODO: + " usePayloads: " + usePayload;
@@ -164,12 +164,12 @@ namespace Lucene.Net.Index
             {
                 BytesRef bytes = new BytesRef("" + term);
                 IndexReaderContext topReaderContext = reader.Context;
-                foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves())
+                foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves)
                 {
-                    DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions((AtomicReader)atomicReaderContext.Reader(), bytes, null);
+                    DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions((AtomicReader)atomicReaderContext.Reader, bytes, null);
                     Assert.IsNotNull(docsAndPosEnum);
                     int initDoc = 0;
-                    int maxDoc = atomicReaderContext.Reader().MaxDoc();
+                    int maxDoc = atomicReaderContext.Reader.MaxDoc;
                     // initially advance or do next doc
                     if (Random().NextBoolean())
                     {
@@ -248,10 +248,10 @@ namespace Lucene.Net.Index
             {
                 BytesRef bytes = new BytesRef("" + term);
                 IndexReaderContext topReaderContext = reader.Context;
-                foreach (AtomicReaderContext context in topReaderContext.Leaves())
+                foreach (AtomicReaderContext context in topReaderContext.Leaves)
                 {
-                    int maxDoc = context.Reader().MaxDoc();
-                    DocsEnum docsEnum = TestUtil.Docs(Random(), context.Reader(), FieldName, bytes, null, null, DocsEnum.FLAG_FREQS);
+                    int maxDoc = context.AtomicReader.MaxDoc;
+                    DocsEnum docsEnum = TestUtil.Docs(Random(), context.Reader, FieldName, bytes, null, null, DocsEnum.FLAG_FREQS);
                     if (FindNext(freqInDoc, context.DocBase, context.DocBase + maxDoc) == int.MaxValue)
                     {
                         Assert.IsNull(docsEnum);
@@ -345,13 +345,13 @@ namespace Lucene.Net.Index
                 BytesRef bytes = new BytesRef("even");
 
                 IndexReaderContext topReaderContext = reader.Context;
-                foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves())
+                foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves)
                 {
-                    DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions((AtomicReader)atomicReaderContext.Reader(), bytes, null);
+                    DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions((AtomicReader)atomicReaderContext.Reader, bytes, null);
                     Assert.IsNotNull(docsAndPosEnum);
 
                     int initDoc = 0;
-                    int maxDoc = atomicReaderContext.Reader().MaxDoc();
+                    int maxDoc = atomicReaderContext.Reader.MaxDoc;
                     // initially advance or do next doc
                     if (Random().NextBoolean())
                     {

@@ -243,9 +243,9 @@ namespace Lucene.Net.Index
                         return;
                     }
                 }
-                if (r1.NumDocs() != r2.NumDocs())
+                if (r1.NumDocs != r2.NumDocs)
                 {
-                    throw new Exception("doc counts differ: r1=" + r1.NumDocs() + " r2=" + r2.NumDocs());
+                    throw new Exception("doc counts differ: r1=" + r1.NumDocs + " r2=" + r2.NumDocs);
                 }
                 r1.Dispose();
                 r2.Dispose();

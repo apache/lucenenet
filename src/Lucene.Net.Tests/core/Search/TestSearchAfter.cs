@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
 
         internal virtual void AssertQuery(Query query, Filter filter, Sort sort)
         {
-            int maxDoc = Searcher.IndexReader.MaxDoc();
+            int maxDoc = Searcher.IndexReader.MaxDoc;
             TopDocs all;
             int pageSize = TestUtil.NextInt(Random(), 1, maxDoc * 2);
             if (VERBOSE)

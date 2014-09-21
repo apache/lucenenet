@@ -315,7 +315,7 @@ namespace Lucene.Net.Index
 
             // Reader should see index as multi-seg at this
             // point:
-            Assert.IsTrue(reader.Leaves().Count > 1, "Reader incorrectly sees one segment");
+            Assert.IsTrue(reader.Leaves.Count > 1, "Reader incorrectly sees one segment");
             reader.Dispose();
 
             // Abort the writer:
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
             reader = DirectoryReader.Open(dir);
 
             // Reader should still see index as multi-segment
-            Assert.IsTrue(reader.Leaves().Count > 1, "Reader incorrectly sees one segment");
+            Assert.IsTrue(reader.Leaves.Count > 1, "Reader incorrectly sees one segment");
             reader.Dispose();
 
             if (VERBOSE)
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
             reader = DirectoryReader.Open(dir);
 
             // Reader should see index as one segment
-            Assert.AreEqual(1, reader.Leaves().Count, "Reader incorrectly sees more than one segment");
+            Assert.AreEqual(1, reader.Leaves.Count, "Reader incorrectly sees more than one segment");
             reader.Dispose();
             dir.Dispose();
         }
@@ -457,27 +457,27 @@ namespace Lucene.Net.Index
             }
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, reader.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
             writer.Commit();
             DirectoryReader reader2 = DirectoryReader.OpenIfChanged(reader);
             Assert.IsNotNull(reader2);
-            Assert.AreEqual(0, reader.NumDocs());
-            Assert.AreEqual(23, reader2.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
+            Assert.AreEqual(23, reader2.NumDocs);
             reader.Dispose();
 
             for (int i = 0; i < 17; i++)
             {
                 TestIndexWriter.AddDoc(writer);
             }
-            Assert.AreEqual(23, reader2.NumDocs());
+            Assert.AreEqual(23, reader2.NumDocs);
             reader2.Dispose();
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(23, reader.NumDocs());
+            Assert.AreEqual(23, reader.NumDocs);
             reader.Dispose();
             writer.Commit();
 
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(40, reader.NumDocs());
+            Assert.AreEqual(40, reader.NumDocs);
             reader.Dispose();
             writer.Dispose();
             dir.Dispose();
@@ -581,20 +581,20 @@ namespace Lucene.Net.Index
             }
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, reader.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
 
             writer.PrepareCommit();
 
             IndexReader reader2 = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, reader2.NumDocs());
+            Assert.AreEqual(0, reader2.NumDocs);
 
             writer.Commit();
 
             IndexReader reader3 = DirectoryReader.OpenIfChanged(reader);
             Assert.IsNotNull(reader3);
-            Assert.AreEqual(0, reader.NumDocs());
-            Assert.AreEqual(0, reader2.NumDocs());
-            Assert.AreEqual(23, reader3.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
+            Assert.AreEqual(0, reader2.NumDocs);
+            Assert.AreEqual(23, reader3.NumDocs);
             reader.Dispose();
             reader2.Dispose();
 
@@ -603,21 +603,21 @@ namespace Lucene.Net.Index
                 TestIndexWriter.AddDoc(writer);
             }
 
-            Assert.AreEqual(23, reader3.NumDocs());
+            Assert.AreEqual(23, reader3.NumDocs);
             reader3.Dispose();
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(23, reader.NumDocs());
+            Assert.AreEqual(23, reader.NumDocs);
             reader.Dispose();
 
             writer.PrepareCommit();
 
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(23, reader.NumDocs());
+            Assert.AreEqual(23, reader.NumDocs);
             reader.Dispose();
 
             writer.Commit();
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(40, reader.NumDocs());
+            Assert.AreEqual(40, reader.NumDocs);
             reader.Dispose();
             writer.Dispose();
             dir.Dispose();
@@ -642,19 +642,19 @@ namespace Lucene.Net.Index
             }
 
             DirectoryReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, reader.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
 
             writer.PrepareCommit();
 
             IndexReader reader2 = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, reader2.NumDocs());
+            Assert.AreEqual(0, reader2.NumDocs);
 
             writer.Rollback();
 
             IndexReader reader3 = DirectoryReader.OpenIfChanged(reader);
             Assert.IsNull(reader3);
-            Assert.AreEqual(0, reader.NumDocs());
-            Assert.AreEqual(0, reader2.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
+            Assert.AreEqual(0, reader2.NumDocs);
             reader.Dispose();
             reader2.Dispose();
 
@@ -665,18 +665,18 @@ namespace Lucene.Net.Index
             }
 
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, reader.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
             reader.Dispose();
 
             writer.PrepareCommit();
 
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, reader.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
             reader.Dispose();
 
             writer.Commit();
             reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(17, reader.NumDocs());
+            Assert.AreEqual(17, reader.NumDocs);
             reader.Dispose();
             writer.Dispose();
             dir.Dispose();
@@ -694,7 +694,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             IndexReader reader = DirectoryReader.Open(dir);
-            Assert.AreEqual(0, reader.NumDocs());
+            Assert.AreEqual(0, reader.NumDocs);
             reader.Dispose();
             dir.Dispose();
         }

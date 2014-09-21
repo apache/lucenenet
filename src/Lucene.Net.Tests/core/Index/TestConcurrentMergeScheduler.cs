@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
 
             writer.Dispose();
             IndexReader reader = DirectoryReader.Open(directory);
-            Assert.AreEqual(200 + extraCount, reader.NumDocs());
+            Assert.AreEqual(200 + extraCount, reader.NumDocs);
             reader.Dispose();
             directory.Dispose();
         }
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
             IndexReader reader = DirectoryReader.Open(directory);
             // Verify that we did not lose any deletes...
-            Assert.AreEqual(450, reader.NumDocs());
+            Assert.AreEqual(450, reader.NumDocs);
             reader.Dispose();
             directory.Dispose();
         }
@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
                 writer.Dispose(false);
 
                 IndexReader reader = DirectoryReader.Open(directory);
-                Assert.AreEqual((1 + iter) * 182, reader.NumDocs());
+                Assert.AreEqual((1 + iter) * 182, reader.NumDocs);
                 reader.Dispose();
 
                 // Reopen

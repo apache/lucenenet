@@ -874,9 +874,9 @@ namespace Lucene.Net.Index
 
             Term term = new Term("f", new BytesRef("doc"));
             DirectoryReader reader = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext ctx in reader.Leaves())
+            foreach (AtomicReaderContext ctx in reader.Leaves)
             {
-                DocsEnum de = ((AtomicReader)ctx.Reader()).TermDocsEnum(term);
+                DocsEnum de = ((AtomicReader)ctx.Reader).TermDocsEnum(term);
                 while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
                     Assert.AreEqual(1, de.Freq(), "wrong freq for doc " + de.DocID());

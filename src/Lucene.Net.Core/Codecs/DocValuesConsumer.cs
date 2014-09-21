@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs
                     yield break;
                 }
 
-                if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
                 {
                     readerUpto++;
                     if (readerUpto < toMerge.Count)
@@ -226,7 +226,7 @@ namespace Lucene.Net.Codecs
 					return false;
 				  }
 
-				  if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+				  if (currentReader == null || docIDUpto == currentReader.MaxDoc)
 				  {
 					readerUpto++;
 					if (readerUpto < OuterInstance.ToMerge.Count)
@@ -288,7 +288,7 @@ namespace Lucene.Net.Codecs
                     yield break;
                 }
 
-                if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
                 {
                     readerUpto++;
                     if (readerUpto < toMerge.Count)
@@ -386,7 +386,7 @@ namespace Lucene.Net.Codecs
                       return false;
                     }
 
-                    if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+                    if (currentReader == null || docIDUpto == currentReader.MaxDoc)
                     {
                       readerUpto++;
                       if (readerUpto < OuterInstance.ToMerge.Count)
@@ -447,7 +447,7 @@ namespace Lucene.Net.Codecs
                 else
                 {
                     LongBitSet bitset = new LongBitSet(dv.ValueCount);
-                    for (int i = 0; i < reader.MaxDoc(); i++)
+                    for (int i = 0; i < reader.MaxDoc; i++)
                     {
                         if (liveDocs.Get(i))
                         {
@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs
                     yield break;
                 }
 
-                if (currentReader == null || docIDUpTo == currentReader.MaxDoc())
+                if (currentReader == null || docIDUpTo == currentReader.MaxDoc)
                 {
                     readerUpTo++;
                     if (readerUpTo < readers.Length)
@@ -653,7 +653,7 @@ namespace Lucene.Net.Codecs
                       return false;
                     }
 
-                    if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+                    if (currentReader == null || docIDUpto == currentReader.MaxDoc)
                     {
                       readerUpto++;
                       if (readerUpto < OuterInstance.Readers.Length)
@@ -705,7 +705,7 @@ namespace Lucene.Net.Codecs
                 else
                 {
                     LongBitSet bitset = new LongBitSet(dv.ValueCount);
-                    for (int i = 0; i < reader.MaxDoc(); i++)
+                    for (int i = 0; i < reader.MaxDoc; i++)
                     {
                         if (liveDocs.Get(i))
                         {
@@ -762,7 +762,7 @@ namespace Lucene.Net.Codecs
                     yield break;
                 }
 
-                if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
                 {
                     readerUpto++;
                     if (readerUpto < readers.Length)
@@ -816,7 +816,7 @@ namespace Lucene.Net.Codecs
                     continue;
                 }
 
-                if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
                 {
                     readerUpto++;
                     if (readerUpto < readers.Length)
@@ -830,7 +830,7 @@ namespace Lucene.Net.Codecs
 
                 if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
                 {
-                    Debug.Assert(docIDUpto < currentReader.MaxDoc());
+                    Debug.Assert(docIDUpto < currentReader.MaxDoc);
                     SortedSetDocValues dv = dvs[readerUpto];
                     dv.Document = docIDUpto;
                     ordUpto = ordLength = 0;
@@ -978,7 +978,7 @@ namespace Lucene.Net.Codecs
                       return false;
                     }
 
-                    if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+                    if (currentReader == null || docIDUpto == currentReader.MaxDoc)
                     {
                       readerUpto++;
                       if (readerUpto < OuterInstance.Readers.Length)
@@ -1091,7 +1091,7 @@ namespace Lucene.Net.Codecs
                       return true;
                     }
 
-                    if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+                    if (currentReader == null || docIDUpto == currentReader.MaxDoc)
                     {
                       readerUpto++;
                       if (readerUpto < OuterInstance.Readers.Length)
@@ -1105,7 +1105,7 @@ namespace Lucene.Net.Codecs
 
                     if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
                     {
-                      Debug.Assert(docIDUpto < currentReader.MaxDoc());
+                      Debug.Assert(docIDUpto < currentReader.MaxDoc);
                       SortedSetDocValues dv = OuterInstance.Dvs[readerUpto];
                       dv.Document = docIDUpto;
                       ordUpto = ordLength = 0;

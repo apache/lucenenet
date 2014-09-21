@@ -316,7 +316,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private int CopyFieldsWithDeletions(MergeState mergeState, AtomicReader reader, Lucene40StoredFieldsReader matchingFieldsReader, int[] rawDocLengths)
         {
             int docCount = 0;
-            int maxDoc = reader.MaxDoc();
+            int maxDoc = reader.MaxDoc;
             Bits liveDocs = reader.LiveDocs;
             Debug.Assert(liveDocs != null);
             if (matchingFieldsReader != null)
@@ -380,7 +380,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private int CopyFieldsNoDeletions(MergeState mergeState, AtomicReader reader, Lucene40StoredFieldsReader matchingFieldsReader, int[] rawDocLengths)
         {
-            int maxDoc = reader.MaxDoc();
+            int maxDoc = reader.MaxDoc;
             int docCount = 0;
             if (matchingFieldsReader != null)
             {

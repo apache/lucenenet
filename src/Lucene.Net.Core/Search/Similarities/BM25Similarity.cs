@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Similarities
             }
             else
             {
-                return (float)(sumTotalTermFreq / (double)collectionStats.MaxDoc());
+                return (float)(sumTotalTermFreq / (double)collectionStats.MaxDoc);
             }
         }
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search.Similarities
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics termStats)
         {
             long df = termStats.DocFreq();
-            long max = collectionStats.MaxDoc();
+            long max = collectionStats.MaxDoc;
             float idf = Idf(df, max);
             return new Explanation(idf, "idf(docFreq=" + df + ", maxDocs=" + max + ")");
         }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Search.Similarities
         ///         for each term. </returns>
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics[] termStats)
         {
-            long max = collectionStats.MaxDoc();
+            long max = collectionStats.MaxDoc;
             float idf = 0.0f;
             Explanation exp = new Explanation();
             exp.Description = "idf(), sum of:";
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search.Similarities
         public override sealed SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
         {
             BM25Stats bm25stats = (BM25Stats)stats;
-            return new BM25DocScorer(this, bm25stats, ((AtomicReader)context.Reader()).GetNormValues(bm25stats.Field));
+            return new BM25DocScorer(this, bm25stats, context.AtomicReader.GetNormValues(bm25stats.Field));
         }
 
         private class BM25DocScorer : SimScorer
