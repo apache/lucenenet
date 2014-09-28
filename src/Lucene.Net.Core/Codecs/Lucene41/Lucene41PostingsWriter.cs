@@ -1,36 +1,36 @@
-using System;
-using System.Diagnostics;
+/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 namespace Lucene.Net.Codecs.Lucene41
 {
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using DataOutput = Lucene.Net.Store.DataOutput;
 
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    using System;
+    using System.Diagnostics;
 
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
-    using TermState = Lucene.Net.Index.TermState;
+    using ArrayUtil = Util.ArrayUtil;
+    using BytesRef = Util.BytesRef;
+    using DataOutput = Store.DataOutput;
+    using FieldInfo = Index.FieldInfo;
+    using IndexFileNames = Index.IndexFileNames;
+    using IndexOutput = Store.IndexOutput;
+    using IOUtils = Util.IOUtils;
+    using PackedInts = Util.Packed.PackedInts;
+    using SegmentWriteState = Index.SegmentWriteState;
+    using TermState = Index.TermState;
 
     /// <summary>
     /// Concrete class that writes docId(maybe frq,pos,offset,payloads) list
@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs.Lucene41
             SkipWriter.ResetSkip();
         }
 
-        public override void StartDoc(int docID, int termDocFreq)
+        public override void StartDoc(int docId, int termDocFreq)
         {
             // if (DEBUG) {
             //   System.out.println("FPW.startDoc docID["+docBufferUpto+"]=" + docID);
@@ -302,11 +302,11 @@ namespace Lucene.Net.Codecs.Lucene41
                 SkipWriter.BufferSkip(LastBlockDocID, DocCount, LastBlockPosFP, LastBlockPayFP, LastBlockPosBufferUpto, LastBlockPayloadByteUpto);
             }
 
-            int docDelta = docID - LastDocID;
+            int docDelta = docId - LastDocID;
 
-            if (docID < 0 || (DocCount > 0 && docDelta <= 0))
+            if (docId < 0 || (DocCount > 0 && docDelta <= 0))
             {
-                throw new Exception("docs out of order (" + docID + " <= " + LastDocID + " ) (docOut: " + DocOut + ")");
+                throw new Exception("docs out of order (" + docId + " <= " + LastDocID + " ) (docOut: " + DocOut + ")");
             }
 
             DocDeltaBuffer[DocBufferUpto] = docDelta;
@@ -338,7 +338,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 // the block was filled so it can save skip data)
             }
 
-            LastDocID = docID;
+            LastDocID = docId;
             LastPosition = 0;
             LastStartOffset = 0;
         }

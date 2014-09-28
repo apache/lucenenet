@@ -18,7 +18,7 @@
 namespace Lucene.Net.Codecs.SimpleText
 {
 
-    using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+    using CorruptIndexException = Index.CorruptIndexException;
     using ChecksumIndexInput = Store.ChecksumIndexInput;
     using DataInput = Store.DataInput;
     using DataOutput = Store.DataOutput;
@@ -77,10 +77,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         break;
                     }
-                    else
-                    {
-                        scratch.Bytes[upto++] = b;
-                    }
+                    
+                    scratch.Bytes[upto++] = b;
                 }
             }
             scratch.Offset = 0;

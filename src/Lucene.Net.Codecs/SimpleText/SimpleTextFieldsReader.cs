@@ -15,15 +15,16 @@
 * limitations under the License.
 */
 
-using System.Linq;
-
 namespace Lucene.Net.Codecs.SimpleText
 {
 
     using System;
     using System.Diagnostics;
     using System.Collections.Generic;
-
+    using System.Linq;
+    using Support;
+    using Util.Fst;
+    
     using DocsAndPositionsEnum = Index.DocsAndPositionsEnum;
     using DocsEnum = Index.DocsEnum;
     using FieldInfo = Index.FieldInfo;
@@ -44,44 +45,24 @@ namespace Lucene.Net.Codecs.SimpleText
     using IntsRef = Util.IntsRef;
     using StringHelper = Util.StringHelper;
     using UnicodeUtil = Util.UnicodeUtil;
-    using Builder = Util.Fst.Builder;
-    using BytesRefFSTEnum = Util.Fst.BytesRefFSTEnum;
+    using BytesRefFSTEnum = Util.Fst.BytesRefFSTEnum<Util.Fst.PairOutputs<long,long>.Pair<long, Util.Fst.PairOutputs<long,long>.Pair<long, long>>>;
     using FST = Util.Fst.FST;
-    using PairOutputs = Util.Fst.PairOutputs;
+    using PairOutputs = Util.Fst.PairOutputs<long,long>;
     using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
     using Util = Util.Fst.Util;
 
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextFieldsWriter.END;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextFieldsWriter.FIELD;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextFieldsWriter.TERM;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextFieldsWriter.DOC;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextFieldsWriter.FREQ;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextFieldsWriter.POS;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextFieldsWriter.START_OFFSET;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextFieldsWriter.END_OFFSET;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextFieldsWriter.PAYLOAD;
-
     internal class SimpleTextFieldsReader : FieldsProducer
     {
-        private readonly SortedDictionary<string, long?> fields;
+        private readonly SortedDictionary<string, long?> _fields;
         private readonly IndexInput _input;
-        private readonly FieldInfos fieldInfos;
-        private readonly int maxDoc;
+        private readonly FieldInfos _fieldInfos;
+        private readonly int _maxDoc;
         private readonly IDictionary<string, SimpleTextTerms> _termsCache = new Dictionary<string, SimpleTextTerms>();
 
         public SimpleTextFieldsReader(SegmentReadState state)
         {
-            this.maxDoc = state.SegmentInfo.DocCount;
-            fieldInfos = state.FieldInfos;
+            _maxDoc = state.SegmentInfo.DocCount;
+            _fieldInfos = state.FieldInfos;
             _input =
                 state.Directory.OpenInput(
                     SimpleTextPostingsFormat.GetPostingsFileName(state.SegmentInfo.Name, state.SegmentSuffix),
@@ -89,14 +70,14 @@ namespace Lucene.Net.Codecs.SimpleText
             bool success = false;
             try
             {
-                fields = readFields((IndexInput)_input.Clone());
+                _fields = ReadFields((IndexInput)_input.Clone());
                 success = true;
             }
             finally
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(this);
+                    IOUtils.CloseWhileHandlingException();
                 }
             }
         }
@@ -104,21 +85,22 @@ namespace Lucene.Net.Codecs.SimpleText
         private SortedDictionary<string, long?> ReadFields(IndexInput @in)
         {
             ChecksumIndexInput input = new BufferedChecksumIndexInput(@in);
-            BytesRef scratch = new BytesRef(10);
-            SortedDictionary<string, long?> fields = new SortedDictionary<string, long?>();
+            var scratch = new BytesRef(10);
+            var fields = new SortedDictionary<string, long?>();
 
             while (true)
             {
                 SimpleTextUtil.ReadLine(input, scratch);
-                if (scratch.Equals(END))
+                if (scratch.Equals(SimpleTextFieldsWriter.END))
                 {
                     SimpleTextUtil.CheckFooter(input);
                     return fields;
                 }
-                else if (StringHelper.StartsWith(scratch, FIELD))
+                
+                if (StringHelper.StartsWith(scratch, SimpleTextFieldsWriter.FIELD))
                 {
-                    string fieldName = new string(scratch.Bytes, scratch.Offset + FIELD.length,
-                        scratch.Length - FIELD.length, StandardCharsets.UTF_8);
+                    var fieldName = scratch.Bytes.SubList(scratch.Offset + SimpleTextFieldsWriter.FIELD.Length,
+                        scratch.Length - SimpleTextFieldsWriter.FIELD.Length).ToString();
                     fields[fieldName] = input.FilePointer;
                 }
             }
@@ -126,97 +108,71 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTextTermsEnum : TermsEnum
         {
-            private readonly SimpleTextFieldsReader outerInstance;
+            private readonly SimpleTextFieldsReader _outerInstance;
 
-            internal readonly FieldInfo.IndexOptions indexOptions;
-            internal int docFreq_Renamed;
-            internal long totalTermFreq_Renamed;
-            internal long docsStart;
-            internal bool ended;
-            internal readonly BytesRefFSTEnum<PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>>> fstEnum;
+            private readonly IndexOptions _indexOptions;
+            private int _docFreq;
+            private long _totalTermFreq;
+            private long _docsStart;
+            
+            private readonly BytesRefFSTEnum<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>> _fstEnum;
 
             public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance,
-                FST<PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>>> fst, FieldInfo.IndexOptions indexOptions)
+                FST<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>> fst, IndexOptions indexOptions)
             {
-                this.outerInstance = outerInstance;
-                this.indexOptions = indexOptions;
-                fstEnum = new BytesRefFSTEnum<>(fst);
+                _outerInstance = outerInstance;
+                _indexOptions = indexOptions;
+                _fstEnum = new BytesRefFSTEnum<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>>(fst);
             }
 
             public override bool SeekExact(BytesRef text)
             {
 
-                BytesRefFSTEnum.InputOutput<PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>>> result =
-                    fstEnum.SeekExact(text);
-                if (result != null)
-                {
-                    PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>> pair1 = result.output;
-                    PairOutputs.Pair<long?, long?> pair2 = pair1.output2;
-                    docsStart = pair1.Output1;
-                    docFreq_Renamed = (int) pair2.Output1;
-                    totalTermFreq_Renamed = pair2.Output2;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                var result = _fstEnum.SeekExact(text);
+                
+                if (result == null) return false;
+                
+                var pair1 = result.Output;
+                var pair2 = pair1.Output2;
+                _docsStart = pair1.Output1;
+                _docFreq = (int) pair2.Output1;
+                _totalTermFreq = pair2.Output2;
+                return true;
             }
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
-
-                BytesRefFSTEnum.InputOutput<PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>>> result =
-                    fstEnum.SeekCeil(text);
+                var result = _fstEnum.SeekCeil(text);
                 if (result == null)
-                {
-                    //System.out.println("  end");
                     return SeekStatus.END;
-                }
-                else
-                {
-                    //System.out.println("  got text=" + term.utf8ToString());
-                    PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>> pair1 = result.output;
-                    PairOutputs.Pair<long?, long?> pair2 = pair1.output2;
-                    docsStart = pair1.output1;
-                    docFreq_Renamed = (int) pair2.output1;
-                    totalTermFreq_Renamed = pair2.output2;
 
-                    if (result.input.Equals(text))
-                    {
-                        //System.out.println("  match docsStart=" + docsStart);
-                        return SeekStatus.FOUND;
-                    }
-                    else
-                    {
-                        //System.out.println("  not match docsStart=" + docsStart);
-                        return SeekStatus.NOT_FOUND;
-                    }
-                }
+                var pair1 = result.Output;
+                var pair2 = pair1.Output2;
+                _docsStart = pair1.Output1;
+                _docFreq = (int) pair2.Output1;
+                _totalTermFreq = pair2.Output2;
+
+                return result.Input.Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+
             }
+
             public override BytesRef Next()
             {
-                Debug.Assert(!ended);
-                BytesRefFSTEnum.InputOutput<PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>>> result =
-                    fstEnum.Next();
-                if (result != null)
-                {
-                    PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>> pair1 = result.output;
-                    PairOutputs.Pair<long?, long?> pair2 = pair1.output2;
-                    docsStart = pair1.output1;
-                    docFreq_Renamed = (int) pair2.output1;
-                    totalTermFreq_Renamed = pair2.output2;
-                    return result.input;
-                }
-                else
-                {
-                    return null;
-                }
+                var result = _fstEnum.Next();
+
+                if (result == null) return null;
+
+                var pair1 = result.Output;
+                var pair2 = pair1.Output2;
+                _docsStart = pair1.Output1;
+                _docFreq = (int)pair2.Output1;
+                _totalTermFreq = pair2.Output2;
+                return result.Input;
             }
 
             public override BytesRef Term()
             {
-                return fstEnum.Current().Input;
+                return _fstEnum.Current().Input;
             }
 
             public override long Ord()
@@ -231,50 +187,48 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override int DocFreq()
             {
-                return docFreq_Renamed;
+                return _docFreq;
             }
 
             public override long TotalTermFreq()
             {
-                return indexOptions == IndexOptions.DOCS_ONLY ? - 1 : totalTermFreq_Renamed;
+                return _indexOptions == IndexOptions.DOCS_ONLY ? - 1 : _totalTermFreq;
             }
 
             public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
             {
                 SimpleTextDocsEnum docsEnum;
-                if (reuse != null && reuse is SimpleTextDocsEnum &&
-                    ((SimpleTextDocsEnum) reuse).CanReuse(outerInstance._input))
+                if (reuse is SimpleTextDocsEnum && ((SimpleTextDocsEnum) reuse).CanReuse(_outerInstance._input))
                 {
                     docsEnum = (SimpleTextDocsEnum) reuse;
                 }
                 else
                 {
-                    docsEnum = new SimpleTextDocsEnum(outerInstance);
+                    docsEnum = new SimpleTextDocsEnum(_outerInstance);
                 }
-                return docsEnum.Reset(docsStart, liveDocs, indexOptions == IndexOptions.DOCS_ONLY,
-                    docFreq_Renamed);
+                return docsEnum.Reset(_docsStart, liveDocs, _indexOptions == IndexOptions.DOCS_ONLY,
+                    _docFreq);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
 
-                if (indexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (_indexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     // Positions were not indexed
                     return null;
                 }
 
                 SimpleTextDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse != null && reuse is SimpleTextDocsAndPositionsEnum &&
-                    ((SimpleTextDocsAndPositionsEnum) reuse).canReuse(outerInstance._input))
+                if (reuse is SimpleTextDocsAndPositionsEnum && ((SimpleTextDocsAndPositionsEnum) reuse).CanReuse(_outerInstance._input))
                 {
                     docsAndPositionsEnum = (SimpleTextDocsAndPositionsEnum) reuse;
                 }
                 else
                 {
-                    docsAndPositionsEnum = new SimpleTextDocsAndPositionsEnum(outerInstance);
+                    docsAndPositionsEnum = new SimpleTextDocsAndPositionsEnum(_outerInstance);
                 }
-                return docsAndPositionsEnum.reset(docsStart, liveDocs, indexOptions, docFreq_Renamed);
+                return docsAndPositionsEnum.Reset(_docsStart, liveDocs, _indexOptions, _docFreq);
             }
 
             public override IComparer<BytesRef> Comparator
@@ -283,119 +237,116 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private class SimpleTextDocsEnum : DocsEnum
+        private sealed class SimpleTextDocsEnum : DocsEnum
         {
-            private readonly SimpleTextFieldsReader outerInstance;
-
-            internal readonly IndexInput inStart;
-            internal readonly IndexInput @in;
-            internal bool omitTF;
-            internal int docID_Renamed = -1;
-            internal int tf;
-            internal Bits liveDocs;
-            internal readonly BytesRef scratch = new BytesRef(10);
-            internal readonly CharsRef scratchUTF16 = new CharsRef(10);
-            internal int cost_Renamed;
+            private readonly IndexInput _inStart;
+            private readonly IndexInput _in;
+            private bool _omitTf;
+            private int _docId = -1;
+            private int _tf;
+            private Bits _liveDocs;
+            private readonly BytesRef _scratch = new BytesRef(10);
+            private readonly CharsRef _scratchUtf16 = new CharsRef(10);
+            private int _cost;
 
             public SimpleTextDocsEnum(SimpleTextFieldsReader outerInstance)
             {
-                this.outerInstance = outerInstance;
-                inStart = outerInstance._input;
-                @in = (IndexInput) inStart.Clone();
+                _inStart = outerInstance._input;
+                _in = (IndexInput) _inStart.Clone();
             }
 
-            public virtual bool CanReuse(IndexInput @in)
+            public bool CanReuse(IndexInput @in)
             {
-                return @in == inStart;
+                return @in == _inStart;
             }
 
-            public virtual SimpleTextDocsEnum Reset(long fp, Bits liveDocs, bool omitTF, int docFreq)
+            public SimpleTextDocsEnum Reset(long fp, Bits liveDocs, bool omitTf, int docFreq)
             {
-                this.liveDocs = liveDocs;
-                @in.Seek(fp);
-                this.omitTF = omitTF;
-                docID_Renamed = -1;
-                tf = 1;
-                cost_Renamed = docFreq;
+                _liveDocs = liveDocs;
+                _in.Seek(fp);
+                _omitTf = omitTf;
+                _docId = -1;
+                _tf = 1;
+                _cost = docFreq;
                 return this;
             }
 
             public override int DocID()
             {
-                return docID_Renamed;
+                return _docId;
             }
 
             public override int Freq()
             {
-                return tf;
+                return _tf;
             }
 
             public override int NextDoc()
             {
-                if (docID_Renamed == NO_MORE_DOCS)
+                if (_docId == NO_MORE_DOCS)
                 {
-                    return docID_Renamed;
+                    return _docId;
                 }
                 bool first = true;
                 int termFreq = 0;
                 while (true)
                 {
-                    long lineStart = @in.FilePointer;
-                    SimpleTextUtil.ReadLine(@in, scratch);
-                    if (StringHelper.StartsWith(scratch, DOC))
+                    long lineStart = _in.FilePointer;
+                    SimpleTextUtil.ReadLine(_in, _scratch);
+                    if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.DOC))
                     {
-                        if (!first && (liveDocs == null || liveDocs.Get(docID_Renamed)))
+                        if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))
                         {
-                            @in.Seek(lineStart);
-                            if (!omitTF)
+                            _in.Seek(lineStart);
+                            if (!_omitTf)
                             {
-                                tf = termFreq;
+                                _tf = termFreq;
                             }
-                            return docID_Renamed;
+                            return _docId;
                         }
-                        UnicodeUtil.UTF8toUTF16(scratch.Bytes, scratch.Offset + DOC.length, scratch.Length - DOC.length,
-                            scratchUTF16);
-                        docID_Renamed = ArrayUtil.ParseInt(scratchUTF16.Chars, 0, scratchUTF16.length);
+                        UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.DOC.Length, _scratch.Length - SimpleTextFieldsWriter.DOC.Length,
+                            _scratchUtf16);
+                        _docId = ArrayUtil.ParseInt(_scratchUtf16.Chars, 0, _scratchUtf16.length);
                         termFreq = 0;
                         first = false;
                     }
-                    else if (StringHelper.StartsWith(scratch, FREQ))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FREQ))
                     {
-                        UnicodeUtil.UTF8toUTF16(scratch.Bytes, scratch.Offset + FREQ.length,
-                            scratch.Length - FREQ.length, scratchUTF16);
-                        termFreq = ArrayUtil.ParseInt(scratchUTF16.Chars, 0, scratchUTF16.length);
+                        UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.FREQ.Length,
+                            _scratch.Length - SimpleTextFieldsWriter.FREQ.Length, _scratchUtf16);
+                        termFreq = ArrayUtil.ParseInt(_scratchUtf16.Chars, 0, _scratchUtf16.length);
                     }
-                    else if (StringHelper.StartsWith(scratch, POS))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS))
                     {
                         // skip termFreq++;
                     }
-                    else if (StringHelper.StartsWith(scratch, START_OFFSET))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.START_OFFSET))
                     {
                         // skip
                     }
-                    else if (StringHelper.StartsWith(scratch, END_OFFSET))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END_OFFSET))
                     {
                         // skip
                     }
-                    else if (StringHelper.StartsWith(scratch, PAYLOAD))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.PAYLOAD))
                     {
                         // skip
                     }
                     else
                     {
                         Debug.Assert(
-                            StringHelper.StartsWith(scratch, TERM) || StringHelper.StartsWith(scratch, FIELD) ||
-                            StringHelper.StartsWith(scratch, END), "scratch=" + scratch.Utf8ToString());
-                        if (!first && (liveDocs == null || liveDocs.Get(docID_Renamed)))
+                            StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
+                            StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END), "scratch=" + _scratch.Utf8ToString());
+                        if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))
                         {
-                            @in.Seek(lineStart);
-                            if (!omitTF)
+                            _in.Seek(lineStart);
+                            if (!_omitTf)
                             {
-                                tf = termFreq;
+                                _tf = termFreq;
                             }
-                            return docID_Renamed;
+                            return _docId;
                         }
-                        return docID_Renamed = NO_MORE_DOCS;
+                        return _docId = NO_MORE_DOCS;
                     }
                 }
             }
@@ -408,130 +359,126 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override long Cost()
             {
-                return cost_Renamed;
+                return _cost;
             }
         }
 
-        private class SimpleTextDocsAndPositionsEnum : DocsAndPositionsEnum
+        private sealed class SimpleTextDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            private readonly SimpleTextFieldsReader outerInstance;
-
-            internal readonly IndexInput inStart;
-            internal readonly IndexInput @in;
-            internal int docID_Renamed = -1;
-            internal int tf;
-            internal Bits liveDocs;
-            internal readonly BytesRef scratch = new BytesRef(10);
-            internal readonly BytesRef scratch2 = new BytesRef(10);
-            internal readonly CharsRef scratchUTF16 = new CharsRef(10);
-            internal readonly CharsRef scratchUTF16_2 = new CharsRef(10);
-            internal BytesRef payload;
-            internal long nextDocStart;
-            internal bool readOffsets;
-            internal bool readPositions;
-            internal int startOffset_Renamed;
-            internal int endOffset_Renamed;
-            internal int cost_Renamed;
+            private readonly IndexInput _inStart;
+            private readonly IndexInput _in;
+            private int _docId = -1;
+            private int _tf;
+            private Bits _liveDocs;
+            private readonly BytesRef _scratch = new BytesRef(10);
+            private readonly BytesRef _scratch2 = new BytesRef(10);
+            private readonly CharsRef _scratchUtf16 = new CharsRef(10);
+            private readonly CharsRef _scratchUtf162 = new CharsRef(10);
+            private BytesRef _payload;
+            private long _nextDocStart;
+            private bool _readOffsets;
+            private bool _readPositions;
+            private int _startOffset;
+            private int _endOffset;
+            private int _cost;
 
             public SimpleTextDocsAndPositionsEnum(SimpleTextFieldsReader outerInstance)
             {
-                this.outerInstance = outerInstance;
-                this.inStart = outerInstance._input;
-                this.@in = (IndexInput) inStart.Clone();
+                _inStart = outerInstance._input;
+                _in = (IndexInput) _inStart.Clone();
             }
 
-            public virtual bool canReuse(IndexInput @in)
+            public bool CanReuse(IndexInput @in)
             {
-                return @in == inStart;
+                return @in == _inStart;
             }
 
-            public virtual SimpleTextDocsAndPositionsEnum reset(long fp, Bits liveDocs,
-                FieldInfo.IndexOptions indexOptions, int docFreq)
+            public SimpleTextDocsAndPositionsEnum Reset(long fp, Bits liveDocs, IndexOptions indexOptions, int docFreq)
             {
-                this.liveDocs = liveDocs;
-                nextDocStart = fp;
-                docID_Renamed = -1;
-                readPositions = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                readOffsets = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                _liveDocs = liveDocs;
+                _nextDocStart = fp;
+                _docId = -1;
+                _readPositions = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                _readOffsets = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 
-                if (!readOffsets)
+                if (!_readOffsets)
                 {
-                    startOffset_Renamed = -1;
-                    endOffset_Renamed = -1;
+                    _startOffset = -1;
+                    _endOffset = -1;
                 }
-                cost_Renamed = docFreq;
+                _cost = docFreq;
                 return this;
             }
 
             public override int DocID()
             {
-                return docID_Renamed;
+                return _docId;
             }
 
             public override int Freq()
             {
-                return tf;
+                return _tf;
             }
 
             public override int NextDoc()
             {
                 bool first = true;
-                @in.Seek(nextDocStart);
+                _in.Seek(_nextDocStart);
                 long posStart = 0;
                 while (true)
                 {
-                    long lineStart = @in.FilePointer;
-                    SimpleTextUtil.ReadLine(@in, scratch);
+                    long lineStart = _in.FilePointer;
+                    SimpleTextUtil.ReadLine(_in, _scratch);
                     //System.out.println("NEXT DOC: " + scratch.utf8ToString());
-                    if (StringHelper.StartsWith(scratch, DOC))
+                    if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.DOC))
                     {
-                        if (!first && (liveDocs == null || liveDocs.Get(docID_Renamed)))
+                        if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))
                         {
-                            nextDocStart = lineStart;
-                            @in.Seek(posStart);
-                            return docID_Renamed;
+                            _nextDocStart = lineStart;
+                            _in.Seek(posStart);
+                            return _docId;
                         }
-                        UnicodeUtil.UTF8toUTF16(scratch.Bytes, scratch.Offset + DOC.length, scratch.Length - DOC.length,
-                            scratchUTF16);
-                        docID_Renamed = ArrayUtil.ParseInt(scratchUTF16.Chars, 0, scratchUTF16.length);
-                        tf = 0;
+                        UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.DOC.Length, _scratch.Length - SimpleTextFieldsWriter.DOC.Length,
+                            _scratchUtf16);
+                        _docId = ArrayUtil.ParseInt(_scratchUtf16.Chars, 0, _scratchUtf16.length);
+                        _tf = 0;
                         first = false;
                     }
-                    else if (StringHelper.StartsWith(scratch, FREQ))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FREQ))
                     {
-                        UnicodeUtil.UTF8toUTF16(scratch.Bytes, scratch.Offset + FREQ.length,
-                            scratch.Length - FREQ.length, scratchUTF16);
-                        tf = ArrayUtil.ParseInt(scratchUTF16.Chars, 0, scratchUTF16.length);
-                        posStart = @in.FilePointer;
+                        UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.FREQ.Length,
+                            _scratch.Length - SimpleTextFieldsWriter.FREQ.Length, _scratchUtf16);
+                        _tf = ArrayUtil.ParseInt(_scratchUtf16.Chars, 0, _scratchUtf16.length);
+                        posStart = _in.FilePointer;
                     }
-                    else if (StringHelper.StartsWith(scratch, POS))
-                    {
-                        // skip
-                    }
-                    else if (StringHelper.StartsWith(scratch, START_OFFSET))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS))
                     {
                         // skip
                     }
-                    else if (StringHelper.StartsWith(scratch, END_OFFSET))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.START_OFFSET))
                     {
                         // skip
                     }
-                    else if (StringHelper.StartsWith(scratch, PAYLOAD))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END_OFFSET))
+                    {
+                        // skip
+                    }
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.PAYLOAD))
                     {
                         // skip
                     }
                     else
                     {
-                        Debug.Assert(StringHelper.StartsWith(scratch, TERM) || StringHelper.StartsWith(scratch, FIELD) ||
-                                     StringHelper.StartsWith(scratch, END));
+                        Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
+                                     StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END));
 
-                        if (!first && (liveDocs == null || liveDocs.Get(docID_Renamed)))
+                        if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))
                         {
-                            nextDocStart = lineStart;
-                            @in.Seek(posStart);
-                            return docID_Renamed;
+                            _nextDocStart = lineStart;
+                            _in.Seek(posStart);
+                            return _docId;
                         }
-                        return docID_Renamed = NO_MORE_DOCS;
+                        return _docId = NO_MORE_DOCS;
                     }
                 }
             }
@@ -545,72 +492,72 @@ namespace Lucene.Net.Codecs.SimpleText
             public override int NextPosition()
             {
                 int pos;
-                if (readPositions)
+                if (_readPositions)
                 {
-                    SimpleTextUtil.ReadLine(@in, scratch);
-                    Debug.Assert(StringHelper.StartsWith(scratch, POS), "got line=" + scratch.Utf8ToString());
-                    UnicodeUtil.UTF8toUTF16(scratch.bytes, scratch.Offset + POS.length, scratch.Length - POS.length,
-                        scratchUTF16_2);
-                    pos = ArrayUtil.ParseInt(scratchUTF16_2.Chars, 0, scratchUTF16_2.length);
+                    SimpleTextUtil.ReadLine(_in, _scratch);
+                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS), "got line=" + _scratch.Utf8ToString());
+                    UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.POS.Length, _scratch.Length - SimpleTextFieldsWriter.POS.Length,
+                        _scratchUtf162);
+                    pos = ArrayUtil.ParseInt(_scratchUtf162.Chars, 0, _scratchUtf162.length);
                 }
                 else
                 {
                     pos = -1;
                 }
 
-                if (readOffsets)
+                if (_readOffsets)
                 {
-                    SimpleTextUtil.ReadLine(@in, scratch);
-                    Debug.Assert(StringHelper.StartsWith(scratch, START_OFFSET), "got line=" + scratch.Utf8ToString());
-                    UnicodeUtil.UTF8toUTF16(scratch.bytes, scratch.Offset + START_OFFSET.length,
-                        scratch.Length - START_OFFSET.length, scratchUTF16_2);
-                    startOffset_Renamed = ArrayUtil.ParseInt(scratchUTF16_2.chars, 0, scratchUTF16_2.length);
-                    SimpleTextUtil.ReadLine(@in, scratch);
-                    Debug.Assert(StringHelper.StartsWith(scratch, END_OFFSET), "got line=" + scratch.Utf8ToString());
-                    UnicodeUtil.UTF8toUTF16(scratch.Bytes, scratch.Offset + END_OFFSET.length,
-                        scratch.Length - END_OFFSET.length, scratchUTF16_2);
-                    endOffset_Renamed = ArrayUtil.ParseInt(scratchUTF16_2.Chars, 0, scratchUTF16_2.length);
+                    SimpleTextUtil.ReadLine(_in, _scratch);
+                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.START_OFFSET), "got line=" + _scratch.Utf8ToString());
+                    UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.START_OFFSET.Length,
+                        _scratch.Length - SimpleTextFieldsWriter.START_OFFSET.Length, _scratchUtf162);
+                    _startOffset = ArrayUtil.ParseInt(_scratchUtf162.Chars, 0, _scratchUtf162.length);
+                    SimpleTextUtil.ReadLine(_in, _scratch);
+                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END_OFFSET), "got line=" + _scratch.Utf8ToString());
+                    UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.END_OFFSET.Length,
+                        _scratch.Length - SimpleTextFieldsWriter.END_OFFSET.Length, _scratchUtf162);
+                    _endOffset = ArrayUtil.ParseInt(_scratchUtf162.Chars, 0, _scratchUtf162.length);
                 }
 
-                long fp = @in.FilePointer;
-                SimpleTextUtil.ReadLine(@in, scratch);
-                if (StringHelper.StartsWith(scratch, PAYLOAD))
+                long fp = _in.FilePointer;
+                SimpleTextUtil.ReadLine(_in, _scratch);
+                if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.PAYLOAD))
                 {
-                    int len = scratch.Length - PAYLOAD.length;
-                    if (scratch2.Bytes.Length < len)
+                    int len = _scratch.Length - SimpleTextFieldsWriter.PAYLOAD.Length;
+                    if (_scratch2.Bytes.Length < len)
                     {
-                        scratch2.Grow(len);
+                        _scratch2.Grow(len);
                     }
-                    Array.Copy(scratch.Bytes, PAYLOAD.length, scratch2.Bytes, 0, len);
-                    scratch2.Length = len;
-                    payload = scratch2;
+                    Array.Copy(_scratch.Bytes, SimpleTextFieldsWriter.PAYLOAD.Length, _scratch2.Bytes, 0, len);
+                    _scratch2.Length = len;
+                    _payload = _scratch2;
                 }
                 else
                 {
-                    payload = null;
-                    @in.Seek(fp);
+                    _payload = null;
+                    _in.Seek(fp);
                 }
                 return pos;
             }
 
             public override int StartOffset()
             {
-                return startOffset_Renamed;
+                return _startOffset;
             }
 
             public override int EndOffset()
             {
-                return endOffset_Renamed;
+                return _endOffset;
             }
 
             public override BytesRef Payload
             {
-                get { return payload; }
+                get { return _payload; }
             }
 
             public override long Cost()
             {
-                return cost_Renamed;
+                return _cost;
             }
         }
 
@@ -626,111 +573,112 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private class SimpleTextTerms : Terms
+        private sealed class SimpleTextTerms : Terms
         {
-            private readonly SimpleTextFieldsReader outerInstance;
+            private readonly SimpleTextFieldsReader _outerInstance;
 
-            internal readonly long termsStart;
-            internal readonly FieldInfo fieldInfo;
-            internal readonly int maxDoc;
-            internal long sumTotalTermFreq;
-            internal long sumDocFreq;
-            internal int docCount;
-            internal FST<PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>>> fst;
-            internal int termCount;
-            internal readonly BytesRef scratch = new BytesRef(10);
-            internal readonly CharsRef scratchUTF16 = new CharsRef(10);
+            private readonly long _termsStart;
+            private readonly FieldInfo _fieldInfo;
+            private readonly int _maxDoc;
+            private long _sumTotalTermFreq;
+            private long _sumDocFreq;
+            private int _docCount;
+            private FST<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>> _fst;
+            private int _termCount;
+            private readonly BytesRef _scratch = new BytesRef(10);
+            private readonly CharsRef _scratchUtf16 = new CharsRef(10);
 
             public SimpleTextTerms(SimpleTextFieldsReader outerInstance, string field, long termsStart, int maxDoc)
             {
-                this.outerInstance = outerInstance;
-                this.maxDoc = maxDoc;
-                this.termsStart = termsStart;
-                fieldInfo = outerInstance.fieldInfos.FieldInfo(field);
+                _outerInstance = outerInstance;
+                _maxDoc = maxDoc;
+                _termsStart = termsStart;
+                _fieldInfo = outerInstance._fieldInfos.FieldInfo(field);
                 LoadTerms();
             }
 
-            internal virtual void LoadTerms()
+            private void LoadTerms()
             {
-                PositiveIntOutputs posIntOutputs = PositiveIntOutputs.Singleton;
-                Builder<PairOutputs.Pair<long?, PairOutputs.Pair<long?, long?>>> b;
-                PairOutputs<long?, long?> outputsInner = new PairOutputs<long?, long?>(posIntOutputs, posIntOutputs);
-                PairOutputs<long?, PairOutputs.Pair<long?, long?>> outputs =
-                    new PairOutputs<long?, PairOutputs.Pair<long?, long?>>(posIntOutputs, outputsInner);
-                b = new Builder<>(FST.INPUT_TYPE.BYTE1, outputs);
-                IndexInput @in = (IndexInput) outerInstance._input.Clone();
-                @in.Seek(termsStart);
+                var posIntOutputs = PositiveIntOutputs.Singleton;
+                var outputsInner = new PairOutputs<long, long>(posIntOutputs, posIntOutputs);
+                var outputs = new PairOutputs<long, PairOutputs.Pair<long, long>>(posIntOutputs, outputsInner);
 
-                BytesRef lastTerm = new BytesRef(10);
+                // honestly, wtf kind of generic mess is this.
+                var b = new Builder<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>>(FST.INPUT_TYPE.BYTE1, outputs);
+                var input = (IndexInput) _outerInstance._input.Clone();
+                input.Seek(_termsStart);
+
+                var lastTerm = new BytesRef(10);
                 long lastDocsStart = -1;
                 int docFreq = 0;
                 long totalTermFreq = 0;
-                FixedBitSet visitedDocs = new FixedBitSet(maxDoc);
+                var visitedDocs = new FixedBitSet(_maxDoc);
 
-                IntsRef scratchIntsRef = new IntsRef();
+                var scratchIntsRef = new IntsRef();
                 while (true)
                 {
-                    SimpleTextUtil.ReadLine(@in, scratch);
-                    if (scratch.Equals(END) || StringHelper.StartsWith(scratch, FIELD))
+                    SimpleTextUtil.ReadLine(input, _scratch);
+                    if (_scratch.Equals(SimpleTextFieldsWriter.END) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD))
                     {
                         if (lastDocsStart != -1)
                         {
                             b.Add(Util.ToIntsRef(lastTerm, scratchIntsRef),
-                                outputs.NewPair(lastDocsStart, outputsInner.NewPair((long) docFreq, totalTermFreq)));
-                            sumTotalTermFreq += totalTermFreq;
+                                outputs.NewPair(lastDocsStart, outputsInner.NewPair(docFreq, totalTermFreq)));
+                            _sumTotalTermFreq += totalTermFreq;
                         }
                         break;
                     }
-                    else if (StringHelper.StartsWith(scratch, DOC))
+                    
+                    if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.DOC))
                     {
                         docFreq++;
-                        sumDocFreq++;
-                        UnicodeUtil.UTF8toUTF16(scratch.Bytes, scratch.Offset + DOC.length, scratch.Length - DOC.length,
-                            scratchUTF16);
-                        int docID = ArrayUtil.ParseInt(scratchUTF16.Chars, 0, scratchUTF16.length);
-                        visitedDocs.Set(docID);
+                        _sumDocFreq++;
+                        UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.DOC.Length, _scratch.Length - SimpleTextFieldsWriter.DOC.Length,
+                            _scratchUtf16);
+                        int docId = ArrayUtil.ParseInt(_scratchUtf16.Chars, 0, _scratchUtf16.length);
+                        visitedDocs.Set(docId);
                     }
-                    else if (StringHelper.StartsWith(scratch, FREQ))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FREQ))
                     {
-                        UnicodeUtil.UTF8toUTF16(scratch.Bytes, scratch.Offset + FREQ.length,
-                            scratch.Length - FREQ.length, scratchUTF16);
-                        totalTermFreq += ArrayUtil.ParseInt(scratchUTF16.Chars, 0, scratchUTF16.length);
+                        UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.FREQ.Length,
+                            _scratch.Length - SimpleTextFieldsWriter.FREQ.Length, _scratchUtf16);
+                        totalTermFreq += ArrayUtil.ParseInt(_scratchUtf16.Chars, 0, _scratchUtf16.length);
                     }
-                    else if (StringHelper.StartsWith(scratch, TERM))
+                    else if (StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM))
                     {
                         if (lastDocsStart != -1)
                         {
                             b.Add(Util.ToIntsRef(lastTerm, scratchIntsRef),
-                                outputs.NewPair(lastDocsStart, outputsInner.NewPair((long) docFreq, totalTermFreq)));
+                                outputs.NewPair(lastDocsStart, outputsInner.NewPair(docFreq, totalTermFreq)));
                         }
-                        lastDocsStart = @in.FilePointer;
-                        int len = scratch.Length - TERM.length;
+                        lastDocsStart = input.FilePointer;
+                        int len = _scratch.Length - SimpleTextFieldsWriter.TERM.Length;
                         if (len > lastTerm.Length)
                         {
                             lastTerm.Grow(len);
                         }
-                        Array.Copy(scratch.Bytes, TERM.length, lastTerm.Bytes, 0, len);
+                        Array.Copy(_scratch.Bytes, SimpleTextFieldsWriter.TERM.Length, lastTerm.Bytes, 0, len);
                         lastTerm.Length = len;
                         docFreq = 0;
-                        sumTotalTermFreq += totalTermFreq;
+                        _sumTotalTermFreq += totalTermFreq;
                         totalTermFreq = 0;
-                        termCount++;
+                        _termCount++;
                     }
                 }
-                docCount = visitedDocs.Cardinality();
-                fst = b.Finish();
+                _docCount = visitedDocs.Cardinality();
+                _fst = b.Finish();
             
             }
 
             /// <summary>Returns approximate RAM bytes used</summary>
-            public virtual long RamBytesUsed()
+            public long RamBytesUsed()
             {
-                return (fst != null) ? fst.SizeInBytes : 0;
+                return (_fst != null) ? _fst.SizeInBytes() : 0;
             }
 
             public override TermsEnum Iterator(TermsEnum reuse)
             {
-                return fst != null ? new SimpleTextTermsEnum(outerInstance, fst, fieldInfo.FieldIndexOptions.Value) : TermsEnum.EMPTY;
+                return (_fst != null && _fieldInfo.FieldIndexOptions.HasValue) ? new SimpleTextTermsEnum(_outerInstance, _fst, _fieldInfo.FieldIndexOptions.Value) : TermsEnum.EMPTY;
             }
 
             public override IComparer<BytesRef> Comparator
@@ -740,48 +688,49 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override long Size()
             {
-                return termCount;
+                return _termCount;
             }
 
             public override long SumTotalTermFreq
             {
-                get { return fieldInfo.FieldIndexOptions == IndexOptions.DOCS_ONLY ? - 1 : sumTotalTermFreq; }
+                get { return _fieldInfo.FieldIndexOptions == IndexOptions.DOCS_ONLY ? - 1 : _sumTotalTermFreq; }
             }
 
             public override long SumDocFreq
             {
-                get { return sumDocFreq; }
+                get { return _sumDocFreq; }
             }
 
             public override int DocCount
             {
-                get { return docCount; }
+                get { return _docCount; }
             }
 
             public override bool HasFreqs()
             {
-                return fieldInfo.FieldIndexOptions >= IndexOptions.DOCS_AND_FREQS;
+                return _fieldInfo.FieldIndexOptions >= IndexOptions.DOCS_AND_FREQS;
             }
 
             public override bool HasOffsets()
             {
                 return
-                    fieldInfo.FieldIndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                    _fieldInfo.FieldIndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
 
             public override bool HasPositions()
             {
-                return fieldInfo.FieldIndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                return _fieldInfo.FieldIndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             }
 
             public override bool HasPayloads()
             {
-                return fieldInfo.HasPayloads();
+                return _fieldInfo.HasPayloads();
             }
         }
 
-        public override IEnumerator<string> Iterator()
+        public override IEnumerator<string> GetEnumerator()
         {
+            return _fields.Keys.GetEnumerator();
         }
 
         public override Terms Terms(string field)
@@ -789,26 +738,23 @@ namespace Lucene.Net.Codecs.SimpleText
             lock (this)
             {
                 Terms terms = _termsCache[field];
-                if (terms == null)
+                if (terms != null) return terms;
+
+                var fp = _fields[field];
+                if (fp == null)
                 {
-                    long? fp = fields[field];
-                    if (fp == null)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        terms = new SimpleTextTerms(this, field, fp.Value, maxDoc);
-                        _termsCache[field] = (SimpleTextTerms) terms;
-                    }
+                    return null;
                 }
+
+                terms = new SimpleTextTerms(this, field, fp.Value, _maxDoc);
+                _termsCache[field] = (SimpleTextTerms) terms;
                 return terms;
             }
         }
 
-        public override int Size()
+        public override int Size
         {
-            return -1;
+            get { return -1; }
         }
 
         public override void Dispose()

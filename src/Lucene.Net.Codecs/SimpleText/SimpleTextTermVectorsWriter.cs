@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.SimpleText
             if (numDocsWritten != numDocs)
             {
                 throw new Exception("mergeVectors produced an invalid result: mergedDocs is " + numDocs +
-                                    " but vec numDocs is " + numDocsWritten + " file=" + _output.ToString() +
+                                    " but vec numDocs is " + numDocsWritten + " file=" + _output +
                                     "; now aborting this merge to prevent index corruption");
             }
             Write(END);

@@ -31,5 +31,10 @@ namespace Lucene.Net.Index
             : base(message)
         {
         }
+
+        public CorruptIndexException(string message, Exception ex) 
+            : base(message, ex)
+        {
+        }
     }
 }

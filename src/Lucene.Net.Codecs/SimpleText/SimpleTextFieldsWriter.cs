@@ -74,19 +74,18 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override void Dispose()
         {
-            if (_output != null)
+            if (_output == null) return;
+
+            try
             {
-                try
-                {
-                    Write(END);
-                    Newline();
-                    SimpleTextUtil.WriteChecksum(_output, _scratch);
-                }
-                finally
-                {
-                    _output.Dispose();
-                    _output = null;
-                }
+                Write(END);
+                Newline();
+                SimpleTextUtil.WriteChecksum(_output, _scratch);
+            }
+            finally
+            {
+                _output.Dispose();
+                _output = null;
             }
         }
 
@@ -97,7 +96,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public SimpleTextTermsWriter(SimpleTextFieldsWriter outerInstance, FieldInfo field)
             {
-                this._outerInstance = outerInstance;
+                _outerInstance = outerInstance;
                 _postingsWriter = new SimpleTextPostingsWriter(outerInstance, field);
             }
 
@@ -131,7 +130,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly bool _writeOffsets;
 
             // for assert:
-            private int _lastStartOffset = 0;
+            private int _lastStartOffset;
 
             public SimpleTextPostingsWriter(SimpleTextFieldsWriter outerInstance, FieldInfo field)
             {
@@ -141,7 +140,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 _writeOffsets = _indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }
 
-            public override void StartDoc(int docID, int termDocFreq)
+            public override void StartDoc(int docId, int termDocFreq)
             {
                 if (!_wroteTerm)
                 {
@@ -153,7 +152,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
 
                 _outerInstance.Write(DOC);
-                _outerInstance.Write(Convert.ToString(docID));
+                _outerInstance.Write(Convert.ToString(docId));
                 _outerInstance.Newline();
                 if (_indexOptions != IndexOptions.DOCS_ONLY)
                 {
@@ -167,7 +166,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public PostingsConsumer Reset(BytesRef term)
             {
-                this._term = term;
+                _term = term;
                 _wroteTerm = false;
                 return this;
             }

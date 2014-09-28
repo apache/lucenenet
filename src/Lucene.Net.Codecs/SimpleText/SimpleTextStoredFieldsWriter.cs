@@ -106,9 +106,8 @@ namespace Lucene.Net.Codecs.SimpleText
             NewLine();
 
             Write(TYPE);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Number n = field.numericValue();
-            Number n = field.NumericValue;
+
+            var n = field.NumericValue;
 
             if (n != null)
             {
@@ -150,12 +149,12 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else
                 {
-                    throw new System.ArgumentException("cannot store numeric type " + n.GetType());
+                    throw new ArgumentException("cannot store numeric type " + n.GetType());
                 }
             }
             else
             {
-                BytesRef bytes = field.binaryValue();
+                BytesRef bytes = field.BinaryValue();
                 if (bytes != null)
                 {
                     Write(TYPE_BINARY);
@@ -165,7 +164,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     Write(bytes);
                     NewLine();
                 }
-                else if (field.stringValue() == null)
+                else if (field.StringValue == null)
                 {
                     throw new ArgumentException("field " + field.Name() +
                                                        " is stored but does not have binaryValue, stringValue nor numericValue");
@@ -176,7 +175,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     NewLine();
 
                     Write(VALUE);
-                    Write(field.StringValue());
+                    Write(field.StringValue);
                     NewLine();
                 }
             }

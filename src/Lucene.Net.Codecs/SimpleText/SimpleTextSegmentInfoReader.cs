@@ -15,27 +15,10 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Codecs.SimpleText
 {
-
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_DIAG_KEY;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_DIAG_VALUE;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_DOCCOUNT;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_FILE;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_NUM_DIAG;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_NUM_FILES;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_USECOMPOUND;
-////JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-//    import static Lucene.Net.Codecs.SimpleText.SimpleTextSegmentInfoWriter.SI_VERSION;
-
-
     using System;
     using System.Diagnostics;
     using System.Collections.Generic;
@@ -69,52 +52,51 @@ namespace Lucene.Net.Codecs.SimpleText
             try
             {
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SI_VERSION));
-                string version = ReadString(SI_VERSION.length, scratch);
+                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_VERSION));
+                string version = ReadString(SimpleTextSegmentInfoWriter.SI_VERSION.Length, scratch);
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SI_DOCCOUNT));
-                int docCount = Convert.ToInt32(ReadString(SI_DOCCOUNT.length, scratch));
+                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DOCCOUNT));
+                int docCount = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_DOCCOUNT.Length, scratch));
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SI_USECOMPOUND));
-                bool isCompoundFile = Convert.ToBoolean(ReadString(SI_USECOMPOUND.length, scratch));
+                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_USECOMPOUND));
+                bool isCompoundFile = Convert.ToBoolean(ReadString(SimpleTextSegmentInfoWriter.SI_USECOMPOUND.Length, scratch));
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SI_NUM_DIAG));
-                int numDiag = Convert.ToInt32(ReadString(SI_NUM_DIAG.length, scratch));
+                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_DIAG));
+                int numDiag = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_DIAG.Length, scratch));
                 IDictionary<string, string> diagnostics = new Dictionary<string, string>();
 
                 for (int i = 0; i < numDiag; i++)
                 {
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debug.Assert(StringHelper.StartsWith(scratch, SI_DIAG_KEY));
-                    string key = ReadString(SI_DIAG_KEY.length, scratch);
+                    Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DIAG_KEY));
+                    string key = ReadString(SimpleTextSegmentInfoWriter.SI_DIAG_KEY.Length, scratch);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debug.Assert(StringHelper.StartsWith(scratch, SI_DIAG_VALUE));
-                    string value = ReadString(SI_DIAG_VALUE.length, scratch);
+                    Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DIAG_VALUE));
+                    string value = ReadString(SimpleTextSegmentInfoWriter.SI_DIAG_VALUE.Length, scratch);
                     diagnostics[key] = value;
                 }
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SI_NUM_FILES));
-                int numFiles = Convert.ToInt32(ReadString(SI_NUM_FILES.length, scratch));
+                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_FILES));
+                int numFiles = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_FILES.Length, scratch));
                 HashSet<string> files = new HashSet<string>();
 
                 for (int i = 0; i < numFiles; i++)
                 {
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debug.Assert(StringHelper.StartsWith(scratch, SI_FILE));
-                    string fileName = ReadString(SI_FILE.length, scratch);
+                    Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_FILE));
+                    string fileName = ReadString(SimpleTextSegmentInfoWriter.SI_FILE.Length, scratch);
                     files.Add(fileName);
                 }
 
                 SimpleTextUtil.CheckFooter(input);
 
-                SegmentInfo info = new SegmentInfo(directory, version, segmentName, docCount, isCompoundFile, null,
-                    diagnostics);
-                info.Files = files;
+                var info = new SegmentInfo(directory, version, segmentName, docCount, isCompoundFile, null,
+                    diagnostics) {Files = files};
                 success = true;
                 return info;
             }
@@ -126,14 +108,15 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else
                 {
-                    input.Close();
+                    input.Dispose();
                 }
             }
         }
 
-        private string ReadString(int offset, BytesRef scratch)
+        private static string ReadString(int offset, BytesRef scratch)
         {
-            return new string(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset, StandardCharsets.UTF_8);
+            return scratch.Bytes.SubList(scratch.Offset + offset, scratch.Length - offset).ToString();
+            //return new string(scratch.Bytes, scratch.Offset + offset, scratch.Length - offset, StandardCharsets.UTF_8);
         }
     }
 }

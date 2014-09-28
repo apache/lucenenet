@@ -15,6 +15,9 @@
 * limitations under the License.
 */
 
+using System.Linq;
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Codecs.SimpleText
 {
     
@@ -43,9 +46,6 @@ namespace Lucene.Net.Codecs.SimpleText
 	using StringHelper = Util.StringHelper;
 	using UnicodeUtil = Util.UnicodeUtil;
 
-    //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	//import static Lucene.Net.Codecs.SimpleText.SimpleTextTermVectorsWriter.*;
-
     /// <summary>
     /// Reads plain-text term vectors.
     /// <para>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs.SimpleText
             bool success = false;
             try
             {
-                _input = directory.OpenInput(IndexFileNames.SegmentFileName(si.Name, "", VECTORS_EXTENSION), context);
+                _input = directory.OpenInput(IndexFileNames.SegmentFileName(si.Name, "", SimpleTextTermVectorsWriter.VECTORS_EXTENSION), context);
                 success = true;
             }
             finally
@@ -75,9 +75,10 @@ namespace Lucene.Net.Codecs.SimpleText
                     try
                     {
                         Dispose();
-                    } // ensure we throw our original exception
+                    } 
                     catch (Exception)
                     {
+                        // ensure we throw our original exception
                     }
                 }
             }
@@ -85,10 +86,10 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         // used by clone
-        internal SimpleTextTermVectorsReader(long[] offsets, IndexInput @in)
+        internal SimpleTextTermVectorsReader(long[] offsets, IndexInput input)
         {
-            this._offsets = offsets;
-            _input = @in;
+            _offsets = offsets;
+            _input = input;
         }
 
         // we don't actually write a .tvx-like index, instead we read the 
@@ -99,10 +100,10 @@ namespace Lucene.Net.Codecs.SimpleText
             ChecksumIndexInput input = new BufferedChecksumIndexInput(_input);
             _offsets = new long[maxDoc];
             int upto = 0;
-            while (!_scratch.Equals(END))
+            while (!_scratch.Equals(SimpleTextTermVectorsWriter.END))
             {
                 SimpleTextUtil.ReadLine(input, _scratch);
-                if (StringHelper.StartsWith(_scratch, DOC))
+                if (StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.DOC))
                 {
                     _offsets[upto] = input.FilePointer;
                     upto++;
@@ -114,128 +115,127 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override Fields Get(int doc)
         {
-            SortedMap<string, SimpleTVTerms> fields = new SortedDictionary<string, SimpleTVTerms>();
+            var fields = new SortedDictionary<string, SimpleTVTerms>();
+
             _input.Seek(_offsets[doc]);
             ReadLine();
-            Debug.Assert(StringHelper.StartsWith(_scratch, NUMFIELDS));
-            int numFields = ParseIntAt(NUMFIELDS.length);
+            Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.NUMFIELDS));
+            var numFields = ParseIntAt(SimpleTextTermVectorsWriter.NUMFIELDS.Length);
             if (numFields == 0)
             {
                 return null; // no vectors for this doc
             }
-            for (int i = 0; i < numFields; i++)
+            for (var i = 0; i < numFields; i++)
             {
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, FIELD));
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELD));
                 // skip fieldNumber:
-                ParseIntAt(FIELD.length);
+                ParseIntAt(SimpleTextTermVectorsWriter.FIELD.Length);
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, FIELDNAME));
-                string fieldName = ReadString(FIELDNAME.length, _scratch);
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDNAME));
+                var fieldName = ReadString(SimpleTextTermVectorsWriter.FIELDNAME.Length, _scratch);
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, FIELDPOSITIONS));
-                bool positions = Convert.ToBoolean(ReadString(FIELDPOSITIONS.length, _scratch));
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPOSITIONS));
+                var positions = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPOSITIONS.Length, _scratch));
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, FIELDOFFSETS));
-                bool offsets = Convert.ToBoolean(ReadString(FIELDOFFSETS.length, _scratch));
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDOFFSETS));
+                var offsets = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDOFFSETS.Length, _scratch));
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, FIELDPAYLOADS));
-                bool payloads = Convert.ToBoolean(ReadString(FIELDPAYLOADS.length, _scratch));
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPAYLOADS));
+                var payloads = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPAYLOADS.Length, _scratch));
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, FIELDTERMCOUNT));
-                int termCount = ParseIntAt(FIELDTERMCOUNT.length);
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDTERMCOUNT));
+                var termCount = ParseIntAt(SimpleTextTermVectorsWriter.FIELDTERMCOUNT.Length);
 
-                SimpleTVTerms terms = new SimpleTVTerms(offsets, positions, payloads);
-                fields.put(fieldName, terms);
+                var terms = new SimpleTVTerms(offsets, positions, payloads);
+                fields.Add(fieldName, terms);
 
-                for (int j = 0; j < termCount; j++)
+                for (var j = 0; j < termCount; j++)
                 {
                     ReadLine();
-                    Debug.Assert(StringHelper.StartsWith(_scratch, TERMTEXT));
-                    BytesRef term = new BytesRef();
-                    int termLength = _scratch.length - TERMTEXT.length;
-                    term.grow(termLength);
-                    term.length = termLength;
-                    Array.Copy(_scratch.bytes, _scratch.offset + TERMTEXT.length, term.bytes, term.offset, termLength);
+                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMTEXT));
+                    var term = new BytesRef();
+                    var termLength = _scratch.Length - SimpleTextTermVectorsWriter.TERMTEXT.Length;
+                    term.Grow(termLength);
+                    term.Length = termLength;
+                    Array.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextTermVectorsWriter.TERMTEXT.Length, term.Bytes, term.Offset, termLength);
 
-                    SimpleTVPostings postings = new SimpleTVPostings();
-                    terms.TERMS.put(term, postings);
+                    var postings = new SimpleTVPostings();
+                    terms.TERMS.Add(term, postings);
 
                     ReadLine();
-                    Debug.Assert(StringHelper.StartsWith(_scratch, TERMFREQ));
-                    postings.FREQ = ParseIntAt(TERMFREQ.length);
+                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMFREQ));
+                    postings.FREQ = ParseIntAt(SimpleTextTermVectorsWriter.TERMFREQ.Length);
 
-                    if (positions || offsets)
+                    if (!positions && !offsets) continue;
+
+                    if (positions)
+                    {
+                        postings.POSITIONS = new int[postings.FREQ];
+                        if (payloads)
+                        {
+                            postings.PAYLOADS = new BytesRef[postings.FREQ];
+                        }
+                    }
+
+                    if (offsets)
+                    {
+                        postings.START_OFFSETS = new int[postings.FREQ];
+                        postings.END_OFFSETS = new int[postings.FREQ];
+                    }
+
+                    for (var k = 0; k < postings.FREQ; k++)
                     {
                         if (positions)
                         {
-                            postings.POSITIONS = new int[postings.FREQ];
+                            ReadLine();
+                            Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.POSITION));
+                            postings.POSITIONS[k] = ParseIntAt(SimpleTextTermVectorsWriter.POSITION.Length);
                             if (payloads)
                             {
-                                postings.PAYLOADS = new BytesRef[postings.FREQ];
-                            }
-                        }
-
-                        if (offsets)
-                        {
-                            postings.START_OFFSETS = new int[postings.FREQ];
-                            postings.END_OFFSETS = new int[postings.FREQ];
-                        }
-
-                        for (int k = 0; k < postings.FREQ; k++)
-                        {
-                            if (positions)
-                            {
                                 ReadLine();
-                                Debug.Assert(StringHelper.StartsWith(_scratch, POSITION));
-                                postings.POSITIONS[k] = ParseIntAt(POSITION.length);
-                                if (payloads)
+                                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.PAYLOAD));
+                                if (_scratch.Length - SimpleTextTermVectorsWriter.PAYLOAD.Length == 0)
                                 {
-                                    ReadLine();
-                                    Debug.Assert(StringHelper.StartsWith(_scratch, PAYLOAD));
-                                    if (_scratch.length - PAYLOAD.length == 0)
-                                    {
-                                        postings.PAYLOADS[k] = null;
-                                    }
-                                    else
-                                    {
-                                        sbyte[] payloadBytes = new sbyte[_scratch.length - PAYLOAD.length];
-                                        Array.Copy(_scratch.bytes, _scratch.offset + PAYLOAD.length, payloadBytes, 0,
-                                            payloadBytes.Length);
-                                        postings.PAYLOADS[k] = new BytesRef(payloadBytes);
-                                    }
+                                    postings.PAYLOADS[k] = null;
+                                }
+                                else
+                                {
+                                    var payloadBytes = new sbyte[_scratch.Length - SimpleTextTermVectorsWriter.PAYLOAD.Length];
+                                    Array.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextTermVectorsWriter.PAYLOAD.Length, payloadBytes, 0,
+                                        payloadBytes.Length);
+                                    postings.PAYLOADS[k] = new BytesRef(payloadBytes);
                                 }
                             }
-
-                            if (offsets)
-                            {
-                                ReadLine();
-                                Debug.Assert(StringHelper.StartsWith(_scratch, STARTOFFSET));
-                                postings.START_OFFSETS[k] = ParseIntAt(STARTOFFSET.length);
-
-                                ReadLine();
-                                Debug.Assert(StringHelper.StartsWith(_scratch, ENDOFFSET));
-                                postings.END_OFFSETS[k] = ParseIntAt(ENDOFFSET.length);
-                            }
                         }
+
+                        if (!offsets) continue;
+
+                        ReadLine();
+                        Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.STARTOFFSET));
+                        postings.START_OFFSETS[k] = ParseIntAt(SimpleTextTermVectorsWriter.STARTOFFSET.Length);
+
+                        ReadLine();
+                        Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.ENDOFFSET));
+                        postings.END_OFFSETS[k] = ParseIntAt(SimpleTextTermVectorsWriter.ENDOFFSET.Length);
                     }
                 }
             }
             return new SimpleTVFields(this, fields);
         }
 
-        public override TermVectorsReader Clone()
+        public override object Clone()
         {
             if (_input == null)
             {
                 throw new AlreadyClosedException("this TermVectorsReader is closed");
             }
-            return new SimpleTextTermVectorsReader(_offsets, _input.Clone());
+            return new SimpleTextTermVectorsReader(_offsets, (IndexInput)_input.Clone());
         }
 
         protected override void Dispose(bool disposing)
@@ -301,9 +301,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return _fields[field];
             }
 
-            public override int Size()
+            public override int Size
             {
-                return _fields.Count;
+                get { return _fields.Count; }
             }
         }
 
@@ -385,27 +385,32 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTVTermsEnum : TermsEnum
         {
-            internal SortedMap<BytesRef, SimpleTVPostings> terms;
+            private readonly SortedDictionary<BytesRef, SimpleTVPostings> _terms;
             private IEnumerator<KeyValuePair<BytesRef, SimpleTVPostings>> _iterator;
             private KeyValuePair<BytesRef, SimpleTVPostings> _current;
 
-            internal SimpleTVTermsEnum(SortedMap<BytesRef, SimpleTVPostings> terms)
+            internal SimpleTVTermsEnum(SortedDictionary<BytesRef, SimpleTVPostings> terms)
             {
-                this.terms = terms;
-                this._iterator = terms.EntrySet().GetEnumerator();
+                _terms = terms;
+                _iterator = terms.EntrySet().GetEnumerator();
             }
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                _iterator = terms.TailMap(text).entrySet().GetEnumerator();
-                //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-                if (!_iterator.HasNext())
+                var newTerms = new SortedDictionary<BytesRef, SimpleTVPostings>();
+                foreach (var p in _terms.Where(p => p.Key.CompareTo(text) >= 0))
+                    newTerms.Add(p.Key, p.Value);
+
+                _iterator = newTerms.EntrySet().GetEnumerator();
+
+                try
+                {
+                    _iterator.MoveNext();
+                    return _iterator.Current.Key.Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+                }
+                catch
                 {
                     return SeekStatus.END;
-                }
-                else
-                {
-                    return Next().Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
                 }
             }
 
@@ -416,16 +421,15 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override BytesRef Next()
             {
-                //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-                if (!_iterator.HasNext())
+                try
+                {
+                    _iterator.MoveNext();
+                    _current = _iterator.Current;
+                    return _current.Key;
+                }
+                catch
                 {
                     return null;
-                }
-                else
-                {
-                    //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-                    _current = _iterator.Next();
-                    return _current.Key;
                 }
             }
 
@@ -459,7 +463,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
-                SimpleTVPostings postings = _current.Value;
+                var postings = _current.Value;
                 if (postings.POSITIONS == null && postings.START_OFFSETS == null)
                     return null;
 
