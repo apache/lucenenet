@@ -1,6 +1,4 @@
-package codecs.sep;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,355 +15,397 @@ package codecs.sep;
  * limitations under the License.
  */
 
-import java.io.IOException;
+namespace Lucene.Net.Codecs.Sep
+{
+    using System.Diagnostics;
+    using Index;
+    using Store;
+    using Util;
 
-import codecs.BlockTermState;
-import codecs.CodecUtil;
-import codecs.PostingsWriterBase;
-import index.CorruptIndexException;
-import index.DocsEnum;
-import index.FieldInfo;
-import index.FieldInfo.IndexOptions;
-import index.IndexFileNames;
-import index.SegmentWriteState;
-import store.DataOutput;
-import store.IndexOutput;
-import store.RAMOutputStream;
-import util.BytesRef;
-import util.IOUtils;
+    /// <summary>
+    /// Writes frq to .frq, docs to .doc, pos to .pos, payloads
+    /// to .pyl, skip data to .skp
+    /// 
+    /// @lucene.experimental 
+    /// </summary>
+    public sealed class SepPostingsWriter : PostingsWriterBase
+    {
+        internal const string CODEC = "SepPostingsWriter";
 
-/** Writes frq to .frq, docs to .doc, pos to .pos, payloads
- *  to .pyl, skip data to .skp
- *
- * @lucene.experimental */
-public final class SepPostingsWriter extends PostingsWriterBase {
-  final static String CODEC = "SepPostingsWriter";
+        internal const string DOC_EXTENSION = "doc";
+        internal const string SKIP_EXTENSION = "skp";
+        internal const string FREQ_EXTENSION = "frq";
+        internal const string POS_EXTENSION = "pos";
+        internal const string PAYLOAD_EXTENSION = "pyl";
 
-  final static String DOC_EXTENSION = "doc";
-  final static String SKIP_EXTENSION = "skp";
-  final static String FREQ_EXTENSION = "frq";
-  final static String POS_EXTENSION = "pos";
-  final static String PAYLOAD_EXTENSION = "pyl";
+        // Increment version to change it:
+        internal const int VERSION_START = 0;
+        internal const int VERSION_CURRENT = VERSION_START;
 
-  // Increment version to change it:
-  final static int VERSION_START = 0;
-  final static int VERSION_CURRENT = VERSION_START;
+        internal IntIndexOutput FREQ_OUT;
+        internal IntIndexOutputIndex FREQ_INDEX;
 
-  IntIndexOutput freqOut;
-  IntIndexOutput.Index freqIndex;
+        internal IntIndexOutput POS_OUT;
+        internal IntIndexOutputIndex POS_INDEX;
 
-  IntIndexOutput posOut;
-  IntIndexOutput.Index posIndex;
+        internal IntIndexOutput DOC_OUT;
+        internal IntIndexOutputIndex DOC_INDEX;
 
-  IntIndexOutput docOut;
-  IntIndexOutput.Index docIndex;
+        internal IndexOutput PAYLOAD_OUT;
 
-  IndexOutput payloadOut;
+        internal IndexOutput SKIP_OUT;
 
-  IndexOutput skipOut;
+        internal readonly SepSkipListWriter SKIP_LIST_WRITER;
 
-  final SepSkipListWriter skipListWriter;
-  /** Expert: The fraction of TermDocs entries stored in skip tables,
-   * used to accelerate {@link DocsEnum#advance(int)}.  Larger values result in
-   * smaller indexes, greater acceleration, but fewer accelerable cases, while
-   * smaller values result in bigger indexes, less acceleration and more
-   * accelerable cases. More detailed experiments would be useful here. */
-  final int skipInterval;
-  static final int DEFAULT_SKIP_INTERVAL = 16;
-  
-  /**
-   * Expert: minimum docFreq to write any skip data at all
-   */
-  final int skipMinimum;
+        /// <summary>
+        /// Expert: The fraction of TermDocs entries stored in skip tables,
+        /// used to accelerate <seealso cref="DocsEnum#advance(int)"/>.  Larger values result in
+        /// smaller indexes, greater acceleration, but fewer accelerable cases, while
+        /// smaller values result in bigger indexes, less acceleration and more
+        /// accelerable cases. More detailed experiments would be useful here. 
+        /// </summary>
+        internal readonly int SKIP_INTERVAL;
 
-  /** Expert: The maximum number of skip levels. Smaller values result in 
-   * slightly smaller indexes, but slower skipping in big posting lists.
-   */
-  final int maxSkipLevels = 10;
+        internal const int DEFAULT_SKIP_INTERVAL = 16;
 
-  final int totalNumDocs;
+        /// <summary>
+        /// Expert: minimum docFreq to write any skip data at all
+        /// </summary>
+        internal readonly int SKIP_MINIMUM;
 
-  bool storePayloads;
-  IndexOptions indexOptions;
+        /// <summary>
+        /// Expert: The maximum number of skip levels. Smaller values result in 
+        /// slightly smaller indexes, but slower skipping in big posting lists.
+        /// </summary>
+        internal readonly int MAX_SKIP_LEVELS = 10;
 
-  FieldInfo fieldInfo;
+        internal readonly int TOTAL_NUM_DOCS;
 
-  int lastPayloadLength;
-  int lastPosition;
-  long payloadStart;
-  int lastDocID;
-  int df;
+        internal bool STORE_PAYLOADS;
+        internal FieldInfo.IndexOptions INDEX_OPTIONS;
 
-  SepTermState lastState;
-  long lastPayloadFP;
-  long lastSkipFP;
+        internal FieldInfo FIELD_INFO;
 
-  public SepPostingsWriter(SegmentWriteState state, IntStreamFactory factory)  {
-    this(state, factory, DEFAULT_SKIP_INTERVAL);
-  }
+        internal int LAST_PAYLOAD_LENGTH;
+        internal int LAST_POSITION;
+        internal long PAYLOAD_START;
+        internal int LAST_DOC_ID;
+        internal int DF;
 
-  public SepPostingsWriter(SegmentWriteState state, IntStreamFactory factory, int skipInterval)  {
-    freqOut = null;
-    freqIndex = null;
-    posOut = null;
-    posIndex = null;
-    payloadOut = null;
-    bool success = false;
-    try {
-      this.skipInterval = skipInterval;
-      this.skipMinimum = skipInterval; /* set to the same for now */
-      final String docFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, DOC_EXTENSION);
+        private SepTermState _lastState;
+        internal long LAST_PAYLOAD_FP;
+        internal long LAST_SKIP_FP;
 
-      docOut = factory.createOutput(state.directory, docFileName, state.context);
-      docIndex = docOut.index();
-
-      if (state.fieldInfos.hasFreq()) {
-        final String frqFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FREQ_EXTENSION);
-        freqOut = factory.createOutput(state.directory, frqFileName, state.context);
-        freqIndex = freqOut.index();
-      }
-
-      if (state.fieldInfos.hasProx()) {      
-        final String posFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, POS_EXTENSION);
-        posOut = factory.createOutput(state.directory, posFileName, state.context);
-        posIndex = posOut.index();
-        
-        // TODO: -- only if at least one field stores payloads?
-        final String payloadFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, PAYLOAD_EXTENSION);
-        payloadOut = state.directory.createOutput(payloadFileName, state.context);
-      }
-
-      final String skipFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, SKIP_EXTENSION);
-      skipOut = state.directory.createOutput(skipFileName, state.context);
-      
-      totalNumDocs = state.segmentInfo.getDocCount();
-      
-      skipListWriter = new SepSkipListWriter(skipInterval,
-          maxSkipLevels,
-          totalNumDocs,
-          freqOut, docOut,
-          posOut, payloadOut);
-      
-      success = true;
-    } finally {
-      if (!success) {
-        IOUtils.closeWhileHandlingException(docOut, skipOut, freqOut, posOut, payloadOut);
-      }
-    }
-  }
-
-  @Override
-  public void init(IndexOutput termsOut)  {
-    CodecUtil.writeHeader(termsOut, CODEC, VERSION_CURRENT);
-    // TODO: -- just ask skipper to "start" here
-    termsOut.writeInt(skipInterval);                // write skipInterval
-    termsOut.writeInt(maxSkipLevels);               // write maxSkipLevels
-    termsOut.writeInt(skipMinimum);                 // write skipMinimum
-  }
-
-  @Override
-  public BlockTermState newTermState() {
-    return new SepTermState();
-  }
-
-  @Override
-  public void startTerm()  {
-    docIndex.mark();
-    //System.out.println("SEPW: startTerm docIndex=" + docIndex);
-
-    if (indexOptions != IndexOptions.DOCS_ONLY) {
-      freqIndex.mark();
-    }
-    
-    if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) {
-      posIndex.mark();
-      payloadStart = payloadOut.getFilePointer();
-      lastPayloadLength = -1;
-    }
-
-    skipListWriter.resetSkip(docIndex, freqIndex, posIndex);
-  }
-
-  // Currently, this instance is re-used across fields, so
-  // our parent calls setField whenever the field changes
-  @Override
-  public int setField(FieldInfo fieldInfo) {
-    this.fieldInfo = fieldInfo;
-    this.indexOptions = fieldInfo.getIndexOptions();
-    if (indexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) {
-      throw new UnsupportedOperationException("this codec cannot index offsets");
-    }
-    skipListWriter.setIndexOptions(indexOptions);
-    storePayloads = indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS && fieldInfo.hasPayloads();
-    lastPayloadFP = 0;
-    lastSkipFP = 0;
-    lastState = setEmptyState();
-    return 0;
-  }
-
-  private SepTermState setEmptyState() {
-    SepTermState emptyState = new SepTermState();
-    emptyState.docIndex = docOut.index();
-    if (indexOptions != IndexOptions.DOCS_ONLY) {
-      emptyState.freqIndex = freqOut.index();
-      if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) {
-        emptyState.posIndex = posOut.index();
-      }
-    }
-    emptyState.payloadFP = 0;
-    emptyState.skipFP = 0;
-    return emptyState;
-  }
-
-  /** Adds a new doc in this term.  If this returns null
-   *  then we just skip consuming positions/payloads. */
-  @Override
-  public void startDoc(int docID, int termDocFreq)  {
-
-    final int delta = docID - lastDocID;
-    //System.out.println("SEPW: startDoc: write doc=" + docID + " delta=" + delta + " out.fp=" + docOut);
-
-    if (docID < 0 || (df > 0 && delta <= 0)) {
-      throw new CorruptIndexException("docs out of order (" + docID + " <= " + lastDocID + " ) (docOut: " + docOut + ")");
-    }
-
-    if ((++df % skipInterval) == 0) {
-      // TODO: -- awkward we have to make these two
-      // separate calls to skipper
-      //System.out.println("    buffer skip lastDocID=" + lastDocID);
-      skipListWriter.setSkipData(lastDocID, storePayloads, lastPayloadLength);
-      skipListWriter.bufferSkip(df);
-    }
-
-    lastDocID = docID;
-    docOut.write(delta);
-    if (indexOptions != IndexOptions.DOCS_ONLY) {
-      //System.out.println("    sepw startDoc: write freq=" + termDocFreq);
-      freqOut.write(termDocFreq);
-    }
-  }
-
-  /** Add a new position & payload */
-  @Override
-  public void addPosition(int position, BytesRef payload, int startOffset, int endOffset)  {
-    Debug.Assert( indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-
-    final int delta = position - lastPosition;
-    Debug.Assert( delta >= 0: "position=" + position + " lastPosition=" + lastPosition;            // not quite right (if pos=0 is repeated twice we don't catch it)
-    lastPosition = position;
-
-    if (storePayloads) {
-      final int payloadLength = payload == null ? 0 : payload.length;
-      if (payloadLength != lastPayloadLength) {
-        lastPayloadLength = payloadLength;
-        // TODO: explore whether we get better compression
-        // by not storing payloadLength into prox stream?
-        posOut.write((delta<<1)|1);
-        posOut.write(payloadLength);
-      } else {
-        posOut.write(delta << 1);
-      }
-
-      if (payloadLength > 0) {
-        payloadOut.writeBytes(payload.bytes, payload.offset, payloadLength);
-      }
-    } else {
-      posOut.write(delta);
-    }
-
-    lastPosition = position;
-  }
-
-  /** Called when we are done adding positions & payloads */
-  @Override
-  public void finishDoc() {       
-    lastPosition = 0;
-  }
-
-  private static class SepTermState extends BlockTermState {
-    public IntIndexOutput.Index docIndex;
-    public IntIndexOutput.Index freqIndex;
-    public IntIndexOutput.Index posIndex;
-    public long payloadFP;
-    public long skipFP;
-  }
-
-  /** Called when we are done adding docs to this term */
-  @Override
-  public void finishTerm(BlockTermState _state)  {
-    SepTermState state = (SepTermState)_state;
-    // TODO: -- wasteful we are counting this in two places?
-    Debug.Assert( state.docFreq > 0;
-    Debug.Assert( state.docFreq == df;
-
-    state.docIndex = docOut.index();
-    state.docIndex.copyFrom(docIndex, false);
-    if (indexOptions != IndexOptions.DOCS_ONLY) {
-      state.freqIndex = freqOut.index();
-      state.freqIndex.copyFrom(freqIndex, false);
-      if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) {
-        state.posIndex = posOut.index();
-        state.posIndex.copyFrom(posIndex, false);
-      } else {
-        state.posIndex = null;
-      }
-    } else {
-      state.freqIndex = null;
-      state.posIndex = null;
-    }
-
-    if (df >= skipMinimum) {
-      state.skipFP = skipOut.getFilePointer();
-      //System.out.println("  skipFP=" + skipFP);
-      skipListWriter.writeSkip(skipOut);
-      //System.out.println("    numBytes=" + (skipOut.getFilePointer()-skipFP));
-    } else {
-      state.skipFP = -1;
-    }
-    state.payloadFP = payloadStart;
-
-    lastDocID = 0;
-    df = 0;
-  }
-
-  @Override
-  public void encodeTerm(long[] longs, DataOutput out, FieldInfo fieldInfo, BlockTermState _state, bool absolute)  {
-    SepTermState state = (SepTermState)_state;
-    if (absolute) {
-      lastSkipFP = 0;
-      lastPayloadFP = 0;
-      lastState = state;
-    }
-    lastState.docIndex.copyFrom(state.docIndex, false);
-    lastState.docIndex.write(out, absolute);
-    if (indexOptions != IndexOptions.DOCS_ONLY) {
-      lastState.freqIndex.copyFrom(state.freqIndex, false);
-      lastState.freqIndex.write(out, absolute);
-      if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) {
-        lastState.posIndex.copyFrom(state.posIndex, false);
-        lastState.posIndex.write(out, absolute);
-        if (storePayloads) {
-          if (absolute) {
-            out.writeVLong(state.payloadFP);
-          } else {
-            out.writeVLong(state.payloadFP - lastPayloadFP);
-          }
-          lastPayloadFP = state.payloadFP;
+        public SepPostingsWriter(SegmentWriteState state, IntStreamFactory factory)
+            : this(state, factory, DEFAULT_SKIP_INTERVAL)
+        {
         }
-      }
-    }
-    if (state.skipFP != -1) {
-      if (absolute) {
-        out.writeVLong(state.skipFP);
-      } else {
-        out.writeVLong(state.skipFP - lastSkipFP);
-      }
-      lastSkipFP = state.skipFP;
-    }
-  }
 
-  @Override
-  public void close()  {
-    IOUtils.close(docOut, skipOut, freqOut, posOut, payloadOut);
-  }
+        public SepPostingsWriter(SegmentWriteState state, IntStreamFactory factory, int skipInterval)
+        {
+            FREQ_OUT = null;
+            FREQ_INDEX = null;
+            POS_OUT = null;
+            POS_INDEX = null;
+            PAYLOAD_OUT = null;
+            var success = false;
+            try
+            {
+                SKIP_INTERVAL = skipInterval;
+                SKIP_MINIMUM = skipInterval; // set to the same for now
+                var docFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, DOC_EXTENSION);
+
+                DOC_OUT = factory.CreateOutput(state.Directory, docFileName, state.Context);
+                DOC_INDEX = DOC_OUT.Index();
+
+                if (state.FieldInfos.HasFreq())
+                {
+                    var frqFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, FREQ_EXTENSION);
+                    FREQ_OUT = factory.CreateOutput(state.Directory, frqFileName, state.Context);
+                    FREQ_INDEX = FREQ_OUT.Index();
+                }
+
+                if (state.FieldInfos.HasProx())
+                {
+                    var posFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, POS_EXTENSION);
+                    POS_OUT = factory.CreateOutput(state.Directory, posFileName, state.Context);
+                    POS_INDEX = POS_OUT.Index();
+
+                    // TODO: -- only if at least one field stores payloads?
+                    var payloadFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,PAYLOAD_EXTENSION);
+                    PAYLOAD_OUT = state.Directory.CreateOutput(payloadFileName, state.Context);
+                }
+
+                var skipFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, SKIP_EXTENSION);
+                SKIP_OUT = state.Directory.CreateOutput(skipFileName, state.Context);
+
+                TOTAL_NUM_DOCS = state.SegmentInfo.DocCount;
+
+                SKIP_LIST_WRITER = new SepSkipListWriter(skipInterval, MAX_SKIP_LEVELS, TOTAL_NUM_DOCS, FREQ_OUT, DOC_OUT,
+                    POS_OUT, PAYLOAD_OUT);
+
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException(DOC_OUT, SKIP_OUT, FREQ_OUT, POS_OUT, PAYLOAD_OUT);
+                }
+            }
+        }
+        public override void Init(IndexOutput termsOut)
+        {
+            CodecUtil.WriteHeader(termsOut, CODEC, VERSION_CURRENT);
+            // TODO: -- just ask skipper to "start" here
+            termsOut.WriteInt(SKIP_INTERVAL);    // write skipInterval
+            termsOut.WriteInt(MAX_SKIP_LEVELS);   // write maxSkipLevels
+            termsOut.WriteInt(SKIP_MINIMUM);     // write skipMinimum
+        }
+
+        public override BlockTermState NewTermState()
+        {
+            return new SepTermState();
+        }
+
+        public override void StartTerm()
+        {
+            DOC_INDEX.Mark();
+            
+            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            {
+                FREQ_INDEX.Mark();
+            }
+
+            if (INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            {
+                POS_INDEX.Mark();
+                PAYLOAD_START = PAYLOAD_OUT.FilePointer;
+                LAST_PAYLOAD_LENGTH = -1;
+            }
+
+            SKIP_LIST_WRITER.ResetSkip(DOC_INDEX, FREQ_INDEX, POS_INDEX);
+        }
+
+        // Currently, this instance is re-used across fields, so
+        // our parent calls setField whenever the field changes
+        public override int SetField(FieldInfo fi)
+        {
+            FIELD_INFO = fi;
+            
+            if (FIELD_INFO.FieldIndexOptions.HasValue)
+                INDEX_OPTIONS = FIELD_INFO.FieldIndexOptions.Value;
+
+            if (INDEX_OPTIONS >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+            {
+                throw new System.NotSupportedException("this codec cannot index offsets");
+            }
+            SKIP_LIST_WRITER.IndexOptions = INDEX_OPTIONS;
+            STORE_PAYLOADS = INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS &&
+                            FIELD_INFO.HasPayloads();
+            LAST_PAYLOAD_FP = 0;
+            LAST_SKIP_FP = 0;
+            _lastState = SetEmptyState();
+            return 0;
+        }
+
+        private SepTermState SetEmptyState()
+        {
+            var emptyState = new SepTermState {DocIndex = DOC_OUT.Index()};
+            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            {
+                emptyState.FreqIndex = FREQ_OUT.Index();
+                if (INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                {
+                    emptyState.PosIndex = POS_OUT.Index();
+                }
+            }
+            emptyState.PayloadFp = 0;
+            emptyState.SkipFp = 0;
+            return emptyState;
+        }
+
+        /// <summary>
+        /// Adds a new doc in this term.  If this returns null
+        ///  then we just skip consuming positions/payloads. 
+        /// </summary>
+        public override void StartDoc(int docId, int termDocFreq)
+        {
+            var delta = docId - LAST_DOC_ID;
+            
+            if (docId < 0 || (DF > 0 && delta <= 0))
+            {
+                throw new CorruptIndexException("docs out of order (" + docId + " <= " + LAST_DOC_ID + " ) (docOut: " +
+                                                DOC_OUT + ")");
+            }
+
+            if ((++DF%SKIP_INTERVAL) == 0)
+            {
+                // TODO: -- awkward we have to make these two separate calls to skipper
+                SKIP_LIST_WRITER.SetSkipData(LAST_DOC_ID, STORE_PAYLOADS, LAST_PAYLOAD_LENGTH);
+                SKIP_LIST_WRITER.BufferSkip(DF);
+            }
+
+            LAST_DOC_ID = docId;
+            DOC_OUT.Write(delta);
+            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            {
+                //System.out.println("    sepw startDoc: write freq=" + termDocFreq);
+                FREQ_OUT.Write(termDocFreq);
+            }
+        }
+
+        /// <summary>
+        /// Add a new position & payload </summary>
+        public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
+        {
+            Debug.Assert(INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            int delta = position - LAST_POSITION;
+            Debug.Assert(delta >= 0, "position=" + position + " lastPosition=" + LAST_POSITION);
+            // not quite right (if pos=0 is repeated twice we don't catch it)
+            LAST_POSITION = position;
+
+            if (STORE_PAYLOADS)
+            {
+                int payloadLength = payload == null ? 0 : payload.Length;
+                if (payloadLength != LAST_PAYLOAD_LENGTH)
+                {
+                    LAST_PAYLOAD_LENGTH = payloadLength;
+                    // TODO: explore whether we get better compression
+                    // by not storing payloadLength into prox stream?
+                    POS_OUT.Write((delta << 1) | 1);
+                    POS_OUT.Write(payloadLength);
+                }
+                else
+                {
+                    POS_OUT.Write(delta << 1);
+                }
+
+                if (payloadLength > 0 && payload != null)
+                {
+                    PAYLOAD_OUT.WriteBytes(payload.Bytes, payload.Offset, payloadLength);
+                }
+            }
+            else
+            {
+                POS_OUT.Write(delta);
+            }
+
+            LAST_POSITION = position;
+        }
+
+        /// <summary>Called when we are done adding positions & payloads </summary>
+        public override void FinishDoc()
+        {
+            LAST_POSITION = 0;
+        }
+
+        private class SepTermState : BlockTermState
+        {
+            public IntIndexOutputIndex DocIndex { get; set; }
+            public IntIndexOutputIndex FreqIndex { get; set; }
+            public IntIndexOutputIndex PosIndex { get; set; }
+            public long PayloadFp { get; set; }
+            public long SkipFp { get; set; }
+        }
+
+        /// <summary>Called when we are done adding docs to this term </summary>
+        public override void FinishTerm(BlockTermState bstate)
+        {
+            var state = (SepTermState)bstate;
+            // TODO: -- wasteful we are counting this in two places?
+            Debug.Assert(state.DocFreq > 0);
+            Debug.Assert(state.DocFreq == DF);
+
+            state.DocIndex = DOC_OUT.Index();
+            state.DocIndex.CopyFrom(DOC_INDEX, false);
+            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            {
+                state.FreqIndex = FREQ_OUT.Index();
+                state.FreqIndex.CopyFrom(FREQ_INDEX, false);
+                if (INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                {
+                    state.PosIndex = POS_OUT.Index();
+                    state.PosIndex.CopyFrom(POS_INDEX, false);
+                }
+                else
+                {
+                    state.PosIndex = null;
+                }
+            }
+            else
+            {
+                state.FreqIndex = null;
+                state.PosIndex = null;
+            }
+
+            if (DF >= SKIP_MINIMUM)
+            {
+                state.SkipFp = SKIP_OUT.FilePointer;
+                SKIP_LIST_WRITER.WriteSkip(SKIP_OUT);
+            }
+            else
+            {
+                state.SkipFp = -1;
+            }
+            state.PayloadFp = PAYLOAD_START;
+
+            LAST_DOC_ID = 0;
+            DF = 0;
+        }
+
+        public override void EncodeTerm(long[] longs, DataOutput output, FieldInfo fi, BlockTermState bstate, bool absolute)
+        {
+            var state = (SepTermState) bstate;
+            if (absolute)
+            {
+                LAST_SKIP_FP = 0;
+                LAST_PAYLOAD_FP = 0;
+                _lastState = state;
+            }
+            _lastState.DocIndex.CopyFrom(state.DocIndex, false);
+            _lastState.DocIndex.Write(output, absolute);
+            if (INDEX_OPTIONS != FieldInfo.IndexOptions.DOCS_ONLY)
+            {
+                _lastState.FreqIndex.CopyFrom(state.FreqIndex, false);
+                _lastState.FreqIndex.Write(output, absolute);
+                if (INDEX_OPTIONS == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                {
+                    _lastState.PosIndex.CopyFrom(state.PosIndex, false);
+                    _lastState.PosIndex.Write(output, absolute);
+                    if (STORE_PAYLOADS)
+                    {
+                        if (absolute)
+                        {
+                            output.WriteVLong(state.PayloadFp);
+                        }
+                        else
+                        {
+                            output.WriteVLong(state.PayloadFp - LAST_PAYLOAD_FP);
+                        }
+                        LAST_PAYLOAD_FP = state.PayloadFp;
+                    }
+                }
+            }
+            if (state.SkipFp == -1) return;
+
+            if (absolute)
+            {
+                output.WriteVLong(state.SkipFp);
+            }
+            else
+            {
+                output.WriteVLong(state.SkipFp - LAST_SKIP_FP);
+            }
+            LAST_SKIP_FP = state.SkipFp;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) return;
+
+            IOUtils.Close(DOC_OUT, SKIP_OUT, FREQ_OUT, POS_OUT, PAYLOAD_OUT);
+        }
+    }
+
 }

@@ -58,19 +58,19 @@ namespace Lucene.Net.Codecs.SimpleText
 
         internal const string VECTORS_EXTENSION = "vec";
 
-        private readonly Directory directory;
-        private readonly string segment;
+        private readonly Directory _directory;
+        private readonly string _segment;
         private IndexOutput _output;
-        private int numDocsWritten = 0;
-        private readonly BytesRef scratch = new BytesRef();
-        private bool offsets;
-        private bool positions;
-        private bool payloads;
+        private int _numDocsWritten;
+        private readonly BytesRef _scratch = new BytesRef();
+        private bool _offsets;
+        private bool _positions;
+        private bool _payloads;
 
         public SimpleTextTermVectorsWriter(Directory directory, string segment, IOContext context)
         {
-            this.directory = directory;
-            this.segment = segment;
+            _directory = directory;
+            _segment = segment;
             bool success = false;
             try
             {
@@ -89,13 +89,13 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void StartDocument(int numVectorFields)
         {
             Write(DOC);
-            Write(Convert.ToString(numDocsWritten));
+            Write(Convert.ToString(_numDocsWritten));
             NewLine();
 
             Write(NUMFIELDS);
             Write(Convert.ToString(numVectorFields));
             NewLine();
-            numDocsWritten++;
+            _numDocsWritten++;
         }
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
@@ -124,9 +124,9 @@ namespace Lucene.Net.Codecs.SimpleText
             Write(Convert.ToString(numTerms));
             NewLine();
 
-            this.positions = positions;
-            this.offsets = offsets;
-            this.payloads = payloads;
+            _positions = positions;
+            _offsets = offsets;
+            _payloads = payloads;
         }
 
         public override void StartTerm(BytesRef term, int freq)
@@ -142,15 +142,15 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            Debug.Assert(positions || offsets);
+            Debug.Assert(_positions || _offsets);
 
-            if (positions)
+            if (_positions)
             {
                 Write(POSITION);
                 Write(Convert.ToString(position));
                 NewLine();
 
-                if (payloads)
+                if (_payloads)
                 {
                     Write(PAYLOAD);
                     if (payload != null)
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            if (offsets)
+            if (_offsets)
             {
                 Write(STARTOFFSET);
                 Write(Convert.ToString(startOffset));
@@ -174,7 +174,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        public override void Abort()
+        public override sealed void Abort()
         {
             try
             {
@@ -183,22 +183,22 @@ namespace Lucene.Net.Codecs.SimpleText
             finally
             {
 
-                IOUtils.DeleteFilesIgnoringExceptions(directory,
-                    IndexFileNames.SegmentFileName(segment, "", VECTORS_EXTENSION));
+                IOUtils.DeleteFilesIgnoringExceptions(_directory,
+                    IndexFileNames.SegmentFileName(_segment, "", VECTORS_EXTENSION));
             }
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (numDocsWritten != numDocs)
+            if (_numDocsWritten != numDocs)
             {
                 throw new Exception("mergeVectors produced an invalid result: mergedDocs is " + numDocs +
-                                    " but vec numDocs is " + numDocsWritten + " file=" + _output +
+                                    " but vec numDocs is " + _numDocsWritten + " file=" + _output +
                                     "; now aborting this merge to prevent index corruption");
             }
             Write(END);
             NewLine();
-            SimpleTextUtil.WriteChecksum(_output, scratch);
+            SimpleTextUtil.WriteChecksum(_output, _scratch);
         }
 
         protected override void Dispose(bool disposing)
@@ -222,7 +222,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private void Write(string s)
         {
-            SimpleTextUtil.Write(_output, s, scratch);
+            SimpleTextUtil.Write(_output, s, _scratch);
         }
 
         private void Write(BytesRef bytes)

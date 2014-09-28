@@ -1,6 +1,4 @@
-package codecs.sep;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,45 +15,57 @@ package codecs.sep;
  * limitations under the License.
  */
 
-// TODO: we may want tighter integration w/ IndexOutput --
-// may give better perf:
+namespace Lucene.Net.Codecs.Sep
+{
+    using System;
+    using Store;
 
-import store.DataOutput;
+    /// <summary>
+    /// Defines basic API for writing ints to an IndexOutput.
+    /// IntBlockCodec interacts with this API. @see IntBlockReader.
+    /// 
+    /// NOTE: block sizes could be variable
+    /// 
+    /// @lucene.experimental 
+    /// </summary>
+    /// <remarks>
+    /// TODO: We may want tighter integration w/IndexOutput
+    /// may give better performance
+    /// </remarks>
+    public abstract class IntIndexOutput : IDisposable
+    {
 
-import java.io.IOException;
-import java.io.Closeable;
+        /// <summary>
+        /// Write an int to the primary file.  The value must be
+        /// >= 0.  
+        /// </summary>
+        public abstract void Write(int v);
 
-/** Defines basic API for writing ints to an IndexOutput.
- *  IntBlockCodec interacts with this API. @see
- *  IntBlockReader.
- *
- * <p>NOTE: block sizes could be variable
- *
- * @lucene.experimental */
-public abstract class IntIndexOutput implements Closeable {
+        /// <summary>
+        /// If you are indexing the primary output file, call
+        ///  this and interact with the returned IndexWriter. 
+        /// </summary>
+        public abstract IntIndexOutputIndex Index();
 
-  /** Write an int to the primary file.  The value must be
-   * >= 0.  */
-  public abstract void write(int v) ;
+        public abstract void Dispose();
+    }
 
-  /** Records a single skip-point in the IndexOutput. */
-  public abstract static class Index {
 
-    /** Internally records the current location */
-    public abstract void mark() ;
+    /// <summary>Records a single skip-point in the IndexOutput. </summary>
+    public abstract class IntIndexOutputIndex
+    {
 
-    /** Copies index from other */
-    public abstract void copyFrom(Index other, bool copyLast) ;
+        /// <summary>Internally records the current location </summary>
+        public abstract void Mark();
 
-    /** Writes "location" of current output pointer of primary
-     *  output to different output (out) */
-    public abstract void write(DataOutput indexOut, bool absolute) ;
-  }
+        /// <summary>Copies index from other </summary>
+        public abstract void CopyFrom(IntIndexOutputIndex other, bool copyLast);
 
-  /** If you are indexing the primary output file, call
-   *  this and interact with the returned IndexWriter. */
-  public abstract Index index();
+        /// <summary>
+        /// Writes "location" of current output pointer of primary
+        ///  output to different output (out) 
+        /// </summary>
+        public abstract void Write(DataOutput indexOut, bool absolute);
+    }
 
-  @Override
-  public abstract void close() ;
 }

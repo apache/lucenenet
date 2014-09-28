@@ -1,6 +1,4 @@
-package codecs.sep;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,698 +15,762 @@ package codecs.sep;
  * limitations under the License.
  */
 
-import java.io.IOException;
+namespace Lucene.Net.Codecs.Sep
+{
 
-import codecs.BlockTermState;
-import codecs.CodecUtil;
-import codecs.PostingsReaderBase;
-import index.DocsAndPositionsEnum;
-import index.DocsEnum;
-import index.FieldInfo.IndexOptions;
-import index.FieldInfo;
-import index.FieldInfos;
-import index.IndexFileNames;
-import index.SegmentInfo;
-import index.TermState;
-import store.ByteArrayDataInput;
-import store.DataInput;
-import store.Directory;
-import store.IOContext;
-import store.IndexInput;
-import util.ArrayUtil;
-import util.Bits;
-import util.BytesRef;
-import util.IOUtils;
+    using System.Diagnostics;
+    using Index;
+    using Store;
+    using Util;
 
-/** Concrete class that reads the current doc/freq/skip
- *  postings format.    
- *
- * @lucene.experimental
- */
+    /// <summary>
+    /// Concrete class that reads the current doc/freq/skip
+    /// postings format.    
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    /// <remarks>
+    /// TODO: -- should we switch "hasProx" higher up?  and
+    /// create two separate docs readers, one that also reads
+    /// prox and one that doesn't?
+    /// </remarks>
+    public class SepPostingsReader : PostingsReaderBase
+    {
+        private readonly IntIndexInput _freqIn;
+        private readonly IntIndexInput _docIn;
+        private readonly IntIndexInput _posIn;
+        private readonly IndexInput _payloadIn;
+        private readonly IndexInput _skipIn;
 
-// TODO: -- should we switch "hasProx" higher up?  and
-// create two separate docs readers, one that also reads
-// prox and one that doesn't?
+        private int _skipInterval;
+        private int _maxSkipLevels;
+        private int _skipMinimum;
 
-public class SepPostingsReader extends PostingsReaderBase {
+        public SepPostingsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo segmentInfo, IOContext context,
+            IntStreamFactory intFactory, string segmentSuffix)
+        {
+            var success = false;
+            try
+            {
 
-  final IntIndexInput freqIn;
-  final IntIndexInput docIn;
-  final IntIndexInput posIn;
-  final IndexInput payloadIn;
-  final IndexInput skipIn;
+                var docFileName = IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix,
+                    SepPostingsWriter.DOC_EXTENSION);
+                _docIn = intFactory.OpenInput(dir, docFileName, context);
 
-  int skipInterval;
-  int maxSkipLevels;
-  int skipMinimum;
+                _skipIn =
+                    dir.OpenInput(
+                        IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, SepPostingsWriter.SKIP_EXTENSION),
+                        context);
 
-  public SepPostingsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo segmentInfo, IOContext context, IntStreamFactory intFactory, String segmentSuffix)  {
-    bool success = false;
-    try {
-
-      final String docFileName = IndexFileNames.segmentFileName(segmentInfo.name, segmentSuffix, SepPostingsWriter.DOC_EXTENSION);
-      docIn = intFactory.openInput(dir, docFileName, context);
-
-      skipIn = dir.openInput(IndexFileNames.segmentFileName(segmentInfo.name, segmentSuffix, SepPostingsWriter.SKIP_EXTENSION), context);
-
-      if (fieldInfos.hasFreq()) {
-        freqIn = intFactory.openInput(dir, IndexFileNames.segmentFileName(segmentInfo.name, segmentSuffix, SepPostingsWriter.FREQ_EXTENSION), context);        
-      } else {
-        freqIn = null;
-      }
-      if (fieldInfos.hasProx()) {
-        posIn = intFactory.openInput(dir, IndexFileNames.segmentFileName(segmentInfo.name, segmentSuffix, SepPostingsWriter.POS_EXTENSION), context);
-        payloadIn = dir.openInput(IndexFileNames.segmentFileName(segmentInfo.name, segmentSuffix, SepPostingsWriter.PAYLOAD_EXTENSION), context);
-      } else {
-        posIn = null;
-        payloadIn = null;
-      }
-      success = true;
-    } finally {
-      if (!success) {
-        close();
-      }
-    }
-  }
-
-  @Override
-  public void init(IndexInput termsIn)  {
-    // Make sure we are talking to the matching past writer
-    CodecUtil.checkHeader(termsIn, SepPostingsWriter.CODEC,
-      SepPostingsWriter.VERSION_START, SepPostingsWriter.VERSION_START);
-    skipInterval = termsIn.readInt();
-    maxSkipLevels = termsIn.readInt();
-    skipMinimum = termsIn.readInt();
-  }
-
-  @Override
-  public void close()  {
-    IOUtils.close(freqIn, docIn, skipIn, posIn, payloadIn);
-  }
-
-  private static final class SepTermState extends BlockTermState {
-    // We store only the seek point to the docs file because
-    // the rest of the info (freqIndex, posIndex, etc.) is
-    // stored in the docs file:
-    IntIndexInput.Index docIndex;
-    IntIndexInput.Index posIndex;
-    IntIndexInput.Index freqIndex;
-    long payloadFP;
-    long skipFP;
-
-    @Override
-    public SepTermState clone() {
-      SepTermState other = new SepTermState();
-      other.copyFrom(this);
-      return other;
-    }
-
-    @Override
-    public void copyFrom(TermState _other) {
-      super.copyFrom(_other);
-      SepTermState other = (SepTermState) _other;
-      if (docIndex == null) {
-        docIndex = other.docIndex.clone();
-      } else {
-        docIndex.copyFrom(other.docIndex);
-      }
-      if (other.freqIndex != null) {
-        if (freqIndex == null) {
-          freqIndex = other.freqIndex.clone();
-        } else {
-          freqIndex.copyFrom(other.freqIndex);
-        }
-      } else {
-        freqIndex = null;
-      }
-      if (other.posIndex != null) {
-        if (posIndex == null) {
-          posIndex = other.posIndex.clone();
-        } else {
-          posIndex.copyFrom(other.posIndex);
-        }
-      } else {
-        posIndex = null;
-      }
-      payloadFP = other.payloadFP;
-      skipFP = other.skipFP;
-    }
-
-    @Override
-    public String toString() {
-      return super.toString() + " docIndex=" + docIndex + " freqIndex=" + freqIndex + " posIndex=" + posIndex + " payloadFP=" + payloadFP + " skipFP=" + skipFP;
-    }
-  }
-
-  @Override
-  public BlockTermState newTermState()  {
-    final SepTermState state = new SepTermState();
-    state.docIndex = docIn.index();
-    if (freqIn != null) {
-      state.freqIndex = freqIn.index();
-    }
-    if (posIn != null) {
-      state.posIndex = posIn.index();
-    }
-    return state;
-  }
-
-  @Override
-  public void decodeTerm(long[] empty, DataInput in, FieldInfo fieldInfo, BlockTermState _termState, bool absolute) 
-     {
-    final SepTermState termState = (SepTermState) _termState;
-    termState.docIndex.read(in, absolute);
-    if (fieldInfo.getIndexOptions() != IndexOptions.DOCS_ONLY) {
-      termState.freqIndex.read(in, absolute);
-      if (fieldInfo.getIndexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) {
-        //System.out.println("  freqIndex=" + termState.freqIndex);
-        termState.posIndex.read(in, absolute);
-        //System.out.println("  posIndex=" + termState.posIndex);
-        if (fieldInfo.hasPayloads()) {
-          if (absolute) {
-            termState.payloadFP = in.readVLong();
-          } else {
-            termState.payloadFP += in.readVLong();
-          }
-          //System.out.println("  payloadFP=" + termState.payloadFP);
-        }
-      }
-    }
-
-    if (termState.docFreq >= skipMinimum) {
-      //System.out.println("   readSkip @ " + in.getPosition());
-      if (absolute) {
-        termState.skipFP = in.readVLong();
-      } else {
-        termState.skipFP += in.readVLong();
-      }
-      //System.out.println("  skipFP=" + termState.skipFP);
-    } else if (absolute) {
-      termState.skipFP = 0;
-    }
-  }
-
-  @Override
-  public DocsEnum docs(FieldInfo fieldInfo, BlockTermState _termState, Bits liveDocs, DocsEnum reuse, int flags)  {
-    final SepTermState termState = (SepTermState) _termState;
-    SepDocsEnum docsEnum;
-    if (reuse == null || !(reuse instanceof SepDocsEnum)) {
-      docsEnum = new SepDocsEnum();
-    } else {
-      docsEnum = (SepDocsEnum) reuse;
-      if (docsEnum.startDocIn != docIn) {
-        // If you are using ParellelReader, and pass in a
-        // reused DocsAndPositionsEnum, it could have come
-        // from another reader also using sep codec
-        docsEnum = new SepDocsEnum();        
-      }
-    }
-
-    return docsEnum.init(fieldInfo, termState, liveDocs);
-  }
-
-  @Override
-  public DocsAndPositionsEnum docsAndPositions(FieldInfo fieldInfo, BlockTermState _termState, Bits liveDocs,
-                                               DocsAndPositionsEnum reuse, int flags)
-     {
-
-    Debug.Assert( fieldInfo.getIndexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-    final SepTermState termState = (SepTermState) _termState;
-    SepDocsAndPositionsEnum postingsEnum;
-    if (reuse == null || !(reuse instanceof SepDocsAndPositionsEnum)) {
-      postingsEnum = new SepDocsAndPositionsEnum();
-    } else {
-      postingsEnum = (SepDocsAndPositionsEnum) reuse;
-      if (postingsEnum.startDocIn != docIn) {
-        // If you are using ParellelReader, and pass in a
-        // reused DocsAndPositionsEnum, it could have come
-        // from another reader also using sep codec
-        postingsEnum = new SepDocsAndPositionsEnum();        
-      }
-    }
-
-    return postingsEnum.init(fieldInfo, termState, liveDocs);
-  }
-
-  class SepDocsEnum extends DocsEnum {
-    int docFreq;
-    int doc = -1;
-    int accum;
-    int count;
-    int freq;
-    long freqStart;
-
-    // TODO: -- should we do omitTF with 2 different enum classes?
-    private bool omitTF;
-    private IndexOptions indexOptions;
-    private bool storePayloads;
-    private Bits liveDocs;
-    private final IntIndexInput.Reader docReader;
-    private final IntIndexInput.Reader freqReader;
-    private long skipFP;
-
-    private final IntIndexInput.Index docIndex;
-    private final IntIndexInput.Index freqIndex;
-    private final IntIndexInput.Index posIndex;
-    private final IntIndexInput startDocIn;
-
-    // TODO: -- should we do hasProx with 2 different enum classes?
-
-    bool skipped;
-    SepSkipListReader skipper;
-
-    SepDocsEnum()  {
-      startDocIn = docIn;
-      docReader = docIn.reader();
-      docIndex = docIn.index();
-      if (freqIn != null) {
-        freqReader = freqIn.reader();
-        freqIndex = freqIn.index();
-      } else {
-        freqReader = null;
-        freqIndex = null;
-      }
-      if (posIn != null) {
-        posIndex = posIn.index();                 // only init this so skipper can read it
-      } else {
-        posIndex = null;
-      }
-    }
-
-    SepDocsEnum init(FieldInfo fieldInfo, SepTermState termState, Bits liveDocs)  {
-      this.liveDocs = liveDocs;
-      this.indexOptions = fieldInfo.getIndexOptions();
-      omitTF = indexOptions == IndexOptions.DOCS_ONLY;
-      storePayloads = fieldInfo.hasPayloads();
-
-      // TODO: can't we only do this if consumer
-      // skipped consuming the previous docs?
-      docIndex.copyFrom(termState.docIndex);
-      docIndex.seek(docReader);
-
-      if (!omitTF) {
-        freqIndex.copyFrom(termState.freqIndex);
-        freqIndex.seek(freqReader);
-      }
-
-      docFreq = termState.docFreq;
-      // NOTE: unused if docFreq < skipMinimum:
-      skipFP = termState.skipFP;
-      count = 0;
-      doc = -1;
-      accum = 0;
-      freq = 1;
-      skipped = false;
-
-      return this;
-    }
-
-    @Override
-    public int nextDoc()  {
-
-      while(true) {
-        if (count == docFreq) {
-          return doc = NO_MORE_DOCS;
+                if (fieldInfos.HasFreq())
+                {
+                    _freqIn = intFactory.OpenInput(dir,
+                        IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, SepPostingsWriter.FREQ_EXTENSION),
+                        context);
+                }
+                else
+                {
+                    _freqIn = null;
+                }
+                if (fieldInfos.HasProx())
+                {
+                    _posIn = intFactory.OpenInput(dir,
+                        IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix, SepPostingsWriter.POS_EXTENSION),
+                        context);
+                    _payloadIn =
+                        dir.OpenInput(
+                            IndexFileNames.SegmentFileName(segmentInfo.Name, segmentSuffix,
+                                SepPostingsWriter.PAYLOAD_EXTENSION), context);
+                }
+                else
+                {
+                    _posIn = null;
+                    _payloadIn = null;
+                }
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    Dispose();
+                }
+            }
         }
 
-        count++;
-
-        // Decode next doc
-        //System.out.println("decode docDelta:");
-        accum += docReader.next();
-          
-        if (!omitTF) {
-          //System.out.println("decode freq:");
-          freq = freqReader.next();
+        public override void Init(IndexInput termsIn)
+        {
+            // Make sure we are talking to the matching past writer
+            CodecUtil.CheckHeader(termsIn, SepPostingsWriter.CODEC, SepPostingsWriter.VERSION_START,
+                SepPostingsWriter.VERSION_START);
+            _skipInterval = termsIn.ReadInt();
+            _maxSkipLevels = termsIn.ReadInt();
+            _skipMinimum = termsIn.ReadInt();
         }
 
-        if (liveDocs == null || liveDocs.get(accum)) {
-          break;
-        }
-      }
-      return (doc = accum);
-    }
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) return;
 
-    @Override
-    public int freq()  {
-      return freq;
-    }
-
-    @Override
-    public int docID() {
-      return doc;
-    }
-
-    @Override
-    public int advance(int target)  {
-
-      if ((target - skipInterval) >= doc && docFreq >= skipMinimum) {
-
-        // There are enough docs in the posting to have
-        // skip data, and its not too close
-
-        if (skipper == null) {
-          // This DocsEnum has never done any skipping
-          skipper = new SepSkipListReader(skipIn.clone(),
-                                          freqIn,
-                                          docIn,
-                                          posIn,
-                                          maxSkipLevels, skipInterval);
-
+            IOUtils.Close(_freqIn, _docIn, _skipIn, _posIn, _payloadIn);
         }
 
-        if (!skipped) {
-          // We haven't yet skipped for this posting
-          skipper.init(skipFP,
-                       docIndex,
-                       freqIndex,
-                       posIndex,
-                       0,
-                       docFreq,
-                       storePayloads);
-          skipper.setIndexOptions(indexOptions);
+        public override BlockTermState NewTermState()
+        {
+            var state = new SepTermState {DOC_INDEX = _docIn.Index()};
 
-          skipped = true;
+            if (_freqIn != null)
+                state.FREQ_INDEX = _freqIn.Index();
+
+            if (_posIn != null)
+                state.POS_INDEX = _posIn.Index();
+
+            return state;
         }
 
-        final int newCount = skipper.skipTo(target); 
+        public override void DecodeTerm(long[] empty, DataInput input, FieldInfo fieldInfo, BlockTermState bTermState,
+            bool absolute)
+        {
+            var termState = (SepTermState) bTermState;
+            termState.DOC_INDEX.Read(input, absolute);
+            if (fieldInfo.FieldIndexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+            {
+                termState.FREQ_INDEX.Read(input, absolute);
+                if (fieldInfo.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                {
+                    termState.POS_INDEX.Read(input, absolute);
+                    
+                    if (fieldInfo.HasPayloads())
+                    {
+                        if (absolute)
+                        {
+                            termState.PAYLOAD_FP = input.ReadVLong();
+                        }
+                        else
+                        {
+                            termState.PAYLOAD_FP += input.ReadVLong();
+                        }
+                    }
+                }
+            }
 
-        if (newCount > count) {
-
-          // Skipper did move
-          if (!omitTF) {
-            skipper.getFreqIndex().seek(freqReader);
-          }
-          skipper.getDocIndex().seek(docReader);
-          count = newCount;
-          doc = accum = skipper.getDoc();
-        }
-      }
-        
-      // Now, linear scan for the rest:
-      do {
-        if (nextDoc() == NO_MORE_DOCS) {
-          return NO_MORE_DOCS;
-        }
-      } while (target > doc);
-
-      return doc;
-    }
-    
-    @Override
-    public long cost() {
-      return docFreq;
-    }
-  }
-
-  class SepDocsAndPositionsEnum extends DocsAndPositionsEnum {
-    int docFreq;
-    int doc = -1;
-    int accum;
-    int count;
-    int freq;
-    long freqStart;
-
-    private bool storePayloads;
-    private Bits liveDocs;
-    private final IntIndexInput.Reader docReader;
-    private final IntIndexInput.Reader freqReader;
-    private final IntIndexInput.Reader posReader;
-    private final IndexInput payloadIn;
-    private long skipFP;
-
-    private final IntIndexInput.Index docIndex;
-    private final IntIndexInput.Index freqIndex;
-    private final IntIndexInput.Index posIndex;
-    private final IntIndexInput startDocIn;
-
-    private long payloadFP;
-
-    private int pendingPosCount;
-    private int position;
-    private int payloadLength;
-    private long pendingPayloadBytes;
-
-    private bool skipped;
-    private SepSkipListReader skipper;
-    private bool payloadPending;
-    private bool posSeekPending;
-
-    SepDocsAndPositionsEnum()  {
-      startDocIn = docIn;
-      docReader = docIn.reader();
-      docIndex = docIn.index();
-      freqReader = freqIn.reader();
-      freqIndex = freqIn.index();
-      posReader = posIn.reader();
-      posIndex = posIn.index();
-      payloadIn = SepPostingsReader.this.payloadIn.clone();
-    }
-
-    SepDocsAndPositionsEnum init(FieldInfo fieldInfo, SepTermState termState, Bits liveDocs)  {
-      this.liveDocs = liveDocs;
-      storePayloads = fieldInfo.hasPayloads();
-      //System.out.println("Sep D&P init");
-
-      // TODO: can't we only do this if consumer
-      // skipped consuming the previous docs?
-      docIndex.copyFrom(termState.docIndex);
-      docIndex.seek(docReader);
-      //System.out.println("  docIndex=" + docIndex);
-
-      freqIndex.copyFrom(termState.freqIndex);
-      freqIndex.seek(freqReader);
-      //System.out.println("  freqIndex=" + freqIndex);
-
-      posIndex.copyFrom(termState.posIndex);
-      //System.out.println("  posIndex=" + posIndex);
-      posSeekPending = true;
-      payloadPending = false;
-
-      payloadFP = termState.payloadFP;
-      skipFP = termState.skipFP;
-      //System.out.println("  skipFP=" + skipFP);
-
-      docFreq = termState.docFreq;
-      count = 0;
-      doc = -1;
-      accum = 0;
-      pendingPosCount = 0;
-      pendingPayloadBytes = 0;
-      skipped = false;
-
-      return this;
-    }
-
-    @Override
-    public int nextDoc()  {
-
-      while(true) {
-        if (count == docFreq) {
-          return doc = NO_MORE_DOCS;
+            if (termState.DocFreq >= _skipMinimum)
+            {
+                if (absolute)
+                {
+                    termState.SKIP_FP = input.ReadVLong();
+                }
+                else
+                {
+                    termState.SKIP_FP += input.ReadVLong();
+                }
+            }
+            else if (absolute)
+            {
+                termState.SKIP_FP = 0;
+            }
         }
 
-        count++;
+        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState bTermState, Bits liveDocs, DocsEnum reuse,
+            int flags)
+        {
+            var termState = (SepTermState)bTermState;
 
-        // TODO: maybe we should do the 1-bit trick for encoding
-        // freq=1 case?
+            SepDocsEnum docsEnum;
+            if (!(reuse is SepDocsEnum))
+            {
+                docsEnum = new SepDocsEnum(this);
+            }
+            else
+            {
+                docsEnum = (SepDocsEnum) reuse;
+                if (docsEnum.START_DOC_IN != _docIn)
+                {
+                    // If you are using ParellelReader, and pass in a
+                    // reused DocsAndPositionsEnum, it could have come
+                    // from another reader also using sep codec
+                    docsEnum = new SepDocsEnum(this);
+                }
+            }
 
-        // Decode next doc
-        //System.out.println("  sep d&p read doc");
-        accum += docReader.next();
-
-        //System.out.println("  sep d&p read freq");
-        freq = freqReader.next();
-
-        pendingPosCount += freq;
-
-        if (liveDocs == null || liveDocs.get(accum)) {
-          break;
-        }
-      }
-
-      position = 0;
-      return (doc = accum);
-    }
-
-    @Override
-    public int freq()  {
-      return freq;
-    }
-
-    @Override
-    public int docID() {
-      return doc;
-    }
-
-    @Override
-    public int advance(int target)  {
-      //System.out.println("SepD&P advance target=" + target + " vs current=" + doc + " this=" + this);
-
-      if ((target - skipInterval) >= doc && docFreq >= skipMinimum) {
-
-        // There are enough docs in the posting to have
-        // skip data, and its not too close
-
-        if (skipper == null) {
-          //System.out.println("  create skipper");
-          // This DocsEnum has never done any skipping
-          skipper = new SepSkipListReader(skipIn.clone(),
-                                          freqIn,
-                                          docIn,
-                                          posIn,
-                                          maxSkipLevels, skipInterval);
+            return docsEnum.Init(fieldInfo, termState, liveDocs);
         }
 
-        if (!skipped) {
-          //System.out.println("  init skip data skipFP=" + skipFP);
-          // We haven't yet skipped for this posting
-          skipper.init(skipFP,
-                       docIndex,
-                       freqIndex,
-                       posIndex,
-                       payloadFP,
-                       docFreq,
-                       storePayloads);
-          skipper.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
-          skipped = true;
+        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState bTermState,
+            Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        {
+
+            Debug.Assert(fieldInfo.FieldIndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            var termState = (SepTermState)bTermState;
+            SepDocsAndPositionsEnum postingsEnum;
+            if (!(reuse is SepDocsAndPositionsEnum))
+            {
+                postingsEnum = new SepDocsAndPositionsEnum(this);
+            }
+            else
+            {
+                postingsEnum = (SepDocsAndPositionsEnum) reuse;
+                if (postingsEnum.START_DOC_IN != _docIn)
+                {
+                    // If you are using ParellelReader, and pass in a
+                    // reused DocsAndPositionsEnum, it could have come
+                    // from another reader also using sep codec
+                    postingsEnum = new SepDocsAndPositionsEnum(this);
+                }
+            }
+
+            return postingsEnum.Init(fieldInfo, termState, liveDocs);
         }
-        final int newCount = skipper.skipTo(target); 
-        //System.out.println("  skip newCount=" + newCount + " vs " + count);
 
-        if (newCount > count) {
-
-          // Skipper did move
-          skipper.getFreqIndex().seek(freqReader);
-          skipper.getDocIndex().seek(docReader);
-          //System.out.println("  doc seek'd to " + skipper.getDocIndex());
-          // NOTE: don't seek pos here; do it lazily
-          // instead.  Eg a PhraseQuery may skip to many
-          // docs before finally asking for positions...
-          posIndex.copyFrom(skipper.getPosIndex());
-          posSeekPending = true;
-          count = newCount;
-          doc = accum = skipper.getDoc();
-          //System.out.println("    moved to doc=" + doc);
-          //payloadIn.seek(skipper.getPayloadPointer());
-          payloadFP = skipper.getPayloadPointer();
-          pendingPosCount = 0;
-          pendingPayloadBytes = 0;
-          payloadPending = false;
-          payloadLength = skipper.getPayloadLength();
-          //System.out.println("    move payloadLen=" + payloadLength);
+        public override long RamBytesUsed()
+        {
+            return 0;
         }
-      }
-        
-      // Now, linear scan for the rest:
-      do {
-        if (nextDoc() == NO_MORE_DOCS) {
-          //System.out.println("  advance nextDoc=END");
-          return NO_MORE_DOCS;
+
+        public override void CheckIntegrity()
+        {
+            // TODO: remove sep layout, its fallen behind on features...
         }
-        //System.out.println("  advance nextDoc=" + doc);
-      } while (target > doc);
 
-      //System.out.println("  return doc=" + doc);
-      return doc;
-    }
+        internal sealed class SepTermState : BlockTermState
+        {
+            // We store only the seek point to the docs file because
+            // the rest of the info (freqIndex, posIndex, etc.) is
+            // stored in the docs file:
+            internal IntIndexInputIndex DOC_INDEX;
+            internal IntIndexInputIndex POS_INDEX;
+            internal IntIndexInputIndex FREQ_INDEX;
+            internal long PAYLOAD_FP;
+            internal long SKIP_FP;
 
-    @Override
-    public int nextPosition()  {
-      if (posSeekPending) {
-        posIndex.seek(posReader);
-        payloadIn.seek(payloadFP);
-        posSeekPending = false;
-      }
+            public override object Clone()
+            {
+                var other = new SepTermState();
+                other.CopyFrom(this);
+                return other;
+            }
 
-      // scan over any docs that were iterated without their
-      // positions
-      while (pendingPosCount > freq) {
-        final int code = posReader.next();
-        if (storePayloads && (code & 1) != 0) {
-          // Payload length has changed
-          payloadLength = posReader.next();
-          Debug.Assert( payloadLength >= 0;
+            public override void CopyFrom(TermState tsOther)
+            {
+                base.CopyFrom(tsOther);
+
+                var other = (SepTermState)tsOther;
+                if (DOC_INDEX == null)
+                {
+                    DOC_INDEX = other.DOC_INDEX.Clone();
+                }
+                else
+                {
+                    DOC_INDEX.CopyFrom(other.DOC_INDEX);
+                }
+                if (other.FREQ_INDEX != null)
+                {
+                    if (FREQ_INDEX == null)
+                    {
+                        FREQ_INDEX = other.FREQ_INDEX.Clone();
+                    }
+                    else
+                    {
+                        FREQ_INDEX.CopyFrom(other.FREQ_INDEX);
+                    }
+                }
+                else
+                {
+                    FREQ_INDEX = null;
+                }
+                if (other.POS_INDEX != null)
+                {
+                    if (POS_INDEX == null)
+                    {
+                        POS_INDEX = other.POS_INDEX.Clone();
+                    }
+                    else
+                    {
+                        POS_INDEX.CopyFrom(other.POS_INDEX);
+                    }
+                }
+                else
+                {
+                    POS_INDEX = null;
+                }
+                PAYLOAD_FP = other.PAYLOAD_FP;
+                SKIP_FP = other.SKIP_FP;
+            }
+
+            public override string ToString()
+            {
+                return base.ToString() + " docIndex=" + DOC_INDEX + " freqIndex=" + FREQ_INDEX + " posIndex=" + POS_INDEX +
+                       " payloadFP=" + PAYLOAD_FP + " skipFP=" + SKIP_FP;
+            }
         }
-        pendingPosCount--;
-        position = 0;
-        pendingPayloadBytes += payloadLength;
-      }
 
-      final int code = posReader.next();
 
-      if (storePayloads) {
-        if ((code & 1) != 0) {
-          // Payload length has changed
-          payloadLength = posReader.next();
-          Debug.Assert( payloadLength >= 0;
+        internal class SepDocsEnum : DocsEnum
+        {
+            private readonly SepPostingsReader _outerInstance;
+
+            private int _docFreq;
+            private int _doc = -1;
+            private int _accum;
+            private int _count;
+            private int _freq;
+
+            // TODO: -- should we do omitTF with 2 different enum classes?
+            private bool _omitTf;
+            private FieldInfo.IndexOptions _indexOptions;
+            private bool _storePayloads;
+            private Bits _liveDocs;
+            private readonly IntIndexInputReader _docReader;
+            private readonly IntIndexInputReader _freqReader;
+            private long _skipFp;
+
+            private readonly IntIndexInputIndex _docIndex;
+            private readonly IntIndexInputIndex _freqIndex;
+            private readonly IntIndexInputIndex _posIndex;
+
+            // TODO: -- should we do hasProx with 2 different enum classes?
+
+            private bool _skipped;
+            private SepSkipListReader _skipper;
+
+            internal IntIndexInput START_DOC_IN;
+
+            internal SepDocsEnum(SepPostingsReader outerInstance)
+            {
+                _outerInstance = outerInstance;
+                _docReader = outerInstance._docIn.Reader();
+                _docIndex = outerInstance._docIn.Index();
+                if (outerInstance._freqIn != null)
+                {
+                    _freqReader = outerInstance._freqIn.Reader();
+                    _freqIndex = outerInstance._freqIn.Index();
+                }
+                else
+                {
+                    _freqReader = null;
+                    _freqIndex = null;
+                }
+                _posIndex = outerInstance._posIn != null ? outerInstance._posIn.Index() : null;
+
+                START_DOC_IN = outerInstance._docIn;
+            }
+
+            internal virtual SepDocsEnum Init(FieldInfo fieldInfo, SepTermState termState, Bits liveDocs)
+            {
+                _liveDocs = liveDocs;
+                if (fieldInfo.FieldIndexOptions.HasValue)
+                    _indexOptions = fieldInfo.FieldIndexOptions.Value;
+
+                _omitTf = _indexOptions == FieldInfo.IndexOptions.DOCS_ONLY;
+                _storePayloads = fieldInfo.HasPayloads();
+
+                // TODO: can't we only do this if consumer
+                // skipped consuming the previous docs?
+                _docIndex.CopyFrom(termState.DOC_INDEX);
+                _docIndex.Seek(_docReader);
+
+                if (!_omitTf)
+                {
+                    _freqIndex.CopyFrom(termState.FREQ_INDEX);
+                    _freqIndex.Seek(_freqReader);
+                }
+
+                _docFreq = termState.DocFreq;
+                // NOTE: unused if docFreq < skipMinimum:
+                _skipFp = termState.SKIP_FP;
+                _count = 0;
+                _doc = -1;
+                _accum = 0;
+                _freq = 1;
+                _skipped = false;
+
+                return this;
+            }
+
+            public override int NextDoc()
+            {
+
+                while (true)
+                {
+                    if (_count == _docFreq)
+                    {
+                        return _doc = NO_MORE_DOCS;
+                    }
+
+                    _count++;
+
+                    // Decode next doc
+                    //System.out.println("decode docDelta:");
+                    _accum += _docReader.Next();
+
+                    if (!_omitTf)
+                    {
+                        //System.out.println("decode freq:");
+                        _freq = _freqReader.Next();
+                    }
+
+                    if (_liveDocs == null || _liveDocs.Get(_accum))
+                    {
+                        break;
+                    }
+                }
+                return (_doc = _accum);
+            }
+
+            public override int Freq()
+            {
+                return _freq;
+            }
+
+            public override int DocID()
+            {
+                return _doc;
+            }
+
+            public override int Advance(int target)
+            {
+
+                if ((target - _outerInstance._skipInterval) >= _doc && _docFreq >= _outerInstance._skipMinimum)
+                {
+
+                    // There are enough docs in the posting to have
+                    // skip data, and its not too close
+
+                    if (_skipper == null)
+                    {
+                        // This DocsEnum has never done any skipping
+                        _skipper = new SepSkipListReader((IndexInput) _outerInstance._skipIn.Clone(),
+                            _outerInstance._freqIn,
+                            _outerInstance._docIn, _outerInstance._posIn, _outerInstance._maxSkipLevels,
+                            _outerInstance._skipInterval);
+
+                    }
+
+                    if (!_skipped)
+                    {
+                        // We haven't yet skipped for this posting
+                        _skipper.Init(_skipFp, _docIndex, _freqIndex, _posIndex, 0, _docFreq, _storePayloads);
+                        _skipper.IndexOptions = _indexOptions;
+
+                        _skipped = true;
+                    }
+
+                    int newCount = _skipper.SkipTo(target);
+
+                    if (newCount > _count)
+                    {
+
+                        // Skipper did move
+                        if (!_omitTf)
+                        {
+                            _skipper.FreqIndex.Seek(_freqReader);
+                        }
+                        _skipper.DocIndex.Seek(_docReader);
+                        _count = newCount;
+                        _doc = _accum = _skipper.Doc;
+                    }
+                }
+
+                // Now, linear scan for the rest:
+                do
+                {
+                    if (NextDoc() == NO_MORE_DOCS)
+                    {
+                        return NO_MORE_DOCS;
+                    }
+                } while (target > _doc);
+
+                return _doc;
+            }
+
+            public override long Cost()
+            {
+                return _docFreq;
+            }
         }
-        position += code >>> 1;
-        pendingPayloadBytes += payloadLength;
-        payloadPending = payloadLength > 0;
-      } else {
-        position += code;
-      }
-    
-      pendingPosCount--;
-      Debug.Assert( pendingPosCount >= 0;
-      return position;
+
+        internal class SepDocsAndPositionsEnum : DocsAndPositionsEnum
+        {
+            private readonly SepPostingsReader _outerInstance;
+            private BytesRef _payload;
+
+            private int _docFreq;
+            private int _doc = -1;
+            private int _accum;
+            private int _count;
+            private int _freq;
+
+            private bool _storePayloads;
+            private Bits _liveDocs;
+            private readonly IntIndexInputReader _docReader;
+            private readonly IntIndexInputReader _freqReader;
+            private readonly IntIndexInputReader _posReader;
+            private readonly IndexInput _payloadIn;
+            private long _skipFp;
+
+            private readonly IntIndexInputIndex _docIndex;
+            private readonly IntIndexInputIndex _freqIndex;
+            private readonly IntIndexInputIndex _posIndex;
+
+            private long _payloadFp;
+
+            private int _pendingPosCount;
+            private int _position;
+            private int _payloadLength;
+            private long _pendingPayloadBytes;
+
+            private bool _skipped;
+            private SepSkipListReader _skipper;
+            private bool _payloadPending;
+            private bool _posSeekPending;
+
+            internal IntIndexInput START_DOC_IN;
+
+            internal SepDocsAndPositionsEnum(SepPostingsReader outerInstance)
+            {
+                _outerInstance = outerInstance;
+                _docReader = outerInstance._docIn.Reader();
+                _docIndex = outerInstance._docIn.Index();
+                _freqReader = outerInstance._freqIn.Reader();
+                _freqIndex = outerInstance._freqIn.Index();
+                _posReader = outerInstance._posIn.Reader();
+                _posIndex = outerInstance._posIn.Index();
+                _payloadIn = (IndexInput) outerInstance._payloadIn.Clone();
+
+                START_DOC_IN = outerInstance._docIn;
+            }
+
+            internal virtual SepDocsAndPositionsEnum Init(FieldInfo fieldInfo, SepTermState termState, Bits liveDocs)
+            {
+                _liveDocs = liveDocs;
+                _storePayloads = fieldInfo.HasPayloads();
+
+                // TODO: can't we only do this if consumer skipped consuming the previous docs?
+                _docIndex.CopyFrom(termState.DOC_INDEX);
+                _docIndex.Seek(_docReader);
+
+                _freqIndex.CopyFrom(termState.FREQ_INDEX);
+                _freqIndex.Seek(_freqReader);
+
+                _posIndex.CopyFrom(termState.POS_INDEX);
+                _posSeekPending = true;
+                _payloadPending = false;
+
+                _payloadFp = termState.PAYLOAD_FP;
+                _skipFp = termState.SKIP_FP;
+
+                _docFreq = termState.DocFreq;
+                _count = 0;
+                _doc = -1;
+                _accum = 0;
+                _pendingPosCount = 0;
+                _pendingPayloadBytes = 0;
+                _skipped = false;
+
+                return this;
+            }
+
+            public override int NextDoc()
+            {
+                while (true)
+                {
+                    if (_count == _docFreq)
+                        return _doc = NO_MORE_DOCS;
+
+                    _count++;
+
+                    // Decode next doc
+                    _accum += _docReader.Next();
+                    _freq = _freqReader.Next();
+                    _pendingPosCount += _freq;
+
+                    if (_liveDocs == null || _liveDocs.Get(_accum))
+                        break;
+                }
+
+                _position = 0;
+                return (_doc = _accum);
+            }
+
+            public override int Freq()
+            {
+                return _freq;
+            }
+
+            public override int DocID()
+            {
+                return _doc;
+            }
+
+            public override int Advance(int target)
+            {
+                //System.out.println("SepD&P advance target=" + target + " vs current=" + doc + " this=" + this);
+
+                if ((target - _outerInstance._skipInterval) >= _doc && _docFreq >= _outerInstance._skipMinimum)
+                {
+
+                    // There are enough docs in the posting to have
+                    // skip data, and its not too close
+
+                    if (_skipper == null)
+                    {
+                        //System.out.println("  create skipper");
+                        // This DocsEnum has never done any skipping
+                        _skipper = new SepSkipListReader((IndexInput) _outerInstance._skipIn.Clone(),
+                            _outerInstance._freqIn,
+                            _outerInstance._docIn, _outerInstance._posIn, _outerInstance._maxSkipLevels,
+                            _outerInstance._skipInterval);
+                    }
+
+                    if (!_skipped)
+                    {
+                        //System.out.println("  init skip data skipFP=" + skipFP);
+                        // We haven't yet skipped for this posting
+                        _skipper.Init(_skipFp, _docIndex, _freqIndex, _posIndex, _payloadFp, _docFreq, _storePayloads);
+                        _skipper.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                        _skipped = true;
+                    }
+
+                    int newCount = _skipper.SkipTo(target);
+
+                    if (newCount > _count)
+                    {
+
+                        // Skipper did move
+                        _skipper.FreqIndex.Seek(_freqReader);
+                        _skipper.DocIndex.Seek(_docReader);
+
+                        // NOTE: don't seek pos here; do it lazily
+                        // instead.  Eg a PhraseQuery may skip to many
+                        // docs before finally asking for positions...
+
+                        _posIndex.CopyFrom(_skipper.PosIndex);
+                        _posSeekPending = true;
+                        _count = newCount;
+                        _doc = _accum = _skipper.Doc;
+
+                        _payloadFp = _skipper.PayloadPointer;
+                        _pendingPosCount = 0;
+                        _pendingPayloadBytes = 0;
+                        _payloadPending = false;
+                        _payloadLength = _skipper.PayloadLength;
+                    }
+                }
+
+                // Now, linear scan for the rest:
+                do
+                {
+                    if (NextDoc() == NO_MORE_DOCS)
+                    {
+                        return NO_MORE_DOCS;
+                    }
+
+                } while (target > _doc);
+
+                return _doc;
+            }
+
+            public override int NextPosition()
+            {
+                if (_posSeekPending)
+                {
+                    _posIndex.Seek(_posReader);
+                    _payloadIn.Seek(_payloadFp);
+                    _posSeekPending = false;
+                }
+
+                int code;
+
+                // scan over any docs that were iterated without their positions
+                while (_pendingPosCount > _freq)
+                {
+                    code = _posReader.Next();
+                    if (_storePayloads && (code & 1) != 0)
+                    {
+                        // Payload length has changed
+                        _payloadLength = _posReader.Next();
+                        Debug.Assert(_payloadLength >= 0);
+                    }
+                    _pendingPosCount--;
+                    _position = 0;
+                    _pendingPayloadBytes += _payloadLength;
+                }
+
+                code = _posReader.Next();
+
+                if (_storePayloads)
+                {
+                    if ((code & 1) != 0)
+                    {
+                        // Payload length has changed
+                        _payloadLength = _posReader.Next();
+                        Debug.Assert(_payloadLength >= 0);
+                    }
+                    _position += (int) ((uint) code >> 1);
+                    _pendingPayloadBytes += _payloadLength;
+                    _payloadPending = _payloadLength > 0;
+                }
+                else
+                {
+                    _position += code;
+                }
+
+                _pendingPosCount--;
+                Debug.Assert(_pendingPosCount >= 0);
+                return _position;
+            }
+
+            public override int StartOffset()
+            {
+                return -1;
+            }
+
+            public override int EndOffset()
+            {
+                return -1;
+            }
+
+            public override BytesRef Payload
+            {
+                get
+                {
+                    if (!_payloadPending)
+                    {
+                        return null;
+                    }
+
+                    if (_pendingPayloadBytes == 0)
+                    {
+                        return _payload;
+                    }
+
+                    Debug.Assert(_pendingPayloadBytes >= _payloadLength);
+
+                    if (_pendingPayloadBytes > _payloadLength)
+                    {
+                        _payloadIn.Seek(_payloadIn.FilePointer + (_pendingPayloadBytes - _payloadLength));
+                    }
+
+                    if (_payload == null)
+                    {
+                        _payload = new BytesRef {Bytes = new sbyte[_payloadLength]};
+                    }
+                    else if (_payload.Bytes.Length < _payloadLength)
+                    {
+                        _payload.Grow(_payloadLength);
+                    }
+
+                    _payloadIn.ReadBytes(_payload.Bytes, 0, _payloadLength);
+                    _payload.Length = _payloadLength;
+                    _pendingPayloadBytes = 0;
+                    return _payload;
+                }
+            }
+
+            public override long Cost()
+            {
+                return _docFreq;
+            }
+        }
     }
-
-    @Override
-    public int startOffset() {
-      return -1;
-    }
-
-    @Override
-    public int endOffset() {
-      return -1;
-    }
-
-    private BytesRef payload;
-
-    @Override
-    public BytesRef getPayload()  {
-      if (!payloadPending) {
-        return null;
-      }
-      
-      if (pendingPayloadBytes == 0) {
-        return payload;
-      }
-
-      Debug.Assert( pendingPayloadBytes >= payloadLength;
-
-      if (pendingPayloadBytes > payloadLength) {
-        payloadIn.seek(payloadIn.getFilePointer() + (pendingPayloadBytes - payloadLength));
-      }
-
-      if (payload == null) {
-        payload = new BytesRef();
-        payload.bytes = new byte[payloadLength];
-      } else if (payload.bytes.length < payloadLength) {
-        payload.grow(payloadLength);
-      }
-
-      payloadIn.readBytes(payload.bytes, 0, payloadLength);
-      payload.length = payloadLength;
-      pendingPayloadBytes = 0;
-      return payload;
-    }
-    
-    @Override
-    public long cost() {
-      return docFreq;
-    }
-  }
-
-  @Override
-  public long ramBytesUsed() {
-    return 0;
-  }
-
-  @Override
-  public void checkIntegrity()  {
-    // TODO: remove sep layout, its fallen behind on features...
-  }
 }

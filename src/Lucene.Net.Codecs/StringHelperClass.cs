@@ -22,7 +22,9 @@
 //	This class is used to convert some aspects of the Java String class.
 //-------------------------------------------------------------------------------------------
 
-namespace Lucene.Net.Codes
+using System.Runtime.InteropServices;
+
+namespace Lucene.Net.Codecs
 {
 
     internal static class StringHelperClass
@@ -109,7 +111,7 @@ namespace Lucene.Net.Codes
 
         private static sbyte[] GetSBytesForEncoding(System.Text.Encoding encoding, string s)
         {
-            sbyte[] sbytes = new sbyte[encoding.GetByteCount(s)];
+            var sbytes = new sbyte[encoding.GetByteCount(s)];
             encoding.GetBytes(s, 0, s.Length, (byte[]) (object) sbytes, 0);
             return sbytes;
         }

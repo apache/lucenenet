@@ -83,51 +83,37 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.Write(data, Convert.ToString(minValue), scratch);
             SimpleTextUtil.WriteNewline(data);
 
-            // build up our fixed-width "simple text packed ints"
-            // format
-            System.Numerics.BigInteger maxBig = System.Numerics.BigInteger.valueOf(maxValue);
-            System.Numerics.BigInteger minBig = System.Numerics.BigInteger.valueOf(minValue);
-            System.Numerics.BigInteger diffBig = maxBig - minBig;
-            int maxBytesPerValue = diffBig.ToString().Length;
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < maxBytesPerValue; i++)
-            {
-                sb.Append('0');
-            }
+            // build up our fixed-width "simple text packed ints" format
+            System.Numerics.BigInteger maxBig = maxValue;
+            System.Numerics.BigInteger minBig = minValue;
+            var diffBig = maxBig - minBig;
 
+            var maxBytesPerValue = diffBig.ToString().Length;
+            var sb = new StringBuilder();
+            for (var i = 0; i < maxBytesPerValue; i++)
+                sb.Append('0');
+         
             // write our pattern to the .dat
             SimpleTextUtil.Write(data, PATTERN);
             SimpleTextUtil.Write(data, sb.ToString(), scratch);
             SimpleTextUtil.WriteNewline(data);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String patternString = sb.toString();
-            string patternString = sb.ToString();
-
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.text.DecimalFormat encoder = new java.text.DecimalFormat(patternString, new java.text.DecimalFormatSymbols(java.util.Locale.ROOT));
+            var patternString = sb.ToString();
             DecimalFormat encoder = new DecimalFormat(patternString, new DecimalFormatSymbols(Locale.ROOT));
 
             int numDocsWritten = 0;
 
             // second pass to write the values
-            foreach (Number n in values)
+            foreach (var value in values)
             {
-                long value = n == null ? 0 : (long) n;
                 Debug.Assert(value >= minValue);
-                Number delta = System.Numerics.BigInteger.valueOf(value) - System.Numerics.BigInteger.valueOf(minValue);
+
+                var delta = value - minValue;
                 string s = encoder.format(delta);
                 Debug.Assert(s.Length == patternString.Length);
                 SimpleTextUtil.Write(data, s, scratch);
                 SimpleTextUtil.WriteNewline(data);
-                if (n == null)
-                {
-                    SimpleTextUtil.Write(data, "F", scratch);
-                }
-                else
-                {
-                    SimpleTextUtil.Write(data, "T", scratch);
-                }
+                SimpleTextUtil.Write(data, n == null ? "F" : "T", scratch);
                 SimpleTextUtil.WriteNewline(data);
                 numDocsWritten++;
                 Debug.Assert(numDocsWritten <= numDocs);
@@ -141,10 +127,10 @@ namespace Lucene.Net.Codecs.SimpleText
             Debug.Assert(FieldSeen(field.Name));
             Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType_e.BINARY);
 
-            int maxLength = 0;
-            foreach (BytesRef value in values)
+            var maxLength = 0;
+            foreach (var value in values)
             {
-                int length = value == null ? 0 : value.Length;
+                var length = value == null ? 0 : value.Length;
                 maxLength = Math.Max(maxLength, length);
             }
             WriteFieldEntry(field, FieldInfo.DocValuesType_e.BINARY);
@@ -179,7 +165,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // because it escapes:
                 if (value != null)
                 {
-                    data.WriteBytes(value.bytes, value.offset, value.length);
+                    data.WriteBytes(value.Bytes, value.Offset, value.Length);
                 }
 
                 // pad to fit
@@ -188,14 +174,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     data.WriteByte((sbyte) ' ');
                 }
                 SimpleTextUtil.WriteNewline(data);
-                if (value == null)
-                {
-                    SimpleTextUtil.Write(data, "F", scratch);
-                }
-                else
-                {
-                    SimpleTextUtil.Write(data, "T", scratch);
-                }
+                SimpleTextUtil.Write(data, value == null ? "F" : "T", scratch);
                 SimpleTextUtil.WriteNewline(data);
                 numDocsWritten++;
             }
@@ -390,19 +369,18 @@ namespace Lucene.Net.Codecs.SimpleText
             foreach (var n in docToOrdCount)
             {
                 sb2.Length = 0;
-                int count = (int) n;
-                for (int i = 0; i < count; i++)
+                var count = (int) n;
+                for (var i = 0; i < count; i++)
                 {
-                    long ord = (long) ordStream.Next();
+                    var ord = (long) ordStream.Next();
                     if (sb2.Length > 0)
-                    {
                         sb2.Append(",");
-                    }
+                    
                     sb2.Append(Convert.ToString(ord));
                 }
                 // now pad to fit: these are numbers so spaces work well. reader calls trim()
-                int numPadding = maxOrdListLength - sb2.Length;
-                for (int i = 0; i < numPadding; i++)
+                var numPadding = maxOrdListLength - sb2.Length;
+                for (var i = 0; i < numPadding; i++)
                 {
                     sb2.Append(' ');
                 }
@@ -418,7 +396,7 @@ namespace Lucene.Net.Codecs.SimpleText
             try
             {
                 Debug.Assert(_fieldsSeen.Count > 0);
-                // TODO: sheisty to do this here?
+                // java : sheisty to do this here?
                 SimpleTextUtil.Write(data, END);
                 SimpleTextUtil.WriteNewline(data);
                 SimpleTextUtil.WriteChecksum(data, scratch);

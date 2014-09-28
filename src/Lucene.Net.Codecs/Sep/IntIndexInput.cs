@@ -1,6 +1,4 @@
-package codecs.sep;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,43 +15,45 @@ package codecs.sep;
  * limitations under the License.
  */
 
-import java.io.Closeable;
-import java.io.IOException;
+namespace Lucene.Net.Codecs.Sep
+{
+    using Store;
+    using System;
 
-import store.DataInput;
+    /// <summary>
+    /// Defines basic API for writing ints to an IndexOutput.
+    ///  IntBlockCodec interacts with this API. @see
+    ///  IntBlockReader
+    /// 
+    /// @lucene.experimental 
+    /// </summary>
+    public abstract class IntIndexInput : IDisposable
+    {
+        public abstract IntIndexInputReader Reader();
+        public abstract void Dispose();
+        public abstract IntIndexInputIndex Index();
 
-/** Defines basic API for writing ints to an IndexOutput.
- *  IntBlockCodec interacts with this API. @see
- *  IntBlockReader
- *
- * @lucene.experimental */
-public abstract class IntIndexInput implements Closeable {
-
-  public abstract Reader reader() ;
-
-  @Override
-  public abstract void close() ;
-
-  public abstract Index index() ;
-  
-  /** Records a single skip-point in the {@link IntIndexInput.Reader}. */
-  public abstract static class Index {
-
-    public abstract void read(DataInput indexIn, bool absolute) ;
-
-    /** Seeks primary stream to the last read offset */
-    public abstract void seek(IntIndexInput.Reader stream) ;
-
-    public abstract void copyFrom(Index other);
+      
+    }
     
-    @Override
-    public abstract Index clone();
-  }
+    /// <summary>Reads int values</summary>
+    public abstract class IntIndexInputReader
+    {
+        /// <summary>Reads next single int</summary>
+        public abstract int Next();
+    }
 
-  /** Reads int values. */
-  public abstract static class Reader {
+    /// <summary>
+    /// Records a single skip-point in the <seealso cref="IntIndexInput.Reader"/>. </summary>
+    public abstract class IntIndexInputIndex
+    {
+        public abstract void Read(DataInput indexIn, bool absolute);
 
-    /** Reads next single int */
-    public abstract int next() ;
-  }
+        /// <summary>Seeks primary stream to the last read offset </summary>
+        public abstract void Seek(IntIndexInputReader stream);
+
+        public abstract void CopyFrom(IntIndexInputIndex other);
+
+        public abstract IntIndexInputIndex Clone();
+    }
 }

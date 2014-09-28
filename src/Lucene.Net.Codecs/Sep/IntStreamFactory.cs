@@ -1,6 +1,4 @@
-package codecs.sep;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,20 +15,28 @@ package codecs.sep;
  * limitations under the License.
  */
 
-import store.Directory;
-import store.IOContext;
+namespace Lucene.Net.Codecs.Sep
+{
 
-import java.io.IOException;
+    using Store;
 
-/** Provides int reader and writer to specified files.
- *
- * @lucene.experimental */
-public abstract class IntStreamFactory {
-  /** Create an {@link IntIndexInput} on the provided
-   *  fileName. */
-  public abstract IntIndexInput openInput(Directory dir, String fileName, IOContext context) ;
+    /// <summary>
+    /// Provides int reader and writer to specified files.
+    /// 
+    /// @lucene.experimental 
+    /// </summary>
+    public abstract class IntStreamFactory
+    {
 
-  /** Create an {@link IntIndexOutput} on the provided
-   *  fileName. */
-  public abstract IntIndexOutput createOutput(Directory dir, String fileName, IOContext context) ;
+        /// <summary>
+        /// Create an <seealso cref="IntIndexInput"/> on the provided fileName. 
+        /// </summary>
+        public abstract IntIndexInput OpenInput(Directory dir, string fileName, IOContext context);
+
+        /// <summary>
+        /// Create an <seealso cref="IntIndexOutput"/> on the provided fileName. 
+        /// </summary>
+        public abstract IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext context);
+    }
+
 }

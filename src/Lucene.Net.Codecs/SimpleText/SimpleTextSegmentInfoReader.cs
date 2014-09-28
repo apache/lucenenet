@@ -44,7 +44,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override SegmentInfo Read(Directory directory, string segmentName, IOContext context)
         {
-            BytesRef scratch = new BytesRef();
+            var scratch = new BytesRef();
             string segFileName = IndexFileNames.SegmentFileName(segmentName, "",
                 SimpleTextSegmentInfoFormat.SI_EXTENSION);
             ChecksumIndexInput input = directory.OpenChecksumInput(segFileName, context);
@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.ReadLine(input, scratch);
                 Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_FILES));
                 int numFiles = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_FILES.Length, scratch));
-                HashSet<string> files = new HashSet<string>();
+                var files = new HashSet<string>();
 
                 for (int i = 0; i < numFiles; i++)
                 {

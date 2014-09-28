@@ -1,6 +1,4 @@
-package codecs.sep;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,184 +15,209 @@ package codecs.sep;
  * limitations under the License.
  */
 
-import java.io.IOException;
-import java.util.Arrays;
+namespace Lucene.Net.Codecs.Sep
+{
+    using System.Diagnostics;
+    using Index;
+    using Store;
+    using Support;
 
-import store.IndexOutput;
-import codecs.MultiLevelSkipListWriter;
-import index.FieldInfo.IndexOptions;
+	/// <summary>
+	/// Implements the skip list writer for the default posting list format
+	/// that stores positions and payloads.
+	/// 
+	/// @lucene.experimental
+	/// </summary>
+	/// <remarks>
+    /// TODO: -- skip data should somehow be more local to the particular stream 
+    /// (doc, freq, pos, payload)
+	/// </remarks>
+	internal class SepSkipListWriter : MultiLevelSkipListWriter
+	{
+	  private readonly int[] _lastSkipDoc;
+	  private readonly int[] _lastSkipPayloadLength;
+	  private readonly long[] _lastSkipPayloadPointer;
+      private FieldInfo.IndexOptions _indexOptions;
 
-// TODO: -- skip data should somehow be more local to the
-// particular stream (doc, freq, pos, payload)
+      private readonly IntIndexOutputIndex[] _docIndex;
+      private readonly IntIndexOutputIndex[] _freqIndex;
+      private readonly IntIndexOutputIndex[] _posIndex;
 
-/**
- * Implements the skip list writer for the default posting list format
- * that stores positions and payloads.
- *
- * @lucene.experimental
- */
-class SepSkipListWriter extends MultiLevelSkipListWriter {
-  private int[] lastSkipDoc;
-  private int[] lastSkipPayloadLength;
-  private long[] lastSkipPayloadPointer;
+	  private readonly IntIndexOutput _freqOutput;
+	  private IntIndexOutput _posOutput;
+      private IndexOutput _payloadOutput;
 
-  private IntIndexOutput.Index[] docIndex;
-  private IntIndexOutput.Index[] freqIndex;
-  private IntIndexOutput.Index[] posIndex;
-  
-  private IntIndexOutput freqOutput;
-  // TODO: -- private again
-  IntIndexOutput posOutput;
-  // TODO: -- private again
-  IndexOutput payloadOutput;
+	  private int _curDoc;
+	  private bool _curStorePayloads;
+	  private int _curPayloadLength;
+	  private long _curPayloadPointer;
 
-  private int curDoc;
-  private bool curStorePayloads;
-  private int curPayloadLength;
-  private long curPayloadPointer;
-  
-  SepSkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount,
-                    IntIndexOutput freqOutput,
-                    IntIndexOutput docOutput,
-                    IntIndexOutput posOutput,
-                    IndexOutput payloadOutput)
-     {
-    super(skipInterval, numberOfSkipLevels, docCount);
+	    internal SepSkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount, IntIndexOutput freqOutput,
+	        IntIndexOutput docOutput, IntIndexOutput posOutput, IndexOutput payloadOutput)
+	        : base(skipInterval, numberOfSkipLevels, docCount)
+	    {
 
-    this.freqOutput = freqOutput;
-    this.posOutput = posOutput;
-    this.payloadOutput = payloadOutput;
-    
-    lastSkipDoc = new int[numberOfSkipLevels];
-    lastSkipPayloadLength = new int[numberOfSkipLevels];
-    // TODO: -- also cutover normal IndexOutput to use getIndex()?
-    lastSkipPayloadPointer = new long[numberOfSkipLevels];
+	        _freqOutput = freqOutput;
+	        _posOutput = posOutput;
+	        _payloadOutput = payloadOutput;
 
-    freqIndex = new IntIndexOutput.Index[numberOfSkipLevels];
-    docIndex = new IntIndexOutput.Index[numberOfSkipLevels];
-    posIndex = new IntIndexOutput.Index[numberOfSkipLevels];
+	        _lastSkipDoc = new int[numberOfSkipLevels];
+	        _lastSkipPayloadLength = new int[numberOfSkipLevels];
+	        // TODO: -- also cutover normal IndexOutput to use getIndex()?
+	        _lastSkipPayloadPointer = new long[numberOfSkipLevels];
 
-    for(int i=0;i<numberOfSkipLevels;i++) {
-      if (freqOutput != null) {
-        freqIndex[i] = freqOutput.index();
-      }
-      docIndex[i] = docOutput.index();
-      if (posOutput != null) {
-        posIndex[i] = posOutput.index();
-      }
-    }
-  }
+	        _freqIndex = new IntIndexOutputIndex[numberOfSkipLevels];
+	        _docIndex = new IntIndexOutputIndex[numberOfSkipLevels];
+	        _posIndex = new IntIndexOutputIndex[numberOfSkipLevels];
 
-  IndexOptions indexOptions;
+	        for (var i = 0; i < numberOfSkipLevels; i++)
+	        {
+	            if (freqOutput != null)
+	            {
+	                _freqIndex[i] = freqOutput.Index();
+	            }
+	            _docIndex[i] = docOutput.Index();
+	            if (posOutput != null)
+	            {
+	                _posIndex[i] = posOutput.Index();
+	            }
+	        }
+	    }
 
-  void setIndexOptions(IndexOptions v) {
-    indexOptions = v;
-  }
+	    internal virtual FieldInfo.IndexOptions IndexOptions
+	    {
+	        set { _indexOptions = value; }
+	    }
 
-  void setPosOutput(IntIndexOutput posOutput)  {
-    this.posOutput = posOutput;
-    for(int i=0;i<numberOfSkipLevels;i++) {
-      posIndex[i] = posOutput.index();
-    }
-  }
+	    internal virtual IntIndexOutput PosOutput
+	    {
+	        set
+	        {
+	            _posOutput = value;
+                for (var i = 0; i < NumberOfSkipLevels; i++)
+	            {
+	                _posIndex[i] = value.Index();
+	            }
+	        }
+	    }
 
-  void setPayloadOutput(IndexOutput payloadOutput) {
-    this.payloadOutput = payloadOutput;
-  }
+	    internal virtual IndexOutput PayloadOutput
+	    {
+	        set { _payloadOutput = value; }
+	    }
 
-  /**
-   * Sets the values for the current skip data. 
-   */
-  // Called @ every index interval (every 128th (by default)
-  // doc)
-  void setSkipData(int doc, bool storePayloads, int payloadLength) {
-    this.curDoc = doc;
-    this.curStorePayloads = storePayloads;
-    this.curPayloadLength = payloadLength;
-    if (payloadOutput != null) {
-      this.curPayloadPointer = payloadOutput.getFilePointer();
-    }
-  }
+	    /// <summary>
+	    /// Sets the values for the current skip data. 
+        /// Called @ every index interval (every 128th (by default) doc)
+	    /// </summary>
+	    internal virtual void SetSkipData(int doc, bool storePayloads, int payloadLength)
+	    {
+	        _curDoc = doc;
+	        _curStorePayloads = storePayloads;
+	        _curPayloadLength = payloadLength;
+	        if (_payloadOutput != null)
+	        {
+	            _curPayloadPointer = _payloadOutput.FilePointer;
+	        }
+	    }
+        
+	    /// <summary>
+	    /// Called @ start of new term
+	    /// </summary>
+        protected internal virtual void ResetSkip(IntIndexOutputIndex topDocIndex, IntIndexOutputIndex topFreqIndex,
+	        IntIndexOutputIndex topPosIndex)
+	    {
+	        base.ResetSkip();
 
-  // Called @ start of new term
-  protected void resetSkip(IntIndexOutput.Index topDocIndex, IntIndexOutput.Index topFreqIndex, IntIndexOutput.Index topPosIndex)
-     {
-    super.resetSkip();
+	        Arrays.Fill(_lastSkipDoc, 0);
+	        Arrays.Fill(_lastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
+	        for (int i = 0; i < NumberOfSkipLevels; i++)
+	        {
+	            _docIndex[i].CopyFrom(topDocIndex, true);
+	            if (_freqOutput != null)
+	            {
+	                _freqIndex[i].CopyFrom(topFreqIndex, true);
+	            }
+	            if (_posOutput != null)
+	            {
+	                _posIndex[i].CopyFrom(topPosIndex, true);
+	            }
+	        }
+	        if (_payloadOutput != null)
+	        {
+	            Arrays.Fill(_lastSkipPayloadPointer, _payloadOutput.FilePointer);
+	        }
+	    }
 
-    Arrays.fill(lastSkipDoc, 0);
-    Arrays.fill(lastSkipPayloadLength, -1);  // we don't have to write the first length in the skip list
-    for(int i=0;i<numberOfSkipLevels;i++) {
-      docIndex[i].copyFrom(topDocIndex, true);
-      if (freqOutput != null) {
-        freqIndex[i].copyFrom(topFreqIndex, true);
-      }
-      if (posOutput != null) {
-        posIndex[i].copyFrom(topPosIndex, true);
-      }
-    }
-    if (payloadOutput != null) {
-      Arrays.fill(lastSkipPayloadPointer, payloadOutput.getFilePointer());
-    }
-  }
-  
-  @Override
-  protected void writeSkipData(int level, IndexOutput skipBuffer)  {
-    // To efficiently store payloads in the posting lists we do not store the length of
-    // every payload. Instead we omit the length for a payload if the previous payload had
-    // the same length.
-    // However, in order to support skipping the payload length at every skip point must be known.
-    // So we use the same length encoding that we use for the posting lists for the skip data as well:
-    // Case 1: current field does not store payloads
-    //           SkipDatum                 --> DocSkip, FreqSkip, ProxSkip
-    //           DocSkip,FreqSkip,ProxSkip --> VInt
-    //           DocSkip records the document number before every SkipInterval th  document in TermFreqs. 
-    //           Document numbers are represented as differences from the previous value in the sequence.
-    // Case 2: current field stores payloads
-    //           SkipDatum                 --> DocSkip, PayloadLength?, FreqSkip,ProxSkip
-    //           DocSkip,FreqSkip,ProxSkip --> VInt
-    //           PayloadLength             --> VInt    
-    //         In this case DocSkip/2 is the difference between
-    //         the current and the previous value. If DocSkip
-    //         is odd, then a PayloadLength encoded as VInt follows,
-    //         if DocSkip is even, then it is assumed that the
-    //         current payload length equals the length at the previous
-    //         skip point
+	    protected override void WriteSkipData(int level, IndexOutput skipBuffer)
+	    {
+	        // To efficiently store payloads in the posting lists we do not store the length of
+	        // every payload. Instead we omit the length for a payload if the previous payload had
+	        // the same length.
+	        // However, in order to support skipping the payload length at every skip point must be known.
+	        // So we use the same length encoding that we use for the posting lists for the skip data as well:
+	        // Case 1: current field does not store payloads
+	        //           SkipDatum                 --> DocSkip, FreqSkip, ProxSkip
+	        //           DocSkip,FreqSkip,ProxSkip --> VInt
+	        //           DocSkip records the document number before every SkipInterval th  document in TermFreqs. 
+	        //           Document numbers are represented as differences from the previous value in the sequence.
+	        // Case 2: current field stores payloads
+	        //           SkipDatum                 --> DocSkip, PayloadLength?, FreqSkip,ProxSkip
+	        //           DocSkip,FreqSkip,ProxSkip --> VInt
+	        //           PayloadLength             --> VInt    
+	        //         In this case DocSkip/2 is the difference between
+	        //         the current and the previous value. If DocSkip
+	        //         is odd, then a PayloadLength encoded as VInt follows,
+	        //         if DocSkip is even, then it is assumed that the
+	        //         current payload length equals the length at the previous
+	        //         skip point
 
-    Debug.Assert( indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !curStorePayloads;
+            Debug.Assert(_indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !_curStorePayloads);
 
-    if (curStorePayloads) {
-      int delta = curDoc - lastSkipDoc[level];
-      if (curPayloadLength == lastSkipPayloadLength[level]) {
-        // the current payload length equals the length at the previous skip point,
-        // so we don't store the length again
-        skipBuffer.writeVInt(delta << 1);
-      } else {
-        // the payload length is different from the previous one. We shift the DocSkip, 
-        // set the lowest bit and store the current payload length as VInt.
-        skipBuffer.writeVInt(delta << 1 | 1);
-        skipBuffer.writeVInt(curPayloadLength);
-        lastSkipPayloadLength[level] = curPayloadLength;
-      }
-    } else {
-      // current field does not store payloads
-      skipBuffer.writeVInt(curDoc - lastSkipDoc[level]);
-    }
+	        if (_curStorePayloads)
+	        {
+	            int delta = _curDoc - _lastSkipDoc[level];
+	            if (_curPayloadLength == _lastSkipPayloadLength[level])
+	            {
+	                // the current payload length equals the length at the previous skip point,
+	                // so we don't store the length again
+	                skipBuffer.WriteVInt(delta << 1);
+	            }
+	            else
+	            {
+	                // the payload length is different from the previous one. We shift the DocSkip, 
+	                // set the lowest bit and store the current payload length as VInt.
+	                skipBuffer.WriteVInt(delta << 1 | 1);
+	                skipBuffer.WriteVInt(_curPayloadLength);
+	                _lastSkipPayloadLength[level] = _curPayloadLength;
+	            }
+	        }
+	        else
+	        {
+	            // current field does not store payloads
+	            skipBuffer.WriteVInt(_curDoc - _lastSkipDoc[level]);
+	        }
 
-    if (indexOptions != IndexOptions.DOCS_ONLY) {
-      freqIndex[level].mark();
-      freqIndex[level].write(skipBuffer, false);
-    }
-    docIndex[level].mark();
-    docIndex[level].write(skipBuffer, false);
-    if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) {
-      posIndex[level].mark();
-      posIndex[level].write(skipBuffer, false);
-      if (curStorePayloads) {
-        skipBuffer.writeVInt((int) (curPayloadPointer - lastSkipPayloadPointer[level]));
-      }
-    }
+            if (_indexOptions != FieldInfo.IndexOptions.DOCS_ONLY)
+	        {
+	            _freqIndex[level].Mark();
+	            _freqIndex[level].Write(skipBuffer, false);
+	        }
+	        _docIndex[level].Mark();
+	        _docIndex[level].Write(skipBuffer, false);
+	        if (_indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+	        {
+	            _posIndex[level].Mark();
+	            _posIndex[level].Write(skipBuffer, false);
+	            if (_curStorePayloads)
+	            {
+	                skipBuffer.WriteVInt((int) (_curPayloadPointer - _lastSkipPayloadPointer[level]));
+	            }
+	        }
 
-    lastSkipDoc[level] = curDoc;
-    lastSkipPayloadPointer[level] = curPayloadPointer;
-  }
+	        _lastSkipDoc[level] = _curDoc;
+	        _lastSkipPayloadPointer[level] = _curPayloadPointer;
+	    }
+	}
+
 }

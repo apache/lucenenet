@@ -258,12 +258,10 @@ namespace Lucene.Net.Codecs.SimpleText
         private Bits GetBinaryDocsWithField(FieldInfo fieldInfo)
         {
             var field = FIELDS[fieldInfo.Name];
-            var @in = (IndexInput)DATA.Clone();
-            BytesRef scratch = new BytesRef();
+            var input = (IndexInput)DATA.Clone();
+            var scratch = new BytesRef();
             
-            DecimalFormat decoder = new DecimalFormat(field.Pattern, new DecimalFormatSymbols(Locale.ROOT));
-
-            return new BitsAnonymousInnerClassHelper2(this, field, @in, scratch, decoder);
+            return new BitsAnonymousInnerClassHelper2(this, field, input, scratch);
         }
 
         private class BitsAnonymousInnerClassHelper2 : Bits
@@ -273,39 +271,32 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly OneField _field;
             private readonly IndexInput _input;
             private readonly BytesRef _scratch;
-            private readonly DecimalFormat _decoder;
 
             public BitsAnonymousInnerClassHelper2(SimpleTextDocValuesReader outerInstance, OneField field, 
-                IndexInput input, BytesRef scratch, DecimalFormat decoder)
+                IndexInput input, BytesRef scratch)
             {
                 _outerInstance = outerInstance;
                 _field = field;
                 _input = input;
                 _scratch = scratch;
-                _decoder = decoder;
             }
 
             public bool Get(int index)
             {
-
                 _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2)*index);
                 SimpleTextUtil.ReadLine(_input, _scratch);
                 Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
                 int len;
                 try
                 {
-                    len =
-                        (int)
-                            _decoder.parse(new string(_scratch.bytes, _scratch.offset + SimpleTextDocValuesWriter.LENGTH.length,
-                                _scratch.length - LENGTH.length, StandardCharsets.UTF_8));
+                    len = int.Parse(_scratch.Bytes.SubList( _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
                 }
-                catch (ParseException pe)
+                catch (FormatException ex)
                 {
-                    CorruptIndexException e =
-                        new CorruptIndexException("failed to parse int length (resource=" + _input + ")");
-                    e.initCause(pe);
-                    throw e;
+                    throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
                 }
+
                 // skip past bytes
                 var bytes = new sbyte[len];
                 _input.ReadBytes(bytes, 0, len);
