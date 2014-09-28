@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
-using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function
 {
@@ -56,7 +56,7 @@ namespace Lucene.Net.Queries.Function
             return this;
         }
 
-        public override void ExtractTerms(HashSet<Term> terms)
+        public override void ExtractTerms(ISet<Term> terms)
         {
         }
 
@@ -64,18 +64,16 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly FunctionQuery outerInstance;
 
-            protected internal readonly IndexSearcher searcher;
+            protected readonly IndexSearcher searcher;
             protected internal float queryNorm;
-            protected internal float queryWeight;
+            protected float queryWeight;
             protected internal readonly IDictionary context;
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: public FunctionWeight(IndexSearcher searcher) throws java.io.IOException
             public FunctionWeight(FunctionQuery outerInstance, IndexSearcher searcher)
             {
                 this.outerInstance = outerInstance;
                 this.searcher = searcher;
-                this.context = ValueSource.newContext(searcher);
+                this.context = ValueSource.NewContext(searcher);
                 outerInstance.func.CreateWeight(context, searcher);
             }
 
@@ -102,14 +100,14 @@ namespace Lucene.Net.Queries.Function
                 queryWeight *= this.queryNorm;
             }
 
-            public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+            public override Scorer Scorer(AtomicReaderContext ctx, Bits acceptDocs)
             {
-                return new AllScorer(outerInstance, context, acceptDocs, this, queryWeight);
+                return new AllScorer(outerInstance, ctx, acceptDocs, this, queryWeight);
             }
 
-            public override Explanation Explain(AtomicReaderContext context, int doc)
+            public override Explanation Explain(AtomicReaderContext ctx, int doc)
             {
-                return ((AllScorer)Scorer(context, context.reader().LiveDocs)).Explain(doc);
+                return ((AllScorer)Scorer(ctx, ctx.AtomicReader.LiveDocs)).Explain(doc);
             }
         }
 
@@ -165,8 +163,6 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public int advance(int target) throws java.io.IOException
             public override int Advance(int target)
             {
                 // this will work even if target==NO_MORE_DOCS
@@ -174,8 +170,6 @@ namespace Lucene.Net.Queries.Function
                 return NextDoc();
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public float score() throws java.io.IOException
             public override float Score()
             {
                 float score = qWeight * vals.FloatVal(doc);
@@ -191,43 +185,36 @@ namespace Lucene.Net.Queries.Function
                 return maxDoc;
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public int freq() throws java.io.IOException
             public override int Freq()
             {
                 return 1;
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: public Explanation explain(int doc) throws java.io.IOException
-            public virtual Explanation Explain(int doc)
+            public virtual Explanation Explain(int d)
             {
-                float sc = qWeight * vals.FloatVal(doc);
+                float sc = qWeight * vals.FloatVal(d);
 
                 Explanation result = new ComplexExplanation(true, sc, "FunctionQuery(" + outerInstance.func + "), product of:");
 
-                result.AddDetail(vals.Explain(doc));
+                result.AddDetail(vals.Explain(d));
                 result.AddDetail(new Explanation(Boost, "boost"));
                 result.AddDetail(new Explanation(weight.queryNorm, "queryNorm"));
                 return result;
             }
         }
 
-
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: @Override public Weight CreateWeight(IndexSearcher searcher) throws java.io.IOException
         public override Weight CreateWeight(IndexSearcher searcher)
         {
             return new FunctionQuery.FunctionWeight(this, searcher);
         }
 
-
         /// <summary>
-        /// Prints a user-readable version of this query. </summary>
+        /// Prints a user-readable version of this query.
+        /// </summary>
         public override string ToString(string field)
         {
             float boost = Boost;
-            return (boost != 1.0 ? "(" : "") + func.ToString() + (boost == 1.0 ? "" : ")^" + boost);
+            return (boost != 1.0 ? "(" : "") + func + (boost == 1.0 ? "" : ")^" + boost);
         }
 
 
@@ -235,12 +222,12 @@ namespace Lucene.Net.Queries.Function
         /// Returns true if <code>o</code> is equal to this. </summary>
         public override bool Equals(object o)
         {
-            if (!typeof(FunctionQuery).IsInstanceOfType(o))
+            var other = o as FunctionQuery;
+            if (other == null)
             {
                 return false;
             }
-            FunctionQuery other = (FunctionQuery)o;
-            return this.Boost == other.Boost && this.func.Equals(other.func);
+            return Boost == other.Boost && func.Equals(other.func);
         }
 
         /// <summary>
@@ -249,7 +236,5 @@ namespace Lucene.Net.Queries.Function
         {
             return func.GetHashCode() * 31 + Number.FloatToIntBits(Boost);
         }
-
     }
-
 }

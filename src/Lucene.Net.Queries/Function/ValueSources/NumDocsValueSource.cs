@@ -16,44 +16,40 @@
  */
 using System.Collections;
 using Lucene.Net.Index;
-using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Returns the value of <seealso cref="IndexReader#numDocs()"/>
-	/// for every document. This is the number of documents
-	/// excluding deletions.
-	/// </summary>
-	public class NumDocsValueSource : ValueSource
-	{
-	  public virtual string name()
-	  {
-		return "numdocs";
-	  }
+    /// Returns the value of <seealso cref="IndexReader#numDocs()"/>
+    /// for every document. This is the number of documents
+    /// excluding deletions.
+    /// </summary>
+    public class NumDocsValueSource : ValueSource
+    {
+        public virtual string Name
+        {
+            get { return "numdocs"; }
+        }
 
-	  public override string description()
-	  {
-		return name() + "()";
-	  }
+        public override string Description
+        {
+            get { return Name + "()"; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-		// Searcher has no numdocs so we must use the reader instead
-		return new ConstIntDocValues(ReaderUtil.getTopLevelContext(readerContext).reader().numDocs(), this);
-	  }
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            // Searcher has no numdocs so we must use the reader instead
+            return new ConstIntDocValues(ReaderUtil.GetTopLevelContext(readerContext).Reader.NumDocs, this);
+        }
 
-	  public override bool Equals(object o)
-	  {
-		return this.GetType() == o.GetType();
-	  }
+        public override bool Equals(object o)
+        {
+            return this.GetType() == o.GetType();
+        }
 
-	  public override int GetHashCode()
-	  {
-		return this.GetType().GetHashCode();
-	  }
-	}
-
+        public override int GetHashCode()
+        {
+            return this.GetType().GetHashCode();
+        }
+    }
 }

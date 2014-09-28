@@ -164,7 +164,7 @@ namespace Lucene.Net.Queries
                 return false;
             }
 
-            BooleanFilter other = (BooleanFilter)obj;
+            var other = (BooleanFilter)obj;
             return clauses.Equals(other.clauses);
         }
 

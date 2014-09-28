@@ -5,7 +5,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function
 {
@@ -83,9 +82,9 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly BoostedQuery outerInstance;
 
-            internal readonly IndexSearcher searcher;
-            internal Weight qWeight;
-            internal IDictionary fcontext;
+            private readonly IndexSearcher searcher;
+            private readonly Weight qWeight;
+            private readonly IDictionary fcontext;
 
             //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
             //ORIGINAL LINE: public BoostedWeight(IndexSearcher searcher) throws java.io.IOException
@@ -94,7 +93,7 @@ namespace Lucene.Net.Queries.Function
                 this.outerInstance = outerInstance;
                 this.searcher = searcher;
                 this.qWeight = outerInstance.q.CreateWeight(searcher);
-                this.fcontext = ValueSource.newContext(searcher);
+                this.fcontext = ValueSource.NewContext(searcher);
                 outerInstance.boostVal.CreateWeight(fcontext, searcher);
             }
 
@@ -106,8 +105,6 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public float getValueForNormalization() throws java.io.IOException
             public override float ValueForNormalization
             {
                 get
@@ -118,7 +115,7 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            public override void normalize(float norm, float topLevelBoost)
+            public override void Normalize(float norm, float topLevelBoost)
             {
                 topLevelBoost *= Boost;
                 qWeight.Normalize(norm, topLevelBoost);
@@ -145,7 +142,7 @@ namespace Lucene.Net.Queries.Function
                 float sc = subQueryExpl.Value * vals.FloatVal(doc);
                 Explanation res = new ComplexExplanation(true, sc, outerInstance.ToString() + ", product of:");
                 res.AddDetail(subQueryExpl);
-                res.AddDetail(vals.explain(doc));
+                res.AddDetail(vals.Explain(doc));
                 return res;
             }
         }
@@ -155,15 +152,13 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly BoostedQuery outerInstance;
 
-            internal readonly BoostedQuery.BoostedWeight weight;
-            internal readonly float qWeight;
-            internal readonly Scorer scorer;
-            internal readonly FunctionValues vals;
-            internal readonly AtomicReaderContext readerContext;
+            private readonly BoostedQuery.BoostedWeight weight;
+            private readonly float qWeight;
+            private readonly Scorer scorer;
+            private readonly FunctionValues vals;
+            private readonly AtomicReaderContext readerContext;
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: private CustomScorer(org.apache.lucene.index.AtomicReaderContext readerContext, BoostedQuery.BoostedWeight w, float qWeight, Scorer scorer, ValueSource vs) throws java.io.IOException
-            internal CustomScorer(BoostedQuery outerInstance, AtomicReaderContext readerContext, BoostedQuery.BoostedWeight w, float qWeight, Scorer scorer, ValueSource vs)
+            private CustomScorer(BoostedQuery outerInstance, AtomicReaderContext readerContext, BoostedQuery.BoostedWeight w, float qWeight, Scorer scorer, ValueSource vs)
                 : base(w)
             {
                 this.outerInstance = outerInstance;
@@ -179,22 +174,16 @@ namespace Lucene.Net.Queries.Function
                 return scorer.DocID();
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public int advance(int target) throws java.io.IOException
             public override int Advance(int target)
             {
                 return scorer.Advance(target);
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public int nextDoc() throws java.io.IOException
             public override int NextDoc()
             {
                 return scorer.NextDoc();
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public float score() throws java.io.IOException
             public override float Score()
             {
                 float score = qWeight * scorer.Score() * vals.FloatVal(scorer.DocID());
@@ -230,7 +219,7 @@ namespace Lucene.Net.Queries.Function
                 float sc = subQueryExpl.Value * vals.FloatVal(doc);
                 Explanation res = new ComplexExplanation(true, sc, outerInstance.ToString() + ", product of:");
                 res.AddDetail(subQueryExpl);
-                res.AddDetail(vals.explain(doc));
+                res.AddDetail(vals.Explain(doc));
                 return res;
             }
 
@@ -243,7 +232,7 @@ namespace Lucene.Net.Queries.Function
 
         public override string ToString(string field)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("boost(").Append(q.ToString(field)).Append(',').Append(boostVal).Append(')');
             sb.Append(ToStringUtils.Boost(Boost));
             return sb.ToString();
@@ -255,7 +244,7 @@ namespace Lucene.Net.Queries.Function
             {
                 return false;
             }
-            BoostedQuery other = (BoostedQuery)o;
+            var other = (BoostedQuery)o;
             return this.q.Equals(other.q) && this.boostVal.Equals(other.boostVal);
         }
 

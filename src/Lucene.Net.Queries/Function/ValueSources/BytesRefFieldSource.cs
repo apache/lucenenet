@@ -24,7 +24,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      * limitations under the License.
      */
     /// <summary>
-    /// An implementation for retrieving <seealso cref="FunctionValues"/> instances for string based fields.
+    /// An implementation for retrieving <seealso cref="FunctionValues"/> instances for str based fields.
     /// </summary>
     public class BytesRefFieldSource : FieldCacheSource
     {

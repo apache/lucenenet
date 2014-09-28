@@ -17,127 +17,127 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Abstract <seealso cref="ValueSource"/> implementation which wraps multiple ValueSources
-	/// and applies an extendible boolean function to their values.
-	/// 
-	/// </summary>
-	public abstract class MultiBoolFunction : BoolFunction
-	{
-	  protected internal readonly IList<ValueSource> sources;
+    /// Abstract <seealso cref="ValueSource"/> implementation which wraps multiple ValueSources
+    /// and applies an extendible boolean function to their values.
+    /// 
+    /// </summary>
+    public abstract class MultiBoolFunction : BoolFunction
+    {
+        protected readonly IList<ValueSource> sources;
 
-	  public MultiBoolFunction(IList<ValueSource> sources)
-	  {
-		this.sources = sources;
-	  }
+        protected MultiBoolFunction(IList<ValueSource> sources)
+        {
+            this.sources = sources;
+        }
 
-	  protected internal abstract string name();
+        protected abstract string Name { get; }
 
-	  protected internal abstract bool func(int doc, FunctionValues[] vals);
+        protected abstract bool Func(int doc, FunctionValues[] vals);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.docvalues.BoolDocValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override BoolDocValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues[] vals = new org.apache.lucene.queries.function.FunctionValues[sources.size()];
-		FunctionValues[] vals = new FunctionValues[sources.Count];
-		int i = 0;
-		foreach (ValueSource source in sources)
-		{
-		  vals[i++] = source.GetValues(context, readerContext);
-		}
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            var vals = new FunctionValues[sources.Count];
+            int i = 0;
+            foreach (ValueSource source in sources)
+            {
+                vals[i++] = source.GetValues(context, readerContext);
+            }
 
-		return new BoolDocValuesAnonymousInnerClassHelper(this, this, vals);
-	  }
+            return new BoolDocValuesAnonymousInnerClassHelper(this, this, vals);
+        }
 
-	  private class BoolDocValuesAnonymousInnerClassHelper : BoolDocValues
-	  {
-		  private readonly MultiBoolFunction outerInstance;
+        private class BoolDocValuesAnonymousInnerClassHelper : BoolDocValues
+        {
+            private readonly MultiBoolFunction outerInstance;
 
-		  private FunctionValues[] vals;
+            private readonly FunctionValues[] vals;
 
-		  public BoolDocValuesAnonymousInnerClassHelper(MultiBoolFunction outerInstance, MultiBoolFunction this, FunctionValues[] vals) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.vals = vals;
-		  }
+            public BoolDocValuesAnonymousInnerClassHelper(MultiBoolFunction outerInstance, MultiBoolFunction @this, FunctionValues[] vals)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.vals = vals;
+            }
 
-		  public override bool boolVal(int doc)
-		  {
-			return outerInstance.func(doc, vals);
-		  }
+            public override bool BoolVal(int doc)
+            {
+                return outerInstance.Func(doc, vals);
+            }
 
-		  public override string ToString(int doc)
-		  {
-			StringBuilder sb = new StringBuilder(outerInstance.name());
-			sb.Append('(');
-			bool first = true;
-			foreach (FunctionValues dv in vals)
-			{
-			  if (first)
-			  {
-				first = false;
-			  }
-			  else
-			  {
-				sb.Append(',');
-			  }
-			  sb.Append(dv.ToString(doc));
-			}
-			return sb.ToString();
-		  }
-	  }
+            public override string ToString(int doc)
+            {
+                var sb = new StringBuilder(outerInstance.Name);
+                sb.Append('(');
+                bool first = true;
+                foreach (FunctionValues dv in vals)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        sb.Append(',');
+                    }
+                    sb.Append(dv.ToString(doc));
+                }
+                return sb.ToString();
+            }
+        }
 
-	  public override string description()
-	  {
-		StringBuilder sb = new StringBuilder(name());
-		sb.Append('(');
-		bool first = true;
-		foreach (ValueSource source in sources)
-		{
-		  if (first)
-		  {
-			first = false;
-		  }
-		  else
-		  {
-			sb.Append(',');
-		  }
-		  sb.Append(source.description());
-		}
-		return sb.ToString();
-	  }
+        public override string Description
+        {
+            get
+            {
+                var sb = new StringBuilder(Name);
+                sb.Append('(');
+                bool first = true;
+                foreach (ValueSource source in sources)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        sb.Append(',');
+                    }
+                    sb.Append(source.Description);
+                }
+                return sb.ToString();
+            }
+        }
 
-	  public override int GetHashCode()
-	  {
-		return sources.GetHashCode() + name().GetHashCode();
-	  }
+        public override int GetHashCode()
+        {
+            return sources.GetHashCode() + Name.GetHashCode();
+        }
 
-	  public override bool Equals(object o)
-	  {
-		if (this.GetType() != o.GetType())
-		{
-			return false;
-		}
-		MultiBoolFunction other = (MultiBoolFunction)o;
-		return this.sources.Equals(other.sources);
-	  }
+        public override bool Equals(object o)
+        {
+            if (this.GetType() != o.GetType())
+            {
+                return false;
+            }
+            var other = o as MultiBoolFunction;
+            if (other == null)
+                return false;
+            return this.sources.Equals(other.sources);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		foreach (ValueSource source in sources)
-		{
-		  source.CreateWeight(context, searcher);
-		}
-	  }
-	}
-
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            foreach (ValueSource source in sources)
+            {
+                source.CreateWeight(context, searcher);
+            }
+        }
+    }
 }

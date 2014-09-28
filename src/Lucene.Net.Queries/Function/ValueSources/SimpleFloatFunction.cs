@@ -17,48 +17,47 @@
  */
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// A simple float function with a single argument
-	/// </summary>
-	 public abstract class SimpleFloatFunction : SingleFunction
-	 {
-	  public SimpleFloatFunction(ValueSource source) : base(source)
-	  {
-	  }
+    /// A simple float function with a single argument
+    /// </summary>
+    public abstract class SimpleFloatFunction : SingleFunction
+    {
+        protected SimpleFloatFunction(ValueSource source)
+            : base(source)
+        {
+        }
 
-	  protected internal abstract float func(int doc, FunctionValues vals);
+        protected abstract float Func(int doc, FunctionValues vals);
 
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-		FunctionValues vals = source.GetValues(context, readerContext);
-		return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
-	  }
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            FunctionValues vals = source.GetValues(context, readerContext);
+            return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
+        }
 
-	  private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
-	  {
-		  private readonly SimpleFloatFunction outerInstance;
+        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        {
+            private readonly SimpleFloatFunction outerInstance;
+            private readonly FunctionValues vals;
 
-		  private FunctionValues vals;
+            public FloatDocValuesAnonymousInnerClassHelper(SimpleFloatFunction outerInstance, SimpleFloatFunction @this, FunctionValues vals)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.vals = vals;
+            }
 
-		  public FloatDocValuesAnonymousInnerClassHelper(SimpleFloatFunction outerInstance, SimpleFloatFunction this, FunctionValues vals) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.vals = vals;
-		  }
-
-		  public override float FloatVal(int doc)
-		  {
-			return outerInstance.func(doc, vals);
-		  }
-		  public override string ToString(int doc)
-		  {
-			return outerInstance.name() + '(' + vals.ToString(doc) + ')';
-		  }
-	  }
-	 }
-
+            public override float FloatVal(int doc)
+            {
+                return outerInstance.Func(doc, vals);
+            }
+            public override string ToString(int doc)
+            {
+                return outerInstance.Name + '(' + vals.ToString(doc) + ')';
+            }
+        }
+    }
 }

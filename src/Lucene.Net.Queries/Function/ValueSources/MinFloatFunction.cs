@@ -15,39 +15,36 @@
  * limitations under the License.
  */
 using System;
-using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
+    /// <summary>
+    /// <code>MinFloatFunction</code> returns the min of it's components.
+    /// </summary>
+    public class MinFloatFunction : MultiFloatFunction
+    {
+        public MinFloatFunction(ValueSource[] sources)
+            : base(sources)
+        {
+        }
 
+        protected override string Name
+        {
+            get { return "min"; }
+        }
 
-	/// <summary>
-	/// <code>MinFloatFunction</code> returns the min of it's components.
-	/// </summary>
-	public class MinFloatFunction : MultiFloatFunction
-	{
-	  public MinFloatFunction(ValueSource[] sources) : base(sources)
-	  {
-	  }
-
-	  protected internal override string name()
-	  {
-		return "min";
-	  }
-
-	  protected internal override float func(int doc, FunctionValues[] valsArr)
-	  {
-		if (valsArr.Length == 0)
-		{
-			return 0.0f;
-		}
-		float val = float.PositiveInfinity;
-		foreach (FunctionValues vals in valsArr)
-		{
-		  val = Math.Min(vals.FloatVal(doc), val);
-		}
-		return val;
-	  }
-	}
-
+        protected override float Func(int doc, FunctionValues[] valsArr)
+        {
+            if (valsArr.Length == 0)
+            {
+                return 0.0f;
+            }
+            float val = float.PositiveInfinity;
+            foreach (FunctionValues vals in valsArr)
+            {
+                val = Math.Min(vals.FloatVal(doc), val);
+            }
+            return val;
+        }
+    }
 }

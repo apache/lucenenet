@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 using System.Collections;
-using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -50,7 +50,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override string Description
         {
-            get { return "scale(" + source.Description() + "," + min + "," + max + ")"; }
+            get { return "scale(" + source.Description + "," + min + "," + max + ")"; }
         }
 
         private class ScaleInfo
@@ -59,26 +59,22 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		internal float maxVal;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private ScaleInfo createScaleInfo(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
 	  private ScaleInfo CreateScaleInfo(IDictionary context, AtomicReaderContext readerContext)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<org.apache.lucene.index.AtomicReaderContext> leaves = org.apache.lucene.index.ReaderUtil.getTopLevelContext(readerContext).leaves();
-		IList<AtomicReaderContext> leaves = ReaderUtil.GetTopLevelContext(readerContext).leaves();
+		var leaves = ReaderUtil.GetTopLevelContext(readerContext).Leaves;
 
 		float minVal = float.PositiveInfinity;
 		float maxVal = float.NegativeInfinity;
 
 		foreach (AtomicReaderContext leaf in leaves)
 		{
-		  int maxDoc = leaf.reader().maxDoc();
+		  int maxDoc = leaf.Reader.MaxDoc;
 		  FunctionValues vals = source.GetValues(context, leaf);
 		  for (int i = 0; i < maxDoc; i++)
 		  {
 
 		  float val = vals.FloatVal(i);
-		  if ((float.floatToRawIntBits(val) & (0xff << 23)) == 0xff << 23)
+		  if ((Number.FloatToRawIntBits(val) & (0xff << 23)) == 0xff << 23)
 		  {
 			// if the exponent in the float is all ones, then this is +Inf, -Inf or NaN
 			// which don't make sense to factor into the scale function
@@ -108,31 +104,20 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		return scaleInfo;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
 	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
 	  {
 
-		ScaleInfo scaleInfo = (ScaleInfo)context[ScaleFloatFunction.this];
+		var scaleInfo = (ScaleInfo)context[ScaleFloatFunction.this];
 		if (scaleInfo == null)
 		{
-		  scaleInfo = createScaleInfo(context, readerContext);
+		  scaleInfo = CreateScaleInfo(context, readerContext);
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float scale = (scaleInfo.maxVal-scaleInfo.minVal==0) ? 0 : (max-min)/(scaleInfo.maxVal-scaleInfo.minVal);
 		float scale = (scaleInfo.maxVal - scaleInfo.minVal == 0) ? 0 : (max - min) / (scaleInfo.maxVal - scaleInfo.minVal);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float minSource = scaleInfo.minVal;
 		float minSource = scaleInfo.minVal;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float maxSource = scaleInfo.maxVal;
 		float maxSource = scaleInfo.maxVal;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues vals = source.GetValues(context, readerContext);
-		FunctionValues vals = source.GetValues(context, readerContext);
-
+		var vals = source.GetValues(context, readerContext);
 		return new FloatDocValuesAnonymousInnerClassHelper(this, this, scale, minSource, maxSource, vals);
 	  }
 
@@ -140,12 +125,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 	  {
 		  private readonly ScaleFloatFunction outerInstance;
 
-		  private float scale;
-		  private float minSource;
-		  private float maxSource;
-		  private FunctionValues vals;
+		  private readonly float scale;
+		  private readonly float minSource;
+		  private readonly float maxSource;
+		  private readonly FunctionValues vals;
 
-		  public FloatDocValuesAnonymousInnerClassHelper(ScaleFloatFunction outerInstance, ScaleFloatFunction this, float scale, float minSource, float maxSource, FunctionValues vals) : base(this)
+		  public FloatDocValuesAnonymousInnerClassHelper(ScaleFloatFunction outerInstance, ScaleFloatFunction @this, float scale, float minSource, float maxSource, FunctionValues vals) : base(@this)
 		  {
 			  this.outerInstance = outerInstance;
 			  this.scale = scale;
@@ -164,8 +149,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
 	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
 	  {
 		source.CreateWeight(context, searcher);
@@ -183,13 +166,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
 	  public override bool Equals(object o)
 	  {
-		if (typeof(ScaleFloatFunction) != o.GetType())
-		{
-			return false;
-		}
-		ScaleFloatFunction other = (ScaleFloatFunction)o;
+		var other = o as ScaleFloatFunction;
+	      if (other == null)
+	          return false;
 		return this.min == other.min && this.max == other.max && this.source.Equals(other.source);
 	  }
 	}
-
-}s
+}

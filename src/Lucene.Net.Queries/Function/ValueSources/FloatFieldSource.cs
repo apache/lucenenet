@@ -19,128 +19,121 @@ using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using Lucene.Net.Util.Mutable;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// Obtains float field values from <seealso cref="IFieldCache#getFloats"/> and makes those
-	/// values available as other numeric types, casting as needed.
-	/// </summary>
-	public class FloatFieldSource : FieldCacheSource
-	{
+    /// Obtains float field values from <seealso cref="IFieldCache#getFloats"/> and makes those
+    /// values available as other numeric types, casting as needed.
+    /// </summary>
+    public class FloatFieldSource : FieldCacheSource
+    {
 
-	  protected internal readonly FieldCache.FloatParser parser;
+        protected internal readonly FieldCache.IFloatParser parser;
 
-	  public FloatFieldSource(string field) : this(field, null)
-	  {
-	  }
+        public FloatFieldSource(string field)
+            : this(field, null)
+        {
+        }
 
-	  public FloatFieldSource(string field, IFieldCache.FloatParser parser) : base(field)
-	  {
-		this.parser = parser;
-	  }
+        public FloatFieldSource(string field, FieldCache.IFloatParser parser)
+            : base(field)
+        {
+            this.parser = parser;
+        }
 
         public override string Description
         {
             get { return "float(" + field + ')'; }
         }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.search.FieldCache.Floats arr = cache.getFloats(readerContext.reader(), field, parser, true);
-		FieldCache.Floats arr = cache.GetFloats(readerContext.AtomicReader, field, parser, true);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.Bits valid = cache.getDocsWithField(readerContext.reader(), field);
-		Bits valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            var arr = cache.GetFloats(readerContext.AtomicReader, field, parser, true);
+            var valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
+            return new FloatDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
+        }
 
-		return new FloatDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
-	  }
+        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        {
+            private readonly FloatFieldSource outerInstance;
 
-	  private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
-	  {
-		  private readonly FloatFieldSource outerInstance;
+            private readonly FieldCache.Floats arr;
+            private readonly Bits valid;
 
-		  private readonly FieldCache.Floats arr;
-		  private readonly Bits valid;
+            public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource outerInstance, FloatFieldSource @this, FieldCache.Floats arr, Bits valid)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.arr = arr;
+                this.valid = valid;
+            }
 
-		  public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource outerInstance, FloatFieldSource this, FieldCache.Floats arr, Bits valid) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.arr = arr;
-			  this.valid = valid;
-		  }
+            public override float FloatVal(int doc)
+            {
+                return arr.Get(doc);
+            }
 
-		  public override float FloatVal(int doc)
-		  {
-			return arr.get(doc);
-		  }
+            public override object ObjectVal(int doc)
+            {
+                return valid.Get(doc) ? arr.Get(doc) : (float?)null;
+            }
 
-		  public override object objectVal(int doc)
-		  {
-			return valid.get(doc) ? arr.get(doc) : null;
-		  }
+            public override bool Exists(int doc)
+            {
+                return arr.Get(doc) != 0 || valid.Get(doc);
+            }
 
-		  public override bool exists(int doc)
-		  {
-			return arr.get(doc) != 0 || valid.get(doc);
-		  }
+            public override AbstractValueFiller ValueFiller
+            {
+                get
+                {
+                    return new ValueFillerAnonymousInnerClassHelper(this);
+                }
+            }
 
-		  public override ValueFiller ValueFiller
-		  {
-			  get
-			  {
-				return new ValueFillerAnonymousInnerClassHelper(this);
-			  }
-		  }
+            private class ValueFillerAnonymousInnerClassHelper : AbstractValueFiller
+            {
+                private readonly FloatDocValuesAnonymousInnerClassHelper outerInstance;
 
-		  private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-		  {
-			  private readonly FloatDocValuesAnonymousInnerClassHelper outerInstance;
+                public ValueFillerAnonymousInnerClassHelper(FloatDocValuesAnonymousInnerClassHelper outerInstance)
+                {
+                    this.outerInstance = outerInstance;
+                    mval = new MutableValueFloat();
+                }
 
-			  public ValueFillerAnonymousInnerClassHelper(FloatDocValuesAnonymousInnerClassHelper outerInstance)
-			  {
-				  this.outerInstance = outerInstance;
-				  mval = new MutableValueFloat();
-			  }
+                private readonly MutableValueFloat mval;
 
-			  private readonly MutableValueFloat mval;
+                public override MutableValue Value
+                {
+                    get
+                    {
+                        return mval;
+                    }
+                }
 
-			  public override MutableValue Value
-			  {
-				  get
-				  {
-					return mval;
-				  }
-			  }
+                public override void FillValue(int doc)
+                {
+                    mval.Value = outerInstance.arr.Get(doc);
+                    mval.Exists = mval.Value != 0 || outerInstance.valid.Get(doc);
+                }
+            }
+        }
 
-			  public override void fillValue(int doc)
-			  {
-				mval.value = outerInstance.arr.get(doc);
-				mval.exists = mval.value != 0 || outerInstance.valid.get(doc);
-			  }
-		  }
+        public override bool Equals(object o)
+        {
+            var other = o as FloatFieldSource;
+            if (other == null)
+                return false;
+            return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
+        }
 
-	  }
-
-	  public override bool Equals(object o)
-	  {
-		if (o.GetType() != typeof(FloatFieldSource))
-		{
-			return false;
-		}
-		FloatFieldSource other = (FloatFieldSource)o;
-		return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
-	  }
-
-	  public override int GetHashCode()
-	  {
-		int h = parser == null ? typeof(float?).GetHashCode() : parser.GetType().GetHashCode();
-		h += base.GetHashCode();
-		return h;
-	  }
-	}
-
+        public override int GetHashCode()
+        {
+            int h = parser == null ? typeof(float?).GetHashCode() : parser.GetType().GetHashCode();
+            h += base.GetHashCode();
+            return h;
+        }
+    }
 }

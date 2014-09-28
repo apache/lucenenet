@@ -30,7 +30,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     {
         protected internal readonly IList<ValueSource> sources;
 
-        public MultiFunction(IList<ValueSource> sources)
+        protected MultiFunction(IList<ValueSource> sources)
         {
             this.sources = sources;
         }
@@ -44,7 +44,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public static string GetDescription(string name, IList<ValueSource> sources)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append(name).Append('(');
             bool firstTime = true;
             foreach (ValueSource source in sources)
@@ -95,7 +95,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public static string ToString(string name, FunctionValues[] valsArr, int doc)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append(name).Append('(');
             bool firstTime = true;
             foreach (FunctionValues vals in valsArr)

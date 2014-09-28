@@ -15,39 +15,36 @@
  * limitations under the License.
  */
 using System;
-using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
+    /// <summary>
+    /// <code>MaxFloatFunction</code> returns the max of it's components.
+    /// </summary>
+    public class MaxFloatFunction : MultiFloatFunction
+    {
+        public MaxFloatFunction(ValueSource[] sources)
+            : base(sources)
+        {
+        }
 
+        protected override string Name
+        {
+            get { return "max"; }
+        }
 
-	/// <summary>
-	/// <code>MaxFloatFunction</code> returns the max of it's components.
-	/// </summary>
-	public class MaxFloatFunction : MultiFloatFunction
-	{
-	  public MaxFloatFunction(ValueSource[] sources) : base(sources)
-	  {
-	  }
-
-	  protected internal override string name()
-	  {
-		return "max";
-	  }
-
-	  protected internal override float func(int doc, FunctionValues[] valsArr)
-	  {
-		if (valsArr.Length == 0)
-		{
-			return 0.0f;
-		}
-		float val = float.NegativeInfinity;
-		foreach (FunctionValues vals in valsArr)
-		{
-		  val = Math.Max(vals.FloatVal(doc), val);
-		}
-		return val;
-	  }
-	}
-
+        protected override float Func(int doc, FunctionValues[] valsArr)
+        {
+            if (valsArr.Length == 0)
+            {
+                return 0.0f;
+            }
+            float val = float.NegativeInfinity;
+            foreach (FunctionValues vals in valsArr)
+            {
+                val = Math.Max(vals.FloatVal(doc), val);
+            }
+            return val;
+        }
+    }
 }

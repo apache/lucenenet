@@ -15,34 +15,29 @@
  * limitations under the License.
  */
 using System;
-using org.apache.lucene.queries.function;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
+    /// <summary>
+    /// Function to raise the base "a" to the power "b"
+    /// </summary>
+    public class PowFloatFunction : DualFloatFunction
+    {
+        /// <param name="a">  the base. </param>
+        /// <param name="b">  the exponent. </param>
+        public PowFloatFunction(ValueSource a, ValueSource b)
+            : base(a, b)
+        {
+        }
 
+        protected override string Name
+        {
+            get { return "pow"; }
+        }
 
-	/// <summary>
-	/// Function to raise the base "a" to the power "b"
-	/// </summary>
-	public class PowFloatFunction : DualFloatFunction
-	{
-	 /// <param name="a">  the base. </param>
-	 /// <param name="b">  the exponent. </param>
-	  public PowFloatFunction(ValueSource a, ValueSource b) : base(a,b)
-	  {
-	  }
-
-	  protected internal override string name()
-	  {
-		return "pow";
-	  }
-
-	  protected internal override float func(int doc, FunctionValues aVals, FunctionValues bVals)
-	  {
-		return (float)Math.Pow(aVals.FloatVal(doc), bVals.FloatVal(doc));
-	  }
-	}
-
-
-
+        protected override float Func(int doc, FunctionValues aVals, FunctionValues bVals)
+        {
+            return (float)Math.Pow(aVals.FloatVal(doc), bVals.FloatVal(doc));
+        }
+    }
 }

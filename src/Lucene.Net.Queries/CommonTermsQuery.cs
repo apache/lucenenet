@@ -67,7 +67,7 @@ namespace Lucene.Net.Queries
         protected internal readonly BooleanClause.Occur highFreqOccur;
         protected internal float lowFreqBoost = 1.0f;
         protected internal float highFreqBoost = 1.0f;
-       
+
 
         /// <summary>
         /// Creates a new <seealso cref="CommonTermsQuery"/>
@@ -174,16 +174,15 @@ namespace Lucene.Net.Queries
             {
                 return (int)minNrShouldMatch;
             }
-            return Math.Round(minNrShouldMatch * numOptional);
+            return (int)Math.Round(minNrShouldMatch * numOptional);
         }
 
-         protected internal virtual Query BuildQuery(int maxDoc, TermContext[] contextArray, Term[] queryTerms)
+        protected internal virtual Query BuildQuery(int maxDoc, TermContext[] contextArray, Term[] queryTerms)
         {
-            BooleanQuery lowFreq = new BooleanQuery(disableCoord);
-            BooleanQuery highFreq = new BooleanQuery(disableCoord);
-            highFreq.Boost = highFreqBoost;
+            var lowFreq = new BooleanQuery(disableCoord);
+            var highFreq = new BooleanQuery(disableCoord) { Boost = highFreqBoost };
             lowFreq.Boost = lowFreqBoost;
-            BooleanQuery query = new BooleanQuery(true);
+            var query = new BooleanQuery(true);
             for (int i = 0; i < queryTerms.Length; i++)
             {
                 TermContext termContext = contextArray[i];
@@ -230,7 +229,7 @@ namespace Lucene.Net.Queries
                 {
                     foreach (BooleanClause booleanClause in highFreq)
                     {
-                        booleanClause.Occur = BooleanClause.Occur.MUST;
+                        booleanClause.Occur_ = BooleanClause.Occur.MUST;
                     }
                 }
                 highFreq.Boost = Boost;
@@ -347,14 +346,14 @@ namespace Lucene.Net.Queries
         public float HighFreqMinimumNumberShouldMatch { get; set; }
 
 
-        public override void ExtractTerms(HashSet<Term> terms)
+        public override void ExtractTerms(ISet<Term> terms)
         {
             terms.AddAll(this.terms);
         }
 
         public override string ToString(string field)
         {
-            StringBuilder buffer = new StringBuilder();
+            var buffer = new StringBuilder();
             bool needParens = (Boost != 1.0) || (LowFreqMinimumNumberShouldMatch > 0);
             if (needParens)
             {
@@ -419,7 +418,7 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            CommonTermsQuery other = (CommonTermsQuery)obj;
+            var other = (CommonTermsQuery)obj;
             if (disableCoord != other.disableCoord)
             {
                 return false;

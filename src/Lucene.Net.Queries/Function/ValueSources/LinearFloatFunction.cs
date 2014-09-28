@@ -15,94 +15,87 @@
  * limitations under the License.
  */
 using System.Collections;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
-using org.apache.lucene.queries.function;
+using Lucene.Net.Search;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
     /// <summary>
-	/// <code>LinearFloatFunction</code> implements a linear function over
-	/// another <seealso cref="ValueSource"/>.
-	/// <br>
-	/// Normally Used as an argument to a <seealso cref="FunctionQuery"/>
-	/// 
-	/// 
-	/// </summary>
-	public class LinearFloatFunction : ValueSource
-	{
-	  protected internal readonly ValueSource source;
-	  protected internal readonly float slope;
-	  protected internal readonly float intercept;
+    /// <code>LinearFloatFunction</code> implements a linear function over
+    /// another <seealso cref="ValueSource"/>.
+    /// <br>
+    /// Normally Used as an argument to a <seealso cref="FunctionQuery"/>
+    /// 
+    /// 
+    /// </summary>
+    public class LinearFloatFunction : ValueSource
+    {
+        protected internal readonly ValueSource source;
+        protected internal readonly float slope;
+        protected internal readonly float intercept;
 
-	  public LinearFloatFunction(ValueSource source, float slope, float intercept)
-	  {
-		this.source = source;
-		this.slope = slope;
-		this.intercept = intercept;
-	  }
+        public LinearFloatFunction(ValueSource source, float slope, float intercept)
+        {
+            this.source = source;
+            this.slope = slope;
+            this.intercept = intercept;
+        }
 
-	  public override string description()
-	  {
-		return slope + "*float(" + source.description() + ")+" + intercept;
-	  }
+        public override string Description
+        {
+            get { return slope + "*float(" + source.Description + ")+" + intercept; }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.queries.function.FunctionValues GetValues(java.util.Map context, org.apache.lucene.index.AtomicReaderContext readerContext) throws java.io.IOException
-	  public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.queries.function.FunctionValues vals = source.GetValues(context, readerContext);
-		FunctionValues vals = source.GetValues(context, readerContext);
-		return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
-	  }
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
+        {
+            FunctionValues vals = source.GetValues(context, readerContext);
+            return new FloatDocValuesAnonymousInnerClassHelper(this, this, vals);
+        }
 
-	  private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
-	  {
-		  private readonly LinearFloatFunction outerInstance;
+        private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
+        {
+            private readonly LinearFloatFunction outerInstance;
+            private readonly FunctionValues vals;
 
-		  private FunctionValues vals;
+            public FloatDocValuesAnonymousInnerClassHelper(LinearFloatFunction outerInstance, LinearFloatFunction @this, FunctionValues vals)
+                : base(@this)
+            {
+                this.outerInstance = outerInstance;
+                this.vals = vals;
+            }
 
-		  public FloatDocValuesAnonymousInnerClassHelper(LinearFloatFunction outerInstance, LinearFloatFunction this, FunctionValues vals) : base(this)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.vals = vals;
-		  }
+            public override float FloatVal(int doc)
+            {
+                return vals.FloatVal(doc) * outerInstance.slope + outerInstance.intercept;
+            }
+            public override string ToString(int doc)
+            {
+                return outerInstance.slope + "*float(" + vals.ToString(doc) + ")+" + outerInstance.intercept;
+            }
+        }
 
-		  public override float FloatVal(int doc)
-		  {
-			return vals.FloatVal(doc) * outerInstance.slope + outerInstance.intercept;
-		  }
-		  public override string ToString(int doc)
-		  {
-			return outerInstance.slope + "*float(" + vals.ToString(doc) + ")+" + outerInstance.intercept;
-		  }
-	  }
+        public override void CreateWeight(IDictionary context, IndexSearcher searcher)
+        {
+            source.CreateWeight(context, searcher);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void CreateWeight(java.util.Map context, org.apache.lucene.search.IndexSearcher searcher) throws java.io.IOException
-	  public override void CreateWeight(IDictionary context, IndexSearcher searcher)
-	  {
-		source.CreateWeight(context, searcher);
-	  }
+        public override int GetHashCode()
+        {
+            int h = Number.FloatToIntBits(slope);
+            h = ((int)((uint)h >> 2)) | (h << 30);
+            h += Number.FloatToIntBits(intercept);
+            h ^= (h << 14) | ((int)((uint)h >> 19));
+            return h + source.GetHashCode();
+        }
 
-	  public override int GetHashCode()
-	  {
-		int h = Number.FloatToIntBits(slope);
-		h = ((int)((uint)h >> 2)) | (h << 30);
-		h += Number.FloatToIntBits(intercept);
-		h ^= (h << 14) | ((int)((uint)h >> 19));
-		return h + source.GetHashCode();
-	  }
-
-	  public override bool Equals(object o)
-	  {
-		if (typeof(LinearFloatFunction) != o.GetType())
-		{
-			return false;
-		}
-		LinearFloatFunction other = (LinearFloatFunction)o;
-		return this.slope == other.slope && this.intercept == other.intercept && this.source.Equals(other.source);
-	  }
-	}
-
+        public override bool Equals(object o)
+        {
+            var other = o as LinearFloatFunction;
+            if (other == null)
+                return false;
+            return this.slope == other.slope && this.intercept == other.intercept && this.source.Equals(other.source);
+        }
+    }
 }
