@@ -1,25 +1,25 @@
 ﻿/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Lucene.Net.Codecs.Sep;
-using org.apache.lucene.codecs.memory;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.Memory
 	  internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: MemoryDocValuesProducer(org.apache.lucene.index.SegmentReadState state, String dataCodec, String dataExtension, String metaCodec, String metaExtension) throws java.io.IOException
+//ORIGINAL LINE: MemoryDocValuesProducer(index.SegmentReadState state, String dataCodec, String dataExtension, String metaCodec, String metaExtension) throws java.io.IOException
 	  internal MemoryDocValuesProducer(SegmentReadState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension)
 	  {
 		maxDoc = state.segmentInfo.DocCount;
@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Memory
 		  string dataName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, dataExtension);
 		  data = state.directory.openInput(dataName, state.context);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int version2 = org.apache.lucene.codecs.CodecUtil.checkHeader(data, dataCodec, VERSION_START, VERSION_CURRENT);
+//ORIGINAL LINE: final int version2 = codecs.CodecUtil.checkHeader(data, dataCodec, VERSION_START, VERSION_CURRENT);
 		  int version2 = CodecUtil.checkHeader(data, dataCodec, VERSION_START, VERSION_CURRENT);
 		  if (version != version2)
 		  {
@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.Memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void readFields(org.apache.lucene.store.IndexInput meta, org.apache.lucene.index.FieldInfos infos) throws java.io.IOException
+//ORIGINAL LINE: private void readFields(store.IndexInput meta, index.FieldInfos infos) throws java.io.IOException
 	  private void readFields(IndexInput meta, FieldInfos infos)
 	  {
 		int fieldNumber = meta.readVInt();
@@ -200,7 +200,7 @@ namespace Lucene.Net.Codecs.Memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public synchronized org.apache.lucene.index.NumericDocValues getNumeric(org.apache.lucene.index.FieldInfo field) throws java.io.IOException
+//ORIGINAL LINE: @Override public synchronized index.NumericDocValues getNumeric(index.FieldInfo field) throws java.io.IOException
 	  public override NumericDocValues getNumeric(FieldInfo field)
 	  {
 		  lock (this)
@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private org.apache.lucene.index.NumericDocValues loadNumeric(org.apache.lucene.index.FieldInfo field) throws java.io.IOException
+//ORIGINAL LINE: private index.NumericDocValues loadNumeric(index.FieldInfo field) throws java.io.IOException
 	  private NumericDocValues loadNumeric(FieldInfo field)
 	  {
 		NumericEntry entry = numerics[field.number];
@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.Memory
 //ORIGINAL LINE: final int bitsPerValue = data.readVInt();
 			int bitsPerValue = data.readVInt();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.packed.PackedInts.Reader ordsReader = org.apache.lucene.util.packed.PackedInts.getReaderNoHeader(data, org.apache.lucene.util.packed.PackedInts.Format.byId(formatID), entry.packedIntsVersion, maxDoc, bitsPerValue);
+//ORIGINAL LINE: final util.packed.PackedInts.Reader ordsReader = util.packed.PackedInts.getReaderNoHeader(data, util.packed.PackedInts.Format.byId(formatID), entry.packedIntsVersion, maxDoc, bitsPerValue);
 			PackedInts.Reader ordsReader = PackedInts.getReaderNoHeader(data, PackedInts.Format.byId(formatID), entry.packedIntsVersion, maxDoc, bitsPerValue);
 			ramBytesUsed_Renamed.addAndGet(RamUsageEstimator.sizeOf(decode) + ordsReader.ramBytesUsed());
 			return new NumericDocValuesAnonymousInnerClassHelper(this, decode, ordsReader);
@@ -267,7 +267,7 @@ namespace Lucene.Net.Codecs.Memory
 //ORIGINAL LINE: final int blockSize = data.readVInt();
 			int blockSize = data.readVInt();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.packed.BlockPackedReader reader = new org.apache.lucene.util.packed.BlockPackedReader(data, entry.packedIntsVersion, blockSize, maxDoc, false);
+//ORIGINAL LINE: final util.packed.BlockPackedReader reader = new util.packed.BlockPackedReader(data, entry.packedIntsVersion, blockSize, maxDoc, false);
 			BlockPackedReader reader = new BlockPackedReader(data, entry.packedIntsVersion, blockSize, maxDoc, false);
 			ramBytesUsed_Renamed.addAndGet(reader.ramBytesUsed());
 			return reader;
@@ -289,7 +289,7 @@ namespace Lucene.Net.Codecs.Memory
 //ORIGINAL LINE: final int quotientBlockSize = data.readVInt();
 			int quotientBlockSize = data.readVInt();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.packed.BlockPackedReader quotientReader = new org.apache.lucene.util.packed.BlockPackedReader(data, entry.packedIntsVersion, quotientBlockSize, maxDoc, false);
+//ORIGINAL LINE: final util.packed.BlockPackedReader quotientReader = new util.packed.BlockPackedReader(data, entry.packedIntsVersion, quotientBlockSize, maxDoc, false);
 			BlockPackedReader quotientReader = new BlockPackedReader(data, entry.packedIntsVersion, quotientBlockSize, maxDoc, false);
 			ramBytesUsed_Renamed.addAndGet(quotientReader.ramBytesUsed());
 			return new NumericDocValuesAnonymousInnerClassHelper3(this, min, mult, quotientReader);
@@ -359,7 +359,7 @@ namespace Lucene.Net.Codecs.Memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public synchronized org.apache.lucene.index.BinaryDocValues getBinary(org.apache.lucene.index.FieldInfo field) throws java.io.IOException
+//ORIGINAL LINE: @Override public synchronized index.BinaryDocValues getBinary(index.FieldInfo field) throws java.io.IOException
 	  public override BinaryDocValues getBinary(FieldInfo field)
 	  {
 		  lock (this)
@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private org.apache.lucene.index.BinaryDocValues loadBinary(org.apache.lucene.index.FieldInfo field) throws java.io.IOException
+//ORIGINAL LINE: private index.BinaryDocValues loadBinary(index.FieldInfo field) throws java.io.IOException
 	  private BinaryDocValues loadBinary(FieldInfo field)
 	  {
 		BinaryEntry entry = binaries[field.number];
@@ -383,7 +383,7 @@ namespace Lucene.Net.Codecs.Memory
 		PagedBytes bytes = new PagedBytes(16);
 		bytes.copy(data, entry.numBytes);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.PagedBytes.Reader bytesReader = bytes.freeze(true);
+//ORIGINAL LINE: final util.PagedBytes.Reader bytesReader = bytes.freeze(true);
 		PagedBytes.Reader bytesReader = bytes.freeze(true);
 		if (entry.minLength == entry.maxLength)
 		{
@@ -397,7 +397,7 @@ namespace Lucene.Net.Codecs.Memory
 		{
 		  data.seek(data.FilePointer + entry.missingBytes);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.packed.MonotonicBlockPackedReader addresses = new org.apache.lucene.util.packed.MonotonicBlockPackedReader(data, entry.packedIntsVersion, entry.blockSize, maxDoc, false);
+//ORIGINAL LINE: final util.packed.MonotonicBlockPackedReader addresses = new util.packed.MonotonicBlockPackedReader(data, entry.packedIntsVersion, entry.blockSize, maxDoc, false);
 		  MonotonicBlockPackedReader addresses = new MonotonicBlockPackedReader(data, entry.packedIntsVersion, entry.blockSize, maxDoc, false);
 		  ramBytesUsed_Renamed.addAndGet(bytes.ramBytesUsed() + addresses.ramBytesUsed());
 		  return new BinaryDocValuesAnonymousInnerClassHelper2(this, bytesReader, addresses);
@@ -447,7 +447,7 @@ namespace Lucene.Net.Codecs.Memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.SortedDocValues getSorted(org.apache.lucene.index.FieldInfo field) throws java.io.IOException
+//ORIGINAL LINE: @Override public index.SortedDocValues getSorted(index.FieldInfo field) throws java.io.IOException
 	  public override SortedDocValues getSorted(FieldInfo field)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -470,27 +470,27 @@ namespace Lucene.Net.Codecs.Memory
 		  }
 		}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.NumericDocValues docToOrd = getNumeric(field);
+//ORIGINAL LINE: final index.NumericDocValues docToOrd = getNumeric(field);
 		NumericDocValues docToOrd = getNumeric(field);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST<Long> fst = instance;
+//ORIGINAL LINE: final util.fst.FST<Long> fst = instance;
 		FST<long?> fst = instance;
 
 		// per-thread resources
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.BytesReader in = fst.getBytesReader();
+//ORIGINAL LINE: final util.fst.FST.BytesReader in = fst.getBytesReader();
 		FST.BytesReader @in = fst.BytesReader;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<Long> firstArc = new org.apache.lucene.util.fst.FST.Arc<>();
+//ORIGINAL LINE: final util.fst.FST.Arc<Long> firstArc = new util.fst.FST.Arc<>();
 		FST.Arc<long?> firstArc = new FST.Arc<long?>();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<Long> scratchArc = new org.apache.lucene.util.fst.FST.Arc<>();
+//ORIGINAL LINE: final util.fst.FST.Arc<Long> scratchArc = new util.fst.FST.Arc<>();
 		FST.Arc<long?> scratchArc = new FST.Arc<long?>();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.IntsRef scratchInts = new org.apache.lucene.util.IntsRef();
+//ORIGINAL LINE: final util.IntsRef scratchInts = new util.IntsRef();
 		IntsRef scratchInts = new IntsRef();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.BytesRefFSTEnum<Long> fstEnum = new org.apache.lucene.util.fst.BytesRefFSTEnum<>(fst);
+//ORIGINAL LINE: final util.fst.BytesRefFSTEnum<Long> fstEnum = new util.fst.BytesRefFSTEnum<>(fst);
 		BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
 
 		return new SortedDocValuesAnonymousInnerClassHelper(this, entry, docToOrd, fst, @in, firstArc, scratchArc, scratchInts, fstEnum);
@@ -503,18 +503,18 @@ namespace Lucene.Net.Codecs.Memory
 		  private MemoryDocValuesProducer.FSTEntry entry;
 		  private NumericDocValues docToOrd;
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.fst.FST<long?> fst;
+//ORIGINAL LINE: private util.fst.FST<long?> fst;
 		  private FST<long?> fst;
 		  private FST.BytesReader @in;
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.fst.FST.Arc<long?> firstArc;
+//ORIGINAL LINE: private util.fst.FST.Arc<long?> firstArc;
 		  private FST.Arc<long?> firstArc;
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.fst.FST.Arc<long?> scratchArc;
+//ORIGINAL LINE: private util.fst.FST.Arc<long?> scratchArc;
 		  private FST.Arc<long?> scratchArc;
 		  private IntsRef scratchInts;
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.fst.BytesRefFSTEnum<long?> fstEnum;
+//ORIGINAL LINE: private util.fst.BytesRefFSTEnum<long?> fstEnum;
 		  private BytesRefFSTEnum<long?> fstEnum;
 
 		  public SortedDocValuesAnonymousInnerClassHelper<T1, T2, T3, T4>(MemoryDocValuesProducer outerInstance, org.MemoryDocValuesProducer.FSTEntry entry, NumericDocValues docToOrd, FST<T1> fst, FST.BytesReader @in, FST.Arc<T2> firstArc, FST.Arc<T3> scratchArc, IntsRef scratchInts, BytesRefFSTEnum<T4> fstEnum)
@@ -592,7 +592,7 @@ namespace Lucene.Net.Codecs.Memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.SortedSetDocValues getSortedSet(org.apache.lucene.index.FieldInfo field) throws java.io.IOException
+//ORIGINAL LINE: @Override public index.SortedSetDocValues getSortedSet(index.FieldInfo field) throws java.io.IOException
 	  public override SortedSetDocValues getSortedSet(FieldInfo field)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -615,33 +615,33 @@ namespace Lucene.Net.Codecs.Memory
 		  }
 		}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.BinaryDocValues docToOrds = getBinary(field);
+//ORIGINAL LINE: final index.BinaryDocValues docToOrds = getBinary(field);
 		BinaryDocValues docToOrds = getBinary(field);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST<Long> fst = instance;
+//ORIGINAL LINE: final util.fst.FST<Long> fst = instance;
 		FST<long?> fst = instance;
 
 		// per-thread resources
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.BytesReader in = fst.getBytesReader();
+//ORIGINAL LINE: final util.fst.FST.BytesReader in = fst.getBytesReader();
 		FST.BytesReader @in = fst.BytesReader;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<Long> firstArc = new org.apache.lucene.util.fst.FST.Arc<>();
+//ORIGINAL LINE: final util.fst.FST.Arc<Long> firstArc = new util.fst.FST.Arc<>();
 		FST.Arc<long?> firstArc = new FST.Arc<long?>();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<Long> scratchArc = new org.apache.lucene.util.fst.FST.Arc<>();
+//ORIGINAL LINE: final util.fst.FST.Arc<Long> scratchArc = new util.fst.FST.Arc<>();
 		FST.Arc<long?> scratchArc = new FST.Arc<long?>();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.IntsRef scratchInts = new org.apache.lucene.util.IntsRef();
+//ORIGINAL LINE: final util.IntsRef scratchInts = new util.IntsRef();
 		IntsRef scratchInts = new IntsRef();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.BytesRefFSTEnum<Long> fstEnum = new org.apache.lucene.util.fst.BytesRefFSTEnum<>(fst);
+//ORIGINAL LINE: final util.fst.BytesRefFSTEnum<Long> fstEnum = new util.fst.BytesRefFSTEnum<>(fst);
 		BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.BytesRef ref = new org.apache.lucene.util.BytesRef();
+//ORIGINAL LINE: final util.BytesRef ref = new util.BytesRef();
 		BytesRef @ref = new BytesRef();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.store.ByteArrayDataInput input = new org.apache.lucene.store.ByteArrayDataInput();
+//ORIGINAL LINE: final store.ByteArrayDataInput input = new store.ByteArrayDataInput();
 		ByteArrayDataInput input = new ByteArrayDataInput();
 		return new SortedSetDocValuesAnonymousInnerClassHelper(this, entry, docToOrds, fst, @in, firstArc, scratchArc, scratchInts, fstEnum, @ref, input);
 	  }
@@ -653,18 +653,18 @@ namespace Lucene.Net.Codecs.Memory
 		  private MemoryDocValuesProducer.FSTEntry entry;
 		  private BinaryDocValues docToOrds;
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.fst.FST<long?> fst;
+//ORIGINAL LINE: private util.fst.FST<long?> fst;
 		  private FST<long?> fst;
 		  private FST.BytesReader @in;
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.fst.FST.Arc<long?> firstArc;
+//ORIGINAL LINE: private util.fst.FST.Arc<long?> firstArc;
 		  private FST.Arc<long?> firstArc;
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.fst.FST.Arc<long?> scratchArc;
+//ORIGINAL LINE: private util.fst.FST.Arc<long?> scratchArc;
 		  private FST.Arc<long?> scratchArc;
 		  private IntsRef scratchInts;
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.fst.BytesRefFSTEnum<long?> fstEnum;
+//ORIGINAL LINE: private util.fst.BytesRefFSTEnum<long?> fstEnum;
 		  private BytesRefFSTEnum<long?> fstEnum;
 		  private BytesRef @ref;
 		  private ByteArrayDataInput input;
@@ -766,7 +766,7 @@ namespace Lucene.Net.Codecs.Memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.Bits getMissingBits(int fieldNumber, final long offset, final long length) throws java.io.IOException
+//ORIGINAL LINE: private util.Bits getMissingBits(int fieldNumber, final long offset, final long length) throws java.io.IOException
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 	  private Bits getMissingBits(int fieldNumber, long offset, long length)
 	  {
@@ -799,7 +799,7 @@ namespace Lucene.Net.Codecs.Memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.util.Bits getDocsWithField(org.apache.lucene.index.FieldInfo field) throws java.io.IOException
+//ORIGINAL LINE: @Override public util.Bits getDocsWithField(index.FieldInfo field) throws java.io.IOException
 	  public override Bits getDocsWithField(FieldInfo field)
 	  {
 		switch (field.DocValuesType)
@@ -875,7 +875,7 @@ namespace Lucene.Net.Codecs.Memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.util.BytesRef next() throws java.io.IOException
+//ORIGINAL LINE: @Override public util.BytesRef next() throws java.io.IOException
 		public override BytesRef next()
 		{
 		  BytesRefFSTEnum.InputOutput<long?> io = @in.next();
@@ -898,7 +898,7 @@ namespace Lucene.Net.Codecs.Memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public SeekStatus seekCeil(org.apache.lucene.util.BytesRef text) throws java.io.IOException
+//ORIGINAL LINE: @Override public SeekStatus seekCeil(util.BytesRef text) throws java.io.IOException
 		public override SeekStatus seekCeil(BytesRef text)
 		{
 		  if (@in.seekCeil(text) == null)
@@ -918,7 +918,7 @@ namespace Lucene.Net.Codecs.Memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean seekExact(org.apache.lucene.util.BytesRef text) throws java.io.IOException
+//ORIGINAL LINE: @Override public boolean seekExact(util.BytesRef text) throws java.io.IOException
 		public override bool seekExact(BytesRef text)
 		{
 		  if (@in.seekExact(text) == null)
@@ -949,7 +949,7 @@ namespace Lucene.Net.Codecs.Memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.util.BytesRef term() throws java.io.IOException
+//ORIGINAL LINE: @Override public util.BytesRef term() throws java.io.IOException
 		public override BytesRef term()
 		{
 		  return @in.current().input;
@@ -977,14 +977,14 @@ namespace Lucene.Net.Codecs.Memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.DocsEnum docs(org.apache.lucene.util.Bits liveDocs, org.apache.lucene.index.DocsEnum reuse, int flags) throws java.io.IOException
+//ORIGINAL LINE: @Override public index.DocsEnum docs(util.Bits liveDocs, index.DocsEnum reuse, int flags) throws java.io.IOException
 		public override DocsEnum docs(Bits liveDocs, DocsEnum reuse, int flags)
 		{
 		  throw new System.NotSupportedException();
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.DocsAndPositionsEnum docsAndPositions(org.apache.lucene.util.Bits liveDocs, org.apache.lucene.index.DocsAndPositionsEnum reuse, int flags) throws java.io.IOException
+//ORIGINAL LINE: @Override public index.DocsAndPositionsEnum docsAndPositions(util.Bits liveDocs, index.DocsAndPositionsEnum reuse, int flags) throws java.io.IOException
 		public override DocsAndPositionsEnum docsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 		{
 		  throw new System.NotSupportedException();

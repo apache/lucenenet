@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using Lucene.Net.Codecs.Memory;
+using Lucene.Net.Index;
 
-namespace org.apache.lucene.codecs.memory
+namespace Lucene.Net.Codecs.Memory
 {
 
 	/*
@@ -24,44 +25,44 @@ namespace org.apache.lucene.codecs.memory
 	 */
 
 
-	using FieldInfo = org.apache.lucene.index.FieldInfo;
-	using IndexFileNames = org.apache.lucene.index.IndexFileNames;
-	using SegmentWriteState = org.apache.lucene.index.SegmentWriteState;
-	using ByteArrayDataOutput = org.apache.lucene.store.ByteArrayDataOutput;
-	using IndexOutput = org.apache.lucene.store.IndexOutput;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using IntsRef = org.apache.lucene.util.IntsRef;
-	using MathUtil = org.apache.lucene.util.MathUtil;
-	using Builder = org.apache.lucene.util.fst.Builder;
-	using INPUT_TYPE = org.apache.lucene.util.fst.FST.INPUT_TYPE;
-	using FST = org.apache.lucene.util.fst.FST;
-	using PositiveIntOutputs = org.apache.lucene.util.fst.PositiveIntOutputs;
-	using Util = org.apache.lucene.util.fst.Util;
-	using BlockPackedWriter = org.apache.lucene.util.packed.BlockPackedWriter;
-	using MonotonicBlockPackedWriter = org.apache.lucene.util.packed.MonotonicBlockPackedWriter;
-	using FormatAndBits = org.apache.lucene.util.packed.PackedInts.FormatAndBits;
-	using PackedInts = org.apache.lucene.util.packed.PackedInts;
+	using FieldInfo = index.FieldInfo;
+	using IndexFileNames = index.IndexFileNames;
+	using SegmentWriteState = index.SegmentWriteState;
+	using ByteArrayDataOutput = store.ByteArrayDataOutput;
+	using IndexOutput = store.IndexOutput;
+	using ArrayUtil = util.ArrayUtil;
+	using BytesRef = util.BytesRef;
+	using IOUtils = util.IOUtils;
+	using IntsRef = util.IntsRef;
+	using MathUtil = util.MathUtil;
+	using Builder = util.fst.Builder;
+	using INPUT_TYPE = util.fst.FST.INPUT_TYPE;
+	using FST = util.fst.FST;
+	using PositiveIntOutputs = util.fst.PositiveIntOutputs;
+	using Util = util.fst.Util;
+	using BlockPackedWriter = util.packed.BlockPackedWriter;
+	using MonotonicBlockPackedWriter = util.packed.MonotonicBlockPackedWriter;
+	using FormatAndBits = util.packed.PackedInts.FormatAndBits;
+	using PackedInts = util.packed.PackedInts;
 
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.VERSION_CURRENT;
+	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.VERSION_CURRENT;
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.BLOCK_SIZE;
+	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.BLOCK_SIZE;
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.BYTES;
+	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.BYTES;
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.NUMBER;
+	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.NUMBER;
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.FST;
+	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.FST;
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.DELTA_COMPRESSED;
+	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.DELTA_COMPRESSED;
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.GCD_COMPRESSED;
+	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.GCD_COMPRESSED;
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.TABLE_COMPRESSED;
+	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.TABLE_COMPRESSED;
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.MemoryDocValuesProducer.UNCOMPRESSED;
+	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.UNCOMPRESSED;
 
 	/// <summary>
 	/// Writer for <seealso cref="MemoryDocValuesFormat"/>
@@ -72,9 +73,7 @@ namespace org.apache.lucene.codecs.memory
 	  internal readonly int maxDoc;
 	  internal readonly float acceptableOverheadRatio;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: MemoryDocValuesConsumer(org.apache.lucene.index.SegmentWriteState state, String dataCodec, String dataExtension, String metaCodec, String metaExtension, float acceptableOverheadRatio) throws java.io.IOException
-	  internal MemoryDocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension, float acceptableOverheadRatio)
+        internal MemoryDocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension, float acceptableOverheadRatio)
 	  {
 		this.acceptableOverheadRatio = acceptableOverheadRatio;
 		maxDoc = state.segmentInfo.DocCount;
@@ -99,14 +98,14 @@ namespace org.apache.lucene.codecs.memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addNumericField(org.apache.lucene.index.FieldInfo field, Iterable<Number> values) throws java.io.IOException
+//ORIGINAL LINE: @Override public void addNumericField(index.FieldInfo field, Iterable<Number> values) throws java.io.IOException
 	  public override void addNumericField(FieldInfo field, IEnumerable<Number> values)
 	  {
 		addNumericField(field, values, true);
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: void addNumericField(org.apache.lucene.index.FieldInfo field, Iterable<Number> values, boolean optimizeStorage) throws java.io.IOException
+//ORIGINAL LINE: void addNumericField(index.FieldInfo field, Iterable<Number> values, boolean optimizeStorage) throws java.io.IOException
 	  internal virtual void addNumericField(FieldInfo field, IEnumerable<Number> values, bool optimizeStorage)
 	  {
 		meta.writeVInt(field.number);
@@ -188,7 +187,7 @@ namespace org.apache.lucene.codecs.memory
 		{
 		  // small number of unique values
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerValue = org.apache.lucene.util.packed.PackedInts.bitsRequired(uniqueValues.size()-1);
+//ORIGINAL LINE: final int bitsPerValue = util.packed.PackedInts.bitsRequired(uniqueValues.size()-1);
 		  int bitsPerValue = PackedInts.bitsRequired(uniqueValues.Count - 1);
 		  FormatAndBits formatAndBits = PackedInts.fastestFormatAndBits(maxDoc, bitsPerValue, acceptableOverheadRatio);
 		  if (formatAndBits.bitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
@@ -218,7 +217,7 @@ namespace org.apache.lucene.codecs.memory
 			data.writeVInt(formatAndBits.bitsPerValue);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.packed.PackedInts.Writer writer = org.apache.lucene.util.packed.PackedInts.getWriterNoHeader(data, formatAndBits.format, maxDoc, formatAndBits.bitsPerValue, org.apache.lucene.util.packed.PackedInts.DEFAULT_BUFFER_SIZE);
+//ORIGINAL LINE: final util.packed.PackedInts.Writer writer = util.packed.PackedInts.getWriterNoHeader(data, formatAndBits.format, maxDoc, formatAndBits.bitsPerValue, util.packed.PackedInts.DEFAULT_BUFFER_SIZE);
 			PackedInts.Writer writer = PackedInts.getWriterNoHeader(data, formatAndBits.format, maxDoc, formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
 			foreach (Number nv in values)
 			{
@@ -236,7 +235,7 @@ namespace org.apache.lucene.codecs.memory
 		  data.writeVInt(BLOCK_SIZE);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.packed.BlockPackedWriter writer = new org.apache.lucene.util.packed.BlockPackedWriter(data, BLOCK_SIZE);
+//ORIGINAL LINE: final util.packed.BlockPackedWriter writer = new util.packed.BlockPackedWriter(data, BLOCK_SIZE);
 		  BlockPackedWriter writer = new BlockPackedWriter(data, BLOCK_SIZE);
 		  foreach (Number nv in values)
 		  {
@@ -253,7 +252,7 @@ namespace org.apache.lucene.codecs.memory
 		  data.writeVInt(BLOCK_SIZE);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.packed.BlockPackedWriter writer = new org.apache.lucene.util.packed.BlockPackedWriter(data, BLOCK_SIZE);
+//ORIGINAL LINE: final util.packed.BlockPackedWriter writer = new util.packed.BlockPackedWriter(data, BLOCK_SIZE);
 		  BlockPackedWriter writer = new BlockPackedWriter(data, BLOCK_SIZE);
 		  foreach (Number nv in values)
 		  {
@@ -296,7 +295,7 @@ namespace org.apache.lucene.codecs.memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addBinaryField(org.apache.lucene.index.FieldInfo field, final Iterable<org.apache.lucene.util.BytesRef> values) throws java.io.IOException
+//ORIGINAL LINE: @Override public void addBinaryField(index.FieldInfo field, final Iterable<util.BytesRef> values) throws java.io.IOException
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 	  public override void addBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
 	  {
@@ -358,7 +357,7 @@ namespace org.apache.lucene.codecs.memory
 		  meta.writeVInt(BLOCK_SIZE);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.packed.MonotonicBlockPackedWriter writer = new org.apache.lucene.util.packed.MonotonicBlockPackedWriter(data, BLOCK_SIZE);
+//ORIGINAL LINE: final util.packed.MonotonicBlockPackedWriter writer = new util.packed.MonotonicBlockPackedWriter(data, BLOCK_SIZE);
 		  MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(data, BLOCK_SIZE);
 		  long addr = 0;
 		  foreach (BytesRef v in values)
@@ -374,7 +373,7 @@ namespace org.apache.lucene.codecs.memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void writeFST(org.apache.lucene.index.FieldInfo field, Iterable<org.apache.lucene.util.BytesRef> values) throws java.io.IOException
+//ORIGINAL LINE: private void writeFST(index.FieldInfo field, Iterable<util.BytesRef> values) throws java.io.IOException
 	  private void writeFST(FieldInfo field, IEnumerable<BytesRef> values)
 	  {
 		meta.writeVInt(field.number);
@@ -426,7 +425,7 @@ namespace org.apache.lucene.codecs.memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addSortedField(org.apache.lucene.index.FieldInfo field, Iterable<org.apache.lucene.util.BytesRef> values, Iterable<Number> docToOrd) throws java.io.IOException
+//ORIGINAL LINE: @Override public void addSortedField(index.FieldInfo field, Iterable<util.BytesRef> values, Iterable<Number> docToOrd) throws java.io.IOException
 	  public override void addSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd)
 	  {
 		// write the ordinals as numerics
@@ -438,7 +437,7 @@ namespace org.apache.lucene.codecs.memory
 
 	  // note: this might not be the most efficient... but its fairly simple
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addSortedSetField(org.apache.lucene.index.FieldInfo field, Iterable<org.apache.lucene.util.BytesRef> values, final Iterable<Number> docToOrdCount, final Iterable<Number> ords) throws java.io.IOException
+//ORIGINAL LINE: @Override public void addSortedSetField(index.FieldInfo field, Iterable<util.BytesRef> values, final Iterable<Number> docToOrdCount, final Iterable<Number> ords) throws java.io.IOException
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 	  public override void addSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
 	  {

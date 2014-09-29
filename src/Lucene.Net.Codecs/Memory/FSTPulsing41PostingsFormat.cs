@@ -1,102 +1,94 @@
-﻿namespace org.apache.lucene.codecs.memory
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace Lucene.Net.Codecs.Memory
 {
+    
+    using Lucene41PostingsBaseFormat = Lucene41.Lucene41PostingsBaseFormat;
+    using PulsingPostingsWriter = Pulsing.PulsingPostingsWriter;
+    using PulsingPostingsReader = Pulsing.PulsingPostingsReader;
+    using SegmentReadState = Index.SegmentReadState;
+    using SegmentWriteState = Index.SegmentWriteState;
+    using IOUtils = Util.IOUtils;
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /// <summary>
+    /// FST + Pulsing41, test only, since
+    ///  FST does no delta encoding here!
+    ///  @lucene.experimental 
+    /// </summary>
 
-	using Lucene41PostingsWriter = org.apache.lucene.codecs.lucene41.Lucene41PostingsWriter;
-	using Lucene41PostingsReader = org.apache.lucene.codecs.lucene41.Lucene41PostingsReader;
-	using Lucene41PostingsBaseFormat = org.apache.lucene.codecs.lucene41.Lucene41PostingsBaseFormat;
-	using Lucene41PostingsFormat = org.apache.lucene.codecs.lucene41.Lucene41PostingsFormat;
-	using PulsingPostingsWriter = org.apache.lucene.codecs.pulsing.PulsingPostingsWriter;
-	using PulsingPostingsReader = org.apache.lucene.codecs.pulsing.PulsingPostingsReader;
-	using SegmentReadState = org.apache.lucene.index.SegmentReadState;
-	using SegmentWriteState = org.apache.lucene.index.SegmentWriteState;
-	using IOUtils = org.apache.lucene.util.IOUtils;
+    public class FSTPulsing41PostingsFormat : PostingsFormat
+    {
+        private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
+        private readonly int _freqCutoff;
 
-	/// <summary>
-	/// FST + Pulsing41, test only, since
-	///  FST does no delta encoding here!
-	///  @lucene.experimental 
-	/// </summary>
+        public FSTPulsing41PostingsFormat() : this(1)
+        {
+        }
 
-	public class FSTPulsing41PostingsFormat : PostingsFormat
-	{
-	  private readonly PostingsBaseFormat wrappedPostingsBaseFormat;
-	  private readonly int freqCutoff;
+        public FSTPulsing41PostingsFormat(int freqCutoff) : base("FSTPulsing41")
+        {
+            _wrappedPostingsBaseFormat = new Lucene41PostingsBaseFormat();
+            _freqCutoff = freqCutoff;
+        }
 
-	  public FSTPulsing41PostingsFormat() : this(1)
-	  {
-	  }
+        public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
+        {
+            PostingsWriterBase docsWriter = null;
+            PostingsWriterBase pulsingWriter = null;
 
-	  public FSTPulsing41PostingsFormat(int freqCutoff) : base("FSTPulsing41")
-	  {
-		this.wrappedPostingsBaseFormat = new Lucene41PostingsBaseFormat();
-		this.freqCutoff = freqCutoff;
-	  }
+            bool success = false;
+            try
+            {
+                docsWriter = _wrappedPostingsBaseFormat.PostingsWriterBase(state);
+                pulsingWriter = new PulsingPostingsWriter(state, _freqCutoff, docsWriter);
+                FieldsConsumer ret = new FSTTermsWriter(state, pulsingWriter);
+                success = true;
+                return ret;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException(docsWriter, pulsingWriter);
+                }
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.codecs.FieldsConsumer fieldsConsumer(org.apache.lucene.index.SegmentWriteState state) throws java.io.IOException
-	  public override FieldsConsumer fieldsConsumer(SegmentWriteState state)
-	  {
-		PostingsWriterBase docsWriter = null;
-		PostingsWriterBase pulsingWriter = null;
-
-		bool success = false;
-		try
-		{
-		  docsWriter = wrappedPostingsBaseFormat.postingsWriterBase(state);
-		  pulsingWriter = new PulsingPostingsWriter(state, freqCutoff, docsWriter);
-		  FieldsConsumer ret = new FSTTermsWriter(state, pulsingWriter);
-		  success = true;
-		  return ret;
-		}
-		finally
-		{
-		  if (!success)
-		  {
-			IOUtils.closeWhileHandlingException(docsWriter, pulsingWriter);
-		  }
-		}
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.codecs.FieldsProducer fieldsProducer(org.apache.lucene.index.SegmentReadState state) throws java.io.IOException
-	  public override FieldsProducer fieldsProducer(SegmentReadState state)
-	  {
-		PostingsReaderBase docsReader = null;
-		PostingsReaderBase pulsingReader = null;
-		bool success = false;
-		try
-		{
-		  docsReader = wrappedPostingsBaseFormat.postingsReaderBase(state);
-		  pulsingReader = new PulsingPostingsReader(state, docsReader);
-		  FieldsProducer ret = new FSTTermsReader(state, pulsingReader);
-		  success = true;
-		  return ret;
-		}
-		finally
-		{
-		  if (!success)
-		  {
-			IOUtils.closeWhileHandlingException(docsReader, pulsingReader);
-		  }
-		}
-	  }
-	}
-
+        public override FieldsProducer FieldsProducer(SegmentReadState state)
+        {
+            PostingsReaderBase docsReader = null;
+            PostingsReaderBase pulsingReader = null;
+            bool success = false;
+            try
+            {
+                docsReader = _wrappedPostingsBaseFormat.PostingsReaderBase(state);
+                pulsingReader = new PulsingPostingsReader(state, docsReader);
+                FieldsProducer ret = new FSTTermsReader(state, pulsingReader);
+                success = true;
+                return ret;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException(docsReader, pulsingReader);
+                }
+            }
+        }
+    }
 }

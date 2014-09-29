@@ -1,329 +1,301 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-namespace org.apache.lucene.codecs.memory
+namespace Lucene.Net.Codecs.Memory
 {
+    using System.Collections.Generic;
+    using System.IO;
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using IndexOptions = Index.FieldInfo.IndexOptions;
+    using FieldInfo = Index.FieldInfo;
+    using FieldInfos = Index.FieldInfos;
+    using IndexFileNames = Index.IndexFileNames;
+    using SegmentWriteState = Index.SegmentWriteState;
+    using DataOutput = Store.DataOutput;
+    using IndexOutput = Store.IndexOutput;
+    using RAMOutputStream = Store.RAMOutputStream;
+    using BytesRef = Util.BytesRef;
+    using IOUtils = Util.IOUtils;
+    using IntsRef = Util.IntsRef;
+    using FST = Util.Fst.FST;
+    using Util.Fst;
+    using Util = Util.Fst.Util;
 
+    /// <summary>
+    /// FST-based term dict, using metadata as FST output.
+    /// 
+    /// The FST directly holds the mapping between &lt;term, metadata&gt;.
+    /// 
+    /// Term metadata consists of three parts:
+    /// 1. term statistics: docFreq, totalTermFreq;
+    /// 2. monotonic long[], e.g. the pointer to the postings list for that term;
+    /// 3. generic byte[], e.g. other information need by postings reader.
+    /// 
+    /// <para>
+    /// File:
+    /// <ul>
+    ///   <li><tt>.tst</tt>: <a href="#Termdictionary">Term Dictionary</a></li>
+    /// </ul>
+    /// </para>
+    /// <para>
+    /// 
+    /// <a name="Termdictionary" id="Termdictionary"></a>
+    /// <h3>Term Dictionary</h3>
+    /// </para>
+    /// <para>
+    ///  The .tst contains a list of FSTs, one for each field.
+    ///  The FST maps a term to its corresponding statistics (e.g. docfreq) 
+    ///  and metadata (e.g. information for postings list reader like file pointer
+    ///  to postings list).
+    /// </para>
+    /// <para>
+    ///  Typically the metadata is separated into two parts:
+    ///  <ul>
+    ///   <li>
+    ///    Monotonical long array: Some metadata will always be ascending in order
+    ///    with the corresponding term. This part is used by FST to share outputs between arcs.
+    ///   </li>
+    ///   <li>
+    ///    Generic byte array: Used to store non-monotonic metadata.
+    ///   </li>
+    ///  </ul>
+    /// </para>
+    /// 
+    /// File format:
+    /// <ul>
+    ///  <li>TermsDict(.tst) --&gt; Header, <i>PostingsHeader</i>, FieldSummary, DirOffset</li>
+    ///  <li>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, SumTotalTermFreq?, 
+    ///                                      SumDocFreq, DocCount, LongsSize, TermFST &gt;<sup>NumFields</sup></li>
+    ///  <li>TermFST TermData
+    ///  <li>TermData --&gt; Flag, BytesSize?, LongDelta<sup>LongsSize</sup>?, Byte<sup>BytesSize</sup>?, 
+    ///                      &lt; DocFreq[Same?], (TotalTermFreq-DocFreq) &gt; ? </li>
+    ///  <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
+    ///  <li>DirOffset --&gt; <seealso cref="DataOutput#writeLong Uint64"/></li>
+    ///  <li>DocFreq, LongsSize, BytesSize, NumFields,
+    ///        FieldNumber, DocCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
+    ///  <li>TotalTermFreq, NumTerms, SumTotalTermFreq, SumDocFreq, LongDelta --&gt; 
+    ///        <seealso cref="DataOutput#writeVLong VLong"/></li>
+    /// </ul>
+    /// <para>Notes:</para>
+    /// <ul>
+    ///  <li>
+    ///   The format of PostingsHeader and generic meta bytes are customized by the specific postings implementation:
+    ///   they contain arbitrary per-file data (such as parameters or versioning information), and per-term data
+    ///   (non-monotonic ones like pulsed postings data).
+    ///  </li>
+    ///  <li>
+    ///   The format of TermData is determined by FST, typically monotonic metadata will be dense around shallow arcs,
+    ///   while in deeper arcs only generic bytes and term statistics exist.
+    ///  </li>
+    ///  <li>
+    ///   The byte Flag is used to indicate which part of metadata exists on current arc. Specially the monotonic part
+    ///   is omitted when it is an array of 0s.
+    ///  </li>
+    ///  <li>
+    ///   Since LongsSize is per-field fixed, it is only written once in field summary.
+    ///  </li>
+    /// </ul>
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    public class FSTTermsWriter : FieldsConsumer
+    {
+        internal const string TERMS_EXTENSION = "tmp";
+        internal const string TERMS_CODEC_NAME = "FST_TERMS_DICT";
+        public const int TERMS_VERSION_START = 0;
+        public const int TERMS_VERSION_CHECKSUM = 1;
+        public const int TERMS_VERSION_CURRENT = TERMS_VERSION_CHECKSUM;
 
-	using IndexOptions = org.apache.lucene.index.FieldInfo.IndexOptions;
-	using FieldInfo = org.apache.lucene.index.FieldInfo;
-	using FieldInfos = org.apache.lucene.index.FieldInfos;
-	using IndexFileNames = org.apache.lucene.index.IndexFileNames;
-	using SegmentWriteState = org.apache.lucene.index.SegmentWriteState;
-	using DataOutput = org.apache.lucene.store.DataOutput;
-	using IndexOutput = org.apache.lucene.store.IndexOutput;
-	using RAMOutputStream = org.apache.lucene.store.RAMOutputStream;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using IntsRef = org.apache.lucene.util.IntsRef;
-	using Builder = org.apache.lucene.util.fst.Builder;
-	using FST = org.apache.lucene.util.fst.FST;
-	using Util = org.apache.lucene.util.fst.Util;
+        private readonly PostingsWriterBase _postingsWriter;
+        private readonly FieldInfos _fieldInfos;
+        private IndexOutput _output;
+        private readonly IList<FieldMetaData> _fields = new List<FieldMetaData>();
 
-	/// <summary>
-	/// FST-based term dict, using metadata as FST output.
-	/// 
-	/// The FST directly holds the mapping between &lt;term, metadata&gt;.
-	/// 
-	/// Term metadata consists of three parts:
-	/// 1. term statistics: docFreq, totalTermFreq;
-	/// 2. monotonic long[], e.g. the pointer to the postings list for that term;
-	/// 3. generic byte[], e.g. other information need by postings reader.
-	/// 
-	/// <para>
-	/// File:
-	/// <ul>
-	///   <li><tt>.tst</tt>: <a href="#Termdictionary">Term Dictionary</a></li>
-	/// </ul>
-	/// </para>
-	/// <para>
-	/// 
-	/// <a name="Termdictionary" id="Termdictionary"></a>
-	/// <h3>Term Dictionary</h3>
-	/// </para>
-	/// <para>
-	///  The .tst contains a list of FSTs, one for each field.
-	///  The FST maps a term to its corresponding statistics (e.g. docfreq) 
-	///  and metadata (e.g. information for postings list reader like file pointer
-	///  to postings list).
-	/// </para>
-	/// <para>
-	///  Typically the metadata is separated into two parts:
-	///  <ul>
-	///   <li>
-	///    Monotonical long array: Some metadata will always be ascending in order
-	///    with the corresponding term. This part is used by FST to share outputs between arcs.
-	///   </li>
-	///   <li>
-	///    Generic byte array: Used to store non-monotonic metadata.
-	///   </li>
-	///  </ul>
-	/// </para>
-	/// 
-	/// File format:
-	/// <ul>
-	///  <li>TermsDict(.tst) --&gt; Header, <i>PostingsHeader</i>, FieldSummary, DirOffset</li>
-	///  <li>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, SumTotalTermFreq?, 
-	///                                      SumDocFreq, DocCount, LongsSize, TermFST &gt;<sup>NumFields</sup></li>
-	///  <li>TermFST --&gt; <seealso cref="FST FST&lt;TermData&gt;"/></li>
-	///  <li>TermData --&gt; Flag, BytesSize?, LongDelta<sup>LongsSize</sup>?, Byte<sup>BytesSize</sup>?, 
-	///                      &lt; DocFreq[Same?], (TotalTermFreq-DocFreq) &gt; ? </li>
-	///  <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-	///  <li>DirOffset --&gt; <seealso cref="DataOutput#writeLong Uint64"/></li>
-	///  <li>DocFreq, LongsSize, BytesSize, NumFields,
-	///        FieldNumber, DocCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-	///  <li>TotalTermFreq, NumTerms, SumTotalTermFreq, SumDocFreq, LongDelta --&gt; 
-	///        <seealso cref="DataOutput#writeVLong VLong"/></li>
-	/// </ul>
-	/// <para>Notes:</para>
-	/// <ul>
-	///  <li>
-	///   The format of PostingsHeader and generic meta bytes are customized by the specific postings implementation:
-	///   they contain arbitrary per-file data (such as parameters or versioning information), and per-term data
-	///   (non-monotonic ones like pulsed postings data).
-	///  </li>
-	///  <li>
-	///   The format of TermData is determined by FST, typically monotonic metadata will be dense around shallow arcs,
-	///   while in deeper arcs only generic bytes and term statistics exist.
-	///  </li>
-	///  <li>
-	///   The byte Flag is used to indicate which part of metadata exists on current arc. Specially the monotonic part
-	///   is omitted when it is an array of 0s.
-	///  </li>
-	///  <li>
-	///   Since LongsSize is per-field fixed, it is only written once in field summary.
-	///  </li>
-	/// </ul>
-	/// 
-	/// @lucene.experimental
-	/// </summary>
+        public FSTTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter)
+        {
+            var termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
+                TERMS_EXTENSION);
 
-	public class FSTTermsWriter : FieldsConsumer
-	{
-	  internal const string TERMS_EXTENSION = "tmp";
-	  internal const string TERMS_CODEC_NAME = "FST_TERMS_DICT";
-	  public const int TERMS_VERSION_START = 0;
-	  public const int TERMS_VERSION_CHECKSUM = 1;
-	  public const int TERMS_VERSION_CURRENT = TERMS_VERSION_CHECKSUM;
+            _postingsWriter = postingsWriter;
+            _fieldInfos = state.FieldInfos;
+            _output = state.Directory.CreateOutput(termsFileName, state.Context);
 
-	  internal readonly PostingsWriterBase postingsWriter;
-	  internal readonly FieldInfos fieldInfos;
-	  internal IndexOutput @out;
-	  internal readonly IList<FieldMetaData> fields = new List<FieldMetaData>();
+            var success = false;
+            try
+            {
+                WriteHeader(_output);
+                _postingsWriter.Init(_output);
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException(_output);
+                }
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public FSTTermsWriter(org.apache.lucene.index.SegmentWriteState state, org.apache.lucene.codecs.PostingsWriterBase postingsWriter) throws java.io.IOException
-	  public FSTTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String termsFileName = org.apache.lucene.index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, TERMS_EXTENSION);
-		string termsFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, TERMS_EXTENSION);
+        private void WriteHeader(IndexOutput output)
+        {
+            CodecUtil.WriteHeader(output, TERMS_CODEC_NAME, TERMS_VERSION_CURRENT);
+        }
 
-		this.postingsWriter = postingsWriter;
-		this.fieldInfos = state.fieldInfos;
-		this.@out = state.directory.createOutput(termsFileName, state.context);
+        private static void WriteTrailer(IndexOutput output, long dirStart)
+        {
+            output.WriteLong(dirStart);
+        }
 
-		bool success = false;
-		try
-		{
-		  writeHeader(@out);
-		  this.postingsWriter.init(@out);
-		  success = true;
-		}
-		finally
-		{
-		  if (!success)
-		  {
-			IOUtils.closeWhileHandlingException(@out);
-		  }
-		}
-	  }
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void writeHeader(org.apache.lucene.store.IndexOutput out) throws java.io.IOException
-	  private void writeHeader(IndexOutput @out)
-	  {
-		CodecUtil.writeHeader(@out, TERMS_CODEC_NAME, TERMS_VERSION_CURRENT);
-	  }
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void writeTrailer(org.apache.lucene.store.IndexOutput out, long dirStart) throws java.io.IOException
-	  private void writeTrailer(IndexOutput @out, long dirStart)
-	  {
-		@out.writeLong(dirStart);
-	  }
+        public override TermsConsumer AddField(FieldInfo field)
+        {
+            return new TermsWriter(this, field);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.codecs.TermsConsumer addField(org.apache.lucene.index.FieldInfo field) throws java.io.IOException
-	  public override TermsConsumer addField(FieldInfo field)
-	  {
-		return new TermsWriter(this, field);
-	  }
+        public override void Dispose()
+        {
+            if (_output == null) return;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void close() throws java.io.IOException
-	  public override void close()
-	  {
-		if (@out != null)
-		{
-		  IOException ioe = null;
-		  try
-		  {
-			// write field summary
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long dirStart = out.getFilePointer();
-			long dirStart = @out.FilePointer;
+            IOException ioe = null;
+            try
+            {
+                // write field summary
+                var dirStart = _output.FilePointer;
 
-			@out.writeVInt(fields.Count);
-			foreach (FieldMetaData field in fields)
-			{
-			  @out.writeVInt(field.fieldInfo.number);
-			  @out.writeVLong(field.numTerms);
-			  if (field.fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
-			  {
-				@out.writeVLong(field.sumTotalTermFreq);
-			  }
-			  @out.writeVLong(field.sumDocFreq);
-			  @out.writeVInt(field.docCount);
-			  @out.writeVInt(field.longsSize);
-			  field.dict.save(@out);
-			}
-			writeTrailer(@out, dirStart);
-			CodecUtil.writeFooter(@out);
-		  }
-		  catch (IOException ioe2)
-		  {
-			ioe = ioe2;
-		  }
-		  finally
-		  {
-			IOUtils.closeWhileHandlingException(ioe, @out, postingsWriter);
-			@out = null;
-		  }
-		}
-	  }
+                _output.WriteVInt(_fields.Count);
+                foreach (var field in _fields)
+                {
+                    _output.WriteVInt(field.FieldInfo.Number);
+                    _output.WriteVLong(field.NumTerms);
+                    if (field.FieldInfo.FieldIndexOptions != IndexOptions.DOCS_ONLY)
+                    {
+                        _output.WriteVLong(field.SumTotalTermFreq);
+                    }
+                    _output.WriteVLong(field.SumDocFreq);
+                    _output.WriteVInt(field.DocCount);
+                    _output.WriteVInt(field.LongsSize);
+                    field.Dict.Save(_output);
+                }
+                WriteTrailer(_output, dirStart);
+                CodecUtil.WriteFooter(_output);
+            }
+            catch (IOException ioe2)
+            {
+                ioe = ioe2;
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(ioe, _output, _postingsWriter);
+                _output = null;
+            }
+        }
 
-	  private class FieldMetaData
-	  {
-		public readonly FieldInfo fieldInfo;
-		public readonly long numTerms;
-		public readonly long sumTotalTermFreq;
-		public readonly long sumDocFreq;
-		public readonly int docCount;
-		public readonly int longsSize;
-		public readonly FST<FSTTermOutputs.TermData> dict;
+        private class FieldMetaData
+        {
+            public FieldInfo FieldInfo { get; private set; }
+            public long NumTerms { get; private set; }
+            public long SumTotalTermFreq { get; private set; }
+            public long SumDocFreq { get; private set; }
+            public int DocCount { get; private set; }
+            public int LongsSize { get; private set; }
+            public FST<FSTTermOutputs.TermData> Dict { get; private set; }
 
-		public FieldMetaData(FieldInfo fieldInfo, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize, FST<FSTTermOutputs.TermData> fst)
-		{
-		  this.fieldInfo = fieldInfo;
-		  this.numTerms = numTerms;
-		  this.sumTotalTermFreq = sumTotalTermFreq;
-		  this.sumDocFreq = sumDocFreq;
-		  this.docCount = docCount;
-		  this.longsSize = longsSize;
-		  this.dict = fst;
-		}
-	  }
+            public FieldMetaData(FieldInfo fieldInfo, long numTerms, long sumTotalTermFreq, long sumDocFreq,
+                int docCount, int longsSize, FST<FSTTermOutputs.TermData> fst)
+            {
+                FieldInfo = fieldInfo;
+                NumTerms = numTerms;
+                SumTotalTermFreq = sumTotalTermFreq;
+                SumDocFreq = sumDocFreq;
+                DocCount = docCount;
+                LongsSize = longsSize;
+                Dict = fst;
+            }
+        }
 
-	  internal sealed class TermsWriter : TermsConsumer
-	  {
-		  private readonly FSTTermsWriter outerInstance;
+        internal sealed class TermsWriter : TermsConsumer
+        {
+            private readonly FSTTermsWriter _outerInstance;
 
-		internal readonly Builder<FSTTermOutputs.TermData> builder;
-		internal readonly FSTTermOutputs outputs;
-		internal readonly FieldInfo fieldInfo;
-		internal readonly int longsSize;
-		internal long numTerms;
+            private readonly Builder<FSTTermOutputs.TermData> _builder;
+            private readonly FSTTermOutputs _outputs;
+            private readonly FieldInfo _fieldInfo;
+            private readonly int _longsSize;
+            private long _numTerms;
 
-		internal readonly IntsRef scratchTerm = new IntsRef();
-		internal readonly RAMOutputStream statsWriter = new RAMOutputStream();
-		internal readonly RAMOutputStream metaWriter = new RAMOutputStream();
+            private readonly IntsRef _scratchTerm = new IntsRef();
+            private readonly RAMOutputStream _statsWriter = new RAMOutputStream();
+            private readonly RAMOutputStream _metaWriter = new RAMOutputStream();
 
-		internal TermsWriter(FSTTermsWriter outerInstance, FieldInfo fieldInfo)
-		{
-			this.outerInstance = outerInstance;
-		  this.numTerms = 0;
-		  this.fieldInfo = fieldInfo;
-		  this.longsSize = outerInstance.postingsWriter.setField(fieldInfo);
-		  this.outputs = new FSTTermOutputs(fieldInfo, longsSize);
-		  this.builder = new Builder<>(FST.INPUT_TYPE.BYTE1, outputs);
-		}
+            internal TermsWriter(FSTTermsWriter outerInstance, FieldInfo fieldInfo)
+            {
+                _outerInstance = outerInstance;
+                _numTerms = 0;
+                _fieldInfo = fieldInfo;
+                _longsSize = outerInstance._postingsWriter.SetField(fieldInfo);
+                _outputs = new FSTTermOutputs(fieldInfo, _longsSize);
+                _builder = new Builder<FSTTermOutputs.TermData>(FST.INPUT_TYPE.BYTE1, _outputs);
+            }
 
-		public override IComparer<BytesRef> Comparator
-		{
-			get
-			{
-			  return BytesRef.UTF8SortedAsUnicodeComparator;
-			}
-		}
+            public override IComparer<BytesRef> Comparator
+            {
+                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.codecs.PostingsConsumer startTerm(org.apache.lucene.util.BytesRef text) throws java.io.IOException
-		public override PostingsConsumer startTerm(BytesRef text)
-		{
-		  outerInstance.postingsWriter.startTerm();
-		  return outerInstance.postingsWriter;
-		}
+            public override PostingsConsumer StartTerm(BytesRef text)
+            {
+                _outerInstance._postingsWriter.StartTerm();
+                return _outerInstance._postingsWriter;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void finishTerm(org.apache.lucene.util.BytesRef text, org.apache.lucene.codecs.TermStats stats) throws java.io.IOException
-		public override void finishTerm(BytesRef text, TermStats stats)
-		{
-		  // write term meta data into fst
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.codecs.BlockTermState state = postingsWriter.newTermState();
-		  BlockTermState state = outerInstance.postingsWriter.newTermState();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FSTTermOutputs.TermData meta = new FSTTermOutputs.TermData();
-		  FSTTermOutputs.TermData meta = new FSTTermOutputs.TermData();
-		  meta.longs = new long[longsSize];
-		  meta.bytes = null;
-		  meta.docFreq = state.docFreq = stats.docFreq;
-		  meta.totalTermFreq = state.totalTermFreq = stats.totalTermFreq;
-		  outerInstance.postingsWriter.finishTerm(state);
-		  outerInstance.postingsWriter.encodeTerm(meta.longs, metaWriter, fieldInfo, state, true);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bytesSize = (int)metaWriter.getFilePointer();
-		  int bytesSize = (int)metaWriter.FilePointer;
-		  if (bytesSize > 0)
-		  {
-			meta.bytes = new sbyte[bytesSize];
-			metaWriter.writeTo(meta.bytes, 0);
-			metaWriter.reset();
-		  }
-		  builder.add(Util.toIntsRef(text, scratchTerm), meta);
-		  numTerms++;
-		}
+            public override void FinishTerm(BytesRef text, TermStats stats)
+            {
+                // write term meta data into fst
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void finish(long sumTotalTermFreq, long sumDocFreq, int docCount) throws java.io.IOException
-		public override void finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
-		{
-		  // save FST dict
-		  if (numTerms > 0)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST<FSTTermOutputs.TermData> fst = builder.finish();
-			FST<FSTTermOutputs.TermData> fst = builder.finish();
-			outerInstance.fields.Add(new FieldMetaData(fieldInfo, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize, fst));
-		  }
-		}
-	  }
-	}
+                var state = _outerInstance._postingsWriter.NewTermState();
 
+                var meta = new FSTTermOutputs.TermData
+                {
+                    longs = new long[_longsSize],
+                    bytes = null,
+                    docFreq = state.DocFreq = stats.DocFreq,
+                    totalTermFreq = state.TotalTermFreq = stats.TotalTermFreq
+                };
+                _outerInstance._postingsWriter.FinishTerm(state);
+                _outerInstance._postingsWriter.EncodeTerm(meta.longs, _metaWriter, _fieldInfo, state, true);
+                var bytesSize = (int) _metaWriter.FilePointer;
+                if (bytesSize > 0)
+                {
+                    meta.bytes = new sbyte[bytesSize];
+                    _metaWriter.WriteTo(meta.bytes, 0);
+                    _metaWriter.Reset();
+                }
+                _builder.Add(Util.ToIntsRef(text, _scratchTerm), meta);
+                _numTerms++;
+            }
+
+            public override void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
+            {
+                // save FST dict
+                if (_numTerms <= 0) return;
+
+                var fst = _builder.Finish();
+                _outerInstance._fields.Add(new FieldMetaData(_fieldInfo, _numTerms, sumTotalTermFreq, sumDocFreq,
+                    docCount, _longsSize, fst));
+            }
+        }
+    }
 }

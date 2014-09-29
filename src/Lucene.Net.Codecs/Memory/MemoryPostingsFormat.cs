@@ -1,56 +1,56 @@
-﻿using System;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Util.Packed;
 
-namespace org.apache.lucene.codecs.memory
+namespace Lucene.Net.Codecs.Memory
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-
-
-	using DocsAndPositionsEnum = org.apache.lucene.index.DocsAndPositionsEnum;
-	using DocsEnum = org.apache.lucene.index.DocsEnum;
-	using IndexOptions = org.apache.lucene.index.FieldInfo.IndexOptions;
-	using FieldInfo = org.apache.lucene.index.FieldInfo;
-	using FieldInfos = org.apache.lucene.index.FieldInfos;
-	using IndexFileNames = org.apache.lucene.index.IndexFileNames;
-	using SegmentReadState = org.apache.lucene.index.SegmentReadState;
-	using SegmentWriteState = org.apache.lucene.index.SegmentWriteState;
-	using Terms = org.apache.lucene.index.Terms;
-	using TermsEnum = org.apache.lucene.index.TermsEnum;
-	using ByteArrayDataInput = org.apache.lucene.store.ByteArrayDataInput;
-	using ChecksumIndexInput = org.apache.lucene.store.ChecksumIndexInput;
-	using IOContext = org.apache.lucene.store.IOContext;
-	using IndexInput = org.apache.lucene.store.IndexInput;
-	using IndexOutput = org.apache.lucene.store.IndexOutput;
-	using RAMOutputStream = org.apache.lucene.store.RAMOutputStream;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using Bits = org.apache.lucene.util.Bits;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using IntsRef = org.apache.lucene.util.IntsRef;
-	using RamUsageEstimator = org.apache.lucene.util.RamUsageEstimator;
-	using Builder = org.apache.lucene.util.fst.Builder;
-	using ByteSequenceOutputs = org.apache.lucene.util.fst.ByteSequenceOutputs;
-	using BytesRefFSTEnum = org.apache.lucene.util.fst.BytesRefFSTEnum;
-	using FST = org.apache.lucene.util.fst.FST;
-	using Util = org.apache.lucene.util.fst.Util;
-	using PackedInts = org.apache.lucene.util.packed.PackedInts;
+	using DocsAndPositionsEnum = Index.DocsAndPositionsEnum;
+	using DocsEnum = Index.DocsEnum;
+	using IndexOptions = Index.FieldInfo.IndexOptions;
+	using FieldInfo = Index.FieldInfo;
+	using FieldInfos = Index.FieldInfos;
+	using IndexFileNames = Index.IndexFileNames;
+	using SegmentReadState = Index.SegmentReadState;
+	using SegmentWriteState = Index.SegmentWriteState;
+	using Terms = Index.Terms;
+	using TermsEnum = Index.TermsEnum;
+	using ByteArrayDataInput = Store.ByteArrayDataInput;
+	using ChecksumIndexInput = Store.ChecksumIndexInput;
+	using IOContext = Store.IOContext;
+	using IndexInput = Store.IndexInput;
+	using IndexOutput = Store.IndexOutput;
+	using RAMOutputStream = Store.RAMOutputStream;
+	using ArrayUtil = Util.ArrayUtil;
+	using Bits = Util.Bits;
+	using BytesRef = Util.BytesRef;
+	using IOUtils = Util.IOUtils;
+	using IntsRef = Util.IntsRef;
+	using RamUsageEstimator = Util.RamUsageEstimator;
+	using Builder = Util.Fst.Builder;
+	using ByteSequenceOutputs = Util.Fst.ByteSequenceOutputs;
+	using BytesRefFSTEnum = Util.Fst.BytesRefFSTEnum;
+	using FST = Util.Fst.FST;
+	using Util = Util.Fst.Util;
+	using PackedInts = Util.packed.PackedInts;
 
 	// TODO: would be nice to somehow allow this to act like
 	// InstantiatedIndex, by never writing to disk; ie you write
@@ -184,7 +184,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addPosition(int pos, org.apache.lucene.util.BytesRef payload, int startOffset, int endOffset) throws java.io.IOException
+//ORIGINAL LINE: @Override public void addPosition(int pos, util.BytesRef payload, int startOffset, int endOffset) throws java.io.IOException
 		  public override void addPosition(int pos, BytesRef payload, int startOffset, int endOffset)
 		  {
 			Debug.Assert(payload == null || outerInstance.field.hasPayloads());
@@ -274,7 +274,7 @@ namespace org.apache.lucene.codecs.memory
 		internal readonly IntsRef scratchIntsRef = new IntsRef();
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void finishTerm(org.apache.lucene.util.BytesRef text, org.apache.lucene.codecs.TermStats stats) throws java.io.IOException
+//ORIGINAL LINE: @Override public void finishTerm(util.BytesRef text, codecs.TermStats stats) throws java.io.IOException
 		public override void finishTerm(BytesRef text, TermStats stats)
 		{
 
@@ -348,15 +348,15 @@ namespace org.apache.lucene.codecs.memory
 	  private const int VERSION_CURRENT = VERSION_START;
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.codecs.FieldsConsumer fieldsConsumer(org.apache.lucene.index.SegmentWriteState state) throws java.io.IOException
+//ORIGINAL LINE: @Override public codecs.FieldsConsumer fieldsConsumer(index.SegmentWriteState state) throws java.io.IOException
 	  public override FieldsConsumer fieldsConsumer(SegmentWriteState state)
 	  {
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fileName = org.apache.lucene.index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
+//ORIGINAL LINE: final String fileName = index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
 		string fileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.store.IndexOutput out = state.directory.createOutput(fileName, state.context);
+//ORIGINAL LINE: final store.IndexOutput out = state.directory.createOutput(fileName, state.context);
 		IndexOutput @out = state.directory.createOutput(fileName, state.context);
 		bool success = false;
 		try
@@ -858,7 +858,7 @@ namespace org.apache.lucene.codecs.memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean seekExact(org.apache.lucene.util.BytesRef text) throws java.io.IOException
+//ORIGINAL LINE: @Override public boolean seekExact(util.BytesRef text) throws java.io.IOException
 		public override bool seekExact(BytesRef text)
 		{
 		  //System.out.println("te.seekExact text=" + field.name + ":" + text.utf8ToString() + " this=" + this);
@@ -868,7 +868,7 @@ namespace org.apache.lucene.codecs.memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public SeekStatus seekCeil(org.apache.lucene.util.BytesRef text) throws java.io.IOException
+//ORIGINAL LINE: @Override public SeekStatus seekCeil(util.BytesRef text) throws java.io.IOException
 		public override SeekStatus seekCeil(BytesRef text)
 		{
 		  //System.out.println("te.seek text=" + field.name + ":" + text.utf8ToString() + " this=" + this);
@@ -952,7 +952,7 @@ namespace org.apache.lucene.codecs.memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.util.BytesRef next() throws java.io.IOException
+//ORIGINAL LINE: @Override public util.BytesRef next() throws java.io.IOException
 		public override BytesRef next()
 		{
 		  //System.out.println("te.next");
@@ -1012,7 +1012,7 @@ namespace org.apache.lucene.codecs.memory
 		internal readonly FieldInfo field;
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public TermsReader(org.apache.lucene.index.FieldInfos fieldInfos, org.apache.lucene.store.IndexInput in, int termCount) throws java.io.IOException
+//ORIGINAL LINE: public TermsReader(index.FieldInfos fieldInfos, store.IndexInput in, int termCount) throws java.io.IOException
 		public TermsReader(FieldInfos fieldInfos, IndexInput @in, int termCount)
 		{
 		  this.termCount = termCount;
@@ -1103,14 +1103,14 @@ namespace org.apache.lucene.codecs.memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.codecs.FieldsProducer fieldsProducer(org.apache.lucene.index.SegmentReadState state) throws java.io.IOException
+//ORIGINAL LINE: @Override public codecs.FieldsProducer fieldsProducer(index.SegmentReadState state) throws java.io.IOException
 	  public override FieldsProducer fieldsProducer(SegmentReadState state)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fileName = org.apache.lucene.index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
+//ORIGINAL LINE: final String fileName = index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
 		string fileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.store.ChecksumIndexInput in = state.directory.openChecksumInput(fileName, org.apache.lucene.store.IOContext.READONCE);
+//ORIGINAL LINE: final store.ChecksumIndexInput in = state.directory.openChecksumInput(fileName, store.IOContext.READONCE);
 		ChecksumIndexInput @in = state.directory.openChecksumInput(fileName, IOContext.READONCE);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':

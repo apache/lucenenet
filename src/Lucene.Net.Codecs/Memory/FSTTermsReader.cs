@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using Lucene.Net.Index;
 
-namespace org.apache.lucene.codecs.memory
+namespace Lucene.Net.Codecs.Memory
 {
 
 	/*
@@ -24,32 +25,32 @@ namespace org.apache.lucene.codecs.memory
 	 */
 
 
-	using CorruptIndexException = org.apache.lucene.index.CorruptIndexException;
-	using DocsAndPositionsEnum = org.apache.lucene.index.DocsAndPositionsEnum;
-	using DocsEnum = org.apache.lucene.index.DocsEnum;
-	using IndexOptions = org.apache.lucene.index.FieldInfo.IndexOptions;
-	using FieldInfo = org.apache.lucene.index.FieldInfo;
-	using FieldInfos = org.apache.lucene.index.FieldInfos;
-	using IndexFileNames = org.apache.lucene.index.IndexFileNames;
-	using SegmentInfo = org.apache.lucene.index.SegmentInfo;
-	using SegmentReadState = org.apache.lucene.index.SegmentReadState;
-	using TermState = org.apache.lucene.index.TermState;
-	using Terms = org.apache.lucene.index.Terms;
-	using TermsEnum = org.apache.lucene.index.TermsEnum;
-	using ByteArrayDataInput = org.apache.lucene.store.ByteArrayDataInput;
-	using IndexInput = org.apache.lucene.store.IndexInput;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using Bits = org.apache.lucene.util.Bits;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using RamUsageEstimator = org.apache.lucene.util.RamUsageEstimator;
-	using ByteRunAutomaton = org.apache.lucene.util.automaton.ByteRunAutomaton;
-	using CompiledAutomaton = org.apache.lucene.util.automaton.CompiledAutomaton;
-	using InputOutput = org.apache.lucene.util.fst.BytesRefFSTEnum.InputOutput;
-	using BytesRefFSTEnum = org.apache.lucene.util.fst.BytesRefFSTEnum;
-	using FST = org.apache.lucene.util.fst.FST;
-	using Outputs = org.apache.lucene.util.fst.Outputs;
-	using Util = org.apache.lucene.util.fst.Util;
+	using CorruptIndexException = index.CorruptIndexException;
+	using DocsAndPositionsEnum = index.DocsAndPositionsEnum;
+	using DocsEnum = index.DocsEnum;
+	using IndexOptions = index.FieldInfo.IndexOptions;
+	using FieldInfo = index.FieldInfo;
+	using FieldInfos = index.FieldInfos;
+	using IndexFileNames = index.IndexFileNames;
+	using SegmentInfo = index.SegmentInfo;
+	using SegmentReadState = index.SegmentReadState;
+	using TermState = index.TermState;
+	using Terms = index.Terms;
+	using TermsEnum = index.TermsEnum;
+	using ByteArrayDataInput = store.ByteArrayDataInput;
+	using IndexInput = store.IndexInput;
+	using ArrayUtil = util.ArrayUtil;
+	using Bits = util.Bits;
+	using BytesRef = util.BytesRef;
+	using IOUtils = util.IOUtils;
+	using RamUsageEstimator = util.RamUsageEstimator;
+	using ByteRunAutomaton = util.automaton.ByteRunAutomaton;
+	using CompiledAutomaton = util.automaton.CompiledAutomaton;
+	using InputOutput = util.fst.BytesRefFSTEnum.InputOutput;
+	using BytesRefFSTEnum = util.fst.BytesRefFSTEnum;
+	using FST = util.fst.FST;
+	using Outputs = util.fst.Outputs;
+	using Util = util.fst.Util;
 
 	/// <summary>
 	/// FST-based terms dictionary reader.
@@ -68,16 +69,16 @@ namespace org.apache.lucene.codecs.memory
 	  internal readonly int version;
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public FSTTermsReader(org.apache.lucene.index.SegmentReadState state, org.apache.lucene.codecs.PostingsReaderBase postingsReader) throws java.io.IOException
+//ORIGINAL LINE: public FSTTermsReader(index.SegmentReadState state, codecs.PostingsReaderBase postingsReader) throws java.io.IOException
 	  public FSTTermsReader(SegmentReadState state, PostingsReaderBase postingsReader)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String termsFileName = org.apache.lucene.index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTTermsWriter.TERMS_EXTENSION);
+//ORIGINAL LINE: final String termsFileName = index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTTermsWriter.TERMS_EXTENSION);
 		string termsFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTTermsWriter.TERMS_EXTENSION);
 
 		this.postingsReader = postingsReader;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.store.IndexInput in = state.directory.openInput(termsFileName, state.context);
+//ORIGINAL LINE: final store.IndexInput in = state.directory.openInput(termsFileName, state.context);
 		IndexInput @in = state.directory.openInput(termsFileName, state.context);
 
 		bool success = false;
@@ -92,7 +93,7 @@ namespace org.apache.lucene.codecs.memory
 		  seekDir(@in);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.FieldInfos fieldInfos = state.fieldInfos;
+//ORIGINAL LINE: final index.FieldInfos fieldInfos = state.fieldInfos;
 		  FieldInfos fieldInfos = state.fieldInfos;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int numFields = in.readVInt();
@@ -126,13 +127,13 @@ namespace org.apache.lucene.codecs.memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private int readHeader(org.apache.lucene.store.IndexInput in) throws java.io.IOException
+//ORIGINAL LINE: private int readHeader(store.IndexInput in) throws java.io.IOException
 	  private int readHeader(IndexInput @in)
 	  {
 		return CodecUtil.checkHeader(@in, FSTTermsWriter.TERMS_CODEC_NAME, FSTTermsWriter.TERMS_VERSION_START, FSTTermsWriter.TERMS_VERSION_CURRENT);
 	  }
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void seekDir(org.apache.lucene.store.IndexInput in) throws java.io.IOException
+//ORIGINAL LINE: private void seekDir(store.IndexInput in) throws java.io.IOException
 	  private void seekDir(IndexInput @in)
 	  {
 		if (version >= FSTTermsWriter.TERMS_VERSION_CHECKSUM)
@@ -146,7 +147,7 @@ namespace org.apache.lucene.codecs.memory
 		@in.seek(@in.readLong());
 	  }
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void checkFieldSummary(org.apache.lucene.index.SegmentInfo info, org.apache.lucene.store.IndexInput in, TermsReader field, TermsReader previous) throws java.io.IOException
+//ORIGINAL LINE: private void checkFieldSummary(index.SegmentInfo info, store.IndexInput in, TermsReader field, TermsReader previous) throws java.io.IOException
 	  private void checkFieldSummary(SegmentInfo info, IndexInput @in, TermsReader field, TermsReader previous)
 	  {
 		// #docs with field must be <= #docs
@@ -176,7 +177,7 @@ namespace org.apache.lucene.codecs.memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.Terms terms(String field) throws java.io.IOException
+//ORIGINAL LINE: @Override public index.Terms terms(String field) throws java.io.IOException
 	  public override Terms terms(string field)
 	  {
 		Debug.Assert(field != null);
@@ -215,7 +216,7 @@ namespace org.apache.lucene.codecs.memory
 		internal readonly FST<FSTTermOutputs.TermData> dict;
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: TermsReader(org.apache.lucene.index.FieldInfo fieldInfo, org.apache.lucene.store.IndexInput in, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize) throws java.io.IOException
+//ORIGINAL LINE: TermsReader(index.FieldInfo fieldInfo, store.IndexInput in, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize) throws java.io.IOException
 		internal TermsReader(FSTTermsReader outerInstance, FieldInfo fieldInfo, IndexInput @in, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize)
 		{
 			this.outerInstance = outerInstance;
@@ -290,14 +291,14 @@ namespace org.apache.lucene.codecs.memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.TermsEnum iterator(org.apache.lucene.index.TermsEnum reuse) throws java.io.IOException
+//ORIGINAL LINE: @Override public index.TermsEnum iterator(index.TermsEnum reuse) throws java.io.IOException
 		public override TermsEnum iterator(TermsEnum reuse)
 		{
 		  return new SegmentTermsEnum(this);
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.TermsEnum intersect(org.apache.lucene.util.automaton.CompiledAutomaton compiled, org.apache.lucene.util.BytesRef startTerm) throws java.io.IOException
+//ORIGINAL LINE: @Override public index.TermsEnum intersect(util.automaton.CompiledAutomaton compiled, util.BytesRef startTerm) throws java.io.IOException
 		public override TermsEnum intersect(CompiledAutomaton compiled, BytesRef startTerm)
 		{
 		  return new IntersectTermsEnum(this, compiled, startTerm);
@@ -336,7 +337,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.TermState termState() throws java.io.IOException
+//ORIGINAL LINE: @Override public index.TermState termState() throws java.io.IOException
 		  public override TermState termState()
 		  {
 			decodeMetaData();
@@ -363,7 +364,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.DocsEnum docs(org.apache.lucene.util.Bits liveDocs, org.apache.lucene.index.DocsEnum reuse, int flags) throws java.io.IOException
+//ORIGINAL LINE: @Override public index.DocsEnum docs(util.Bits liveDocs, index.DocsEnum reuse, int flags) throws java.io.IOException
 		  public override DocsEnum docs(Bits liveDocs, DocsEnum reuse, int flags)
 		  {
 			decodeMetaData();
@@ -371,7 +372,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.DocsAndPositionsEnum docsAndPositions(org.apache.lucene.util.Bits liveDocs, org.apache.lucene.index.DocsAndPositionsEnum reuse, int flags) throws java.io.IOException
+//ORIGINAL LINE: @Override public index.DocsAndPositionsEnum docsAndPositions(util.Bits liveDocs, index.DocsAndPositionsEnum reuse, int flags) throws java.io.IOException
 		  public override DocsAndPositionsEnum docsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 		  {
 			if (!outerInstance.hasPositions())
@@ -435,18 +436,18 @@ namespace org.apache.lucene.codecs.memory
 		  {
 			if (!decoded && !seekPending)
 			{
-			  if (meta.bytes != null)
+			  if (meta.BYTES != null)
 			  {
-				bytesReader.reset(meta.bytes, 0, meta.bytes.Length);
+				bytesReader.reset(meta.BYTES, 0, meta.BYTES.Length);
 			  }
-			  outerInstance.outerInstance.postingsReader.decodeTerm(meta.longs, bytesReader, outerInstance.fieldInfo, state, true);
+			  outerInstance.outerInstance.postingsReader.decodeTerm(meta.LONGS, bytesReader, outerInstance.fieldInfo, state, true);
 			  decoded = true;
 			}
 		  }
 
 		  // Update current enum according to FSTEnum
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: void updateEnum(final org.apache.lucene.util.fst.BytesRefFSTEnum.InputOutput<FSTTermOutputs.TermData> pair)
+//ORIGINAL LINE: void updateEnum(final util.fst.BytesRefFSTEnum.InputOutput<FSTTermOutputs.TermData> pair)
 		  internal void updateEnum(InputOutput<FSTTermOutputs.TermData> pair)
 		  {
 			if (pair == null)
@@ -457,15 +458,15 @@ namespace org.apache.lucene.codecs.memory
 			{
 			  term_Renamed = pair.input;
 			  meta = pair.output;
-			  state.docFreq = meta.docFreq;
-			  state.totalTermFreq = meta.totalTermFreq;
+			  state.docFreq = meta.DOC_FREQ;
+			  state.totalTermFreq = meta.TOTAL_TERM_FREQ;
 			}
 			decoded = false;
 			seekPending = false;
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.util.BytesRef next() throws java.io.IOException
+//ORIGINAL LINE: @Override public util.BytesRef next() throws java.io.IOException
 		  public override BytesRef next()
 		  {
 			if (seekPending) // previously positioned, but termOutputs not fetched
@@ -479,7 +480,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean seekExact(org.apache.lucene.util.BytesRef target) throws java.io.IOException
+//ORIGINAL LINE: @Override public boolean seekExact(util.BytesRef target) throws java.io.IOException
 		  public override bool seekExact(BytesRef target)
 		  {
 			updateEnum(fstEnum.seekExact(target));
@@ -487,7 +488,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public SeekStatus seekCeil(org.apache.lucene.util.BytesRef target) throws java.io.IOException
+//ORIGINAL LINE: @Override public SeekStatus seekCeil(util.BytesRef target) throws java.io.IOException
 		  public override SeekStatus seekCeil(BytesRef target)
 		  {
 			updateEnum(fstEnum.seekCeil(target));
@@ -566,7 +567,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: IntersectTermsEnum(org.apache.lucene.util.automaton.CompiledAutomaton compiled, org.apache.lucene.util.BytesRef startTerm) throws java.io.IOException
+//ORIGINAL LINE: IntersectTermsEnum(util.automaton.CompiledAutomaton compiled, util.BytesRef startTerm) throws java.io.IOException
 		  internal IntersectTermsEnum(FSTTermsReader.TermsReader outerInstance, CompiledAutomaton compiled, BytesRef startTerm) : base(outerInstance)
 		  {
 			  this.outerInstance = outerInstance;
@@ -619,11 +620,11 @@ namespace org.apache.lucene.codecs.memory
 			Debug.Assert(term_Renamed != null);
 			if (!decoded)
 			{
-			  if (meta.bytes != null)
+			  if (meta.BYTES != null)
 			  {
-				bytesReader.reset(meta.bytes, 0, meta.bytes.Length);
+				bytesReader.reset(meta.BYTES, 0, meta.BYTES.Length);
 			  }
-			  outerInstance.outerInstance.postingsReader.decodeTerm(meta.longs, bytesReader, outerInstance.fieldInfo, state, true);
+			  outerInstance.outerInstance.postingsReader.decodeTerm(meta.LONGS, bytesReader, outerInstance.fieldInfo, state, true);
 			  decoded = true;
 			}
 		  }
@@ -651,12 +652,12 @@ namespace org.apache.lucene.codecs.memory
 			{
 			  meta = last.output;
 			}
-			state.docFreq = meta.docFreq;
-			state.totalTermFreq = meta.totalTermFreq;
+			state.docFreq = meta.DOC_FREQ;
+			state.totalTermFreq = meta.TOTAL_TERM_FREQ;
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public SeekStatus seekCeil(org.apache.lucene.util.BytesRef target) throws java.io.IOException
+//ORIGINAL LINE: @Override public SeekStatus seekCeil(util.BytesRef target) throws java.io.IOException
 		  public override SeekStatus seekCeil(BytesRef target)
 		  {
 			decoded = false;
@@ -673,7 +674,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.util.BytesRef next() throws java.io.IOException
+//ORIGINAL LINE: @Override public util.BytesRef next() throws java.io.IOException
 		  public override BytesRef next()
 		  {
 			//if (TEST) System.out.println("Enum next()");
@@ -719,7 +720,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private org.apache.lucene.util.BytesRef doSeekCeil(org.apache.lucene.util.BytesRef target) throws java.io.IOException
+//ORIGINAL LINE: private util.BytesRef doSeekCeil(util.BytesRef target) throws java.io.IOException
 		  internal BytesRef doSeekCeil(BytesRef target)
 		  {
 			//if (TEST) System.out.println("Enum doSeekCeil()");
@@ -894,7 +895,7 @@ namespace org.apache.lucene.codecs.memory
 			if (level + 1 == stack.Length)
 			{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Frame[] temp = new Frame[org.apache.lucene.util.ArrayUtil.oversize(level+2, org.apache.lucene.util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+//ORIGINAL LINE: final Frame[] temp = new Frame[util.ArrayUtil.oversize(level+2, util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			  Frame[] temp = new Frame[ArrayUtil.oversize(level + 2, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			  Array.Copy(stack, 0, temp, 0, stack.Length);
 			  for (int i = stack.Length; i < temp.Length; i++)
@@ -944,26 +945,26 @@ namespace org.apache.lucene.codecs.memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: static<T> void walk(org.apache.lucene.util.fst.FST<T> fst) throws java.io.IOException
+//ORIGINAL LINE: static<T> void walk(util.fst.FST<T> fst) throws java.io.IOException
 	  internal static void walk<T>(FST<T> fst)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.ArrayList<org.apache.lucene.util.fst.FST.Arc<T>> queue = new java.util.ArrayList<>();
+//ORIGINAL LINE: final java.util.ArrayList<util.fst.FST.Arc<T>> queue = new java.util.ArrayList<>();
 		List<FST.Arc<T>> queue = new List<FST.Arc<T>>();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.BitSet seen = new java.util.BitSet();
 		BitArray seen = new BitArray();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.BytesReader reader = fst.getBytesReader();
+//ORIGINAL LINE: final util.fst.FST.BytesReader reader = fst.getBytesReader();
 		FST.BytesReader reader = fst.BytesReader;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<T> startArc = fst.getFirstArc(new org.apache.lucene.util.fst.FST.Arc<T>());
+//ORIGINAL LINE: final util.fst.FST.Arc<T> startArc = fst.getFirstArc(new util.fst.FST.Arc<T>());
 		FST.Arc<T> startArc = fst.getFirstArc(new FST.Arc<T>());
 		queue.Add(startArc);
 		while (queue.Count > 0)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<T> arc = queue.remove(0);
+//ORIGINAL LINE: final util.fst.FST.Arc<T> arc = queue.remove(0);
 		  FST.Arc<T> arc = queue.Remove(0);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long node = arc.target;

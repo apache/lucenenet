@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 
-namespace org.apache.lucene.codecs.memory
+namespace Lucene.Net.Codecs.Memory
 {
 
 	/// <summary>
@@ -23,27 +23,27 @@ namespace org.apache.lucene.codecs.memory
 	/// </summary>
 
 
-	using Lucene41PostingsFormat = org.apache.lucene.codecs.lucene41.Lucene41PostingsFormat; // javadocs
-	using DocsAndPositionsEnum = org.apache.lucene.index.DocsAndPositionsEnum;
-	using DocsEnum = org.apache.lucene.index.DocsEnum;
-	using IndexOptions = org.apache.lucene.index.FieldInfo.IndexOptions;
-	using FieldInfo = org.apache.lucene.index.FieldInfo;
-	using Fields = org.apache.lucene.index.Fields;
-	using OrdTermState = org.apache.lucene.index.OrdTermState;
-	using SegmentReadState = org.apache.lucene.index.SegmentReadState;
-	using SegmentWriteState = org.apache.lucene.index.SegmentWriteState;
-	using TermState = org.apache.lucene.index.TermState;
-	using Terms = org.apache.lucene.index.Terms;
-	using TermsEnum = org.apache.lucene.index.TermsEnum;
-	using IOContext = org.apache.lucene.store.IOContext;
-	using RAMOutputStream = org.apache.lucene.store.RAMOutputStream;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using Bits = org.apache.lucene.util.Bits;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using RamUsageEstimator = org.apache.lucene.util.RamUsageEstimator;
-	using CompiledAutomaton = org.apache.lucene.util.automaton.CompiledAutomaton;
-	using RunAutomaton = org.apache.lucene.util.automaton.RunAutomaton;
-	using Transition = org.apache.lucene.util.automaton.Transition;
+	using Lucene41PostingsFormat = codecs.lucene41.Lucene41PostingsFormat; // javadocs
+	using DocsAndPositionsEnum = index.DocsAndPositionsEnum;
+	using DocsEnum = index.DocsEnum;
+	using IndexOptions = index.FieldInfo.IndexOptions;
+	using FieldInfo = index.FieldInfo;
+	using Fields = index.Fields;
+	using OrdTermState = index.OrdTermState;
+	using SegmentReadState = index.SegmentReadState;
+	using SegmentWriteState = index.SegmentWriteState;
+	using TermState = index.TermState;
+	using Terms = index.Terms;
+	using TermsEnum = index.TermsEnum;
+	using IOContext = store.IOContext;
+	using RAMOutputStream = store.RAMOutputStream;
+	using ArrayUtil = util.ArrayUtil;
+	using Bits = util.Bits;
+	using BytesRef = util.BytesRef;
+	using RamUsageEstimator = util.RamUsageEstimator;
+	using CompiledAutomaton = util.automaton.CompiledAutomaton;
+	using RunAutomaton = util.automaton.RunAutomaton;
+	using Transition = util.automaton.Transition;
 
 	// TODO: 
 	//   - build depth-N prefix hash?
@@ -104,14 +104,14 @@ namespace org.apache.lucene.codecs.memory
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.codecs.FieldsConsumer fieldsConsumer(org.apache.lucene.index.SegmentWriteState state) throws java.io.IOException
+//ORIGINAL LINE: @Override public codecs.FieldsConsumer fieldsConsumer(index.SegmentWriteState state) throws java.io.IOException
 	  public override FieldsConsumer fieldsConsumer(SegmentWriteState state)
 	  {
 		return PostingsFormat.forName("Lucene41").fieldsConsumer(state);
 	  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.codecs.FieldsProducer fieldsProducer(org.apache.lucene.index.SegmentReadState state) throws java.io.IOException
+//ORIGINAL LINE: @Override public codecs.FieldsProducer fieldsProducer(index.SegmentReadState state) throws java.io.IOException
 	  public override FieldsProducer fieldsProducer(SegmentReadState state)
 	  {
 		FieldsProducer postings = PostingsFormat.forName("Lucene41").fieldsProducer(state);
@@ -141,7 +141,7 @@ namespace org.apache.lucene.codecs.memory
 		internal readonly IDictionary<string, DirectField> fields = new SortedDictionary<string, DirectField>();
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public DirectFields(org.apache.lucene.index.SegmentReadState state, org.apache.lucene.index.Fields fields, int minSkipCount, int lowFreqCutoff) throws java.io.IOException
+//ORIGINAL LINE: public DirectFields(index.SegmentReadState state, index.Fields fields, int minSkipCount, int lowFreqCutoff) throws java.io.IOException
 		public DirectFields(SegmentReadState state, Fields fields, int minSkipCount, int lowFreqCutoff)
 		{
 		  foreach (string field in fields)
@@ -333,11 +333,11 @@ namespace org.apache.lucene.codecs.memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public DirectField(org.apache.lucene.index.SegmentReadState state, String field, org.apache.lucene.index.Terms termsIn, int minSkipCount, int lowFreqCutoff) throws java.io.IOException
+//ORIGINAL LINE: public DirectField(index.SegmentReadState state, String field, index.Terms termsIn, int minSkipCount, int lowFreqCutoff) throws java.io.IOException
 		public DirectField(SegmentReadState state, string field, Terms termsIn, int minSkipCount, int lowFreqCutoff)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.FieldInfo fieldInfo = state.fieldInfos.fieldInfo(field);
+//ORIGINAL LINE: final index.FieldInfo fieldInfo = state.fieldInfos.fieldInfo(field);
 		  FieldInfo fieldInfo = state.fieldInfos.fieldInfo(field);
 
 		  sumTotalTermFreq = termsIn.SumTotalTermFreq;
@@ -367,7 +367,7 @@ namespace org.apache.lucene.codecs.memory
 		  DocsEnum docsEnum = null;
 		  DocsAndPositionsEnum docsAndPositionsEnum = null;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.TermsEnum termsEnum = termsIn.iterator(null);
+//ORIGINAL LINE: final index.TermsEnum termsEnum = termsIn.iterator(null);
 		  TermsEnum termsEnum = termsIn.iterator(null);
 		  int termOffset = 0;
 
@@ -377,7 +377,7 @@ namespace org.apache.lucene.codecs.memory
 
 		  // Used for payloads, if any:
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.store.RAMOutputStream ros = new org.apache.lucene.store.RAMOutputStream();
+//ORIGINAL LINE: final store.RAMOutputStream ros = new store.RAMOutputStream();
 		  RAMOutputStream ros = new RAMOutputStream();
 
 		  // if (DEBUG) {
@@ -421,7 +421,7 @@ namespace org.apache.lucene.codecs.memory
 			TermAndSkip ent;
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.DocsEnum docsEnum2;
+//ORIGINAL LINE: final index.DocsEnum docsEnum2;
 			DocsEnum docsEnum2;
 			if (hasPos)
 			{
@@ -462,7 +462,7 @@ namespace org.apache.lucene.codecs.memory
 					  if (hasPayloads_Renamed)
 					  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.BytesRef payload = docsAndPositionsEnum.getPayload();
+//ORIGINAL LINE: final util.BytesRef payload = docsAndPositionsEnum.getPayload();
 						BytesRef payload = docsAndPositionsEnum.Payload;
 						if (payload != null)
 						{
@@ -841,7 +841,7 @@ namespace org.apache.lucene.codecs.memory
 		}
 
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.TermsEnum intersect(org.apache.lucene.util.automaton.CompiledAutomaton compiled, final org.apache.lucene.util.BytesRef startTerm)
+//ORIGINAL LINE: @Override public index.TermsEnum intersect(util.automaton.CompiledAutomaton compiled, final util.BytesRef startTerm)
 		public override TermsEnum intersect(CompiledAutomaton compiled, BytesRef startTerm)
 		{
 		  return new DirectIntersectTermsEnum(this, compiled, startTerm);
@@ -1052,7 +1052,7 @@ namespace org.apache.lucene.codecs.memory
 		  }
 
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void seekExact(org.apache.lucene.util.BytesRef term, org.apache.lucene.index.TermState state) throws java.io.IOException
+//ORIGINAL LINE: @Override public void seekExact(util.BytesRef term, index.TermState state) throws java.io.IOException
 		  public override void seekExact(BytesRef term, TermState state)
 		  {
 			termOrd = (int)((OrdTermState) state).ord;

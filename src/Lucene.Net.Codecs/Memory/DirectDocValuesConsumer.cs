@@ -1,423 +1,387 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-namespace org.apache.lucene.codecs.memory
+namespace Lucene.Net.Codecs.Memory
 {
+    using System;
+    using System.Diagnostics;
+    using System.Collections.Generic;
+   
+    using FieldInfo = Index.FieldInfo;
+    using IndexFileNames = Index.IndexFileNames;
+    using SegmentWriteState = Index.SegmentWriteState;
+    using IndexOutput = Store.IndexOutput;
+    using BytesRef = Util.BytesRef;
+    using IOUtils = Util.IOUtils;
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /// <summary>
+    /// Writer for <seealso cref="DirectDocValuesFormat"/>
+    /// </summary>
+    internal class DirectDocValuesConsumer : DocValuesConsumer
+    {
+        internal IndexOutput data, meta;
+        internal readonly int maxDoc;
 
+        internal DirectDocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension,
+            string metaCodec, string metaExtension)
+        {
+            maxDoc = state.SegmentInfo.DocCount;
+            bool success = false;
+            try
+            {
+                string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
+                    dataExtension);
+                data = state.Directory.CreateOutput(dataName, state.Context);
+                CodecUtil.WriteHeader(data, dataCodec, VERSION_CURRENT);
+                string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
+                    metaExtension);
+                meta = state.Directory.CreateOutput(metaName, state.Context);
+                CodecUtil.WriteHeader(meta, metaCodec, VERSION_CURRENT);
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException(this);
+                }
+            }
+        }
 
-	using FieldInfo = org.apache.lucene.index.FieldInfo;
-	using IndexFileNames = org.apache.lucene.index.IndexFileNames;
-	using SegmentWriteState = org.apache.lucene.index.SegmentWriteState;
-	using IndexOutput = org.apache.lucene.store.IndexOutput;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using IOUtils = org.apache.lucene.util.IOUtils;
+        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        {
+            meta.WriteVInt(field.Number);
+            meta.WriteByte(NUMBER);
+            AddNumericFieldValues(field, values);
+        }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.VERSION_CURRENT;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.BYTES;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.SORTED;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.SORTED_SET;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static org.apache.lucene.codecs.memory.DirectDocValuesProducer.NUMBER;
+        private void AddNumericFieldValues(FieldInfo field, IEnumerable<long> values)
+        {
+            meta.WriteLong(data.FilePointer);
+            long minValue = long.MaxValue;
+            long maxValue = long.MinValue;
+            bool missing = false;
 
-	/// <summary>
-	/// Writer for <seealso cref="DirectDocValuesFormat"/>
-	/// </summary>
+            long count = 0;
+            foreach (var nv in values)
+            {
+                if (nv != null)
+                {
+                    var v = nv;
+                    minValue = Math.Min(minValue, v);
+                    maxValue = Math.Max(maxValue, v);
+                }
+                else
+                {
+                    missing = true;
+                }
+                count++;
+                if (count >= DirectDocValuesFormat.MAX_SORTED_SET_ORDS)
+                {
+                    throw new ArgumentException("DocValuesField \"" + field.name + "\" is too large, must be <= " +
+                                                       DirectDocValuesFormat.MAX_SORTED_SET_ORDS + " values/total ords");
+                }
+            }
+            meta.WriteInt((int) count);
 
-	internal class DirectDocValuesConsumer : DocValuesConsumer
-	{
-	  internal IndexOutput data, meta;
-	  internal readonly int maxDoc;
+            if (missing)
+            {
+                long start = data.FilePointer;
+                WriteMissingBitset(values);
+                meta.WriteLong(start);
+                meta.WriteLong(data.FilePointer - start);
+            }
+            else
+            {
+                meta.WriteLong(-1L);
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: DirectDocValuesConsumer(org.apache.lucene.index.SegmentWriteState state, String dataCodec, String dataExtension, String metaCodec, String metaExtension) throws java.io.IOException
-	  internal DirectDocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension)
-	  {
-		maxDoc = state.segmentInfo.DocCount;
-		bool success = false;
-		try
-		{
-		  string dataName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, dataExtension);
-		  data = state.directory.createOutput(dataName, state.context);
-		  CodecUtil.writeHeader(data, dataCodec, VERSION_CURRENT);
-		  string metaName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, metaExtension);
-		  meta = state.directory.createOutput(metaName, state.context);
-		  CodecUtil.writeHeader(meta, metaCodec, VERSION_CURRENT);
-		  success = true;
-		}
-		finally
-		{
-		  if (!success)
-		  {
-			IOUtils.closeWhileHandlingException(this);
-		  }
-		}
-	  }
+            sbyte byteWidth;
+            if (minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
+            {
+                byteWidth = 1;
+            }
+            else if (minValue >= short.MinValue && maxValue <= short.MaxValue)
+            {
+                byteWidth = 2;
+            }
+            else if (minValue >= int.MinValue && maxValue <= int.MaxValue)
+            {
+                byteWidth = 4;
+            }
+            else
+            {
+                byteWidth = 8;
+            }
+            meta.WriteByte(byteWidth);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addNumericField(org.apache.lucene.index.FieldInfo field, Iterable<Number> values) throws java.io.IOException
-	  public override void addNumericField(FieldInfo field, IEnumerable<Number> values)
-	  {
-		meta.writeVInt(field.number);
-		meta.writeByte(NUMBER);
-		addNumericFieldValues(field, values);
-	  }
+            foreach (var nv in values)
+            {
+                long v;
+                if (nv != null)
+                {
+                    v = (long) nv;
+                }
+                else
+                {
+                    v = 0;
+                }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void addNumericFieldValues(org.apache.lucene.index.FieldInfo field, Iterable<Number> values) throws java.io.IOException
-	  private void addNumericFieldValues(FieldInfo field, IEnumerable<Number> values)
-	  {
-		meta.writeLong(data.FilePointer);
-		long minValue = long.MaxValue;
-		long maxValue = long.MinValue;
-		bool missing = false;
+                switch (byteWidth)
+                {
+                    case 1:
+                        data.WriteByte((sbyte) v);
+                        break;
+                    case 2:
+                        data.WriteShort((short) v);
+                        break;
+                    case 4:
+                        data.WriteInt((int) v);
+                        break;
+                    case 8:
+                        data.WriteLong(v);
+                        break;
+                }
+            }
+        }
 
-		long count = 0;
-		foreach (Number nv in values)
-		{
-		  if (nv != null)
-		  {
-			long v = (long)nv;
-			minValue = Math.Min(minValue, v);
-			maxValue = Math.Max(maxValue, v);
-		  }
-		  else
-		  {
-			missing = true;
-		  }
-		  count++;
-		  if (count >= DirectDocValuesFormat.MAX_SORTED_SET_ORDS)
-		  {
-			throw new System.ArgumentException("DocValuesField \"" + field.name + "\" is too large, must be <= " + DirectDocValuesFormat.MAX_SORTED_SET_ORDS + " values/total ords");
-		  }
-		}
-		meta.writeInt((int) count);
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) return;
 
-		if (missing)
-		{
-		  long start = data.FilePointer;
-		  writeMissingBitset(values);
-		  meta.writeLong(start);
-		  meta.writeLong(data.FilePointer - start);
-		}
-		else
-		{
-		  meta.writeLong(-1L);
-		}
+            var success = false;
+            try
+            {
+                if (meta != null)
+                {
+                    meta.WriteVInt(-1); // write EOF marker
+                    CodecUtil.WriteFooter(meta); // write checksum
+                }
+                if (data != null)
+                {
+                    CodecUtil.WriteFooter(data);
+                }
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Close(data, meta);
+                }
+                else
+                {
+                    IOUtils.CloseWhileHandlingException(data, meta);
+                }
+                data = meta = null;
+            }
+        }
 
-		sbyte byteWidth;
-		if (minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
-		{
-		  byteWidth = 1;
-		}
-		else if (minValue >= short.MinValue && maxValue <= short.MaxValue)
-		{
-		  byteWidth = 2;
-		}
-		else if (minValue >= int.MinValue && maxValue <= int.MaxValue)
-		{
-		  byteWidth = 4;
-		}
-		else
-		{
-		  byteWidth = 8;
-		}
-		meta.writeByte(byteWidth);
+        public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
+        {
+            meta.WriteVInt(field.Number);
+            meta.WriteByte(BYTES);
+            AddBinaryFieldValues(field, values);
+        }
 
-		foreach (Number nv in values)
-		{
-		  long v;
-		  if (nv != null)
-		  {
-			v = (long)nv;
-		  }
-		  else
-		  {
-			v = 0;
-		  }
+        private void AddBinaryFieldValues(FieldInfo field, IEnumerable<BytesRef> values)
+        {
+            // write the byte[] data
+            long startFP = data.FilePointer;
+            bool missing = false;
+            long totalBytes = 0;
+            int count = 0;
+            foreach (BytesRef v in values)
+            {
+                if (v != null)
+                {
+                    data.WriteBytes(v.Bytes, v.Offset, v.Length);
+                    totalBytes += v.Length;
+                    if (totalBytes > DirectDocValuesFormat.MAX_TOTAL_BYTES_LENGTH)
+                    {
+                        throw new ArgumentException("DocValuesField \"" + field.name +
+                                                           "\" is too large, cannot have more than DirectDocValuesFormat.MAX_TOTAL_BYTES_LENGTH (" +
+                                                           DirectDocValuesFormat.MAX_TOTAL_BYTES_LENGTH + ") bytes");
+                    }
+                }
+                else
+                {
+                    missing = true;
+                }
+                count++;
+            }
 
-		  switch (byteWidth)
-		  {
-		  case 1:
-			data.writeByte((sbyte) v);
-			break;
-		  case 2:
-			data.writeShort((short) v);
-			break;
-		  case 4:
-			data.writeInt((int) v);
-			break;
-		  case 8:
-			data.writeLong(v);
-			break;
-		  }
-		}
-	  }
+            meta.WriteLong(startFP);
+            meta.WriteInt((int) totalBytes);
+            meta.WriteInt(count);
+            if (missing)
+            {
+                long start = data.FilePointer;
+                WriteMissingBitset(values);
+                meta.WriteLong(start);
+                meta.WriteLong(data.FilePointer - start);
+            }
+            else
+            {
+                meta.WriteLong(-1L);
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void close() throws java.io.IOException
-	  public override void close()
-	  {
-		bool success = false;
-		try
-		{
-		  if (meta != null)
-		  {
-			meta.writeVInt(-1); // write EOF marker
-			CodecUtil.writeFooter(meta); // write checksum
-		  }
-		  if (data != null)
-		  {
-			CodecUtil.writeFooter(data);
-		  }
-		  success = true;
-		}
-		finally
-		{
-		  if (success)
-		  {
-			IOUtils.close(data, meta);
-		  }
-		  else
-		  {
-			IOUtils.closeWhileHandlingException(data, meta);
-		  }
-		  data = meta = null;
-		}
-	  }
+            int addr = 0;
+            foreach (BytesRef v in values)
+            {
+                data.WriteInt(addr);
+                if (v != null)
+                {
+                    addr += v.Length;
+                }
+            }
+            data.WriteInt(addr);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addBinaryField(org.apache.lucene.index.FieldInfo field, final Iterable<org.apache.lucene.util.BytesRef> values) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  public override void addBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
-	  {
-		meta.writeVInt(field.number);
-		meta.writeByte(BYTES);
-		addBinaryFieldValues(field, values);
-	  }
+        // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
+        // but this is very simple, and algorithms only check this for values of 0 anyway (doesnt slow down normal decode)
+        internal virtual void WriteMissingBitset<T1>(IEnumerable<T1> values)
+        {
+            long bits = 0;
+            int count = 0;
+            foreach (object v in values)
+            {
+                if (count == 64)
+                {
+                    data.WriteLong(bits);
+                    count = 0;
+                    bits = 0;
+                }
+                if (v != null)
+                {
+                    bits |= 1L << (count & 0x3f);
+                }
+                count++;
+            }
+            if (count > 0)
+            {
+                data.WriteLong(bits);
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void addBinaryFieldValues(org.apache.lucene.index.FieldInfo field, final Iterable<org.apache.lucene.util.BytesRef> values) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  private void addBinaryFieldValues(FieldInfo field, IEnumerable<BytesRef> values)
-	  {
-		// write the byte[] data
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long startFP = data.getFilePointer();
-		long startFP = data.FilePointer;
-		bool missing = false;
-		long totalBytes = 0;
-		int count = 0;
-		foreach (BytesRef v in values)
-		{
-		  if (v != null)
-		  {
-			data.writeBytes(v.bytes, v.offset, v.length);
-			totalBytes += v.length;
-			if (totalBytes > DirectDocValuesFormat.MAX_TOTAL_BYTES_LENGTH)
-			{
-			  throw new System.ArgumentException("DocValuesField \"" + field.name + "\" is too large, cannot have more than DirectDocValuesFormat.MAX_TOTAL_BYTES_LENGTH (" + DirectDocValuesFormat.MAX_TOTAL_BYTES_LENGTH + ") bytes");
-			}
-		  }
-		  else
-		  {
-			missing = true;
-		  }
-		  count++;
-		}
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        {
+            meta.WriteVInt(field.Number);
+            meta.WriteByte(SORTED);
 
-		meta.writeLong(startFP);
-		meta.writeInt((int) totalBytes);
-		meta.writeInt(count);
-		if (missing)
-		{
-		  long start = data.FilePointer;
-		  writeMissingBitset(values);
-		  meta.writeLong(start);
-		  meta.writeLong(data.FilePointer - start);
-		}
-		else
-		{
-		  meta.writeLong(-1L);
-		}
+            // write the ordinals as numerics
+            AddNumericFieldValues(field, docToOrd);
 
-		int addr = 0;
-		foreach (BytesRef v in values)
-		{
-		  data.writeInt(addr);
-		  if (v != null)
-		  {
-			addr += v.length;
-		  }
-		}
-		data.writeInt(addr);
-	  }
+            // write the values as binary
+            AddBinaryFieldValues(field, values);
+        }
 
-	  // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
-	  // but this is very simple, and algorithms only check this for values of 0 anyway (doesnt slow down normal decode)
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: void writeMissingBitset(Iterable<?> values) throws java.io.IOException
-	  internal virtual void writeMissingBitset<T1>(IEnumerable<T1> values)
-	  {
-		long bits = 0;
-		int count = 0;
-		foreach (object v in values)
-		{
-		  if (count == 64)
-		  {
-			data.writeLong(bits);
-			count = 0;
-			bits = 0;
-		  }
-		  if (v != null)
-		  {
-			bits |= 1L << (count & 0x3f);
-		  }
-		  count++;
-		}
-		if (count > 0)
-		{
-		  data.writeLong(bits);
-		}
-	  }
+        // note: this might not be the most efficient... but its fairly simple
+        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values,
+            IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+        {
+            meta.WriteVInt(field.Number);
+            meta.WriteByte(SORTED_SET);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addSortedField(org.apache.lucene.index.FieldInfo field, Iterable<org.apache.lucene.util.BytesRef> values, Iterable<Number> docToOrd) throws java.io.IOException
-	  public override void addSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd)
-	  {
-		meta.writeVInt(field.number);
-		meta.writeByte(SORTED);
+            // First write docToOrdCounts, except we "aggregate" the
+            // counts so they turn into addresses, and add a final
+            // value = the total aggregate:
+            AddNumericFieldValues(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount));
 
-		// write the ordinals as numerics
-		addNumericFieldValues(field, docToOrd);
+            // Write ordinals for all docs, appended into one big
+            // numerics:
+            AddNumericFieldValues(field, ords);
 
-		// write the values as binary
-		addBinaryFieldValues(field, values);
-	  }
+            // write the values as binary
+            AddBinaryFieldValues(field, values);
+        }
 
-	  // note: this might not be the most efficient... but its fairly simple
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addSortedSetField(org.apache.lucene.index.FieldInfo field, Iterable<org.apache.lucene.util.BytesRef> values, final Iterable<Number> docToOrdCount, final Iterable<Number> ords) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  public override void addSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
-	  {
-		meta.writeVInt(field.number);
-		meta.writeByte(SORTED_SET);
+        private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
+        {
+            private readonly DirectDocValuesConsumer _outerInstance;
+            private readonly IEnumerable<long> _docToOrdCount;
 
-		// First write docToOrdCounts, except we "aggregate" the
-		// counts so they turn into addresses, and add a final
-		// value = the total aggregate:
-		addNumericFieldValues(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount));
-
-		// Write ordinals for all docs, appended into one big
-		// numerics:
-		addNumericFieldValues(field, ords);
-
-		// write the values as binary
-		addBinaryFieldValues(field, values);
-	  }
-
-	  private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
-	  {
-		  private readonly DirectDocValuesConsumer outerInstance;
-
-		  private IEnumerable<Number> docToOrdCount;
-
-		  public IterableAnonymousInnerClassHelper(DirectDocValuesConsumer outerInstance, IEnumerable<Number> docToOrdCount)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.docToOrdCount = docToOrdCount;
-		  }
+            public IterableAnonymousInnerClassHelper(DirectDocValuesConsumer outerInstance,
+                IEnumerable<long> docToOrdCount)
+            {
+                _outerInstance = outerInstance;
+                _docToOrdCount = docToOrdCount;
+            }
 
 
-			  // Just aggregates the count values so they become
-			  // "addresses", and adds one more value in the end
-			  // (the final sum):
+            // Just aggregates the count values so they become
+            // "addresses", and adds one more value in the end
+            // (the final sum):
 
-		  public virtual IEnumerator<Number> GetEnumerator()
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Iterator<Number> iter = docToOrdCount.iterator();
-			IEnumerator<Number> iter = docToOrdCount.GetEnumerator();
+            public virtual IEnumerator<long> GetEnumerator()
+            {
+                var iter = _docToOrdCount.GetEnumerator();
+                return new IteratorAnonymousInnerClassHelper(this, iter);
+            }
 
-			return new IteratorAnonymousInnerClassHelper(this, iter);
-		  }
+            private class IteratorAnonymousInnerClassHelper : IEnumerator<long>
+            {
+                private readonly IterableAnonymousInnerClassHelper outerInstance;
+                private readonly IEnumerator<long> _iter;
 
-		  private class IteratorAnonymousInnerClassHelper : IEnumerator<Number>
-		  {
-			  private readonly IterableAnonymousInnerClassHelper outerInstance;
-
-			  private IEnumerator<Number> iter;
-
-			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance, IEnumerator<Number> iter)
-			  {
-				  this.outerInstance = outerInstance;
-				  this.iter = iter;
-			  }
+                public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance,
+                    IEnumerator<long> iter)
+                {
+                    this.outerInstance = outerInstance;
+                    _iter = iter;
+                }
 
 
-			  internal long sum;
-			  internal bool ended;
+                internal long sum;
+                internal bool ended;
 
-			  public virtual bool hasNext()
-			  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-				return iter.hasNext() || !ended;
-			  }
+                public virtual bool HasNext()
+                {
+                    return _iter.HasNext() || !ended;
+                }
 
-			  public virtual Number next()
-			  {
-				long toReturn = sum;
+                public virtual long Next()
+                {
+                    long toReturn = sum;
+                    if (_iter.hasNext())
+                    {
+                        long n = _iter.next();
+                        if (n != null)
+                        {
+                            sum += n;
+                        }
+                    }
+                    else if (!ended)
+                    {
+                        ended = true;
+                    }
+                    else
+                    {
+                        Debug.Assert(false);
+                    }
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-				if (iter.hasNext())
-				{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-				  Number n = iter.next();
-				  if (n != null)
-				  {
-					sum += (long)n;
-				  }
-				}
-				else if (!ended)
-				{
-				  ended = true;
-				}
-				else
-				{
-				  Debug.Assert(false);
-				}
+                    return toReturn;
+                }
 
-				return toReturn;
-			  }
-
-			  public virtual void remove()
-			  {
-				throw new System.NotSupportedException();
-			  }
-		  }
-	  }
-	}
-
+                public virtual void Remove()
+                {
+                    throw new NotSupportedException();
+                }
+            }
+        }
+    }
 }
