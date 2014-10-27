@@ -2,7 +2,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
-using org.apache.lucene.queries;
 
 namespace Lucene.Net.Queries
 {

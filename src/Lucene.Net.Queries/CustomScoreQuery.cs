@@ -114,14 +114,14 @@ namespace Lucene.Net.Queries
 
         /*(non-Javadoc) @see org.apache.lucene.search.Query#clone() */
 
-        public override CustomScoreQuery Clone()
+        public override object Clone()
         {
-            CustomScoreQuery clone = (CustomScoreQuery) base.Clone();
-            clone.subQuery = subQuery.Clone();
+            var clone = (CustomScoreQuery) base.Clone();
+            clone.subQuery = (Query)subQuery.Clone();
             clone.scoringQueries = new Query[scoringQueries.Length];
             for (int i = 0; i < scoringQueries.Length; i++)
             {
-                clone.scoringQueries[i] = scoringQueries[i].Clone();
+                clone.scoringQueries[i] = (Query)scoringQueries[i].Clone();
             }
             return clone;
         }

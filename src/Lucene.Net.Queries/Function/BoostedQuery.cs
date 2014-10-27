@@ -58,17 +58,17 @@ namespace Lucene.Net.Queries.Function
     
         public override Query Rewrite(IndexReader reader)
         {
-            Query newQ = q.Rewrite(reader);
-            if (newQ == q)
+            var newQ = q.Rewrite(reader);
+            if (Equals(newQ, q))
             {
                 return this;
             }
-            BoostedQuery bq = (BoostedQuery)this.MemberwiseClone();
+            var bq = (BoostedQuery)this.MemberwiseClone();
             bq.q = newQ;
             return bq;
         }
 
-        public override void ExtractTerms(HashSet<Term> terms)
+        public override void ExtractTerms(ISet<Term> terms)
         {
             q.ExtractTerms(terms);
         }
