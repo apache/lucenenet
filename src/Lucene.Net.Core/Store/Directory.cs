@@ -66,8 +66,8 @@ namespace Lucene.Net.Store
         /// following contract:
         /// <ul>
         /// <li>Throws <seealso cref="FileNotFoundException"/> or <seealso cref="NoSuchFileException"/>
-        /// if the file does not exist.
-        /// <li>Returns a value &ge;0 if the file exists, which specifies its length.
+        /// if the file does not exist.</li>
+        /// <li>Returns a value &gt;=0 if the file exists, which specifies its length.</li>
         /// </ul>
         /// </summary>
         /// <param name="name"> the name of the file for which to return the length. </param>
