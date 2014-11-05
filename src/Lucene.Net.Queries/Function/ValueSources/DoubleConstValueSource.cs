@@ -141,14 +141,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
         }
 
-        public override Number Number
-        {
-            get
-            {
-                return constant;
-            }
-        }
-
         public override bool Bool
         {
             get

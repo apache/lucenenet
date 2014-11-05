@@ -123,7 +123,7 @@ namespace Lucene.Net.Queries.Function
                 this.context = context;
             }
 
-            public override FieldComparator<double?> NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
+            public override FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
             {
                 return new ValueSourceComparator(outerInstance, context, numHits);
             }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            public override double? TopValue
+            public override object TopValue
             {
                 set
                 {
@@ -188,7 +188,7 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            public override double? Value(int slot)
+            public override IComparable Value(int slot)
             {
                 return values[slot];
             }
