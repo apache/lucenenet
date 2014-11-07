@@ -57,19 +57,16 @@ namespace Lucene.Net.Queries
         /// can contain duplicate terms and multiple fields.
         /// </summary>
         public TermsFilter(List<Term> terms)
-            : this(new FieldAndTermEnumAnonymousInnerClassHelper(this, terms), terms.Count)
+            : this(new FieldAndTermEnumAnonymousInnerClassHelper(terms), terms.Count)
         {
         }
 
         private class FieldAndTermEnumAnonymousInnerClassHelper : FieldAndTermEnum
-        {
-            private readonly TermsFilter outerInstance;
-
+        {            
             private IList<Term> terms;
 
-            public FieldAndTermEnumAnonymousInnerClassHelper(TermsFilter outerInstance, List<Term> terms)
+            public FieldAndTermEnumAnonymousInnerClassHelper(List<Term> terms)
             {
-                this.outerInstance = outerInstance;
                 this.terms = terms;
                 terms.Sort();
                 iter = terms.GetEnumerator();
@@ -94,20 +91,17 @@ namespace Lucene.Net.Queries
         /// a single field.
         /// </summary>
         public TermsFilter(string field, List<BytesRef> terms)
-            : this(new FieldAndTermEnumAnonymousInnerClassHelper2(this, field, terms), terms.Count)
+            : this(new FieldAndTermEnumAnonymousInnerClassHelper2(field, terms), terms.Count)
         {
         }
 
         private class FieldAndTermEnumAnonymousInnerClassHelper2 : FieldAndTermEnum
         {
-            private readonly TermsFilter outerInstance;
-
             private IList<BytesRef> terms;
 
-            public FieldAndTermEnumAnonymousInnerClassHelper2(TermsFilter outerInstance, string field, List<BytesRef> terms)
+            public FieldAndTermEnumAnonymousInnerClassHelper2(string field, List<BytesRef> terms)
                 : base(field)
             {
-                this.outerInstance = outerInstance;
                 this.terms = terms;
                 terms.Sort();
                 iter = terms.GetEnumerator();
@@ -147,6 +141,8 @@ namespace Lucene.Net.Queries
 
         private TermsFilter(FieldAndTermEnum iter, int length)
         {
+            iter.OuterInstance = this; // .NET specific, since "this" can't be used in ctor redirection
+
             // TODO: maybe use oal.index.PrefixCodedTerms instead?
             // If number of terms is more than a few hundred it
             // should be a win
@@ -382,15 +378,17 @@ namespace Lucene.Net.Queries
 
         private abstract class FieldAndTermEnum
         {
-            protected internal string field;
+            public TermsFilter OuterInstance { get; internal set; }
+
+            protected string field;
 
             public abstract BytesRef Next();
 
-            public FieldAndTermEnum()
+            protected FieldAndTermEnum()
             {
             }
 
-            public FieldAndTermEnum(string field)
+            protected FieldAndTermEnum(string field)
             {
                 this.field = field;
             }
