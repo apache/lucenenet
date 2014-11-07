@@ -146,8 +146,7 @@ namespace Lucene.Net.Queries.Function
             }
         }
 
-
-        private class CustomScorer : Scorer
+        private sealed class CustomScorer : Scorer
         {
             private readonly BoostedQuery outerInstance;
 
@@ -157,7 +156,7 @@ namespace Lucene.Net.Queries.Function
             private readonly FunctionValues vals;
             private readonly AtomicReaderContext readerContext;
 
-            private CustomScorer(BoostedQuery outerInstance, AtomicReaderContext readerContext, BoostedQuery.BoostedWeight w, float qWeight, Scorer scorer, ValueSource vs)
+            public CustomScorer(BoostedQuery outerInstance, AtomicReaderContext readerContext, BoostedQuery.BoostedWeight w, float qWeight, Scorer scorer, ValueSource vs)
                 : base(w)
             {
                 this.outerInstance = outerInstance;
@@ -206,7 +205,7 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            public virtual Explanation Explain(int doc)
+            public Explanation Explain(int doc)
             {
                 var subQueryExpl = weight.qWeight.Explain(readerContext, doc);
                 if (!subQueryExpl.IsMatch)
