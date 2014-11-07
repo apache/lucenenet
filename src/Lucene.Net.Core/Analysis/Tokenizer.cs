@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Analysis
     {
         /// <summary>
         /// The text source for this Tokenizer. </summary>
-        protected internal TextReader Input = ILLEGAL_STATE_READER;
+        protected internal TextReader input = ILLEGAL_STATE_READER;
 
         /// <summary>
         /// Pending reader: not actually assigned to input until reset() </summary>
@@ -72,11 +73,11 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void Dispose()
         {
-            Input.Close();
+            input.Close();
             // LUCENE-2387: don't hold onto Reader after close, so
             // GC can reclaim
             InputPending = ILLEGAL_STATE_READER;
-            Input = ILLEGAL_STATE_READER;
+            input = ILLEGAL_STATE_READER;
         }
 
         /// <summary>
@@ -87,7 +88,7 @@ namespace Lucene.Net.Analysis
         /// <seealso> cref= CharFilter#correctOffset </seealso>
         protected internal int CorrectOffset(int currentOff)
         {
-            return (Input is CharFilter) ? ((CharFilter)Input).CorrectOffset(currentOff) : currentOff;
+            return (input is CharFilter) ? ((CharFilter)input).CorrectOffset(currentOff) : currentOff;
         }
 
         /// <summary>
@@ -103,7 +104,7 @@ namespace Lucene.Net.Analysis
                 {
                     throw new System.NullReferenceException("input must not be null");
                 }
-                else if (this.Input != ILLEGAL_STATE_READER)
+                else if (this.input != ILLEGAL_STATE_READER)
                 {
                     //throw new Exception("TokenStream contract violation: close() call missing");
                 }
@@ -115,7 +116,7 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            Input = InputPending;
+            input = InputPending;
             InputPending = ILLEGAL_STATE_READER;
         }
 

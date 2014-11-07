@@ -241,7 +241,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        int count = Input.Read(Buffer, 0, Buffer.Length);
+                        int count = input.Read(Buffer, 0, Buffer.Length);
                         ClearAttributes();
                         Done = true;
                         if (count == 1)

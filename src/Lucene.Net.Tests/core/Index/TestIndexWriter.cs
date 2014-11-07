@@ -1914,7 +1914,7 @@ namespace Lucene.Net.Index
                 StringBuilder b = new StringBuilder();
                 char[] buffer = new char[1024];
                 int n;
-                while ((n = Input.Read(buffer, 0, buffer.Length)) != -1)
+                while ((n = input.Read(buffer, 0, buffer.Length)) != -1)
                 {
                     b.Append(buffer, 0, n);
                 }

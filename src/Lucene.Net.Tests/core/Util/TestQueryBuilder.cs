@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 using System.IO;
 
@@ -220,7 +220,7 @@ namespace Lucene.Net.Util
 
             public override bool IncrementToken()
             {
-                int ch = Input.Read();
+                int ch = input.Read();
                 if (ch < 0)
                 {
                     return false;
