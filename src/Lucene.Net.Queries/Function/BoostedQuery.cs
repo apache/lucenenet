@@ -84,7 +84,7 @@ namespace Lucene.Net.Queries.Function
             private readonly BoostedQuery outerInstance;
 
             private readonly IndexSearcher searcher;
-            private readonly Weight qWeight;
+            internal readonly Weight qWeight;
             internal readonly IDictionary fcontext;
 
             public BoostedWeight(BoostedQuery outerInstance, IndexSearcher searcher)
@@ -208,7 +208,7 @@ namespace Lucene.Net.Queries.Function
 
             public virtual Explanation Explain(int doc)
             {
-                Explanation subQueryExpl = weight.qWeight.Explain(readerContext, doc);
+                var subQueryExpl = weight.qWeight.Explain(readerContext, doc);
                 if (!subQueryExpl.IsMatch)
                 {
                     return subQueryExpl;

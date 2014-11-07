@@ -214,7 +214,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 int ll = lower.Value;
                 int uu = upper.Value;
 
-                return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, this, ll, uu);
+                return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, outerInstance, ll, uu);
             }
 
             private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
@@ -225,7 +225,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 private readonly int uu;
 
                 public ValueSourceScorerAnonymousInnerClassHelper(IntDocValuesAnonymousInnerClassHelper outerInstance, IndexReader reader, EnumFieldSource @this, int ll, int uu)
-                    : base(reader, @this)
+                    : base(reader, outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     this.ll = ll;

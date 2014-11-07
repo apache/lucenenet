@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -66,9 +67,9 @@ namespace Lucene.Net.Queries.Function
         /// <summary>
         /// Returns a new non-threadsafe context map.
         /// </summary>
-        public static IDictionary<string, IndexSearcher> NewContext(IndexSearcher searcher)
+        public static IDictionary NewContext(IndexSearcher searcher)
         {
-            var context = new IdentityHashMap<string, IndexSearcher>();
+            var context = new Hashtable(new IdentityComparer());
             context["searcher"] = searcher;
             return context;
         }
