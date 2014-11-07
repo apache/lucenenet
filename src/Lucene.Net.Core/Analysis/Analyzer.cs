@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis
         /// <param name="reader">
         ///          the reader passed to the <seealso cref="Tokenizer"/> constructor </param>
         /// <returns> the <seealso cref="TokenStreamComponents"/> for this analyzer. </returns>
-        protected internal abstract TokenStreamComponents CreateComponents(string fieldName, TextReader reader);
+        protected abstract TokenStreamComponents CreateComponents(string fieldName, TextReader reader);
 
         /// <summary>
         /// Returns a TokenStream suitable for <code>fieldName</code>, tokenizing
