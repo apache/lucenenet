@@ -400,16 +400,16 @@ namespace Lucene.Net.Queries.Mlt
 
             while ((cur = q.Pop()) != null)
             {
-                object[] ar = (object[])cur;
-                TermQuery tq = new TermQuery(new Term((string)ar[1], (string)ar[0]));
+                var ar = (object[])cur;
+                var tq = new TermQuery(new Term((string)ar[1], (string)ar[0]));
 
                 if (Boost)
                 {
                     if (qterms == 0)
                     {
-                        bestScore = ((float?)ar[2]);
+                        bestScore = ((float)ar[2]);
                     }
-                    float myScore = ((float?)ar[2]);
+                    float myScore = ((float)ar[2]);
 
                     tq.Boost = boostFactor * myScore / bestScore;
                 }
@@ -707,22 +707,19 @@ namespace Lucene.Net.Queries.Mlt
         }
 
         /// <seealso cref= #retrieveInterestingTerms(java.io.Reader, String) </seealso>
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: public String[] retrieveInterestingTerms(int docNum) throws IOException
         public string[] RetrieveInterestingTerms(int docNum)
         {
-            var al = new List<object>(MaxQueryTerms);
+            var al = new List<string>(MaxQueryTerms);
             var pq = RetrieveTerms(docNum);
             object cur;
             int lim = MaxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
             while (((cur = pq.Pop()) != null) && lim-- > 0)
             {
-                object[] ar = (object[])cur;
-                al.Add(ar[0]); // the 1st entry is the interesting word
+                var ar = (object[])cur;
+                al.Add(ar[0].ToString()); // the 1st entry is the interesting word
             }
-            string[] res = new string[al.Count];
-            return al.ToArray(res);
+            return al.ToArray();
         }
 
         /// <summary>
@@ -736,18 +733,17 @@ namespace Lucene.Net.Queries.Mlt
         /// <seealso cref= #setMaxQueryTerms </seealso>
         public string[] RetrieveInterestingTerms(Reader r, string fieldName)
         {
-            List<object> al = new List<object>(MaxQueryTerms);
+            var al = new List<string>(MaxQueryTerms);
             PriorityQueue<object[]> pq = RetrieveTerms(r, fieldName);
             object cur;
             int lim = MaxQueryTerms; // have to be careful, retrieveTerms returns all words but that's probably not useful to our caller...
             // we just want to return the top words
             while (((cur = pq.Pop()) != null) && lim-- > 0)
             {
-                object[] ar = (object[])cur;
-                al.Add(ar[0]); // the 1st entry is the interesting word
+                var ar = (object[])cur;
+                al.Add(ar[0].ToString()); // the 1st entry is the interesting word
             }
-            string[] res = new string[al.Count];
-            return al.ToArray(res);
+            return al.ToArray();
         }
 
         /// <summary>

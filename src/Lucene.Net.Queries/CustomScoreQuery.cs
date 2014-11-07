@@ -39,7 +39,7 @@ namespace Lucene.Net.Queries
     public class CustomScoreQuery : Query
     {
 
-        private Query subQuery;
+        internal Query subQuery;
         private Query[] scoringQueries; // never null (empty array if there are no valSrcQueries).
         private bool strict = false; // if true, valueSource part of query does not take part in weights normalization.
 
@@ -257,7 +257,7 @@ namespace Lucene.Net.Queries
                         valSrcWeight.Normalize(norm, 1f);
                     }
                 }
-                queryWeight = topLevelBoost*Boost;
+                queryWeight = topLevelBoost * outerInstance.Boost;
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
@@ -284,23 +284,23 @@ namespace Lucene.Net.Queries
 
             internal virtual Explanation DoExplain(AtomicReaderContext info, int doc)
             {
-                Explanation subQueryExpl = subQueryWeight.Explain(info, doc);
+                var subQueryExpl = subQueryWeight.Explain(info, doc);
                 if (!subQueryExpl.IsMatch)
                 {
                     return subQueryExpl;
                 }
                 // match
-                Explanation[] valSrcExpls = new Explanation[valSrcWeights.Length];
+                var valSrcExpls = new Explanation[valSrcWeights.Length];
                 for (int i = 0; i < valSrcWeights.Length; i++)
                 {
                     valSrcExpls[i] = valSrcWeights[i].Explain(info, doc);
                 }
                 Explanation customExp = outerInstance.GetCustomScoreProvider(info)
                     .CustomExplain(doc, subQueryExpl, valSrcExpls);
-                float sc = Boost*customExp.Value;
+                float sc = outerInstance.Boost * customExp.Value;
                 Explanation res = new ComplexExplanation(true, sc, outerInstance.ToString() + ", product of:");
                 res.AddDetail(customExp);
-                res.AddDetail(new Explanation(Boost, "queryBoost"));
+                res.AddDetail(new Explanation(outerInstance.Boost, "queryBoost"));
                     // actually using the q boost as q weight (== weight value)
                 return res;
             }
@@ -365,7 +365,7 @@ namespace Lucene.Net.Queries
                     {
                         vScores[i] = valSrcScorers[i].Score();
                     }
-                    return qWeight*provider.CustomScore(subQueryScorer.DocID, subQueryScorer.Score, vScores);
+                    return qWeight*provider.CustomScore(subQueryScorer.DocID(), subQueryScorer.Score(), vScores);
                 }
 
                 public override int Freq()
@@ -418,14 +418,14 @@ namespace Lucene.Net.Queries
             /// The sub-query that CustomScoreQuery wraps, affecting both the score and which documents match. </summary>
             public virtual Query SubQuery
             {
-                get { return subQuery; }
+                get { return outerInstance.subQuery; }
             }
 
             /// <summary>
             /// The scoring queries that only affect the score of CustomScoreQuery. </summary>
             public virtual Query[] ScoringQueries
             {
-                get { return scoringQueries; }
+                get { return outerInstance.scoringQueries; }
             }
 
             /// <summary>

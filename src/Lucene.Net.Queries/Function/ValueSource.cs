@@ -98,7 +98,7 @@ namespace Lucene.Net.Queries.Function
             private readonly ValueSource outerInstance;
 
             public ValueSourceSortField(ValueSource outerInstance, bool reverse)
-                : base(outerInstance.Description, SortField.Type.REWRITEABLE, reverse)
+                : base(outerInstance.Description, SortField.Type_e.REWRITEABLE, reverse)
             {
                 this.outerInstance = outerInstance;
             }

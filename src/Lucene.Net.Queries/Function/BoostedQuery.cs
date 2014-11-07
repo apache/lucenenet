@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Lucene.Net.Index;
@@ -84,10 +85,8 @@ namespace Lucene.Net.Queries.Function
 
             private readonly IndexSearcher searcher;
             private readonly Weight qWeight;
-            private readonly IDictionary fcontext;
+            internal readonly IDictionary fcontext;
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: public BoostedWeight(IndexSearcher searcher) throws java.io.IOException
             public BoostedWeight(BoostedQuery outerInstance, IndexSearcher searcher)
             {
                 this.outerInstance = outerInstance;
@@ -110,14 +109,14 @@ namespace Lucene.Net.Queries.Function
                 get
                 {
                     float sum = qWeight.ValueForNormalization;
-                    sum *= Boost * Boost;
+                    sum *= outerInstance.Boost * outerInstance.Boost;
                     return sum;
                 }
             }
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                topLevelBoost *= Boost;
+                topLevelBoost *= outerInstance.Boost;
                 qWeight.Normalize(norm, topLevelBoost);
             }
 
@@ -128,7 +127,7 @@ namespace Lucene.Net.Queries.Function
                 {
                     return null;
                 }
-                return new BoostedQuery.CustomScorer(outerInstance, context, this, Boost, subQueryScorer, outerInstance.boostVal);
+                return new BoostedQuery.CustomScorer(outerInstance, context, this, outerInstance.Boost, subQueryScorer, outerInstance.boostVal);
             }
 
             public override Explanation Explain(AtomicReaderContext readerContext, int doc)
@@ -207,10 +206,10 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            public virtual Explanation explain(int doc)
+            public virtual Explanation Explain(int doc)
             {
                 Explanation subQueryExpl = weight.qWeight.Explain(readerContext, doc);
-                if (!subQueryExpl.Match)
+                if (!subQueryExpl.IsMatch)
                 {
                     return subQueryExpl;
                 }
