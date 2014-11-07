@@ -200,11 +200,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
 	  private class AnalyzingComparator : IComparer<BytesRef>
 	  {
-
-		internal readonly ByteArrayDataInput readerA = new ByteArrayDataInput();
-		internal readonly ByteArrayDataInput readerB = new ByteArrayDataInput();
-		internal readonly BytesRef scratchA = new BytesRef();
-		internal readonly BytesRef scratchB = new BytesRef();
+	      private readonly ByteArrayDataInput readerA = new ByteArrayDataInput();
+	      private readonly ByteArrayDataInput readerB = new ByteArrayDataInput();
+	      private readonly BytesRef scratchA = new BytesRef();
+	      private readonly BytesRef scratchB = new BytesRef();
 
 		public virtual int Compare(BytesRef a, BytesRef b)
 		{
@@ -295,11 +294,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 	  /// </summary>
 	  public virtual void Build(InputIterator iterator, double ramBufferSizeMB)
 	  {
-		if (iterator.HasPayloads())
+		if (iterator.HasPayloads)
 		{
 		  throw new System.ArgumentException("this suggester doesn't support payloads");
 		}
-		if (iterator.HasContexts())
+		if (iterator.HasContexts)
 		{
 		  throw new System.ArgumentException("this suggester doesn't support contexts");
 		}
@@ -371,12 +370,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		  IntsRef scratchInts = new IntsRef();
 		  while (true)
 		  {
-			BytesRef term = termsEnum.next();
+			BytesRef term = termsEnum.Next();
 			if (term == null)
 			{
 			  break;
 			}
-			int ngramCount = countGrams(term);
+			int ngramCount = CountGrams(term);
 			if (ngramCount > grams)
 			{
 			  throw new System.ArgumentException("tokens must not contain separator byte; got token=" + term + " but gramCount=" + ngramCount + ", which is greater than expected max ngram size=" + grams);
@@ -386,7 +385,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 			  totTokens += termsEnum.TotalTermFreq();
 			}
 
-			builder.Add(Util.ToIntsRef(term, scratchInts), encodeWeight(termsEnum.TotalTermFreq()));
+			builder.Add(Util.ToIntsRef(term, scratchInts), EncodeWeight(termsEnum.TotalTermFreq()));
 		  }
 
 		  fst = builder.Finish();
@@ -834,7 +833,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		  }
 	  }
 
-	  private class ComparatorAnonymousInnerClassHelper : IComparer<Lookup.LookupResult>
+	  private sealed class ComparatorAnonymousInnerClassHelper : IComparer<Lookup.LookupResult>
 	  {
 		  private readonly FreeTextSuggester outerInstance;
 
@@ -843,7 +842,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 			  this.outerInstance = outerInstance;
 		  }
 
-		  public virtual int Compare(LookupResult a, LookupResult b)
+		  public int Compare(LookupResult a, LookupResult b)
 		  {
 			if (a.value > b.value)
 			{

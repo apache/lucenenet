@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Lucene.Net.Search.Spell;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Suggest
@@ -211,7 +213,7 @@ namespace Lucene.Net.Search.Suggest
         /// Calls <seealso cref="#load(DataInput)"/> after converting
         /// <seealso cref="InputStream"/> to <seealso cref="DataInput"/>
         /// </summary>
-        public virtual bool Load(InputStream input)
+        public virtual bool Load(Stream input)
         {
             DataInput dataIn = new InputStreamDataInput(input);
             try
@@ -228,7 +230,7 @@ namespace Lucene.Net.Search.Suggest
         /// Calls <seealso cref="#store(DataOutput)"/> after converting
         /// <seealso cref="OutputStream"/> to <seealso cref="DataOutput"/>
         /// </summary>
-        public virtual bool Store(OutputStream output)
+        public virtual bool Store(Stream output)
         {
             DataOutput dataOut = new OutputStreamDataOutput(output);
             try
@@ -259,9 +261,9 @@ namespace Lucene.Net.Search.Suggest
         /// <param name="onlyMorePopular"> return only more popular results </param>
         /// <param name="num"> maximum number of results to return </param>
         /// <returns> a list of possible completions, with their relative weight (e.g. popularity) </returns>
-        public virtual IList<LookupResult> Lookup(string key, bool onlyMorePopular, int num)
+        public virtual IList<LookupResult> DoLookup(string key, bool onlyMorePopular, int num)
         {
-            return Lookup(key, null, onlyMorePopular, num);
+            return DoLookup(key, null, onlyMorePopular, num);
         }
 
         /// <summary>
@@ -272,7 +274,7 @@ namespace Lucene.Net.Search.Suggest
         /// <param name="onlyMorePopular"> return only more popular results </param>
         /// <param name="num"> maximum number of results to return </param>
         /// <returns> a list of possible completions, with their relative weight (e.g. popularity) </returns>
-        public abstract IList<LookupResult> Lookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num);
+        public abstract IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num);
 
         /// <summary>
         /// Persist the constructed lookup data to a directory. Optional operation. </summary>

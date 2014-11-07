@@ -618,7 +618,7 @@ namespace Lucene.Net.Util.Fst
                 return new TopResults<T>(rejectCount + TopN <= MaxQueueDepth, results);
             }
 
-            protected internal virtual bool AcceptResult(IntsRef input, T output)
+            protected virtual bool AcceptResult(IntsRef input, T output)
             {
                 return true;
             }

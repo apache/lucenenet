@@ -9,5 +9,10 @@ namespace Lucene.Net
         {
             return ImmutableHashSet.Create(o);
         }
+
+        public static IList<T> EmptyList<T>()
+        {
+            return ImmutableList<T>.Empty;
+        }
     }
 }
