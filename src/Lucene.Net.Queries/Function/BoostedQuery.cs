@@ -134,7 +134,7 @@ namespace Lucene.Net.Queries.Function
             public override Explanation Explain(AtomicReaderContext readerContext, int doc)
             {
                 Explanation subQueryExpl = qWeight.Explain(readerContext, doc);
-                if (!subQueryExpl.Match)
+                if (!subQueryExpl.IsMatch)
                 {
                     return subQueryExpl;
                 }
@@ -207,8 +207,6 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: public Explanation explain(int doc) throws java.io.IOException
             public virtual Explanation explain(int doc)
             {
                 Explanation subQueryExpl = weight.qWeight.Explain(readerContext, doc);

@@ -83,7 +83,7 @@ namespace Lucene.Net.Queries
             Query sq = subQuery.Rewrite(reader);
             if (sq != subQuery)
             {
-                clone = Clone();
+                clone = (CustomScoreQuery)Clone();
                 clone.subQuery = sq;
             }
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Queries
                 {
                     if (clone == null)
                     {
-                        clone = Clone();
+                        clone = (CustomScoreQuery)Clone();
                     }
                     clone.scoringQueries[i] = v;
                 }
@@ -224,7 +224,7 @@ namespace Lucene.Net.Queries
                     {
                         if (qStrict)
                         {
-                            valSrcWeight.ValueForNormalization;
+                            var _ = valSrcWeight.ValueForNormalization;
                                 // do not include ValueSource part in the query normalization
                         }
                         else

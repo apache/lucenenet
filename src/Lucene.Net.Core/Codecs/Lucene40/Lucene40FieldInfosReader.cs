@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 {"BYTES_VAR_SORTED", BYTES_VAR_SORTED}
             };
 
-            public static readonly IDictionary<string, int> ordinalLookup = new HashMap<string, int>() {
+            public static readonly IDictionary<string, int> ordinalLookup = new HashMap<string, int>(14) {
                 {"NONE", 0},
                 {"VAR_INTS", 1},
                 {"FLOAT_32", 2},

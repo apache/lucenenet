@@ -65,7 +65,7 @@ namespace Lucene.Net.Support
         private TValue _nullValue;
 
         // Indicates the type of key is a non-nullable valuetype
-        private bool _isValueType;
+        private readonly bool _isValueType;
 
         public HashMap()
             : this(0)
