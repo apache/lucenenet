@@ -1,4 +1,5 @@
 ﻿using System;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Spell
@@ -50,7 +51,7 @@ namespace Lucene.Net.Search.Spell
         {
         }
 
-        public float getDistance(string target, string other)
+        public float GetDistance(string target, string other)
         {
             IntsRef targetPoints;
             IntsRef otherPoints;
@@ -64,8 +65,8 @@ namespace Lucene.Net.Search.Spell
             // in "distributed spellcheck", and its inefficient in other ways too...
 
             // cheaper to do this up front once
-            targetPoints = toIntsRef(target);
-            otherPoints = toIntsRef(other);
+            targetPoints = ToIntsRef(target);
+            otherPoints = ToIntsRef(other);
             n = targetPoints.Length;
             int m = otherPoints.Length;
 
@@ -104,15 +105,15 @@ namespace Lucene.Net.Search.Spell
 
             for (j = 1; j <= m; j++)
             {
-                t_j = otherPoints.ints[j - 1];
+                t_j = otherPoints.Ints[j - 1];
 
                 for (i = 1; i <= n; i++)
                 {
-                    cost = targetPoints.ints[i - 1] == t_j ? 0 : 1;
+                    cost = targetPoints.Ints[i - 1] == t_j ? 0 : 1;
                     // minimum of cell to the left+1, to the top+1, diagonally left and up +cost
                     d[i][j] = Math.Min(Math.Min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
                     // transposition
-                    if (i > 1 && j > 1 && targetPoints.ints[i - 1] == otherPoints.ints[j - 2] && targetPoints.ints[i - 2] == otherPoints.ints[j - 1])
+                    if (i > 1 && j > 1 && targetPoints.Ints[i - 1] == otherPoints.Ints[j - 2] && targetPoints.Ints[i - 2] == otherPoints.Ints[j - 1])
                     {
                         d[i][j] = Math.Min(d[i][j], d[i - 2][j - 2] + cost);
                     }
@@ -122,13 +123,13 @@ namespace Lucene.Net.Search.Spell
             return 1.0f - ((float)d[n][m] / Math.Min(m, n));
         }
 
-        private static IntsRef toIntsRef(string s)
+        private static IntsRef ToIntsRef(string s)
         {
-            IntsRef @ref = new IntsRef(s.Length); // worst case
+            var @ref = new IntsRef(s.Length); // worst case
             int utf16Len = s.Length;
-            for (int i = 0, cp = 0; i < utf16Len; i += char.charCount(cp))
+            for (int i = 0, cp = 0; i < utf16Len; i += Character.CharCount(cp))
             {
-                cp = @ref.ints[@ref.length++] = char.codePointAt(s, i);
+                cp = @ref.Ints[@ref.Length++] = Character.CodePointAt(s, i);
             }
             return @ref;
         }

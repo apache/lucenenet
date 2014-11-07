@@ -385,7 +385,7 @@ namespace Lucene.Net.Util.Fst
             }
 
             // If back plus this arc is competitive then add to queue:
-            protected internal virtual void AddIfCompetitive(FSTPath<T> path)
+            protected virtual void AddIfCompetitive(FSTPath<T> path)
             {
                 Debug.Assert(Queue != null);
 

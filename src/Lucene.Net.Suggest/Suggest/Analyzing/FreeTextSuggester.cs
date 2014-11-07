@@ -13,6 +13,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using Directory = Lucene.Net.Store.Directory;
 using Version = Lucene.Net.Util.Version;
+using Util = Lucene.Net.Util.Fst.Util;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -254,7 +255,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		{
 		  // TODO: use ShingleAnalyzerWrapper?
 		  // Tack on ShingleFilter to the end, to generate token ngrams:
-		  return new AnalyzerWrapperAnonymousInnerClassHelper(this, other.ReuseStrategy, other);
+		  return new AnalyzerWrapperAnonymousInnerClassHelper(this, other.Strategy, other);
 		}
 	  }
 
@@ -263,7 +264,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		  private readonly FreeTextSuggester outerInstance;
 		  private readonly Analyzer other;
 
-		  public AnalyzerWrapperAnonymousInnerClassHelper(FreeTextSuggester outerInstance, UnknownType getReuseStrategy, Analyzer other) : base(getReuseStrategy)
+		  public AnalyzerWrapperAnonymousInnerClassHelper(FreeTextSuggester outerInstance, ReuseStrategy reuseStrategy, Analyzer other)
+              : base(reuseStrategy)
 		  {
 			  this.outerInstance = outerInstance;
 			  this.other = other;
@@ -321,11 +323,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		Directory dir = FSDirectory.Open(tempIndexPath);
 
 		IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_CURRENT, indexAnalyzer);
-		iwc.OpenMode = IndexWriterConfig.OpenMode.CREATE;
+		iwc.OpenMode = IndexWriterConfig.OpenMode_e.CREATE;
 		iwc.RAMBufferSizeMB = ramBufferSizeMB;
 		IndexWriter writer = new IndexWriter(dir, iwc);
 
-		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
+		var ft = new FieldType(TextField.TYPE_NOT_STORED);
 		// TODO: if only we had IndexOptions.TERMS_ONLY...
 		ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
 		ft.OmitNorms = true;
@@ -385,7 +387,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 			  totTokens += termsEnum.TotalTermFreq();
 			}
 
-			builder.Add(Util.ToIntsRef(term, scratchInts), EncodeWeight(termsEnum.TotalTermFreq()));
+			builder.Add(Lucene.Net.Util.Fst.Util.ToIntsRef(term, scratchInts), EncodeWeight(termsEnum.TotalTermFreq()));
 		  }
 
 		  fst = builder.Finish();
@@ -452,7 +454,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 	  {
 		CodecUtil.CheckHeader(input, CODEC_NAME, VERSION_START, VERSION_START);
 		count = input.ReadVLong();
-		sbyte separatorOrig = input.ReadByte();
+		var separatorOrig = (sbyte)input.ReadByte();
 		if (separatorOrig != separator)
 		{
 		  throw new InvalidOperationException("separator=" + separator + " is incorrect: original model was built with separator=" + separatorOrig);
@@ -464,37 +466,29 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		}
 		totTokens = input.ReadVLong();
 
-		fst = new FST<>(input, PositiveIntOutputs.Singleton);
+		fst = new FST<long?>(input, PositiveIntOutputs.Singleton);
 
 		return true;
 	  }
 
-	  public override IList<LookupResult> Lookup(string key, bool onlyMorePopular, int num) // ignored
+	  public override IList<LookupResult> DoLookup(string key, bool onlyMorePopular, int num) // ignored
 	  {
-		return Lookup(key, null, onlyMorePopular, num);
+		return DoLookup(key, null, onlyMorePopular, num);
 	  }
 
 	  /// <summary>
 	  /// Lookup, without any context. </summary>
-	  public virtual IList<LookupResult> Lookup(string key, int num)
+	  public virtual IList<LookupResult> DoLookup(string key, int num)
 	  {
-		return Lookup(key, null, true, num);
+		return DoLookup(key, null, true, num);
 	  }
 
-	  public override IList<LookupResult> Lookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num) // ignored
+	  public override IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num) // ignored
 	  {
-		try
-		{
-		  return Lookup(key, contexts, num);
-		}
-		catch (IOException ioe)
-		{
-		  // bogus:
-		  throw new Exception(ioe);
-		}
+	      return Lookup(key, contexts, num);
 	  }
 
-	  public override long Count
+	    public override long Count
 	  {
 		  get
 		  {
@@ -604,9 +598,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 			lastTokens[0] = new BytesRef();
 		  }
 
-		  FST.Arc<long?> arc = new FST.Arc<long?>();
+		  var arc = new FST.Arc<long?>();
 
-		  FST.BytesReader bytesReader = fst.BytesReader;
+		  var bytesReader = fst.BytesReader;
 
 		  // Try highest order models first, and if they return
 		  // results, return that; else, fallback:
@@ -645,14 +639,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 			// match the prefix portion exactly
 			//Pair<Long,BytesRef> prefixOutput = null;
 			long? prefixOutput = null;
-			try
-			{
-			  prefixOutput = LookupPrefix(fst, bytesReader, token, arc);
-			}
-			catch (IOException bogus)
-			{
-			  throw new Exception(bogus);
-			}
+			prefixOutput = LookupPrefix(fst, bytesReader, token, arc);
 			//System.out.println("  prefixOutput=" + prefixOutput);
 
 			if (prefixOutput == null)
@@ -677,7 +664,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 			  if (token.Bytes[token.Offset + i] == separator)
 			  {
 				BytesRef context = new BytesRef(token.Bytes, token.Offset, i);
-				long? output = Util.Get(fst, Util.ToIntsRef(context, new IntsRef()));
+				long? output = Util.Get(fst, Lucene.Net.Util.Fst.Util.ToIntsRef(context, new IntsRef()));
 				Debug.Assert(output != null);
 				contextCount = DecodeWeight(output);
 				lastTokenFragment = new BytesRef(token.Bytes, token.Offset + i + 1, token.Length - i - 1);
@@ -700,7 +687,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 			CharsRef spare = new CharsRef();
 
 			// complete top-N
-			Util.TopResults<long?> completions = null;
+		      Util.Fst.Util.TopResults<long?> completions = null;
 			try
 			{
 
@@ -715,7 +702,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
 			  // Must do num+seen.size() for queue depth because we may
 			  // reject up to seen.size() paths in acceptResult():
-			  Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, num, num + seen.Count, weightComparator, seen, finalLastToken);
+			    Util.Fst.Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, num, num + seen.Count, weightComparator, seen, finalLastToken);
 
 			  // since this search is initialized with a single start node 
 			  // it is okay to start with an empty input path here
@@ -734,11 +721,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 			BytesRef suffix = new BytesRef(8);
 			//System.out.println("    " + completions.length + " completions");
 
-			  foreach (Util.Result<long?> completion in completions)
+			  foreach (Util.Fst.Util.Result<long?> completion in completions)
 			  {
 				token.Length = prefixLength;
 				// append suffix
-				Util.ToBytesRef(completion.Input, suffix);
+				Util.Fst.Util.ToBytesRef(completion.Input, suffix);
 				token.Append(suffix);
 
 				//System.out.println("    completion " + token.utf8ToString());
@@ -763,7 +750,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 				seen.Add(BytesRef.DeepCopyOf(lastToken));
 				spare.Grow(token.Length);
 				UnicodeUtil.UTF8toUTF16(token, spare);
-				LookupResult result = new LookupResult(spare.ToString(), (long)(long.MaxValue * backoff * ((double) decodeWeight(completion.Output)) / contextCount));
+				LookupResult result = new LookupResult(spare.ToString(), (long)(long.MaxValue * backoff * ((double) DecodeWeight(completion.Output)) / contextCount));
 				results.Add(result);
 				Debug.Assert(results.Count == seen.Count);
 				//System.out.println("  add result=" + result);
@@ -788,14 +775,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		}
 	  }
 
-	  private class TopNSearcherAnonymousInnerClassHelper : Util.TopNSearcher<long?>
+	  private class TopNSearcherAnonymousInnerClassHelper : Util.Fst.Util.TopNSearcher<long?>
 	  {
 		  private readonly FreeTextSuggester outerInstance;
 
 		  private HashSet<BytesRef> seen;
 		  private BytesRef finalLastToken;
 
-		  public TopNSearcherAnonymousInnerClassHelper<T1>(FreeTextSuggester outerInstance, FST<T1> org.apache.lucene.search.suggest.fst, int num, UnknownType size, UnknownType weightComparator, HashSet<BytesRef> seen, BytesRef finalLastToken) : base(org.apache.lucene.search.suggest.fst, num, size, weightComparator)
+		  public TopNSearcherAnonymousInnerClassHelper<T1>(FreeTextSuggester outerInstance, FST<T1> fst, int num, UnknownType size, UnknownType weightComparator, HashSet<BytesRef> seen, BytesRef finalLastToken) : base(org.apache.lucene.search.suggest.fst, num, size, weightComparator)
 		  {
 			  this.outerInstance = outerInstance;
 			  this.seen = seen;
@@ -804,11 +791,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		  }
 
 
-		  internal BytesRef scratchBytes;
+	      private BytesRef scratchBytes;
 
-		  protected internal override void addIfCompetitive(Util.FSTPath<long?> path)
+		  protected override void AddIfCompetitive(Util.Fst.Util.FSTPath<long?> path)
 		  {
-			if (path.Arc.label != outerInstance.separator)
+			if (path.Arc.Label != outerInstance.separator)
 			{
 			  //System.out.println("    keep path: " + Util.toBytesRef(path.input, new BytesRef()).utf8ToString() + "; " + path + "; arc=" + path.arc);
 			  base.AddIfCompetitive(path);
@@ -819,16 +806,16 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 			}
 		  }
 
-		  protected internal override bool AcceptResult(IntsRef input, long? output)
+		  protected override bool AcceptResult(IntsRef input, long? output)
 		  {
-			Util.ToBytesRef(input, scratchBytes);
+			Util.Fst.Util.ToBytesRef(input, scratchBytes);
 			finalLastToken.Grow(finalLastToken.length + scratchBytes.length);
 			int lenSav = finalLastToken.length;
-			finalLastToken.append(scratchBytes);
+			finalLastToken.Append(scratchBytes);
 			//System.out.println("    accept? input='" + scratchBytes.utf8ToString() + "'; lastToken='" + finalLastToken.utf8ToString() + "'; return " + (seen.contains(finalLastToken) == false));
 			bool ret = seen.Contains(finalLastToken) == false;
 
-			finalLastToken.length = lenSav;
+			finalLastToken.Length = lenSav;
 			return ret;
 		  }
 	  }
@@ -870,7 +857,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 	  /// <summary>
 	  /// cost -> weight </summary>
 	  //private long decodeWeight(Pair<Long,BytesRef> output) {
-	  private long DecodeWeight(long? output)
+	  private static long DecodeWeight(long? output)
 	  {
 		Debug.Assert(output != null);
 		return (int)(long.MaxValue - output);
@@ -880,7 +867,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 	  private long? LookupPrefix(FST<long?> fst, FST.BytesReader bytesReader, BytesRef scratch, FST.Arc<long?> arc) //Bogus
 	  {
 
-		long? output = fst.outputs.NoOutput;
+		long? output = fst.Outputs.NoOutput;
 
 		fst.GetFirstArc(arc);
 
@@ -895,7 +882,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		  }
 		  else
 		  {
-			output = fst.outputs.add(output, arc.output);
+			output = fst.Outputs.Add(output, arc.Output);
 		  }
 		}
 
@@ -904,13 +891,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
 	  internal static readonly IComparer<long?> weightComparator = new ComparatorAnonymousInnerClassHelper2();
 
-	  private class ComparatorAnonymousInnerClassHelper2 : IComparer<long?>
+	  private sealed class ComparatorAnonymousInnerClassHelper2 : IComparer<long?>
 	  {
 		  public ComparatorAnonymousInnerClassHelper2()
 		  {
 		  }
 
-		  public virtual int Compare(long? left, long? right)
+		  public int Compare(long? left, long? right)
 		  {
 			return left.CompareTo(right);
 		  }
@@ -922,7 +909,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 	  /// </summary>
 	  public virtual object Get(string key)
 	  {
-		throw new System.NotSupportedException();
+		throw new NotSupportedException();
 	  }
 	}
 }
