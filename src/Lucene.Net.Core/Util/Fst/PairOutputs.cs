@@ -28,15 +28,15 @@ namespace Lucene.Net.Util.Fst
     /// @lucene.experimental
     /// </summary>
 
-    public class PairOutputs<A, B> : Outputs<PairOutputs<A, B>.Pair<A, B>>
+    public class PairOutputs<A, B> : Outputs<PairOutputs<A, B>.Pair>
     {
-        private readonly Pair<A, B> NO_OUTPUT;
+        private readonly Pair NO_OUTPUT;
         private readonly Outputs<A> Outputs1;
         private readonly Outputs<B> Outputs2;
 
         /// <summary>
         /// Holds a single pair of two outputs. </summary>
-        public class Pair<A, B>
+        public class Pair
         {
             public readonly A Output1;
             public readonly B Output2;
@@ -54,9 +54,9 @@ namespace Lucene.Net.Util.Fst
                 {
                     return true;
                 }
-                else if (other is Pair<A, B>)
+                else if (other is Pair)
                 {
-                    Pair<A, B> pair = (Pair<A, B>)other;
+                    var pair = (Pair)other;
                     return Output1.Equals(pair.Output1) && Output2.Equals(pair.Output2);
                 }
                 else
@@ -75,12 +75,12 @@ namespace Lucene.Net.Util.Fst
         {
             this.Outputs1 = outputs1;
             this.Outputs2 = outputs2;
-            NO_OUTPUT = new Pair<A, B>(outputs1.NoOutput, outputs2.NoOutput);
+            NO_OUTPUT = new Pair(outputs1.NoOutput, outputs2.NoOutput);
         }
 
         /// <summary>
         /// Create a new Pair </summary>
-        public virtual Pair<A, B> NewPair(A a, B b)
+        public virtual Pair NewPair(A a, B b)
         {
             if (a.Equals(Outputs1.NoOutput))
             {
@@ -97,14 +97,14 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                Pair<A, B> p = new Pair<A, B>(a, b);
+                var p = new Pair(a, b);
                 Debug.Assert(Valid(p));
                 return p;
             }
         }
 
         // for assert
-        private bool Valid(Pair<A, B> pair)
+        private bool Valid(Pair pair)
         {
             bool noOutput1 = pair.Output1.Equals(Outputs1.NoOutput);
             bool noOutput2 = pair.Output2.Equals(Outputs2.NoOutput);
@@ -136,42 +136,42 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override Pair<A, B> Common(Pair<A, B> pair1, Pair<A, B> pair2)
+        public override Pair Common(Pair pair1, Pair pair2)
         {
             Debug.Assert(Valid(pair1));
             Debug.Assert(Valid(pair2));
             return NewPair(Outputs1.Common(pair1.Output1, pair2.Output1), Outputs2.Common(pair1.Output2, pair2.Output2));
         }
 
-        public override Pair<A, B> Subtract(Pair<A, B> output, Pair<A, B> inc)
+        public override Pair Subtract(Pair output, Pair inc)
         {
             Debug.Assert(Valid(output));
             Debug.Assert(Valid(inc));
             return NewPair(Outputs1.Subtract(output.Output1, inc.Output1), Outputs2.Subtract(output.Output2, inc.Output2));
         }
 
-        public override Pair<A, B> Add(Pair<A, B> prefix, Pair<A, B> output)
+        public override Pair Add(Pair prefix, Pair output)
         {
             Debug.Assert(Valid(prefix));
             Debug.Assert(Valid(output));
             return NewPair(Outputs1.Add(prefix.Output1, output.Output1), Outputs2.Add(prefix.Output2, output.Output2));
         }
 
-        public override void Write(Pair<A, B> output, DataOutput writer)
+        public override void Write(Pair output, DataOutput writer)
         {
             Debug.Assert(Valid(output));
             Outputs1.Write(output.Output1, writer);
             Outputs2.Write(output.Output2, writer);
         }
 
-        public override Pair<A, B> Read(DataInput @in)
+        public override Pair Read(DataInput @in)
         {
             A output1 = Outputs1.Read(@in);
             B output2 = Outputs2.Read(@in);
             return NewPair(output1, output2);
         }
 
-        public override Pair<A, B> NoOutput
+        public override Pair NoOutput
         {
             get
             {
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override string OutputToString(Pair<A, B> output)
+        public override string OutputToString(Pair output)
         {
             Debug.Assert(Valid(output));
             return "<pair:" + Outputs1.OutputToString(output.Output1) + "," + Outputs2.OutputToString(output.Output2) + ">";
