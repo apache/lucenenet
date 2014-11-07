@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
         /// matching this clause will (in addition to the normal weightings) have
         /// their score multiplied by <code>b</code>.
         /// </summary>
-        public float Boost { get; set; }
+        public virtual float Boost { get; set; }
 
         /// <summary>
         /// Prints a query to a string, with <code>field</code> assumed to be the
