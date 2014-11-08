@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-
-
 namespace Lucene.Net.Codecs.Pulsing
 {
     using System;
     using System.Diagnostics;
-    using Lucene.Net.Index;
-    using Lucene.Net.Util;
+    using Index;
+    using Util;
 
     /// <summary>
     /// This postings format "inlines" the postings for terms that have
@@ -49,11 +47,11 @@ namespace Lucene.Net.Codecs.Pulsing
         {
         }
 
-        /// <summary>Terms with freq <= freqCutoff are inlined into terms dict.</summary>
+        /// <summary>Terms with freq less than or equal freqCutoff are inlined into terms dict.</summary>
         protected PulsingPostingsFormat(String name, PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff,
             int minBlockSize, int maxBlockSize) : base(name)
         {
-            Debug.Debug.Assert((minBlockSize > 1);
+            Debug.Assert(minBlockSize > 1);
 
             _freqCutoff = freqCutoff;
             _minBlockSize = minBlockSize;
