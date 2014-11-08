@@ -1,13 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using Lucene.Net.Codecs.Memory;
-using Lucene.Net.Index;
-
-namespace Lucene.Net.Codecs.Memory
-{
-
-	/*
+﻿	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -24,524 +15,472 @@ namespace Lucene.Net.Codecs.Memory
 	 * limitations under the License.
 	 */
 
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Collections.Generic;
+using Lucene.Net.Codecs.Memory;
+using Lucene.Net.Index;
+using Lucene.Net.Util.Fst;
 
-	using FieldInfo = index.FieldInfo;
-	using IndexFileNames = index.IndexFileNames;
-	using SegmentWriteState = index.SegmentWriteState;
-	using ByteArrayDataOutput = store.ByteArrayDataOutput;
-	using IndexOutput = store.IndexOutput;
-	using ArrayUtil = util.ArrayUtil;
-	using BytesRef = util.BytesRef;
-	using IOUtils = util.IOUtils;
-	using IntsRef = util.IntsRef;
-	using MathUtil = util.MathUtil;
-	using Builder = util.fst.Builder;
-	using INPUT_TYPE = util.fst.FST.INPUT_TYPE;
-	using FST = util.fst.FST;
-	using PositiveIntOutputs = util.fst.PositiveIntOutputs;
-	using Util = util.fst.Util;
-	using BlockPackedWriter = util.packed.BlockPackedWriter;
-	using MonotonicBlockPackedWriter = util.packed.MonotonicBlockPackedWriter;
-	using FormatAndBits = util.packed.PackedInts.FormatAndBits;
-	using PackedInts = util.packed.PackedInts;
+namespace Lucene.Net.Codecs.Memory
+{
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.VERSION_CURRENT;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.BLOCK_SIZE;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.BYTES;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.NUMBER;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.FST;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.DELTA_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.GCD_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.TABLE_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Memory.MemoryDocValuesProducer.UNCOMPRESSED;
 
-	/// <summary>
-	/// Writer for <seealso cref="MemoryDocValuesFormat"/>
-	/// </summary>
-	internal class MemoryDocValuesConsumer : DocValuesConsumer
-	{
-	  internal IndexOutput data, meta;
-	  internal readonly int maxDoc;
-	  internal readonly float acceptableOverheadRatio;
+    using FieldInfo = Index.FieldInfo;
+    using IndexFileNames = Index.IndexFileNames;
+    using SegmentWriteState = Index.SegmentWriteState;
+    using ByteArrayDataOutput = Store.ByteArrayDataOutput;
+    using IndexOutput = Store.IndexOutput;
+    using ArrayUtil = Util.ArrayUtil;
+    using BytesRef = Util.BytesRef;
+    using IOUtils = Util.IOUtils;
+    using IntsRef = Util.IntsRef;
+    using MathUtil = Util.MathUtil;
+    using Builder = Util.Fst.Builder;
+    using INPUT_TYPE = Util.Fst.FST.INPUT_TYPE;
+    using FST = Util.Fst.FST;
+    using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
+    using Util = Util.Fst.Util;
+    using BlockPackedWriter = Util.Packed.BlockPackedWriter;
+    using MonotonicBlockPackedWriter = Util.Packed.MonotonicBlockPackedWriter;
+    using FormatAndBits = Util.Packed.PackedInts.FormatAndBits;
+    using PackedInts = Util.Packed.PackedInts;
 
-        internal MemoryDocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension, float acceptableOverheadRatio)
-	  {
-		this.acceptableOverheadRatio = acceptableOverheadRatio;
-		maxDoc = state.segmentInfo.DocCount;
-		bool success = false;
-		try
-		{
-		  string dataName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, dataExtension);
-		  data = state.directory.createOutput(dataName, state.context);
-		  CodecUtil.writeHeader(data, dataCodec, VERSION_CURRENT);
-		  string metaName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, metaExtension);
-		  meta = state.directory.createOutput(metaName, state.context);
-		  CodecUtil.writeHeader(meta, metaCodec, VERSION_CURRENT);
-		  success = true;
-		}
-		finally
-		{
-		  if (!success)
-		  {
-			IOUtils.closeWhileHandlingException(this);
-		  }
-		}
-	  }
+    /// <summary>
+    /// Writer for <seealso cref="MemoryDocValuesFormat"/>
+    /// </summary>
+    internal class MemoryDocValuesConsumer : DocValuesConsumer
+    {
+        internal IndexOutput data, meta;
+        internal readonly int maxDoc;
+        internal readonly float acceptableOverheadRatio;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addNumericField(index.FieldInfo field, Iterable<Number> values) throws java.io.IOException
-	  public override void addNumericField(FieldInfo field, IEnumerable<Number> values)
-	  {
-		addNumericField(field, values, true);
-	  }
+        internal MemoryDocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension,
+            string metaCodec,
+            string metaExtension, float acceptableOverheadRatio)
+        {
+            this.acceptableOverheadRatio = acceptableOverheadRatio;
+            maxDoc = state.SegmentInfo.DocCount;
+            var success = false;
+            try
+            {
+                var dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
+                data = state.Directory.CreateOutput(dataName, state.Context);
+                CodecUtil.WriteHeader(data, dataCodec, MemoryDocValuesProducer.VERSION_CURRENT);
+                var metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
+                meta = state.Directory.CreateOutput(metaName, state.Context);
+                CodecUtil.WriteHeader(meta, metaCodec, MemoryDocValuesProducer.VERSION_CURRENT);
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    IOUtils.CloseWhileHandlingException(this);
+                }
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: void addNumericField(index.FieldInfo field, Iterable<Number> values, boolean optimizeStorage) throws java.io.IOException
-	  internal virtual void addNumericField(FieldInfo field, IEnumerable<Number> values, bool optimizeStorage)
-	  {
-		meta.writeVInt(field.number);
-		meta.writeByte(NUMBER);
-		meta.writeLong(data.FilePointer);
-		long minValue = long.MaxValue;
-		long maxValue = long.MinValue;
-		long gcd = 0;
-		bool missing = false;
-		// TODO: more efficient?
-		HashSet<long?> uniqueValues = null;
-		if (optimizeStorage)
-		{
-		  uniqueValues = new HashSet<>();
+        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        {
+            AddNumericField(field, values, true);
+        }
 
-		  long count = 0;
-		  foreach (Number nv in values)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long v;
-			long v;
-			if (nv == null)
-			{
-			  v = 0;
-			  missing = true;
-			}
-			else
-			{
-			  v = (long)nv;
-			}
+        internal virtual void AddNumericField(FieldInfo field, IEnumerable<long> values, bool optimizeStorage)
+        {
+            meta.WriteVInt(field.Number);
+            meta.WriteByte(MemoryDocValuesProducer.NUMBER);
+            meta.WriteLong(data.FilePointer);
+            long minValue = long.MaxValue;
+            long maxValue = long.MinValue;
+            long gcd = 0;
+            bool missing = false;
+            // TODO: more efficient?
+            HashSet<long?> uniqueValues = null;
+            if (optimizeStorage)
+            {
+                uniqueValues = new HashSet<>();
 
-			if (gcd != 1)
-			{
-			  if (v < long.MinValue / 2 || v > long.MaxValue / 2)
-			  {
-				// in that case v - minValue might overflow and make the GCD computation return
-				// wrong results. Since these extreme values are unlikely, we just discard
-				// GCD computation for them
-				gcd = 1;
-			  } // minValue needs to be set first
-			  else if (count != 0)
-			  {
-				gcd = MathUtil.gcd(gcd, v - minValue);
-			  }
-			}
+                long count = 0;
+                foreach (var nv in values)
+                {
+                    long v = nv;
 
-			minValue = Math.Min(minValue, v);
-			maxValue = Math.Max(maxValue, v);
+                    if (gcd != 1)
+                    {
+                        if (v < long.MinValue/2 || v > long.MaxValue/2)
+                        {
+                            // in that case v - minValue might overflow and make the GCD computation return
+                            // wrong results. Since these extreme values are unlikely, we just discard
+                            // GCD computation for them
+                            gcd = 1;
+                        } // minValue needs to be set first
+                        else if (count != 0)
+                        {
+                            gcd = MathUtil.Gcd(gcd, v - minValue);
+                        }
+                    }
 
-			if (uniqueValues != null)
-			{
-			  if (uniqueValues.Add(v))
-			  {
-				if (uniqueValues.Count > 256)
-				{
-				  uniqueValues = null;
-				}
-			  }
-			}
+                    minValue = Math.Min(minValue, v);
+                    maxValue = Math.Max(maxValue, v);
 
-			++count;
-		  }
-		  Debug.Assert(count == maxDoc);
-		}
+                    if (uniqueValues != null)
+                    {
+                        if (uniqueValues.Add(v))
+                        {
+                            if (uniqueValues.Count > 256)
+                            {
+                                uniqueValues = null;
+                            }
+                        }
+                    }
 
-		if (missing)
-		{
-		  long start = data.FilePointer;
-		  writeMissingBitset(values);
-		  meta.writeLong(start);
-		  meta.writeLong(data.FilePointer - start);
-		}
-		else
-		{
-		  meta.writeLong(-1L);
-		}
+                    ++count;
+                }
+                Debug.Assert(count == maxDoc);
+            }
 
-		if (uniqueValues != null)
-		{
-		  // small number of unique values
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerValue = util.packed.PackedInts.bitsRequired(uniqueValues.size()-1);
-		  int bitsPerValue = PackedInts.bitsRequired(uniqueValues.Count - 1);
-		  FormatAndBits formatAndBits = PackedInts.fastestFormatAndBits(maxDoc, bitsPerValue, acceptableOverheadRatio);
-		  if (formatAndBits.bitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
-		  {
-			meta.writeByte(UNCOMPRESSED); // uncompressed
-			foreach (Number nv in values)
-			{
-			  data.writeByte(nv == null ? 0 : (long)(sbyte) nv);
-			}
-		  }
-		  else
-		  {
-			meta.writeByte(TABLE_COMPRESSED); // table-compressed
-			long?[] decode = uniqueValues.toArray(new long?[uniqueValues.Count]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.HashMap<Long,Integer> encode = new java.util.HashMap<>();
-			Dictionary<long?, int?> encode = new Dictionary<long?, int?>();
-			data.writeVInt(decode.Length);
-			for (int i = 0; i < decode.Length; i++)
-			{
-			  data.writeLong(decode[i]);
-			  encode[decode[i]] = i;
-			}
+            if (missing)
+            {
+                long start = data.FilePointer;
+                WriteMissingBitset(values);
+                meta.WriteLong(start);
+                meta.WriteLong(data.FilePointer - start);
+            }
+            else
+            {
+                meta.WriteLong(-1L);
+            }
 
-			meta.writeVInt(PackedInts.VERSION_CURRENT);
-			data.writeVInt(formatAndBits.format.Id);
-			data.writeVInt(formatAndBits.bitsPerValue);
+            if (uniqueValues != null)
+            {
+                // small number of unique values
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.packed.PackedInts.Writer writer = util.packed.PackedInts.getWriterNoHeader(data, formatAndBits.format, maxDoc, formatAndBits.bitsPerValue, util.packed.PackedInts.DEFAULT_BUFFER_SIZE);
-			PackedInts.Writer writer = PackedInts.getWriterNoHeader(data, formatAndBits.format, maxDoc, formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
-			foreach (Number nv in values)
-			{
-			  writer.add(encode[nv == null ? 0 : (long)nv]);
-			}
-			writer.finish();
-		  }
-		}
-		else if (gcd != 0 && gcd != 1)
-		{
-		  meta.writeByte(GCD_COMPRESSED);
-		  meta.writeVInt(PackedInts.VERSION_CURRENT);
-		  data.writeLong(minValue);
-		  data.writeLong(gcd);
-		  data.writeVInt(BLOCK_SIZE);
+                int bitsPerValue = PackedInts.BitsRequired(uniqueValues.Count - 1);
+                FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(maxDoc, bitsPerValue,
+                    acceptableOverheadRatio);
+                if (formatAndBits.bitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
+                {
+                    meta.WriteByte(MemoryDocValuesProducer.UNCOMPRESSED); // uncompressed
+                    foreach (var nv in values)
+                    {
+                        data.WriteByte(nv == null ? 0 : (long) (sbyte) nv);
+                    }
+                }
+                else
+                {
+                    meta.WriteByte(MemoryDocValuesProducer.TABLE_COMPRESSED); // table-compressed
+                    long?[] decode = uniqueValues.toArray(new long?[uniqueValues.Count]);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.packed.BlockPackedWriter writer = new util.packed.BlockPackedWriter(data, BLOCK_SIZE);
-		  BlockPackedWriter writer = new BlockPackedWriter(data, BLOCK_SIZE);
-		  foreach (Number nv in values)
-		  {
-			long value = nv == null ? 0 : (long)nv;
-			writer.add((value - minValue) / gcd);
-		  }
-		  writer.finish();
-		}
-		else
-		{
-		  meta.writeByte(DELTA_COMPRESSED); // delta-compressed
+                    var encode = new Dictionary<long?, int?>();
+                    data.WriteVInt(decode.Length);
+                    for (int i = 0; i < decode.Length; i++)
+                    {
+                        data.WriteLong(decode[i]);
+                        encode[decode[i]] = i;
+                    }
 
-		  meta.writeVInt(PackedInts.VERSION_CURRENT);
-		  data.writeVInt(BLOCK_SIZE);
+                    meta.WriteVInt(PackedInts.VERSION_CURRENT);
+                    data.WriteVInt(formatAndBits.format.Id);
+                    data.WriteVInt(formatAndBits.bitsPerValue);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.packed.BlockPackedWriter writer = new util.packed.BlockPackedWriter(data, BLOCK_SIZE);
-		  BlockPackedWriter writer = new BlockPackedWriter(data, BLOCK_SIZE);
-		  foreach (Number nv in values)
-		  {
-			writer.add(nv == null ? 0 : (long)nv);
-		  }
-		  writer.finish();
-		}
-	  }
+                    PackedInts.Writer writer = PackedInts.GetWriterNoHeader(data, formatAndBits.format, maxDoc,
+                        formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
+                    foreach (long nv in values)
+                    {
+                        writer.Add(encode[nv == null ? 0 : (long) nv]);
+                    }
+                    writer.Finish();
+                }
+            }
+            else if (gcd != 0 && gcd != 1)
+            {
+                meta.WriteByte(MemoryDocValuesProducer.GCD_COMPRESSED);
+                meta.WriteVInt(PackedInts.VERSION_CURRENT);
+                data.WriteLong(minValue);
+                data.WriteLong(gcd);
+                data.WriteVInt(MemoryDocValuesProducer.BLOCK_SIZE);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void close() throws java.io.IOException
-	  public override void close()
-	  {
-		bool success = false;
-		try
-		{
-		  if (meta != null)
-		  {
-			meta.writeVInt(-1); // write EOF marker
-			CodecUtil.writeFooter(meta); // write checksum
-		  }
-		  if (data != null)
-		  {
-			CodecUtil.writeFooter(data);
-		  }
-		  success = true;
-		}
-		finally
-		{
-		  if (success)
-		  {
-			IOUtils.close(data, meta);
-		  }
-		  else
-		  {
-			IOUtils.closeWhileHandlingException(data, meta);
-		  }
-		  data = meta = null;
-		}
-	  }
+                var writer = new BlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
+                foreach (var nv in values)
+                {
+                    writer.Add((nv - minValue)/gcd);
+                }
+                writer.Finish();
+            }
+            else
+            {
+                meta.WriteByte(MemoryDocValuesProducer.DELTA_COMPRESSED); // delta-compressed
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addBinaryField(index.FieldInfo field, final Iterable<util.BytesRef> values) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  public override void addBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
-	  {
-		// write the byte[] data
-		meta.writeVInt(field.number);
-		meta.writeByte(BYTES);
-		int minLength = int.MaxValue;
-		int maxLength = int.MinValue;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long startFP = data.getFilePointer();
-		long startFP = data.FilePointer;
-		bool missing = false;
-		foreach (BytesRef v in values)
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length;
-		  int length;
-		  if (v == null)
-		  {
-			length = 0;
-			missing = true;
-		  }
-		  else
-		  {
-			length = v.length;
-		  }
-		  if (length > MemoryDocValuesFormat.MAX_BINARY_FIELD_LENGTH)
-		  {
-			throw new System.ArgumentException("DocValuesField \"" + field.name + "\" is too large, must be <= " + MemoryDocValuesFormat.MAX_BINARY_FIELD_LENGTH);
-		  }
-		  minLength = Math.Min(minLength, length);
-		  maxLength = Math.Max(maxLength, length);
-		  if (v != null)
-		  {
-			data.writeBytes(v.bytes, v.offset, v.length);
-		  }
-		}
-		meta.writeLong(startFP);
-		meta.writeLong(data.FilePointer - startFP);
-		if (missing)
-		{
-		  long start = data.FilePointer;
-		  writeMissingBitset(values);
-		  meta.writeLong(start);
-		  meta.writeLong(data.FilePointer - start);
-		}
-		else
-		{
-		  meta.writeLong(-1L);
-		}
-		meta.writeVInt(minLength);
-		meta.writeVInt(maxLength);
+                meta.WriteVInt(PackedInts.VERSION_CURRENT);
+                data.WriteVInt(MemoryDocValuesProducer.BLOCK_SIZE);
 
-		// if minLength == maxLength, its a fixed-length byte[], we are done (the addresses are implicit)
-		// otherwise, we need to record the length fields...
-		if (minLength != maxLength)
-		{
-		  meta.writeVInt(PackedInts.VERSION_CURRENT);
-		  meta.writeVInt(BLOCK_SIZE);
+                var writer = new BlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
+                foreach (var nv in values)
+                {
+                    writer.Add(nv);
+                }
+                writer.Finish();
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.packed.MonotonicBlockPackedWriter writer = new util.packed.MonotonicBlockPackedWriter(data, BLOCK_SIZE);
-		  MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(data, BLOCK_SIZE);
-		  long addr = 0;
-		  foreach (BytesRef v in values)
-		  {
-			if (v != null)
-			{
-			  addr += v.length;
-			}
-			writer.add(addr);
-		  }
-		  writer.finish();
-		}
-	  }
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) return;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void writeFST(index.FieldInfo field, Iterable<util.BytesRef> values) throws java.io.IOException
-	  private void writeFST(FieldInfo field, IEnumerable<BytesRef> values)
-	  {
-		meta.writeVInt(field.number);
-		meta.writeByte(FST);
-		meta.writeLong(data.FilePointer);
-		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		Builder<long?> builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
-		IntsRef scratch = new IntsRef();
-		long ord = 0;
-		foreach (BytesRef v in values)
-		{
-		  builder.add(Util.toIntsRef(v, scratch), ord);
-		  ord++;
-		}
-		FST<long?> fst = builder.finish();
-		if (fst != null)
-		{
-		  fst.save(data);
-		}
-		meta.writeVLong(ord);
-	  }
+            var success = false;
+            try
+            {
+                if (meta != null)
+                {
+                    meta.WriteVInt(-1); // write EOF marker
+                    CodecUtil.WriteFooter(meta); // write checksum
+                }
+                if (data != null)
+                {
+                    CodecUtil.WriteFooter(data);
+                }
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Close(data, meta);
+                }
+                else
+                {
+                    IOUtils.CloseWhileHandlingException(data, meta);
+                }
+                data = meta = null;
+            }
+        }
 
-	  // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
-	  // but this is very simple, and algorithms only check this for values of 0 anyway (doesnt slow down normal decode)
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: void writeMissingBitset(Iterable<?> values) throws java.io.IOException
-	  internal virtual void writeMissingBitset<T1>(IEnumerable<T1> values)
-	  {
-		long bits = 0;
-		int count = 0;
-		foreach (object v in values)
-		{
-		  if (count == 64)
-		  {
-			data.writeLong(bits);
-			count = 0;
-			bits = 0;
-		  }
-		  if (v != null)
-		  {
-			bits |= 1L << (count & 0x3f);
-		  }
-		  count++;
-		}
-		if (count > 0)
-		{
-		  data.writeLong(bits);
-		}
-	  }
+        public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
+        {
+            // write the byte[] data
+            meta.WriteVInt(field.Number);
+            meta.WriteByte(MemoryDocValuesProducer.BYTES);
+            var minLength = int.MaxValue;
+            var maxLength = int.MinValue;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addSortedField(index.FieldInfo field, Iterable<util.BytesRef> values, Iterable<Number> docToOrd) throws java.io.IOException
-	  public override void addSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd)
-	  {
-		// write the ordinals as numerics
-		addNumericField(field, docToOrd, false);
+            var startFP = data.FilePointer;
+            var missing = false;
+            foreach (var v in values)
+            {
+                int length;
+                if (v == null)
+                {
+                    length = 0;
+                    missing = true;
+                }
+                else
+                {
+                    length = v.Length;
+                }
+                if (length > MemoryDocValuesFormat.MAX_BINARY_FIELD_LENGTH)
+                {
+                    throw new ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " +
+                                                       MemoryDocValuesFormat.MAX_BINARY_FIELD_LENGTH);
+                }
+                minLength = Math.Min(minLength, length);
+                maxLength = Math.Max(maxLength, length);
+                if (v != null)
+                {
+                    data.WriteBytes(v.Bytes, v.Offset, v.Length);
+                }
+            }
+            meta.WriteLong(startFP);
+            meta.WriteLong(data.FilePointer - startFP);
+            if (missing)
+            {
+                long start = data.FilePointer;
+                WriteMissingBitset(values);
+                meta.WriteLong(start);
+                meta.WriteLong(data.FilePointer - start);
+            }
+            else
+            {
+                meta.WriteLong(-1L);
+            }
+            meta.WriteVInt(minLength);
+            meta.WriteVInt(maxLength);
 
-		// write the values as FST
-		writeFST(field, values);
-	  }
+            // if minLength == maxLength, its a fixed-length byte[], we are done (the addresses are implicit)
+            // otherwise, we need to record the length fields...
+            if (minLength != maxLength)
+            {
+                meta.WriteVInt(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt(MemoryDocValuesProducer.BLOCK_SIZE);
 
-	  // note: this might not be the most efficient... but its fairly simple
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void addSortedSetField(index.FieldInfo field, Iterable<util.BytesRef> values, final Iterable<Number> docToOrdCount, final Iterable<Number> ords) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  public override void addSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
-	  {
-		// write the ordinals as a binary field
-		addBinaryField(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount, ords));
 
-		// write the values as FST
-		writeFST(field, values);
-	  }
+                var writer = new MonotonicBlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
+                long addr = 0;
+                foreach (BytesRef v in values)
+                {
+                    if (v != null)
+                    {
+                        addr += v.Length;
+                    }
+                    writer.Add(addr);
+                }
+                writer.Finish();
+            }
+        }
 
-	  private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
-	  {
-		  private readonly MemoryDocValuesConsumer outerInstance;
+        private void WriteFST(FieldInfo field, IEnumerable<BytesRef> values)
+        {
+            meta.WriteVInt(field.Number);
+            meta.WriteByte(FST);
+            meta.WriteLong(data.FilePointer);
+            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
+            var builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
+            var scratch = new IntsRef();
+            long ord = 0;
+            foreach (BytesRef v in values)
+            {
+                builder.Add(Util.ToIntsRef(v, scratch), ord);
+                ord++;
+            }
+            FST<long?> fst = builder.Finish();
+            if (fst != null)
+            {
+                fst.Save(data);
+            }
+            meta.WriteVLong(ord);
+        }
 
-		  private IEnumerable<Number> docToOrdCount;
-		  private IEnumerable<Number> ords;
+        // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
+        // but this is very simple, and algorithms only check this for values of 0 anyway (doesnt slow down normal decode)
 
-		  public IterableAnonymousInnerClassHelper(MemoryDocValuesConsumer outerInstance, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.docToOrdCount = docToOrdCount;
-			  this.ords = ords;
-		  }
+        internal virtual void WriteMissingBitset<T1>(IEnumerable<T1> values)
+        {
+            long bits = 0;
+            int count = 0;
+            foreach (object v in values)
+            {
+                if (count == 64)
+                {
+                    data.WriteLong(bits);
+                    count = 0;
+                    bits = 0;
+                }
+                if (v != null)
+                {
+                    bits |= 1L << (count & 0x3f);
+                }
+                count++;
+            }
+            if (count > 0)
+            {
+                data.WriteLong(bits);
+            }
+        }
 
-		  public virtual IEnumerator<BytesRef> GetEnumerator()
-		  {
-			return new SortedSetIterator(docToOrdCount.GetEnumerator(), ords.GetEnumerator());
-		  }
-	  }
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        {
+            // write the ordinals as numerics
+            AddNumericField(field, docToOrd, false);
 
-	  // per-document vint-encoded byte[]
-	  internal class SortedSetIterator : IEnumerator<BytesRef>
-	  {
-		internal sbyte[] buffer = new sbyte[10];
-		internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
-		internal BytesRef @ref = new BytesRef();
+            // write the values as FST
+            WriteFST(field, values);
+        }
 
-		internal readonly IEnumerator<Number> counts;
-		internal readonly IEnumerator<Number> ords;
+        // note: this might not be the most efficient... but its fairly simple
+        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values,
+            IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+        {
+            // write the ordinals as a binary field
+            AddBinaryField(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount, ords));
 
-		internal SortedSetIterator(IEnumerator<Number> counts, IEnumerator<Number> ords)
-		{
-		  this.counts = counts;
-		  this.ords = ords;
-		}
+            // write the values as FST
+            WriteFST(field, values);
+        }
 
-		public override bool hasNext()
-		{
+        private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
+        {
+            private readonly IEnumerable<long> _docToOrdCount;
+            private readonly IEnumerable<long> _ords;
+
+            public IterableAnonymousInnerClassHelper(MemoryDocValuesConsumer outerInstance,
+                IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+            {
+                _docToOrdCount = docToOrdCount;
+                _ords = ords;
+            }
+
+            public IEnumerator<BytesRef> GetEnumerator()
+            {
+                return new SortedSetIterator(_docToOrdCount.GetEnumerator(), _ords.GetEnumerator());
+            }
+        }
+
+        // per-document vint-encoded byte[]
+        internal class SortedSetIterator : IEnumerator<BytesRef>
+        {
+            internal sbyte[] buffer = new sbyte[10];
+            internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
+            internal BytesRef @ref = new BytesRef();
+
+            internal readonly IEnumerator<long> counts;
+            internal readonly IEnumerator<long> ords;
+
+            internal SortedSetIterator(IEnumerator<long> counts, IEnumerator<long> ords)
+            {
+                this.counts = counts;
+                this.ords = ords;
+            }
+
+            public override bool HasNext()
+            {
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  return counts.hasNext();
-		}
+                return counts.hasNext();
+            }
 
-		public override BytesRef next()
-		{
-		  if (!hasNext())
-		  {
-			throw new NoSuchElementException();
-		  }
+            public override BytesRef Next()
+            {
+                if (!HasNext())
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
 
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  int count = (int)counts.next();
-		  int maxSize = count * 9; // worst case
-		  if (maxSize > buffer.Length)
-		  {
-			buffer = ArrayUtil.grow(buffer, maxSize);
-		  }
+                int count = (int) counts.next();
+                int maxSize = count*9; // worst case
+                if (maxSize > buffer.Length)
+                {
+                    buffer = ArrayUtil.Grow(buffer, maxSize);
+                }
 
-		  try
-		  {
-			encodeValues(count);
-		  }
-		  catch (IOException bogus)
-		  {
-			throw new Exception(bogus);
-		  }
+                EncodeValues(count);
+                
 
-		  @ref.bytes = buffer;
-		  @ref.offset = 0;
-		  @ref.length = @out.Position;
+                @ref.Bytes = buffer;
+                @ref.Offset = 0;
+                @ref.Length = @out.Position;
 
-		  return @ref;
-		}
+                return @ref;
+            }
 
-		// encodes count values to buffer
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void encodeValues(int count) throws java.io.IOException
-		internal virtual void encodeValues(int count)
-		{
-		  @out.reset(buffer);
-		  long lastOrd = 0;
-		  for (int i = 0; i < count; i++)
-		  {
+            // encodes count values to buffer
+            internal virtual void EncodeValues(int count)
+            {
+                @out.Reset(buffer);
+                long lastOrd = 0;
+                for (int i = 0; i < count; i++)
+                {
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			long ord = (long)ords.next();
-			@out.writeVLong(ord - lastOrd);
-			lastOrd = ord;
-		  }
-		}
+                    long ord = (long) ords.next();
+                    @out.writeVLong(ord - lastOrd);
+                    lastOrd = ord;
+                }
+            }
 
-		public override void remove()
-		{
-		  throw new System.NotSupportedException();
-		}
-	  }
-	}
-
+            public override void Remove()
+            {
+                throw new NotSupportedException();
+            }
+        }
+    }
 }
