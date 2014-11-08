@@ -46,11 +46,11 @@ namespace Lucene.Net.Codecs.Memory
                 string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
                     dataExtension);
                 data = state.Directory.CreateOutput(dataName, state.Context);
-                CodecUtil.WriteHeader(data, dataCodec, VERSION_CURRENT);
+                CodecUtil.WriteHeader(data, dataCodec, MemoryDocValuesProducer.VERSION_CURRENT);
                 string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
                     metaExtension);
                 meta = state.Directory.CreateOutput(metaName, state.Context);
-                CodecUtil.WriteHeader(meta, metaCodec, VERSION_CURRENT);
+                CodecUtil.WriteHeader(meta, metaCodec, MemoryDocValuesProducer.VERSION_CURRENT);
                 success = true;
             }
             finally
@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs.Memory
         public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
         {
             meta.WriteVInt(field.Number);
-            meta.WriteByte(NUMBER);
+            meta.WriteByte(MemoryDocValuesProducer.NUMBER);
             AddNumericFieldValues(field, values);
         }
 
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.Memory
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
             meta.WriteVInt(field.Number);
-            meta.WriteByte(BYTES);
+            meta.WriteByte(MemoryDocValuesProducer.BYTES);
             AddBinaryFieldValues(field, values);
         }
 
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Memory
                     totalBytes += v.Length;
                     if (totalBytes > DirectDocValuesFormat.MAX_TOTAL_BYTES_LENGTH)
                     {
-                        throw new ArgumentException("DocValuesField \"" + field.name +
+                        throw new ArgumentException("DocValuesField \"" + field.Name +
                                                            "\" is too large, cannot have more than DirectDocValuesFormat.MAX_TOTAL_BYTES_LENGTH (" +
                                                            DirectDocValuesFormat.MAX_TOTAL_BYTES_LENGTH + ") bytes");
                     }
@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs.Memory
             AddBinaryFieldValues(field, values);
         }
 
-        private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
+        private class IterableAnonymousInnerClassHelper : IEnumerable<long>
         {
             private readonly DirectDocValuesConsumer _outerInstance;
             private readonly IEnumerable<long> _docToOrdCount;
@@ -322,11 +322,9 @@ namespace Lucene.Net.Codecs.Memory
                 _docToOrdCount = docToOrdCount;
             }
 
-
             // Just aggregates the count values so they become
             // "addresses", and adds one more value in the end
             // (the final sum):
-
             public virtual IEnumerator<long> GetEnumerator()
             {
                 var iter = _docToOrdCount.GetEnumerator();
@@ -335,13 +333,11 @@ namespace Lucene.Net.Codecs.Memory
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<long>
             {
-                private readonly IterableAnonymousInnerClassHelper outerInstance;
                 private readonly IEnumerator<long> _iter;
 
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance,
                     IEnumerator<long> iter)
                 {
-                    this.outerInstance = outerInstance;
                     _iter = iter;
                 }
 
