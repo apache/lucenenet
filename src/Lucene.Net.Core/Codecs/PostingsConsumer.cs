@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs
         /// <code>freq</code> will be -1 when term frequencies are omitted
         /// for the field.
         /// </summary>
-        public abstract void StartDoc(int docId, int freq);
+        public abstract void StartDoc(int docID, int freq);
 
         /// <summary>
         /// Add a new position & payload, and start/end offset.  A

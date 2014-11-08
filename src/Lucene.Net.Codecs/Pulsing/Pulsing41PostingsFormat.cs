@@ -17,7 +17,7 @@
 
 namespace Lucene.Net.Codecs.Pulsing
 {
-    using Lucene41;
+    using Lucene.Net.Codecs.Lucene41;
 
     /// <summary>
     /// Concrete pulsing implementation over {@link Lucene41PostingsFormat}.
