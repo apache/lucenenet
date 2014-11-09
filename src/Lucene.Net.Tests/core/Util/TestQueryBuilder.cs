@@ -135,7 +135,7 @@ namespace Lucene.Net.Util
         /// adds synonym of "dog" for "dogs". </summary>
         internal class MockSynonymAnalyzer : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new MockSynonymFilter(tokenizer));
@@ -240,7 +240,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new SimpleCJKTokenizer(reader));
             }
@@ -330,7 +330,7 @@ namespace Lucene.Net.Util
 
         internal class MockCJKSynonymAnalyzer : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new SimpleCJKTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new MockCJKSynonymFilter(tokenizer));

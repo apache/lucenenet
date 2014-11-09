@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class MockPayloadAnalyzer : Analyzer
     {
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer result = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
             return new TokenStreamComponents(result, new MockPayloadFilter(result, fieldName));

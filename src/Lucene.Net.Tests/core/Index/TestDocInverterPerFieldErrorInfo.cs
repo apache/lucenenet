@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 
         private class ThrowingAnalyzer : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader input)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader input)
             {
                 Tokenizer tokenizer = new MockTokenizer(input);
                 if (fieldName.Equals("distinctiveFieldName"))

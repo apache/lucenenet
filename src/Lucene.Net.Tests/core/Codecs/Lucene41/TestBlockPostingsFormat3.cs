@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader);
                 if (fieldName.Contains("payloadsFixed"))
