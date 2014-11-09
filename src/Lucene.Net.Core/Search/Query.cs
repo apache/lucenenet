@@ -133,6 +133,14 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
+            if (Object.ReferenceEquals(obj, this))
+            {
+                return true;
+            }
+
+            if (GetType() != obj.GetType())
+                return false;
+
             var other = obj as Query;
             if (other == null)
             {
