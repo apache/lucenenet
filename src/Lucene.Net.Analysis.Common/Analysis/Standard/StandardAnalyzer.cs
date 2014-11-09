@@ -1,4 +1,6 @@
 ﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Util;
+using StopwordAnalyzerBase = Lucene.Net.Analysis.Util.StopwordAnalyzerBase;
 
 namespace org.apache.lucene.analysis.standard
 {
@@ -24,9 +26,9 @@ namespace org.apache.lucene.analysis.standard
 	using LowerCaseFilter = LowerCaseFilter;
 	using StopAnalyzer = StopAnalyzer;
 	using StopFilter = StopFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using StopwordAnalyzerBase = org.apache.lucene.analysis.util.StopwordAnalyzerBase;
-	using WordlistLoader = org.apache.lucene.analysis.util.WordlistLoader;
+	using CharArraySet = CharArraySet;
+	using StopwordAnalyzerBase = StopwordAnalyzerBase;
+	using WordlistLoader = WordlistLoader;
 	using Version = org.apache.lucene.util.Version;
 
 

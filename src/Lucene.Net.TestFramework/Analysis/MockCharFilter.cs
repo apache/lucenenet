@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis
             }
 
             // otherwise actually read one
-            int c = Input.Read();
+            int c = input.Read();
             if (c < 0)
             {
                 return c;

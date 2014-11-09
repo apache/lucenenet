@@ -1,7 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
 
 	/*
@@ -62,13 +63,9 @@ namespace org.apache.lucene.analysis.util
 		this.loader = loader;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public java.io.InputStream openResource(String resource) throws java.io.IOException
-	  public InputStream openResource(string resource)
+	  public Stream openResource(string resource)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.InputStream stream = (clazz != null) ? clazz.getResourceAsStream(resource) : loader.getResourceAsStream(resource);
-		InputStream stream = (clazz != null) ? clazz.getResourceAsStream(resource) : loader.getResourceAsStream(resource);
+		Stream stream = (clazz != null) ? clazz.getResourceAsStream(resource) : loader.getResourceAsStream(resource);
 		if (stream == null)
 		{
 		  throw new IOException("Resource not found: " + resource);

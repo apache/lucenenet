@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+using Lucene.Net.Analysis.Util;
+using org.apache.lucene.analysis.compound;
+using org.apache.lucene.analysis.compound.hyphenation;
+using org.apache.lucene.analysis.util;
 
-namespace org.apache.lucene.analysis.compound
+namespace Lucene.Net.Analysis.Compound
 {
 
 	/*
@@ -20,17 +23,7 @@ namespace org.apache.lucene.analysis.compound
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using HyphenationTree = org.apache.lucene.analysis.compound.hyphenation.HyphenationTree;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using ResourceLoader = org.apache.lucene.analysis.util.ResourceLoader;
-	using ResourceLoaderAware = org.apache.lucene.analysis.util.ResourceLoaderAware;
-	using TokenFilterFactory = TokenFilterFactory;
-	using IOUtils = org.apache.lucene.util.IOUtils;
-
-	using InputSource = org.xml.sax.InputSource;
-
-	/// <summary>
+    /// <summary>
 	/// Factory for <seealso cref="HyphenationCompoundWordTokenFilter"/>.
 	/// <para>
 	/// This factory accepts the following parameters:
@@ -89,9 +82,7 @@ namespace org.apache.lucene.analysis.compound
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void inform(org.apache.lucene.analysis.util.ResourceLoader loader) throws java.io.IOException
-	  public virtual void inform(ResourceLoader loader)
+	  public virtual void Inform(ResourceLoader loader)
 	  {
 		InputStream stream = null;
 		try
@@ -103,8 +94,6 @@ namespace org.apache.lucene.analysis.compound
 		  // TODO: Broken, because we cannot resolve real system id
 		  // ResourceLoader should also supply method like ClassLoader to get resource URL
 		  stream = loader.openResource(hypFile);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.xml.sax.InputSource is = new org.xml.sax.InputSource(stream);
 		  InputSource @is = new InputSource(stream);
 		  @is.Encoding = encoding; // if it's null let xml parser decide
 		  @is.SystemId = hypFile;

@@ -1,6 +1,4 @@
-﻿using System;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,83 +15,72 @@
  * limitations under the License.
  */
 
-namespace org.apache.lucene.analysis.miscellaneous
+using System;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using Version = Lucene.Net.Util.Version;
+
+namespace Lucene.Net.Analysis.Miscellaneous
 {
+    /// <summary>
+    /// A TokenFilter which filters out Tokens at the same position and Term text as the previous token in the stream.
+    /// </summary>
+    public sealed class RemoveDuplicatesTokenFilter : TokenFilter
+    {
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
+        private readonly CharTermAttribute termAttribute = addAttribute(typeof(CharTermAttribute));
+        private readonly PositionIncrementAttribute posIncAttribute = addAttribute(typeof(PositionIncrementAttribute));
 
-	/// <summary>
-	/// A TokenFilter which filters out Tokens at the same position and Term text as the previous token in the stream.
-	/// </summary>
-	public sealed class RemoveDuplicatesTokenFilter : TokenFilter
-	{
+        // use a fixed version, as we don't care about case sensitivity.
+        private readonly CharArraySet previous = new CharArraySet(Version.LUCENE_31, 8, false);
 
-	  private readonly CharTermAttribute termAttribute = addAttribute(typeof(CharTermAttribute));
-	  private readonly PositionIncrementAttribute posIncAttribute = addAttribute(typeof(PositionIncrementAttribute));
+        /// <summary>
+        /// Creates a new RemoveDuplicatesTokenFilter
+        /// </summary>
+        /// <param name="in"> TokenStream that will be filtered </param>
+        public RemoveDuplicatesTokenFilter(TokenStream @in)
+            : base(@in)
+        {
+        }
 
-	  // use a fixed version, as we don't care about case sensitivity.
-	  private readonly CharArraySet previous = new CharArraySet(Version.LUCENE_31, 8, false);
+        /// <summary>
+        /// {@inheritDoc}
+        /// </summary>
+        public override bool IncrementToken()
+        {
+            while (input.IncrementToken())
+            {
+                char[] term = termAttribute.Buffer();
+                int length = termAttribute.Length;
+                int posIncrement = posIncAttribute.PositionIncrement;
 
-	  /// <summary>
-	  /// Creates a new RemoveDuplicatesTokenFilter
-	  /// </summary>
-	  /// <param name="in"> TokenStream that will be filtered </param>
-	  public RemoveDuplicatesTokenFilter(TokenStream @in) : base(@in)
-	  {
-	  }
+                if (posIncrement > 0)
+                {
+                    previous.Clear();
+                }
 
-	  /// <summary>
-	  /// {@inheritDoc}
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		while (input.incrementToken())
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char term[] = termAttribute.buffer();
-		  char[] term = termAttribute.buffer();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = termAttribute.length();
-		  int length = termAttribute.length();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int posIncrement = posIncAttribute.getPositionIncrement();
-		  int posIncrement = posIncAttribute.PositionIncrement;
+                bool duplicate = (posIncrement == 0 && previous.Contains(term, 0, length));
 
-		  if (posIncrement > 0)
-		  {
-			previous.clear();
-		  }
+                // clone the term, and add to the set of seen terms.
+                char[] saved = new char[length];
+                Array.Copy(term, 0, saved, 0, length);
+                previous.Add(saved);
 
-		  bool duplicate = (posIncrement == 0 && previous.contains(term, 0, length));
+                if (!duplicate)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-		  // clone the term, and add to the set of seen terms.
-		  char[] saved = new char[length];
-		  Array.Copy(term, 0, saved, 0, length);
-		  previous.add(saved);
-
-		  if (!duplicate)
-		  {
-			return true;
-		  }
-		}
-		return false;
-	  }
-
-	  /// <summary>
-	  /// {@inheritDoc}
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
-	  {
-		base.reset();
-		previous.clear();
-	  }
-	}
-
+        /// <summary>
+        /// {@inheritDoc}
+        /// </summary>
+        public override void Reset()
+        {
+            base.Reset();
+            previous.Clear();
+        }
+    }
 }

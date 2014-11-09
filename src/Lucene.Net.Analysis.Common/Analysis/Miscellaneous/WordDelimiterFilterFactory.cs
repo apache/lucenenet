@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using org.apache.lucene.analysis.miscellaneous;
+using Version = Lucene.Net.Util.Version;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -21,15 +25,6 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using ResourceLoader = org.apache.lucene.analysis.util.ResourceLoader;
-	using ResourceLoaderAware = org.apache.lucene.analysis.util.ResourceLoaderAware;
-	using TokenFilterFactory = TokenFilterFactory;
-	using Version = org.apache.lucene.util.Version;
-
-
-	using org.apache.lucene.analysis.miscellaneous;
 //JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
 //	import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.*;
 
@@ -109,13 +104,11 @@ namespace org.apache.lucene.analysis.miscellaneous
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void inform(org.apache.lucene.analysis.util.ResourceLoader loader) throws java.io.IOException
-	  public virtual void inform(ResourceLoader loader)
+	  public virtual void Inform(ResourceLoader loader)
 	  {
 		if (wordFiles != null)
 		{
-		  protectedWords = getWordSet(loader, wordFiles, false);
+		  protectedWords = GetWordSet(loader, wordFiles, false);
 		}
 		if (types != null)
 		{
@@ -130,9 +123,9 @@ namespace org.apache.lucene.analysis.miscellaneous
 		}
 	  }
 
-	  public override TokenFilter create(TokenStream input)
+	  public override TokenFilter Create(TokenStream input)
 	  {
-		if (luceneMatchVersion.onOrAfter(Version.LUCENE_48))
+		if (luceneMatchVersion.OnOrAfter(Version.LUCENE_48))
 		{
 		  return new WordDelimiterFilter(luceneMatchVersion, input, typeTable == null ? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE : typeTable, flags, protectedWords);
 		}
@@ -170,19 +163,19 @@ namespace org.apache.lucene.analysis.miscellaneous
 		}
 
 		// ensure the table is always at least as big as DEFAULT_WORD_DELIM_TABLE for performance
-		sbyte[] types = new sbyte[Math.Max(typeMap.lastKey() + 1, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE.Length)];
+		sbyte[] types = new sbyte[Math.Max(typeMap.LastKey() + 1, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE.Length)];
 		for (int i = 0; i < types.Length; i++)
 		{
 		  types[i] = WordDelimiterIterator.getType(i);
 		}
-		foreach (KeyValuePair<char?, sbyte?> mapping in typeMap.entrySet())
+		foreach (KeyValuePair<char?, sbyte?> mapping in typeMap.EntrySet())
 		{
 		  types[mapping.Key] = mapping.Value;
 		}
 		return types;
 	  }
 
-	  private sbyte? parseType(string s)
+	  private sbyte? ParseType(string s)
 	  {
 		if (s.Equals("LOWER"))
 		{
@@ -266,5 +259,4 @@ namespace org.apache.lucene.analysis.miscellaneous
 		return new string(@out, 0, writePos);
 	  }
 	}
-
 }

@@ -15,24 +15,23 @@
  * limitations under the License.
  */
 
-namespace org.apache.lucene.analysis.util
+using org.apache.lucene.analysis.util;
+
+namespace Lucene.Net.Analysis.Util
 {
 
-	/// <summary>
-	/// Interface for a component that needs to be initialized by
-	/// an implementation of <seealso cref="ResourceLoader"/>.
-	/// </summary>
-	/// <seealso cref= ResourceLoader </seealso>
-	public interface ResourceLoaderAware
-	{
+    /// <summary>
+    /// Interface for a component that needs to be initialized by
+    /// an implementation of <seealso cref="ResourceLoader"/>.
+    /// </summary>
+    /// <seealso cref= ResourceLoader </seealso>
+    public interface ResourceLoaderAware
+    {
 
-	  /// <summary>
-	  /// Initializes this component with the provided ResourceLoader
-	  /// (used for loading classes, files, etc).
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: void inform(ResourceLoader loader) throws java.io.IOException;
-	  void inform(ResourceLoader loader);
-	}
-
+        /// <summary>
+        /// Initializes this component with the provided ResourceLoader
+        /// (used for loading classes, files, etc).
+        /// </summary>
+        void Inform(ResourceLoader loader);
+    }
 }

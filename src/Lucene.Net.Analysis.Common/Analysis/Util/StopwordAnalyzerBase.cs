@@ -1,6 +1,4 @@
-﻿using System;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+using System.IO;
+using Lucene.Net.Util;
+using Version = System.Version;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
-
-
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Base class for Analyzers that need to make use of stopword sets. 
 	/// 
 	/// </summary>
@@ -59,13 +56,11 @@ namespace org.apache.lucene.analysis.util
 	  ///          the Lucene version for cross version compatibility </param>
 	  /// <param name="stopwords">
 	  ///          the analyzer's stopword set </param>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: protected StopwordAnalyzerBase(final org.apache.lucene.util.Version version, final CharArraySet stopwords)
 	  protected internal StopwordAnalyzerBase(Version version, CharArraySet stopwords)
 	  {
 		matchVersion = version;
 		// analyzers should use char array set for stopwords!
-		this.stopwords = stopwords == null ? CharArraySet.EMPTY_SET : CharArraySet.unmodifiableSet(CharArraySet.copy(version, stopwords));
+		this.stopwords = stopwords == null ? CharArraySet.EMPTY_SET : CharArraySet.unmodifiableSet(CharArraySet.Copy(version, stopwords));
 	  }
 
 	  /// <summary>
@@ -73,8 +68,6 @@ namespace org.apache.lucene.analysis.util
 	  /// </summary>
 	  /// <param name="version">
 	  ///          the Lucene version for cross version compatibility </param>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: protected StopwordAnalyzerBase(final org.apache.lucene.util.Version version)
 	  protected internal StopwordAnalyzerBase(Version version) : this(version, null)
 	  {
 	  }
@@ -96,22 +89,18 @@ namespace org.apache.lucene.analysis.util
 	  ///         file </returns>
 	  /// <exception cref="IOException">
 	  ///           if loading the stopwords throws an <seealso cref="IOException"/> </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected static CharArraySet loadStopwordSet(final boolean ignoreCase, final Class aClass, final String resource, final String comment) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  protected internal static CharArraySet loadStopwordSet(bool ignoreCase, Type aClass, string resource, string comment)
+	  protected internal static CharArraySet LoadStopwordSet(bool ignoreCase, Type aClass, string resource, string comment)
 	  {
-		Reader reader = null;
+		TextReader reader = null;
 		try
 		{
-		  reader = IOUtils.getDecodingReader(aClass.getResourceAsStream(resource), StandardCharsets.UTF_8);
-		  return WordlistLoader.getWordSet(reader, comment, new CharArraySet(Version.LUCENE_CURRENT, 16, ignoreCase));
+		  reader = IOUtils.GetDecodingReader(aClass.GetResourceAsStream(resource), StandardCharsets.UTF_8);
+		  return WordlistLoader.GetWordSet(reader, comment, new CharArraySet(Version.LUCENE_CURRENT, 16, ignoreCase));
 		}
 		finally
 		{
-		  IOUtils.close(reader);
+		  IOUtils.Close(reader);
 		}
-
 	  }
 
 	  /// <summary>
@@ -126,19 +115,17 @@ namespace org.apache.lucene.analysis.util
 	  ///         file </returns>
 	  /// <exception cref="IOException">
 	  ///           if loading the stopwords throws an <seealso cref="IOException"/> </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected static CharArraySet loadStopwordSet(java.io.File stopwords, org.apache.lucene.util.Version matchVersion) throws java.io.IOException
-	  protected internal static CharArraySet loadStopwordSet(File stopwords, Version matchVersion)
+	  protected internal static CharArraySet LoadStopwordSet(File stopwords, Version matchVersion)
 	  {
 		Reader reader = null;
 		try
 		{
-		  reader = IOUtils.getDecodingReader(stopwords, StandardCharsets.UTF_8);
-		  return WordlistLoader.getWordSet(reader, matchVersion);
+		  reader = IOUtils.GetDecodingReader(stopwords, StandardCharsets.UTF_8);
+		  return WordlistLoader.GetWordSet(reader, matchVersion);
 		}
 		finally
 		{
-		  IOUtils.close(reader);
+		  IOUtils.Close(reader);
 		}
 	  }
 
@@ -154,17 +141,15 @@ namespace org.apache.lucene.analysis.util
 	  ///         reader </returns>
 	  /// <exception cref="IOException">
 	  ///           if loading the stopwords throws an <seealso cref="IOException"/> </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected static CharArraySet loadStopwordSet(java.io.Reader stopwords, org.apache.lucene.util.Version matchVersion) throws java.io.IOException
 	  protected internal static CharArraySet loadStopwordSet(Reader stopwords, Version matchVersion)
 	  {
 		try
 		{
-		  return WordlistLoader.getWordSet(stopwords, matchVersion);
+		  return WordlistLoader.GetWordSet(stopwords, matchVersion);
 		}
 		finally
 		{
-		  IOUtils.close(stopwords);
+		  IOUtils.Close(stopwords);
 		}
 	  }
 	}

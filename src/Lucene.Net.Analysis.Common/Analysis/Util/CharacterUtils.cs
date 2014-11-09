@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
 
 	/*
@@ -19,11 +21,7 @@ namespace org.apache.lucene.analysis.util
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// <seealso cref="CharacterUtils"/> provides a unified interface to Character-related
 	/// operations to implement backwards compatible character operations based on a
 	/// <seealso cref="Version"/> instance.
@@ -43,11 +41,9 @@ namespace org.apache.lucene.analysis.util
 	  ///          a version instance </param>
 	  /// <returns> a <seealso cref="CharacterUtils"/> implementation according to the given
 	  ///         <seealso cref="Version"/> instance. </returns>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public static CharacterUtils getInstance(final org.apache.lucene.util.Version matchVersion)
 	  public static CharacterUtils getInstance(Version matchVersion)
 	  {
-		return matchVersion.onOrAfter(Version.LUCENE_31) ? JAVA_5 : JAVA_4;
+		return matchVersion.OnOrAfter(Version.LUCENE_31) ? JAVA_5 : JAVA_4;
 	  }
 
 	  /// <summary>

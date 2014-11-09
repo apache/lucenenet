@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using org.apache.lucene.analysis.util;
 
-namespace org.apache.lucene.analysis.synonym
+namespace Lucene.Net.Analysis.Synonym
 {
 
 	/*
@@ -21,11 +23,7 @@ namespace org.apache.lucene.analysis.synonym
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using org.apache.lucene.analysis.util;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Mapping rules for use with <seealso cref="SlowSynonymFilter"/> </summary>
 	/// @deprecated (3.4) use <seealso cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
 	[Obsolete("(3.4) use <seealso cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]

@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -19,13 +21,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using RamUsageEstimator = org.apache.lucene.util.RamUsageEstimator;
-
-	/// <summary>
+    /// <summary>
 	/// This class converts alphabetic, numeric, and symbolic Unicode characters
 	/// which are not in the first 127 ASCII characters (the "Basic Latin" Unicode
 	/// block) into their ASCII equivalents, if one exists.
@@ -94,38 +90,30 @@ namespace org.apache.lucene.analysis.miscellaneous
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		if (state != null)
 		{
 		  Debug.Assert(preserveOriginal, "state should only be captured if preserveOriginal is true");
-		  restoreState(state);
+		  RestoreState(state);
 		  posIncAttr.PositionIncrement = 0;
 		  state = null;
 		  return true;
 		}
-		if (input.incrementToken())
+		if (input.IncrementToken())
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] buffer = termAtt.buffer();
-		  char[] buffer = termAtt.buffer();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = termAtt.length();
-		  int length = termAtt.length();
+		  char[] buffer = termAtt.Buffer();
+		  int length = termAtt.Length;
 
 		  // If no characters actually require rewriting then we
 		  // just return token as-is:
 		  for (int i = 0 ; i < length ; ++i)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char c = buffer[i];
 			char c = buffer[i];
 			if (c >= '\u0080')
 			{
-			  foldToASCII(buffer, length);
-			  termAtt.copyBuffer(output, 0, outputPos);
+			  FoldToASCII(buffer, length);
+			  termAtt.CopyBuffer(output, 0, outputPos);
 			  break;
 			}
 		  }
@@ -137,11 +125,9 @@ namespace org.apache.lucene.analysis.miscellaneous
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		state = null;
 	  }
 
@@ -150,22 +136,20 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  /// accents are removed from accented characters. </summary>
 	  /// <param name="input"> The string to fold </param>
 	  /// <param name="length"> The number of characters in the input string </param>
-	  public void foldToASCII(char[] input, int length)
+	  public void FoldToASCII(char[] input, int length)
 	  {
 		if (preserveOriginal)
 		{
-		  state = captureState();
+		  state = CaptureState();
 		}
 		// Worst-case length required:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxSizeNeeded = 4 * length;
 		int maxSizeNeeded = 4 * length;
 		if (output.Length < maxSizeNeeded)
 		{
-		  output = new char[ArrayUtil.oversize(maxSizeNeeded, RamUsageEstimator.NUM_BYTES_CHAR)];
+		  output = new char[ArrayUtil.Oversize(maxSizeNeeded, RamUsageEstimator.NUM_BYTES_CHAR)];
 		}
 
-		outputPos = foldToASCII(input, 0, output, 0, length);
+		outputPos = FoldToASCII(input, 0, output, 0, length);
 	  }
 
 	  /// <summary>
@@ -178,15 +162,11 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  /// <param name="length">    The number of characters to fold </param>
 	  /// <returns> length of output
 	  /// @lucene.internal </returns>
-	  public static int foldToASCII(char[] input, int inputPos, char[] output, int outputPos, int length)
+	  public static int FoldToASCII(char[] input, int inputPos, char[] output, int outputPos, int length)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = inputPos + length;
 		int end = inputPos + length;
 		for (int pos = inputPos; pos < end ; ++pos)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char c = input[pos];
 		  char c = input[pos];
 
 		  // Quick test: if it's not in range then just keep current character
