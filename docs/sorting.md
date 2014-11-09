@@ -4,7 +4,7 @@ The system libraries in Java and C# have differences in the default sorting mech
 
 [Array.Sort](http://msdn.microsoft.com/en-us/library/kwx6zbd4\(v=vs.110\).aspx)in C# uses [Quick Sort](http://algs4.cs.princeton.edu/23quicksort) as the default algorithm for soring.
 
-[Array.sort](http://docs.oracle.com/javase/7/docs/api/java/util/Arrays.html#sort(T\[\],%20java.util.Comparator) in in Java uses the [Tim Sort](http://svn.python.org/projects/python/trunk/Objects/listsort.txt) as the default sorting algorithm as of Java 7.
+[Array.sort](http://docs.oracle.com/javase/7/docs/api/java/util/Arrays.html#sort(T\[\],%20java.util.Comparator) in in Java uses the [Tim Sort](http://svn.python.org/projects/python/trunk/Objects/listsort.txt) as the default sorting algorithm as of Java 7 for Object arrays and using the Dual Pivot Quick Sort (unstable) for primitive typed arrays.
 
 The differences in sorting methods could account for the discrepencies between running ported tests for the various sorting algorithms in Lucene core.
 

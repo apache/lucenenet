@@ -36,8 +36,12 @@ namespace Java.Lang
             public static int Position(long value)
             {
                 var v = value;
+                // TODO: find a better way of handling negative indices for DeBruijn64.Position
+                var index =  ((v & -v)*0x022fdd63cc95386d >> 58);
+                if (0 > index)
+                    index = 64 + index;
 
-                return POSITIONS[(v & -v) * 0x022fdd63cc95386d >> 58];
+                return POSITIONS[index]; 
             }
         }
 
@@ -46,20 +50,45 @@ namespace Java.Lang
 
 
         /// <summary>
-        /// Returns the leading zeros from the value.
+        /// Returns the leading zeros from the binary expression of the value.
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///      A long is 64 bits. Each bit is either a one or a zero.
+        ///     <see cref="NumberOfLeadingZeros(long)"/> will count zeros from the left most bit towards the right
+        ///     till it reaches the first bit that has a value of one.  Binary is often
+        ///     written as 
+        ///     <a href="http://simple.wikipedia.org/wiki/Hexadecimal_numeral_system">hexadecimal literal or hex digit</a> in code.    
+        ///     </para>
+        ///     <example>
+        ///     <code lang="csharp"> 
+        ///     // The counting stops at the first bit that has a one value starting from the left side.
+        ///     // In the case below, the first bit with a value of one is in the 16th position.
+        ///     //
+        ///     // hex value, long value
+        ///     // 0x1F00F0f00F111L = (Long)545422443606289;
+        ///     //
+        ///     // this is the binary form of the long value being tested:
+        ///     // |                 | 15 zeros 
+        ///     // 0000 0000 0000 0001 1111 0000 0000 1111 0000 1111 0000 0000 1111 0001 0001 0001
+        ///     const long value2 = 0x1F00F0f00F111L;
+        ///     Assert.Equal(15, Long.NumberOfLeadingZeros(value2), "The number of leading zeros must be 15");
+        ///     </code>
+        ///     </example>
+        /// </remarks>
         /// <param name="value">The value.</param>
-        /// <returns>System.Int32.</returns>
+        /// <returns>The number of leading zeros.</returns>
         public static int NumberOfLeadingZeros(long value)
         {
             return (int)NumberOfLeadingZeros((ulong)value);
         }
 
         /// <summary>
-        /// Returns the leading zeros from the value.
+        /// Returns the leading zeros from the binary expression of the value.  
         /// </summary>
+        /// <seealso cref="NumberOfLeadingZeros(long)"/>
         /// <param name="value">The value.</param>
-        /// <returns>System.UInt32.</returns>
+        /// <returns>The number of leading zeros.</returns>
         [CLSCompliant(false)]
         public static uint NumberOfLeadingZeros(ulong value)
         {
@@ -105,18 +134,39 @@ namespace Java.Lang
 
         // ReSharper disable once CSharpWarnings::CS1584
         /// <summary>
-        /// Returns the number of trailing zeros. i.e 100 has two trailing zeros.
+        /// Returns the number of trailing zeros from the binary value.
         /// </summary>
         /// <param name="value">The value to be inspected for trailing zeros.</param>
         /// <remarks>
         ///     <para>
-        ///         We're using the De Bruijn sequences based upon the various bit twiddling hacks found in 
-
+        ///      A long is 64 bits. Each bit is either a one or a zero.
+        ///     <see cref="NumberOfTrailingZeros(long)"/> will count zeros from the right most bit towards the left
+        ///     till it reaches the first bit that has a value of one.  Binary is often
+        ///     written as 
+        ///     <a href="http://simple.wikipedia.org/wiki/Hexadecimal_numeral_system">hexadecimal literal or hex digit</a> in code.    
+        ///     </para>
+        ///     <example>
+        ///     <code lang="csharp"> 
+        ///     // The counting stops at the first bit that has a one value starting from the right side.
+        ///     // In the case below, the first bit with a value of one is in the 16th position.
+        ///     //
+        ///     // hex value, long value
+        ///     // 0x80000L = (Long) 524288;
+        ///     //
+        ///     // this is the binary form of the long value being tested:
+        ///     //                                                        |                      | 19 zeros 
+        ///     // 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1000 0000 0000 0000 0000
+        ///     const long value3 = 0x80000L;
+        ///     Assert.Equal(19, Long.NumberOfTrailingZeros(value3), "The number of trailing zeros must be 19");
+        ///     </code>
+        ///     </example>
+        ///     <para>
+        ///         We're using the De Bruijn sequences based upon the various bit twiddling hacks found in
         ///         an online paper stanford <see href="https://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup" />
         ///     </para>
         ///     <para>
         ///          It should be faster than Java's native 
-        ///          <see href="http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/lang/Integer.java#Integer.numberOfTrailingZeros%28int%29">
+        ///          <see href="http://docs.oracle.com/javase/7/docs/api/java/lang/Long.html#numberOfTrailingZeros(long)">
         ///          Long.numberOfTrailingZeros
         ///          </see> which uses the binary search method of finding trailing zeros.  
         ///     </para>
@@ -127,11 +177,23 @@ namespace Java.Lang
             return DeBruijn64.Position(value);
         }
 
+        /// <summary>
+        /// Rotates the left.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="shift">The shift.</param>
+        /// <returns>System.Int64.</returns>
         public static long RotateLeft(long value, int shift)
         {
             return (long)RotateLeft((ulong) value, shift);
         }
 
+        /// <summary>
+        /// Rotates the left.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="shift">The shift.</param>
+        /// <returns>System.UInt64.</returns>
         [CLSCompliant(false)]
         public static ulong RotateLeft(ulong value, int shift)
         {
@@ -139,11 +201,23 @@ namespace Java.Lang
         }
 
 
+        /// <summary>
+        /// Rotates the right.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="shift">The shift.</param>
+        /// <returns>System.Int64.</returns>
         public static long RotateRight(long value, int shift)
         {
             return (long)RotateRight((ulong) value, shift);
         }
 
+        /// <summary>
+        /// Rotates the right.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="shift">The shift.</param>
+        /// <returns>System.UInt64.</returns>
         [CLSCompliant(false)]
         public static ulong RotateRight(ulong value, int shift)
         {

@@ -12,6 +12,13 @@ Apache Lucene.Net is compiled against Microsoft .NET Framework 4.0
 The Apache Lucene.Net web site is at:
   http://lucenenet.apache.org
 
+## NOTICE
+This branch is on hiatus as I'm currently working on extending Xunit.Net to have similar functionality to JUnit for TestRules and to enable randomization testing from carrot search.  I'm also working on making the story for running tests quickly from the command line.  
+
+I've also started separate code that provides the same apis found in Java but .Net into a separate library in hopes that it will make it easier for others to port code from Java.  
+
+- Michael
+
 ## Getting Started
 
 ### Windows Users
@@ -68,6 +75,7 @@ $ k test
  * Implement a ci server, possibly appveyor
  * Generate Code Documentation.
  * Port core, test-framework, and tests for core. 
+  * 
 
 ## Notes
 
