@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Core
         {
         }
 
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             return new TokenStreamComponents(new KeywordTokenizer(reader));
         }

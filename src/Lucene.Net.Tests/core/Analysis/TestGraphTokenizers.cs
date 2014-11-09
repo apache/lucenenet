@@ -204,7 +204,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream t2 = new MockGraphTokenFilter(Random(), t);
@@ -239,7 +239,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new GraphTokenizer(reader);
                 TokenStream t2 = new MockGraphTokenFilter(Random(), t);
@@ -278,7 +278,7 @@ namespace Lucene.Net.Analysis
             {
                 while (true)
                 {
-                    bool gotOne = Input.IncrementToken();
+                    bool gotOne = input.IncrementToken();
                     if (!gotOne)
                     {
                         return false;
@@ -328,7 +328,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream t2 = new MockGraphTokenFilter(Random(), t);
@@ -368,7 +368,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream t2 = new RemoveATokens(t);
@@ -405,7 +405,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream t2 = new MockGraphTokenFilter(Random(), t);
@@ -449,7 +449,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream t1 = new MockGraphTokenFilter(Random(), t);
@@ -486,7 +486,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream t1 = new MockGraphTokenFilter(Random(), t);
@@ -523,7 +523,7 @@ namespace Lucene.Net.Analysis
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream t1 = new MockHoleInjectingTokenFilter(Random(), t);

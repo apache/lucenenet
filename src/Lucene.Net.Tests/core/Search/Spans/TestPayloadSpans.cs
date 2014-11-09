@@ -510,7 +510,7 @@ namespace Lucene.Net.Search.Spans
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result));
@@ -544,7 +544,7 @@ namespace Lucene.Net.Search.Spans
 
             public override bool IncrementToken()
             {
-                if (Input.IncrementToken())
+                if (input.IncrementToken())
                 {
                     string token = TermAtt.ToString();
 
@@ -581,7 +581,7 @@ namespace Lucene.Net.Search.Spans
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result));

@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Payloads
             {
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(result, new PayloadFilter(result, fieldName));
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override bool IncrementToken()
             {
-                bool hasNext = Input.IncrementToken();
+                bool hasNext = input.IncrementToken();
                 if (hasNext)
                 {
                     if (FieldName.Equals("field"))

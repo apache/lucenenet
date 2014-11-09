@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
             }

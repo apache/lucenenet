@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Spans
 
             public override bool IncrementToken()
             {
-                if (Input.IncrementToken())
+                if (input.IncrementToken())
                 {
                     PayloadAttr.Payload = new BytesRef(("pos: " + Pos).GetBytes(IOUtils.CHARSET_UTF_8));
                     Pos++;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Spans
             {
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(tokenizer, new SimplePayloadFilter(tokenizer));

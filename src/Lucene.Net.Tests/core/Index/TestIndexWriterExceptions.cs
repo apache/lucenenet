@@ -448,7 +448,7 @@ namespace Lucene.Net.Index
                 {
                     throw new IOException(CRASH_FAIL_MESSAGE);
                 }
-                return Input.IncrementToken();
+                return input.IncrementToken();
             }
 
             public override void Reset()
@@ -519,7 +519,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
@@ -637,7 +637,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
@@ -663,7 +663,7 @@ namespace Lucene.Net.Index
                     {
                         throw new IOException();
                     }
-                    return Input.IncrementToken();
+                    return input.IncrementToken();
                 }
 
                 public override void Reset()
@@ -873,7 +873,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
@@ -972,7 +972,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.

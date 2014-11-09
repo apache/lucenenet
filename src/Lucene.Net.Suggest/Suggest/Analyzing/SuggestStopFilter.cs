@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 return false;
             }
 
-            if (!Input.IncrementToken())
+            if (!input.IncrementToken())
             {
                 return false;
             }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     int endOffset = offsetAtt.EndOffset();
                     // This token may be a stopword, if it's not end:
                     State sav = CaptureState();
-                    if (Input.IncrementToken())
+                    if (input.IncrementToken())
                     {
                         // It was a stopword; skip it
                         skippedPositions += posInc;
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     else
                     {
                         ClearAttributes();
-                        Input.End();
+                        input.End();
                         endState = CaptureState();
                         int finalEndOffset = offsetAtt.EndOffset();
                         Debug.Assert(finalEndOffset >= endOffset);

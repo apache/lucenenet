@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis
                 positions.Get(InputPos).Add(CaptureState());
                 TokenPending = false;
             }
-            bool gotToken = Input.IncrementToken();
+            bool gotToken = input.IncrementToken();
             if (DEBUG)
             {
                 Console.WriteLine("  input.incrToken() returned " + gotToken);

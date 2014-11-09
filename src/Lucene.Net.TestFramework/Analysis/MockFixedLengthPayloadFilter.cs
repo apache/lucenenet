@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
 
         public override bool IncrementToken()
         {
-            if (Input.IncrementToken())
+            if (input.IncrementToken())
             {
                 Random.NextBytes((byte[])(Array)Bytes);
                 PayloadAtt.Payload = Payload;

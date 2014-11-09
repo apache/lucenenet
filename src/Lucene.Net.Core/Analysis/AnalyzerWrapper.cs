@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis
             return reader;
         }
 
-        protected override sealed TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
+        public override sealed TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
         {
             return WrapComponents(fieldName, GetWrappedAnalyzer(fieldName).CreateComponents(fieldName, aReader));
         }

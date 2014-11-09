@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
-using Lucene.Net.Collation;
+using org.apache.lucene.collation;
 
-namespace org.apache.lucene.collation
+namespace Lucene.Net.Collation
 {
 
 	/*
@@ -23,13 +25,10 @@ namespace org.apache.lucene.collation
 	 */
 
 
-	using Analyzer = org.apache.lucene.analysis.Analyzer;
-	using KeywordTokenizer = KeywordTokenizer;
-	using IndexableBinaryStringTools = org.apache.lucene.util.IndexableBinaryStringTools; // javadoc @link
-	using Version = org.apache.lucene.util.Version;
+    // javadoc @link
 
 
-	/// <summary>
+    /// <summary>
 	/// <para>
 	///   Configures <seealso cref="KeywordTokenizer"/> with <seealso cref="CollationAttributeFactory"/>.
 	/// </para>
@@ -106,14 +105,14 @@ namespace org.apache.lucene.collation
 
 	  /// @deprecated Use <seealso cref="CollationKeyAnalyzer#CollationKeyAnalyzer(Version, Collator)"/>
 	  ///   and specify a version instead. This ctor will be removed in Lucene 5.0 
-	  [Obsolete("Use <seealso cref="CollationKeyAnalyzer#CollationKeyAnalyzer(org.apache.lucene.util.Version, java.text.Collator)"/>")]
+	  [Obsolete("Use <seealso cref=\"CollationKeyAnalyzer#CollationKeyAnalyzer(org.apache.lucene.util.Version, java.text.Collator)\"/>")]
 	  public CollationKeyAnalyzer(Collator collator) : this(Version.LUCENE_31, collator)
 	  {
 	  }
 
-	  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
+        public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 	  {
-		if (matchVersion.onOrAfter(Version.LUCENE_40))
+		if (matchVersion.OnOrAfter(Version.LUCENE_40))
 		{
 		  KeywordTokenizer tokenizer = new KeywordTokenizer(factory, reader, KeywordTokenizer.DEFAULT_BUFFER_SIZE);
 		  return new TokenStreamComponents(tokenizer, tokenizer);

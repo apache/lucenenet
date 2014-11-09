@@ -387,7 +387,7 @@ namespace Lucene.Net.Index
                 FieldToData[field] = new PayloadData(data, offset, length);
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 PayloadData payload;
                 FieldToData.TryGetValue(fieldName, out payload);
@@ -436,7 +436,7 @@ namespace Lucene.Net.Index
 
             public override bool IncrementToken()
             {
-                bool hasNext = Input.IncrementToken();
+                bool hasNext = input.IncrementToken();
                 if (!hasNext)
                 {
                     return false;

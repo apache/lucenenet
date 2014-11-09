@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Payloads
 
         private class PayloadAnalyzer : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(result, new PayloadFilter(result, fieldName));
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Payloads
             public override bool IncrementToken()
             {
                 bool result = false;
-                if (Input.IncrementToken())
+                if (input.IncrementToken())
                 {
                     if (NumSeen % 2 == 0)
                     {

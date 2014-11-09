@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Util
             if (enablePositionIncrements)
             {
                 skippedPositions = 0;
-                while (Input.IncrementToken())
+                while (input.IncrementToken())
                 {
                     if (Accept())
                     {
@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Util
             }
             else
             {
-                while (Input.IncrementToken())
+                while (input.IncrementToken())
                 {
                     if (Accept())
                     {

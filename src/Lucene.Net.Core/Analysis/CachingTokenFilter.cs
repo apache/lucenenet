@@ -91,12 +91,12 @@ namespace Lucene.Net.Analysis
 
         private void FillCache()
         {
-            while (Input.IncrementToken())
+            while (input.IncrementToken())
             {
                 Cache.AddLast(CaptureState());
             }
             // capture final state
-            Input.End();
+            input.End();
             FinalState = CaptureState();
         }
     }
