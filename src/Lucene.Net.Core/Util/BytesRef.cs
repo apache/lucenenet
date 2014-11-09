@@ -433,31 +433,31 @@ namespace Lucene.Net.Util
             {
                 if (Bytes == null)
                 {
-                    throw new Exception("bytes is null");
+                    throw new InvalidOperationException("bytes is null");
                 }
                 if (Length < 0)
                 {
-                    throw new Exception("length is negative: " + Length);
+                    throw new InvalidOperationException("length is negative: " + Length);
                 }
                 if (Length > Bytes.Length)
                 {
-                    throw new Exception("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
+                    throw new InvalidOperationException("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
                 }
                 if (Offset < 0)
                 {
-                    throw new Exception("offset is negative: " + Offset);
+                    throw new InvalidOperationException("offset is negative: " + Offset);
                 }
                 if (Offset > Bytes.Length)
                 {
-                    throw new Exception("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
+                    throw new InvalidOperationException("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
                 }
                 if (Offset + Length < 0)
                 {
-                    throw new Exception("offset+length is negative: offset=" + Offset + ",length=" + Length);
+                    throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
                 }
                 if (Offset + Length > Bytes.Length)
                 {
-                    throw new Exception("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
+                    throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
                 }
                 return true;
             }

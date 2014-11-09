@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Suggest.Jaspell
@@ -61,11 +62,10 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 throw new System.ArgumentException("this suggester doesn't support contexts");
             }
             count = 0;
-            trie = new JaspellTernarySearchTrie();
-            trie.MatchAlmostDiff = editDistance;
+            trie = new JaspellTernarySearchTrie { MatchAlmostDiff = editDistance };
             BytesRef spare;
 
-            CharsRef charsSpare = new CharsRef();
+            var charsSpare = new CharsRef();
 
             while ((spare = tfit.Next()) != null)
             {
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             return trie.Get(key);
         }
 
-        public override IList<LookupResult> Lookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)
             {
@@ -132,8 +132,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 LookupPriorityQueue queue = new LookupPriorityQueue(num);
                 foreach (string s in list)
                 {
-                    long freq = (long)((Number)trie.Get(s));
-                    queue.InsertWithOverflow(new LookupResult(new CharsRef(s), freq));
+                    long freq = (long)(trie.Get(s));
+                    queue.InsertWithOverflow(new LookupResult(s, freq));
                 }
                 foreach (LookupResult lr in queue.Results)
                 {
@@ -145,8 +145,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 for (int i = 0; i < maxCnt; i++)
                 {
                     string s = list[i];
-                    long freq = (long)((Number)trie.Get(s));
-                    res.Add(new LookupResult(new CharsRef(s), freq));
+                    long freq = (long)(trie.Get(s));
+                    res.Add(new LookupResult(s, freq));
                 }
             }
             return res;
@@ -159,27 +159,27 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         private void ReadRecursively(DataInput @in, JaspellTernarySearchTrie.TSTNode node)
         {
-            node.splitchar = @in.ReadString().charAt(0);
-            sbyte mask = @in.ReadByte();
+            node.splitchar = @in.ReadString()[0];
+            sbyte mask = (sbyte)@in.ReadByte();
             if ((mask & HAS_VALUE) != 0)
             {
-                node.data = Convert.ToInt64(@in.readLong());
+                node.data = Convert.ToInt64(@in.ReadLong());
             }
             if ((mask & LO_KID) != 0)
             {
-                JaspellTernarySearchTrie.TSTNode kid = new JaspellTernarySearchTrie.TSTNode(trie, '\0', node);
+                var kid = new JaspellTernarySearchTrie.TSTNode(trie, '\0', node);
                 node.relatives[JaspellTernarySearchTrie.TSTNode.LOKID] = kid;
                 ReadRecursively(@in, kid);
             }
             if ((mask & EQ_KID) != 0)
             {
-                JaspellTernarySearchTrie.TSTNode kid = new JaspellTernarySearchTrie.TSTNode(trie, '\0', node);
+                var kid = new JaspellTernarySearchTrie.TSTNode(trie, '\0', node);
                 node.relatives[JaspellTernarySearchTrie.TSTNode.EQKID] = kid;
                 ReadRecursively(@in, kid);
             }
             if ((mask & HI_KID) != 0)
             {
-                JaspellTernarySearchTrie.TSTNode kid = new JaspellTernarySearchTrie.TSTNode(trie, '\0', node);
+                var kid = new JaspellTernarySearchTrie.TSTNode(trie, '\0', node);
                 node.relatives[JaspellTernarySearchTrie.TSTNode.HIKID] = kid;
                 ReadRecursively(@in, kid);
             }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 return;
             }
-            @out.writeString(new string(new char[] { node.splitchar }, 0, 1));
+            @out.WriteString(new string(new char[] { node.splitchar }, 0, 1));
             sbyte mask = 0;
             if (node.relatives[JaspellTernarySearchTrie.TSTNode.LOKID] != null)
             {
@@ -209,10 +209,10 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 mask |= HAS_VALUE;
             }
-            @out.writeByte(mask);
+            @out.WriteByte(mask);
             if (node.data != null)
             {
-                @out.writeLong((long)((Number)node.data));
+                @out.WriteLong((long)(node.data));
             }
             WriteRecursively(@out, node.relatives[JaspellTernarySearchTrie.TSTNode.LOKID]);
             WriteRecursively(@out, node.relatives[JaspellTernarySearchTrie.TSTNode.EQKID]);
@@ -231,10 +231,10 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             return true;
         }
 
-        public override bool load(DataInput input)
+        public override bool Load(DataInput input)
         {
             count = input.ReadVLong();
-            JaspellTernarySearchTrie.TSTNode root = new JaspellTernarySearchTrie.TSTNode(trie, '\0', null);
+            var root = new JaspellTernarySearchTrie.TSTNode(trie, '\0', null);
             ReadRecursively(input, root);
             trie.Root = root;
             return true;

@@ -87,12 +87,12 @@ namespace Lucene.Net.Search.Suggest.Fst
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
             count = 0;
-            BytesRef scratch = new BytesRef();
+            var scratch = new BytesRef();
             InputIterator iter = new WFSTInputIterator(this, iterator);
-            IntsRef scratchInts = new IntsRef();
+            var scratchInts = new IntsRef();
             BytesRef previous = null;
-            PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-            Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+            var outputs = PositiveIntOutputs.Singleton;
+            var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
             while ((scratch = iter.Next()) != null)
             {
                 long cost = iter.Weight;
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     continue; // for duplicate suggestions, the best weight is actually
                     // added
                 }
-                Util.ToIntsRef(scratch, scratchInts);
+                Lucene.Net.Util.Fst.Util.ToIntsRef(scratch, scratchInts);
                 builder.Add(scratchInts, cost);
                 previous.CopyBytes(scratch);
                 count++;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 		return true;
 	  }
 
-        public override IList<LookupResult> Lookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)
             {
@@ -147,12 +147,12 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             if (fst == null)
             {
-                return Collections.emptyList();
+                return Collections.EmptyList<LookupResult>();
             }
 
             BytesRef scratch = new BytesRef(key);
             int prefixLength = scratch.Length;
-            Arc<long?> arc = new Arc<long?>();
+            FST.Arc<long?> arc = new FST.Arc<long?>();
 
             // match the prefix portion exactly
             long? prefixOutput = null;
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             if (prefixOutput == null)
             {
-                return Collections.emptyList();
+                return Collections.EmptyList();
             }
 
             IList<LookupResult> results = new List<LookupResult>(num);
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 spare.grow(scratch.length);
                 UnicodeUtil.UTF8toUTF16(scratch, spare);
-                results.Add(new LookupResult(spare.ToString(), decodeWeight(prefixOutput + arc.nextFinalOutput)));
+                results.Add(new LookupResult(spare.ToString(), decodeWeight(prefixOutput + arc.NextFinalOutput)));
                 if (--num == 0)
                 {
                     return results; // that was quick
@@ -184,11 +184,11 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
 
             // complete top-N
-            TopResults<long?> completions = null;
+            Util.Fst.Util.TopResults<long?> completions = null;
             try
             {
                 completions = Util.ShortestPaths(fst, arc, prefixOutput, weightComparator, num, !exactFirst);
-                Debug.Assert(completions.isComplete);
+                Debug.Assert(completions.IsComplete);
             }
             catch (IOException bogus)
             {
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
 
             BytesRef suffix = new BytesRef(8);
-            foreach (Result<long?> completion in completions)
+            foreach (Util.Fst.Util.Result<long?> completion in completions)
             {
                 scratch.length = prefixLength;
                 // append suffix
@@ -209,9 +209,9 @@ namespace Lucene.Net.Search.Suggest.Fst
             return results;
         }
 
-        private long? LookupPrefix(BytesRef scratch, Arc<long?> arc) //Bogus
+        private long? LookupPrefix(BytesRef scratch, FST.Arc<long?> arc) //Bogus
         {
-            Debug.Assert(0 == (long)fst.outputs.NoOutput);
+            Debug.Assert(0 == (long)fst.Outputs.NoOutput);
             long output = 0;
             var bytesReader = fst.BytesReader;
 
@@ -307,7 +307,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 writer.Write(buffer, 0, output.Position);
             }
 
-            protected internal override long decode(BytesRef scratch, ByteArrayDataInput tmpInput)
+            protected internal override long Decode(BytesRef scratch, ByteArrayDataInput tmpInput)
             {
                 scratch.Length -= 4; // int
                 // skip suggestion:
