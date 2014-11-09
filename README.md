@@ -17,6 +17,10 @@ This branch is on hiatus as I'm currently working on extending Xunit.Net to have
 
 I've also started separate code that provides the same apis found in Java but .Net into a separate library in hopes that it will make it easier for others to port code from Java.  
 
+The Mettle Project can be found here: 
+* https://github.com/michaelherndon/xunit
+* https://github.com/michaelherndon/mettle
+
 - Michael
 
 ## Getting Started
