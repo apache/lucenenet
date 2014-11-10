@@ -326,7 +326,7 @@ namespace Lucene.Net.Util
                 }
 
                 EncodeBlock();
-                sbyte[] dataArr = Arrays.CopyOf(Data.Bytes, Data.Length + MAX_BYTE_BLOCK_COUNT);
+                var dataArr = Arrays.CopyOf(Data.Bytes, Data.Length + MAX_BYTE_BLOCK_COUNT);
 
                 int indexSize = (NumBlocks - 1) / IndexInterval_Renamed + 1;
                 MonotonicAppendingLongBuffer docIDs, offsets;
@@ -365,11 +365,11 @@ namespace Lucene.Net.Util
             }
         }
 
-        internal readonly sbyte[] Data;
+        internal readonly byte[] Data;
         internal readonly MonotonicAppendingLongBuffer DocIDs, Offsets; // for the index
         internal readonly int Cardinality_Renamed, IndexInterval;
 
-        internal PForDeltaDocIdSet(sbyte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer docIDs, MonotonicAppendingLongBuffer offsets)
+        internal PForDeltaDocIdSet(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer docIDs, MonotonicAppendingLongBuffer offsets)
         {
             this.Data = data;
             this.Cardinality_Renamed = cardinality;
@@ -406,7 +406,7 @@ namespace Lucene.Net.Util
             internal readonly MonotonicAppendingLongBuffer DocIDs, Offsets;
 
             internal readonly int Cardinality;
-            internal readonly sbyte[] Data;
+            internal readonly byte[] Data;
             internal int Offset; // offset in data
 
             internal readonly int[] NextDocs;
@@ -417,7 +417,7 @@ namespace Lucene.Net.Util
             internal int BlockIdx;
             internal int DocID_Renamed;
 
-            internal Iterator(sbyte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer docIDs, MonotonicAppendingLongBuffer offsets)
+            internal Iterator(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer docIDs, MonotonicAppendingLongBuffer offsets)
             {
                 this.Data = data;
                 this.Cardinality = cardinality;
@@ -438,7 +438,7 @@ namespace Lucene.Net.Util
                 return DocID_Renamed;
             }
 
-            internal virtual void PforDecompress(sbyte token)
+            internal virtual void PforDecompress(byte token)
             {
                 int bitsPerValue = token & 0x1F;
                 if (bitsPerValue == 0)
@@ -470,13 +470,13 @@ namespace Lucene.Net.Util
                 }
             }
 
-            internal virtual void UnaryDecompress(sbyte token)
+            internal virtual void UnaryDecompress(byte token)
             {
                 Debug.Assert((token & HAS_EXCEPTIONS) == 0);
                 int docID = this.DocID_Renamed;
                 for (int i = 0; i < BLOCK_SIZE; )
                 {
-                    sbyte b = Data[Offset++];
+                    var b = Data[Offset++];
                     for (int bitList = BitUtil.BitList(b); bitList != 0; ++i, bitList = (int)((uint)bitList >> 4))
                     {
                         NextDocs[i] = docID + (bitList & 0x0F);
@@ -487,7 +487,7 @@ namespace Lucene.Net.Util
 
             internal virtual void DecompressBlock()
             {
-                sbyte token = Data[Offset++];
+                var token = Data[Offset++];
 
                 if ((token & UNARY) != 0)
                 {

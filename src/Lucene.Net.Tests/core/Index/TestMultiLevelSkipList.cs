@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
                 bool hasNext = input.IncrementToken();
                 if (hasNext)
                 {
-                    PayloadAtt.Payload = new BytesRef(new sbyte[] { (sbyte)PayloadCount.IncrementAndGet() });
+                    PayloadAtt.Payload = new BytesRef(new[] { (byte)PayloadCount.IncrementAndGet() });
                 }
                 return hasNext;
             }

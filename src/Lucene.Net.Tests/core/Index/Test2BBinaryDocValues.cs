@@ -54,17 +54,17 @@ namespace Lucene.Net.Index
            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
             Document doc = new Document();
-            sbyte[] bytes = new sbyte[4];
+            var bytes = new byte[4];
             BytesRef data = new BytesRef(bytes);
             BinaryDocValuesField dvField = new BinaryDocValuesField("dv", data);
             doc.Add(dvField);
 
             for (int i = 0; i < int.MaxValue; i++)
             {
-                bytes[0] = (sbyte)(i >> 24);
-                bytes[1] = (sbyte)(i >> 16);
-                bytes[2] = (sbyte)(i >> 8);
-                bytes[3] = (sbyte)i;
+                bytes[0] = (byte)(i >> 24);
+                bytes[1] = (byte)(i >> 16);
+                bytes[2] = (byte)(i >> 8);
+                bytes[3] = (byte)i;
                 w.AddDocument(doc);
                 if (i % 100000 == 0)
                 {
@@ -88,10 +88,10 @@ namespace Lucene.Net.Index
                 BinaryDocValues dv = reader.GetBinaryDocValues("dv");
                 for (int i = 0; i < reader.MaxDoc; i++)
                 {
-                    bytes[0] = (sbyte)(expectedValue >> 24);
-                    bytes[1] = (sbyte)(expectedValue >> 16);
-                    bytes[2] = (sbyte)(expectedValue >> 8);
-                    bytes[3] = (sbyte)expectedValue;
+                    bytes[0] = (byte)(expectedValue >> 24);
+                    bytes[1] = (byte)(expectedValue >> 16);
+                    bytes[2] = (byte)(expectedValue >> 8);
+                    bytes[3] = (byte)expectedValue;
                     dv.Get(i, scratch);
                     Assert.AreEqual(data, scratch);
                     expectedValue++;
@@ -116,15 +116,15 @@ namespace Lucene.Net.Index
            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
             Document doc = new Document();
-            sbyte[] bytes = new sbyte[4];
-            ByteArrayDataOutput encoder = new ByteArrayDataOutput((byte[])(Array)bytes);
+            var bytes = new byte[4];
+            ByteArrayDataOutput encoder = new ByteArrayDataOutput(bytes);
             BytesRef data = new BytesRef(bytes);
             BinaryDocValuesField dvField = new BinaryDocValuesField("dv", data);
             doc.Add(dvField);
 
             for (int i = 0; i < int.MaxValue; i++)
             {
-                encoder.Reset((byte[])(Array)bytes);
+                encoder.Reset(bytes);
                 encoder.WriteVInt(i % 65535); // 1, 2, or 3 bytes
                 data.Length = encoder.Position;
                 w.AddDocument(doc);

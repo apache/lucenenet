@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Compressing.dummy
                 Debug.Assert(offset + length <= originalLength);
                 if (bytes.Bytes.Length < originalLength)
                 {
-                    bytes.Bytes = new sbyte[ArrayUtil.Oversize(originalLength, 1)];
+                    bytes.Bytes = new byte[ArrayUtil.Oversize(originalLength, 1)];
                 }
                 @in.ReadBytes(bytes.Bytes, 0, offset + length);
                 bytes.Offset = offset;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Compressing.dummy
             {
             }
 
-            public override void Compress(sbyte[] bytes, int off, int len, DataOutput @out)
+            public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {
                 @out.WriteBytes(bytes, off, len);
             }

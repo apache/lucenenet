@@ -37,13 +37,13 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns true if the given byte array is accepted by this automaton
         /// </summary>
-        public virtual bool Run(sbyte[] s, int offset, int length)
+        public virtual bool Run(byte[] s, int offset, int length)
         {
-            int p = Initial;
-            int l = offset + length;
+            var p = Initial;
+            var l = offset + length;
             for (int i = offset; i < l; i++)
             {
-                p = Step(p, s[i] & 0xFF);
+                p = Step(p, ((sbyte)s[i]) & 0xFF);
                 if (p == -1)
                 {
                     return false;

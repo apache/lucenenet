@@ -51,15 +51,15 @@ namespace Lucene.Net.Index
            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
             Document doc = new Document();
-            sbyte[] bytes = new sbyte[2];
+            var bytes = new byte[2];
             BytesRef data = new BytesRef(bytes);
             SortedDocValuesField dvField = new SortedDocValuesField("dv", data);
             doc.Add(dvField);
 
             for (int i = 0; i < int.MaxValue; i++)
             {
-                bytes[0] = (sbyte)(i >> 8);
-                bytes[1] = (sbyte)i;
+                bytes[0] = (byte)(i >> 8);
+                bytes[1] = (byte)i;
                 w.AddDocument(doc);
                 if (i % 100000 == 0)
                 {
@@ -83,8 +83,8 @@ namespace Lucene.Net.Index
                 BinaryDocValues dv = reader.GetSortedDocValues("dv");
                 for (int i = 0; i < reader.MaxDoc; i++)
                 {
-                    bytes[0] = (sbyte)(expectedValue >> 8);
-                    bytes[1] = (sbyte)expectedValue;
+                    bytes[0] = (byte)(expectedValue >> 8);
+                    bytes[1] = (byte)expectedValue;
                     dv.Get(i, scratch);
                     Assert.AreEqual(data, scratch);
                     expectedValue++;
@@ -109,17 +109,17 @@ namespace Lucene.Net.Index
            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
             Document doc = new Document();
-            sbyte[] bytes = new sbyte[4];
+            var bytes = new byte[4];
             BytesRef data = new BytesRef(bytes);
             SortedDocValuesField dvField = new SortedDocValuesField("dv", data);
             doc.Add(dvField);
 
             for (int i = 0; i < int.MaxValue; i++)
             {
-                bytes[0] = (sbyte)(i >> 24);
-                bytes[1] = (sbyte)(i >> 16);
-                bytes[2] = (sbyte)(i >> 8);
-                bytes[3] = (sbyte)i;
+                bytes[0] = (byte)(i >> 24);
+                bytes[1] = (byte)(i >> 16);
+                bytes[2] = (byte)(i >> 8);
+                bytes[3] = (byte)i;
                 w.AddDocument(doc);
                 if (i % 100000 == 0)
                 {
@@ -143,10 +143,10 @@ namespace Lucene.Net.Index
                 BinaryDocValues dv = reader.GetSortedDocValues("dv");
                 for (int i = 0; i < reader.MaxDoc; i++)
                 {
-                    bytes[0] = (sbyte)(counter >> 24);
-                    bytes[1] = (sbyte)(counter >> 16);
-                    bytes[2] = (sbyte)(counter >> 8);
-                    bytes[3] = (sbyte)counter;
+                    bytes[0] = (byte)(counter >> 24);
+                    bytes[1] = (byte)(counter >> 16);
+                    bytes[2] = (byte)(counter >> 8);
+                    bytes[3] = (byte)counter;
                     counter++;
                     dv.Get(i, scratch);
                     Assert.AreEqual(data, scratch);

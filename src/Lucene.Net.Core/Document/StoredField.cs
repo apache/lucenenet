@@ -49,7 +49,7 @@ namespace Lucene.Net.Documents
         /// <param name="name"> field name </param>
         /// <param name="value"> byte array pointing to binary content (not copied) </param>
         /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
-        public StoredField(string name, sbyte[] value)
+        public StoredField(string name, byte[] value)
             : base(name, value, TYPE)
         {
         }
@@ -63,7 +63,7 @@ namespace Lucene.Net.Documents
         /// <param name="offset"> starting position of the byte array </param>
         /// <param name="length"> valid length of the byte array </param>
         /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
-        public StoredField(string name, sbyte[] value, int offset, int length)
+        public StoredField(string name, byte[] value, int offset, int length)
             : base(name, value, offset, length, TYPE)
         {
         }

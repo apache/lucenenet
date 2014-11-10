@@ -84,7 +84,7 @@ namespace Lucene.Net.Util.Fst
             {
                 int x = ir.Ints[ir.Offset + i];
                 Debug.Assert(x >= 0 && x <= 255);
-                br.Bytes[i] = (sbyte)x;
+                br.Bytes[i] = (byte)x;
             }
             br.Length = ir.Length;
             return br;

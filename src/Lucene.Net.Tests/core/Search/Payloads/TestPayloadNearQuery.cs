@@ -46,8 +46,8 @@ namespace Lucene.Net.Search.Payloads
         private static IndexReader Reader;
         private static Directory Directory;
         private static BoostingSimilarity Similarity = new BoostingSimilarity();
-        private static sbyte[] Payload2 = new sbyte[] { 2 };
-        private static sbyte[] Payload4 = new sbyte[] { 4 };
+        private static byte[] Payload2 = { 2 };
+        private static byte[] Payload4 = { 4 };
 
         private class PayloadAnalyzer : Analyzer
         {

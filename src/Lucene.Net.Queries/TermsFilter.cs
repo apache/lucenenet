@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries
          * be efficient for GC and cache-lookups
          */
         private readonly int[] offsets;
-        private readonly sbyte[] termsBytes;
+        private readonly byte[] termsBytes;
         private readonly TermsAndField[] termsAndFields;
         private readonly int hashCode_Renamed; // cached hashcode for fast cache lookups
         private const int PRIME = 31;
@@ -154,7 +154,7 @@ namespace Lucene.Net.Queries
             // an automaton an call intersect on the termsenum if the density is high
 
             int hash = 9;
-            sbyte[] serializedTerms = new sbyte[0];
+            var serializedTerms = new byte[0];
             this.offsets = new int[length + 1];
             int lastEndOffset = 0;
             int index = 0;

@@ -151,14 +151,14 @@ namespace Lucene.Net.Util.Fst
                     Outputs<BytesRef> outputs = ByteSequenceOutputs.Singleton;
                     Builder<BytesRef> b = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInts.COMPACT, true, 15);
 
-                    sbyte[] outputBytes = new sbyte[20];
+                    var outputBytes = new byte[20];
                     BytesRef output = new BytesRef(outputBytes);
                     Arrays.Fill(ints, 0);
                     int count = 0;
                     Random r = new Random(seed);
                     while (true)
                     {
-                        r.NextBytes((byte[])(Array)outputBytes);
+                        r.NextBytes(outputBytes);
                         //System.out.println("add: " + input + " -> " + output);
                         b.Add(input, BytesRef.DeepCopyOf(output));
                         count++;

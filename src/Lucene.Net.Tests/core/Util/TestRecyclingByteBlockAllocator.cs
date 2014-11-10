@@ -43,8 +43,8 @@ namespace Lucene.Net.Util
         public virtual void TestAllocate()
         {
             RecyclingByteBlockAllocator allocator = NewAllocator();
-            HashSet<sbyte[]> set = new HashSet<sbyte[]>();
-            sbyte[] block = allocator.ByteBlock;
+            var set = new HashSet<byte[]>();
+            var block = allocator.ByteBlock;
             set.Add(block);
             Assert.IsNotNull(block);
             int size = block.Length;
@@ -65,9 +65,9 @@ namespace Lucene.Net.Util
         public virtual void TestAllocateAndRecycle()
         {
             RecyclingByteBlockAllocator allocator = NewAllocator();
-            HashSet<sbyte[]> allocated = new HashSet<sbyte[]>();
+            var allocated = new HashSet<byte[]>();
 
-            sbyte[] block = allocator.ByteBlock;
+            var block = allocator.ByteBlock;
             allocated.Add(block);
             Assert.IsNotNull(block);
             int size = block.Length;
@@ -84,10 +84,10 @@ namespace Lucene.Net.Util
                     Assert.IsTrue(allocated.Add(block), "block is returned twice");
                     Assert.AreEqual(size * (allocated.Count + allocator.NumBufferedBlocks()), allocator.BytesUsed());
                 }
-                sbyte[][] array = allocated.ToArray(/*new sbyte[0][]*/);
+                var array = allocated.ToArray();
                 int begin = Random().Next(array.Length);
                 int end = begin + Random().Next(array.Length - begin);
-                IList<sbyte[]> selected = new List<sbyte[]>();
+                var selected = new List<byte[]>();
                 for (int j = begin; j < end; j++)
                 {
                     selected.Add(array[j]);
@@ -96,7 +96,7 @@ namespace Lucene.Net.Util
                 for (int j = begin; j < end; j++)
                 {
                     Assert.IsNull(array[j]);
-                    sbyte[] b = selected[0];
+                    var b = selected[0];
                     selected.RemoveAt(0);
                     Assert.IsTrue(allocated.Remove(b));
                 }
@@ -107,9 +107,9 @@ namespace Lucene.Net.Util
         public virtual void TestAllocateAndFree()
         {
             RecyclingByteBlockAllocator allocator = NewAllocator();
-            HashSet<sbyte[]> allocated = new HashSet<sbyte[]>();
+            var allocated = new HashSet<byte[]>();
             int freeButAllocated = 0;
-            sbyte[] block = allocator.ByteBlock;
+            var block = allocator.ByteBlock;
             allocated.Add(block);
             Assert.IsNotNull(block);
             int size = block.Length;
@@ -128,12 +128,12 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(size * (allocated.Count + allocator.NumBufferedBlocks()), allocator.BytesUsed());
                 }
 
-                sbyte[][] array = allocated.ToArray(/*new sbyte[0][]*/);
+                var array = allocated.ToArray();
                 int begin = Random().Next(array.Length);
                 int end = begin + Random().Next(array.Length - begin);
                 for (int j = begin; j < end; j++)
                 {
-                    sbyte[] b = array[j];
+                    var b = array[j];
                     Assert.IsTrue(allocated.Remove(b));
                 }
                 allocator.RecycleByteBlocks(array, begin, end);

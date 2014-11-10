@@ -185,7 +185,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="IllegalArgumentException"> if the field name is null,
         ///         or the field's type is indexed() </exception>
         /// <exception cref="NullPointerException"> if the type is null </exception>
-        public Field(string name, sbyte[] value, FieldType type)
+        public Field(string name, byte[] value, FieldType type)
             : this(name, value, 0, value.Length, type)
         {
         }
@@ -203,7 +203,7 @@ namespace Lucene.Net.Documents
         /// <exception cref="IllegalArgumentException"> if the field name is null,
         ///         or the field's type is indexed() </exception>
         /// <exception cref="NullPointerException"> if the type is null </exception>
-        public Field(string name, sbyte[] value, int offset, int length, FieldType type)
+        public Field(string name, byte[] value, int offset, int length, FieldType type)
             : this(name, new BytesRef(value, offset, length), type)
         {
         }
@@ -337,28 +337,6 @@ namespace Lucene.Net.Documents
                     throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Reader");
                 }
                 FieldsData = value;
-            }
-        }
-
-        /// <summary>
-        /// Expert: change the value of this field. See
-        /// <seealso cref="#setStringValue(String)"/>.
-        /// </summary>
-        public virtual sbyte[] SBytesValue
-        {
-            set
-            {
-                BytesRef temp = (new BytesRef(value));
-                if (!(FieldsData is BytesRef))
-                {
-                    throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to BytesRef");
-                }
-
-                if (Type.Indexed)
-                {
-                    throw new ArgumentException("cannot set a BytesRef value on an indexed field");
-                }
-                FieldsData = temp;
             }
         }
 
@@ -954,13 +932,13 @@ namespace Lucene.Net.Documents
         }
 
         [Obsolete("Use StoredField instead.")]
-        public Field(String name, sbyte[] value)
+        public Field(String name, byte[] value)
             : this(name, value, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
         {
         }
 
         [Obsolete("Use StoredField instead.")]
-        public Field(String name, sbyte[] value, int offset, int length)
+        public Field(String name, byte[] value, int offset, int length)
             : this(name, value, offset, length, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
         {
         }

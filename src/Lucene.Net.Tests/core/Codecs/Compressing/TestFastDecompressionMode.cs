@@ -29,10 +29,10 @@ namespace Lucene.Net.Codecs.Compressing
             Mode = CompressionMode.FAST_DECOMPRESSION;
         }
 
-        public override sbyte[] Test(sbyte[] decompressed, int off, int len)
+        public override byte[] Test(byte[] decompressed, int off, int len)
         {
-            sbyte[] compressed = base.Test(decompressed, off, len);
-            sbyte[] compressed2 = Compress(CompressionMode.FAST.NewCompressor(), decompressed, off, len);
+            var compressed = base.Test(decompressed, off, len);
+            var compressed2 = Compress(CompressionMode.FAST.NewCompressor(), decompressed, off, len);
             // because of the way this compression mode works, its output is necessarily
             // smaller than the output of CompressionMode.FAST
             Assert.IsTrue(compressed.Length <= compressed2.Length);

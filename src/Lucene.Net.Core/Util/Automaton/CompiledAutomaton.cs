@@ -239,7 +239,7 @@ namespace Lucene.Net.Util.Automaton
                 term.Grow(1 + idx);
             }
             //if (DEBUG) System.out.println("  add floorLabel=" + (char) floorLabel + " idx=" + idx);
-            term.Bytes[idx] = (sbyte)floorLabel;
+            term.Bytes[idx] = (byte)floorLabel;
 
             state = maxTransition.To.Number;
             idx++;
@@ -266,7 +266,7 @@ namespace Lucene.Net.Util.Automaton
                         term.Grow(1 + idx);
                     }
                     //if (DEBUG) System.out.println("  push maxLabel=" + (char) lastTransition.max + " idx=" + idx);
-                    term.Bytes[idx] = (sbyte)lastTransition.Max_Renamed;
+                    term.Bytes[idx] = (byte)lastTransition.Max_Renamed;
                     state = lastTransition.To.Number;
                     idx++;
                 }
@@ -338,7 +338,7 @@ namespace Lucene.Net.Util.Automaton
             int idx = 0;
             while (true)
             {
-                int label = input.Bytes[input.Offset + idx] & 0xff;
+                int label = ((sbyte)input.Bytes[input.Offset + idx]) & 0xff;
                 int nextState = RunAutomaton.Step(state, label);
                 //if (DEBUG) System.out.println("  cycle label=" + (char) label + " nextState=" + nextState);
 
@@ -351,7 +351,7 @@ namespace Lucene.Net.Util.Automaton
                         {
                             output.Grow(1 + idx);
                         }
-                        output.Bytes[idx] = (sbyte)label;
+                        output.Bytes[idx] = (byte)label;
                         output.Length = input.Length;
                         //if (DEBUG) System.out.println("  input is accepted; return term=" + output.utf8ToString());
                         return output;
@@ -416,7 +416,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         output.Grow(1 + idx);
                     }
-                    output.Bytes[idx] = (sbyte)label;
+                    output.Bytes[idx] = (byte)label;
                     stack.Add(state);
                     state = nextState;
                     idx++;

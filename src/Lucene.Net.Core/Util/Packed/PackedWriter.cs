@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Packed
         internal bool Finished;
         internal readonly PackedInts.Format Format_Renamed;
         internal readonly BulkOperation Encoder;
-        internal readonly sbyte[] NextBlocks;
+        internal readonly byte[] NextBlocks;
         internal readonly long[] NextValues;
         internal readonly int Iterations;
         internal int Off;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Packed
             this.Format_Renamed = format;
             Encoder = BulkOperation.Of(format, bitsPerValue);
             Iterations = Encoder.ComputeIterations(valueCount, mem);
-            NextBlocks = new sbyte[Iterations * Encoder.ByteBlockCount()];
+            NextBlocks = new byte[Iterations * Encoder.ByteBlockCount()];
             NextValues = new long[Iterations * Encoder.ByteValueCount()];
             Off = 0;
             Written = 0;

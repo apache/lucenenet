@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs
                     long numTerms = @in.ReadVLong();
                     Debug.Assert(numTerms >= 0);
                     int numBytes = @in.ReadVInt();
-                    BytesRef rootCode = new BytesRef(new sbyte[numBytes]);
+                    BytesRef rootCode = new BytesRef(new byte[numBytes]);
                     @in.ReadBytes(rootCode.Bytes, 0, numBytes);
                     rootCode.Length = numBytes;
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
@@ -1395,7 +1395,7 @@ namespace Lucene.Net.Codecs
                                 // A prefix of the common suffix overlaps with
                                 // the suffix of the block prefix so we first
                                 // test whether the prefix part matches:
-                                sbyte[] termBytes = Term_Renamed.Bytes;
+                                byte[] termBytes = Term_Renamed.Bytes;
                                 int termBytesPos = CurrentFrame.Prefix - lenInPrefix;
                                 Debug.Assert(termBytesPos >= 0);
                                 int termBytesPosEnd = CurrentFrame.Prefix;
@@ -2023,7 +2023,7 @@ namespace Lucene.Net.Codecs
                             if (!CurrentFrame.HasTerms)
                             {
                                 TermExists = false;
-                                Term_Renamed.Bytes[targetUpto] = (sbyte)targetLabel;
+                                Term_Renamed.Bytes[targetUpto] = (byte)targetLabel;
                                 Term_Renamed.Length = 1 + targetUpto;
                                 // if (DEBUG) {
                                 //   System.out.println("  FAST NOT_FOUND term=" + brToString(term));
@@ -2053,7 +2053,7 @@ namespace Lucene.Net.Codecs
                         {
                             // Follow this arc
                             arc = nextArc;
-                            Term_Renamed.Bytes[targetUpto] = (sbyte)targetLabel;
+                            Term_Renamed.Bytes[targetUpto] = (byte)targetLabel;
                             // Aggregate output as we go:
                             Debug.Assert(arc.Output != null);
                             if (arc.Output != OuterInstance.OuterInstance.NO_OUTPUT)
@@ -2339,7 +2339,7 @@ namespace Lucene.Net.Codecs
                         else
                         {
                             // Follow this arc
-                            Term_Renamed.Bytes[targetUpto] = (sbyte)targetLabel;
+                            Term_Renamed.Bytes[targetUpto] = (byte)targetLabel;
                             arc = nextArc;
                             // Aggregate output as we go:
                             Debug.Assert(arc.Output != null);

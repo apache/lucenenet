@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.Lucene40
             else
             {
                 int length = FieldsStream.ReadVInt();
-                sbyte[] bytes = new sbyte[length];
+                var bytes = new byte[length];
                 FieldsStream.ReadBytes(bytes, 0, length);
                 if ((bits & Lucene40StoredFieldsWriter.FIELD_IS_BINARY) != 0)
                 {

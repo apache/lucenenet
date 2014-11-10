@@ -190,14 +190,14 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 case CompressingStoredFieldsWriter.BYTE_ARR:
                     int length = @in.ReadVInt();
-                    sbyte[] data = new sbyte[length];
+                    var data = new byte[length];
                     @in.ReadBytes(data, 0, length);
                     visitor.BinaryField(info, data);
                     break;
 
                 case CompressingStoredFieldsWriter.STRING:
                     length = @in.ReadVInt();
-                    data = new sbyte[length];
+                    data = new byte[length];
                     @in.ReadBytes(data, 0, length);
                     visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString((byte[])(Array)data));
                     break;

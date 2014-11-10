@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
         public static Field UnStoredField2;
 
         public const string LAZY_FIELD_BINARY_KEY = "lazyFieldBinary";
-        public static sbyte[] LAZY_FIELD_BINARY_BYTES;
+        public static byte[] LAZY_FIELD_BINARY_BYTES;
         public static Field LazyFieldBinary;
 
         public const string LAZY_FIELD_KEY = "lazyField";

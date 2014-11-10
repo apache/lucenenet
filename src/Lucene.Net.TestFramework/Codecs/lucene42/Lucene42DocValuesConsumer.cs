@@ -388,7 +388,7 @@ namespace Lucene.Net.Codecs.Lucene42
         // per-document vint-encoded byte[]
         internal class SortedSetIterator : IEnumerator<BytesRef>
         {
-            internal sbyte[] Buffer = new sbyte[10];
+            internal byte[] Buffer = new byte[10];
             internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
             internal BytesRef @ref = new BytesRef();
 

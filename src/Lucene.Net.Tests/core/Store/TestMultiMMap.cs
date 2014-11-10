@@ -251,12 +251,12 @@ namespace Lucene.Net.Store
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekEnd"), null, 1 << i);
                 IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
-                sbyte[] bytes = new sbyte[1 << i];
+                var bytes = new byte[1 << i];
                 Random().NextBytes((byte[])(Array)bytes);
                 io.WriteBytes(bytes, bytes.Length);
                 io.Dispose();
                 IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));
-                sbyte[] actual = new sbyte[1 << i];
+                var actual = new byte[1 << i];
                 ii.ReadBytes(actual, 0, actual.Length);
                 Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
                 ii.Seek(1 << i);
@@ -272,13 +272,13 @@ namespace Lucene.Net.Store
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekSliceEnd"), null, 1 << i);
                 IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
-                sbyte[] bytes = new sbyte[1 << i];
-                Random().NextBytes((byte[])(Array)bytes);
+                var bytes = new byte[1 << i];
+                Random().NextBytes(bytes);
                 io.WriteBytes(bytes, bytes.Length);
                 io.Dispose();
                 IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
                 IndexInput ii = slicer.OpenSlice("full slice", 0, bytes.Length);
-                sbyte[] actual = new sbyte[1 << i];
+                var actual = new byte[1 << i];
                 ii.ReadBytes(actual, 0, actual.Length);
                 Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
                 ii.Seek(1 << i);
@@ -295,19 +295,19 @@ namespace Lucene.Net.Store
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeeking"), null, 1 << i);
                 IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
-                sbyte[] bytes = new sbyte[1 << (i + 1)]; // make sure we switch buffers
-                Random().NextBytes((byte[])(Array)bytes);
+                var bytes = new byte[1 << (i + 1)]; // make sure we switch buffers
+                Random().NextBytes(bytes);
                 io.WriteBytes(bytes, bytes.Length);
                 io.Dispose();
                 IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));
-                sbyte[] actual = new sbyte[1 << (i + 1)]; // first read all bytes
+                var actual = new byte[1 << (i + 1)]; // first read all bytes
                 ii.ReadBytes(actual, 0, actual.Length);
                 Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
                 for (int sliceStart = 0; sliceStart < bytes.Length; sliceStart++)
                 {
                     for (int sliceLength = 0; sliceLength < bytes.Length - sliceStart; sliceLength++)
                     {
-                        sbyte[] slice = new sbyte[sliceLength];
+                        var slice = new byte[sliceLength];
                         ii.Seek(sliceStart);
                         ii.ReadBytes(slice, 0, slice.Length);
                         Assert.AreEqual(new BytesRef(bytes, sliceStart, sliceLength), new BytesRef(slice));
@@ -327,12 +327,12 @@ namespace Lucene.Net.Store
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSlicedSeeking"), null, 1 << i);
                 IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
-                sbyte[] bytes = new sbyte[1 << (i + 1)]; // make sure we switch buffers
-                Random().NextBytes((byte[])(Array)bytes);
+                var bytes = new byte[1 << (i + 1)]; // make sure we switch buffers
+                Random().NextBytes(bytes);
                 io.WriteBytes(bytes, bytes.Length);
                 io.Dispose();
                 IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));
-                sbyte[] actual = new sbyte[1 << (i + 1)]; // first read all bytes
+                var actual = new byte[1 << (i + 1)]; // first read all bytes
                 ii.ReadBytes(actual, 0, actual.Length);
                 ii.Dispose();
                 Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
@@ -341,7 +341,7 @@ namespace Lucene.Net.Store
                 {
                     for (int sliceLength = 0; sliceLength < bytes.Length - sliceStart; sliceLength++)
                     {
-                        sbyte[] slice = new sbyte[sliceLength];
+                        var slice = new byte[sliceLength];
                         IndexInput input = slicer.OpenSlice("bytesSlice", sliceStart, slice.Length);
                         input.ReadBytes(slice, 0, slice.Length);
                         input.Dispose();

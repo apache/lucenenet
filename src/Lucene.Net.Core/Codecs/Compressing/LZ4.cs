@@ -56,17 +56,18 @@ namespace Lucene.Net.Codecs.Compressing
             return Hash(i, HASH_LOG_HC);
         }
 
-        private static int ReadInt(sbyte[] buf, int i)
+        private static int ReadInt(byte[] buf, int i)
         {
-            return ((buf[i] & 0xFF) << 24) | ((buf[i + 1] & 0xFF) << 16) | ((buf[i + 2] & 0xFF) << 8) | (buf[i + 3] & 0xFF);
+            return ((((sbyte)buf[i]) & 0xFF) << 24) | ((((sbyte)buf[i + 1]) & 0xFF) << 16) | ((((sbyte)buf[i + 2]) & 0xFF) << 8) |
+                (((sbyte)buf[i + 3]) & 0xFF);
         }
 
-        private static bool ReadIntEquals(sbyte[] buf, int i, int j)
+        private static bool ReadIntEquals(byte[] buf, int i, int j)
         {
             return ReadInt(buf, i) == ReadInt(buf, j);
         }
 
-        private static int CommonBytes(sbyte[] b, int o1, int o2, int limit)
+        private static int CommonBytes(byte[] b, int o1, int o2, int limit)
         {
             Debug.Assert(o1 < o2);
             int count = 0;
@@ -77,7 +78,7 @@ namespace Lucene.Net.Codecs.Compressing
             return count;
         }
 
-        private static int CommonBytesBackward(sbyte[] b, int o1, int o2, int l1, int l2)
+        private static int CommonBytesBackward(byte[] b, int o1, int o2, int l1, int l2)
         {
             int count = 0;
             while (o1 > l1 && o2 > l2 && b[--o1] == b[--o2])
@@ -93,7 +94,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// enough to be able to hold <b>all</b> decompressed data (meaning that you
         /// need to know the total decompressed length).
         /// </summary>
-        public static int Decompress(DataInput compressed, int decompressedLen, sbyte[] dest, int dOff)
+        public static int Decompress(DataInput compressed, int decompressedLen, byte[] dest, int dOff)
         {
             int destEnd = dest.Length;
 
@@ -172,7 +173,7 @@ namespace Lucene.Net.Codecs.Compressing
             @out.WriteByte((sbyte)l);
         }
 
-        private static void EncodeLiterals(sbyte[] bytes, int token, int anchor, int literalLen, DataOutput @out)
+        private static void EncodeLiterals(byte[] bytes, int token, int anchor, int literalLen, DataOutput @out)
         {
             @out.WriteByte((sbyte)token);
 
@@ -186,13 +187,13 @@ namespace Lucene.Net.Codecs.Compressing
             @out.WriteBytes(bytes, anchor, literalLen);
         }
 
-        private static void EncodeLastLiterals(sbyte[] bytes, int anchor, int literalLen, DataOutput @out)
+        private static void EncodeLastLiterals(byte[] bytes, int anchor, int literalLen, DataOutput @out)
         {
             int token = Math.Min(literalLen, 0x0F) << 4;
             EncodeLiterals(bytes, token, anchor, literalLen, @out);
         }
 
-        private static void EncodeSequence(sbyte[] bytes, int anchor, int matchRef, int matchOff, int matchLen, DataOutput @out)
+        private static void EncodeSequence(byte[] bytes, int anchor, int matchRef, int matchOff, int matchLen, DataOutput @out)
         {
             int literalLen = matchOff - anchor;
             Debug.Assert(matchLen >= 4);
@@ -239,7 +240,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// at most 16KB of memory. <code>ht</code> shouldn't be shared across threads
         /// but can safely be reused.
         /// </summary>
-        public static void Compress(sbyte[] bytes, int off, int len, DataOutput @out, HashTable ht)
+        public static void Compress(byte[] bytes, int off, int len, DataOutput @out, HashTable ht)
         {
             int @base = off;
             int end = off + len;
@@ -340,7 +341,7 @@ namespace Lucene.Net.Codecs.Compressing
                 CollectionsHelper.Fill(ChainTable, (short)0);
             }
 
-            internal int HashPointer(sbyte[] bytes, int off)
+            internal int HashPointer(byte[] bytes, int off)
             {
                 int v = ReadInt(bytes, off);
                 int h = HashHC(v);
@@ -352,7 +353,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return off - (ChainTable[off & MASK] & 0xFFFF);
             }
 
-            internal void AddHash(sbyte[] bytes, int off)
+            internal void AddHash(byte[] bytes, int off)
             {
                 int v = ReadInt(bytes, off);
                 int h = HashHC(v);
@@ -366,7 +367,7 @@ namespace Lucene.Net.Codecs.Compressing
                 HashTable[h] = off;
             }
 
-            internal void Insert(int off, sbyte[] bytes)
+            internal void Insert(int off, byte[] bytes)
             {
                 for (; NextToUpdate < off; ++NextToUpdate)
                 {
@@ -374,7 +375,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            public bool InsertAndFindBestMatch(sbyte[] buf, int off, int matchLimit, Match match)
+            public bool InsertAndFindBestMatch(byte[] buf, int off, int matchLimit, Match match)
             {
                 match.Start = off;
                 match.Len = 0;
@@ -435,7 +436,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return match.Len != 0;
             }
 
-            public bool InsertAndFindWiderMatch(sbyte[] buf, int off, int startLimit, int matchLimit, int minLen, Match match)
+            public bool InsertAndFindWiderMatch(byte[] buf, int off, int startLimit, int matchLimit, int minLen, Match match)
             {
                 match.Len = minLen;
 
@@ -477,7 +478,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// fix overlapping matches. <code>ht</code> shouldn't be shared across threads
         /// but can safely be reused.
         /// </summary>
-        public static void CompressHC(sbyte[] src, int srcOff, int srcLen, DataOutput @out, HCHashTable ht)
+        public static void CompressHC(byte[] src, int srcOff, int srcLen, DataOutput @out, HCHashTable ht)
         {
             int srcEnd = srcOff + srcLen;
             int matchLimit = srcEnd - LAST_LITERALS;

@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
     // other "shift/mask big arrays". there are too many of these classes!
     public sealed class PagedBytes
     {
-        private readonly IList<sbyte[]> Blocks = new List<sbyte[]>();
+        private readonly IList<byte[]> Blocks = new List<byte[]>();
 
         // TODO: these are unused?
         private readonly IList<int> BlockEnd = new List<int>();
@@ -49,10 +49,10 @@ namespace Lucene.Net.Util
         private bool DidSkipBytes;
         private bool Frozen;
         private int Upto;
-        private sbyte[] CurrentBlock;
+        private byte[] CurrentBlock;
         private readonly long BytesUsedPerBlock;
 
-        private static readonly sbyte[] EMPTY_BYTES = new sbyte[0];
+        private static readonly byte[] EMPTY_BYTES = new byte[0];
 
         /// <summary>
         /// Provides methods to read BytesRefs from a frozen
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #freeze  </seealso>
         public sealed class Reader
         {
-            internal readonly sbyte[][] Blocks;
+            internal readonly byte[][] Blocks;
             internal readonly int[] BlockEnds;
             internal readonly int BlockBits;
             internal readonly int BlockMask;
@@ -69,8 +69,8 @@ namespace Lucene.Net.Util
 
             internal Reader(PagedBytes pagedBytes)
             {
-                Blocks = new sbyte[pagedBytes.Blocks.Count][];
-                for (int i = 0; i < Blocks.Length; i++)
+                Blocks = new byte[pagedBytes.Blocks.Count][];
+                for (var i = 0; i < Blocks.Length; i++)
                 {
                     Blocks[i] = pagedBytes.Blocks[i];
                 }
@@ -103,8 +103,8 @@ namespace Lucene.Net.Util
                 {
                     return;
                 }
-                int index = (int)(start >> BlockBits);
-                int offset = (int)(start & BlockMask);
+                var index = (int)(start >> BlockBits);
+                var offset = (int)(start & BlockMask);
                 if (BlockSize - offset >= length)
                 {
                     // Within block
@@ -114,7 +114,7 @@ namespace Lucene.Net.Util
                 else
                 {
                     // Split
-                    b.Bytes = new sbyte[length];
+                    b.Bytes = new byte[length];
                     b.Offset = 0;
                     Array.Copy(Blocks[index], offset, b.Bytes, 0, BlockSize - offset);
                     Array.Copy(Blocks[1 + index], 0, b.Bytes, BlockSize - offset, length - (BlockSize - offset));
@@ -134,9 +134,9 @@ namespace Lucene.Net.Util
             // TODO: this really needs to be refactored into fieldcacheimpl
             public void Fill(BytesRef b, long start)
             {
-                int index = (int)(start >> BlockBits);
-                int offset = (int)(start & BlockMask);
-                sbyte[] block = b.Bytes = Blocks[index];
+                var index = (int)(start >> BlockBits);
+                var offset = (int)(start & BlockMask);
+                var block = b.Bytes = Blocks[index];
 
                 if ((block[offset] & 128) == 0)
                 {
@@ -187,7 +187,7 @@ namespace Lucene.Net.Util
                         Blocks.Add(CurrentBlock);
                         BlockEnd.Add(Upto);
                     }
-                    CurrentBlock = new sbyte[BlockSize];
+                    CurrentBlock = new byte[BlockSize];
                     Upto = 0;
                     left = BlockSize;
                 }
@@ -222,7 +222,7 @@ namespace Lucene.Net.Util
                     BlockEnd.Add(Upto);
                     DidSkipBytes = true;
                 }
-                CurrentBlock = new sbyte[BlockSize];
+                CurrentBlock = new byte[BlockSize];
                 Upto = 0;
                 left = BlockSize;
                 Debug.Assert(bytes.Length <= BlockSize);
@@ -251,7 +251,7 @@ namespace Lucene.Net.Util
             }
             if (trim && Upto < BlockSize)
             {
-                sbyte[] newBlock = new sbyte[Upto];
+                var newBlock = new byte[Upto];
                 Array.Copy(CurrentBlock, 0, newBlock, 0, Upto);
                 CurrentBlock = newBlock;
             }
@@ -311,7 +311,7 @@ namespace Lucene.Net.Util
                     Blocks.Add(CurrentBlock);
                     BlockEnd.Add(Upto);
                 }
-                CurrentBlock = new sbyte[BlockSize];
+                CurrentBlock = new byte[BlockSize];
                 Upto = 0;
             }
 
@@ -319,12 +319,12 @@ namespace Lucene.Net.Util
 
             if (bytes.Length < 128)
             {
-                CurrentBlock[Upto++] = (sbyte)bytes.Length;
+                CurrentBlock[Upto++] = (byte)bytes.Length;
             }
             else
             {
-                CurrentBlock[Upto++] = unchecked((sbyte)(0x80 | (bytes.Length >> 8)));
-                CurrentBlock[Upto++] = unchecked((sbyte)(bytes.Length & 0xff));
+                CurrentBlock[Upto++] = unchecked((byte)(0x80 | (bytes.Length >> 8)));
+                CurrentBlock[Upto++] = unchecked((byte)(bytes.Length & 0xff));
             }
             Array.Copy(bytes.Bytes, bytes.Offset, CurrentBlock, Upto, bytes.Length);
             Upto += bytes.Length;
@@ -338,7 +338,7 @@ namespace Lucene.Net.Util
 
             internal int CurrentBlockIndex;
             internal int CurrentBlockUpto;
-            internal sbyte[] CurrentBlock;
+            internal byte[] CurrentBlock;
 
             internal PagedBytesDataInput(PagedBytes outerInstance)
             {
@@ -428,10 +428,10 @@ namespace Lucene.Net.Util
                         OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
                         OuterInstance.BlockEnd.Add(OuterInstance.Upto);
                     }
-                    OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
+                    OuterInstance.CurrentBlock = new byte[OuterInstance.BlockSize];
                     OuterInstance.Upto = 0;
                 }
-                OuterInstance.CurrentBlock[OuterInstance.Upto++] = (sbyte)b;
+                OuterInstance.CurrentBlock[OuterInstance.Upto++] = (byte)b;
             }
 
             public override void WriteBytes(byte[] b, int offset, int length)
@@ -449,7 +449,7 @@ namespace Lucene.Net.Util
                         OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
                         OuterInstance.BlockEnd.Add(OuterInstance.Upto);
                     }
-                    OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
+                    OuterInstance.CurrentBlock = new byte[OuterInstance.BlockSize];
                     OuterInstance.Upto = 0;
                 }
 
@@ -463,7 +463,7 @@ namespace Lucene.Net.Util
                         System.Buffer.BlockCopy(b, offset, OuterInstance.CurrentBlock, OuterInstance.Upto, blockLeft);
                         OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
                         OuterInstance.BlockEnd.Add(OuterInstance.BlockSize);
-                        OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
+                        OuterInstance.CurrentBlock = new byte[OuterInstance.BlockSize];
                         OuterInstance.Upto = 0;
                         offset += blockLeft;
                     }

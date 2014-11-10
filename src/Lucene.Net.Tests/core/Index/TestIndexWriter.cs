@@ -1464,10 +1464,10 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            sbyte[] b = new sbyte[50];
+            var b = new byte[50];
             for (int i = 0; i < 50; i++)
             {
-                b[i] = (sbyte)(i + 77);
+                b[i] = (byte)(i + 77);
             }
 
             Document doc = new Document();

@@ -44,7 +44,7 @@ namespace Lucene.Net.Document
         {
             FieldType ft = new FieldType();
             ft.Stored = true;
-            IndexableField binaryFldStored = new StoredField("binaryStored", (sbyte[])(Array)System.Text.UTF8Encoding.UTF8.GetBytes(BinaryValStored));
+            IndexableField binaryFldStored = new StoredField("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(BinaryValStored));
             IndexableField stringFldStored = new Field("stringStored", BinaryValStored, ft);
 
             Documents.Document doc = new Documents.Document();
@@ -92,8 +92,8 @@ namespace Lucene.Net.Document
         [Test]
         public virtual void TestCompressionTools()
         {
-            IndexableField binaryFldCompressed = new StoredField("binaryCompressed", (sbyte[])(Array)CompressionTools.Compress(BinaryValCompressed.GetBytes(Encoding.UTF8)));
-            IndexableField stringFldCompressed = new StoredField("stringCompressed", (sbyte[])(Array)CompressionTools.CompressString(BinaryValCompressed));
+            IndexableField binaryFldCompressed = new StoredField("binaryCompressed", CompressionTools.Compress(BinaryValCompressed.GetBytes(Encoding.UTF8)));
+            IndexableField stringFldCompressed = new StoredField("stringCompressed", CompressionTools.CompressString(BinaryValCompressed));
 
             var doc = new Documents.Document {binaryFldCompressed, stringFldCompressed};
 

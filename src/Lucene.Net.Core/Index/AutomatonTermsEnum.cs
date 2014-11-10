@@ -186,10 +186,10 @@ namespace Lucene.Net.Index
                 int length = value + 1; // value + maxTransition
                 if (LinearUpperBound.Bytes.Length < length)
                 {
-                    LinearUpperBound.Bytes = new sbyte[length];
+                    LinearUpperBound.Bytes = new byte[length];
                 }
                 Array.Copy(SeekBytesRef.Bytes, 0, LinearUpperBound.Bytes, 0, value);
-                LinearUpperBound.Bytes[value] = (sbyte)maxInterval;
+                LinearUpperBound.Bytes[value] = (byte)maxInterval;
                 LinearUpperBound.Length = length;
 
                 Linear_Renamed = true;
@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
                     // append either the next sequential char, or the minimum transition
                     SeekBytesRef.Grow(SeekBytesRef.Length + 1);
                     SeekBytesRef.Length++;
-                    SeekBytesRef.Bytes[SeekBytesRef.Length - 1] = (sbyte)nextChar;
+                    SeekBytesRef.Bytes[SeekBytesRef.Length - 1] = (byte)nextChar;
                     state = transition.Dest.Number;
                     /*
                      * as long as is possible, continue down the minimal path in
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
                         // append the minimum transition
                         SeekBytesRef.Grow(SeekBytesRef.Length + 1);
                         SeekBytesRef.Length++;
-                        SeekBytesRef.Bytes[SeekBytesRef.Length - 1] = (sbyte)transition.Min;
+                        SeekBytesRef.Bytes[SeekBytesRef.Length - 1] = (byte)transition.Min;
 
                         // we found a loop, record it for faster enumeration
                         if ((Finite == false) && !Linear_Renamed && Visited[state] == CurGen)
@@ -368,7 +368,7 @@ namespace Lucene.Net.Index
                 // because there is no higher character in binary sort order.
                 if (nextChar++ != 0xff)
                 {
-                    SeekBytesRef.Bytes[position] = (sbyte)nextChar;
+                    SeekBytesRef.Bytes[position] = (byte)nextChar;
                     SeekBytesRef.Length = position + 1;
                     return position;
                 }

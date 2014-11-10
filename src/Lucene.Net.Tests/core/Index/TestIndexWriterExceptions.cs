@@ -1925,7 +1925,7 @@ namespace Lucene.Net.Index
             t1.PositionIncrement = int.MaxValue - 500;
             if (Random().NextBoolean())
             {
-                t1.Payload = new BytesRef(new sbyte[] { 0x1 });
+                t1.Payload = new BytesRef(new byte[] { 0x1 });
             }
             TokenStream overflowingTokenStream = new CannedTokenStream(new Token[] { t1 });
             Field field = new TextField("foo", overflowingTokenStream);

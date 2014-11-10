@@ -40,20 +40,20 @@ namespace Lucene.Net.Documents
         ///  specified compressionLevel (constants are defined in
         ///  java.util.zip.Deflater).
         /// </summary>
-        public static byte[] Compress(sbyte[] value, int offset, int length, int compressionLevel)
+        public static byte[] Compress(byte[] value, int offset, int length, int compressionLevel)
         {
             /* Create an expandable byte array to hold the compressed data.
              * You cannot use an array that's the same size as the orginal because
              * there is no guarantee that the compressed data will be smaller than
              * the uncompressed data. */
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+            var bos = new ByteArrayOutputStream(length);
 
             Deflater compressor = SharpZipLib.CreateDeflater();
 
             try
             {
                 compressor.SetLevel(compressionLevel);
-                compressor.SetInput((byte[])(Array)value, offset, length);
+                compressor.SetInput(value, offset, length);
                 compressor.Finish();
 
                 // Compress the data
@@ -73,14 +73,14 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Compresses the specified byte range, with default BEST_COMPRESSION level </summary>
-        public static byte[] Compress(sbyte[] value, int offset, int length)
+        public static byte[] Compress(byte[] value, int offset, int length)
         {
             return Compress(value, offset, length, Deflater.BEST_COMPRESSION);
         }
 
         /// <summary>
         /// Compresses all bytes in the array, with default BEST_COMPRESSION level </summary>
-        public static byte[] Compress(sbyte[] value)
+        public static byte[] Compress(byte[] value)
         {
             return Compress(value, 0, value.Length, Deflater.BEST_COMPRESSION);
         }
@@ -99,7 +99,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public static byte[] CompressString(string value, int compressionLevel)
         {
-            BytesRef result = new BytesRef();
+            var result = new BytesRef();
             UnicodeUtil.UTF16toUTF8(value.ToCharArray(), 0, value.Length, result);
             return Compress(result.Bytes, 0, result.Length, compressionLevel);
         }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Documents
         /// Decompress the byte array previously returned by
         ///  compress
         /// </summary>
-        public static byte[] Decompress(sbyte[] value)
+        public static byte[] Decompress(byte[] value)
         {
             return Decompress(value, 0, value.Length);
         }
@@ -126,19 +126,19 @@ namespace Lucene.Net.Documents
         /// Decompress the byte array previously returned by
         ///  compress
         /// </summary>
-        public static byte[] Decompress(sbyte[] value, int offset, int length)
+        public static byte[] Decompress(byte[] value, int offset, int length)
         {
             // Create an expandable byte array to hold the decompressed data
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+            var bos = new ByteArrayOutputStream(length);
 
             Inflater decompressor = SharpZipLib.CreateInflater();
 
             try
             {
-                decompressor.SetInput((byte[])(Array)value);
+                decompressor.SetInput(value);
 
                 // Decompress the data
-                byte[] buf = new byte[1024];
+                var buf = new byte[1024];
                 while (!decompressor.IsFinished)
                 {
                     int count = decompressor.Inflate(buf);
@@ -156,7 +156,7 @@ namespace Lucene.Net.Documents
         /// Decompress the byte array previously returned by
         ///  compressString back into a String
         /// </summary>
-        public static string DecompressString(sbyte[] value)
+        public static string DecompressString(byte[] value)
         {
             return DecompressString(value, 0, value.Length);
         }
@@ -165,11 +165,11 @@ namespace Lucene.Net.Documents
         /// Decompress the byte array previously returned by
         ///  compressString back into a String
         /// </summary>
-        public static string DecompressString(sbyte[] value, int offset, int length)
+        public static string DecompressString(byte[] value, int offset, int length)
         {
             byte[] bytes = Decompress(value, offset, length);
             CharsRef result = new CharsRef(bytes.Length);
-            UnicodeUtil.UTF8toUTF16((sbyte[])(Array)bytes, 0, bytes.Length, result);
+            UnicodeUtil.UTF8toUTF16(bytes, 0, bytes.Length, result);
             return new string(result.Chars, 0, result.length);
         }
 

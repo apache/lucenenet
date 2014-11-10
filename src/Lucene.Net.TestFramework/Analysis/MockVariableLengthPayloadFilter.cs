@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
 
         private readonly IPayloadAttribute PayloadAtt;
         private readonly Random Random;
-        private readonly sbyte[] Bytes = new sbyte[MAXLENGTH];
+        private readonly byte[] Bytes = new byte[MAXLENGTH];
         private readonly BytesRef Payload;
 
         public MockVariableLengthPayloadFilter(Random random, TokenStream @in)

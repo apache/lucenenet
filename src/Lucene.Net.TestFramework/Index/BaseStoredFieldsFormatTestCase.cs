@@ -231,15 +231,15 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            sbyte[] b = new sbyte[50];
+            var b = new byte[50];
             for (int i = 0; i < 50; i++)
             {
-                b[i] = (sbyte)(i + 77);
+                b[i] = (byte)(i + 77);
             }
 
             Document doc = new Document();
             Field f = new StoredField("binary", b, 10, 17);
-            sbyte[] bx = f.BinaryValue().Bytes;
+            var bx = f.BinaryValue().Bytes;
             Assert.IsTrue(bx != null);
             Assert.AreEqual(50, bx.Length);
             Assert.AreEqual(10, f.BinaryValue().Offset);
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
             ft.Freeze();
 
             string @string = TestUtil.RandomSimpleString(Random(), 50);
-            sbyte[] bytes = @string.GetBytes(IOUtils.CHARSET_UTF_8);
+            var bytes = @string.GetBytes(IOUtils.CHARSET_UTF_8);
             long l = Random().NextBoolean() ? Random().Next(42) : Random().NextLong();
             int i = Random().NextBoolean() ? Random().Next(42) : Random().Next();
             float f = Random().NextFloat();
@@ -554,12 +554,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static sbyte[] RandomByteArray(int length, int max)
+        private static byte[] RandomByteArray(int length, int max)
         {
-            var result = new sbyte[length];
+            var result = new byte[length];
             for (int i = 0; i < length; ++i)
             {
-                result[i] = (sbyte)Random().Next(max);
+                result[i] = (byte)Random().Next(max);
             }
             return result;
         }
@@ -583,11 +583,11 @@ namespace Lucene.Net.Index
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, (IndexWriterConfig)iwConf.Clone());
 
             int docCount = AtLeast(200);
-            sbyte[][][] data = new sbyte[docCount][][];
+            var data = new byte[docCount][][];
             for (int i = 0; i < docCount; ++i)
             {
                 int fieldCount = Rarely() ? RandomInts.NextIntBetween(Random(), 1, 500) : RandomInts.NextIntBetween(Random(), 1, 5);
-                data[i] = new sbyte[fieldCount][];
+                data[i] = new byte[fieldCount][];
                 for (int j = 0; j < fieldCount; ++j)
                 {
                     int length = Rarely() ? Random().Next(1000) : Random().Next(10);
@@ -653,9 +653,9 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(data[docId].Length + 1, doc.Fields.Count);
                 for (int j = 0; j < data[docId].Length; ++j)
                 {
-                    sbyte[] arr = data[docId][j];
+                    var arr = data[docId][j];
                     BytesRef arr2Ref = doc.GetBinaryValue("bytes" + j);
-                    sbyte[] arr2 = Arrays.CopyOfRange(arr2Ref.Bytes, arr2Ref.Offset, arr2Ref.Offset + arr2Ref.Length);
+                    var arr2 = Arrays.CopyOfRange(arr2Ref.Bytes, arr2Ref.Offset, arr2Ref.Offset + arr2Ref.Length);
                     Assert.AreEqual(arr, arr2);
                 }
             }

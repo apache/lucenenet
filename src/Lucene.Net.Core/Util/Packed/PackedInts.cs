@@ -491,7 +491,7 @@ namespace Lucene.Net.Util.Packed
             /// <param name="values">       the values buffer </param>
             /// <param name="valuesOffset"> the offset where to start writing values </param>
             /// <param name="iterations">   controls how much data to decode </param>
-            void Decode(sbyte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
+            void Decode(byte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
 
             /// <summary>
             /// Read <code>iterations * blockCount()</code> blocks from <code>blocks</code>,
@@ -515,7 +515,7 @@ namespace Lucene.Net.Util.Packed
             /// <param name="values">       the values buffer </param>
             /// <param name="valuesOffset"> the offset where to start writing values </param>
             /// <param name="iterations">   controls how much data to decode </param>
-            void Decode(sbyte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
+            void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
         }
 
         /// <summary>
@@ -569,7 +569,7 @@ namespace Lucene.Net.Util.Packed
             /// <param name="values">       the values buffer </param>
             /// <param name="valuesOffset"> the offset where to start reading values </param>
             /// <param name="iterations">   controls how much data to encode </param>
-            void Encode(long[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations);
+            void Encode(long[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
 
             /// <summary>
             /// Read <code>iterations * valueCount()</code> values from <code>values</code>,
@@ -593,7 +593,7 @@ namespace Lucene.Net.Util.Packed
             /// <param name="values">       the values buffer </param>
             /// <param name="valuesOffset"> the offset where to start reading values </param>
             /// <param name="iterations">   controls how much data to encode </param>
-            void Encode(int[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations);
+            void Encode(int[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
         }
 
         /// <summary>

@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis
             Assert.AreEqual(t.ToString(), copy.ToString());
             Assert.AreNotSame(buf, copy.Buffer());
 
-            BytesRef pl = new BytesRef(new sbyte[] { 1, 2, 3, 4 });
+            BytesRef pl = new BytesRef(new byte[] { 1, 2, 3, 4 });
             t.Payload = pl;
             copy = AssertCloneIsEqual(t);
             Assert.AreEqual(pl, copy.Payload);
@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis
             Assert.AreEqual(t.ToString(), copy.ToString());
             Assert.AreNotSame(buf, copy.Buffer());
 
-            BytesRef pl = new BytesRef(new sbyte[] { 1, 2, 3, 4 });
+            BytesRef pl = new BytesRef(new byte[] { 1, 2, 3, 4 });
             t.Payload = pl;
             copy = AssertCopyIsEqual(t);
             Assert.AreEqual(pl, copy.Payload);
