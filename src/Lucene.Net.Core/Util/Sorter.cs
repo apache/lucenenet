@@ -38,11 +38,11 @@ namespace Lucene.Net.Util
         ///  The contract for the returned value is the same as
         ///  <seealso cref="Comparator#compare(Object, Object)"/>.
         /// </summary>
-        protected internal abstract int Compare(int i, int j);
+        protected abstract int Compare(int i, int j);
 
         /// <summary>
         /// Swap values at slots <code>i</code> and <code>j</code>. </summary>
-        protected internal abstract void Swap(int i, int j);
+        protected abstract void Swap(int i, int j);
 
         /// <summary>
         /// Sort the slice which starts at <code>from</code> (inclusive) and ends at

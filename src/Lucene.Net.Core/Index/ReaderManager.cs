@@ -64,22 +64,22 @@ namespace Lucene.Net.Index
             Current = DirectoryReader.Open(dir);
         }
 
-        protected internal override void DecRef(DirectoryReader reference)
+        protected override void DecRef(DirectoryReader reference)
         {
             reference.DecRef();
         }
 
-        protected internal override DirectoryReader RefreshIfNeeded(DirectoryReader referenceToRefresh)
+        protected override DirectoryReader RefreshIfNeeded(DirectoryReader referenceToRefresh)
         {
             return DirectoryReader.OpenIfChanged(referenceToRefresh);
         }
 
-        protected internal override bool TryIncRef(DirectoryReader reference)
+        protected override bool TryIncRef(DirectoryReader reference)
         {
             return reference.TryIncRef();
         }
 
-        protected internal override int GetRefCount(DirectoryReader reference)
+        protected override int GetRefCount(DirectoryReader reference)
         {
             return reference.RefCount;
         }

@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
                 return true;
             }
 
-            if (GetType() != obj.GetType())
+            if (obj != null && GetType() != obj.GetType())
                 return false;
 
             var other = obj as Query;

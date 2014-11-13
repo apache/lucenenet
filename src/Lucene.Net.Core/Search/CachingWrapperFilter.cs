@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Default cache implementation: uses <seealso cref="WAH8DocIdSet"/>.
         /// </summary>
-        protected internal virtual DocIdSet CacheImpl(DocIdSetIterator iterator, AtomicReader reader)
+        protected virtual DocIdSet CacheImpl(DocIdSetIterator iterator, AtomicReader reader)
         {
             var builder = new WAH8DocIdSet.Builder();
             builder.Add(iterator);

@@ -36,12 +36,12 @@ namespace Lucene.Net.Util
             this.Comparator = comparator;
         }
 
-        protected internal override int Compare(int i, int j)
+        protected override int Compare(int i, int j)
         {
             return Comparator.Compare(Arr[i], Arr[j]);
         }
 
-        protected internal override void Swap(int i, int j)
+        protected override void Swap(int i, int j)
         {
             ArrayUtil.Swap(Arr, i, j);
         }

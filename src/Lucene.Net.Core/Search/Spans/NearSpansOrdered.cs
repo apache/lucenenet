@@ -87,12 +87,12 @@ namespace Lucene.Net.Search.Spans
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override void Swap(int i, int j)
+            protected override void Swap(int i, int j)
             {
                 ArrayUtil.Swap(OuterInstance.SubSpansByDoc, i, j);
             }
 
-            protected internal override int Compare(int i, int j)
+            protected override int Compare(int i, int j)
             {
                 return OuterInstance.SubSpansByDoc[i].Doc() - OuterInstance.SubSpansByDoc[j].Doc();
             }
