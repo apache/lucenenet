@@ -111,8 +111,8 @@
             int prev = 0;
             while (offset < upto)
             {
-                sbyte b = buf.Bytes[offset++];
-                if (b >= 0)
+                byte b = buf.Bytes[offset++];
+                if ((sbyte)b >= 0)
                 {
                     ordinals.Ints[ordinals.Length] = ((value << 7) | b) + prev;
                     value = 0;

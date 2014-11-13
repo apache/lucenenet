@@ -49,12 +49,13 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public static BytesRef intToBytesRef(int v)
         {
-            sbyte[] bytes = new sbyte[4];
+            
+            byte[] bytes = new byte[4];
             // big-endian:
-            bytes[0] = (sbyte)(v >> 24);
-            bytes[1] = (sbyte)(v >> 16);
-            bytes[2] = (sbyte)(v >> 8);
-            bytes[3] = (sbyte)v;
+            bytes[0] = (byte)(v >> 24);
+            bytes[1] = (byte)(v >> 16);
+            bytes[2] = (byte)(v >> 8);
+            bytes[3] = (byte)v;
             return new BytesRef(bytes);
         }
 

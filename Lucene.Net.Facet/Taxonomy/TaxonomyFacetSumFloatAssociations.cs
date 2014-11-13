@@ -79,7 +79,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     // BytesRef getAssociation()?
                     BytesRef bytesRef = new BytesRef();
                     dv.Get(doc, bytesRef);
-                    sbyte[] bytes = bytesRef.Bytes;
+                    byte[] bytes = bytesRef.Bytes;
                     int end = bytesRef.Offset + bytesRef.Length;
                     int offset = bytesRef.Offset;
                     while (offset < end)

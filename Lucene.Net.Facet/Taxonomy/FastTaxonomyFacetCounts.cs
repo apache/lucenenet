@@ -76,15 +76,15 @@ namespace Lucene.Net.Facet.Taxonomy
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
                     dv.Get(doc,bytesRef);
-                    sbyte[] bytes = bytesRef.Bytes;
+                    var bytes = bytesRef.Bytes;
                     int end = bytesRef.Offset + bytesRef.Length;
                     int ord = 0;
                     int offset = bytesRef.Offset;
                     int prev = 0;
                     while (offset < end)
                     {
-                        sbyte b = bytes[offset++];
-                        if (b >= 0)
+                        byte b = bytes[offset++];
+                        if ((sbyte)b >= 0)
                         {
                             prev = ord = ((ord << 7) | b) + prev;
                             ++values[ord];

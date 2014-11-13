@@ -487,7 +487,7 @@ namespace Lucene.Net.Facet
         {
             foreach (KeyValuePair<string, IList<AssociationFacetField>> ent in byField)
             {
-                sbyte[] bytes = new sbyte[16];
+                byte[] bytes = new byte[16];
                 int upto = 0;
                 string indexFieldName = ent.Key;
                 foreach (AssociationFacetField field in ent.Value)
@@ -501,10 +501,10 @@ namespace Lucene.Net.Facet
                         bytes = ArrayUtil.Grow(bytes, upto + 4);
                     }
                     // big-endian:
-                    bytes[upto++] = (sbyte)(ordinal >> 24);
-                    bytes[upto++] = (sbyte)(ordinal >> 16);
-                    bytes[upto++] = (sbyte)(ordinal >> 8);
-                    bytes[upto++] = (sbyte)ordinal;
+                    bytes[upto++] = (byte)(ordinal >> 24);
+                    bytes[upto++] = (byte)(ordinal >> 16);
+                    bytes[upto++] = (byte)(ordinal >> 8);
+                    bytes[upto++] = (byte)ordinal;
                     if (upto + field.assoc.Length > bytes.Length)
                     {
                         bytes = ArrayUtil.Grow(bytes, upto + field.assoc.Length);
@@ -529,7 +529,7 @@ namespace Lucene.Net.Facet
         protected internal virtual BytesRef DedupAndEncode(IntsRef ordinals)
         {
             Array.Sort(ordinals.Ints, ordinals.Offset, ordinals.Length);
-            sbyte[] bytes = new sbyte[5 * ordinals.Length];
+            byte[] bytes = new byte[5 * ordinals.Length];
             int lastOrd = -1;
             int upto = 0;
             for (int i = 0; i < ordinals.Length; i++)
@@ -549,37 +549,37 @@ namespace Lucene.Net.Facet
                     }
                     if ((delta & ~0x7F) == 0)
                     {
-                        bytes[upto] = (sbyte)delta;
+                        bytes[upto] = (byte)delta;
                         upto++;
                     }
                     else if ((delta & ~0x3FFF) == 0)
                     {
-                        bytes[upto] = unchecked((sbyte)(0x80 | ((delta & 0x3F80) >> 7)));
-                        bytes[upto + 1] = (sbyte)(delta & 0x7F);
+                        bytes[upto] = unchecked((byte)(0x80 | ((delta & 0x3F80) >> 7)));
+                        bytes[upto + 1] = (byte)(delta & 0x7F);
                         upto += 2;
                     }
                     else if ((delta & ~0x1FFFFF) == 0)
                     {
-                        bytes[upto] = unchecked((sbyte)(0x80 | ((delta & 0x1FC000) >> 14)));
-                        bytes[upto + 1] = unchecked((sbyte)(0x80 | ((delta & 0x3F80) >> 7)));
-                        bytes[upto + 2] = (sbyte)(delta & 0x7F);
+                        bytes[upto] = unchecked((byte)(0x80 | ((delta & 0x1FC000) >> 14)));
+                        bytes[upto + 1] = unchecked((byte)(0x80 | ((delta & 0x3F80) >> 7)));
+                        bytes[upto + 2] = (byte)(delta & 0x7F);
                         upto += 3;
                     }
                     else if ((delta & ~0xFFFFFFF) == 0)
                     {
-                        bytes[upto] = unchecked((sbyte)(0x80 | ((delta & 0xFE00000) >> 21)));
-                        bytes[upto + 1] = unchecked((sbyte)(0x80 | ((delta & 0x1FC000) >> 14)));
-                        bytes[upto + 2] = unchecked((sbyte)(0x80 | ((delta & 0x3F80) >> 7)));
-                        bytes[upto + 3] = (sbyte)(delta & 0x7F);
+                        bytes[upto] = unchecked((byte)(0x80 | ((delta & 0xFE00000) >> 21)));
+                        bytes[upto + 1] = unchecked((byte)(0x80 | ((delta & 0x1FC000) >> 14)));
+                        bytes[upto + 2] = unchecked((byte)(0x80 | ((delta & 0x3F80) >> 7)));
+                        bytes[upto + 3] = (byte)(delta & 0x7F);
                         upto += 4;
                     }
                     else
                     {
-                        bytes[upto] = unchecked((sbyte)(0x80 | ((delta & 0xF0000000) >> 28)));
-                        bytes[upto + 1] = unchecked((sbyte)(0x80 | ((delta & 0xFE00000) >> 21)));
-                        bytes[upto + 2] = unchecked((sbyte)(0x80 | ((delta & 0x1FC000) >> 14)));
-                        bytes[upto + 3] = unchecked((sbyte)(0x80 | ((delta & 0x3F80) >> 7)));
-                        bytes[upto + 4] = (sbyte)(delta & 0x7F);
+                        bytes[upto] = unchecked((byte)(0x80 | ((delta & 0xF0000000) >> 28)));
+                        bytes[upto + 1] = unchecked((byte)(0x80 | ((delta & 0xFE00000) >> 21)));
+                        bytes[upto + 2] = unchecked((byte)(0x80 | ((delta & 0x1FC000) >> 14)));
+                        bytes[upto + 3] = unchecked((byte)(0x80 | ((delta & 0x3F80) >> 7)));
+                        bytes[upto + 4] = (byte)(delta & 0x7F);
                         upto += 5;
                     }
                     lastOrd = ord;
