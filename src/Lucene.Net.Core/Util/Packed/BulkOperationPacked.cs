@@ -102,7 +102,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override void Decode(sbyte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
+        public override void Decode(byte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             long nextValue = 0L;
             int bitsLeft = BitsPerValue;
@@ -155,7 +155,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override void Decode(sbyte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
+        public override void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
         {
             int nextValue = 0;
             int bitsLeft = BitsPerValue;
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override void Encode(long[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations)
+        public override void Encode(long[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations)
         {
             int nextBlock = 0;
             int bitsLeft = 8;
@@ -260,11 +260,11 @@ namespace Lucene.Net.Util.Packed
                 {
                     // flush as many blocks as possible
                     int bits = BitsPerValue - bitsLeft;
-                    blocks[blocksOffset++] = (sbyte)(nextBlock | ((long)((ulong)v >> bits)));
+                    blocks[blocksOffset++] = (byte)(nextBlock | ((long)((ulong)v >> bits)));
                     while (bits >= 8)
                     {
                         bits -= 8;
-                        blocks[blocksOffset++] = (sbyte)((long)((ulong)v >> bits));
+                        blocks[blocksOffset++] = (byte)((long)((ulong)v >> bits));
                     }
                     // then buffer
                     bitsLeft = 8 - bits;
@@ -274,7 +274,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(bitsLeft == 8);
         }
 
-        public override void Encode(int[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations)
+        public override void Encode(int[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations)
         {
             int nextBlock = 0;
             int bitsLeft = 8;
@@ -292,11 +292,11 @@ namespace Lucene.Net.Util.Packed
                 {
                     // flush as many blocks as possible
                     int bits = BitsPerValue - bitsLeft;
-                    blocks[blocksOffset++] = (sbyte)(nextBlock | ((int)((uint)v >> bits)));
+                    blocks[blocksOffset++] = (byte)(nextBlock | ((int)((uint)v >> bits)));
                     while (bits >= 8)
                     {
                         bits -= 8;
-                        blocks[blocksOffset++] = (sbyte)((int)((uint)v >> bits));
+                        blocks[blocksOffset++] = (byte)((int)((uint)v >> bits));
                     }
                     // then buffer
                     bitsLeft = 8 - bits;

@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
                     return true;
                 }
 
-                if (Input.IncrementToken())
+                if (input.IncrementToken())
                 {
                     AddSynonym = TermAtt.ToString().Equals("dogs");
                     return true;
@@ -316,7 +316,7 @@ namespace Lucene.Net.Util
                     return true;
                 }
 
-                if (Input.IncrementToken())
+                if (input.IncrementToken())
                 {
                     AddSynonym = TermAtt.ToString().Equals("国");
                     return true;

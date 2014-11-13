@@ -294,7 +294,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             private readonly Lucene41PostingsReader OuterInstance;
 
-            internal readonly sbyte[] Encoded;
+            internal readonly byte[] Encoded;
 
             internal readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
             internal readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
@@ -345,7 +345,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 IndexHasPos = fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
                 IndexHasOffsets = fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                 IndexHasPayloads = fieldInfo.HasPayloads();
-                Encoded = new sbyte[ForUtil.MAX_ENCODED_SIZE];
+                Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
             }
 
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
@@ -598,7 +598,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             private readonly Lucene41PostingsReader OuterInstance;
 
-            internal readonly sbyte[] Encoded;
+            internal readonly byte[] Encoded;
 
             internal readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
             internal readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
@@ -665,7 +665,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.StartDocIn = outerInstance.DocIn;
                 this.DocIn = null;
                 this.PosIn = (IndexInput)outerInstance.PosIn.Clone();
-                Encoded = new sbyte[ForUtil.MAX_ENCODED_SIZE];
+                Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
                 IndexHasOffsets = fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                 IndexHasPayloads = fieldInfo.HasPayloads();
             }
@@ -1065,7 +1065,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             private readonly Lucene41PostingsReader OuterInstance;
 
-            internal readonly sbyte[] Encoded;
+            internal readonly byte[] Encoded;
 
             internal readonly int[] DocDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
             internal readonly int[] FreqBuffer = new int[ForUtil.MAX_DATA_SIZE];
@@ -1075,7 +1075,7 @@ namespace Lucene.Net.Codecs.Lucene41
             internal readonly int[] OffsetStartDeltaBuffer;
             internal readonly int[] OffsetLengthBuffer;
 
-            internal sbyte[] PayloadBytes;
+            internal byte[] PayloadBytes;
             internal int PayloadByteUpto;
             internal int PayloadLength;
 
@@ -1154,7 +1154,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.DocIn = null;
                 this.PosIn = (IndexInput)outerInstance.PosIn.Clone();
                 this.PayIn = (IndexInput)outerInstance.PayIn.Clone();
-                Encoded = new sbyte[ForUtil.MAX_ENCODED_SIZE];
+                Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
                 IndexHasOffsets = fieldInfo.FieldIndexOptions >= FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
                 if (IndexHasOffsets)
                 {
@@ -1173,7 +1173,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 if (IndexHasPayloads)
                 {
                     PayloadLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
-                    PayloadBytes = new sbyte[128];
+                    PayloadBytes = new byte[128];
                     Payload_Renamed = new BytesRef();
                 }
                 else

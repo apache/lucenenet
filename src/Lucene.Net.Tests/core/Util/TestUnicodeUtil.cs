@@ -127,17 +127,17 @@ namespace Lucene.Net.Util
             }
         }
 
-        private sbyte[] AsByteArray(params int[] ints)
+        private static byte[] AsByteArray(params int[] ints)
         {
-            sbyte[] asByteArray = new sbyte[ints.Length];
+            var asByteArray = new byte[ints.Length];
             for (int i = 0; i < ints.Length; i++)
             {
-                asByteArray[i] = (sbyte)ints[i];
+                asByteArray[i] = (byte)ints[i];
             }
             return asByteArray;
         }
 
-        private void AssertcodePointCountThrowsAssertionOn(params sbyte[] bytes)
+        private static void AssertcodePointCountThrowsAssertionOn(params byte[] bytes)
         {
             bool threwAssertion = false;
             try

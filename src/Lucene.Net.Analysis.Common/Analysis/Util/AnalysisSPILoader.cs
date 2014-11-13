@@ -2,9 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Lucene.Net.Analysis.Util;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
 
 	/*
@@ -23,11 +22,7 @@ namespace org.apache.lucene.analysis.util
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using SPIClassIterator = org.apache.lucene.util.SPIClassIterator;
-
-	/// <summary>
+    /// <summary>
 	/// Helper class for loading named SPIs from classpath (e.g. Tokenizers, TokenStreams).
 	/// @lucene.internal
 	/// </summary>

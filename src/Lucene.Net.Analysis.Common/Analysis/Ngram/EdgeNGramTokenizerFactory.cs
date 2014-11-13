@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
-using TokenizerFactory = Lucene.Net.Analysis.Util.TokenizerFactory;
+using System.IO;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using org.apache.lucene.analysis.ngram;
 
-namespace org.apache.lucene.analysis.ngram
+namespace Lucene.Net.Analysis.Ngram
 {
 
 	/*
@@ -20,13 +23,7 @@ namespace org.apache.lucene.analysis.ngram
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using TokenizerFactory = TokenizerFactory;
-	using AttributeFactory = org.apache.lucene.util.AttributeSource.AttributeFactory;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Creates new instances of <seealso cref="EdgeNGramTokenizer"/>.
 	/// <pre class="prettyprint">
 	/// &lt;fieldType name="text_edgngrm" class="solr.TextField" positionIncrementGap="100"&gt;
@@ -54,9 +51,9 @@ namespace org.apache.lucene.analysis.ngram
 		}
 	  }
 
-	  public override Tokenizer create(AttributeFactory factory, Reader input)
+	  public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
 	  {
-		if (luceneMatchVersion.onOrAfter(Version.LUCENE_44))
+		if (luceneMatchVersion.OnOrAfter(Version.LUCENE_44))
 		{
 		  if (!EdgeNGramTokenFilter.Side.FRONT.Label.Equals(side))
 		  {

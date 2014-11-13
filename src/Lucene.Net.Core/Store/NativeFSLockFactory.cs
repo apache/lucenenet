@@ -443,7 +443,7 @@ namespace Lucene.Net.Store
                         }
                         return !obtained;
                     }
-                    catch (System.IO.IOException ioe)
+                    catch (IOException)
                     {
                         return false;
                     }

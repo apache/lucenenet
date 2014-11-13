@@ -1,6 +1,12 @@
 ﻿using System;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using org.apache.lucene.analysis.reverse;
+using org.apache.lucene.analysis.util;
+using Version = Lucene.Net.Util.Version;
 
-namespace org.apache.lucene.analysis.ngram
+namespace Lucene.Net.Analysis.Ngram
 {
 
 	/*
@@ -19,16 +25,7 @@ namespace org.apache.lucene.analysis.ngram
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using ReverseStringFilter = org.apache.lucene.analysis.reverse.ReverseStringFilter;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using PositionLengthAttribute = org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
-	using CharacterUtils = org.apache.lucene.analysis.util.CharacterUtils;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Tokenizes the given token into n-grams of given size(s).
 	/// <para>
 	/// This <seealso cref="TokenFilter"/> create n-grams from the beginning edge or ending edge of a input token.
@@ -45,35 +42,21 @@ namespace org.apache.lucene.analysis.ngram
 	  public const int DEFAULT_MAX_GRAM_SIZE = 1;
 	  public const int DEFAULT_MIN_GRAM_SIZE = 1;
 
-	  /// <summary>
-	  /// Specifies which side of the input the n-gram should be generated from </summary>
-	  public enum Side
-	  {
+	    /// <summary>
+	    /// Specifies which side of the input the n-gram should be generated from </summary>
+	    public enum Side
+	    {
 
-		/// <summary>
-		/// Get the n-gram from the front of the input </summary>
-//JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
-		FRONT
-		{
-		  public String getLabel() { return "front"
-		}
-	  },
+	        /// <summary>
+	        /// Get the n-gram from the front of the input </summary>
+	        FRONT,
 
-		/// <summary>
-		/// Get the n-gram from the end of the input </summary>
-		[System.Obsolete]
-//JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
-		@Deprecated BACK
-		{
-			public String getLabel()
-			{
-				return "back";
-			}
-		}
+	        /// <summary>
+	        /// Get the n-gram from the end of the input </summary>
+	        [System.Obsolete] BACK,
+	    }
 
-		public = 
-
-		// Get the appropriate Side from a string
+	    // Get the appropriate Side from a string
 		public static Side getSide(String sideName)
 		{
 //JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
@@ -88,7 +71,6 @@ namespace org.apache.lucene.analysis.ngram
 		  }
 		  return null;
 		}
-	}
 
 	  private readonly Version version;
 	  private readonly CharacterUtils charUtils;
@@ -127,7 +109,7 @@ namespace org.apache.lucene.analysis.ngram
 		  throw new System.ArgumentException("version must not be null");
 		}
 
-		if (version.onOrAfter(Version.LUCENE_44) && side == Side.BACK)
+		if (version.OnOrAfter(Version.LUCENE_44) && side == Side.BACK)
 		{
 		  throw new System.ArgumentException("Side.BACK is not supported anymore as of Lucene 4.4, use ReverseStringFilter up-front and afterward");
 		}
@@ -178,27 +160,25 @@ namespace org.apache.lucene.analysis.ngram
 	  {
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		while (true)
 		{
 		  if (curTermBuffer == null)
 		  {
-			if (!input.incrementToken())
+			if (!input.IncrementToken())
 			{
 			  return false;
 			}
 			else
 			{
-			  curTermBuffer = termAtt.buffer().clone();
-			  curTermLength = termAtt.length();
+			  curTermBuffer = termAtt.Buffer().Clone();
+			  curTermLength = termAtt.Length();
 			  curCodePointCount = charUtils.codePointCount(termAtt);
 			  curGramSize = minGram;
-			  tokStart = offsetAtt.startOffset();
-			  tokEnd = offsetAtt.endOffset();
-			  if (version.onOrAfter(Version.LUCENE_44))
+			  tokStart = offsetAtt.StartOffset();
+			  tokEnd = offsetAtt.EndOffset();
+			  if (version.OnOrAfter(Version.LUCENE_44))
 			  {
 				// Never update offsets
 				updateOffsets = false;
@@ -218,20 +198,16 @@ namespace org.apache.lucene.analysis.ngram
 			if (curGramSize <= curCodePointCount) // if the remaining input is too short, we can't generate any n-grams
 			{
 			  // grab gramSize chars from front or back
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int start = side == Side.FRONT ? 0 : charUtils.offsetByCodePoints(curTermBuffer, 0, curTermLength, curTermLength, -curGramSize);
 			  int start = side == Side.FRONT ? 0 : charUtils.offsetByCodePoints(curTermBuffer, 0, curTermLength, curTermLength, -curGramSize);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = charUtils.offsetByCodePoints(curTermBuffer, 0, curTermLength, start, curGramSize);
 			  int end = charUtils.offsetByCodePoints(curTermBuffer, 0, curTermLength, start, curGramSize);
-			  clearAttributes();
+			  ClearAttributes();
 			  if (updateOffsets)
 			  {
-				offsetAtt.setOffset(tokStart + start, tokStart + end);
+				offsetAtt.SetOffset(tokStart + start, tokStart + end);
 			  }
 			  else
 			  {
-				offsetAtt.setOffset(tokStart, tokEnd);
+				offsetAtt.SetOffset(tokStart, tokEnd);
 			  }
 			  // first ngram gets increment, others don't
 			  if (curGramSize == minGram)
@@ -244,7 +220,7 @@ namespace org.apache.lucene.analysis.ngram
 				posIncrAtt.PositionIncrement = 0;
 			  }
 			  posLenAtt.PositionLength = savePosLen;
-			  termAtt.copyBuffer(curTermBuffer, start, end - start);
+			  termAtt.CopyBuffer(curTermBuffer, start, end - start);
 			  curGramSize++;
 			  return true;
 			}
@@ -253,14 +229,11 @@ namespace org.apache.lucene.analysis.ngram
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		curTermBuffer = null;
 		savePosIncr = 0;
 	  }
 }
-
 }

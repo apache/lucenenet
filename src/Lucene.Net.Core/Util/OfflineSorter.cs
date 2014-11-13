@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Lucene.Net.Store;
+using Lucene.Net.Support.Compatibility;
 
 namespace Lucene.Net.Util
 {
@@ -512,72 +514,72 @@ namespace Lucene.Net.Util
 //            }
 //        }
 //
-//        /// <summary>
-//        /// Utility class to emit length-prefixed byte[] entries to an output stream for sorting.
-//        /// Complementary to <seealso cref="ByteSequencesReader"/>.
-//        /// </summary>
-//        public class ByteSequencesWriter : IDisposable
-//        {
-//            internal readonly DataOutput Os;
-//
-//            /// <summary>
-//            /// Constructs a ByteSequencesWriter to the provided File </summary>
-//            public ByteSequencesWriter(FileInfo file)
-//                : this(new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file))))
-//            {
-//            }
-//
-//            /// <summary>
-//            /// Constructs a ByteSequencesWriter to the provided DataOutput </summary>
-//            public ByteSequencesWriter(DataOutput os)
-//            {
-//                this.Os = os;
-//            }
-//
-//            /// <summary>
-//            /// Writes a BytesRef. </summary>
-//            /// <seealso cref= #write(byte[], int, int) </seealso>
-//            public virtual void Write(BytesRef @ref)
-//            {
-//                Debug.Assert(@ref != null);
-//                Write(@ref.Bytes, @ref.Offset, @ref.Length);
-//            }
-//
-//            /// <summary>
-//            /// Writes a byte array. </summary>
-//            /// <seealso cref= #write(byte[], int, int) </seealso>
-//            public virtual void Write(sbyte[] bytes)
-//            {
-//                Write(bytes, 0, bytes.Length);
-//            }
-//
-//            /// <summary>
-//            /// Writes a byte array.
-//            /// <p>
-//            /// The length is written as a <code>short</code>, followed
-//            /// by the bytes.
-//            /// </summary>
-//            public virtual void Write(sbyte[] bytes, int off, int len)
-//            {
-//                Debug.Assert(bytes != null);
-//                Debug.Assert(off >= 0 && off + len <= bytes.Length);
-//                Debug.Assert(len >= 0);
-//                Os.WriteShort(len);
-//                Os.Write(bytes, off, len);
-//            }
-//
-//            /// <summary>
-//            /// Closes the provided <seealso cref="DataOutput"/> if it is <seealso cref="IDisposable"/>.
-//            /// </summary>
-//            public void Dispose()
-//            {
-//                var os = Os as IDisposable;
-//                if (os != null)
-//                {
-//                    os.Dispose();
-//                }
-//            }
-//        }
+        /// <summary>
+        /// Utility class to emit length-prefixed byte[] entries to an output stream for sorting.
+        /// Complementary to <seealso cref="ByteSequencesReader"/>.
+        /// </summary>
+        public class ByteSequencesWriter : IDisposable
+        {
+            internal readonly DataOutput Os;
+
+            /// <summary>
+            /// Constructs a ByteSequencesWriter to the provided File </summary>
+            public ByteSequencesWriter(string filePath)
+                : this(new BinaryWriterDataOutput(new BinaryWriter(new FileStream(filePath, FileMode.Open))))
+            {
+            }
+
+            /// <summary>
+            /// Constructs a ByteSequencesWriter to the provided DataOutput </summary>
+            public ByteSequencesWriter(DataOutput os)
+            {
+                this.Os = os;
+            }
+
+            /// <summary>
+            /// Writes a BytesRef. </summary>
+            /// <seealso cref= #write(byte[], int, int) </seealso>
+            public virtual void Write(BytesRef @ref)
+            {
+                Debug.Assert(@ref != null);
+                Write(@ref.Bytes, @ref.Offset, @ref.Length);
+            }
+
+            /// <summary>
+            /// Writes a byte array. </summary>
+            /// <seealso cref= #write(byte[], int, int) </seealso>
+            public virtual void Write(byte[] bytes)
+            {
+                Write(bytes, 0, bytes.Length);
+            }
+
+            /// <summary>
+            /// Writes a byte array.
+            /// <p>
+            /// The length is written as a <code>short</code>, followed
+            /// by the bytes.
+            /// </summary>
+            public virtual void Write(byte[] bytes, int off, int len)
+            {
+                Debug.Assert(bytes != null);
+                Debug.Assert(off >= 0 && off + len <= bytes.Length);
+                Debug.Assert(len >= 0);
+                Os.WriteShort((short)len);
+                Os.Write(bytes, off, len);
+            }
+
+            /// <summary>
+            /// Closes the provided <seealso cref="DataOutput"/> if it is <seealso cref="IDisposable"/>.
+            /// </summary>
+            public void Dispose()
+            {
+                var os = Os as IDisposable;
+                if (os != null)
+                {
+                    os.Dispose();
+                }
+            }
+        }
 //
 //        /// <summary>
 //        /// Utility class to read length-prefixed byte[] entries from an input.

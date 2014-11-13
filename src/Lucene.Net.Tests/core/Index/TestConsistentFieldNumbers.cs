@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
                     IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(Random().NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
                     Document d = new Document();
                     d.Add(new TextField("f1", "d2 first field", Field.Store.YES));
-                    d.Add(new StoredField("f3", new sbyte[] { 1, 2, 3 }));
+                    d.Add(new StoredField("f3", new byte[] { 1, 2, 3 }));
                     writer.AddDocument(d);
                     writer.Dispose();
                     SegmentInfos sis = new SegmentInfos();
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
                     Document d = new Document();
                     d.Add(new TextField("f1", "d3 first field", Field.Store.YES));
                     d.Add(new TextField("f2", "d3 second field", Field.Store.YES));
-                    d.Add(new StoredField("f3", new sbyte[] { 1, 2, 3, 4, 5 }));
+                    d.Add(new StoredField("f3", new byte[] { 1, 2, 3, 4, 5 }));
                     writer.AddDocument(d);
                     writer.Dispose();
                     SegmentInfos sis = new SegmentInfos();

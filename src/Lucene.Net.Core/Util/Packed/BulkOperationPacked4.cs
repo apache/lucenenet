@@ -41,11 +41,11 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override void Decode(sbyte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
+        public override void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
         {
             for (int j = 0; j < iterations; ++j)
             {
-                sbyte block = blocks[blocksOffset++];
+                var block = blocks[blocksOffset++];
                 values[valuesOffset++] = ((int)((uint)block >> 4)) & 15;
                 values[valuesOffset++] = block & 15;
             }
@@ -63,11 +63,11 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override void Decode(sbyte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
+        public override void Decode(byte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             for (int j = 0; j < iterations; ++j)
             {
-                sbyte block = blocks[blocksOffset++];
+                var block = blocks[blocksOffset++];
                 values[valuesOffset++] = ((int)((uint)block >> 4)) & 15;
                 values[valuesOffset++] = block & 15;
             }

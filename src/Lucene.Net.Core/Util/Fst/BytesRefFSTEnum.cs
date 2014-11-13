@@ -129,7 +129,7 @@ namespace Lucene.Net.Util.Fst
             }
             set
             {
-                Current_Renamed.Bytes[Upto] = (sbyte)value;
+                Current_Renamed.Bytes[Upto] = (byte)value;
             }
         }
 

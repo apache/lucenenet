@@ -280,8 +280,13 @@ namespace Lucene.Net.Index
 
         internal void WriteByte(int stream, sbyte b)
         {
+            WriteByte(stream, (byte)b);
+        }
+
+        internal void WriteByte(int stream, byte b)
+        {
             int upto = IntUptos[IntUptoStart + stream];
-            sbyte[] bytes = BytePool.Buffers[upto >> ByteBlockPool.BYTE_BLOCK_SHIFT];
+            var bytes = BytePool.Buffers[upto >> ByteBlockPool.BYTE_BLOCK_SHIFT];
             Debug.Assert(bytes != null);
             int offset = upto & ByteBlockPool.BYTE_BLOCK_MASK;
             if (bytes[offset] != 0)
@@ -295,7 +300,7 @@ namespace Lucene.Net.Index
             (IntUptos[IntUptoStart + stream])++;
         }
 
-        public void WriteBytes(int stream, sbyte[] b, int offset, int len)
+        public void WriteBytes(int stream, byte[] b, int offset, int len)
         {
             // TODO: optimize
             int end = offset + len;

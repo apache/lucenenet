@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
             string content = sb.ToString();
 
             int payloadDataLength = numTerms * numDocs * 2 + numTerms * numDocs * (numDocs - 1) / 2;
-            sbyte[] payloadData = GenerateRandomData(payloadDataLength);
+            var payloadData = GenerateRandomData(payloadDataLength);
 
             Document d = new Document();
             d.Add(NewTextField(fieldName, content, Field.Store.NO));
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
              */
             IndexReader reader = DirectoryReader.Open(dir);
 
-            sbyte[] verifyPayloadData = new sbyte[payloadDataLength];
+            var verifyPayloadData = new byte[payloadDataLength];
             offset = 0;
             DocsAndPositionsEnum[] tps = new DocsAndPositionsEnum[numTerms];
             for (int i = 0; i < numTerms; i++)
@@ -286,8 +286,8 @@ namespace Lucene.Net.Index
             tp.NextPosition();
 
             BytesRef bref = tp.Payload;
-            verifyPayloadData = new sbyte[bref.Length];
-            sbyte[] portion = new sbyte[1500];
+            verifyPayloadData = new byte[bref.Length];
+            var portion = new byte[1500];
             Array.Copy(payloadData, 100, portion, 0, 1500);
 
             AssertByteArrayEquals(portion, bref.Bytes, bref.Offset, bref.Length);
@@ -296,18 +296,18 @@ namespace Lucene.Net.Index
 
         internal static readonly Encoding Utf8 = IOUtils.CHARSET_UTF_8;
 
-        private void GenerateRandomData(sbyte[] data)
+        private void GenerateRandomData(byte[] data)
         {
             // this test needs the random data to be valid unicode
             string s = TestUtil.RandomFixedByteLengthUnicodeString(Random(), data.Length);
-            sbyte[] b = s.GetBytes(Utf8);
+            var b = s.GetBytes(Utf8);
             Debug.Assert(b.Length == data.Length);
             System.Buffer.BlockCopy(b, 0, data, 0, b.Length);
         }
 
-        private sbyte[] GenerateRandomData(int n)
+        private byte[] GenerateRandomData(int n)
         {
-            sbyte[] data = new sbyte[n];
+            var data = new byte[n];
             GenerateRandomData(data);
             return data;
         }
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
             return terms;
         }
 
-        internal virtual void AssertByteArrayEquals(sbyte[] b1, sbyte[] b2)
+        internal virtual void AssertByteArrayEquals(byte[] b1, byte[] b2)
         {
             if (b1.Length != b2.Length)
             {
@@ -348,7 +348,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal virtual void AssertByteArrayEquals(sbyte[] b1, sbyte[] b2, int b2offset, int b2length)
+        internal virtual void AssertByteArrayEquals(byte[] b1, byte[] b2, int b2offset, int b2length)
         {
             if (b1.Length != b2length)
             {
@@ -369,20 +369,20 @@ namespace Lucene.Net.Index
         /// </summary>
         private class PayloadAnalyzer : Analyzer
         {
-            internal IDictionary<string, PayloadData> FieldToData = new Dictionary<string, PayloadData>();
+            internal readonly IDictionary<string, PayloadData> FieldToData = new Dictionary<string, PayloadData>();
 
             public PayloadAnalyzer()
                 : base(PER_FIELD_REUSE_STRATEGY)
             {
             }
 
-            public PayloadAnalyzer(string field, sbyte[] data, int offset, int length)
+            public PayloadAnalyzer(string field, byte[] data, int offset, int length)
                 : base(PER_FIELD_REUSE_STRATEGY)
             {
                 SetPayloadData(field, data, offset, length);
             }
 
-            internal virtual void SetPayloadData(string field, sbyte[] data, int offset, int length)
+            internal virtual void SetPayloadData(string field, byte[] data, int offset, int length)
             {
                 FieldToData[field] = new PayloadData(data, offset, length);
             }
@@ -398,11 +398,11 @@ namespace Lucene.Net.Index
 
             internal class PayloadData
             {
-                internal sbyte[] Data;
+                internal byte[] Data;
                 internal int Offset;
                 internal int Length;
 
-                internal PayloadData(sbyte[] data, int offset, int length)
+                internal PayloadData(byte[] data, int offset, int length)
                 {
                     this.Data = data;
                     this.Offset = offset;
@@ -416,14 +416,14 @@ namespace Lucene.Net.Index
         /// </summary>
         private class PayloadFilter : TokenFilter
         {
-            internal sbyte[] Data;
+            internal byte[] Data;
             internal int Length;
             internal int Offset;
             internal int StartOffset;
             internal IPayloadAttribute PayloadAtt;
             internal ICharTermAttribute TermAttribute;
 
-            public PayloadFilter(TokenStream @in, sbyte[] data, int offset, int length)
+            public PayloadFilter(TokenStream @in, byte[] data, int offset, int length)
                 : base(@in)
             {
                 this.Data = data;
@@ -436,7 +436,7 @@ namespace Lucene.Net.Index
 
             public override bool IncrementToken()
             {
-                bool hasNext = Input.IncrementToken();
+                bool hasNext = input.IncrementToken();
                 if (!hasNext)
                 {
                     return false;
@@ -553,7 +553,7 @@ namespace Lucene.Net.Index
         {
             private readonly TestPayloads OuterInstance;
 
-            internal sbyte[] Payload;
+            private byte[] Payload;
             internal bool First;
             internal ByteArrayPool Pool;
             internal string Term;
@@ -594,28 +594,28 @@ namespace Lucene.Net.Index
 
         private class ByteArrayPool
         {
-            internal IList<sbyte[]> Pool;
+            internal readonly IList<byte[]> Pool;
 
             internal ByteArrayPool(int capacity, int size)
             {
-                Pool = new List<sbyte[]>();
+                Pool = new List<byte[]>();
                 for (int i = 0; i < capacity; i++)
                 {
-                    Pool.Add(new sbyte[size]);
+                    Pool.Add(new byte[size]);
                 }
             }
 
-            internal virtual sbyte[] Get()
+            internal virtual byte[] Get()
             {
-                lock (this)
+                lock (this) // TODO use BlockingCollection / BCL datastructures instead
                 {
-                    sbyte[] retArray = Pool[0];
+                    var retArray = Pool[0];
                     Pool.RemoveAt(0);
                     return retArray;
                 }
             }
 
-            internal virtual void Release(sbyte[] b)
+            internal virtual void Release(byte[] b)
             {
                 lock (this)
                 {

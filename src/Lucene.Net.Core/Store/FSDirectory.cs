@@ -125,7 +125,7 @@ namespace Lucene.Net.Store
             {
                 file.Create();
             }
-            catch (IOException ioe)
+            catch (IOException)
             {
                 //File already exists
             }

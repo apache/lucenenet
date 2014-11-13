@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestFromBytes()
         {
-            sbyte[] bytes = new sbyte[] { (sbyte)'a', (sbyte)'b', (sbyte)'c', (sbyte)'d' };
+            var bytes = new [] { (byte)'a', (byte)'b', (byte)'c', (byte)'d' };
             BytesRef b = new BytesRef(bytes);
             Assert.AreEqual(bytes, b.Bytes);
             Assert.AreEqual(0, b.Offset);
@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestAppend()
         {
-            sbyte[] bytes = new sbyte[] { (sbyte)'a', (sbyte)'b', (sbyte)'c', (sbyte)'d' };
+            var bytes = new[] { (byte)'a', (byte)'b', (byte)'c', (byte)'d' };
             BytesRef b = new BytesRef(bytes, 1, 3); // bcd
             b.Append(new BytesRef("e"));
             Assert.AreEqual("bcde", b.Utf8ToString());
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestCopyBytes()
         {
-            sbyte[] bytes = new sbyte[] { (sbyte)'a', (sbyte)'b', (sbyte)'c', (sbyte)'d' };
+            var bytes = new[] { (byte)'a', (byte)'b', (byte)'c', (byte)'d' };
             BytesRef b = new BytesRef(bytes, 1, 3); // bcd
             b.CopyBytes(new BytesRef("bcde"));
             Assert.AreEqual("bcde", b.Utf8ToString());

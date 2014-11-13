@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Analysis.Synonym;
 using Lucene.Net.Analysis.Util;
 
 namespace org.apache.lucene.analysis.synonym

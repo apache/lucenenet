@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 
     public sealed class ByteSliceWriter : DataOutput
     {
-        private sbyte[] Slice;
+        private byte[] Slice;
         private int Upto;
         private readonly ByteBlockPool Pool;
 
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
                 Offset0 = Pool.ByteOffset;
                 Debug.Assert(Slice != null);
             }
-            Slice[Upto++] = (sbyte)b;
+            Slice[Upto++] = (byte)b;
             Debug.Assert(Upto != Slice.Length);
         }
 
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
                     Offset0 = Pool.ByteOffset;
                 }
 
-                Slice[Upto++] = (sbyte)b[offset++];
+                Slice[Upto++] = (byte)b[offset++];
                 Debug.Assert(Upto != Slice.Length);
             }
         }

@@ -202,7 +202,7 @@ namespace Lucene.Net.Util.Automaton
 
             // make sure byte dfa accepts empty string
             Assert.IsTrue(bra.IsAccept(bra.InitialState));
-            Assert.IsTrue(bra.Run(new sbyte[0], 0, 0));
+            Assert.IsTrue(bra.Run(new byte[0], 0, 0));
         }
 
         [Test]
@@ -216,7 +216,7 @@ namespace Lucene.Net.Util.Automaton
 
             Assert.IsTrue(cra.Run(input));
 
-            sbyte[] bytes = input.GetBytes(Encoding.UTF8);
+            var bytes = input.GetBytes(Encoding.UTF8);
             Assert.IsTrue(bra.Run(bytes, 0, bytes.Length)); // this one fails!
         }
 
@@ -231,7 +231,7 @@ namespace Lucene.Net.Util.Automaton
 
             Assert.IsTrue(cra.Run(input));
 
-            sbyte[] bytes = input.GetBytes(Encoding.UTF8);
+            var bytes = input.GetBytes(Encoding.UTF8);
             Assert.IsTrue(bra.Run(bytes, 0, bytes.Length));
         }
 

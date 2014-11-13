@@ -38,9 +38,9 @@ namespace Lucene.Net.Util
         public static int BytesDifference(BytesRef left, BytesRef right)
         {
             int len = left.Length < right.Length ? left.Length : right.Length;
-            sbyte[] bytesLeft = left.Bytes;
+            var bytesLeft = left.Bytes;
             int offLeft = left.Offset;
-            sbyte[] bytesRight = right.Bytes;
+            var bytesRight = right.Bytes;
             int offRight = right.Offset;
             for (int i = 0; i < len; i++)
             {
@@ -213,7 +213,7 @@ namespace Lucene.Net.Util
         /// Returns the MurmurHash3_x86_32 hash.
         /// Original source/tests at https://github.com/yonik/java_util/
         /// </summary>
-        public static int Murmurhash3_x86_32(sbyte[] data, int offset, int len, int seed)
+        public static int Murmurhash3_x86_32(byte[] data, int offset, int len, int seed)
         {
             const int c1 = unchecked((int)0xcc9e2d51);
             const int c2 = 0x1b873593;
@@ -224,7 +224,7 @@ namespace Lucene.Net.Util
             for (int i = offset; i < roundedEnd; i += 4)
             {
                 // little endian load order
-                int k1 = (data[i] & 0xff) | ((data[i + 1] & 0xff) << 8) | ((data[i + 2] & 0xff) << 16) | (data[i + 3] << 24);
+                int k1 = (((sbyte)data[i]) & 0xff) | ((((sbyte)data[i + 1]) & 0xff) << 8) | ((((sbyte)data[i + 2]) & 0xff) << 16) | (((sbyte)data[i + 3]) << 24);
                 k1 *= c1;
                 k1 = Number.RotateLeft(k1, 15);
                 k1 *= c2;
@@ -240,15 +240,15 @@ namespace Lucene.Net.Util
             switch (len & 0x03)
             {
                 case 3:
-                    k2 = (data[roundedEnd + 2] & 0xff) << 16;
+                    k2 = (((sbyte)data[roundedEnd + 2]) & 0xff) << 16;
                     // fallthrough
                     goto case 2;
                 case 2:
-                    k2 |= (data[roundedEnd + 1] & 0xff) << 8;
+                    k2 |= (((sbyte)data[roundedEnd + 1]) & 0xff) << 8;
                     // fallthrough
                     goto case 1;
                 case 1:
-                    k2 |= (data[roundedEnd] & 0xff);
+                    k2 |= (((sbyte)data[roundedEnd]) & 0xff);
                     k2 *= c1;
                     k2 = Number.RotateLeft(k2, 15);
                     k2 *= c2;

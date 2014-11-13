@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 
 namespace org.apache.lucene.analysis.util
 {
@@ -23,9 +25,6 @@ namespace org.apache.lucene.analysis.util
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using Version = org.apache.lucene.util.Version;
 
 
 	/// <summary>
@@ -51,7 +50,7 @@ namespace org.apache.lucene.analysis.util
 	/// 3.1 pass a <seealso cref="Version"/> &lt; 3.1 to the constructors.
 	/// </para>
 	/// </summary>
-	public class CharArrayMap<V> : AbstractMap<object, V>
+	public class CharArrayMap<V> : IDictionary<object, V>
 	{
 	  // private only because missing generics
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
@@ -123,78 +122,72 @@ namespace org.apache.lucene.analysis.util
 
 	  /// <summary>
 	  /// Clears all entries in this map. This method is supported for reusing, but not <seealso cref="Map#remove"/>. </summary>
-	  public override void clear()
+	  public override void Clear()
 	  {
 		count = 0;
-		Arrays.fill(keys, null);
-		Arrays.fill(values, null);
+		Arrays.Fill(keys, null);
+		Arrays.Fill(values, null);
 	  }
 
 	  /// <summary>
 	  /// true if the <code>len</code> chars of <code>text</code> starting at <code>off</code>
 	  /// are in the <seealso cref="#keySet()"/> 
 	  /// </summary>
-	  public virtual bool containsKey(char[] text, int off, int len)
+	  public virtual bool ContainsKey(char[] text, int off, int len)
 	  {
 		return keys[getSlot(text, off, len)] != null;
 	  }
 
 	  /// <summary>
 	  /// true if the <code>CharSequence</code> is in the <seealso cref="#keySet()"/> </summary>
-	  public virtual bool containsKey(CharSequence cs)
+	  public virtual bool ContainsKey(string cs)
 	  {
 		return keys[getSlot(cs)] != null;
 	  }
 
-	  public override bool containsKey(object o)
+	  public override bool ContainsKey(object o)
 	  {
 		if (o is char[])
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] text = (char[])o;
 		  char[] text = (char[])o;
-		  return containsKey(text, 0, text.Length);
+		  return ContainsKey(text, 0, text.Length);
 		}
-		return containsKey(o.ToString());
+		return ContainsKey(o.ToString());
 	  }
 
 	  /// <summary>
 	  /// returns the value of the mapping of <code>len</code> chars of <code>text</code>
 	  /// starting at <code>off</code> 
 	  /// </summary>
-	  public virtual V get(char[] text, int off, int len)
+	  public virtual V Get(char[] text, int off, int len)
 	  {
 		return values[getSlot(text, off, len)];
 	  }
 
 	  /// <summary>
 	  /// returns the value of the mapping of the chars inside this {@code CharSequence} </summary>
-	  public virtual V get(CharSequence cs)
+	  public virtual V Get(string cs)
 	  {
 		return values[getSlot(cs)];
 	  }
 
-	  public override V get(object o)
+	  public V Get(object o)
 	  {
-		if (o is char[])
+	      var text = o as char[];
+		if (text != null)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] text = (char[])o;
-		  char[] text = (char[])o;
-		  return get(text, 0, text.Length);
+		    return Get(text, 0, text.Length);
 		}
-		return get(o.ToString());
+		return Get(o.ToString());
 	  }
 
-	  private int getSlot(char[] text, int off, int len)
+	  private int GetSlot(char[] text, int off, int len)
 	  {
 		int code = getHashCode(text, off, len);
 		int pos = code & (keys.Length - 1);
 		char[] text2 = keys[pos];
 		if (text2 != null && !Equals(text, off, len, text2))
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int inc = ((code>>8)+code)|1;
 		  int inc = ((code >> 8) + code) | 1;
 		  do
 		  {
@@ -208,15 +201,13 @@ namespace org.apache.lucene.analysis.util
 
 	  /// <summary>
 	  /// Returns true if the String is in the set </summary>
-	  private int getSlot(CharSequence text)
+	  private int GetSlot(string text)
 	  {
 		int code = getHashCode(text);
 		int pos = code & (keys.Length - 1);
 		char[] text2 = keys[pos];
 		if (text2 != null && !Equals(text, text2))
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int inc = ((code>>8)+code)|1;
 		  int inc = ((code >> 8) + code) | 1;
 		  do
 		  {
@@ -265,8 +256,6 @@ namespace org.apache.lucene.analysis.util
 		int slot = getSlot(text, 0, text.Length);
 		if (keys[slot] != null)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final V oldValue = values[slot];
 		  V oldValue = values[slot];
 		  values[slot] = value;
 		  return oldValue;
@@ -277,15 +266,13 @@ namespace org.apache.lucene.analysis.util
 
 		if (count + (count >> 2) > keys.Length)
 		{
-		  rehash();
+		  Rehash();
 		}
 
 		return null;
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") private void rehash()
-	  private void rehash()
+	  private void Rehash()
 	  {
 		Debug.Assert(keys.Length == values.Length);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':

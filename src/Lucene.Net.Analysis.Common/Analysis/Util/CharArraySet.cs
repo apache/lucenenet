@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Util;
+using org.apache.lucene.analysis.util;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
 
 	/*
@@ -20,12 +22,7 @@ namespace org.apache.lucene.analysis.util
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using Version = org.apache.lucene.util.Version;
-
-
-	/// <summary>
+    /// <summary>
 	/// A simple class that stores Strings as char[]'s in a
 	/// hash table.  Note that this is not a general purpose
 	/// class.  For example, it cannot remove items from the
@@ -51,12 +48,12 @@ namespace org.apache.lucene.analysis.util
 	/// does not behave like it should in all cases. The generic type is
 	/// {@code Set<Object>}, because you can add any object to it,
 	/// that has a string representation. The add methods will use
-	/// <seealso cref="Object#toString"/> and store the result using a {@code char[]}
+	/// <seealso cref="object#toString"/> and store the result using a {@code char[]}
 	/// buffer. The same behavior have the {@code contains()} methods.
 	/// The <seealso cref="#iterator()"/> returns an {@code Iterator<char[]>}.
 	/// </para>
 	/// </summary>
-	public class CharArraySet : AbstractSet<object>
+	public class CharArraySet : ISet<object>
 	{
 	  public static readonly CharArraySet EMPTY_SET = new CharArraySet(CharArrayMap.emptyMap<object>());
 	  private static readonly object PLACEHOLDER = new object();
@@ -91,13 +88,11 @@ namespace org.apache.lucene.analysis.util
 	  ///          otherwise <code>true</code>. </param>
 	  public CharArraySet<T1>(Version matchVersion, ICollection<T1> c, bool ignoreCase) : this(matchVersion, c.Count, ignoreCase)
 	  {
-		addAll(c);
+		AddAll(c);
 	  }
 
 	  /// <summary>
 	  /// Create set from the specified map (internal only), used also by <seealso cref="CharArrayMap#keySet()"/> </summary>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: CharArraySet(final CharArrayMap<Object> map)
 	  internal CharArraySet(CharArrayMap<object> map)
 	  {
 		this.map = map;
@@ -105,7 +100,7 @@ namespace org.apache.lucene.analysis.util
 
 	  /// <summary>
 	  /// Clears all entries in this set. This method is supported for reusing, but not <seealso cref="Set#remove"/>. </summary>
-	  public override void clear()
+	  public void Clear()
 	  {
 		map.clear();
 	  }
@@ -114,38 +109,31 @@ namespace org.apache.lucene.analysis.util
 	  /// true if the <code>len</code> chars of <code>text</code> starting at <code>off</code>
 	  /// are in the set 
 	  /// </summary>
-	  public virtual bool contains(char[] text, int off, int len)
+	  public virtual bool Contains(char[] text, int off, int len)
 	  {
 		return map.containsKey(text, off, len);
 	  }
 
 	  /// <summary>
 	  /// true if the <code>CharSequence</code> is in the set </summary>
-	  public virtual bool contains(CharSequence cs)
+	  public virtual bool Contains(string cs)
 	  {
 		return map.containsKey(cs);
 	  }
 
-	  public override bool contains(object o)
+	  public bool Contains(object o)
 	  {
 		return map.containsKey(o);
 	  }
 
-	  public override bool add(object o)
+	  public bool Add(object o)
 	  {
 		return map.put(o, PLACEHOLDER) == null;
 	  }
 
 	  /// <summary>
-	  /// Add this CharSequence into the set </summary>
-	  public virtual bool add(CharSequence text)
-	  {
-		return map.put(text, PLACEHOLDER) == null;
-	  }
-
-	  /// <summary>
 	  /// Add this String into the set </summary>
-	  public virtual bool add(string text)
+	  public virtual bool Add(string text)
 	  {
 		return map.put(text, PLACEHOLDER) == null;
 	  }
@@ -155,12 +143,12 @@ namespace org.apache.lucene.analysis.util
 	  /// If ignoreCase is true for this Set, the text array will be directly modified.
 	  /// The user should never modify this text array after calling this method.
 	  /// </summary>
-	  public virtual bool add(char[] text)
+	  public virtual bool Add(char[] text)
 	  {
 		return map.put(text, PLACEHOLDER) == null;
 	  }
 
-	  public override int size()
+	  public override int Size()
 	  {
 		return map.size();
 	  }
@@ -211,9 +199,7 @@ namespace org.apache.lucene.analysis.util
 	  /// <returns> a copy of the given set as a <seealso cref="CharArraySet"/>. If the given set
 	  ///         is a <seealso cref="CharArraySet"/> the ignoreCase property as well as the
 	  ///         matchVersion will be of the given set will be preserved. </returns>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public static CharArraySet copy(final org.apache.lucene.util.Version matchVersion, final java.util.Set<?> set)
-	  public static CharArraySet copy<T1>(Version matchVersion, HashSet<T1> set)
+	  public static CharArraySet Copy<T1>(Version matchVersion, HashSet<T1> set)
 	  {
 		if (set == EMPTY_SET)
 		{
@@ -221,8 +207,6 @@ namespace org.apache.lucene.analysis.util
 		}
 		if (set is CharArraySet)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CharArraySet source = (CharArraySet) set;
 		  CharArraySet source = (CharArraySet) set;
 		  return new CharArraySet(CharArrayMap.copy(source.map.matchVersion, source.map));
 		}
@@ -232,8 +216,6 @@ namespace org.apache.lucene.analysis.util
 	  /// <summary>
 	  /// Returns an <seealso cref="Iterator"/> for {@code char[]} instances in this set.
 	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public java.util.Iterator<Object> iterator()
 	  public override IEnumerator<object> iterator()
 	  {
 		// use the AbstractSet#keySet()'s iterator (to not produce endless recursion)
@@ -242,9 +224,7 @@ namespace org.apache.lucene.analysis.util
 
 	  public override string ToString()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder sb = new StringBuilder("[");
-		StringBuilder sb = new StringBuilder("[");
+		var sb = new StringBuilder("[");
 		foreach (object item in this)
 		{
 		  if (sb.Length > 1)

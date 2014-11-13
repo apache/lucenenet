@@ -56,8 +56,8 @@ namespace Lucene.Net.Analysis.Synonym
 		  for (IEnumerator<string> itr = args.Keys.GetEnumerator(); itr.MoveNext();)
 		  {
 			string key = itr.Current;
-			tokArgs[key.replaceAll("^tokenizerFactory\\.","")] = args[key];
-			itr.remove();
+			tokArgs[key.ReplaceAll("^tokenizerFactory\\.","")] = args[key];
+			itr.Remove();
 		  }
 		}
 		if (args.Count > 0)
@@ -66,19 +66,15 @@ namespace Lucene.Net.Analysis.Synonym
 		}
 	  }
 
-	  public override TokenStream create(TokenStream input)
+	  public override TokenStream Create(TokenStream input)
 	  {
 		// if the fst is null, it means there's actually no synonyms... just return the original stream
 		// as there is nothing to do here.
 		return map.fst == null ? input : new SynonymFilter(input, map, ignoreCase);
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void inform(ResourceLoader loader) throws java.io.IOException
 	  public void inform(ResourceLoader loader)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TokenizerFactory factory = tokenizerFactory == null ? null : loadTokenizerFactory(loader, tokenizerFactory);
 		TokenizerFactory factory = tokenizerFactory == null ? null : loadTokenizerFactory(loader, tokenizerFactory);
 
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, factory);
@@ -115,7 +111,7 @@ namespace Lucene.Net.Analysis.Synonym
 			  this.factory = factory;
 		  }
 
-		  protected internal override Analyzer.TokenStreamComponents createComponents(string fieldName, Reader reader)
+		  protected internal override Analyzer.TokenStreamComponents CreateComponents(string fieldName, Reader reader)
 		  {
 			Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(Version.LUCENE_CURRENT, reader) : factory.create(reader);
 			TokenStream stream = outerInstance.ignoreCase ? new LowerCaseFilter(Version.LUCENE_CURRENT, tokenizer) : tokenizer;

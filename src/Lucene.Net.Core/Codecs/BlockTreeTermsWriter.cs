@@ -453,7 +453,7 @@ namespace Lucene.Net.Codecs
 
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                 Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST<BytesRef>.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15);
-                sbyte[] bytes = new sbyte[(int)scratchBytes.FilePointer];
+                var bytes = new byte[(int)scratchBytes.FilePointer];
                 Debug.Assert(bytes.Length > 0);
                 scratchBytes.WriteTo(bytes, 0);
                 indexBuilder.Add(Util.ToIntsRef(Prefix, ScratchIntsRef), new BytesRef(bytes, 0, bytes.Length));
@@ -885,7 +885,7 @@ namespace Lucene.Net.Codecs
                 BytesRef prefix = new BytesRef(indexPrefixLength);
                 for (int m = 0; m < indexPrefixLength; m++)
                 {
-                    prefix.Bytes[m] = (sbyte)prevTerm.Ints[m];
+                    prefix.Bytes[m] = (byte)prevTerm.Ints[m];
                 }
                 prefix.Length = indexPrefixLength;
 

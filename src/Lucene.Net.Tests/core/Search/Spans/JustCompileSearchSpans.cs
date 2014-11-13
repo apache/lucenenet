@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Spans
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override ICollection<sbyte[]> Payload
+            public override ICollection<byte[]> Payload
             {
                 get
                 {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Spans
 
         internal sealed class JustCompilePayloadSpans : Spans
         {
-            public override ICollection<sbyte[]> Payload
+            public override ICollection<byte[]> Payload
             {
                 get
                 {

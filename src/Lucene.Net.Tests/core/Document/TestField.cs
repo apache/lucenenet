@@ -453,7 +453,7 @@ namespace Lucene.Net.Document
         {
             try
             {
-                f.BytesValue = new BytesRef(new sbyte[] { 5, 5 });
+                f.BytesValue = new BytesRef(new byte[] { 5, 5 });
                 Assert.Fail();
             }
             catch (System.ArgumentException expected)

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -21,12 +20,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using AbstractAnalysisFactory = AbstractAnalysisFactory;
-	using MultiTermAwareComponent = org.apache.lucene.analysis.util.MultiTermAwareComponent;
-	using TokenFilterFactory = TokenFilterFactory;
-
-	/// <summary>
+    /// <summary>
 	/// Factory for <seealso cref="ASCIIFoldingFilter"/>.
 	/// <pre class="prettyprint">
 	/// &lt;fieldType name="text_ascii" class="solr.TextField" positionIncrementGap="100"&gt;
@@ -51,7 +45,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 		}
 	  }
 
-	  public override ASCIIFoldingFilter create(TokenStream input)
+	  public override TokenStream Create(TokenStream input)
 	  {
 		return new ASCIIFoldingFilter(input, preserveOriginal);
 	  }

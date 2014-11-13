@@ -148,16 +148,16 @@ namespace Lucene.Net.Util
             bytes.Length = nChars + 1; // one extra for the byte that contains the shift info
             if (bytes.Bytes.Length < bytes.Length)
             {
-                bytes.Bytes = new sbyte[NumericUtils.BUF_SIZE_LONG]; // use the max
+                bytes.Bytes = new byte[NumericUtils.BUF_SIZE_LONG]; // use the max
             }
-            bytes.Bytes[0] = (sbyte)(SHIFT_START_LONG + shift);
+            bytes.Bytes[0] = (byte)(SHIFT_START_LONG + shift);
             ulong sortableBits = BitConverter.ToUInt64(BitConverter.GetBytes(val), 0) ^ 0x8000000000000000L;
             sortableBits = sortableBits >> shift;
             while (nChars > 0)
             {
                 // Store 7 bits per byte for compatibility
                 // with UTF-8 encoding of terms
-                bytes.Bytes[nChars--] = (sbyte)(sortableBits & 0x7f);
+                bytes.Bytes[nChars--] = (byte)(sortableBits & 0x7f);
                 sortableBits = sortableBits >> 7;
             }
         }
@@ -180,16 +180,16 @@ namespace Lucene.Net.Util
             bytes.Length = nChars + 1; // one extra for the byte that contains the shift info
             if (bytes.Bytes.Length < bytes.Length)
             {
-                bytes.Bytes = new sbyte[NumericUtils.BUF_SIZE_LONG]; // use the max
+                bytes.Bytes = new byte[NumericUtils.BUF_SIZE_LONG]; // use the max
             }
-            bytes.Bytes[0] = (sbyte)(SHIFT_START_INT + shift);
+            bytes.Bytes[0] = (byte)(SHIFT_START_INT + shift);
             int sortableBits = val ^ unchecked((int)0x80000000);
             sortableBits = Number.URShift(sortableBits, shift);
             while (nChars > 0)
             {
                 // Store 7 bits per byte for compatibility
                 // with UTF-8 encoding of terms
-                bytes.Bytes[nChars--] = (sbyte)(sortableBits & 0x7f);
+                bytes.Bytes[nChars--] = (byte)(sortableBits & 0x7f);
                 sortableBits = (int)((uint)sortableBits >> 7);
             }
         }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Util
             for (int i = val.Offset + 1, limit = val.Offset + val.Length; i < limit; i++)
             {
                 sortableBits <<= 7;
-                sbyte b = val.Bytes[i];
+                var b = val.Bytes[i];
                 if (b < 0)
                 {
                     throw new System.FormatException("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
@@ -258,12 +258,12 @@ namespace Lucene.Net.Util
             for (int i = val.Offset, limit = val.Offset + val.Length; i < limit; i++)
             {
                 sortableBits <<= 7;
-                sbyte b = val.Bytes[i];
+                var b = val.Bytes[i];
                 if (b < 0)
                 {
                     throw new System.FormatException("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
                 }
-                sortableBits |= (byte)b;
+                sortableBits |= (sbyte)b;
             }
             return (int)((sortableBits << GetPrefixCodedIntShift(val)) ^ 0x80000000);
         }

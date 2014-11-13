@@ -279,11 +279,10 @@ namespace Lucene.Net.Search.Spans
             {
                 while (spans.Next())
                 {
-                    ICollection<sbyte[]> payloads = spans.Payload;
-
-                    foreach (sbyte[] payload in payloads)
+                    var payloads = spans.Payload;
+                    foreach (var payload in payloads)
                     {
-                        payloadSet.Add(Encoding.UTF8.GetString((byte[])(Array)payload));
+                        payloadSet.Add(Encoding.UTF8.GetString(payload));
                     }
                 }
             }
@@ -309,7 +308,7 @@ namespace Lucene.Net.Search.Spans
 
             SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
             SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
-            SpanQuery[] sqs = new SpanQuery[] { stq1, stq2 };
+            SpanQuery[] sqs = { stq1, stq2 };
             SpanNearQuery snq = new SpanNearQuery(sqs, 0, true);
             Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 
@@ -319,8 +318,8 @@ namespace Lucene.Net.Search.Spans
             {
                 while (spans.Next())
                 {
-                    ICollection<sbyte[]> payloads = spans.Payload;
-                    foreach (sbyte[] payload in payloads)
+                    var payloads = spans.Payload;
+                    foreach (var payload in payloads)
                     {
                         payloadSet.Add(Encoding.UTF8.GetString((byte[])(Array)payload));
                     }
@@ -358,11 +357,10 @@ namespace Lucene.Net.Search.Spans
             {
                 while (spans.Next())
                 {
-                    ICollection<sbyte[]> payloads = spans.Payload;
-
-                    foreach (sbyte[] payload in payloads)
+                    var payloads = spans.Payload;
+                    foreach (var payload in payloads)
                     {
-                        payloadSet.Add(Encoding.UTF8.GetString((byte[])(Array)payload));
+                        payloadSet.Add(Encoding.UTF8.GetString(payload));
                     }
                 }
             }
@@ -396,11 +394,11 @@ namespace Lucene.Net.Search.Spans
 
             PayloadSpanUtil psu = new PayloadSpanUtil(searcher.TopReaderContext);
 
-            ICollection<sbyte[]> payloads = psu.GetPayloadsForQuery(new TermQuery(new Term(PayloadHelper.FIELD, "rr")));
+            var payloads = psu.GetPayloadsForQuery(new TermQuery(new Term(PayloadHelper.FIELD, "rr")));
             if (VERBOSE)
             {
                 Console.WriteLine("Num payloads:" + payloads.Count);
-                foreach (sbyte[] bytes in payloads)
+                foreach (var bytes in payloads)
                 {
                     Console.WriteLine(Encoding.UTF8.GetString((byte[])(Array)bytes));
                 }
@@ -429,9 +427,9 @@ namespace Lucene.Net.Search.Spans
                 //See payload helper, for the PayloadHelper.FIELD field, there is a single byte payload at every token
                 if (spans.PayloadAvailable)
                 {
-                    ICollection<sbyte[]> payload = spans.Payload;
+                    var payload = spans.Payload;
                     Assert.IsTrue(payload.Count == expectedNumPayloads, "payload Size: " + payload.Count + " is not: " + expectedNumPayloads);
-                    foreach (sbyte[] thePayload in payload)
+                    foreach (var thePayload in payload)
                     {
                         Assert.IsTrue(thePayload.Length == expectedPayloadLength, "payload[0] Size: " + thePayload.Length + " is not: " + expectedPayloadLength);
                         Assert.IsTrue(thePayload[0] == expectedFirstByte, thePayload[0] + " does not equal: " + expectedFirstByte);
@@ -479,11 +477,11 @@ namespace Lucene.Net.Search.Spans
                 }
                 if (spans.PayloadAvailable)
                 {
-                    ICollection<sbyte[]> payload = spans.Payload;
+                    var payload = spans.Payload;
                     if (VERBOSE)
                     {
                         Console.WriteLine("payloads for span:" + payload.Count);
-                        foreach (sbyte[] bytes in payload)
+                        foreach (var bytes in payload)
                         {
                             Console.WriteLine("doc:" + spans.Doc() + " s:" + spans.Start() + " e:" + spans.End() + " " + Encoding.UTF8.GetString((byte[])(Array)bytes));
                         }
@@ -544,7 +542,7 @@ namespace Lucene.Net.Search.Spans
 
             public override bool IncrementToken()
             {
-                if (Input.IncrementToken())
+                if (input.IncrementToken())
                 {
                     string token = TermAtt.ToString();
 

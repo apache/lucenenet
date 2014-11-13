@@ -615,7 +615,7 @@ namespace Lucene.Net.Index
                                     if (Payload == null)
                                     {
                                         Payload = new BytesRef();
-                                        Payload.Bytes = new sbyte[payloadLength];
+                                        Payload.Bytes = new byte[payloadLength];
                                     }
                                     else if (Payload.Bytes.Length < payloadLength)
                                     {

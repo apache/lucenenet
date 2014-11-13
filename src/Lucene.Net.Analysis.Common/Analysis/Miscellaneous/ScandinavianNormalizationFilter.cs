@@ -1,4 +1,6 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
+﻿using Lucene.Net.Analysis.Util;
+
+namespace org.apache.lucene.analysis.miscellaneous
 {
 
 	/*
@@ -19,7 +21,7 @@
 	 */
 
 	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using StemmerUtil = org.apache.lucene.analysis.util.StemmerUtil;
+	using StemmerUtil = StemmerUtil;
 
 	/// <summary>
 	/// This filter normalize use of the interchangeable Scandinavian characters æÆäÄöÖøØ

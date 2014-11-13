@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.analysis.synonym
+namespace Lucene.Net.Analysis.Synonym
 {
 
 	/*
@@ -20,15 +22,7 @@ namespace org.apache.lucene.analysis.synonym
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using AttributeSource = org.apache.lucene.util.AttributeSource;
-
-
-	/// <summary>
+    /// <summary>
 	/// SynonymFilter handles multi-token synonyms with variable position increment offsets.
 	/// <para>
 	/// The matched tokens from the input stream may be optionally passed through (includeOrig=true)
@@ -56,10 +50,10 @@ namespace org.apache.lucene.analysis.synonym
 
 		this.map = map;
 		// just ensuring these attributes exist...
-		addAttribute(typeof(CharTermAttribute));
-		addAttribute(typeof(PositionIncrementAttribute));
-		addAttribute(typeof(OffsetAttribute));
-		addAttribute(typeof(TypeAttribute));
+		AddAttribute(typeof(CharTermAttribute));
+		AddAttribute(typeof(PositionIncrementAttribute));
+		AddAttribute(typeof(OffsetAttribute));
+		AddAttribute(typeof(TypeAttribute));
 	  }
 
 

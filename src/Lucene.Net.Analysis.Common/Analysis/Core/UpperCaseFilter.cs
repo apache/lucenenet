@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Util;
 
 namespace org.apache.lucene.analysis.core
 {
@@ -21,7 +22,7 @@ namespace org.apache.lucene.analysis.core
 	 */
 
 	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using CharacterUtils = org.apache.lucene.analysis.util.CharacterUtils;
+	using CharacterUtils = CharacterUtils;
 	using Version = org.apache.lucene.util.Version;
 
 	/// <summary>

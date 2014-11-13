@@ -447,8 +447,8 @@ namespace Lucene.Net.Codecs.Lucene40
             private int NumTerms;
             private int NextTerm;
             private int Freq;
-            private BytesRef LastTerm = new BytesRef();
-            private BytesRef Term_Renamed = new BytesRef();
+            private readonly BytesRef LastTerm = new BytesRef();
+            private readonly BytesRef Term_Renamed = new BytesRef();
             private bool StorePositions;
             private bool StoreOffsets;
             private bool StorePayloads;
@@ -462,7 +462,7 @@ namespace Lucene.Net.Codecs.Lucene40
             internal int[] PayloadOffsets;
 
             internal int LastPayloadLength;
-            internal sbyte[] PayloadData;
+            internal byte[] PayloadData;
 
             // NOTE: tvf is pre-positioned by caller
             public TVTermsEnum(Lucene40TermVectorsReader outerInstance)
@@ -566,7 +566,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         totalPayloadLength += LastPayloadLength;
                         Debug.Assert(totalPayloadLength >= 0);
                     }
-                    PayloadData = new sbyte[totalPayloadLength];
+                    PayloadData = new byte[totalPayloadLength];
                     Tvf.ReadBytes(PayloadData, 0, PayloadData.Length);
                 } // no payloads
                 else if (StorePositions)
@@ -715,18 +715,18 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private class TVDocsAndPositionsEnum : DocsAndPositionsEnum
+        private sealed class TVDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            internal bool DidNext;
-            internal int Doc = -1;
-            internal int NextPos;
-            internal Bits LiveDocs;
-            internal int[] Positions;
-            internal int[] StartOffsets;
-            internal int[] EndOffsets;
-            internal int[] PayloadOffsets;
-            internal BytesRef Payload_Renamed = new BytesRef();
-            internal sbyte[] PayloadBytes;
+            private bool DidNext;
+            private int Doc = -1;
+            private int NextPos;
+            private Bits LiveDocs;
+            private int[] Positions;
+            private int[] StartOffsets;
+            private int[] EndOffsets;
+            private int[] PayloadOffsets;
+            private readonly BytesRef Payload_Renamed = new BytesRef();
+            private byte[] PayloadBytes;
 
             public override int Freq()
             {
@@ -764,7 +764,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return SlowAdvance(target);
             }
 
-            public virtual void Reset(Bits liveDocs, int[] positions, int[] startOffsets, int[] endOffsets, int[] payloadLengths, sbyte[] payloadBytes)
+            public void Reset(Bits liveDocs, int[] positions, int[] startOffsets, int[] endOffsets, int[] payloadLengths, byte[] payloadBytes)
             {
                 this.LiveDocs = liveDocs;
                 this.Positions = positions;

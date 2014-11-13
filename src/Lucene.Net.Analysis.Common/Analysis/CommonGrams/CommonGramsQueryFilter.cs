@@ -14,15 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace org.apache.lucene.analysis.commongrams
+
+using Lucene.Net.Analysis.Tokenattributes;
+
+namespace Lucene.Net.Analysis.CommonGrams
 {
-
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.commongrams.CommonGramsFilter.GRAM_TYPE;
-
 	/// <summary>
 	/// Wrap a CommonGramsFilter optimizing phrase queries by only returning single
 	/// words when they are not a member of a bigram.
@@ -62,11 +58,9 @@ namespace org.apache.lucene.analysis.commongrams
 	  /// <summary>
 	  /// {@inheritDoc}
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		previous = null;
 		previousType = null;
 		exhausted = false;
@@ -80,17 +74,15 @@ namespace org.apache.lucene.analysis.commongrams
 	  /// <li>output:"the-rain", "rain-in" ,"in-spain", "falls", "mainly"
 	  /// </ul>
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		while (!exhausted && input.incrementToken())
 		{
-		  State current = captureState();
+		  State current = CaptureState();
 
 		  if (previous != null && !GramType)
 		  {
-			restoreState(previous);
+			RestoreState(previous);
 			previous = current;
 			previousType = typeAttribute.type();
 
@@ -111,7 +103,7 @@ namespace org.apache.lucene.analysis.commongrams
 		  return false;
 		}
 
-		restoreState(previous);
+		RestoreState(previous);
 		previous = null;
 
 		if (GramType)

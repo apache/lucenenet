@@ -35,6 +35,6 @@ namespace Lucene.Net.Codecs.Compressing
         /// compressor to add all necessary information so that a <seealso cref="Decompressor"/>
         /// will know when to stop decompressing bytes from the stream.
         /// </summary>
-        public abstract void Compress(sbyte[] bytes, int off, int len, DataOutput @out);
+        public abstract void Compress(byte[] bytes, int off, int len, DataOutput @out);
     }
 }

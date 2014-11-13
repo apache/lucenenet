@@ -27,19 +27,19 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal abstract class BulkOperation : PackedInts.Decoder, PackedInts.Encoder
     {
-        public abstract void Encode(int[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations);
+        public abstract void Encode(int[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
 
         public abstract void Encode(int[] values, int valuesOffset, long[] blocks, int blocksOffset, int iterations);
 
-        public abstract void Encode(long[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations);
+        public abstract void Encode(long[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
 
         public abstract void Encode(long[] values, int valuesOffset, long[] blocks, int blocksOffset, int iterations);
 
-        public abstract void Decode(sbyte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
+        public abstract void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
 
         public abstract void Decode(long[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
 
-        public abstract void Decode(sbyte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
+        public abstract void Decode(byte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
 
         public abstract void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
 
@@ -74,11 +74,11 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        protected internal virtual int WriteLong(long block, sbyte[] blocks, int blocksOffset)
+        protected internal virtual int WriteLong(long block, byte[] blocks, int blocksOffset)
         {
             for (int j = 1; j <= 8; ++j)
             {
-                blocks[blocksOffset++] = (sbyte)((long)((ulong)block >> (64 - (j << 3))));
+                blocks[blocksOffset++] = (byte)((long)((ulong)block >> (64 - (j << 3))));
             }
             return blocksOffset;
         }

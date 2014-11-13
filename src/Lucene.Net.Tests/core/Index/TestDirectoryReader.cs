@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
         public virtual void TestBinaryFields()
         {
             Directory dir = NewDirectory();
-            sbyte[] bin = new sbyte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            byte[] bin = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 

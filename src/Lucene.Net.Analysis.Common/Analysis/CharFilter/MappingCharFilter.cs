@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,19 +14,18 @@ using System.Collections.Generic;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Lucene.Net.Analysis.CharFilter;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Fst;
+using org.apache.lucene.analysis.charfilter;
 
-namespace org.apache.lucene.analysis.charfilter
+namespace Lucene.Net.Analysis.CharFilter
 {
-
-
-	using RollingCharBuffer = org.apache.lucene.analysis.util.RollingCharBuffer;
-	using CharsRef = org.apache.lucene.util.CharsRef;
-	using CharSequenceOutputs = org.apache.lucene.util.fst.CharSequenceOutputs;
-	using FST = org.apache.lucene.util.fst.FST;
-	using Outputs = org.apache.lucene.util.fst.Outputs;
-
-	/// <summary>
+    /// <summary>
 	/// Simplistic <seealso cref="CharFilter"/> that applies the mappings
 	/// contained in a <seealso cref="NormalizeCharMap"/> to the character
 	/// stream, and correcting the resulting changes to the
@@ -54,9 +50,9 @@ namespace org.apache.lucene.analysis.charfilter
 
 	  /// <summary>
 	  /// Default constructor that takes a <seealso cref="Reader"/>. </summary>
-	  public MappingCharFilter(NormalizeCharMap normMap, Reader @in) : base(@in)
+	  public MappingCharFilter(NormalizeCharMap normMap, TextReader @in) : base(@in)
 	  {
-		buffer.reset(@in);
+		buffer.Reset(@in);
 
 		map = normMap.map;
 		cachedRootArcs = normMap.cachedRootArcs;
@@ -71,11 +67,9 @@ namespace org.apache.lucene.analysis.charfilter
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		input.reset();
+		input.Reset();
 		buffer.reset(input);
 		replacement = null;
 		inputOff = 0;

@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
 
         protected internal DataOutput @out;
         protected internal readonly long[] Values;
-        protected internal sbyte[] Blocks;
+        protected internal byte[] Blocks;
         protected internal int Off;
         protected internal long Ord_Renamed;
         protected internal bool Finished;
@@ -145,7 +145,7 @@ namespace Lucene.Net.Util.Packed
             int blockSize = encoder.ByteBlockCount() * iterations;
             if (Blocks == null || Blocks.Length < blockSize)
             {
-                Blocks = new sbyte[blockSize];
+                Blocks = new byte[blockSize];
             }
             if (Off < Values.Length)
             {

@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
                         return true;
                     }
 
-                    bool hasNext = Input.IncrementToken();
+                    bool hasNext = input.IncrementToken();
                     if (!hasNext)
                     {
                         return false;
@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
                     if (first)
                     {
                         // set payload on first position only
-                        payloadAtt.Payload = new BytesRef(new sbyte[] { 100 });
+                        payloadAtt.Payload = new BytesRef(new byte[] { 100 });
                         first = false;
                     }
 

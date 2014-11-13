@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static void ByteArray(StringBuilder buffer, sbyte[] bytes)
+        public static void ByteArray(StringBuilder buffer, byte[] bytes)
         {
             for (int i = 0; i < bytes.Length; i++)
             {

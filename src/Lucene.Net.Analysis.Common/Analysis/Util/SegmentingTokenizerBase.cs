@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using Lucene.Net.Analysis.Tokenattributes;
+using org.apache.lucene.analysis.util;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
 
 	/*
@@ -21,8 +24,6 @@ namespace org.apache.lucene.analysis.util
 	 * limitations under the License.
 	 */
 
-
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 
 	/// <summary>
 	/// Breaks text into sentences with a <seealso cref="BreakIterator"/> and
@@ -79,15 +80,13 @@ namespace org.apache.lucene.analysis.util
 		this.iterator = iterator;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
-		if (length == 0 || !incrementWord())
+		if (length == 0 || !IncrementWord())
 		{
-		  while (!incrementSentence())
+		  while (!IncrementSentence())
 		  {
-			refill();
+			Refill();
 			if (length <= 0) // no more bytes to read;
 			{
 			  return false;
@@ -98,30 +97,24 @@ namespace org.apache.lucene.analysis.util
 		return true;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		wrapper.setText(buffer, 0, 0);
 		iterator.Text = wrapper;
 		length = usableLength = offset = 0;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final void end() throws java.io.IOException
-	  public override void end()
+	  public override void End()
 	  {
-		base.end();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int finalOffset = correctOffset(length < 0 ? offset : offset + length);
-		int finalOffset = correctOffset(length < 0 ? offset : offset + length);
-		offsetAtt.setOffset(finalOffset, finalOffset);
+		base.End();
+		int finalOffset = CorrectOffset(length < 0 ? offset : offset + length);
+		offsetAtt.SetOffset(finalOffset, finalOffset);
 	  }
 
 	  /// <summary>
 	  /// Returns the last unambiguous break position in the text. </summary>
-	  private int findSafeEnd()
+	  private int FindSafeEnd()
 	  {
 		for (int i = length - 1; i >= 0; i--)
 		{
@@ -135,9 +128,9 @@ namespace org.apache.lucene.analysis.util
 
 	  /// <summary>
 	  /// For sentence tokenization, these are the unambiguous break positions. </summary>
-	  protected internal virtual bool isSafeEnd(char ch)
+	  protected internal virtual bool IsSafeEnd(char ch)
 	  {
-		switch (ch)
+		switch ((int)ch)
 		{
 		  case 0x000D:
 		  case 0x000A:
@@ -150,47 +143,44 @@ namespace org.apache.lucene.analysis.util
 		}
 	  }
 
-	  /// <summary>
-	  /// Refill the buffer, accumulating the offset and setting usableLength to the
-	  /// last unambiguous break position
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void refill() throws java.io.IOException
-	  private void refill()
-	  {
-		offset += usableLength;
-		int leftover = length - usableLength;
-		Array.Copy(buffer, usableLength, buffer, 0, leftover);
-		int requested = buffer.Length - leftover;
-		int returned = read(input, buffer, leftover, requested);
-		length = returned < 0 ? leftover : returned + leftover;
-		if (returned < requested) // reader has been emptied, process the rest
-		{
-		  usableLength = length;
-		}
-		else // still more data to be read, find a safe-stopping place
-		{
-		  usableLength = findSafeEnd();
-		  if (usableLength < 0)
-		  {
-			usableLength = length; /*
+	    /// <summary>
+	    /// Refill the buffer, accumulating the offset and setting usableLength to the
+	    /// last unambiguous break position
+	    /// </summary>
+	    private void Refill()
+	    {
+	        offset += usableLength;
+	        int leftover = length - usableLength;
+	        Array.Copy(buffer, usableLength, buffer, 0, leftover);
+	        int requested = buffer.Length - leftover;
+	        int returned = read(input, buffer, leftover, requested);
+	        length = returned < 0 ? leftover : returned + leftover;
+	        if (returned < requested) // reader has been emptied, process the rest
+	        {
+	            usableLength = length;
+	        }
+	        else // still more data to be read, find a safe-stopping place
+	        {
+	            usableLength = FindSafeEnd();
+	            if (usableLength < 0)
+	            {
+	                usableLength = length; /*
 		  }
 	                                * more than IOBUFFER of text without breaks,
 	                                * gonna possibly truncate tokens
 	                                */
-		}
+	            }
 
-		wrapper.setText(buffer, 0, Math.Max(0, usableLength));
-		iterator.Text = wrapper;
-	  }
+	            wrapper.SetText(buffer, 0, Math.Max(0, usableLength));
+	            iterator.Text = wrapper;
+	        }
+	    }
 
-	  // TODO: refactor to a shared readFully somewhere
+	    // TODO: refactor to a shared readFully somewhere
 	  // (NGramTokenizer does this too):
 	  /// <summary>
 	  /// commons-io's readFully, but without bugs if offset != 0 </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private static int read(java.io.Reader input, char[] buffer, int offset, int length) throws java.io.IOException
-	  private static int read(Reader input, char[] buffer, int offset, int length)
+	  private static int Read(TextReader input, char[] buffer, int offset, int length)
 	  {
 		Debug.Assert(length >= 0, "length must not be negative: " + length);
 
@@ -212,9 +202,7 @@ namespace org.apache.lucene.analysis.util
 	  /// return true if there is a token from the buffer, or null if it is
 	  /// exhausted.
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private boolean incrementSentence() throws java.io.IOException
-	  private bool incrementSentence()
+	  private bool IncrementSentence()
 	  {
 		if (length == 0) // we must refill the buffer
 		{
@@ -223,7 +211,7 @@ namespace org.apache.lucene.analysis.util
 
 		while (true)
 		{
-		  int start = iterator.current();
+		  int start = iterator.Current();
 
 		  if (start == BreakIterator.DONE)
 		  {
@@ -248,11 +236,10 @@ namespace org.apache.lucene.analysis.util
 
 	  /// <summary>
 	  /// Provides the next input sentence for analysis </summary>
-	  protected internal abstract void setNextSentence(int sentenceStart, int sentenceEnd);
+	  protected internal abstract void SetNextSentence(int sentenceStart, int sentenceEnd);
 
 	  /// <summary>
 	  /// Returns true if another word is available </summary>
-	  protected internal abstract bool incrementWord();
+	  protected internal abstract bool IncrementWord();
 	}
-
 }

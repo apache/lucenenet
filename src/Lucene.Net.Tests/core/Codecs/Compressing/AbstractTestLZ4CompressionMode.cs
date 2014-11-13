@@ -28,9 +28,9 @@ namespace Lucene.Net.Codecs.Compressing
     {
         private LZ4 lz4;
 
-        public override sbyte[] Test(sbyte[] decompressed)
+        public override byte[] Test(byte[] decompressed)
         {
-            sbyte[] compressed = base.Test(decompressed);
+            var compressed = base.Test(decompressed);
             int off = 0;
             int decompressedOff = 0;
             for (; ; )
@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.Compressing
         public virtual void TestShortLiteralsAndMatchs()
         {
             // literals and matchs lengths <= 15
-            sbyte[] decompressed = "1234562345673456745678910123".GetBytes(Encoding.UTF8);
+            var decompressed = "1234562345673456745678910123".GetBytes(Encoding.UTF8);
             Test(decompressed);
         }
 
@@ -102,10 +102,10 @@ namespace Lucene.Net.Codecs.Compressing
         public virtual void TestLongMatchs()
         {
             // match length >= 20
-            sbyte[] decompressed = new sbyte[RandomInts.NextIntBetween(Random(), 300, 1024)];
+            var decompressed = new byte[RandomInts.NextIntBetween(Random(), 300, 1024)];
             for (int i = 0; i < decompressed.Length; ++i)
             {
-                decompressed[i] = (sbyte)i;
+                decompressed[i] = (byte)i;
             }
             Test(decompressed);
         }
@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Compressing
         public virtual void TestLongLiterals()
         {
             // long literals (length >= 16) which are not the last literals
-            sbyte[] decompressed = RandomArray(RandomInts.NextIntBetween(Random(), 400, 1024), 256);
+            var decompressed = RandomArray(RandomInts.NextIntBetween(Random(), 400, 1024), 256);
             int matchRef = Random().Next(30);
             int matchOff = RandomInts.NextIntBetween(Random(), decompressed.Length - 40, decompressed.Length - 20);
             int matchLength = RandomInts.NextIntBetween(Random(), 4, 10);
@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Compressing
         [Test]
         public virtual void TestMatchRightBeforeLastLiterals()
         {
-            Test(new sbyte[] { 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 5 });
+            Test(new byte[] { 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 5 });
         }
     }
 }

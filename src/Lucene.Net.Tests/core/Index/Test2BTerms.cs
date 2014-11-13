@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
                 int shift = 32;
                 for (int i = 0; i < 5; i++)
                 {
-                    Bytes.Bytes[i] = unchecked((sbyte)((TermCounter >> shift) & 0xFF));
+                    Bytes.Bytes[i] = unchecked((byte)((TermCounter >> shift) & 0xFF));
                     shift -= 8;
                 }
                 TermCounter++;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
 
 	/*

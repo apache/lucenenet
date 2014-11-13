@@ -1,5 +1,6 @@
 ﻿using System;
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Util;
 
 namespace org.apache.lucene.analysis.miscellaneous
 {
@@ -26,7 +27,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	using StopFilter = StopFilter;
 	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+	using CharArraySet = CharArraySet;
 	using Version = org.apache.lucene.util.Version;
 
 	/// <summary>
@@ -109,7 +110,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  ///            given stop set (after previously having applied toLowerCase()
 	  ///            if applicable). For example, created via
 	  ///            <seealso cref="StopFilter#makeStopSet(Version, String[])"/>and/or
-	  ///            <seealso cref="org.apache.lucene.analysis.util.WordlistLoader"/>as in
+	  ///            <seealso cref="WordlistLoader"/>as in
 	  ///            <code>WordlistLoader.getWordSet(new File("samples/fulltext/stopwords.txt")</code>
 	  ///            or <a href="http://www.unine.ch/info/clef/">other stop words
 	  ///            lists </a>. </param>

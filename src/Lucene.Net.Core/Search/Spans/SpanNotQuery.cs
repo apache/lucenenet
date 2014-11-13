@@ -240,14 +240,14 @@ namespace Lucene.Net.Search.Spans
                 return includeSpans.End();
             }
 
-            public override ICollection<sbyte[]> Payload
+            public override ICollection<byte[]> Payload
             {
                 get
                 {
-                    List<sbyte[]> result = null;
+                    List<byte[]> result = null;
                     if (includeSpans.PayloadAvailable)
                     {
-                        result = new List<sbyte[]>(includeSpans.Payload);
+                        result = new List<byte[]>(includeSpans.Payload);
                     }
                     return result;
                 }
@@ -277,13 +277,13 @@ namespace Lucene.Net.Search.Spans
         {
             SpanNotQuery clone = null;
 
-            SpanQuery rewrittenInclude = (SpanQuery)include.Rewrite(reader);
+            var rewrittenInclude = (SpanQuery)include.Rewrite(reader);
             if (rewrittenInclude != include)
             {
                 clone = (SpanNotQuery)this.Clone();
                 clone.include = rewrittenInclude;
             }
-            SpanQuery rewrittenExclude = (SpanQuery)exclude.Rewrite(reader);
+            var rewrittenExclude = (SpanQuery)exclude.Rewrite(reader);
             if (rewrittenExclude != exclude)
             {
                 if (clone == null)

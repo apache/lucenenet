@@ -990,7 +990,7 @@ namespace Lucene.Net.Index
             conf.SetMergePolicy(NewLogMergePolicy());
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
             Document doc = new Document();
-            sbyte[] bytes = new sbyte[32766];
+            var bytes = new byte[32766];
             BytesRef b = new BytesRef(bytes);
             Random().NextBytes((byte[])(Array)bytes);
             doc.Add(new BinaryDocValuesField("dv", b));
@@ -1019,9 +1019,9 @@ namespace Lucene.Net.Index
             conf.SetMergePolicy(NewLogMergePolicy());
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
             Document doc = new Document();
-            sbyte[] bytes = new sbyte[32766];
+            var bytes = new byte[32766];
             BytesRef b = new BytesRef(bytes);
-            Random().NextBytes((byte[])(Array)bytes);
+            Random().NextBytes(bytes);
             doc.Add(new SortedDocValuesField("dv", b));
             iwriter.AddDocument(doc);
             iwriter.Dispose();
@@ -1055,7 +1055,7 @@ namespace Lucene.Net.Index
             IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
             Debug.Assert(ireader.Leaves.Count == 1);
             BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
-            sbyte[] mybytes = new sbyte[20];
+            var mybytes = new byte[20];
             BytesRef scratch = new BytesRef(mybytes);
             dv.Get(0, scratch);
             Assert.AreEqual("boo!", scratch.Utf8ToString());
@@ -1083,7 +1083,7 @@ namespace Lucene.Net.Index
             IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
             Debug.Assert(ireader.Leaves.Count == 1);
             BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-            sbyte[] mybytes = new sbyte[20];
+            var mybytes = new byte[20];
             BytesRef scratch = new BytesRef(mybytes);
             dv.Get(0, scratch);
             Assert.AreEqual("boo!", scratch.Utf8ToString());
@@ -1585,7 +1585,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
-            Field storedField = new StoredField("stored", new sbyte[0]);
+            Field storedField = new StoredField("stored", new byte[0]);
             Field dvField = new BinaryDocValuesField("dv", new BytesRef());
             doc.Add(idField);
             doc.Add(storedField);
@@ -1605,8 +1605,8 @@ namespace Lucene.Net.Index
                 {
                     length = TestUtil.NextInt(Random(), minLength, maxLength);
                 }
-                sbyte[] buffer = new sbyte[length];
-                Random().NextBytes((byte[])(Array)buffer);
+                var buffer = new byte[length];
+                Random().NextBytes(buffer);
                 storedField.BytesValue = new BytesRef(buffer);
                 dvField.BytesValue = new BytesRef(buffer);
                 writer.AddDocument(doc);
@@ -1671,7 +1671,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
-            Field storedField = new StoredField("stored", new sbyte[0]);
+            Field storedField = new StoredField("stored", new byte[0]);
             Field dvField = new SortedDocValuesField("dv", new BytesRef());
             doc.Add(idField);
             doc.Add(storedField);
@@ -1691,8 +1691,8 @@ namespace Lucene.Net.Index
                 {
                     length = TestUtil.NextInt(Random(), minLength, maxLength);
                 }
-                sbyte[] buffer = new sbyte[length];
-                Random().NextBytes((byte[])(Array)buffer);
+                var buffer = new byte[length];
+                Random().NextBytes(buffer);
                 storedField.BytesValue = new BytesRef(buffer);
                 dvField.BytesValue = new BytesRef(buffer);
                 writer.AddDocument(doc);
@@ -2971,7 +2971,7 @@ namespace Lucene.Net.Index
                 numDocs = TestUtil.NextInt(Random(), 100, 200);
             }
             IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
-            IList<sbyte[]> docBytes = new List<sbyte[]>();
+            var docBytes = new List<byte[]>();
             long totalBytes = 0;
             for (int docID = 0; docID < numDocs; docID++)
             {
@@ -2998,8 +2998,8 @@ namespace Lucene.Net.Index
                 {
                     break;
                 }
-                sbyte[] bytes = new sbyte[numBytes];
-                Random().NextBytes((byte[])(Array)bytes);
+                var bytes = new byte[numBytes];
+                Random().NextBytes(bytes);
                 docBytes.Add(bytes);
                 Document doc = new Document();
                 BytesRef b = new BytesRef(bytes);
@@ -3058,7 +3058,7 @@ namespace Lucene.Net.Index
                 Document doc = ar.Document(docID);
                 BytesRef bytes = new BytesRef();
                 s.Get(docID, bytes);
-                sbyte[] expected = docBytes[Convert.ToInt32(doc.Get("id"))];
+                var expected = docBytes[Convert.ToInt32(doc.Get("id"))];
                 Assert.AreEqual(expected.Length, bytes.Length);
                 Assert.AreEqual(new BytesRef(expected), bytes);
             }
@@ -3094,7 +3094,7 @@ namespace Lucene.Net.Index
                 numDocs = TestUtil.NextInt(Random(), 100, 200);
             }
             IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
-            IList<sbyte[]> docBytes = new List<sbyte[]>();
+            var docBytes = new List<byte[]>();
             long totalBytes = 0;
             for (int docID = 0; docID < numDocs; docID++)
             {
@@ -3121,8 +3121,8 @@ namespace Lucene.Net.Index
                 {
                     break;
                 }
-                sbyte[] bytes = new sbyte[numBytes];
-                Random().NextBytes((byte[])(Array)bytes);
+                var bytes = new byte[numBytes];
+                Random().NextBytes(bytes);
                 docBytes.Add(bytes);
                 Document doc = new Document();
                 BytesRef b = new BytesRef(bytes);
@@ -3143,7 +3143,7 @@ namespace Lucene.Net.Index
                 Document doc = ar.Document(docID);
                 BytesRef bytes = new BytesRef();
                 s.Get(docID, bytes);
-                sbyte[] expected = docBytes[Convert.ToInt32(doc.Get("id"))];
+                var expected = docBytes[Convert.ToInt32(doc.Get("id"))];
                 Assert.AreEqual(expected.Length, bytes.Length);
                 Assert.AreEqual(new BytesRef(expected), bytes);
             }
@@ -3163,7 +3163,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
-            Field storedBinField = new StoredField("storedBin", new sbyte[0]);
+            Field storedBinField = new StoredField("storedBin", new byte[0]);
             Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
             Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
             Field storedNumericField = new StoredField("storedNum", "");
@@ -3181,8 +3181,8 @@ namespace Lucene.Net.Index
             {
                 idField.StringValue = Convert.ToString(i);
                 int length = TestUtil.NextInt(Random(), 0, 8);
-                sbyte[] buffer = new sbyte[length];
-                Random().NextBytes((byte[])(Array)buffer);
+                var buffer = new byte[length];
+                Random().NextBytes(buffer);
                 storedBinField.BytesValue = new BytesRef(buffer);
                 dvBinField.BytesValue = new BytesRef(buffer);
                 dvSortedField.BytesValue = new BytesRef(buffer);
@@ -3283,7 +3283,7 @@ namespace Lucene.Net.Index
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
             Field idField = new StringField("id", "", Field.Store.NO);
-            Field storedBinField = new StoredField("storedBin", new sbyte[0]);
+            Field storedBinField = new StoredField("storedBin", new byte[0]);
             Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
             Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
             Field storedNumericField = new StoredField("storedNum", "");
@@ -3295,8 +3295,8 @@ namespace Lucene.Net.Index
             {
                 idField.StringValue = Convert.ToString(i);
                 int length = TestUtil.NextInt(Random(), 0, 8);
-                sbyte[] buffer = new sbyte[length];
-                Random().NextBytes((byte[])(Array)buffer);
+                var buffer = new byte[length];
+                Random().NextBytes(buffer);
                 storedBinField.BytesValue = new BytesRef(buffer);
                 dvBinField.BytesValue = new BytesRef(buffer);
                 dvSortedField.BytesValue = new BytesRef(buffer);
@@ -3478,7 +3478,7 @@ namespace Lucene.Net.Index
                 Directory dir = NewDirectory();
                 RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
                 BytesRef bytes = new BytesRef();
-                bytes.Bytes = new sbyte[1 << i];
+                bytes.Bytes = new byte[1 << i];
                 bytes.Length = 1 << i;
                 for (int j = 0; j < 4; j++)
                 {

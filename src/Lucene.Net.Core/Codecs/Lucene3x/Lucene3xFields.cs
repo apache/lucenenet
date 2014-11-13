@@ -304,23 +304,23 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             // Returns true if the unicode char is "after" the
             // surrogates in UTF16, ie >= U+E000 and <= U+FFFF:
-            internal bool IsHighBMPChar(sbyte[] b, int idx)
+            private bool IsHighBMPChar(byte[] b, int idx)
             {
-                return (b[idx] & UTF8_HIGH_BMP_LEAD) == UTF8_HIGH_BMP_LEAD;
+                return (((sbyte)b[idx]) & UTF8_HIGH_BMP_LEAD) == UTF8_HIGH_BMP_LEAD;
             }
 
             // Returns true if the unicode char in the UTF8 byte
             // sequence starting at idx encodes a char outside of
             // BMP (ie what would be a surrogate pair in UTF16):
-            internal bool IsNonBMPChar(sbyte[] b, int idx)
+            private bool IsNonBMPChar(byte[] b, int idx)
             {
-                return (b[idx] & UTF8_NON_BMP_LEAD) == UTF8_NON_BMP_LEAD;
+                return (((sbyte)b[idx]) & UTF8_NON_BMP_LEAD) == UTF8_NON_BMP_LEAD;
             }
 
-            internal readonly sbyte[] Scratch = new sbyte[4];
-            internal readonly BytesRef PrevTerm = new BytesRef();
-            internal readonly BytesRef ScratchTerm = new BytesRef();
-            internal int NewSuffixStart;
+            private readonly sbyte[] Scratch = new sbyte[4];
+            private readonly BytesRef PrevTerm = new BytesRef();
+            private readonly BytesRef ScratchTerm = new BytesRef();
+            private int NewSuffixStart;
 
             // Swap in S, in place of E:
             internal virtual bool SeekToNonBMP(SegmentTermEnum te, BytesRef term, int pos)
@@ -346,14 +346,14 @@ namespace Lucene.Net.Codecs.Lucene3x
                     term.Grow(4 + pos);
                 }
 
-                Scratch[0] = term.Bytes[pos];
-                Scratch[1] = term.Bytes[pos + 1];
-                Scratch[2] = term.Bytes[pos + 2];
+                Scratch[0] = (sbyte)term.Bytes[pos];
+                Scratch[1] = (sbyte)term.Bytes[pos + 1];
+                Scratch[2] = (sbyte)term.Bytes[pos + 2];
 
-                term.Bytes[pos] = unchecked((sbyte)0xf0);
-                term.Bytes[pos + 1] = unchecked((sbyte)0x90);
-                term.Bytes[pos + 2] = unchecked((sbyte)0x80);
-                term.Bytes[pos + 3] = unchecked((sbyte)0x80);
+                term.Bytes[pos] = unchecked((byte)0xf0);
+                term.Bytes[pos + 1] = unchecked((byte)0x90);
+                term.Bytes[pos + 2] = unchecked((byte)0x80);
+                term.Bytes[pos + 3] = unchecked((byte)0x80);
                 term.Length = 4 + pos;
 
                 if (DEBUG_SURROGATES)
@@ -406,9 +406,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 // Restore term:
                 term.Length = savLength;
-                term.Bytes[pos] = Scratch[0];
-                term.Bytes[pos + 1] = Scratch[1];
-                term.Bytes[pos + 2] = Scratch[2];
+                term.Bytes[pos] = (byte)Scratch[0];
+                term.Bytes[pos + 1] = (byte)Scratch[1];
+                term.Bytes[pos + 2] = (byte)Scratch[2];
 
                 return matches;
             }
@@ -494,7 +494,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 if (PrevTerm.Length > NewSuffixStart && IsNonBMPChar(PrevTerm.Bytes, NewSuffixStart) && IsHighBMPChar(ScratchTerm.Bytes, NewSuffixStart))
                 {
                     // Seek type 2 -- put 0xFF at this position:
-                    ScratchTerm.Bytes[NewSuffixStart] = unchecked((sbyte)0xff);
+                    ScratchTerm.Bytes[NewSuffixStart] = unchecked((byte)0xff);
                     ScratchTerm.Length = NewSuffixStart + 1;
 
                     if (DEBUG_SURROGATES)
@@ -676,13 +676,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                         Debug.Assert(ScratchTerm.Length >= upTo + 4);
 
                         int savLength = ScratchTerm.Length;
-                        Scratch[0] = ScratchTerm.Bytes[upTo];
-                        Scratch[1] = ScratchTerm.Bytes[upTo + 1];
-                        Scratch[2] = ScratchTerm.Bytes[upTo + 2];
+                        Scratch[0] = (sbyte)ScratchTerm.Bytes[upTo];
+                        Scratch[1] = (sbyte)ScratchTerm.Bytes[upTo + 1];
+                        Scratch[2] = (sbyte)ScratchTerm.Bytes[upTo + 2];
 
-                        ScratchTerm.Bytes[upTo] = UTF8_HIGH_BMP_LEAD;
-                        ScratchTerm.Bytes[upTo + 1] = unchecked((sbyte)0x80);
-                        ScratchTerm.Bytes[upTo + 2] = unchecked((sbyte)0x80);
+                        ScratchTerm.Bytes[upTo] = (byte)UTF8_HIGH_BMP_LEAD;
+                        ScratchTerm.Bytes[upTo + 1] = unchecked((byte)0x80);
+                        ScratchTerm.Bytes[upTo + 2] = unchecked((byte)0x80);
                         ScratchTerm.Length = upTo + 3;
 
                         if (DEBUG_SURROGATES)
@@ -694,9 +694,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                         // TODO: more efficient seek?
                         OuterInstance.TermsDict.SeekEnum(SeekTermEnum, new Term(fieldInfo.Name, ScratchTerm), true);
 
-                        ScratchTerm.Bytes[upTo] = Scratch[0];
-                        ScratchTerm.Bytes[upTo + 1] = Scratch[1];
-                        ScratchTerm.Bytes[upTo + 2] = Scratch[2];
+                        ScratchTerm.Bytes[upTo] = (byte)Scratch[0];
+                        ScratchTerm.Bytes[upTo + 1] = (byte)Scratch[1];
+                        ScratchTerm.Bytes[upTo + 2] = (byte)Scratch[2];
                         ScratchTerm.Length = savLength;
 
                         // Did we find a match?

@@ -148,10 +148,10 @@ namespace Lucene.Net.Index
 
             public override bool IncrementToken()
             {
-                bool hasNext = Input.IncrementToken();
+                bool hasNext = input.IncrementToken();
                 if (hasNext)
                 {
-                    PayloadAtt.Payload = new BytesRef(new sbyte[] { (sbyte)PayloadCount.IncrementAndGet() });
+                    PayloadAtt.Payload = new BytesRef(new[] { (byte)PayloadCount.IncrementAndGet() });
                 }
                 return hasNext;
             }
