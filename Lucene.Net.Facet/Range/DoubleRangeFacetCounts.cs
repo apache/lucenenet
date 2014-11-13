@@ -84,7 +84,7 @@ namespace Lucene.Net.Facet.Range
         ///  checked for the matching ranges.  The filter must be
         ///  random access (implement <seealso cref="DocIdSet#bits"/>). 
         /// </summary>
-        public DoubleRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, Filter fastMatchFilter, params DoubleRange[] ranges)
+        public DoubleRangeFacetCounts(string field, ValueSource valueSource, FacetsCollector hits, Filter fastMatchFilter, DoubleRange[] ranges)
             : base(field, ranges, fastMatchFilter)
         {
             Count(valueSource, hits.GetMatchingDocs);

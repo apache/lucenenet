@@ -1152,9 +1152,9 @@ namespace Lucene.Net.Facet.Range
                 : base(indexSearcher, facetsConfig, org)
             {
                 this.outerInstance = outerInstance;
-                this.vs = vs;
-                this.ranges = ranges;
-                this.fastMatchFilter = fastMatchFilter;
+                this.vs = valueSource;
+                this.ranges = doubleRanges;
+                this.fastMatchFilter = filter;
             }
 
 
