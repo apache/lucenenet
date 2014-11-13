@@ -153,7 +153,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(cat));
                 Assert.True(tr.GetOrdinal(cp) > 0, "category not found " + cp);
-                int level = cp.length;
+                int level = cp.Length;
                 int parentOrd = 0; // for root, parent is always virtual ROOT (ord=0)
                 FacetLabel path = null;
                 for (int i = 0; i < level; i++)
@@ -205,10 +205,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                             FacetLabel label = new FacetLabel(ff.dim, ff.path);
                             // add all prefixes to values
-                            int level = label.length;
+                            int level = label.Length;
                             while (level > 0)
                             {
-                                string s = FacetsConfig.PathToString(label.components, level);
+                                string s = FacetsConfig.PathToString(label.Components, level);
                                 values[s] = s;
                                 --level;
                             }

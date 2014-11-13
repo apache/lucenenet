@@ -79,7 +79,7 @@ namespace Lucene.Net.Facet
             // prepare searcher to search against
             IndexSearcher searcher = NewSearcher(ir);
 
-            FacetsCollector sfc = performSearch(tr, ir, searcher);
+            FacetsCollector sfc = PerformSearch(tr, ir, searcher);
 
             // Obtain facets results and hand-test them
             AssertCorrectResults(GetTaxonomyFacetCounts(tr, config, sfc));
@@ -98,7 +98,7 @@ namespace Lucene.Net.Facet
             // create and open an index writer
             RandomIndexWriter iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
-            TaxonomyWriter tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
+            var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
             FacetsConfig config = Config;
             config.SetIndexFieldName("Author", "$author");
@@ -113,7 +113,7 @@ namespace Lucene.Net.Facet
             // prepare searcher to search against
             IndexSearcher searcher = NewSearcher(ir);
 
-            FacetsCollector sfc = performSearch(tr, ir, searcher);
+            FacetsCollector sfc = PerformSearch(tr, ir, searcher);
 
             IDictionary<string, Facets> facetsMap = new Dictionary<string, Facets>();
             facetsMap["Author"] = GetTaxonomyFacetCounts(tr, config, sfc, "$author");
@@ -153,7 +153,7 @@ namespace Lucene.Net.Facet
             // prepare searcher to search against
             IndexSearcher searcher = NewSearcher(ir);
 
-            FacetsCollector sfc = performSearch(tr, ir, searcher);
+            FacetsCollector sfc = PerformSearch(tr, ir, searcher);
 
             IDictionary<string, Facets> facetsMap = new Dictionary<string, Facets>();
             Facets facets2 = GetTaxonomyFacetCounts(tr, config, sfc, "$music");
@@ -209,7 +209,7 @@ namespace Lucene.Net.Facet
             // prepare searcher to search against
             IndexSearcher searcher = NewSearcher(ir);
 
-            FacetsCollector sfc = performSearch(tr, ir, searcher);
+            FacetsCollector sfc = PerformSearch(tr, ir, searcher);
 
             IDictionary<string, Facets> facetsMap = new Dictionary<string, Facets>();
             facetsMap["Band"] = GetTaxonomyFacetCounts(tr, config, sfc, "$bands");
@@ -251,7 +251,7 @@ namespace Lucene.Net.Facet
             // prepare searcher to search against
             IndexSearcher searcher = NewSearcher(ir);
 
-            FacetsCollector sfc = performSearch(tr, ir, searcher);
+            FacetsCollector sfc = PerformSearch(tr, ir, searcher);
 
             IDictionary<string, Facets> facetsMap = new Dictionary<string, Facets>();
             Facets facets2 = GetTaxonomyFacetCounts(tr, config, sfc, "$music");
@@ -279,7 +279,7 @@ namespace Lucene.Net.Facet
         }
 
         
-        private static FacetsCollector performSearch(TaxonomyReader tr, IndexReader ir, IndexSearcher searcher)
+        private static FacetsCollector PerformSearch(TaxonomyReader tr, IndexReader ir, IndexSearcher searcher)
         {
             FacetsCollector fc = new FacetsCollector();
             FacetsCollector.Search(searcher, new MatchAllDocsQuery(), 10, fc);

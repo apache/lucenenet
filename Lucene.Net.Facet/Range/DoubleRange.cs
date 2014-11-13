@@ -44,52 +44,53 @@ namespace Lucene.Net.Facet.Range
 
         /// <summary>
         /// Minimum. </summary>
-        public readonly double min;
+        public readonly double Min;
 
         /// <summary>
         /// Maximum. </summary>
-        public readonly double max;
+        public readonly double Max;
 
         /// <summary>
         /// True if the minimum value is inclusive. </summary>
-        public readonly bool minInclusive;
+        public readonly bool MinInclusive;
 
         /// <summary>
         /// True if the maximum value is inclusive. </summary>
-        public readonly bool maxInclusive;
+        public readonly bool MaxInclusive;
 
+        private const double EPSILON = 1E-14;
         /// <summary>
         /// Create a DoubleRange. </summary>
         public DoubleRange(string label, double minIn, bool minInclusive, double maxIn, bool maxInclusive)
             : base(label)
         {
-            this.min = minIn;
-            this.max = maxIn;
-            this.minInclusive = minInclusive;
-            this.maxInclusive = maxInclusive;
+            this.Min = minIn;
+            this.Max = maxIn;
+            this.MinInclusive = minInclusive;
+            this.MaxInclusive = maxInclusive;
 
             // TODO: if DoubleDocValuesField used
             // NumericUtils.doubleToSortableLong format (instead of
             // Double.doubleToRawLongBits) we could do comparisons
             // in long space 
 
-            if (double.IsNaN(min))
+            if (double.IsNaN(Min))
             {
                 throw new System.ArgumentException("min cannot be NaN");
             }
             if (!minInclusive)
             {
-                minIn += double.Epsilon;
+                minIn += EPSILON;
             }
 
-            if (double.IsNaN(max))
+            if (double.IsNaN(Max))
             {
                 throw new System.ArgumentException("max cannot be NaN");
             }
             if (!maxInclusive)
             {
                 // Why no Math.nextDown?
-                maxIn = maxIn -= double.Epsilon;
+                maxIn = maxIn -= EPSILON;
             }
 
             if (minIn > maxIn)

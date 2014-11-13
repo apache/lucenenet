@@ -154,12 +154,12 @@ namespace Lucene.Net.Facet.Taxonomy
         /// the taxonomy has changed.
         /// </summary>
         /// <seealso cref= #openIfChanged(TaxonomyReader) </seealso>
-        protected internal abstract TaxonomyReader DoOpenIfChanged();
+        protected abstract TaxonomyReader DoOpenIfChanged();
 
         /// <summary>
         /// Throws <seealso cref="AlreadyClosedException"/> if this IndexReader is closed
         /// </summary>
-        protected internal void EnsureOpen()
+        protected void EnsureOpen()
         {
             if (RefCount <= 0)
             {

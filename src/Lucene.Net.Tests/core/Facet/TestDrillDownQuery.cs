@@ -248,11 +248,11 @@ namespace Lucene.Net.Facet
         [Test]
         public virtual void TestTermNonDefault()
         {
-            string aField = config.GetDimConfig("a").indexFieldName;
+            string aField = config.GetDimConfig("a").IndexFieldName;
             Term termA = DrillDownQuery.Term(aField, "a");
             Assert.AreEqual(new Term(aField, "a"), termA);
 
-            string bField = config.GetDimConfig("b").indexFieldName;
+            string bField = config.GetDimConfig("b").IndexFieldName;
             Term termB = DrillDownQuery.Term(bField, "b");
             Assert.AreEqual(new Term(bField, "b"), termB);
         }

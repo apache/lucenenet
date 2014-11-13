@@ -44,8 +44,8 @@ namespace Lucene.Net.Facet
 
         public override FacetResult GetTopChildren(int topN, string dim, params string[] path)
         {
-            Facets facets = dimToFacets[dim];
-            if (facets == null)
+            Facets facets;
+            if (!dimToFacets.TryGetValue(dim,out facets))
             {
                 if (defaultFacets == null)
                 {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Facet
                 // already add that dim:
                 foreach (FacetResult result in defaultFacets.GetAllDims(topN))
                 {
-                    if (dimToFacets.ContainsKey(result.dim) == false)
+                    if (dimToFacets.ContainsKey(result.Dim) == false)
                     {
                         results.Add(result);
                     }

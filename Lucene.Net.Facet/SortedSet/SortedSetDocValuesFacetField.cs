@@ -50,8 +50,8 @@
         public SortedSetDocValuesFacetField(string dim, string label)
             : base("dummy", TYPE)
         {
-            FacetField.verifyLabel(label);
-            FacetField.verifyLabel(dim);
+            FacetField.VerifyLabel(label);
+            FacetField.VerifyLabel(dim);
             this.Dim = dim;
             this.Label = label;
         }

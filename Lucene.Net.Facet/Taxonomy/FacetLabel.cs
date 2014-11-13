@@ -22,8 +22,8 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-    using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache; 
-    using NameHashIntCacheLRU = Lucene.Net.Facet.Taxonomy.WriterCache.NameHashIntCacheLRU; 
+    using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
+    using NameHashIntCacheLRU = Lucene.Net.Facet.Taxonomy.WriterCache.NameHashIntCacheLRU;
 
     /// <summary>
     /// Holds a sequence of string components, specifying the hierarchical name of a
@@ -51,11 +51,11 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <seealso cref="#subpath(int)"/>, therefore you should traverse the array up to
         /// <seealso cref="#length"/> for this path's components.
         /// </summary>
-        public readonly string[] components;
+        public readonly string[] Components;
 
         /// <summary>
         /// The number of components of this <seealso cref="FacetLabel"/>. </summary>
-        public readonly int length;
+        public readonly int Length;
 
         // Used by subpath
         private FacetLabel(FacetLabel copyFrom, int prefixLen)
@@ -63,17 +63,17 @@ namespace Lucene.Net.Facet.Taxonomy
             // while the code which calls this method is safe, at some point a test
             // tripped on AIOOBE in toString, but we failed to reproduce. adding the
             // assert as a safety check.
-            Debug.Assert(prefixLen >= 0 && prefixLen <= copyFrom.components.Length, "prefixLen cannot be negative nor larger than the given components' length: prefixLen=" + prefixLen + " components.length=" + copyFrom.components.Length);
-            this.components = copyFrom.components;
-            length = prefixLen;
+            Debug.Assert(prefixLen >= 0 && prefixLen <= copyFrom.Components.Length, "prefixLen cannot be negative nor larger than the given components' length: prefixLen=" + prefixLen + " components.length=" + copyFrom.Components.Length);
+            this.Components = copyFrom.Components;
+            Length = prefixLen;
         }
 
         /// <summary>
         /// Construct from the given path components. </summary>
         public FacetLabel(params string[] components)
         {
-            this.components = components;
-            length = components.Length;
+            this.Components = components;
+            Length = components.Length;
             CheckComponents();
         }
 
@@ -81,28 +81,28 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Construct from the dimension plus the given path components. </summary>
         public FacetLabel(string dim, string[] path)
         {
-            components = new string[1 + path.Length];
-            components[0] = dim;
-            Array.Copy(path, 0, components, 1, path.Length);
-            length = components.Length;
+            Components = new string[1 + path.Length];
+            Components[0] = dim;
+            Array.Copy(path, 0, Components, 1, path.Length);
+            Length = Components.Length;
             CheckComponents();
         }
 
         private void CheckComponents()
         {
             long len = 0;
-            foreach (string comp in components)
+            foreach (string comp in Components)
             {
                 if (string.IsNullOrEmpty(comp))
                 {
-                    throw new System.ArgumentException("empty or null components not allowed: " + Arrays.ToString(components));
+                    throw new System.ArgumentException("empty or null components not allowed: " + Arrays.ToString(Components));
                 }
                 len += comp.Length;
             }
-            len += components.Length - 1; // add separators
+            len += Components.Length - 1; // add separators
             if (len > MAX_CATEGORY_PATH_LENGTH)
             {
-                throw new System.ArgumentException("category path exceeds maximum allowed path length: max=" + MAX_CATEGORY_PATH_LENGTH + " len=" + len + " path=" + Arrays.ToString(components).Substring(0, 30) + "...");
+                throw new System.ArgumentException("category path exceeds maximum allowed path length: max=" + MAX_CATEGORY_PATH_LENGTH + " len=" + len + " path=" + Arrays.ToString(Components).Substring(0, 30) + "...");
             }
         }
 
@@ -112,10 +112,10 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public virtual int CompareTo(FacetLabel other)
         {
-            int len = length < other.length ? length : other.length;
+            int len = Length < other.Length ? Length : other.Length;
             for (int i = 0, j = 0; i < len; i++, j++)
             {
-                int cmp = components[i].CompareTo(other.components[j]);
+                int cmp = Components[i].CompareTo(other.Components[j]);
                 if (cmp < 0)
                 {
                     return -1; // this is 'before'
@@ -127,7 +127,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             // one is a prefix of the other
-            return length - other.length;
+            return Length - other.Length;
         }
 
         public override bool Equals(object obj)
@@ -138,16 +138,16 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             FacetLabel other = (FacetLabel)obj;
-            if (length != other.length)
+            if (Length != other.Length)
             {
                 return false; // not same length, cannot be equal
             }
 
             // CategoryPaths are more likely to differ at the last components, so start
             // from last-first
-            for (int i = length - 1; i >= 0; i--)
+            for (int i = Length - 1; i >= 0; i--)
             {
-                if (!components[i].Equals(other.components[i]))
+                if (!string.Equals(Components[i], other.Components[i]))
                 {
                     return false;
                 }
@@ -157,17 +157,12 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override int GetHashCode()
         {
-            if (length == 0)
+            if (Length == 0)
             {
                 return 0;
             }
 
-            int hash = length;
-            for (int i = 0; i < length; i++)
-            {
-                hash = hash * 31 + components[i].GetHashCode();
-            }
-            return hash;
+            return Arrays.GetHashCode(Components);
         }
 
         /// <summary>
@@ -179,15 +174,15 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public virtual long LongHashCode()
         {
-            if (length == 0)
+            if (Length == 0)
             {
                 return 0;
             }
 
-            long hash = length;
-            for (int i = 0; i < length; i++)
+            long hash = Length;
+            for (int i = 0; i < Length; i++)
             {
-                hash = hash * 65599 + components[i].GetHashCode();
+                hash = hash * 65599 + Components[i].GetHashCode();
             }
             return hash;
         }
@@ -196,7 +191,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Returns a sub-path of this path up to {@code length} components. </summary>
         public virtual FacetLabel Subpath(int len)
         {
-            if (len >= this.length || len < 0)
+            if (len >= this.Length || len < 0)
             {
                 return this;
             }
@@ -211,12 +206,12 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public override string ToString()
         {
-            if (length == 0)
+            if (Length == 0)
             {
                 return "FacetLabel: []";
             }
-            string[] parts = new string[length];
-            Array.Copy(components, 0, parts, 0, length);
+            string[] parts = new string[Length];
+            Array.Copy(Components, 0, parts, 0, Length);
             return "FacetLabel: [" + Arrays.ToString(parts) + "]";
         }
     }

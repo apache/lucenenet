@@ -161,7 +161,7 @@ namespace Lucene.Net.Facet
                 // merge a facet label in:
                 throw new Exception("cannot merge with custom Query");
             }
-            string indexedField = config.GetDimConfig(dim).indexFieldName;
+            string indexedField = config.GetDimConfig(dim).IndexFieldName;
 
             BooleanQuery bq = (BooleanQuery)q.Query;
             bq.Add(new TermQuery(Term(indexedField, dim, path)), Occur.SHOULD);
@@ -181,7 +181,7 @@ namespace Lucene.Net.Facet
                 Merge(dim, path);
                 return;
             }
-            string indexedField = config.GetDimConfig(dim).indexFieldName;
+            string indexedField = config.GetDimConfig(dim).IndexFieldName;
 
             BooleanQuery bq = new BooleanQuery(true); // disable coord
             bq.Add(new TermQuery(Term(indexedField, dim, path)), Occur.SHOULD);

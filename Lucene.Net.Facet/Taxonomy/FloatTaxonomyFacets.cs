@@ -52,7 +52,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 string dim = ent.Key;
                 FacetsConfig.DimConfig ft = ent.Value;
-                if (ft.hierarchical && ft.multiValued == false)
+                if (ft.Hierarchical && ft.MultiValued == false)
                 {
                     int dimRootOrd = TaxoReader.GetOrdinal(new FacetLabel(dim));
                     Debug.Assert(dimRootOrd > 0);
@@ -79,11 +79,11 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsConfig.DimConfig dimConfig = VerifyDim(dim);
             if (path.Length == 0)
             {
-                if (dimConfig.hierarchical && dimConfig.multiValued == false)
+                if (dimConfig.Hierarchical && dimConfig.MultiValued == false)
                 {
                     // ok: rolled up at search time
                 }
-                else if (dimConfig.requireDimCount && dimConfig.multiValued)
+                else if (dimConfig.RequireDimCount && dimConfig.MultiValued)
                 {
                     // ok: we indexed all ords at index time
                 }
@@ -152,9 +152,9 @@ namespace Lucene.Net.Facet.Taxonomy
                 return null;
             }
 
-            if (dimConfig.multiValued)
+            if (dimConfig.MultiValued)
             {
-                if (dimConfig.requireDimCount)
+                if (dimConfig.RequireDimCount)
                 {
                     sumValues = values[dimOrd];
                 }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 TopOrdAndFloatQueue.OrdAndValue ordAndValue = q.Pop();
                 FacetLabel child = TaxoReader.GetPath(ordAndValue.ord);
-                labelValues[i] = new LabelAndValue(child.components[cp.length], ordAndValue.value);
+                labelValues[i] = new LabelAndValue(child.Components[cp.Length], ordAndValue.value);
             }
 
             return new FacetResult(dim, path, sumValues, labelValues, childCount);

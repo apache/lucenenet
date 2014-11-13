@@ -182,8 +182,8 @@ namespace Lucene.Net.Facet.Taxonomy
                         if (pair.searcher.IndexReader.NumDocs > 0)
                         {
                             //System.out.println(pair.taxonomyReader.getSize());
-                            Assert.True(result.childCount > 0);
-                            Assert.True(result.labelValues.Length > 0);
+                            Assert.True(result.ChildCount > 0);
+                            Assert.True(result.LabelValues.Length > 0);
                         }
 
                         //if (VERBOSE) {
@@ -290,8 +290,8 @@ namespace Lucene.Net.Facet.Taxonomy
                         if (pair.searcher.IndexReader.NumDocs > 0)
                         {
                             //System.out.println(pair.taxonomyReader.getSize());
-                            Assert.True(result.childCount > 0);
-                            Assert.True(result.labelValues.Length > 0);
+                            Assert.True(result.ChildCount > 0);
+                            Assert.True(result.LabelValues.Length > 0);
                         }
 
                         //if (VERBOSE) {

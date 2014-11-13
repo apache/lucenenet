@@ -336,7 +336,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(cat));
                 Assert.True(dtr.GetOrdinal(cp) > 0, "category not found " + cp);
-                int level = cp.length;
+                int level = cp.Length;
                 int parentOrd = 0; // for root, parent is always virtual ROOT (ord=0)
                 FacetLabel path = new FacetLabel();
                 for (int i = 0; i < level; i++)
@@ -380,10 +380,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         FacetLabel cp = new FacetLabel(Convert.ToString(value / 1000), Convert.ToString(value / 10000), Convert.ToString(value / 100000), Convert.ToString(value));
                         int ord = tw.AddCategory(cp);
                         Assert.True(tw.GetParent(ord) != -1, "invalid parent for ordinal " + ord + ", category " + cp);
-                        string l1 = FacetsConfig.PathToString(cp.components, 1);
-                        string l2 = FacetsConfig.PathToString(cp.components, 2);
-                        string l3 = FacetsConfig.PathToString(cp.components, 3);
-                        string l4 = FacetsConfig.PathToString(cp.components, 4);
+                        string l1 = FacetsConfig.PathToString(cp.Components, 1);
+                        string l2 = FacetsConfig.PathToString(cp.Components, 2);
+                        string l3 = FacetsConfig.PathToString(cp.Components, 3);
+                        string l4 = FacetsConfig.PathToString(cp.Components, 4);
                         values[l1] = l1;
                         values[l2] = l2;
                         values[l3] = l3;

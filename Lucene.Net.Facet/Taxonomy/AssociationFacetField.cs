@@ -68,10 +68,10 @@ namespace Lucene.Net.Facet.Taxonomy
         public AssociationFacetField(BytesRef assoc, string dim, params string[] path)
             : base("dummy", TYPE)
         {
-            FacetField.verifyLabel(dim);
+            FacetField.VerifyLabel(dim);
             foreach (string label in path)
             {
-                FacetField.verifyLabel(label);
+                FacetField.VerifyLabel(label);
             }
             this.dim = dim;
             this.assoc = assoc;

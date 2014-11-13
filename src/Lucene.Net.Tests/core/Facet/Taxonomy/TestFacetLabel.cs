@@ -32,9 +32,9 @@ namespace Lucene.Net.Facet.Taxonomy
         [Test]
         public virtual void TestBasic()
         {
-            Assert.AreEqual(0, (new FacetLabel()).length);
-            Assert.AreEqual(1, (new FacetLabel("hello")).length);
-            Assert.AreEqual(2, (new FacetLabel("hello", "world")).length);
+            Assert.AreEqual(0, (new FacetLabel()).Length);
+            Assert.AreEqual(1, (new FacetLabel("hello")).Length);
+            Assert.AreEqual(2, (new FacetLabel("hello", "world")).Length);
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetLabel cp = new FacetLabel(components);
             for (int i = 0; i < components.Length; i++)
             {
-                Assert.AreEqual(i, Convert.ToInt32(cp.components[i]));
+                Assert.AreEqual(i, Convert.ToInt32(cp.Components[i]));
             }
         }
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // If we change this default later, we also need to change this
             // test.
             FacetLabel p = new FacetLabel();
-            Assert.AreEqual(0, p.length);
+            Assert.AreEqual(0, p.Length);
             Assert.AreEqual("FacetLabel: []", p.ToString());
         }
 
@@ -79,18 +79,18 @@ namespace Lucene.Net.Facet.Taxonomy
         public virtual void TestSubPath()
         {
             FacetLabel p = new FacetLabel("hi", "there", "man");
-            Assert.AreEqual(p.length, 3);
+            Assert.AreEqual(p.Length, 3);
 
             FacetLabel p1 = p.Subpath(2);
-            Assert.AreEqual(2, p1.length);
+            Assert.AreEqual(2, p1.Length);
             Assert.AreEqual("FacetLabel: [hi, there]", p1.ToString());
 
             p1 = p.Subpath(1);
-            Assert.AreEqual(1, p1.length);
+            Assert.AreEqual(1, p1.Length);
             Assert.AreEqual("FacetLabel: [hi]", p1.ToString());
 
             p1 = p.Subpath(0);
-            Assert.AreEqual(0, p1.length);
+            Assert.AreEqual(0, p1.Length);
             Assert.AreEqual("FacetLabel: []", p1.ToString());
 
             // with all the following lengths, the prefix should be the whole path 
@@ -98,7 +98,7 @@ namespace Lucene.Net.Facet.Taxonomy
             for (int i = 0; i < lengths.Length; i++)
             {
                 p1 = p.Subpath(lengths[i]);
-                Assert.AreEqual(3, p1.length);
+                Assert.AreEqual(3, p1.Length);
                 Assert.AreEqual("FacetLabel: [hi, there, man]", p1.ToString());
                 Assert.AreEqual(p, p1);
             }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public virtual void TestArrayConstructor()
         {
             FacetLabel p = new FacetLabel("hello", "world", "yo");
-            Assert.AreEqual(3, p.length);
+            Assert.AreEqual(3, p.Length);
             Assert.AreEqual("FacetLabel: [hello, world, yo]", p.ToString());
         }
 

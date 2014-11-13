@@ -141,7 +141,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 return "<null>";
             }
-            if (path.length == 0)
+            if (path.Length == 0)
             {
                 return "<empty>";
             }
@@ -311,7 +311,7 @@ namespace Lucene.Net.Facet.Taxonomy
             tw.Dispose();
             var tr = new DirectoryTaxonomyReader(indexDir);
             Assert.AreEqual(1, tr.Size);
-            Assert.AreEqual(0, tr.GetPath(0).length);
+            Assert.AreEqual(0, tr.GetPath(0).Length);
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.ParallelTaxonomyArrays.Parents()[0]);
             Assert.AreEqual(0, tr.GetOrdinal(new FacetLabel()));
             tr.Dispose(true);
@@ -332,7 +332,7 @@ namespace Lucene.Net.Facet.Taxonomy
             tw.Commit();
             var tr = new DirectoryTaxonomyReader(indexDir);
             Assert.AreEqual(1, tr.Size);
-            Assert.AreEqual(0, tr.GetPath(0).length);
+            Assert.AreEqual(0, tr.GetPath(0).Length);
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.ParallelTaxonomyArrays.Parents()[0]);
             Assert.AreEqual(0, tr.GetOrdinal(new FacetLabel()));
             tw.Dispose();
@@ -434,7 +434,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     Fail("Parent of " + ordinal + " is " + parentOrdinal + ", but this is not a valid category.");
                 }
                 // verify that the parent is indeed my parent, according to the strings
-                if (!me.Subpath(me.length - 1).Equals(parent))
+                if (!me.Subpath(me.Length - 1).Equals(parent))
                 {
                     Fail("Got parent " + parentOrdinal + " for ordinal " + ordinal + " but categories are " + Showcat(parent) + " and " + Showcat(me) + " respectively.");
                 }
@@ -507,7 +507,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 // verify that the parent is indeed my parent, according to the
                 // strings
-                if (!me.Subpath(me.length - 1).Equals(parent))
+                if (!me.Subpath(me.Length - 1).Equals(parent))
                 {
                     Fail("Got parent " + parentOrdinal + " for ordinal " + ordinal + " but categories are " + Showcat(parent) + " and " + Showcat(me) + " respectively.");
                 }
@@ -1068,7 +1068,6 @@ namespace Lucene.Net.Facet.Taxonomy
         /// taxonomy index. Calling it after something else was already added to the
         /// taxonomy index will surely have this method fail.
         /// </summary>
-        [Test]
         public static void FillTaxonomyCheckPaths(TaxonomyWriter tw)
         {
             for (int i = 0; i < categories.Length; i++)

@@ -58,7 +58,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// Default maximum load factor. </summary>
         public const float DefaultLoadFactor = 0.15f;
 
-        internal const char TERMINATOR_CHAR = (char)0xffff;
+        public const char TERMINATOR_CHAR = (char)0xffff;
         private const int COLLISION = -5;
 
         private HashArray[] hashArrays;
@@ -210,13 +210,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
 
             CollisionMap oldCollisionMap = this.collisionMap;
-            this.collisionMap = new CollisionMap(oldCollisionMap.capacity(), this.labelRepository);
+            this.collisionMap = new CollisionMap(oldCollisionMap.Capacity(), this.labelRepository);
             this.threshold = (int)(this.capacity * this.loadFactor);
 
             var it = oldCollisionMap.entryIterator();
-            while (it.HasNext())
+
+            while (it.MoveNext())
             {
-                var e = it.Current();
+                var e = it.Current;
                 AddLabelOffset(StringHashCode(this.labelRepository, e.offset), e.cid, e.offset);
             }
         }
@@ -395,7 +396,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// Opens the file and reloads the CompactLabelToOrdinal. The file it expects
         /// is generated from the <seealso cref="#flush(File)"/> command.
         /// </summary>
-        internal static CompactLabelToOrdinal Open(string file, float loadFactor, int numHashArrays)
+        public static CompactLabelToOrdinal Open(string file, float loadFactor, int numHashArrays)
         {
             /// <summary>
             /// Part of the file is the labelRepository, which needs to be rehashed
@@ -481,7 +482,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         }
 
-        internal virtual void Flush(Stream stream)
+        public virtual void Flush(Stream stream)
         {
 
             OutputStreamDataOutput dos = new OutputStreamDataOutput(stream);

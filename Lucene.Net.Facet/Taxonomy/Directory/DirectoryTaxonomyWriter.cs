@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
@@ -438,7 +439,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 DirectoryReader reader = readerManager.Acquire();
                 try
                 {
-                    BytesRef catTerm = new BytesRef(FacetsConfig.PathToString(categoryPath.components, categoryPath.length));
+                    BytesRef catTerm = new BytesRef(FacetsConfig.PathToString(categoryPath.Components, categoryPath.Length));
                     TermsEnum termsEnum = null; // reuse
                     DocsEnum docs = null; // reuse
                     foreach (AtomicReaderContext ctx in reader.Leaves)
@@ -514,16 +515,16 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // ordinal as payloads (rather than a stored field; payloads can be
             // more efficiently read into memory in bulk by LuceneTaxonomyReader)
             int parent;
-            if (cp.length > 1)
+            if (cp.Length > 1)
             {
-                FacetLabel parentPath = cp.Subpath(cp.length - 1);
+                FacetLabel parentPath = cp.Subpath(cp.Length - 1);
                 parent = FindCategory(parentPath);
                 if (parent < 0)
                 {
                     parent = InternalAddCategory(parentPath);
                 }
             }
-            else if (cp.length == 1)
+            else if (cp.Length == 1)
             {
                 parent = TaxonomyReader.ROOT_ORDINAL;
             }
@@ -567,7 +568,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Document d = new Document();
             d.Add(parentStreamField);
 
-            fullPathField.StringValue = FacetsConfig.PathToString(categoryPath.components, categoryPath.length);
+            fullPathField.StringValue = FacetsConfig.PathToString(categoryPath.Components, categoryPath.Length);
             d.Add(fullPathField);
 
             // Note that we do no pass an Analyzer here because the fields that are
@@ -986,7 +987,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             /// needed. Calling it will also free all resources that the map might
             /// be holding (such as temporary disk space), other than the returned int[].
             /// </summary>
-            Dictionary<int,int> Map { get; }
+            int[] Map { get; }
         }
 
         /// <summary>
@@ -994,27 +995,37 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public sealed class MemoryOrdinalMap : OrdinalMap
         {
-            internal Dictionary<int, int> map;
+            internal int[] map;
 
             /// <summary>
             /// Sole constructor. 
             /// </summary>
             public MemoryOrdinalMap()
             {
-                map = new Dictionary<int,int>();
+                map = new int[] { };
             }
 
             public int Size { set; private get; }
 
             public void AddMapping(int origOrdinal, int newOrdinal)
             {
-                map[origOrdinal] = newOrdinal;
+                if (map.Length - 1 >= origOrdinal)
+                {
+                    map[origOrdinal] = newOrdinal;
+                }
+                else
+                {
+                    Array.Resize(ref map, origOrdinal + 1);
+                    map[origOrdinal] = newOrdinal;
+                }
+
+
             }
 
             public void AddDone() // nothing to do
             {
             }
-            public Dictionary<int, int> Map
+            public int[] Map
             {
                 get
                 {
@@ -1064,9 +1075,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
 
-            Dictionary<int,int> map = null;
+            int[] map = null;
 
-            public Dictionary<int,int> Map
+            public int[] Map
             {
                 get
                 {
@@ -1078,11 +1089,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                     var ifs = new FileStream(tmpfile, FileMode.OpenOrCreate, FileAccess.Read);
                     var @in = new InputStreamDataInput(ifs);
-                    map = new Dictionary<int, int>(@in.ReadInt());
+                    map = new int[@in.ReadInt()];
                     // NOTE: The current code assumes here that the map is complete,
                     // i.e., every ordinal gets one and exactly one value. Otherwise,
                     // we may run into an EOF here, or vice versa, not read everything.
-                    for (int i = 0; i < map.Count; i++)
+                    for (int i = 0; i < map.Length; i++)
                     {
                         int origordinal = @in.ReadInt();
                         int newordinal = @in.ReadInt();

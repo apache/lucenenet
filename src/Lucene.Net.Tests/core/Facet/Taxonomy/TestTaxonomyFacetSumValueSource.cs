@@ -486,8 +486,8 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets1 = GetTaxonomyFacetCounts(taxoReader, config, fc);
             Facets facets2 = new TaxonomyFacetSumValueSource(new DocValuesOrdinalsReader("$b"), taxoReader, config, fc, new TaxonomyFacetSumValueSource.ScoreValueSource());
 
-            Assert.AreEqual(r.MaxDoc, (int)facets1.GetTopChildren(10, "a").value);
-            Assert.AreEqual(r.MaxDoc, (double)facets2.GetTopChildren(10, "b").value, 1E-10);
+            Assert.AreEqual(r.MaxDoc, (int)facets1.GetTopChildren(10, "a").Value);
+            Assert.AreEqual(r.MaxDoc, (double)facets2.GetTopChildren(10, "b").Value, 1E-10);
             IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 

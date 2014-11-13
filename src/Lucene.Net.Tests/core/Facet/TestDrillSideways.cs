@@ -312,7 +312,7 @@ namespace Lucene.Net.Facet
 
             // Writes facet ords to a separate directory from the
             // main index:
-            DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
+            var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
 
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("dim", true);
@@ -1211,7 +1211,7 @@ namespace Lucene.Net.Facet
 
                 if (fr != null)
                 {
-                    foreach (LabelAndValue labelValue in fr.labelValues)
+                    foreach (LabelAndValue labelValue in fr.LabelValues)
                     {
                         actualValues[labelValue.label] = (int)labelValue.value;
                         if (VERBOSE)
@@ -1220,7 +1220,7 @@ namespace Lucene.Net.Facet
                             idx++;
                         }
                     }
-                    Assert.AreEqual(expected.UniqueCounts[dim], fr.childCount, "dim=" + dim);
+                    Assert.AreEqual(expected.UniqueCounts[dim], fr.ChildCount, "dim=" + dim);
                 }
 
                 if (topN < dimValues[dim].Length)
@@ -1245,7 +1245,7 @@ namespace Lucene.Net.Facet
 
                     if (fr != null)
                     {
-                        Assert.AreEqual(topNIDs.Length, fr.labelValues.Length);
+                        Assert.AreEqual(topNIDs.Length, fr.LabelValues.Length);
                     }
                     else
                     {
@@ -1254,12 +1254,12 @@ namespace Lucene.Net.Facet
                     for (int i = 0; i < topNIDs.Length; i++)
                     {
                         int expectedOrd = topNIDs[i];
-                        Assert.AreEqual(expected.Counts[dim][expectedOrd], (int)fr.labelValues[i].value);
+                        Assert.AreEqual(expected.Counts[dim][expectedOrd], (int)fr.LabelValues[i].value);
                         if (isSortedSetDV)
                         {
                             // Tie-break facet labels are only in unicode
                             // order with SortedSetDVFacets:
-                            Assert.AreEqual("value @ idx=" + i, dimValues[dim][expectedOrd], fr.labelValues[i].label);
+                            Assert.AreEqual("value @ idx=" + i, dimValues[dim][expectedOrd], fr.LabelValues[i].label);
                         }
                     }
                 }

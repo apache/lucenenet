@@ -163,7 +163,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// through <seealso cref="#setCacheSize(int)"/>, it will affect both reader instances.
         /// </para>
         /// </summary>
-        protected internal override TaxonomyReader DoOpenIfChanged()
+        protected override TaxonomyReader DoOpenIfChanged()
         {
             EnsureOpen();
 
@@ -287,7 +287,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         public override int GetOrdinal(FacetLabel cp)
         {
             EnsureOpen();
-            if (cp.length == 0)
+            if (cp.Length == 0)
             {
                 return ROOT_ORDINAL;
             }
@@ -319,7 +319,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // If we're still here, we have a cache miss. We need to fetch the
             // value from disk, and then also put it in the cache:
             int ret = TaxonomyReader.INVALID_ORDINAL;
-            DocsEnum docs = MultiFields.GetTermDocsEnum(indexReader, null, Consts.FULL, new BytesRef(FacetsConfig.PathToString(cp.components, cp.length)), 0);
+            DocsEnum docs = MultiFields.GetTermDocsEnum(indexReader, null, Consts.FULL, new BytesRef(FacetsConfig.PathToString(cp.Components, cp.Length)), 0);
             if (docs != null && docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
                 ret = docs.DocID();
@@ -426,7 +426,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         sb.Append(i + ": NULL!! \n");
                         continue;
                     }
-                    if (category.length == 0)
+                    if (category.Length == 0)
                     {
                         sb.Append(i + ": EMPTY STRING!! \n");
                         continue;

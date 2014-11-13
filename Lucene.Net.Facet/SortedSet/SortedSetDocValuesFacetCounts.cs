@@ -123,8 +123,8 @@ namespace Lucene.Net.Facet.SortedSet
                         {
                             reuse = new TopOrdAndIntQueue.OrdAndValue();
                         }
-                        reuse.ord = ord;
-                        reuse.value = counts[ord];
+                        reuse.Ord = ord;
+                        reuse.Value = counts[ord];
                         if (q == null)
                         {
                             // Lazy init, so we don't create this for the
@@ -134,7 +134,7 @@ namespace Lucene.Net.Facet.SortedSet
                         reuse = q.InsertWithOverflow(reuse);
                         if (q.Size() == topN)
                         {
-                            bottomCount = q.Top().value;
+                            bottomCount = q.Top().Value;
                         }
                     }
                 }
@@ -150,9 +150,9 @@ namespace Lucene.Net.Facet.SortedSet
             {
                 TopOrdAndIntQueue.OrdAndValue ordAndValue = q.Pop();
                 var term = new BytesRef();
-                dv.LookupOrd(ordAndValue.ord, term);
+                dv.LookupOrd(ordAndValue.Ord, term);
                 string[] parts = FacetsConfig.StringToPath(term.Utf8ToString());
-                labelValues[i] = new LabelAndValue(parts[1], ordAndValue.value);
+                labelValues[i] = new LabelAndValue(parts[1], ordAndValue.Value);
             }
 
             return new FacetResult(dim, new string[0], dimCount, labelValues, childCount);
@@ -183,13 +183,13 @@ namespace Lucene.Net.Facet.SortedSet
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
 
-                AtomicReader reader = hits.context.AtomicReader;
+                var reader = hits.context.AtomicReader;
                 //System.out.println("  reader=" + reader);
                 // LUCENE-5090: make sure the provided reader context "matches"
                 // the top-level reader passed to the
                 // SortedSetDocValuesReaderState, else cryptic
                 // AIOOBE can happen:
-                if (ReaderUtil.GetTopLevelContext(hits.context).Reader != origReader)
+                if (!Equals(ReaderUtil.GetTopLevelContext(hits.context).Reader, origReader))
                 {
                     throw new ThreadStateException("the SortedSetDocValuesReaderState provided to this class does not match the reader being searched; you must create a new SortedSetDocValuesReaderState every time you open a new IndexReader");
                 }
@@ -331,17 +331,17 @@ namespace Lucene.Net.Facet.SortedSet
 
             public virtual int Compare(FacetResult a, FacetResult b)
             {
-                if ((int)a.value > (int)b.value)
+                if ((int)a.Value > (int)b.Value)
                 {
                     return -1;
                 }
-                else if ((int)b.value > (int)a.value)
+                else if ((int)b.Value > (int)a.Value)
                 {
                     return 1;
                 }
                 else
                 {
-                    return a.dim.CompareTo(b.dim);
+                    return a.Dim.CompareTo(b.Dim);
                 }
             }
         }

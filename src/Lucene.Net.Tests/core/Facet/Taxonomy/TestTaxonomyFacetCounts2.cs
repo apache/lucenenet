@@ -293,14 +293,14 @@ namespace Lucene.Net.Facet.Taxonomy
             searcher.Search(q, sfc);
             Facets facets = GetTaxonomyFacetCounts(taxoReader, Config, sfc);
             FacetResult result = facets.GetTopChildren(NUM_CHILDREN_CP_A, CP_A);
-            Assert.AreEqual(-1, (int)result.value);
-            foreach (LabelAndValue labelValue in result.labelValues)
+            Assert.AreEqual(-1, (int)result.Value);
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(termExpectedCounts[CP_A + "/" + labelValue.label], labelValue.value);
             }
             result = facets.GetTopChildren(NUM_CHILDREN_CP_B, CP_B);
-            Assert.AreEqual(termExpectedCounts[CP_B], result.value);
-            foreach (LabelAndValue labelValue in result.labelValues)
+            Assert.AreEqual(termExpectedCounts[CP_B], result.Value);
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(termExpectedCounts[CP_B + "/" + labelValue.label], labelValue.value);
             }
@@ -321,9 +321,9 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets = GetTaxonomyFacetCounts(taxoReader, Config, sfc);
 
             FacetResult result = facets.GetTopChildren(NUM_CHILDREN_CP_A, CP_A);
-            Assert.AreEqual(-1, (int)result.value);
+            Assert.AreEqual(-1, (int)result.Value);
             int prevValue = int.MaxValue;
-            foreach (LabelAndValue labelValue in result.labelValues)
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.label], labelValue.value);
                 Assert.True((int)labelValue.value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.value + " prevValue=" + prevValue);
@@ -331,9 +331,9 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             result = facets.GetTopChildren(NUM_CHILDREN_CP_B, CP_B);
-            Assert.AreEqual(allExpectedCounts[CP_B], result.value);
+            Assert.AreEqual(allExpectedCounts[CP_B], result.Value);
             prevValue = int.MaxValue;
-            foreach (LabelAndValue labelValue in result.labelValues)
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.label], labelValue.value);
                 Assert.True((int)labelValue.value <= prevValue, "wrong sort order of sub results: labelValue.value=" + labelValue.value + " prevValue=" + prevValue);
@@ -356,14 +356,14 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets = GetTaxonomyFacetCounts(taxoReader, Config, sfc);
 
             FacetResult result = facets.GetTopChildren(int.MaxValue, CP_A);
-            Assert.AreEqual(-1, (int)result.value);
-            foreach (LabelAndValue labelValue in result.labelValues)
+            Assert.AreEqual(-1, (int)result.Value);
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(allExpectedCounts[CP_A + "/" + labelValue.label], labelValue.value);
             }
             result = facets.GetTopChildren(int.MaxValue, CP_B);
-            Assert.AreEqual(allExpectedCounts[CP_B], result.value);
-            foreach (LabelAndValue labelValue in result.labelValues)
+            Assert.AreEqual(allExpectedCounts[CP_B], result.Value);
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.label], labelValue.value);
             }
@@ -384,14 +384,14 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets = GetTaxonomyFacetCounts(taxoReader, Config, sfc);
 
             FacetResult result = facets.GetTopChildren(NUM_CHILDREN_CP_C, CP_C);
-            Assert.AreEqual(allExpectedCounts[CP_C], result.value);
-            foreach (LabelAndValue labelValue in result.labelValues)
+            Assert.AreEqual(allExpectedCounts[CP_C], result.Value);
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(allExpectedCounts[CP_C + "/" + labelValue.label], labelValue.value);
             }
             result = facets.GetTopChildren(NUM_CHILDREN_CP_D, CP_D);
-            Assert.AreEqual(allExpectedCounts[CP_C], result.value);
-            foreach (LabelAndValue labelValue in result.labelValues)
+            Assert.AreEqual(allExpectedCounts[CP_C], result.Value);
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(allExpectedCounts[CP_D + "/" + labelValue.label], labelValue.value);
             }

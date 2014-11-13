@@ -592,8 +592,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             while (roots.Count > 0)
             {
                 FacetLabel root = taxoReader.GetPath(it.Next());
-                Assert.AreEqual(1, root.length);
-                Assert.True(roots.Remove(root.components[0]));
+                Assert.AreEqual(1, root.Length);
+                Assert.True(roots.Remove(root.Components[0]));
             }
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, it.Next());
 
@@ -607,8 +607,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 while ((child = it.Next()) != TaxonomyReader.INVALID_ORDINAL)
                 {
                     FacetLabel path = taxoReader.GetPath(child);
-                    Assert.AreEqual(2, path.length);
-                    Assert.AreEqual(path.components[0], i == 0 ? "a" : "b");
+                    Assert.AreEqual(2, path.Length);
+                    Assert.AreEqual(path.Components[0], i == 0 ? "a" : "b");
                     ++numChildren;
                 }
                 int expected = i == 0 ? numA : numB;

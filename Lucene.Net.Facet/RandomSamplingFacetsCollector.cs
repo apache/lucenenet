@@ -278,34 +278,34 @@ namespace Lucene.Net.Facet
                 return res;
             }
 
-            LabelAndValue[] fixedLabelValues = new LabelAndValue[res.labelValues.Length];
+            LabelAndValue[] fixedLabelValues = new LabelAndValue[res.LabelValues.Length];
             IndexReader reader = searcher.IndexReader;
-            DimConfig dimConfig = config.GetDimConfig(res.dim);
+            DimConfig dimConfig = config.GetDimConfig(res.Dim);
 
             // +2 to prepend dimension, append child label
-            string[] childPath = new string[res.path.Length + 2];
-            childPath[0] = res.dim;
+            string[] childPath = new string[res.Path.Length + 2];
+            childPath[0] = res.Dim;
 
-            Array.Copy(res.path, 0, childPath, 1, res.path.Length); // reuse
+            Array.Copy(res.Path, 0, childPath, 1, res.Path.Length); // reuse
 
-            for (int i = 0; i < res.labelValues.Length; i++)
+            for (int i = 0; i < res.LabelValues.Length; i++)
             {
-                childPath[res.path.Length + 1] = res.labelValues[i].label;
+                childPath[res.Path.Length + 1] = res.LabelValues[i].label;
                 string fullPath = FacetsConfig.PathToString(childPath, childPath.Length);
-                int max = reader.DocFreq(new Term(dimConfig.indexFieldName, fullPath));
-                int correctedCount = (int)((double)res.labelValues[i].value / samplingRate);
+                int max = reader.DocFreq(new Term(dimConfig.IndexFieldName, fullPath));
+                int correctedCount = (int)((double)res.LabelValues[i].value / samplingRate);
                 correctedCount = Math.Min(max, correctedCount);
-                fixedLabelValues[i] = new LabelAndValue(res.labelValues[i].label, correctedCount);
+                fixedLabelValues[i] = new LabelAndValue(res.LabelValues[i].label, correctedCount);
             }
 
             // cap the total count on the total number of non-deleted documents in the reader
-            int correctedTotalCount = (int)res.value;
+            int correctedTotalCount = (int)res.Value;
             if (correctedTotalCount > 0)
             {
-                correctedTotalCount = Math.Min(reader.NumDocs, (int)((double)res.value / samplingRate));
+                correctedTotalCount = Math.Min(reader.NumDocs, (int)((double)res.Value / samplingRate));
             }
 
-            return new FacetResult(res.dim, res.path, correctedTotalCount, fixedLabelValues, res.childCount);
+            return new FacetResult(res.Dim, res.Path, correctedTotalCount, fixedLabelValues, res.ChildCount);
         }
 
         /// <summary>

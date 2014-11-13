@@ -135,7 +135,7 @@ namespace Lucene.Net.Facet
         {
             foreach (FacetResult result in results)
             {
-                SortTies(result.labelValues);
+                SortTies(result.LabelValues);
             }
         }
 
@@ -233,11 +233,11 @@ namespace Lucene.Net.Facet
 
             public virtual int Compare(FacetResult a, FacetResult b)
             {
-                if ((double)a.value > (double)b.value)
+                if ((double)a.Value > (double)b.Value)
                 {
                     return -1;
                 }
-                else if ((double)b.value > (double)a.value)
+                else if ((double)b.Value > (double)a.Value)
                 {
                     return 1;
                 }
@@ -256,17 +256,17 @@ namespace Lucene.Net.Facet
             IDictionary<string, FacetResult> aByDim = new Dictionary<string, FacetResult>();
             for (int i = 0; i < a.Count; i++)
             {
-                Assert.True((float)a[i].value <= lastValue);
-                lastValue = (float)a[i].value;
-                aByDim[a[i].dim] = a[i];
+                Assert.True((float)a[i].Value <= lastValue);
+                lastValue = (float)a[i].Value;
+                aByDim[a[i].Dim] = a[i];
             }
             lastValue = float.PositiveInfinity;
             IDictionary<string, FacetResult> bByDim = new Dictionary<string, FacetResult>();
             for (int i = 0; i < b.Count; i++)
             {
-                bByDim[b[i].dim] = b[i];
-                Assert.True((float)b[i].value <= lastValue);
-                lastValue = (float)b[i].value;
+                bByDim[b[i].Dim] = b[i];
+                Assert.True((float)b[i].Value <= lastValue);
+                lastValue = (float)b[i].Value;
             }
             foreach (string dim in aByDim.Keys)
             {
@@ -277,15 +277,15 @@ namespace Lucene.Net.Facet
         [Test]
         protected internal virtual void AssertFloatValuesEquals(FacetResult a, FacetResult b)
         {
-            Assert.AreEqual(a.dim, b.dim);
-            Assert.True(Arrays.Equals(a.path, b.path));
-            Assert.AreEqual(a.childCount, b.childCount);
-            Assert.AreEqual((float)a.value, (float)b.value, (float)a.value / 1e5);
-            Assert.AreEqual(a.labelValues.Length, b.labelValues.Length);
-            for (int i = 0; i < a.labelValues.Length; i++)
+            Assert.AreEqual(a.Dim, b.Dim);
+            Assert.True(Arrays.Equals(a.Path, b.Path));
+            Assert.AreEqual(a.ChildCount, b.ChildCount);
+            Assert.AreEqual((float)a.Value, (float)b.Value, (float)a.Value / 1e5);
+            Assert.AreEqual(a.LabelValues.Length, b.LabelValues.Length);
+            for (int i = 0; i < a.LabelValues.Length; i++)
             {
-                Assert.AreEqual(a.labelValues[i].label, b.labelValues[i].label);
-                Assert.AreEqual((float)a.labelValues[i].value, (float)b.labelValues[i].value, (float)a.labelValues[i].value / 1e5);
+                Assert.AreEqual(a.LabelValues[i].label, b.LabelValues[i].label);
+                Assert.AreEqual((float)a.LabelValues[i].value, (float)b.LabelValues[i].value, (float)a.LabelValues[i].value / 1e5);
             }
         }
     }

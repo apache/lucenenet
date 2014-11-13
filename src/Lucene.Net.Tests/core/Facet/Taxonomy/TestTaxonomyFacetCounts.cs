@@ -353,8 +353,8 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             FacetResult result = facets.GetTopChildren(10, "a");
-            Assert.AreEqual(1, result.labelValues.Length);
-            Assert.AreEqual(1, (int)result.labelValues[0].value);
+            Assert.AreEqual(1, result.LabelValues.Length);
+            Assert.AreEqual(1, (int)result.LabelValues[0].value);
 
             IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
         }
@@ -431,9 +431,9 @@ namespace Lucene.Net.Facet.Taxonomy
             searcher.Search(new MatchAllDocsQuery(), c);
 
             Facets facets = GetTaxonomyFacetCounts(taxoReader, config, c);
-            Assert.AreEqual(1, facets.GetTopChildren(10, "dim").value);
-            Assert.AreEqual(1, facets.GetTopChildren(10, "dim2").value);
-            Assert.AreEqual(1, facets.GetTopChildren(10, "dim3").value);
+            Assert.AreEqual(1, facets.GetTopChildren(10, "dim").Value);
+            Assert.AreEqual(1, facets.GetTopChildren(10, "dim2").Value);
+            Assert.AreEqual(1, facets.GetTopChildren(10, "dim3").Value);
             try
             {
                 Assert.AreEqual(1, facets.GetSpecificValue("dim"));
@@ -490,9 +490,9 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets = GetTaxonomyFacetCounts(taxoReader, config, c);
 
             FacetResult result = facets.GetTopChildren(int.MaxValue, "dim");
-            Assert.AreEqual(numLabels, result.labelValues.Length);
+            Assert.AreEqual(numLabels, result.LabelValues.Length);
             var allLabels = new HashSet<string>();
-            foreach (LabelAndValue labelValue in result.labelValues)
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 allLabels.Add(labelValue.label);
                 Assert.AreEqual(1, (int)labelValue.value);
@@ -582,8 +582,8 @@ namespace Lucene.Net.Facet.Taxonomy
             NewSearcher(r).Search(new MatchAllDocsQuery(), sfc);
             Facets facets1 = GetTaxonomyFacetCounts(taxoReader, config, sfc);
             Facets facets2 = GetTaxonomyFacetCounts(taxoReader, config, sfc, "$b");
-            Assert.AreEqual(r.MaxDoc, (int)facets1.GetTopChildren(10, "a").value);
-            Assert.AreEqual(r.MaxDoc, (int)facets2.GetTopChildren(10, "b").value);
+            Assert.AreEqual(r.MaxDoc, (int)facets1.GetTopChildren(10, "a").Value);
+            Assert.AreEqual(r.MaxDoc, (int)facets2.GetTopChildren(10, "b").Value);
             IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
@@ -613,7 +613,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets = GetTaxonomyFacetCounts(taxoReader, config, sfc);
             foreach (FacetResult result in facets.GetAllDims(10))
             {
-                Assert.AreEqual(r.NumDocs, (int)result.value);
+                Assert.AreEqual(r.NumDocs, (int)result.Value);
             }
 
             IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
@@ -673,7 +673,7 @@ namespace Lucene.Net.Facet.Taxonomy
             NewSearcher(r).Search(new MatchAllDocsQuery(), sfc);
             Facets facets = GetTaxonomyFacetCounts(taxoReader, config, sfc);
 
-            Assert.AreEqual(10, facets.GetTopChildren(2, "a").childCount);
+            Assert.AreEqual(10, facets.GetTopChildren(2, "a").ChildCount);
 
             IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
@@ -733,8 +733,8 @@ namespace Lucene.Net.Facet.Taxonomy
             indexSearcher.Search(q, sfc);
             Facets facets = GetTaxonomyFacetCounts(taxoReader, config, sfc);
             FacetResult result = facets.GetTopChildren(10, "A");
-            Assert.AreEqual(2, result.labelValues.Length, "wrong number of children");
-            foreach (LabelAndValue labelValue in result.labelValues)
+            Assert.AreEqual(2, result.LabelValues.Length, "wrong number of children");
+            foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 Assert.AreEqual(2, (int)labelValue.value, "wrong weight for child " + labelValue.label);
             }

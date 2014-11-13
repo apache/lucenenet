@@ -86,7 +86,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     numImmediateChildren++;
                 }
                 FacetLabel cp = r.GetPath(child);
-                @out.WriteLine("/" + cp.components[0] + ": " + numImmediateChildren + " immediate children; " + (1 + CountAllChildren(r, child)) + " total categories");
+                @out.WriteLine("/" + cp.Components[0] + ": " + numImmediateChildren + " immediate children; " + (1 + CountAllChildren(r, child)) + " total categories");
                 if (printTree)
                 {
                     PrintAllChildren(@out, r, child, "  ", 1);
@@ -112,7 +112,7 @@ namespace Lucene.Net.Facet.Taxonomy
             int child;
             while ((child = it.Next()) != TaxonomyReader.INVALID_ORDINAL)
             {
-                @out.WriteLine(indent + "/" + r.GetPath(child).components[depth]);
+                @out.WriteLine(indent + "/" + r.GetPath(child).Components[depth]);
                 PrintAllChildren(@out, r, child, indent + "  ", depth + 1);
             }
         }

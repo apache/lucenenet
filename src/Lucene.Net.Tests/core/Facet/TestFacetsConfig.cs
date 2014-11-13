@@ -89,8 +89,8 @@ namespace Lucene.Net.Facet
 
             Facets facets = GetTaxonomyFacetCounts(taxoReader, facetsConfig, fc);
             FacetResult res = facets.GetTopChildren(10, "a");
-            Assert.AreEqual(1, res.labelValues.Length);
-            Assert.AreEqual(2, res.labelValues[0].value);
+            Assert.AreEqual(1, res.LabelValues.Length);
+            Assert.AreEqual(2, res.LabelValues[0].value);
             IOUtils.Close(indexReader, taxoReader);
 
             IOUtils.Close(indexDir, taxoDir);
@@ -104,7 +104,7 @@ namespace Lucene.Net.Facet
         {
             FacetsConfig config = new FacetsConfigAnonymousInnerClassHelper(this);
 
-            Assert.True(config.GetDimConfig("foobar").hierarchical);
+            Assert.True(config.GetDimConfig("foobar").Hierarchical);
         }
 
         private class FacetsConfigAnonymousInnerClassHelper : FacetsConfig
@@ -121,7 +121,7 @@ namespace Lucene.Net.Facet
                 get
                 {
                     DimConfig config = new DimConfig();
-                    config.hierarchical = true;
+                    config.Hierarchical = true;
                     return config;
                 }
             }

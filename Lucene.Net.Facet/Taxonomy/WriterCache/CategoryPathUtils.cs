@@ -27,15 +27,15 @@
         /// Serializes the given <seealso cref="FacetLabel"/> to the <seealso cref="CharBlockArray"/>. </summary>
         public static void Serialize(FacetLabel cp, CharBlockArray charBlockArray)
         {
-            charBlockArray.Append((char)cp.length);
-            if (cp.length == 0)
+            charBlockArray.Append((char)cp.Length);
+            if (cp.Length == 0)
             {
                 return;
             }
-            for (int i = 0; i < cp.length; i++)
+            for (int i = 0; i < cp.Length; i++)
             {
-                charBlockArray.Append((char)cp.components[i].Length);
-                charBlockArray.Append(cp.components[i]);
+                charBlockArray.Append((char)cp.Components[i].Length);
+                charBlockArray.Append(cp.Components[i]);
             }
         }
 
@@ -68,24 +68,24 @@
         public static bool EqualsToSerialized(FacetLabel cp, CharBlockArray charBlockArray, int offset)
         {
             int n = charBlockArray.CharAt(offset++);
-            if (cp.length != n)
+            if (cp.Length != n)
             {
                 return false;
             }
-            if (cp.length == 0)
+            if (cp.Length == 0)
             {
                 return true;
             }
 
-            for (int i = 0; i < cp.length; i++)
+            for (int i = 0; i < cp.Length; i++)
             {
                 int len = charBlockArray.CharAt(offset++);
-                if (len != cp.components[i].Length)
+                if (len != cp.Components[i].Length)
                 {
                     return false;
                 }
 
-                if (!cp.components[i].Equals(charBlockArray.SubSequence(offset, offset + len)))
+                if (!cp.Components[i].Equals(charBlockArray.SubSequence(offset, offset + len)))
                 {
                     return false;
                 }

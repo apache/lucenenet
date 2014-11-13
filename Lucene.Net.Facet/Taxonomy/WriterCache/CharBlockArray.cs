@@ -81,7 +81,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             this.blocks.Add(this.current);
         }
 
-        internal virtual int blockIndex(int index)
+        internal virtual int BlockIndex(int index)
         {
             return index / blockSize;
         }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public char CharAt(int index)
         {
-            Block b = blocks[blockIndex(index)];
+            Block b = blocks[BlockIndex(index)];
             return b.chars[IndexInBlock(index)];
         }
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             int remaining = end - start;
             StringBuilder sb = new StringBuilder(remaining);
-            int blockIdx = blockIndex(start);
+            int blockIdx = BlockIndex(start);
             int indexInBlock = IndexInBlock(start);
             while (remaining > 0)
             {

@@ -56,10 +56,10 @@ namespace Lucene.Net.Facet
         public FacetField(string dim, params string[] path)
             : base("dummy", TYPE)
         {
-            verifyLabel(dim);
+            VerifyLabel(dim);
             foreach (string label in path)
             {
-                verifyLabel(label);
+                VerifyLabel(label);
             }
             this.dim = dim;
             if (path.Length == 0)
@@ -71,7 +71,7 @@ namespace Lucene.Net.Facet
 
         public override string ToString()
         {
-            return "FacetField(dim=" + dim + " path=" + Arrays.ToString(path) + ")";
+            return "FacetField(dim=" + dim + " path=[" + Arrays.ToString(path) + "])";
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Lucene.Net.Facet
         /// 
         ///  @lucene.internal 
         /// </summary>
-        public static void verifyLabel(string label)
+        public static void VerifyLabel(string label)
         {
             if (string.IsNullOrEmpty(label))
             {

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Management.Instrumentation;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -36,7 +38,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private int size_Renamed;
         private int threshold;
 
-        public class Entry
+        internal class Entry
         {
             internal int offset;
             internal int cid;
@@ -84,8 +86,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// How many slots are allocated. </summary>
-        public virtual int capacity()
+        /// How many slots are allocated. 
+        /// </summary>
+        public virtual int Capacity()
         {
             return this.capacity_Renamed;
         }
@@ -142,7 +145,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
 
         /// <summary>
-        /// Add another mapping. </summary>
+        /// Add another mapping. 
+        /// </summary>
         public virtual int AddLabel(FacetLabel label, int hash, int cid)
         {
             int bucketIndex = IndexFor(hash, this.capacity_Renamed);
@@ -182,7 +186,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        internal virtual EntryIterator entryIterator()
+        internal virtual IEnumerator<CollisionMap.Entry> entryIterator()
         {
             return new EntryIterator(this, entries, size_Renamed);
         }
@@ -221,7 +225,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        public class EntryIterator 
+        private class EntryIterator : IEnumerator<Entry>
         {
             private readonly CollisionMap outerInstance;
 
@@ -257,7 +261,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Entry e = this.next_Renamed;
                 if (e == null)
                 {
-                    throw new IndexOutOfRangeException();
+                    throw new InstanceNotFoundException();
                 }
 
                 Entry n = e.next;
@@ -277,9 +281,28 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 throw new System.NotSupportedException();
             }
 
-            public Entry Current()
+            public void Dispose()
             {
-                return ents[index];
+            }
+
+            public bool MoveNext()
+            {
+                if (!HasNext())
+                    return false;
+                Current = Next();
+                return true;
+            }
+
+            public void Reset()
+            {
+                index = 0;
+            }
+
+            public Entry Current { get; private set; }
+
+            object IEnumerator.Current
+            {
+                get { return Current; }
             }
         }
 

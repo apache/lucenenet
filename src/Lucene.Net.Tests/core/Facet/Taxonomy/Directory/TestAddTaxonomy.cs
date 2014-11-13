@@ -262,14 +262,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // now add the taxonomy to an empty taxonomy, while adding the categories
             // again, in parallel -- in the end, no duplicate categories should exist.
             Directory dest = NewDirectory();
-            var destTW = new DirectoryTaxonomyWriter(dest);
-            ThreadClass t = new ThreadAnonymousInnerClassHelper2(this, numCategories, destTW);
+            var destTw = new DirectoryTaxonomyWriter(dest);
+            ThreadClass t = new ThreadAnonymousInnerClassHelper2(this, numCategories, destTw);
             t.Start();
 
             OrdinalMap map = new MemoryOrdinalMap();
-            destTW.AddTaxonomy(src, map);
+            destTw.AddTaxonomy(src, map);
             t.Join();
-            destTW.Dispose();
+            destTw.Dispose();
 
             // now validate
 
@@ -282,7 +282,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 FacetLabel cat = dtr.GetPath(i);
                 Assert.True(categories.Add(cat), "category " + cat + " already existed");
             }
-            (dtr).Dispose();
+            dtr.Dispose();
 
             IOUtils.Close(src, dest);
         }

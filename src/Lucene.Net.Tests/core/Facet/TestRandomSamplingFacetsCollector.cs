@@ -116,21 +116,21 @@ namespace Lucene.Net.Facet
 
             // we should have five children, but there is a small chance we have less.
             // (see above).
-            Assert.True(random10Result.childCount <= maxNumChildren);
+            Assert.True(random10Result.ChildCount <= maxNumChildren);
             // there should be one child at least.
-            Assert.True(random10Result.childCount >= 1);
+            Assert.True(random10Result.ChildCount >= 1);
 
             // now calculate some statistics to determine if the sampled result is 'ok'.
             // because random sampling is used, the results will vary each time.
             int sum = 0;
-            foreach (LabelAndValue lav in random10Result.labelValues)
+            foreach (LabelAndValue lav in random10Result.LabelValues)
             {
                 sum += (int)lav.value;
             }
             float mu = (float)sum / (float)maxNumChildren;
 
             float variance = 0;
-            foreach (LabelAndValue lav in random10Result.labelValues)
+            foreach (LabelAndValue lav in random10Result.LabelValues)
             {
                 variance += (float)Math.Pow((mu - (int)lav.value), 2);
             }
