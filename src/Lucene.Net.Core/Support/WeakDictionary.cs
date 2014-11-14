@@ -55,7 +55,7 @@ namespace Lucene.Net.Support
         private void Clean()
         {
             if (_hm.Count == 0) return;
-            var newHm = new HashMap<WeakKey<TKey>, TValue>();
+            var newHm = new HashMap<WeakKey<TKey>, TValue>(_hm.Count);
             foreach (var entry in _hm.Where(x => x.Key != null && x.Key.IsAlive))
             {
                 newHm.Add(entry.Key, entry.Value);

@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                 for (int i = 0; i < iterations; ++i)
                 {
-                    forUtil.WriteBlock(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, values.Length), new sbyte[Lucene41.ForUtil.MAX_ENCODED_SIZE], @out);
+                    forUtil.WriteBlock(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, values.Length), new byte[Lucene41.ForUtil.MAX_ENCODED_SIZE], @out);
                 }
                 endPointer = @out.FilePointer;
                 @out.Dispose();
@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         continue;
                     }
                     int[] restored = new int[Lucene41.ForUtil.MAX_DATA_SIZE];
-                    forUtil.ReadBlock(@in, new sbyte[Lucene41.ForUtil.MAX_ENCODED_SIZE], restored);
+                    forUtil.ReadBlock(@in, new byte[Lucene41.ForUtil.MAX_ENCODED_SIZE], restored);
                     Assert.AreEqual(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, (i + 1) * Lucene41PostingsFormat.BLOCK_SIZE), Arrays.CopyOf(restored, Lucene41PostingsFormat.BLOCK_SIZE));
                 }
                 Assert.AreEqual(endPointer, @in.FilePointer);

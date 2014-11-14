@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene41
         private int LastStartOffset;
         private int DocCount;
 
-        internal readonly sbyte[] Encoded;
+        internal readonly byte[] Encoded;
 
         private readonly ForUtil ForUtil;
         private readonly Lucene41SkipWriter SkipWriter;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Codecs.Lucene41
             // TODO: should we try skipping every 2/4 blocks...?
             SkipWriter = new Lucene41SkipWriter(MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, state.SegmentInfo.DocCount, DocOut, posOut, payOut);
 
-            Encoded = new sbyte[ForUtil.MAX_ENCODED_SIZE];
+            Encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
         }
 
         /// <summary>

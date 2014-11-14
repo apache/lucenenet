@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -66,9 +67,9 @@ namespace Lucene.Net.Queries.Function
         /// <summary>
         /// Returns a new non-threadsafe context map.
         /// </summary>
-        public static IDictionary<string, IndexSearcher> NewContext(IndexSearcher searcher)
+        public static IDictionary NewContext(IndexSearcher searcher)
         {
-            var context = new IdentityHashMap<string, IndexSearcher>();
+            var context = new Hashtable(new IdentityComparer());
             context["searcher"] = searcher;
             return context;
         }
@@ -98,7 +99,7 @@ namespace Lucene.Net.Queries.Function
             private readonly ValueSource outerInstance;
 
             public ValueSourceSortField(ValueSource outerInstance, bool reverse)
-                : base(outerInstance.Description, SortField.Type.REWRITEABLE, reverse)
+                : base(outerInstance.Description, SortField.Type_e.REWRITEABLE, reverse)
             {
                 this.outerInstance = outerInstance;
             }
@@ -123,7 +124,7 @@ namespace Lucene.Net.Queries.Function
                 this.context = context;
             }
 
-            public override FieldComparator<double?> NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
+            public override FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
             {
                 return new ValueSourceComparator(outerInstance, context, numHits);
             }
@@ -180,7 +181,7 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            public override double? TopValue
+            public override object TopValue
             {
                 set
                 {
@@ -188,7 +189,7 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            public override double? Value(int slot)
+            public override IComparable Value(int slot)
             {
                 return values[slot];
             }

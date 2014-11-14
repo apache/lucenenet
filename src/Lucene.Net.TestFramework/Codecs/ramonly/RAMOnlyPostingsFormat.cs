@@ -62,8 +62,8 @@ namespace Lucene.Net.Codecs.ramonly
 
             public virtual int Compare(BytesRef t1, BytesRef t2)
             {
-                sbyte[] b1 = t1.Bytes;
-                sbyte[] b2 = t2.Bytes;
+                var b1 = t1.Bytes;
+                var b2 = t2.Bytes;
                 int b1Stop;
                 int b1Upto = t1.Offset;
                 int b2Upto = t2.Offset;
@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.ramonly
         {
             internal readonly int DocID;
             internal readonly int[] Positions;
-            internal sbyte[][] Payloads;
+            internal byte[][] Payloads;
 
             public RAMDoc(int docID, int freq)
             {
@@ -275,7 +275,7 @@ namespace Lucene.Net.Codecs.ramonly
 
                 if (Payloads != null)
                 {
-                    foreach (sbyte[] payload in Payloads)
+                    foreach (var payload in Payloads)
                     {
                         sizeInBytes += (payload != null) ? RamUsageEstimator.SizeOf(payload) : 0;
                     }
@@ -383,9 +383,9 @@ namespace Lucene.Net.Codecs.ramonly
                 {
                     if (Current.Payloads == null)
                     {
-                        Current.Payloads = new sbyte[Current.Positions.Length][];
+                        Current.Payloads = new byte[Current.Positions.Length][];
                     }
-                    sbyte[] bytes = Current.Payloads[PosUpto] = new sbyte[payload.Length];
+                    var bytes = Current.Payloads[PosUpto] = new byte[payload.Length];
                     Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
                 }
                 PosUpto++;

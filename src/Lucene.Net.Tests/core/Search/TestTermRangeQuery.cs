@@ -241,7 +241,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        int count = Input.Read(Buffer, 0, Buffer.Length);
+                        int count = input.Read(Buffer, 0, Buffer.Length);
                         ClearAttributes();
                         Done = true;
                         if (count == 1)
@@ -259,7 +259,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new SingleCharTokenizer(reader));
             }

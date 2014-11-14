@@ -1,4 +1,4 @@
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 using System.IO;
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.Util
         /// adds synonym of "dog" for "dogs". </summary>
         internal class MockSynonymAnalyzer : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new MockSynonymFilter(tokenizer));
@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
                     return true;
                 }
 
-                if (Input.IncrementToken())
+                if (input.IncrementToken())
                 {
                     AddSynonym = TermAtt.ToString().Equals("dogs");
                     return true;
@@ -220,7 +220,7 @@ namespace Lucene.Net.Util
 
             public override bool IncrementToken()
             {
-                int ch = Input.Read();
+                int ch = input.Read();
                 if (ch < 0)
                 {
                     return false;
@@ -240,7 +240,7 @@ namespace Lucene.Net.Util
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new SimpleCJKTokenizer(reader));
             }
@@ -316,7 +316,7 @@ namespace Lucene.Net.Util
                     return true;
                 }
 
-                if (Input.IncrementToken())
+                if (input.IncrementToken())
                 {
                     AddSynonym = TermAtt.ToString().Equals("国");
                     return true;
@@ -330,7 +330,7 @@ namespace Lucene.Net.Util
 
         internal class MockCJKSynonymAnalyzer : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new SimpleCJKTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new MockCJKSynonymFilter(tokenizer));

@@ -1,5 +1,7 @@
 using Lucene.Net.Analysis.Tokenattributes;
 using System;
+using Lucene.Net.Documents;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {

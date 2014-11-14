@@ -66,7 +66,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return new IntDocValuesAnonymousInnerClassHelper(this, this, off, sindex);
         }
 
-        private class IntDocValuesAnonymousInnerClassHelper : IntDocValues
+        private sealed class IntDocValuesAnonymousInnerClassHelper : IntDocValues
         {
             private readonly OrdFieldSource outerInstance;
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.sindex = sindex;
             }
 
-            protected virtual string ToTerm(string readableValue)
+            private string ToTerm(string readableValue)
             {
                 return readableValue;
             }

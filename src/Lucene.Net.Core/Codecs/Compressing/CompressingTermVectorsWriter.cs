@@ -350,7 +350,7 @@ namespace Lucene.Net.Codecs.Compressing
             // copy last term
             if (LastTerm.Bytes.Length < term.Length)
             {
-                LastTerm.Bytes = new sbyte[ArrayUtil.Oversize(term.Length, 1)];
+                LastTerm.Bytes = new byte[ArrayUtil.Oversize(term.Length, 1)];
             }
             LastTerm.Offset = 0;
             LastTerm.Length = term.Length;

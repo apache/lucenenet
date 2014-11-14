@@ -416,14 +416,26 @@ namespace Lucene.Net.Support
             return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
         }
 
+        public static int FloatToRawIntBits(float value)
+        {
+            // TODO: does this handle NaNs the same?
+            return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+        }
+
         public static int FloatToIntBits(float value)
         {
+            // TODO it is claimed that this could be faster
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
 
         public static long FloatToLongBits(float value)
         {
             return BitConverter.ToInt64(BitConverter.GetBytes(value), 0);
+        }
+
+        public static long DoubleToRawLongBits(double value)
+        {
+            return BitConverter.DoubleToInt64Bits(value);
         }
 
         //Flips the endianness from Little-Endian to Big-Endian

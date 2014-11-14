@@ -385,7 +385,7 @@ namespace Lucene.Net.Util.Fst
             }
 
             // If back plus this arc is competitive then add to queue:
-            protected internal virtual void AddIfCompetitive(FSTPath<T> path)
+            protected virtual void AddIfCompetitive(FSTPath<T> path)
             {
                 Debug.Assert(Queue != null);
 
@@ -618,7 +618,7 @@ namespace Lucene.Net.Util.Fst
                 return new TopResults<T>(rejectCount + TopN <= MaxQueueDepth, results);
             }
 
-            protected internal virtual bool AcceptResult(IntsRef input, T output)
+            protected virtual bool AcceptResult(IntsRef input, T output)
             {
                 return true;
             }
@@ -1041,7 +1041,7 @@ namespace Lucene.Net.Util.Fst
                 int value = input.Ints[i + input.Offset];
                 // NOTE: we allow -128 to 255
                 Debug.Assert(value >= sbyte.MinValue && value <= 255, "value " + value + " doesn't fit into byte");
-                scratch.Bytes[i] = (sbyte)value;
+                scratch.Bytes[i] = (byte)value;
             }
             scratch.Length = input.Length;
             return scratch;

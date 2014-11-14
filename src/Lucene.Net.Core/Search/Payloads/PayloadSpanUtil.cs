@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Lucene.Net.Search.Payloads
@@ -59,14 +60,14 @@ namespace Lucene.Net.Search.Payloads
         /// <param name="query"> rewritten query </param>
         /// <returns> payloads Collection </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public virtual ICollection<sbyte[]> GetPayloadsForQuery(Query query)
+        public virtual ICollection<byte[]> GetPayloadsForQuery(Query query)
         {
-            ICollection<sbyte[]> payloads = new List<sbyte[]>();
+            var payloads = new List<byte[]>();
             QueryToSpanQuery(query, payloads);
             return payloads;
         }
 
-        private void QueryToSpanQuery(Query query, ICollection<sbyte[]> payloads)
+        private void QueryToSpanQuery(Query query, ICollection<byte[]> payloads)
         {
             if (query is BooleanQuery)
             {
@@ -183,10 +184,10 @@ namespace Lucene.Net.Search.Payloads
             }
         }
 
-        private void GetPayloads(ICollection<sbyte[]> payloads, SpanQuery query)
+        private void GetPayloads(ICollection<byte[]> payloads, SpanQuery query)
         {
             IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
-            SortedSet<Term> terms = new SortedSet<Term>();
+            var terms = new SortedSet<Term>();
             query.ExtractTerms(terms);
             foreach (Term term in terms)
             {
@@ -199,8 +200,8 @@ namespace Lucene.Net.Search.Payloads
                 {
                     if (spans.PayloadAvailable)
                     {
-                        ICollection<sbyte[]> payload = spans.Payload;
-                        foreach (sbyte[] bytes in payload)
+                        var payload = spans.Payload;
+                        foreach (var bytes in payload)
                         {
                             payloads.Add(bytes);
                         }

@@ -224,23 +224,28 @@ namespace Lucene.Net.Search.Payloads
             // Get the payloads associated with all underlying subspans
             public virtual void GetPayloads(Spans[] subSpans)
             {
-                for (int i = 0; i < subSpans.Length; i++)
+                for (var i = 0; i < subSpans.Length; i++)
                 {
-                    if (subSpans[i] is NearSpansOrdered)
+                    var span = subSpans[i] as NearSpansOrdered;
+                    if (span != null)
                     {
-                        if (((NearSpansOrdered)subSpans[i]).PayloadAvailable)
+                        if (span.PayloadAvailable)
                         {
-                            ProcessPayloads(((NearSpansOrdered)subSpans[i]).Payload, subSpans[i].Start(), subSpans[i].End());
+                            ProcessPayloads(span.Payload, subSpans[i].Start(), subSpans[i].End());
                         }
-                        GetPayloads(((NearSpansOrdered)subSpans[i]).SubSpans);
+                        GetPayloads(span.SubSpans);
                     }
-                    else if (subSpans[i] is NearSpansUnordered)
+                    else
                     {
-                        if (((NearSpansUnordered)subSpans[i]).PayloadAvailable)
+                        var unordered = subSpans[i] as NearSpansUnordered;
+                        if (unordered != null)
                         {
-                            ProcessPayloads(((NearSpansUnordered)subSpans[i]).Payload, subSpans[i].Start(), subSpans[i].End());
+                            if (unordered.PayloadAvailable)
+                            {
+                                ProcessPayloads(unordered.Payload, subSpans[i].Start(), subSpans[i].End());
+                            }
+                            GetPayloads(unordered.SubSpans);
                         }
-                        GetPayloads(((NearSpansUnordered)subSpans[i]).SubSpans);
                     }
                 }
             }
@@ -257,9 +262,9 @@ namespace Lucene.Net.Search.Payloads
             /// <param name="end"> The end position of the span being scored
             /// </param>
             /// <seealso cref= Spans </seealso>
-            protected internal virtual void ProcessPayloads(ICollection<sbyte[]> payLoads, int start, int end)
+            protected internal virtual void ProcessPayloads(ICollection<byte[]> payLoads, int start, int end)
             {
-                foreach (sbyte[] thePayload in payLoads)
+                foreach (var thePayload in payLoads)
                 {
                     Scratch.Bytes = thePayload;
                     Scratch.Offset = 0;

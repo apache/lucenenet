@@ -71,9 +71,9 @@ namespace Lucene.Net.Util
             while (netBytes < 1.1 * int.MaxValue)
             {
                 int numBytes = TestUtil.NextInt(r2, 1, 32768);
-                byte[] bytes = new byte[numBytes];
+                var bytes = new byte[numBytes];
                 r2.NextBytes(bytes);
-                BytesRef expected = new BytesRef((sbyte[])(Array)bytes);
+                BytesRef expected = new BytesRef(bytes);
 
                 BytesRef actual = new BytesRef();
                 reader.FillSlice(actual, netBytes, numBytes);

@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     {
         internal ByteBlockPool Pool;
         internal int BufferUpto;
-        internal sbyte[] Buffer;
+        internal byte[] Buffer;
         public int Upto;
         internal int Limit;
         internal int Level;

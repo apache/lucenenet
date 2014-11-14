@@ -691,7 +691,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 long startAddress = Reader.Get(docID);
                 BytesRef lengthBytes = new BytesRef();
                 BytesReader.FillSlice(lengthBytes, startAddress, 1);
-                sbyte code = lengthBytes.Bytes[lengthBytes.Offset];
+                var code = lengthBytes.Bytes[lengthBytes.Offset];
                 if ((code & 128) == 0)
                 {
                     // length is 1 byte

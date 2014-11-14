@@ -445,23 +445,18 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static sbyte[] Grow(sbyte[] array)
-        {
-            return Grow(array, 1 + array.Length);
-        }
-
         public static byte[] Grow(byte[] array)
         {
             return Grow(array, 1 + array.Length);
         }
 
-        public static sbyte[] Shrink(sbyte[] array, int targetSize)
+        public static byte[] Shrink(byte[] array, int targetSize)
         {
             Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, 1);
             if (newSize != array.Length)
             {
-                sbyte[] newArray = new sbyte[newSize];
+                var newArray = new byte[newSize];
                 Array.Copy(array, 0, newArray, 0, newSize);
                 return newArray;
             }
@@ -548,7 +543,7 @@ namespace Lucene.Net.Util
             Debug.Assert(minSize >= 0, "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
-                int[][] newArray = new int[Oversize(minSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
+                var newArray = new int[Oversize(minSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
                 Array.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }
@@ -683,7 +678,7 @@ namespace Lucene.Net.Util
         /// <returns> true if the two arrays, starting at their respective offsets, are equal
         /// </returns>
         /// <seealso cref= java.util.Arrays#equals(byte[], byte[]) </seealso>
-        public static bool Equals(sbyte[] left, int offsetLeft, sbyte[] right, int offsetRight, int length)
+        public static bool Equals(byte[] left, int offsetLeft, byte[] right, int offsetRight, int length)
         {
             if ((offsetLeft + length <= left.Length) && (offsetRight + length <= right.Length))
             {

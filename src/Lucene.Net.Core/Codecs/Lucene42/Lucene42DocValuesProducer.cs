@@ -495,7 +495,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     @in.Position = 0;
                     Fst.GetFirstArc(FirstArc);
                     IntsRef output = Lucene.Net.Util.Fst.Util.GetByOutput(Fst, ord, @in, FirstArc, ScratchArc, ScratchInts);
-                    result.Bytes = new sbyte[output.Length];
+                    result.Bytes = new byte[output.Length];
                     result.Offset = 0;
                     result.Length = 0;
                     Util.ToBytesRef(output, result);
@@ -639,7 +639,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     @in.Position = 0;
                     Fst.GetFirstArc(FirstArc);
                     IntsRef output = Lucene.Net.Util.Fst.Util.GetByOutput(Fst, ord, @in, FirstArc, ScratchArc, ScratchInts);
-                    result.Bytes = new sbyte[output.Length];
+                    result.Bytes = new byte[output.Length];
                     result.Offset = 0;
                     result.Length = 0;
                     Lucene.Net.Util.Fst.Util.ToBytesRef(output, result);
@@ -811,7 +811,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 BytesReader.Position = 0;
                 Fst.GetFirstArc(FirstArc);
                 IntsRef output = Lucene.Net.Util.Fst.Util.GetByOutput(Fst, ord, BytesReader, FirstArc, ScratchArc, ScratchInts);
-                ScratchBytes.Bytes = new sbyte[output.Length];
+                ScratchBytes.Bytes = new byte[output.Length];
                 ScratchBytes.Offset = 0;
                 ScratchBytes.Length = 0;
                 Lucene.Net.Util.Fst.Util.ToBytesRef(output, ScratchBytes);

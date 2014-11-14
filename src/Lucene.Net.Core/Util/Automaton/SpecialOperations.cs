@@ -170,7 +170,7 @@ namespace Lucene.Net.Util.Automaton
                     if (t.Min_Renamed == t.Max_Renamed && !visited.Contains(t.To))
                     {
                         @ref.Grow(++@ref.Length);
-                        @ref.Bytes[@ref.Length - 1] = (sbyte)t.Min_Renamed;
+                        @ref.Bytes[@ref.Length - 1] = (byte)t.Min_Renamed;
                         s = t.To;
                         done = false;
                     }
@@ -223,7 +223,7 @@ namespace Lucene.Net.Util.Automaton
             int num = @ref.Length >> 1;
             for (int i = @ref.Offset; i < (@ref.Offset + num); i++)
             {
-                sbyte b = @ref.Bytes[i];
+                var b = @ref.Bytes[i];
                 @ref.Bytes[i] = @ref.Bytes[@ref.Offset * 2 + @ref.Length - i - 1];
                 @ref.Bytes[@ref.Offset * 2 + @ref.Length - i - 1] = b;
             }

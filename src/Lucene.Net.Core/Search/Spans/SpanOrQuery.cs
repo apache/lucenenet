@@ -326,15 +326,15 @@ namespace Lucene.Net.Search.Spans
                 return Top().End();
             }
 
-            public override ICollection<sbyte[]> Payload
+            public override ICollection<byte[]> Payload
             {
                 get
                 {
-                    List<sbyte[]> result = null;
+                    List<byte[]> result = null;
                     Spans theTop = Top();
                     if (theTop != null && theTop.PayloadAvailable)
                     {
-                        result = new List<sbyte[]>(theTop.Payload);
+                        result = new List<byte[]>(theTop.Payload);
                     }
                     return result;
                 }

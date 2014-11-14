@@ -29,7 +29,6 @@ namespace Lucene.Net.Util.Fst
     ///
     /// @lucene.experimental
     /// </summary>
-
     public sealed class PositiveIntOutputs : Outputs<long>
     {
         private static readonly long NO_OUTPUT = new long();

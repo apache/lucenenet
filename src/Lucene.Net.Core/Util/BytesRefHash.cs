@@ -321,7 +321,7 @@ namespace Lucene.Net.Util
                     }
                     Pool.NextBuffer();
                 }
-                sbyte[] buffer = Pool.Buffer;
+                var buffer = Pool.Buffer;
                 int bufferUpto = Pool.ByteUpto;
                 if (Count >= BytesStart.Length)
                 {
@@ -339,7 +339,7 @@ namespace Lucene.Net.Util
                 if (length < 128)
                 {
                     // 1 byte to store length
-                    buffer[bufferUpto] = (sbyte)length;
+                    buffer[bufferUpto] = (byte)length;
                     Pool.ByteUpto += length + 1;
                     Debug.Assert(length >= 0, "Length must be positive: " + length);
                     Array.Copy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 1, length);
@@ -347,8 +347,8 @@ namespace Lucene.Net.Util
                 else
                 {
                     // 2 byte to store length
-                    buffer[bufferUpto] = unchecked((sbyte)(0x80 | (length & 0x7f)));
-                    buffer[bufferUpto + 1] = unchecked((sbyte)((length >> 7) & 0xff));
+                    buffer[bufferUpto] = unchecked((byte)(0x80 | (length & 0x7f)));
+                    buffer[bufferUpto + 1] = unchecked((byte)((length >> 7) & 0xff));
                     Pool.ByteUpto += length + 2;
                     Array.Copy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 2, length);
                 }
@@ -469,7 +469,7 @@ namespace Lucene.Net.Util
                     {
                         int off = BytesStart[e0];
                         int start = off & ByteBlockPool.BYTE_BLOCK_MASK;
-                        sbyte[] bytes = Pool.Buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
+                        var bytes = Pool.Buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
                         int len;
                         int pos;
                         if ((bytes[start] & 0x80) == 0)
@@ -514,7 +514,7 @@ namespace Lucene.Net.Util
         }
 
         // TODO: maybe use long?  But our keys are typically short...
-        private int DoHash(sbyte[] bytes, int offset, int length)
+        private static int DoHash(byte[] bytes, int offset, int length)
         {
             return StringHelper.Murmurhash3_x86_32(bytes, offset, length, StringHelper.GOOD_FAST_HASH_SEED);
         }

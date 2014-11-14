@@ -62,7 +62,7 @@ namespace Lucene.Net.Documents
             this.FieldsToAdd = null;
         }
 
-        public override void BinaryField(FieldInfo fieldInfo, sbyte[] value)
+        public override void BinaryField(FieldInfo fieldInfo, byte[] value)
         {
             Doc.Add(new StoredField(fieldInfo.Name, value));
         }

@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis
         {
         }
 
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             MockTokenizer tokenizer = new MockTokenizer(reader, RunAutomaton, LowerCase, MaxTokenLength_Renamed);
             tokenizer.EnableChecks = EnableChecks_Renamed;

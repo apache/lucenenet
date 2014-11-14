@@ -45,10 +45,10 @@ namespace Lucene.Net.Search.Payloads
     {
         private static IndexSearcher Searcher;
         private static IndexReader Reader;
-        private static Similarity Similarity = new BoostingSimilarity();
-        private static readonly sbyte[] PayloadField = new sbyte[] { 1 };
-        private static readonly sbyte[] PayloadMultiField1 = new sbyte[] { 2 };
-        private static readonly sbyte[] PayloadMultiField2 = new sbyte[] { 4 };
+        private static readonly Similarity Similarity = new BoostingSimilarity();
+        private static readonly byte[] PayloadField = { 1 };
+        private static readonly byte[] PayloadMultiField1 = { 2 };
+        private static readonly byte[] PayloadMultiField2 = { 4 };
         protected internal static Directory Directory;
 
         private class PayloadAnalyzer : Analyzer
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Payloads
             {
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(result, new PayloadFilter(result, fieldName));
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override bool IncrementToken()
             {
-                bool hasNext = Input.IncrementToken();
+                bool hasNext = input.IncrementToken();
                 if (hasNext)
                 {
                     if (FieldName.Equals("field"))

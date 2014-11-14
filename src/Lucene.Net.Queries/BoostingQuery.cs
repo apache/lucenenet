@@ -78,7 +78,7 @@ namespace Lucene.Net.Queries
                 private readonly BooleanQueryAnonymousInnerClassHelper outerInstance;
 
                 public BooleanWeightAnonymousInnerClassHelper(BooleanQueryAnonymousInnerClassHelper outerInstance, IndexSearcher searcher)
-                    : base(searcher, false)
+                    : base(outerInstance, searcher, false)
                 {
                     this.outerInstance = outerInstance;
                 }

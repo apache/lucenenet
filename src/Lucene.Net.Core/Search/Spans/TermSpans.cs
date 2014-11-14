@@ -113,16 +113,16 @@ namespace Lucene.Net.Search.Spans
         }
 
         // TODO: Remove warning after API has been finalized
-        public override ICollection<sbyte[]> Payload
+        public override ICollection<byte[]> Payload
         {
             get
             {
-                BytesRef payload = Postings_Renamed.Payload;
+                var payload = Postings_Renamed.Payload;
                 ReadPayload = true;
-                sbyte[] bytes;
+                byte[] bytes;
                 if (payload != null)
                 {
-                    bytes = new sbyte[payload.Length];
+                    bytes = new byte[payload.Length];
                     Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
                 }
                 else
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search.Spans
                 return -1;
             }
 
-            public override ICollection<sbyte[]> Payload
+            public override ICollection<byte[]> Payload
             {
                 get
                 {

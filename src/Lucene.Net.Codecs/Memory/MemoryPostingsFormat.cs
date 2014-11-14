@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.Memory
 	using BytesRefFSTEnum = Util.Fst.BytesRefFSTEnum;
 	using FST = Util.Fst.FST;
 	using Util = Util.Fst.Util;
-	using PackedInts = Util.packed.PackedInts;
+	using PackedInts = Util.Packed.PackedInts;
 
 	// TODO: would be nice to somehow allow this to act like
 	// InstantiatedIndex, by never writing to disk; ie you write
@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Memory
 		  this.field = field;
 		  this.doPackFST = doPackFST;
 		  this.acceptableOverheadRatio = acceptableOverheadRatio;
-		  builder = new Builder<>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPackFST, acceptableOverheadRatio, true, 15);
+		  builder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPackFST, acceptableOverheadRatio, true, 15);
 		}
 
 		private class PostingsWriter : PostingsConsumer
@@ -152,31 +152,26 @@ namespace Lucene.Net.Codecs.Memory
 		  internal int lastOffsetLength;
 		  internal int lastOffset;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void startDoc(int docID, int termDocFreq) throws java.io.IOException
-		  public override void startDoc(int docID, int termDocFreq)
+            public override void StartDoc(int docID, int termDocFreq)
 		  {
-			//System.out.println("    startDoc docID=" + docID + " freq=" + termDocFreq);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int delta = docID - lastDocID;
 			int delta = docID - lastDocID;
 			Debug.Assert(docID == 0 || delta > 0);
 			lastDocID = docID;
 			docCount++;
 
-			if (outerInstance.field.IndexOptions == IndexOptions.DOCS_ONLY)
+			if (outerInstance.field.FieldIndexOptions == IndexOptions.DOCS_ONLY)
 			{
-			  buffer.writeVInt(delta);
+			  buffer.WriteVInt(delta);
 			}
 			else if (termDocFreq == 1)
 			{
-			  buffer.writeVInt((delta << 1) | 1);
+			  buffer.WriteVInt((delta << 1) | 1);
 			}
 			else
 			{
-			  buffer.writeVInt(delta << 1);
+			  buffer.WriteVInt(delta << 1);
 			  Debug.Assert(termDocFreq > 0);
-			  buffer.writeVInt(termDocFreq);
+			  buffer.WriteVInt(termDocFreq);
 			}
 
 			lastPos = 0;
@@ -205,17 +200,17 @@ namespace Lucene.Net.Codecs.Memory
 			  if (payloadLen != lastPayloadLen)
 			  {
 				lastPayloadLen = payloadLen;
-				buffer.writeVInt((delta << 1) | 1);
-				buffer.writeVInt(payloadLen);
+				buffer.WriteVInt((delta << 1) | 1);
+				buffer.WriteVInt(payloadLen);
 			  }
 			  else
 			  {
-				buffer.writeVInt(delta << 1);
+				buffer.WriteVInt(delta << 1);
 			  }
 			}
 			else
 			{
-			  buffer.writeVInt(delta);
+			  buffer.WriteVInt(delta);
 			}
 
 			if (outerInstance.field.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
@@ -226,12 +221,12 @@ namespace Lucene.Net.Codecs.Memory
 			  int offsetLength = endOffset - startOffset;
 			  if (offsetLength != lastOffsetLength)
 			  {
-				buffer.writeVInt(offsetDelta << 1 | 1);
-				buffer.writeVInt(offsetLength);
+				buffer.WriteVInt(offsetDelta << 1 | 1);
+				buffer.WriteVInt(offsetLength);
 			  }
 			  else
 			  {
-				buffer.writeVInt(offsetDelta << 1);
+				buffer.WriteVInt(offsetDelta << 1);
 			  }
 			  lastOffset = startOffset;
 			  lastOffsetLength = offsetLength;
@@ -239,7 +234,7 @@ namespace Lucene.Net.Codecs.Memory
 
 			if (payloadLen > 0)
 			{
-			  buffer.writeBytes(payload.bytes, payload.offset, payloadLen);
+			  buffer.WriteBytes(payload.bytes, payload.offset, payloadLen);
 			}
 		  }
 
@@ -282,13 +277,13 @@ namespace Lucene.Net.Codecs.Memory
 
 		  Debug.Assert(buffer2.FilePointer == 0);
 
-		  buffer2.writeVInt(stats.docFreq);
+		  buffer2.WriteVInt(stats.docFreq);
 		  if (field.IndexOptions != IndexOptions.DOCS_ONLY)
 		  {
-			buffer2.writeVLong(stats.totalTermFreq - stats.docFreq);
+			buffer2.WriteVLong(stats.totalTermFreq - stats.docFreq);
 		  }
 		  int pos = (int) buffer2.FilePointer;
-		  buffer2.writeTo(finalBuffer, 0);
+		  buffer2.WriteTo(finalBuffer, 0);
 		  buffer2.reset();
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -298,7 +293,7 @@ namespace Lucene.Net.Codecs.Memory
 		  {
 			finalBuffer = ArrayUtil.grow(finalBuffer, totalBytes);
 		  }
-		  postingsWriter.buffer.writeTo(finalBuffer, pos);
+		  postingsWriter.buffer.WriteTo(finalBuffer, pos);
 		  postingsWriter.buffer.reset();
 
 		  spare.bytes = finalBuffer;
@@ -319,14 +314,14 @@ namespace Lucene.Net.Codecs.Memory
 		{
 		  if (termCount > 0)
 		  {
-			@out.writeVInt(termCount);
-			@out.writeVInt(field.number);
+			@out.WriteVInt(termCount);
+			@out.WriteVInt(field.number);
 			if (field.IndexOptions != IndexOptions.DOCS_ONLY)
 			{
-			  @out.writeVLong(sumTotalTermFreq);
+			  @out.WriteVLong(sumTotalTermFreq);
 			}
-			@out.writeVLong(sumDocFreq);
-			@out.writeVInt(docCount);
+			@out.WriteVLong(sumDocFreq);
+			@out.WriteVInt(docCount);
 			FST<BytesRef> fst = builder.finish();
 			fst.save(@out);
 			//System.out.println("finish field=" + field.name + " fp=" + out.getFilePointer());
@@ -361,14 +356,14 @@ namespace Lucene.Net.Codecs.Memory
 		bool success = false;
 		try
 		{
-		  CodecUtil.writeHeader(@out, CODEC_NAME, VERSION_CURRENT);
+		  CodecUtil.WriteHeader(@out, CODEC_NAME, VERSION_CURRENT);
 		  success = true;
 		}
 		finally
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(@out);
+			IOUtils.CloseWhileHandlingException(@out);
 		  }
 		}
 
@@ -400,8 +395,8 @@ namespace Lucene.Net.Codecs.Memory
 			// EOF marker:
 			try
 			{
-			  @out.writeVInt(0);
-			  CodecUtil.writeFooter(@out);
+			  @out.WriteVInt(0);
+			  CodecUtil.WriteFooter(@out);
 			}
 			finally
 			{
@@ -1147,54 +1142,52 @@ namespace Lucene.Net.Codecs.Memory
 
 	  private class FieldsProducerAnonymousInnerClassHelper : FieldsProducer
 	  {
-		  private readonly MemoryPostingsFormat outerInstance;
+	      private readonly Dictionary<string, TermsReader> _fields;
 
-		  private SortedMap<string, TermsReader> fields;
-
-		  public FieldsProducerAnonymousInnerClassHelper(MemoryPostingsFormat outerInstance, SortedMap<string, TermsReader> fields)
+		  public FieldsProducerAnonymousInnerClassHelper(MemoryPostingsFormat outerInstance, Dictionary<string, TermsReader> fields)
 		  {
-			  this.outerInstance = outerInstance;
-			  this.fields = fields;
+		      _fields = fields;
 		  }
 
-		  public override IEnumerator<string> iterator()
+		  public override IEnumerator<string> GetEnumerator()
 		  {
-			return Collections.unmodifiableSet(fields.Keys).GetEnumerator();
+			return Collections.unmodifiableSet(_fields.Keys).GetEnumerator();
 		  }
 
-		  public override Terms terms(string field)
+		  public override Terms Terms(string field)
 		  {
-			return fields.get(field);
+			return _fields.Get(field);
 		  }
 
-		  public override int size()
+		  public override int Size
 		  {
-			return fields.size();
+		      get
+		      {
+		          return _fields.Size ;
+		      }
 		  }
 
-		  public override void close()
+		  public override void Dispose()
 		  {
 			// Drop ref to FST:
-			foreach (TermsReader termsReader in fields.values())
+			foreach (TermsReader termsReader in _fields)
 			{
 			  termsReader.fst = null;
 			}
 		  }
 
-		  public override long ramBytesUsed()
+		  public override long RamBytesUsed()
 		  {
 			long sizeInBytes = 0;
-			foreach (KeyValuePair<string, TermsReader> entry in fields.entrySet())
+			foreach (KeyValuePair<string, TermsReader> entry in _fields.EntrySet())
 			{
-			  sizeInBytes += (entry.Key.length() * RamUsageEstimator.NUM_BYTES_CHAR);
+			  sizeInBytes += (entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR);
 			  sizeInBytes += entry.Value.ramBytesUsed();
 			}
 			return sizeInBytes;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void checkIntegrity() throws java.io.IOException
-		  public override void checkIntegrity()
+		  public override void CheckIntegrity()
 		  {
 		  }
 	  }

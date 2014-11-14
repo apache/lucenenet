@@ -38,11 +38,11 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// An empty byte array for convenience </summary>
-        public static readonly sbyte[] EMPTY_BYTES = new sbyte[0];
+        public static readonly byte[] EMPTY_BYTES = new byte[0];
 
         /// <summary>
         /// The contents of the BytesRef. Should never be {@code null}. </summary>
-        public sbyte[] Bytes;
+        public byte[] Bytes;
 
         /// <summary>
         /// Offset of first valid byte. </summary>
@@ -63,7 +63,7 @@ namespace Lucene.Net.Util
         /// this instance will directly reference bytes w/o making a copy.
         /// bytes should not be null.
         /// </summary>
-        public BytesRef(sbyte[] bytes, int offset, int length)
+        public BytesRef(byte[] bytes, int offset, int length)
         {
             this.Bytes = bytes;
             this.Offset = offset;
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
         /// this instance will directly reference bytes w/o making a copy.
         /// bytes should not be null
         /// </summary>
-        public BytesRef(sbyte[] bytes)
+        public BytesRef(byte[] bytes)
             : this(bytes, 0, bytes.Length)
         {
         }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public BytesRef(int capacity)
         {
-            this.Bytes = new sbyte[capacity];
+            this.Bytes = new byte[capacity];
         }
 
         /// <summary>
@@ -146,9 +146,9 @@ namespace Lucene.Net.Util
             Debug.Assert(other != null);
             if (Length == other.Length)
             {
-                int otherUpto = other.Offset;
-                sbyte[] otherBytes = other.Bytes;
-                int end = Offset + Length;
+                var otherUpto = other.Offset;
+                var otherBytes = other.Bytes;
+                var end = Offset + Length;
                 for (int upto = Offset; upto < end; upto++, otherUpto++)
                 {
                     if (Bytes[upto] != otherBytes[otherUpto])
@@ -240,7 +240,7 @@ namespace Lucene.Net.Util
         {
             if (Bytes.Length - Offset < other.Length)
             {
-                Bytes = new sbyte[other.Length];
+                Bytes = new byte[other.Length];
                 Offset = 0;
             }
             Array.Copy(other.Bytes, other.Offset, Bytes, Offset, other.Length);
@@ -258,7 +258,7 @@ namespace Lucene.Net.Util
             int newLen = Length + other.Length;
             if (Bytes.Length - Offset < newLen)
             {
-                sbyte[] newBytes = new sbyte[newLen];
+                var newBytes = new byte[newLen];
                 Array.Copy(Bytes, Offset, newBytes, 0, Length);
                 Offset = 0;
                 Bytes = newBytes;
@@ -309,9 +309,9 @@ namespace Lucene.Net.Util
 
             public virtual int Compare(BytesRef a, BytesRef b)
             {
-                sbyte[] aBytes = a.Bytes;
+                var aBytes = a.Bytes;
                 int aUpto = a.Offset;
-                sbyte[] bBytes = b.Bytes;
+                var bBytes = b.Bytes;
                 int bUpto = b.Offset;
 
                 int aStop = aUpto + Math.Min(a.Length, b.Length);
@@ -357,9 +357,9 @@ namespace Lucene.Net.Util
 
             public virtual int Compare(BytesRef a, BytesRef b)
             {
-                sbyte[] aBytes = a.Bytes;
+                var aBytes = a.Bytes;
                 int aUpto = a.Offset;
-                sbyte[] bBytes = b.Bytes;
+                var bBytes = b.Bytes;
                 int bUpto = b.Offset;
 
                 int aStop;
@@ -433,31 +433,31 @@ namespace Lucene.Net.Util
             {
                 if (Bytes == null)
                 {
-                    throw new Exception("bytes is null");
+                    throw new InvalidOperationException("bytes is null");
                 }
                 if (Length < 0)
                 {
-                    throw new Exception("length is negative: " + Length);
+                    throw new InvalidOperationException("length is negative: " + Length);
                 }
                 if (Length > Bytes.Length)
                 {
-                    throw new Exception("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
+                    throw new InvalidOperationException("length is out of bounds: " + Length + ",bytes.length=" + Bytes.Length);
                 }
                 if (Offset < 0)
                 {
-                    throw new Exception("offset is negative: " + Offset);
+                    throw new InvalidOperationException("offset is negative: " + Offset);
                 }
                 if (Offset > Bytes.Length)
                 {
-                    throw new Exception("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
+                    throw new InvalidOperationException("offset out of bounds: " + Offset + ",bytes.length=" + Bytes.Length);
                 }
                 if (Offset + Length < 0)
                 {
-                    throw new Exception("offset+length is negative: offset=" + Offset + ",length=" + Length);
+                    throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
                 }
                 if (Offset + Length > Bytes.Length)
                 {
-                    throw new Exception("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
+                    throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",bytes.length=" + Bytes.Length);
                 }
                 return true;
             }

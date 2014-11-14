@@ -29,7 +29,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public abstract long Long { get; }
         public abstract float Float { get; }
         public abstract double Double { get; }
-        public abstract Number Number { get; }
+        //public abstract Number Number { get; }
         public abstract bool Bool { get; }
     }
 }

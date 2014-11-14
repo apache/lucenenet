@@ -36,12 +36,12 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanPayloadCheckQuery : SpanPositionCheckQuery
     {
-        protected internal readonly ICollection<sbyte[]> PayloadToMatch;
+        protected internal readonly ICollection<byte[]> PayloadToMatch;
 
         ///
         /// <param name="match"> The underlying <seealso cref="Lucene.Net.Search.Spans.SpanQuery"/> to check </param>
         /// <param name="payloadToMatch"> The <seealso cref="java.util.Collection"/> of payloads to match </param>
-        public SpanPayloadCheckQuery(SpanQuery match, ICollection<sbyte[]> payloadToMatch)
+        public SpanPayloadCheckQuery(SpanQuery match, ICollection<byte[]> payloadToMatch)
             : base(match)
         {
             if (match is SpanNearQuery)
@@ -56,14 +56,14 @@ namespace Lucene.Net.Search.Spans
             bool result = spans.PayloadAvailable;
             if (result == true)
             {
-                ICollection<sbyte[]> candidate = spans.Payload;
+                var candidate = spans.Payload;
                 if (candidate.Count == PayloadToMatch.Count)
                 {
                     //TODO: check the byte arrays are the same
-                    IEnumerator<sbyte[]> toMatchIter = PayloadToMatch.GetEnumerator();
+                    var toMatchIter = PayloadToMatch.GetEnumerator();
                     //check each of the byte arrays, in order
                     //hmm, can't rely on order here
-                    foreach (sbyte[] candBytes in candidate)
+                    foreach (var candBytes in candidate)
                     {
                         toMatchIter.MoveNext();
                         //if one is a mismatch, then return false
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Spans
             buffer.Append("spanPayCheck(");
             buffer.Append(match.ToString(field));
             buffer.Append(", payloadRef: ");
-            foreach (sbyte[] bytes in PayloadToMatch)
+            foreach (var bytes in PayloadToMatch)
             {
                 ToStringUtils.ByteArray(buffer, bytes);
                 buffer.Append(';');

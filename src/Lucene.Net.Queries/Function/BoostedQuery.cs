@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Lucene.Net.Index;
@@ -83,11 +84,9 @@ namespace Lucene.Net.Queries.Function
             private readonly BoostedQuery outerInstance;
 
             private readonly IndexSearcher searcher;
-            private readonly Weight qWeight;
-            private readonly IDictionary fcontext;
+            internal readonly Weight qWeight;
+            internal readonly IDictionary fcontext;
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: public BoostedWeight(IndexSearcher searcher) throws java.io.IOException
             public BoostedWeight(BoostedQuery outerInstance, IndexSearcher searcher)
             {
                 this.outerInstance = outerInstance;
@@ -110,14 +109,14 @@ namespace Lucene.Net.Queries.Function
                 get
                 {
                     float sum = qWeight.ValueForNormalization;
-                    sum *= Boost * Boost;
+                    sum *= outerInstance.Boost * outerInstance.Boost;
                     return sum;
                 }
             }
 
             public override void Normalize(float norm, float topLevelBoost)
             {
-                topLevelBoost *= Boost;
+                topLevelBoost *= outerInstance.Boost;
                 qWeight.Normalize(norm, topLevelBoost);
             }
 
@@ -128,13 +127,13 @@ namespace Lucene.Net.Queries.Function
                 {
                     return null;
                 }
-                return new BoostedQuery.CustomScorer(outerInstance, context, this, Boost, subQueryScorer, outerInstance.boostVal);
+                return new BoostedQuery.CustomScorer(outerInstance, context, this, outerInstance.Boost, subQueryScorer, outerInstance.boostVal);
             }
 
             public override Explanation Explain(AtomicReaderContext readerContext, int doc)
             {
                 Explanation subQueryExpl = qWeight.Explain(readerContext, doc);
-                if (!subQueryExpl.Match)
+                if (!subQueryExpl.IsMatch)
                 {
                     return subQueryExpl;
                 }
@@ -147,8 +146,7 @@ namespace Lucene.Net.Queries.Function
             }
         }
 
-
-        private class CustomScorer : Scorer
+        private sealed class CustomScorer : Scorer
         {
             private readonly BoostedQuery outerInstance;
 
@@ -158,7 +156,7 @@ namespace Lucene.Net.Queries.Function
             private readonly FunctionValues vals;
             private readonly AtomicReaderContext readerContext;
 
-            private CustomScorer(BoostedQuery outerInstance, AtomicReaderContext readerContext, BoostedQuery.BoostedWeight w, float qWeight, Scorer scorer, ValueSource vs)
+            public CustomScorer(BoostedQuery outerInstance, AtomicReaderContext readerContext, BoostedQuery.BoostedWeight w, float qWeight, Scorer scorer, ValueSource vs)
                 : base(w)
             {
                 this.outerInstance = outerInstance;
@@ -207,12 +205,10 @@ namespace Lucene.Net.Queries.Function
                 }
             }
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: public Explanation explain(int doc) throws java.io.IOException
-            public virtual Explanation explain(int doc)
+            public Explanation Explain(int doc)
             {
-                Explanation subQueryExpl = weight.qWeight.Explain(readerContext, doc);
-                if (!subQueryExpl.Match)
+                var subQueryExpl = weight.qWeight.Explain(readerContext, doc);
+                if (!subQueryExpl.IsMatch)
                 {
                     return subQueryExpl;
                 }

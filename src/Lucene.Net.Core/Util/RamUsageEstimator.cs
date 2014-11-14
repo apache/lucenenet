@@ -93,7 +93,7 @@ namespace Lucene.Net.Util
 
         static RamUsageEstimator()
         {
-            PrimitiveSizes = new HashMap<Type, int>();
+            PrimitiveSizes = new HashMap<Type, int>(8);
             PrimitiveSizes[typeof(bool)] = Convert.ToInt32(NUM_BYTES_BOOLEAN);
             PrimitiveSizes[typeof(sbyte)] = Convert.ToInt32(NUM_BYTES_BYTE);
             PrimitiveSizes[typeof(char)] = Convert.ToInt32(NUM_BYTES_CHAR);

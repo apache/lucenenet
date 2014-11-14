@@ -55,9 +55,12 @@ namespace Lucene.Net.Util.Packed
             return ValueCount;
         }
 
-        private static long ReadLong(sbyte[] blocks, int blocksOffset)
+        private static long ReadLong(byte[] blocks, int blocksOffset)
         {
-            return (blocks[blocksOffset++] & 0xFFL) << 56 | (blocks[blocksOffset++] & 0xFFL) << 48 | (blocks[blocksOffset++] & 0xFFL) << 40 | (blocks[blocksOffset++] & 0xFFL) << 32 | (blocks[blocksOffset++] & 0xFFL) << 24 | (blocks[blocksOffset++] & 0xFFL) << 16 | (blocks[blocksOffset++] & 0xFFL) << 8 | blocks[blocksOffset++] & 0xFFL;
+            return (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 56 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 48 | 
+                (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 40 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 32 |
+                (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 24 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 16 |
+                (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 8 | ((sbyte)blocks[blocksOffset++]) & 0xFFL;
         }
 
         private int Decode(long block, long[] values, int valuesOffset)
@@ -111,7 +114,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override void Decode(sbyte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
+        public override void Decode(byte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {
             for (int i = 0; i < iterations; ++i)
             {
@@ -134,7 +137,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override void Decode(sbyte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
+        public override void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
         {
             if (BitsPerValue > 32)
             {
@@ -166,7 +169,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override void Encode(long[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations)
+        public override void Encode(long[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations)
         {
             for (int i = 0; i < iterations; ++i)
             {
@@ -176,7 +179,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        public override void Encode(int[] values, int valuesOffset, sbyte[] blocks, int blocksOffset, int iterations)
+        public override void Encode(int[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations)
         {
             for (int i = 0; i < iterations; ++i)
             {

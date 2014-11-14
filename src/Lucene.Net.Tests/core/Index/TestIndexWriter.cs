@@ -1464,10 +1464,10 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            sbyte[] b = new sbyte[50];
+            var b = new byte[50];
             for (int i = 0; i < 50; i++)
             {
-                b[i] = (sbyte)(i + 77);
+                b[i] = (byte)(i + 77);
             }
 
             Document doc = new Document();
@@ -1866,7 +1866,7 @@ namespace Lucene.Net.Index
 
         internal sealed class StringSplitAnalyzer : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new StringSplitTokenizer(reader));
             }
@@ -1914,7 +1914,7 @@ namespace Lucene.Net.Index
                 StringBuilder b = new StringBuilder();
                 char[] buffer = new char[1024];
                 int n;
-                while ((n = Input.Read(buffer, 0, buffer.Length)) != -1)
+                while ((n = input.Read(buffer, 0, buffer.Length)) != -1)
                 {
                     b.Append(buffer, 0, n);
                 }
@@ -2226,7 +2226,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 throw new InvalidOperationException("don't invoke me!");
             }
@@ -2301,7 +2301,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader);
                 TokenStream stream = new MockTokenFilter(tokenizer, MockTokenFilter.ENGLISH_STOPSET);
@@ -2346,7 +2346,7 @@ namespace Lucene.Net.Index
                 this.SecondSet = secondSet;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader);
                 TokenStream stream = new MockTokenFilter(tokenizer, MockTokenFilter.ENGLISH_STOPSET);

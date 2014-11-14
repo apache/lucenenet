@@ -485,7 +485,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     Data.Seek(address);
                     // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource)
                     // assume "they" own the bytes after calling this!
-                    sbyte[] buffer = new sbyte[Bytes.MaxLength];
+                    var buffer = new byte[Bytes.MaxLength];
                     Data.ReadBytes(buffer, 0, buffer.Length);
                     result.Bytes = buffer;
                     result.Offset = 0;
@@ -555,7 +555,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     Data.Seek(startAddress);
                     // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource)
                     // assume "they" own the bytes after calling this!
-                    sbyte[] buffer = new sbyte[length];
+                    var buffer = new byte[length];
                     Data.ReadBytes(buffer, 0, buffer.Length);
                     result.Bytes = buffer;
                     result.Offset = 0;
@@ -1215,7 +1215,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 private void SetTerm()
                 {
                     // TODO: is there a cleaner way
-                    term.Bytes = new sbyte[termBuffer.Length];
+                    term.Bytes = new byte[termBuffer.Length];
                     term.Offset = 0;
                     term.CopyBytes(termBuffer);
                 }

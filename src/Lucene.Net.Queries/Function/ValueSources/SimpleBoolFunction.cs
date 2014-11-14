@@ -51,7 +51,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             private readonly SimpleBoolFunction outerInstance;
 
-            private FunctionValues vals;
+            private readonly FunctionValues vals;
 
             public BoolDocValuesAnonymousInnerClassHelper(SimpleBoolFunction outerInstance, SimpleBoolFunction @this, FunctionValues vals)
                 : base(@this)

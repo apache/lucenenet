@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  weights are encoded as costs: (Integer.MAX_VALUE-weight)
         ///  surface is the original, unanalyzed form.
         /// </summary>
-        private FST<PairOutputs.Pair<long?, BytesRef>> fst = null;
+        private FST<PairOutputs<long?, BytesRef>.Pair> fst = null;
 
         /// <summary>
         /// Analyzer that will be used for analyzing suggestions at
@@ -323,7 +323,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Used by subclass to change the lookup automaton, if
         ///  necessary. 
         /// </summary>
-        protected internal virtual Automaton convertAutomaton(Automaton a)
+        protected virtual Automaton ConvertAutomaton(Automaton a)
         {
             return a;
         }
@@ -332,28 +332,25 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             get
             {
-                var tsta = new TokenStreamToAutomaton();
-                tsta.PreservePositionIncrements = preservePositionIncrements;
-                return tsta;
+                return new TokenStreamToAutomaton {PreservePositionIncrements = preservePositionIncrements};
             }
         }
 
-        private class AnalyzingComparator : IComparer<BytesRef>
+        private sealed class AnalyzingComparator : IComparer<BytesRef>
         {
-
-            internal readonly bool hasPayloads;
+            private readonly bool hasPayloads;
 
             public AnalyzingComparator(bool hasPayloads)
             {
                 this.hasPayloads = hasPayloads;
             }
 
-            internal readonly ByteArrayDataInput readerA = new ByteArrayDataInput();
-            internal readonly ByteArrayDataInput readerB = new ByteArrayDataInput();
-            internal readonly BytesRef scratchA = new BytesRef();
-            internal readonly BytesRef scratchB = new BytesRef();
+            private readonly ByteArrayDataInput readerA = new ByteArrayDataInput();
+            private readonly ByteArrayDataInput readerB = new ByteArrayDataInput();
+            private readonly BytesRef scratchA = new BytesRef();
+            private readonly BytesRef scratchB = new BytesRef();
 
-            public virtual int Compare(BytesRef a, BytesRef b)
+            public int Compare(BytesRef a, BytesRef b)
             {
 
                 // First by analyzed form:
@@ -433,7 +430,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             sbyte[] buffer = new sbyte[8];
             try
             {
-                ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
+                var output = new ByteArrayDataOutput(buffer);
                 BytesRef surfaceForm;
 
                 while ((surfaceForm = iterator.Next()) != null)
@@ -451,7 +448,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         if (scratch.Length > short.MaxValue - 2)
                         {
                             throw new System.ArgumentException("cannot handle analyzed forms > " + (short.MaxValue - 2) +
-                                                               " in length (got " + scratch.length + ")");
+                                                               " in length (got " + scratch.Length + ")");
                         }
                         short analyzedLength = (short) scratch.Length;
 
@@ -522,10 +519,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 reader = new OfflineSorter.ByteSequencesReader(tempSorted);
 
-                PairOutputs<long?, BytesRef> outputs = new PairOutputs<long?, BytesRef>(PositiveIntOutputs.Singleton,
+                var outputs = new PairOutputs<long?, BytesRef>(PositiveIntOutputs.Singleton,
                     ByteSequenceOutputs.Singleton);
-                Builder<PairOutputs.Pair<long?, BytesRef>> builder =
-                    new Builder<PairOutputs.Pair<long?, BytesRef>>(FST.INPUT_TYPE.BYTE1, outputs);
+                var builder = new Builder<PairOutputs<long?, BytesRef>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
 
                 // Build FST:
                 BytesRef previousAnalyzed = null;
@@ -661,7 +657,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public override bool Load(DataInput input)
         {
             count = input.ReadVLong();
-            this.fst = new FST<>(input, new PairOutputs<>(PositiveIntOutputs.Singleton, ByteSequenceOutputs.Singleton));
+            this.fst = new FST<PairOutputs<long?, BytesRef>.Pair>(input, new PairOutputs<long?, BytesRef>(PositiveIntOutputs.Singleton, ByteSequenceOutputs.Singleton));
             maxAnalyzedPathsForOneInput = input.ReadVInt();
             hasPayloads = input.ReadByte() == 1;
             return true;
@@ -725,7 +721,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override IList<LookupResult> Lookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             Debug.Assert(num > 0);
 
@@ -739,7 +735,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             if (fst == null)
             {
-                return Collections.emptyList();
+                return Collections.EmptyList<LookupResult>();
             }
 
             //System.out.println("lookup key=" + key + " num=" + num);
@@ -775,18 +771,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 FST.BytesReader bytesReader = fst.BytesReader;
 
-                FST.Arc<PairOutputs.Pair<long?, BytesRef>> scratchArc = new FST.Arc<PairOutputs.Pair<long?, BytesRef>>();
+                var scratchArc = new FST.Arc<PairOutputs<long?, BytesRef>.Pair>();
 
                 IList<LookupResult> results = new List<LookupResult>();
 
-                IList<FSTUtil.Path<PairOutputs.Pair<long?, BytesRef>>> prefixPaths =
-                    FSTUtil.intersectPrefixPaths(convertAutomaton(lookupAutomaton), fst);
+                IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths =
+                    FSTUtil.IntersectPrefixPaths(ConvertAutomaton(lookupAutomaton), fst);
 
                 if (exactFirst)
                 {
 
                     int count = 0;
-                    foreach (FSTUtil.Path<PairOutputs.Pair<long?, BytesRef>> path in prefixPaths)
+                    foreach (FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair> path in prefixPaths)
                     {
                         if (fst.FindTargetArc(END_BYTE, path.fstNode, scratchArc, bytesReader) != null)
                         {
@@ -798,8 +794,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     // Searcher just to find the single exact only
                     // match, if present:
-                    Util.TopNSearcher<PairOutputs.Pair<long?, BytesRef>> searcher;
-                    searcher = new Util.TopNSearcher<>(fst, count*maxSurfaceFormsPerAnalyzedForm,
+                    Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher;
+                    searcher = new Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>(fst, count * maxSurfaceFormsPerAnalyzedForm,
                         count*maxSurfaceFormsPerAnalyzedForm, weightComparator);
 
                     // NOTE: we could almost get away with only using
@@ -807,18 +803,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // maxSurfaceFormsPerAnalyzedForm had kicked in and
                     // pruned our exact match from one of these nodes
                     // ...:
-                    foreach (FSTUtil.Path<PairOutputs.Pair<long?, BytesRef>> path in prefixPaths)
+                    foreach (var path in prefixPaths)
                     {
                         if (fst.FindTargetArc(END_BYTE, path.fstNode, scratchArc, bytesReader) != null)
                         {
                             // This node has END_BYTE arc leaving, meaning it's an
                             // "exact" match:
-                            searcher.AddStartPaths(scratchArc, fst.outputs.add(path.output, scratchArc.Output), false,
+                            searcher.AddStartPaths(scratchArc, fst.Outputs.Add(path.output, scratchArc.Output), false,
                                 path.input);
                         }
                     }
 
-                    Util.TopResults<PairOutputs.Pair<long?, BytesRef>> completions = searcher.Search();
+                    var completions = searcher.Search();
                     Debug.Assert(completions.IsComplete);
 
                     // NOTE: this is rather inefficient: we enumerate
@@ -833,12 +829,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // seach: it's bounded by how many prefix start
                     // nodes we have and the
                     // maxSurfaceFormsPerAnalyzedForm:
-                    foreach (Util.Result<PairOutputs.Pair<long?, BytesRef>> completion in completions)
+                    foreach (var completion in completions)
                     {
-                        BytesRef output2 = completion.Output.output2;
+                        BytesRef output2 = completion.Output.Output2;
                         if (SameSurfaceForm(utf8Key, output2))
                         {
-                            results.Add(GetLookupResult(completion.Output.output1, output2, spare));
+                            results.Add(GetLookupResult(completion.Output.Output1, output2, spare));
                             break;
                         }
                     }
@@ -850,24 +846,24 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                 }
 
-                Util.TopNSearcher<PairOutputs.Pair<long?, BytesRef>> searcher;
+                Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher;
                 searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, num - results.Count,
                     num*maxAnalyzedPathsForOneInput, weightComparator, utf8Key, results);
 
-                prefixPaths = getFullPrefixPaths(prefixPaths, lookupAutomaton, fst);
+                prefixPaths = GetFullPrefixPaths(prefixPaths, lookupAutomaton, fst);
 
-                foreach (FSTUtil.Path<PairOutputs.Pair<long?, BytesRef>> path in prefixPaths)
+                foreach (FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair> path in prefixPaths)
                 {
                     searcher.AddStartPaths(path.fstNode, path.output, true, path.input);
                 }
 
-                Util.TopResults<PairOutputs.Pair<long?, BytesRef>> completions = searcher.search();
+                var completions = searcher.Search();
                 Debug.Assert(completions.IsComplete);
 
-                foreach (Util.Result<PairOutputs.Pair<long?, BytesRef>> completion in completions)
+                foreach (Util.Fst.Util.Result<PairOutputs<long?, BytesRef>.Pair> completion in completions)
                 {
 
-                    LookupResult result = GetLookupResult(completion.Output.output1, completion.Output.output2, spare);
+                    LookupResult result = GetLookupResult(completion.Output.Output1, completion.Output.Output2, spare);
 
                     // TODO: for fuzzy case would be nice to return
                     // how many edits were required
@@ -887,53 +883,29 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             catch (IOException bogus)
             {
-                throw new Exception(bogus);
+                throw;
             }
         }
 
-        private class TopNSearcherAnonymousInnerClassHelper : Util.TopNSearcher<PairOutputs.Pair<long?, BytesRef>>
+        private class TopNSearcherAnonymousInnerClassHelper : Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>
         {
             private readonly AnalyzingSuggester outerInstance;
 
-            private BytesRef utf8Key;
-            private IList<LookupResult> results;
+            private readonly BytesRef utf8Key;
+            private readonly IList<LookupResult> results;
 
-            public TopNSearcherAnonymousInnerClassHelper<T1> 
-        (
-            private AnalyzingSuggester outerInstance, FST
-        <
-            private T1 
-        >
-            private org.apache.lucene.search.suggest.fst 
-        ,
-            private UnknownType size,
-            private int num, UnknownType
-            private weightComparator 
-        ,
-            private BytesRef utf8Key, IList
-        <
-            private LookupResult 
-        >
-            private results 
-        ) : base(
-            private org.apache.lucene.search.suggest.fst 
-        ,
-            private size 
-        ,
-            num* outerInstance.maxAnalyzedPathsForOneInput 
-        ,
-            private weightComparator 
-        )
-        {
-            this.outerInstance = outerInstance;
-            this.utf8Key = utf8Key;
-            this.results = results;
-            seen = new HashSet<>();
-        }
+            public TopNSearcherAnonymousInnerClassHelper(AnalyzingSuggester outerInstance, FST<PairOutputs<long?, BytesRef>.Pair> fst, int topN, int maxQueueDepth, object comparator, BytesRef utf8Key, IList<LookupResult> results)
+                : base(fst, topN, maxQueueDepth, comparator)         
+            {
+                this.outerInstance = outerInstance;
+                this.utf8Key = utf8Key;
+                this.results = results;
+                seen = new HashSet<BytesRef>();
+            }
 
-            private readonly HashSet<BytesRef> seen;
+            private readonly HashSet<BytesRef> seen;            
 
-            protected internal override bool AcceptResult(IntsRef input, PairOutputs.Pair<long?, BytesRef> output)
+            protected override bool AcceptResult(IntsRef input, PairOutputs<long?, BytesRef>.Pair output)
             {
 
                 // Dedup: when the input analyzes to a graph we
@@ -953,7 +925,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // In exactFirst mode, don't accept any paths
                     // matching the surface form since that will
                     // create duplicate results:
-                    if (outerInstance.sameSurfaceForm(utf8Key, output.Output2))
+                    if (outerInstance.SameSurfaceForm(utf8Key, output.Output2))
                     {
                         // We found exact match, which means we should
                         // have already found it in the first search:
@@ -976,9 +948,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Returns all prefix paths to initialize the search.
         /// </summary>
-        protected internal virtual IList<FSTUtil.Path<PairOutputs.Pair<long?, BytesRef>>> GetFullPrefixPaths(
-            IList<FSTUtil.Path<PairOutputs.Pair<long?, BytesRef>>> prefixPaths, Automaton lookupAutomaton,
-            FST<PairOutputs.Pair<long?, BytesRef>> fst)
+        protected internal virtual IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
+            IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, Automaton lookupAutomaton,
+            FST<PairOutputs<long?, BytesRef>.Pair> fst)
         {
             return prefixPaths;
         }
@@ -1002,7 +974,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
 
             ReplaceSep(automaton);
-            automaton = convertAutomaton(automaton);
+            automaton = ConvertAutomaton(automaton);
 
             Debug.Assert(SpecialOperations.IsFinite(automaton));
 
@@ -1045,8 +1017,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return automaton;
         }
 
-
-
         /// <summary>
         /// Returns the weight associated with an input string,
         /// or null if it does not exist.
@@ -1074,20 +1044,15 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return int.MaxValue - (int) value;
         }
 
-        internal static readonly IComparer<PairOutputs.Pair<long?, BytesRef>> weightComparator =
+        internal static readonly IComparer<PairOutputs<long?, BytesRef>.Pair> weightComparator =
             new ComparatorAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<PairOutputs.Pair<long?, BytesRef>>
+        private sealed class ComparatorAnonymousInnerClassHelper : IComparer<PairOutputs<long?, BytesRef>.Pair>
         {
-            public ComparatorAnonymousInnerClassHelper()
-            {
-            }
-
-            public virtual int Compare(PairOutputs.Pair<long?, BytesRef> left, PairOutputs.Pair<long?, BytesRef> right)
+            public int Compare(PairOutputs<long?, BytesRef>.Pair left, PairOutputs<long?, BytesRef>.Pair right)
             {
                 return left.Output1.CompareTo(right.Output1);
             }
         }
     }
-
 }

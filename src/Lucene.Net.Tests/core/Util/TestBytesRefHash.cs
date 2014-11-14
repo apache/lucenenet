@@ -326,11 +326,11 @@ namespace Lucene.Net.Util
         [ExpectedException(typeof(MaxBytesLengthExceededException))]
         public virtual void TestLargeValue()
         {
-            int[] sizes = new int[] { Random().Next(5), ByteBlockPool.BYTE_BLOCK_SIZE - 33 + Random().Next(31), ByteBlockPool.BYTE_BLOCK_SIZE - 1 + Random().Next(37) };
+            int[] sizes = { Random().Next(5), ByteBlockPool.BYTE_BLOCK_SIZE - 33 + Random().Next(31), ByteBlockPool.BYTE_BLOCK_SIZE - 1 + Random().Next(37) };
             BytesRef @ref = new BytesRef();
             for (int i = 0; i < sizes.Length; i++)
             {
-                @ref.Bytes = new sbyte[sizes[i]];
+                @ref.Bytes = new byte[sizes[i]];
                 @ref.Offset = 0;
                 @ref.Length = sizes[i];
                 try

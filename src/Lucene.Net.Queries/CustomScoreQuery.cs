@@ -9,22 +9,22 @@ using Lucene.Net.Util;
 namespace Lucene.Net.Queries
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Query that sets document score as a programmatic function of several (sub) scores:
@@ -39,14 +39,15 @@ namespace Lucene.Net.Queries
     public class CustomScoreQuery : Query
     {
 
-        private Query subQuery;
+        internal Query subQuery;
         private Query[] scoringQueries; // never null (empty array if there are no valSrcQueries).
         private bool strict = false; // if true, valueSource part of query does not take part in weights normalization.
 
         /// <summary>
         /// Create a CustomScoreQuery over input subQuery. </summary>
         /// <param name="subQuery"> the sub query whose scored is being customized. Must not be null.  </param>
-        public CustomScoreQuery(Query subQuery) : this(subQuery, new FunctionQuery[0])
+        public CustomScoreQuery(Query subQuery)
+            : this(subQuery, new FunctionQuery[0])
         {
         }
 
@@ -56,8 +57,8 @@ namespace Lucene.Net.Queries
         /// <param name="scoringQuery"> a value source query whose scores are used in the custom score
         /// computation.  This parameter is optional - it can be null. </param>
         public CustomScoreQuery(Query subQuery, FunctionQuery scoringQuery)
-            : this(subQuery, scoringQuery != null ? new FunctionQuery[] {scoringQuery} : new FunctionQuery[0])
-            // don't want an array that contains a single null..
+            : this(subQuery, scoringQuery != null ? new FunctionQuery[] { scoringQuery } : new FunctionQuery[0])
+        // don't want an array that contains a single null..
         {
         }
 
@@ -83,7 +84,7 @@ namespace Lucene.Net.Queries
             Query sq = subQuery.Rewrite(reader);
             if (sq != subQuery)
             {
-                clone = Clone();
+                clone = (CustomScoreQuery)Clone();
                 clone.subQuery = sq;
             }
 
@@ -94,7 +95,7 @@ namespace Lucene.Net.Queries
                 {
                     if (clone == null)
                     {
-                        clone = Clone();
+                        clone = (CustomScoreQuery)Clone();
                     }
                     clone.scoringQueries[i] = v;
                 }
@@ -116,7 +117,7 @@ namespace Lucene.Net.Queries
 
         public override object Clone()
         {
-            var clone = (CustomScoreQuery) base.Clone();
+            var clone = (CustomScoreQuery)base.Clone();
             clone.subQuery = (Query)subQuery.Clone();
             clone.scoringQueries = new Query[scoringQueries.Length];
             for (int i = 0; i < scoringQueries.Length; i++)
@@ -157,7 +158,7 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            var other = (CustomScoreQuery) o;
+            var other = (CustomScoreQuery)o;
             if (this.Boost != other.Boost || !this.subQuery.Equals(other.subQuery) || this.strict != other.strict ||
                 this.scoringQueries.Length != other.scoringQueries.Length)
             {
@@ -224,8 +225,8 @@ namespace Lucene.Net.Queries
                     {
                         if (qStrict)
                         {
-                            valSrcWeight.ValueForNormalization;
-                                // do not include ValueSource part in the query normalization
+                            var _ = valSrcWeight.ValueForNormalization;
+                            // do not include ValueSource part in the query normalization
                         }
                         else
                         {
@@ -257,7 +258,7 @@ namespace Lucene.Net.Queries
                         valSrcWeight.Normalize(norm, 1f);
                     }
                 }
-                queryWeight = topLevelBoost*Boost;
+                queryWeight = topLevelBoost * outerInstance.Boost;
             }
 
             public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
@@ -284,24 +285,24 @@ namespace Lucene.Net.Queries
 
             internal virtual Explanation DoExplain(AtomicReaderContext info, int doc)
             {
-                Explanation subQueryExpl = subQueryWeight.Explain(info, doc);
+                var subQueryExpl = subQueryWeight.Explain(info, doc);
                 if (!subQueryExpl.IsMatch)
                 {
                     return subQueryExpl;
                 }
                 // match
-                Explanation[] valSrcExpls = new Explanation[valSrcWeights.Length];
+                var valSrcExpls = new Explanation[valSrcWeights.Length];
                 for (int i = 0; i < valSrcWeights.Length; i++)
                 {
                     valSrcExpls[i] = valSrcWeights[i].Explain(info, doc);
                 }
                 Explanation customExp = outerInstance.GetCustomScoreProvider(info)
                     .CustomExplain(doc, subQueryExpl, valSrcExpls);
-                float sc = Boost*customExp.Value;
+                float sc = outerInstance.Boost * customExp.Value;
                 Explanation res = new ComplexExplanation(true, sc, outerInstance.ToString() + ", product of:");
                 res.AddDetail(customExp);
-                res.AddDetail(new Explanation(Boost, "queryBoost"));
-                    // actually using the q boost as q weight (== weight value)
+                res.AddDetail(new Explanation(outerInstance.Boost, "queryBoost"));
+                // actually using the q boost as q weight (== weight value)
                 return res;
             }
 
@@ -310,131 +311,132 @@ namespace Lucene.Net.Queries
                 return false;
             }
 
+        }
 
+        //=========================== S C O R E R ============================
 
-            //=========================== S C O R E R ============================
+        /// <summary>
+        /// A scorer that applies a (callback) function on scores of the subQuery.
+        /// </summary>
+        private class CustomScorer : Scorer
+        {
+            private readonly CustomScoreQuery outerInstance;
 
-            /// <summary>
-            /// A scorer that applies a (callback) function on scores of the subQuery.
-            /// </summary>
-            private class CustomScorer : Scorer
+            private readonly float qWeight;
+            private readonly Scorer subQueryScorer;
+            private readonly Scorer[] valSrcScorers;
+            private readonly CustomScoreProvider provider;
+            private readonly float[] vScores; // reused in score() to avoid allocating this array for each doc
+
+            // constructor
+            internal CustomScorer(CustomScoreQuery outerInstance, CustomScoreProvider provider, CustomWeight w,
+                float qWeight, Scorer subQueryScorer, Scorer[] valSrcScorers)
+                : base(w)
             {
-                private readonly CustomScoreQuery outerInstance;
+                this.outerInstance = outerInstance;
+                this.qWeight = qWeight;
+                this.subQueryScorer = subQueryScorer;
+                this.valSrcScorers = valSrcScorers;
+                this.vScores = new float[valSrcScorers.Length];
+                this.provider = provider;
+            }
 
-                private readonly float qWeight;
-                private readonly Scorer subQueryScorer;
-                private readonly Scorer[] valSrcScorers;
-                private readonly CustomScoreProvider provider;
-                private readonly float[] vScores; // reused in score() to avoid allocating this array for each doc
-
-                // constructor
-                internal CustomScorer(CustomScoreQuery outerInstance, CustomScoreProvider provider, CustomWeight w,
-                    float qWeight, Scorer subQueryScorer, Scorer[] valSrcScorers) : base(w)
+            public override int NextDoc()
+            {
+                int doc = subQueryScorer.NextDoc();
+                if (doc != NO_MORE_DOCS)
                 {
-                    this.outerInstance = outerInstance;
-                    this.qWeight = qWeight;
-                    this.subQueryScorer = subQueryScorer;
-                    this.valSrcScorers = valSrcScorers;
-                    this.vScores = new float[valSrcScorers.Length];
-                    this.provider = provider;
-                }
-
-                public override int NextDoc()
-                {
-                    int doc = subQueryScorer.NextDoc();
-                    if (doc != NO_MORE_DOCS)
+                    foreach (Scorer valSrcScorer in valSrcScorers)
                     {
-                        foreach (Scorer valSrcScorer in valSrcScorers)
-                        {
-                            valSrcScorer.Advance(doc);
-                        }
+                        valSrcScorer.Advance(doc);
                     }
-                    return doc;
                 }
+                return doc;
+            }
 
-                public override int DocID()
+            public override int DocID()
+            {
+                return subQueryScorer.DocID();
+            }
+
+            /*(non-Javadoc) @see org.apache.lucene.search.Scorer#score() */
+
+            public override float Score()
+            {
+                for (int i = 0; i < valSrcScorers.Length; i++)
                 {
-                    return subQueryScorer.DocID();
+                    vScores[i] = valSrcScorers[i].Score();
                 }
+                return qWeight * provider.CustomScore(subQueryScorer.DocID(), subQueryScorer.Score(), vScores);
+            }
 
-                /*(non-Javadoc) @see org.apache.lucene.search.Scorer#score() */
+            public override int Freq()
+            {
+                return subQueryScorer.Freq();
+            }
 
-                public override float Score()
+            public override ICollection<ChildScorer> Children
+            {
+                get { return Collections.Singleton(new ChildScorer(subQueryScorer, "CUSTOM")); }
+            }
+
+            public override int Advance(int target)
+            {
+                int doc = subQueryScorer.Advance(target);
+                if (doc != NO_MORE_DOCS)
                 {
-                    for (int i = 0; i < valSrcScorers.Length; i++)
+                    foreach (Scorer valSrcScorer in valSrcScorers)
                     {
-                        vScores[i] = valSrcScorers[i].Score();
+                        valSrcScorer.Advance(doc);
                     }
-                    return qWeight*provider.CustomScore(subQueryScorer.DocID, subQueryScorer.Score, vScores);
                 }
-
-                public override int Freq()
-                {
-                    return subQueryScorer.Freq();
-                }
-
-                public override ICollection<ChildScorer> Children
-                {
-                    get { return Collections.Singleton(new ChildScorer(subQueryScorer, "CUSTOM")); }
-                }
-
-                public override int Advance(int target)
-                {
-                    int doc = subQueryScorer.Advance(target);
-                    if (doc != NO_MORE_DOCS)
-                    {
-                        foreach (Scorer valSrcScorer in valSrcScorers)
-                        {
-                            valSrcScorer.Advance(doc);
-                        }
-                    }
-                    return doc;
-                }
-
-                public override long Cost()
-                {
-                    return subQueryScorer.Cost();
-                }
+                return doc;
             }
 
-            public override Weight CreateWeight(IndexSearcher searcher)
+            public override long Cost()
             {
-                return new CustomWeight(this, searcher);
-            }
-
-            /// <summary>
-            /// Checks if this is strict custom scoring.
-            /// In strict custom scoring, the <seealso cref="ValueSource"/> part does not participate in weight normalization.
-            /// This may be useful when one wants full control over how scores are modified, and does 
-            /// not care about normalizing by the <seealso cref="ValueSource"/> part.
-            /// One particular case where this is useful if for testing this query.   
-            /// <P>
-            /// Note: only has effect when the <seealso cref="ValueSource"/> part is not null.
-            /// </summary>
-            public virtual bool Strict { get; set; }
-
-
-            /// <summary>
-            /// The sub-query that CustomScoreQuery wraps, affecting both the score and which documents match. </summary>
-            public virtual Query SubQuery
-            {
-                get { return subQuery; }
-            }
-
-            /// <summary>
-            /// The scoring queries that only affect the score of CustomScoreQuery. </summary>
-            public virtual Query[] ScoringQueries
-            {
-                get { return scoringQueries; }
-            }
-
-            /// <summary>
-            /// A short name of this query, used in <seealso cref="#toString(String)"/>.
-            /// </summary>
-            public virtual string Name
-            {
-                get { return "custom"; }
+                return subQueryScorer.Cost();
             }
         }
+
+        //            public override Weight CreateWeight(IndexSearcher searcher)
+        //            {                
+        //                return new CustomWeight(this, searcher);
+        //            }
+
+        /// <summary>
+        /// Checks if this is strict custom scoring.
+        /// In strict custom scoring, the <seealso cref="ValueSource"/> part does not participate in weight normalization.
+        /// This may be useful when one wants full control over how scores are modified, and does 
+        /// not care about normalizing by the <seealso cref="ValueSource"/> part.
+        /// One particular case where this is useful if for testing this query.   
+        /// <P>
+        /// Note: only has effect when the <seealso cref="ValueSource"/> part is not null.
+        /// </summary>
+        public virtual bool Strict { get; set; }
+
+
+        /// <summary>
+        /// The sub-query that CustomScoreQuery wraps, affecting both the score and which documents match. </summary>
+        public virtual Query SubQuery
+        {
+            get { return subQuery; }
+        }
+
+        /// <summary>
+        /// The scoring queries that only affect the score of CustomScoreQuery. </summary>
+        public virtual Query[] ScoringQueries
+        {
+            get { return scoringQueries; }
+        }
+
+        /// <summary>
+        /// A short name of this query, used in <seealso cref="#toString(String)"/>.
+        /// </summary>
+        public virtual string Name
+        {
+            get { return "custom"; }
+        }
+
     }
 }

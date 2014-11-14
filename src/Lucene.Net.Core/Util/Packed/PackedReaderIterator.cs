@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
         internal readonly int PackedIntsVersion;
         internal readonly PackedInts.Format Format;
         internal readonly BulkOperation BulkOperation;
-        internal readonly sbyte[] NextBlocks;
+        internal readonly byte[] NextBlocks;
         internal readonly LongsRef NextValues;
         internal readonly int Iterations_Renamed;
         internal int Position;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Packed
             BulkOperation = BulkOperation.Of(format, bitsPerValue);
             Iterations_Renamed = Iterations(mem);
             Debug.Assert(valueCount == 0 || Iterations_Renamed > 0);
-            NextBlocks = new sbyte[Iterations_Renamed * BulkOperation.ByteBlockCount()];
+            NextBlocks = new byte[Iterations_Renamed * BulkOperation.ByteBlockCount()];
             NextValues = new LongsRef(new long[Iterations_Renamed * BulkOperation.ByteValueCount()], 0, 0);
             NextValues.Offset = NextValues.Longs.Length;
             Position = -1;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util.Packed
                 @in.ReadBytes(NextBlocks, 0, blocksToRead);
                 if (blocksToRead < NextBlocks.Length)
                 {
-                    Arrays.Fill(NextBlocks, blocksToRead, NextBlocks.Length, (sbyte)0);
+                    Arrays.Fill(NextBlocks, blocksToRead, NextBlocks.Length, (byte)0);
                 }
 
                 BulkOperation.Decode(NextBlocks, 0, NextValues.Longs, 0, Iterations_Renamed);

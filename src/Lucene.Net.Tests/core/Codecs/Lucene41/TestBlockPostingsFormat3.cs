@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader);
                 if (fieldName.Contains("payloadsFixed"))
@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     else if (code == 2)
                     {
                         // term, but ensure a non-zero offset
-                        sbyte[] newbytes = new sbyte[term.Length + 5];
+                        var newbytes = new byte[term.Length + 5];
                         Array.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
                         tests.Add(new BytesRef(newbytes, 5, term.Length));
                     }

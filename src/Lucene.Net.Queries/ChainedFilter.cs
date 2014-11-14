@@ -118,7 +118,7 @@ namespace Lucene.Net.Queries
             }
             else
             {
-                DocIdSetIterator iter = docIdSet.GetEnumerator();
+                DocIdSetIterator iter = docIdSet.GetIterator();
                 if (iter == null)
                 {
                     return DocIdSetIterator.Empty();
@@ -235,11 +235,7 @@ namespace Lucene.Net.Queries
                 }
                 else
                 {
-                    disi = dis.GetEnumerator();
-                    if (disi == null)
-                    {
-                        disi = DocIdSetIterator.Empty();
-                    }
+                    disi = dis.GetIterator() ?? DocIdSetIterator.Empty();
                 }
 
                 switch (logic)

@@ -246,8 +246,7 @@ namespace Lucene.Net.Index
 
         public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
         {
-            /*Linked*/
-            HashMap<Term, NumericDocValuesUpdate> fieldUpdates;
+            /*Linked*/HashMap<Term, NumericDocValuesUpdate> fieldUpdates;
             if (!NumericUpdates.TryGetValue(update.Field, out fieldUpdates))
             {
                 fieldUpdates = new /*Linked*/HashMap<Term, NumericDocValuesUpdate>();

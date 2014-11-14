@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
                 UnicodeUtil.UTF16toUTF8(buffer, 0, 20, utf8);
                 if (!hasIllegal)
                 {
-                    sbyte[] b = (new string(buffer, 0, 20)).GetBytes(IOUtils.CHARSET_UTF_8);
+                    var b = (new string(buffer, 0, 20)).GetBytes(IOUtils.CHARSET_UTF_8);
                     Assert.AreEqual(b.Length, utf8.Length);
                     for (int i = 0; i < b.Length; i++)
                     {
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
                 UnicodeUtil.UTF8toUTF16(utf8.Bytes, 0, utf8.Length, utf16);
                 Assert.AreEqual(s1, new string(utf16.Chars, 0, utf16.Length), "codepoint " + ch);
 
-                sbyte[] b = s1.GetBytes(Encoding.UTF8);
+                var b = s1.GetBytes(Encoding.UTF8);
                 Assert.AreEqual(utf8.Length, b.Length);
                 for (int j = 0; j < utf8.Length; j++)
                 {

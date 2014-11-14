@@ -507,7 +507,7 @@ namespace Lucene.Net.Util.Fst
                 RAMOutputStream ros = new RAMOutputStream();
                 Outputs.WriteFinalOutput(emptyOutput, ros);
 
-                sbyte[] emptyOutputBytes = new sbyte[(int)ros.FilePointer];
+                var emptyOutputBytes = new byte[(int)ros.FilePointer];
                 ros.WriteTo(emptyOutputBytes, 0);
 
                 if (!Packed)
@@ -517,7 +517,7 @@ namespace Lucene.Net.Util.Fst
                     int upto = 0;
                     while (upto < stopAt)
                     {
-                        sbyte b = emptyOutputBytes[upto];
+                        var b = emptyOutputBytes[upto];
                         emptyOutputBytes[upto] = emptyOutputBytes[emptyOutputBytes.Length - upto - 1];
                         emptyOutputBytes[emptyOutputBytes.Length - upto - 1] = b;
                         upto++;

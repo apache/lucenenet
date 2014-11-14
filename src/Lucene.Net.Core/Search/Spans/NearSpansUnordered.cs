@@ -140,11 +140,11 @@ namespace Lucene.Net.Search.Spans
                 return Spans.End();
             }
 
-            public override ICollection<sbyte[]> Payload
+            public override ICollection<byte[]> Payload
             {
                 get
                 {
-                    return new List<sbyte[]>(Spans.Payload);
+                    return new List<byte[]>(Spans.Payload);
                 }
             }
 
@@ -315,12 +315,12 @@ namespace Lucene.Net.Search.Spans
             return Max.End();
         }
 
-        public override ICollection<sbyte[]> Payload
+        public override ICollection<byte[]> Payload
         {
             get
             {
-                HashSet<sbyte[]> matchPayload = new HashSet<sbyte[]>();
-                for (SpansCell cell = First; cell != null; cell = cell.Next_Renamed)
+                var matchPayload = new HashSet<byte[]>();
+                for (var cell = First; cell != null; cell = cell.Next_Renamed)
                 {
                     if (cell.PayloadAvailable)
                     {

@@ -44,9 +44,9 @@ namespace Lucene.Net.Search.Payloads
     ///
     public class PayloadHelper
     {
-        private sbyte[] PayloadField = new sbyte[] { 1 };
-        private sbyte[] PayloadMultiField1 = new sbyte[] { 2 };
-        private sbyte[] PayloadMultiField2 = new sbyte[] { 4 };
+        private byte[] PayloadField = new byte[] { 1 };
+        private byte[] PayloadMultiField1 = new byte[] { 2 };
+        private byte[] PayloadMultiField2 = new byte[] { 4 };
         public const string NO_PAYLOAD_FIELD = "noPayloadField";
         public const string MULTI_FIELD = "multiField";
         public const string FIELD = "field";
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Payloads
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result, fieldName));
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Payloads
 
             public override bool IncrementToken()
             {
-                if (Input.IncrementToken())
+                if (input.IncrementToken())
                 {
                     if (FieldName.Equals(FIELD))
                     {

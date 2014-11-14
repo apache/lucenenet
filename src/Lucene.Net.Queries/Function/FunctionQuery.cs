@@ -89,7 +89,7 @@ namespace Lucene.Net.Queries.Function
             {
                 get
                 {
-                    queryWeight = Boost;
+                    queryWeight = outerInstance.Boost;
                     return queryWeight * queryWeight;
                 }
             }
@@ -197,7 +197,7 @@ namespace Lucene.Net.Queries.Function
                 Explanation result = new ComplexExplanation(true, sc, "FunctionQuery(" + outerInstance.func + "), product of:");
 
                 result.AddDetail(vals.Explain(d));
-                result.AddDetail(new Explanation(Boost, "boost"));
+                result.AddDetail(new Explanation(outerInstance.Boost, "boost"));
                 result.AddDetail(new Explanation(weight.queryNorm, "queryNorm"));
                 return result;
             }

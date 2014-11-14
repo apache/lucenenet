@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
                 WordShift += 8;
                 Word = (long)((ulong)Word >> 8);
             }
-            IndexArray = BitUtil.BitList((sbyte)Word);
+            IndexArray = BitUtil.BitList((byte)Word);
         }
 
         /// <summary>

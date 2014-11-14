@@ -48,24 +48,17 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class Query : ICloneable
     {
-        private float boost = 1.0f; // query boost factor
+        protected Query()
+        {
+            Boost = 1.0f; // query boost factor
+        }
 
         /// <summary>
         /// Sets the boost for this query clause to <code>b</code>.  Documents
         /// matching this clause will (in addition to the normal weightings) have
         /// their score multiplied by <code>b</code>.
         /// </summary>
-        public virtual float Boost
-        {
-            set
-            {
-                boost = value;
-            }
-            get
-            {
-                return boost;
-            }
-        }
+        public virtual float Boost { get; set; }
 
         /// <summary>
         /// Prints a query to a string, with <code>field</code> assumed to be the
@@ -130,7 +123,7 @@ namespace Lucene.Net.Search
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + Number.FloatToIntBits(boost);
+            result = prime * result + Number.FloatToIntBits(Boost);
             return result;
         }
 
@@ -140,16 +133,13 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (obj == null)
+            var other = obj as Query;
+            if (other == null)
             {
                 return false;
             }
-            if (this.GetType() != obj.GetType())
-            {
-                return false;
-            }
-            var other = (Query)obj;
-            if (Number.FloatToIntBits(boost) != Number.FloatToIntBits(other.boost))
+           
+            if (Number.FloatToIntBits(Boost) != Number.FloatToIntBits(other.Boost))
             {
                 return false;
             }

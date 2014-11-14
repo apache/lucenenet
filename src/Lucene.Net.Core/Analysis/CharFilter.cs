@@ -42,14 +42,14 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// The underlying character-input stream.
         /// </summary>
-        public readonly TextReader Input;
+        public readonly TextReader input;
 
         /// <summary>
         /// Create a new CharFilter wrapping the provided reader. </summary>
         /// <param name="input"> a Reader, can also be a CharFilter for chaining. </param>
         protected CharFilter(TextReader input)
         {
-            this.Input = input;
+            this.input = input;
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void Close()
         {
-            Input.Close();
+            input.Close();
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis
         public int CorrectOffset(int currentOff)
         {
             int corrected = Correct(currentOff);
-            return (Input is CharFilter) ? ((CharFilter)Input).CorrectOffset(corrected) : corrected;
+            return (input is CharFilter) ? ((CharFilter)input).CorrectOffset(corrected) : corrected;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Support
@@ -11,6 +12,19 @@ namespace Lucene.Net.Support
         }
 
         public int GetHashCode(T obj)
+        {
+            return RuntimeHelpers.GetHashCode(obj);
+        }
+    }
+
+    public class IdentityComparer : IEqualityComparer
+    {
+        public new bool Equals(object x, object y)
+        {
+            return ReferenceEquals(x, y);
+        }
+
+        public int GetHashCode(object obj)
         {
             return RuntimeHelpers.GetHashCode(obj);
         }

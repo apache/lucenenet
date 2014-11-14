@@ -82,7 +82,7 @@ namespace Lucene.Net.Store
         /// Copy the current contents of this buffer to output
         ///  byte array
         /// </summary>
-        public virtual void WriteTo(sbyte[] bytes, int offset)
+        public virtual void WriteTo(byte[] bytes, int offset)
         {
             Flush();
             long end = File.Length_Renamed;

@@ -352,10 +352,10 @@ namespace Lucene.Net.Index
                             BytesRef payload;
                             if (storePayloads && Random().Next(4) == 0)
                             {
-                                sbyte[] bytes = new sbyte[1 + Random().Next(5)];
+                                var bytes = new byte[1 + Random().Next(5)];
                                 for (int l = 0; l < bytes.Length; l++)
                                 {
-                                    bytes[l] = (sbyte)Random().Next(255);
+                                    bytes[l] = (byte)Random().Next(255);
                                 }
                                 payload = new BytesRef(bytes);
                             }

@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
         {
             private readonly FieldFilterAtomicReader OuterInstance;
 
-            private StoredFieldVisitor Visitor;
+            private readonly StoredFieldVisitor Visitor;
 
             public StoredFieldVisitorAnonymousInnerClassHelper(FieldFilterAtomicReader outerInstance, StoredFieldVisitor visitor)
             {
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
                 this.Visitor = visitor;
             }
 
-            public override void BinaryField(FieldInfo fieldInfo, sbyte[] value)
+            public override void BinaryField(FieldInfo fieldInfo, byte[] value)
             {
                 Visitor.BinaryField(fieldInfo, value);
             }
