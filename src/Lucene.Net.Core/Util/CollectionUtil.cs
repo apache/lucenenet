@@ -62,12 +62,12 @@ namespace Lucene.Net.Util
                 }
             }
 
-            protected internal override void Swap(int i, int j)
+            protected override void Swap(int i, int j)
             {
                 list = list.Swap(i, j);
             }
 
-            protected internal override int Compare(int i, int j)
+            protected override int Compare(int i, int j)
             {
                 return Comp.Compare(list[i], list[j]);
             }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            protected internal override void Swap(int i, int j)
+            protected override void Swap(int i, int j)
             {
                 List = List.Swap(i, j);
             }
@@ -127,7 +127,7 @@ namespace Lucene.Net.Util
                 List[j] = Tmp[i];
             }
 
-            protected internal override int Compare(int i, int j)
+            protected override int Compare(int i, int j)
             {
                 return Comp.Compare(List[i], List[j]);
             }

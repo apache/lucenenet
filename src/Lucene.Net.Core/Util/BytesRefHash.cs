@@ -187,14 +187,14 @@ namespace Lucene.Net.Util
                 this.Compact = compact;
             }
 
-            protected internal override void Swap(int i, int j)
+            protected override void Swap(int i, int j)
             {
                 int o = Compact[i];
                 Compact[i] = Compact[j];
                 Compact[j] = o;
             }
 
-            protected internal override int Compare(int i, int j)
+            protected override int Compare(int i, int j)
             {
                 int id1 = Compact[i], id2 = Compact[j];
                 Debug.Assert(OuterInstance.BytesStart.Length > id1 && OuterInstance.BytesStart.Length > id2);

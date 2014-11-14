@@ -268,7 +268,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    suppressedExceptions = (List<Exception>) exception.Data["SuppressedExceptions"];
+                    suppressedExceptions = (List<Exception>)exception.Data["SuppressedExceptions"];
                 }
                 suppressedExceptions.Add(suppressed);
             }
