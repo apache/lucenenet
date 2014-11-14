@@ -262,9 +262,9 @@ namespace Lucene.Net.Index
         public void TestNumericField()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
-            int numDocs = AtLeast(500);
-            object[] answers = new Number[numDocs];
+            var w = new RandomIndexWriter(Random(), dir);
+            var numDocs = AtLeast(500);
+            var answers = new object[numDocs];
             FieldType.NumericType[] typeAnswers = new FieldType.NumericType[numDocs];
             for (int id = 0; id < numDocs; id++)
             {

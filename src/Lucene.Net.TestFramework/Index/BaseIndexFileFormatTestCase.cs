@@ -64,21 +64,13 @@ namespace Lucene.Net.Index
             IDictionary<string, long> bytesUsedByExtension = new Dictionary<string, long>();
             foreach (string file in d.ListAll())
             {
-                string ext = IndexFileNames.GetExtension(file);
-                if (!string.IsNullOrWhiteSpace(ext))
-                {
-                    long previousLength = bytesUsedByExtension.ContainsKey(ext) ? bytesUsedByExtension[ext] : 0;
-                    bytesUsedByExtension[ext] = previousLength + d.FileLength(file);
-                }
+				string ext = IndexFileNames.GetExtension(file) ?? string.Empty;
+                long previousLength = bytesUsedByExtension.ContainsKey(ext) ? bytesUsedByExtension[ext] : 0;
+                bytesUsedByExtension[ext] = previousLength + d.FileLength(file);
             }
-
-            foreach (var elm in ExcludedExtensionsFromByteCounts())
-            {
-                if (bytesUsedByExtension.Keys.Contains(elm))
-                {
-                    bytesUsedByExtension.Remove(elm);
-                }
-            }
+			foreach (string item in ExcludedExtensionsFromByteCounts()) {
+				bytesUsedByExtension.Remove(item);							
+			}
             return bytesUsedByExtension;
         }
 

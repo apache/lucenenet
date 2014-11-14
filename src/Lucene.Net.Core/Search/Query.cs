@@ -129,17 +129,10 @@ namespace Lucene.Net.Search
 
         public override bool Equals(object obj)
         {
-            if (this == obj)
+            if (ReferenceEquals(obj, this))
             {
                 return true;
             }
-            if (Object.ReferenceEquals(obj, this))
-            {
-                return true;
-            }
-
-            if (obj != null && GetType() != obj.GetType())
-                return false;
 
             var other = obj as Query;
             if (other == null)

@@ -2,7 +2,7 @@
 
 Apache Lucene.Net is a C# full-text search engine, a C# port of the popular Apache Lucene project.  Apache Lucene.Net is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.
 
-Apache Lucene.Net is compiled against Microsoft .NET Framework 4.0
+Apache Lucene.Net is compiled against Microsoft .NET Framework 4.5
 
 The Apache Lucene.Net web site is at:
   http://lucenenet.apache.org
@@ -12,21 +12,18 @@ Please join the Apache Lucene.Net-User mailing list by sending a message to:
 
 
 ## Files
-  
-build/*
-  Visual Studio solution files
- 
+
 src/Contrib
-  Contributed code whihc extends and enhances Apahce Lucene.Net, but is not part of the core library
+  Temporary folder, mainly contributed code whihc extends and enhances Apahce Lucene.Net, but is not part of the core library
   
-src/core
-  The Lucene source code.
+src/Lucene.Net.*
+  Lucene.NET sub-projects (Core, Queries, Analysis, Facet, etc)
 
-src/Demo
-  Some example code.
+src/Lucene.Net.TestFramework
+  A TestFramework class library which provides a lot of support code for the various Tests projects.
 
-test/*
-  nUnit tests for Lucene.Net and Contrib projects
+src/Lucene.Net.Tests.*
+  Tests for Lucene.NET sub-projects
 
 ## Documentation
 

@@ -582,7 +582,6 @@ namespace Lucene.Net.Documents
             {
                 return null;
             }
-            Number n = new Number();
             FieldType.NumericType? numericType = ((FieldType)FieldType()).NumericTypeValue;
             if (numericType != null)
             {
@@ -592,7 +591,7 @@ namespace Lucene.Net.Documents
                     // (attributes,...) if not needed (stored field loading)
                     InternalTokenStream = new NumericTokenStream(Type.NumericPrecisionStep);
                 }
-                NumericTokenStream nts = (NumericTokenStream)InternalTokenStream;
+                var nts = (NumericTokenStream)InternalTokenStream;
                 // initialize value in TokenStream
                 object val = FieldsData;
                 switch (numericType)

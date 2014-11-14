@@ -50,14 +50,14 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class SearchEquivalenceTestBase : LuceneTestCase
     {
-        protected internal static IndexSearcher S1, S2;
+        protected internal static IndexSearcher	S1, S2;
         protected internal static Directory Directory;
         protected internal static IndexReader Reader;
         protected internal static Analyzer Analyzer;
         protected internal static string Stopword; // we always pick a character as a stopword
 
         [SetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Random random = Random();
             Directory = NewDirectory();
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
         }
 
         [TearDown]
-        public static void AfterClass()
+        public void AfterClass()
         {
             Reader.Dispose();
             Directory.Dispose();

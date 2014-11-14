@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         private List<Term> Terms_Renamed = new List<Term>(4);
         private List<int?> Positions_Renamed = new List<int?>(4);
         private int MaxPosition = 0;
-        private int Slop_Renamed = 0;
+        private int slop = 0;
 
         /// <summary>
         /// Constructs an empty phrase query. </summary>
@@ -86,11 +86,11 @@ namespace Lucene.Net.Search
                 {
                     throw new System.ArgumentException("slop value cannot be negative");
                 }
-                Slop_Renamed = value;
+                slop = value;
             }
             get
             {
-                return Slop_Renamed;
+                return slop;
             }
         }
 
@@ -380,12 +380,12 @@ namespace Lucene.Net.Search
                 }
 
                 // sort by increasing docFreq order
-                if (OuterInstance.Slop_Renamed == 0)
+                if (OuterInstance.slop == 0)
                 {
                     ArrayUtil.TimSort(postingsFreqs);
                 }
 
-                if (OuterInstance.Slop_Renamed == 0) // optimize exact case
+                if (OuterInstance.slop == 0) // optimize exact case
                 {
                     ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, Similarity.DoSimScorer(Stats, context));
                     if (s.NoDocs)
@@ -399,7 +399,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    return new SloppyPhraseScorer(this, postingsFreqs, OuterInstance.Slop_Renamed, Similarity.DoSimScorer(Stats, context));
+                    return new SloppyPhraseScorer(this, postingsFreqs, OuterInstance.slop, Similarity.DoSimScorer(Stats, context));
                 }
             }
 
@@ -417,7 +417,7 @@ namespace Lucene.Net.Search
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
                     {
-                        float freq = OuterInstance.Slop_Renamed == 0 ? scorer.Freq() : ((SloppyPhraseScorer)scorer).SloppyFreq();
+                        float freq = OuterInstance.slop == 0 ? scorer.Freq() : ((SloppyPhraseScorer)scorer).SloppyFreq();
                         SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
                         ComplexExplanation result = new ComplexExplanation();
                         result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
@@ -490,10 +490,10 @@ namespace Lucene.Net.Search
             }
             buffer.Append("\"");
 
-            if (Slop_Renamed != 0)
+            if (slop != 0)
             {
                 buffer.Append("~");
-                buffer.Append(Slop_Renamed);
+                buffer.Append(slop);
             }
 
             buffer.Append(ToStringUtils.Boost(Boost));
@@ -510,14 +510,14 @@ namespace Lucene.Net.Search
                 return false;
             }
             PhraseQuery other = (PhraseQuery)o;
-            return (this.Boost == other.Boost) && (this.Slop_Renamed == other.Slop_Renamed) && this.Terms_Renamed.SequenceEqual(other.Terms_Renamed) && this.Positions_Renamed.SequenceEqual(other.Positions_Renamed);
+            return (this.Boost == other.Boost) && (this.slop == other.slop) && this.Terms_Renamed.SequenceEqual(other.Terms_Renamed) && this.Positions_Renamed.SequenceEqual(other.Positions_Renamed);
         }
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) ^ Slop_Renamed ^ Terms_Renamed.GetHashCode() ^ Positions_Renamed.GetHashCode();
+            return Number.FloatToIntBits(Boost) ^ slop ^ Terms_Renamed.GetHashCode() ^ Positions_Renamed.GetHashCode();
         }
     }
 }
