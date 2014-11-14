@@ -65,10 +65,20 @@ namespace Lucene.Net.Index
             foreach (string file in d.ListAll())
             {
                 string ext = IndexFileNames.GetExtension(file);
-                long previousLength = bytesUsedByExtension.ContainsKey(ext) ? bytesUsedByExtension[ext] : 0;
-                bytesUsedByExtension[ext] = previousLength + d.FileLength(file);
+                if (!string.IsNullOrWhiteSpace(ext))
+                {
+                    long previousLength = bytesUsedByExtension.ContainsKey(ext) ? bytesUsedByExtension[ext] : 0;
+                    bytesUsedByExtension[ext] = previousLength + d.FileLength(file);
+                }
             }
-            bytesUsedByExtension.Keys.RemoveAll(ExcludedExtensionsFromByteCounts());
+
+            foreach (var elm in ExcludedExtensionsFromByteCounts())
+            {
+                if (bytesUsedByExtension.Keys.Contains(elm))
+                {
+                    bytesUsedByExtension.Remove(elm);
+                }
+            }
             return bytesUsedByExtension;
         }
 
