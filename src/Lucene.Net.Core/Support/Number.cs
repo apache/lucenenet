@@ -497,10 +497,5 @@ namespace Lucene.Net.Support
                    || value is double
                    || value is decimal;
         }
-
-        public static long DoubleToRawLongBits(double d)
-        {
-            return BitConverter.DoubleToInt64Bits(d);
-        }
     }
 }
