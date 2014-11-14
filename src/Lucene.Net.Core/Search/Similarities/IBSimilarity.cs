@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Similarities
     /// conference on Research and development in information retrieval (SIGIR '10).
     /// ACM, New York, NY, USA, 234-241.
     /// <p>The retrieval function is of the form <em>RSV(q, d) = &sum;
-    /// -x<sup>q</sup><sub>w</sub> log Prob(X<sub>w</sub> &ge;
+    /// -x<sup>q</sup><sub>w</sub> log Prob(X<sub>w</sub> &gt;=
     /// t<sup>d</sup><sub>w</sub> | &lambda;<sub>w</sub>)</em>, where
     /// <ul>
     ///   <li><em>x<sup>q</sup><sub>w</sub></em> is the query boost;</li>
