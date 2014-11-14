@@ -27,7 +27,7 @@ namespace Lucene.Net.Support
     /// <summary>
     /// A simple class for number conversions.
     /// </summary>
-    public class Number
+    public static class Number
     {
         /// <summary>
         /// Min radix value.
@@ -42,16 +42,16 @@ namespace Lucene.Net.Support
         /*public const int CHAR_MIN_CODE_POINT =
         public const int CHAR_MAX_CODE_POINT = */
 
-        private const System.String digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+        private const string digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
         /// <summary>
         /// Converts a number to System.String.
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public static System.String ToString(long number)
+        public static string ToString(long number)
         {
-            System.Text.StringBuilder s = new System.Text.StringBuilder();
+            var s = new System.Text.StringBuilder();
 
             if (number == 0)
             {
@@ -99,12 +99,12 @@ namespace Lucene.Net.Support
         /// <param name="i">A number to be converted.</param>
         /// <param name="radix">A radix.</param>
         /// <returns>A System.String representation of the number in the specified redix.</returns>
-        public static System.String ToString(long i, int radix)
+        public static String ToString(long i, int radix)
         {
             if (radix < MIN_RADIX || radix > MAX_RADIX)
                 radix = 10;
 
-            char[] buf = new char[65];
+            var buf = new char[65];
             int charPos = 64;
             bool negative = (i < 0);
 
@@ -481,6 +481,26 @@ namespace Lucene.Net.Support
         {
             long x = BitConverter.DoubleToInt64Bits(d);
             return BitConverter.Int64BitsToDouble(FlipEndian(x));
+        }
+
+        public static bool IsNumber(this object value)
+        {
+            return value is sbyte
+                   || value is byte
+                   || value is short
+                   || value is ushort
+                   || value is int
+                   || value is uint
+                   || value is long
+                   || value is ulong
+                   || value is float
+                   || value is double
+                   || value is decimal;
+        }
+
+        public static long DoubleToRawLongBits(double d)
+        {
+            return BitConverter.DoubleToInt64Bits(d);
         }
     }
 }
