@@ -17,64 +17,61 @@
 
 namespace Lucene.Net.Codecs.Intblock
 {
+    using Sep;
+    using Store;
     using System;
-    using Lucene.Net.Codecs.Intblock;
-
-    internal class Index : IntIndexInput.Index 
+    using System.Diagnostics;
+    
+    internal class Index : IntIndexInputIndex 
     {
-    private long fp;
-    private int upto;
+        private long _fp;
+        private int _upto;
 
-        public override void Read(final DataInput indexIn, final bool absolute)
-    {
-        if (absolute)
+        public override void Read(DataInput indexIn, bool absolute)
         {
-            upto = indexIn.readVInt();
-            fp = indexIn.readVLong();
-        }
-        else
-        {
-            final
-            int uptoDelta = indexIn.readVInt();
-            if ((uptoDelta & 1) == 1)
+            if (absolute)
             {
-                // same block
-                upto += uptoDelta >> > 1;
+                _upto = indexIn.ReadVInt();
+                _fp = indexIn.ReadVLong();
             }
             else
             {
-                // new block
-                upto = uptoDelta >> > 1;
-                fp += indexIn.readVLong();
+                var uptoDelta = indexIn.ReadVInt();
+                if ((uptoDelta & 1) == 1)
+                {
+                    // same block
+                    _upto += (int)((uint)uptoDelta >> 1);
+                }
+                else
+                {
+                    // new block
+                    _upto = (int)((uint)uptoDelta >> 1);
+                    _fp += indexIn.ReadVLong();
+                }
             }
-        }
-        Debug.Assert(
-        upto < blockSize;
-    }
-
-        public override void Seek(final IntIndexInput .Reader other)
-        {
-            ((Reader) other).seek(fp, upto);
+            Debug.Assert(_upto < BlockSize);
         }
 
-        public override void CopyFrom(IntIndexInput.Index other)
+        public override void Seek(IntIndexInputReader other)
         {
-            Index idx = (Index) other;
-            fp = idx.fp;
-            upto = idx.upto;
+            ((Reader) other).Seek(_fp, _upto);
         }
 
-        public override Index Clone()
+        public override void CopyFrom(IntIndexInputIndex other)
         {
-            Index other = new Index();
-            other.fp = fp;
-            other.upto = upto;
-            return other;
+            var idx = (Index) other;
+            _fp = idx._fp;
+            _upto = idx._upto;
+        }
+
+        public override IntIndexInputIndex Clone()
+        {
+            return new Index {_fp = _fp, _upto = _upto};
         }
 
         public override String ToString()
         {
-            return "fp=" + fp + " upto=" + upto;
+            return String.Format("fp={0} upto={1}", _fp, _upto);
         }
     
     }

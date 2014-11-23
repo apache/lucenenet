@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Store;
 
 namespace Lucene.Net.Codecs.Intblock
 {
- 
+
     /// <summary>
     /// Naive int block API that writes vInts.  This is
     /// expected to give poor performance; it's really only for
@@ -33,36 +34,38 @@ namespace Lucene.Net.Codecs.Intblock
     /// 
     /// @lucene.experimental
     /// </summary>
-public abstract class FixedIntBlockIndexInput : IntIndexInput {
+    public abstract class FixedIntBlockIndexInput : IntIndexInput
+    {
 
-  private readonly IndexInput input;
-  protected readonly int BlockSize;
+        private readonly IndexInput _input;
+        private readonly int _blockSize;
 
         protected FixedIntBlockIndexInput(IndexInput input)
         {
-            this.input = input;
-            BlockSize = input.ReadVInt();
+            _input = input;
+            _blockSize = input.ReadVInt();
         }
 
-  public override IntIndexInput.Reader reader() {
-    final int[] buffer = new int[BlockSize];
-    final IndexInput clone = in.clone();
-
-    // TODO: can this be simplified?
-    return new Reader(clone, buffer, this.GetBlockReader(clone, buffer));
-  }
-
-        public override void Close()
+        public override IntIndexInputReader Reader()
         {
-            input.Close();
+            var buffer = new int[_blockSize];
+            var clone = (IndexInput)_input.Clone();
+
+            // TODO: can this be simplified?
+            return new Reader(clone, buffer, BlockReader(clone, buffer));
         }
 
-  public override IntIndexInput.Index Index() {
-    return new Index();
-  }
+        public override void Dispose()
+        {
+            _input.Dispose();
+        }
 
-  protected abstract BlockReader getBlockReader(IndexInput in, int[] buffer);
+        public override IntIndexInputIndex Index()
+        {
+            return new Index();
+        }
 
-  
-}
+        protected abstract VariableIntBlockIndexInput.BlockReader BlockReader(IndexInput input, int[] buffer);
+
+    }
 }

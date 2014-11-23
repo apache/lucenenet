@@ -1,5 +1,3 @@
-package codecs.intblock;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -21,12 +19,6 @@ package codecs.intblock;
  *  expected to give poor performance; it's really only for
  *  testing the pluggability.  One should typically use pfor instead. */
 
-import java.io.IOException;
-
-import codecs.sep.IntIndexInput;
-import store.DataInput;
-import store.IndexInput;
-
 // TODO: much of this can be shared code w/ the fixed case
 
 /** Abstract base class that reads variable-size blocks of ints
@@ -37,7 +29,11 @@ import store.IndexInput;
  *
  * @lucene.experimental
  */
-public abstract class VariableIntBlockIndexInput extends IntIndexInput {
+
+using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Store;
+
+public abstract class VariableIntBlockIndexInput : IntIndexInput {
 
   protected final IndexInput in;
   protected final int maxBlockSize;
@@ -77,7 +73,7 @@ public abstract class VariableIntBlockIndexInput extends IntIndexInput {
     public void seek(long pos) ;
   }
 
-  private static class Reader extends IntIndexInput.Reader {
+  private static class Reader : IntIndexInputReader {
     private final IndexInput in;
 
     public final int[] pending;
@@ -145,7 +141,7 @@ public abstract class VariableIntBlockIndexInput extends IntIndexInput {
     }
   }
 
-  private class Index extends IntIndexInput.Index {
+  private class Index : IntIndexInputIndex {
     private long fp;
     private int upto;
 

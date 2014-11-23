@@ -99,8 +99,7 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.WriteNewline(data);
 
             var patternString = sb.ToString();
-            DecimalFormat encoder = new DecimalFormat(patternString, new DecimalFormatSymbols(Locale.ROOT));
-
+            
             int numDocsWritten = 0;
 
             // second pass to write the values
@@ -109,7 +108,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 Debug.Assert(value >= minValue);
 
                 var delta = value - minValue;
-                string s = encoder.format(delta);
+                string s = delta.ToString(patternString);
                 Debug.Assert(s.Length == patternString.Length);
                 SimpleTextUtil.Write(data, s, scratch);
                 SimpleTextUtil.WriteNewline(data);
@@ -151,14 +150,13 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.Write(data, sb.ToString(), scratch);
             SimpleTextUtil.WriteNewline(data);
             
-            DecimalFormat encoder = new DecimalFormat(sb.ToString(), new DecimalFormatSymbols(Locale.ROOT));
-
+           
             int numDocsWritten = 0;
             foreach (BytesRef value in values)
             {
                 int length = value == null ? 0 : value.Length;
                 SimpleTextUtil.Write(data, LENGTH);
-                SimpleTextUtil.Write(data, encoder.format(length), scratch);
+                SimpleTextUtil.Write(data, length.ToString(sb.ToString()), scratch);
                 SimpleTextUtil.WriteNewline(data);
 
                 // write bytes -- don't use SimpleText.Write
@@ -217,8 +215,8 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.Write(data, PATTERN);
             SimpleTextUtil.Write(data, sb.ToString(), scratch);
             SimpleTextUtil.WriteNewline(data);
-            
-            DecimalFormat encoder = new DecimalFormat(sb.ToString(), new DecimalFormatSymbols(Locale.ROOT));
+
+            var encoderFormat = sb.ToString();
 
             int maxOrdBytes = Convert.ToString(valueCount + 1L).Length;
             sb.Length = 0;
@@ -231,8 +229,8 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.Write(data, ORDPATTERN);
             SimpleTextUtil.Write(data, sb.ToString(), scratch);
             SimpleTextUtil.WriteNewline(data);
-            
-            DecimalFormat ordEncoder = new DecimalFormat(sb.ToString(), new DecimalFormatSymbols(Locale.ROOT));
+
+            var ordEncoderFormat = sb.ToString();
 
             // for asserts:
             int valuesSeen = 0;
@@ -241,7 +239,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 // write length
                 SimpleTextUtil.Write(data, LENGTH);
-                SimpleTextUtil.Write(data, encoder.format(value.Length), scratch);
+                SimpleTextUtil.Write(data, value.Length.ToString(encoderFormat), scratch);
                 SimpleTextUtil.WriteNewline(data);
 
                 // write bytes -- don't use SimpleText.Write
@@ -262,7 +260,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             foreach (var ord in docToOrd)
             {
-                SimpleTextUtil.Write(data, ordEncoder.format(ord + 1), scratch);
+                SimpleTextUtil.Write(data, (ord + 1).ToString(ordEncoderFormat), scratch);
                 SimpleTextUtil.WriteNewline(data);
             }
         }
@@ -276,7 +274,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             long valueCount = 0;
             int maxLength = 0;
-            foreach (BytesRef value in values)
+            foreach (var value in values)
             {
                 maxLength = Math.Max(maxLength, value.Length);
                 valueCount++;
@@ -304,7 +302,7 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.Write(data, sb.ToString(), scratch);
             SimpleTextUtil.WriteNewline(data);
 
-            DecimalFormat encoder = new DecimalFormat(sb.ToString(), new DecimalFormatSymbols(Locale.ROOT));
+            string encoderFormat = sb.ToString();
 
             // compute ord pattern: this is funny, we encode all values for all docs to find the maximum length
             var maxOrdListLength = 0;
@@ -316,7 +314,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 int count = (int) n;
                 for (int i = 0; i < count; i++)
                 {
-                    long ord = (long) ordStream.next();
+                    ordStream.MoveNext();
+
+                    var ord = ordStream.Current;
                     if (sb2.Length > 0)
                     {
                         sb2.Append(",");
@@ -340,11 +340,11 @@ namespace Lucene.Net.Codecs.SimpleText
             // for asserts:
             long valuesSeen = 0;
 
-            foreach (BytesRef value in values)
+            foreach (var value in values)
             {
                 // write length
                 SimpleTextUtil.Write(data, LENGTH);
-                SimpleTextUtil.Write(data, encoder.format(value.Length), scratch);
+                SimpleTextUtil.Write(data, value.Length.ToString(encoderFormat), scratch);
                 SimpleTextUtil.WriteNewline(data);
 
                 // write bytes -- don't use SimpleText.Write
@@ -352,7 +352,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 data.WriteBytes(value.Bytes, value.Offset, value.Length);
 
                 // pad to fit
-                for (int i = value.Length; i < maxLength; i++)
+                for (var i = value.Length; i < maxLength; i++)
                 {
                     data.WriteByte((sbyte) ' ');
                 }
@@ -372,7 +372,8 @@ namespace Lucene.Net.Codecs.SimpleText
                 var count = (int) n;
                 for (var i = 0; i < count; i++)
                 {
-                    var ord = (long) ordStream.Next();
+                    ordStream.MoveNext();
+                    var ord = ordStream.Current;
                     if (sb2.Length > 0)
                         sb2.Append(",");
                     

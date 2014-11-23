@@ -15,53 +15,67 @@
  * limitations under the License.
  */
 
+using System.Diagnostics;
+using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Store;
+
 namespace Lucene.Net.Codecs.Intblock
 {
-    internal static class Reader : IntIndexInput.Reader
+    internal class Reader : IntIndexInputReader
     {
 
-    private final IndexInput in;
-    private final BlockReader blockReader;
-    private final int blockSize;
-    private final int[] pending;
+        private readonly IndexInput _input;
+        private readonly VariableIntBlockIndexInput.BlockReader _blockReader;
+        private readonly int _blockSize;
+        private readonly int[] _pending;
 
-    private int upto;
-    private bool seekPending;
-    private long pendingFP;
-    private long lastBlockFP = -1;
+        private int _upto;
+        private bool _seekPending;
+        private long _pendingFp;
+        private long _lastBlockFp = -1;
 
-    public Reader(final IndexInput in, final int[] pending, final BlockReader blockReader) {
-      this.in = in;
-      this.pending = pending;
-      this.blockSize = pending.length;
-      this.blockReader = blockReader;
-      upto = blockSize;
-    }
+        public Reader(IndexInput input, int[] pending, VariableIntBlockIndexInput.BlockReader blockReader)
+        {
+            _input = input;
+            _pending = pending;
+            _blockSize = pending.Length;
+            _blockReader = blockReader;
+            _upto = _blockSize;
+        }
 
-    void Seek(final long fp, final int upto) {
-      Debug.Assert( upto < blockSize;
-      if (seekPending || fp != lastBlockFP) {
-        pendingFP = fp;
-        seekPending = true;
-      }
-      this.upto = upto;
-    }
+        private void Seek(long fp, int upto)
+        {
+            Debug.Assert(upto < _blockSize);
+            
+            if (_seekPending || fp != _lastBlockFp)
+            {
+                _pendingFp = fp;
+                _seekPending = true;
+            }
+            
+            _upto = upto;
+        }
 
-    public override int Next() {
-      if (seekPending) {
-        // Seek & load new block
-        in.seek(pendingFP);
-        lastBlockFP = pendingFP;
-        blockReader.readBlock();
-        seekPending = false;
-      } else if (upto == blockSize) {
-        // Load new block
-        lastBlockFP = in.getFilePointer();
-        blockReader.readBlock();
-        upto = 0;
-      }
-      return pending[upto++];
-    }
-  }
+        public override int Next()
+        {
+            if (_seekPending)
+            {
+                // Seek & load new block
+                _input.Seek(_pendingFp);
+                _lastBlockFp = _pendingFp;
+                _blockReader.readBlock();
+                _seekPending = false;
+            }
+            else if (_upto == _blockSize)
+            {
+                // Load new block
+                _lastBlockFp = _input.FilePointer;
+                _blockReader.readBlock();
+                _upto = 0;
+            }
+
+            return _pending[_upto++];
+        }
     }
 }
+

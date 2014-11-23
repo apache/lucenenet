@@ -1,5 +1,3 @@
-package codecs.intblock;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -17,120 +15,137 @@ package codecs.intblock;
  * limitations under the License.
  */
 
-/** Naive int block API that writes vInts.  This is
- *  expected to give poor performance; it's really only for
- *  testing the pluggability.  One should typically use pfor instead. */
+namespace Lucene.Net.Codecs.Intblock
+{
 
-import java.io.IOException;
+    using System.Diagnostics;
+    using Store;
+    using Sep;
 
-import codecs.sep.IntIndexOutput;
-import store.DataOutput;
-import store.IndexOutput;
+    /// <summary>
+    /// Naive int block API that writes vInts.  This is expected to give poor 
+    /// performance; it's really only for testing the pluggability.  One 
+    /// should typically use pfor instead.
+    ///
+    /// TODO: much of this can be shared code w/ the fixed case
+    /// 
+    /// Abstract base class that writes variable-size blocks of ints
+    /// to an IndexOutput.  While this is a simple approach, a
+    /// more performant approach would directly create an impl
+    /// of IntIndexOutput inside Directory.  Wrapping a generic
+    /// IndexInput will likely cost performance.
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    public abstract class VariableIntBlockIndexOutput : IntIndexOutput
+    {
+        private readonly IndexOutput _output;
+        private int _upto;
+        private bool _hitExcDuringWrite;
 
-// TODO: much of this can be shared code w/ the fixed case
-
-/** Abstract base class that writes variable-size blocks of ints
- *  to an IndexOutput.  While this is a simple approach, a
- *  more performant approach would directly create an impl
- *  of IntIndexOutput inside Directory.  Wrapping a generic
- *  IndexInput will likely cost performance.
- *
- * @lucene.experimental
- */
-public abstract class VariableIntBlockIndexOutput extends IntIndexOutput {
-
-  protected final IndexOutput out;
-
-  private int upto;
-  private bool hitExcDuringWrite;
-
-  // TODO what Var-Var codecs exist in practice... and what are there blocksizes like?
-  // if its less than 128 we should set that as max and use byte?
-
-  /** NOTE: maxBlockSize must be the maximum block size 
-   *  plus the max non-causal lookahead of your codec.  EG Simple9
-   *  requires lookahead=1 because on seeing the Nth value
-   *  it knows it must now encode the N-1 values before it. */
-  protected VariableIntBlockIndexOutput(IndexOutput out, int maxBlockSize)  {
-    this.out = out;
-    out.writeInt(maxBlockSize);
-  }
-
-  /** Called one value at a time.  Return the number of
-   *  buffered input values that have been written to out. */
-  protected abstract int add(int value) ;
-
-  @Override
-  public IntIndexOutput.Index index() {
-    return new Index();
-  }
-
-  private class Index extends IntIndexOutput.Index {
-    long fp;
-    int upto;
-    long lastFP;
-    int lastUpto;
-
-    @Override
-    public void mark()  {
-      fp = out.getFilePointer();
-      upto = VariableIntBlockIndexOutput.this.upto;
-    }
-
-    @Override
-    public void copyFrom(IntIndexOutput.Index other, bool copyLast)  {
-      Index idx = (Index) other;
-      fp = idx.fp;
-      upto = idx.upto;
-      if (copyLast) {
-        lastFP = fp;
-        lastUpto = upto;
-      }
-    }
-
-    @Override
-    public void write(DataOutput indexOut, bool absolute)  {
-      Debug.Assert( upto >= 0;
-      if (absolute) {
-        indexOut.writeVInt(upto);
-        indexOut.writeVLong(fp);
-      } else if (fp == lastFP) {
-        // same block
-        Debug.Assert( upto >= lastUpto;
-        int uptoDelta = upto - lastUpto;
-        indexOut.writeVInt(uptoDelta << 1 | 1);
-      } else {      
-        // new block
-        indexOut.writeVInt(upto << 1);
-        indexOut.writeVLong(fp - lastFP);
-      }
-      lastUpto = upto;
-      lastFP = fp;
-    }
-  }
-
-  @Override
-  public void write(int v)  {
-    hitExcDuringWrite = true;
-    upto -= add(v)-1;
-    hitExcDuringWrite = false;
-    Debug.Assert( upto >= 0;
-  }
-
-  @Override
-  public void close()  {
-    try {
-      if (!hitExcDuringWrite) {
-        // stuff 0s in until the "real" data is flushed:
-        int stuffed = 0;
-        while(upto > stuffed) {
-          upto -= add(0)-1;
-          Debug.Assert( upto >= 0;
-          stuffed += 1;
+        /// <Remarks>
+        /// TODO what Var-Var codecs exist in practice, and what are their blocksizes like?
+        /// If it's less than 128 should we set that as max and use byte?
+        /// 
+        /// NOTE: maxblockSize must be the maxium block size plus the max non-causal lookahed
+        /// of your codec. EG Simple9 requires lookahead=1 becuase on seeing the Nth value it 
+        /// knows it must now encode the N-1 values before it
+        /// </Remarks>
+        protected VariableIntBlockIndexOutput(IndexOutput output, int maxBlockSize)
+        {
+            _output = output;
+            _output.WriteInt(maxBlockSize);
         }
-      }
-    } finally {
-      out.close();
+
+        /// <summary>
+        /// Called one value at a time. Return the number of 
+        /// buffered input values that have been written out
+        /// </summary>
+        protected abstract int Add(int value);
+
+        public override IntIndexOutputIndex Index()
+        {
+            return new VariableIntBlockIndexOutputIndex();
+        }
+
+        public override void Write(int v)
+        {
+            _hitExcDuringWrite = true;
+            _upto -= Add(v) - 1;
+            _hitExcDuringWrite = false;
+            Debug.Assert(_upto >= 0);
+        }
+
+        public override void Dispose()
+        {
+            try
+            {
+                if (_hitExcDuringWrite) return;
+
+                // stuff 0s in until the "real" data is flushed:
+                var stuffed = 0;
+                while (_upto > stuffed)
+                {
+                    _upto -= Add(0) - 1;
+                    Debug.Assert(_upto >= 0);
+                    stuffed += 1;
+                }
+            }
+            finally
+            {
+                _output.Dispose();
+            }
+        }
     }
-  }
+
+    internal class VariableIntBlockIndexOutputIndex : IntIndexOutputIndex
+    {
+        private long _fp;
+        private int _upto;
+        private long _lastFp;
+        private int _lastUpto;
+
+        public override void Mark()
+            {
+                _fp = output.FilePointer;
+                _upto = VariableIntBlockIndexOutput.
+                this._upto;
+            }
+
+        public override void CopyFrom(IntIndexOutputIndex other, bool copyLast)
+        {
+            var idx = (Index)other;
+            _fp = idx.fp;
+            _upto = idx.upto;
+            if (!copyLast) return;
+
+            _lastFp = _fp;
+            _lastUpto = _upto;
+        }
+
+        public override void Write(DataOutput indexOut, bool absolute)
+        {
+            Debug.Assert(_upto >= 0);
+            if (absolute)
+            {
+                indexOut.WriteVInt(_upto);
+                indexOut.WriteVLong(_fp);
+            }
+            else if (_fp == _lastFp)
+            {
+                // same block
+                Debug.Assert(_upto >= _lastUpto);
+                var uptoDelta = _upto - _lastUpto;
+                indexOut.WriteVInt(uptoDelta << 1 | 1);
+            }
+            else
+            {
+                // new block
+                indexOut.WriteVInt(_upto << 1);
+                indexOut.WriteVLong(_fp - _lastFp);
+            }
+            _lastUpto = _upto;
+            _lastFp = _fp;
+        }
+    }
 }
