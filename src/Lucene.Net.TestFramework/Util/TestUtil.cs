@@ -374,7 +374,7 @@ namespace Lucene.Net.Util
 
         public static string RandomSimpleString(Random r)
         {
-            return RandomSimpleString(r, 0, 10);
+            return RandomSimpleString(r, 0, 20);
         }
 
         /// <summary>

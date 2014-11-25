@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
         }
 
         // Called once to run searching
-        protected internal abstract void DoSearching(TaskScheduler es, long stopTime);
+        protected internal abstract void DoSearching(TaskScheduler es, DateTime stopTime);
 
         protected internal virtual Directory GetDirectory(Directory @in)
         {
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
         {
         }
 
-        private ThreadClass[] LaunchIndexingThreads(LineFileDocs docs, int numThreads, long stopTime, ISet<string> delIDs, ISet<string> delPackIDs, IList<SubDocs> allSubDocs)
+        private ThreadClass[] LaunchIndexingThreads(LineFileDocs docs, int numThreads, DateTime stopTime, ISet<string> delIDs, ISet<string> delPackIDs, IList<SubDocs> allSubDocs)
         {
             ThreadClass[] threads = new ThreadClass[numThreads];
             for (int thread = 0; thread < numThreads; thread++)
@@ -145,12 +145,12 @@ namespace Lucene.Net.Index
             private readonly ThreadedIndexingAndSearchingTestCase OuterInstance;
 
             private LineFileDocs Docs;
-            private long StopTime;
+            private DateTime StopTime;
             private ISet<string> DelIDs;
             private ISet<string> DelPackIDs;
             private IList<SubDocs> AllSubDocs;
 
-            public ThreadAnonymousInnerClassHelper(ThreadedIndexingAndSearchingTestCase outerInstance, LineFileDocs docs, long stopTime, ISet<string> delIDs, ISet<string> delPackIDs, IList<SubDocs> allSubDocs)
+            public ThreadAnonymousInnerClassHelper(ThreadedIndexingAndSearchingTestCase outerInstance, LineFileDocs docs, DateTime stopTime, ISet<string> delIDs, ISet<string> delPackIDs, IList<SubDocs> allSubDocs)
             {
                 this.OuterInstance = outerInstance;
                 this.Docs = docs;
@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
                 // TODO: would be better if this were cross thread, so that we make sure one thread deleting anothers added docs works:
                 IList<string> toDeleteIDs = new List<string>();
                 IList<SubDocs> toDeleteSubDocs = new List<SubDocs>();
-                while (DateTime.Now.Millisecond < StopTime && !OuterInstance.Failed.Get())
+                while (DateTime.UtcNow < StopTime && !OuterInstance.Failed.Get())
                 {
                     try
                     {
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual void RunSearchThreads(long stopTimeMS)
+        protected internal virtual void RunSearchThreads(DateTime stopTime)
         {
             int numThreads = TestUtil.NextInt(Random(), 1, 5);
             ThreadClass[] searchThreads = new ThreadClass[numThreads];
@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
             // TODO: we should enrich this to do more interesting searches
             for (int thread = 0; thread < searchThreads.Length; thread++)
             {
-                searchThreads[thread] = new ThreadAnonymousInnerClassHelper2(this, stopTimeMS, totHits, totTermCount);
+                searchThreads[thread] = new ThreadAnonymousInnerClassHelper2(this, stopTime, totHits, totTermCount);
                 searchThreads[thread].SetDaemon(true);
                 searchThreads[thread].Start();
             }
@@ -421,14 +421,14 @@ namespace Lucene.Net.Index
         {
             private readonly ThreadedIndexingAndSearchingTestCase OuterInstance;
 
-            private long StopTimeMS;
+            private DateTime StopTime;
             private AtomicInteger TotHits;
             private AtomicInteger TotTermCount;
 
-            public ThreadAnonymousInnerClassHelper2(ThreadedIndexingAndSearchingTestCase outerInstance, long stopTimeMS, AtomicInteger totHits, AtomicInteger totTermCount)
+            public ThreadAnonymousInnerClassHelper2(ThreadedIndexingAndSearchingTestCase outerInstance, DateTime stopTime, AtomicInteger totHits, AtomicInteger totTermCount)
             {
                 this.OuterInstance = outerInstance;
-                this.StopTimeMS = stopTimeMS;
+                this.StopTime = stopTime;
                 this.TotHits = totHits;
                 this.TotTermCount = totTermCount;
             }
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": launch search thread");
                 }
-                while (DateTime.Now.Millisecond < StopTimeMS)
+                while (DateTime.UtcNow < StopTime)
                 {
                     try
                     {
@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
                                     trigger = TotTermCount.Get() / 30;
                                     shift = Random().Next(trigger);
                                 }
-                                while (DateTime.Now.Millisecond < StopTimeMS)
+                                while (DateTime.UtcNow < StopTime)
                                 {
                                     BytesRef term = termsEnum.Next();
                                     if (term == null)
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
             DelCount.Set(0);
             PackCount.Set(0);
 
-            long t0 = DateTime.Now.Millisecond;
+            DateTime t0 = DateTime.UtcNow;
 
             Random random = new Random(Random().Next());
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
@@ -603,13 +603,13 @@ namespace Lucene.Net.Index
             ISet<string> delPackIDs = new ConcurrentHashSet<string>(new HashSet<string>());
             IList<SubDocs> allSubDocs = new ConcurrentList<SubDocs>(new List<SubDocs>());
 
-            long stopTime = DateTime.Now.Millisecond + RUN_TIME_SEC * 1000;
+            DateTime stopTime = DateTime.UtcNow.AddSeconds(RUN_TIME_SEC);
 
             ThreadClass[] indexThreads = LaunchIndexingThreads(docs, NUM_INDEX_THREADS, stopTime, delIDs, delPackIDs, allSubDocs);
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: DONE start " + NUM_INDEX_THREADS + " indexing threads [" + (DateTime.Now.Millisecond - t0) + " ms]");
+                Console.WriteLine("TEST: DONE start " + NUM_INDEX_THREADS + " indexing threads [" + (DateTime.UtcNow - t0).TotalMilliseconds + " ms]");
             }
 
             // Let index build up a bit
@@ -619,7 +619,7 @@ namespace Lucene.Net.Index
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: all searching done [" + (DateTime.Now.Millisecond - t0) + " ms]");
+                Console.WriteLine("TEST: all searching done [" + (DateTime.UtcNow - t0).TotalMilliseconds + " ms]");
             }
 
             for (int thread = 0; thread < indexThreads.Length; thread++)
@@ -629,7 +629,7 @@ namespace Lucene.Net.Index
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: done join indexing threads [" + (DateTime.Now.Millisecond - t0) + " ms]; addCount=" + AddCount + " delCount=" + DelCount);
+                Console.WriteLine("TEST: done join indexing threads [" + (DateTime.UtcNow - t0).TotalMilliseconds + " ms]; addCount=" + AddCount + " delCount=" + DelCount);
             }
 
             IndexSearcher s = FinalSearcher;
@@ -767,7 +767,7 @@ namespace Lucene.Net.Index
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: done [" + (DateTime.Now.Millisecond - t0) + " ms]");
+                Console.WriteLine("TEST: done [" + (DateTime.UtcNow - t0).TotalMilliseconds + " ms]");
             }
         }
 
