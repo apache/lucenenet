@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.TestFramework", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Queries", "src\Lucene.Net.Queries\Lucene.Net.Queries.csproj", "{69D7956C-C2CC-4708-B399-A188FEC384C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Facet", "Lucene.Net.Facet\Lucene.Net.Facet.csproj", "{48F7884A-9454-4E88-8413-9D35992CB440}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Facet", "src\Lucene.Net.Facet\Lucene.Net.Facet.csproj", "{48F7884A-9454-4E88-8413-9D35992CB440}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

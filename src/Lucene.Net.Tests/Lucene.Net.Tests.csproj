@@ -65,7 +65,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
       <Project>{48f7884a-9454-4e88-8413-9d35992cb440}</Project>
       <Name>Lucene.Net.Facet</Name>
     </ProjectReference>
