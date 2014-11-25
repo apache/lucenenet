@@ -103,11 +103,11 @@
     <Compile Include="TopOrdAndIntQueue.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
       <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
       <Name>Lucene.Net.Queries</Name>
     </ProjectReference>
