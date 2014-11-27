@@ -651,7 +651,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static Random Random()
         {
-            return new Random(1);
+            return new Random();
             //return RandomizedContext.Current.Random;
         }
 
@@ -1409,7 +1409,10 @@ namespace Lucene.Net.Util
                 }
             }
 
-            Trace.TraceInformation("Type of Directory is : {0}", clazzName);
+            if (VERBOSE)
+            {
+                Trace.TraceInformation("Type of Directory is : {0}", clazzName);
+            }
 
             Type clazz = CommandLineUtil.LoadDirectoryClass(clazzName);
             // If it is a FSDirectory type, try its ctor(File)

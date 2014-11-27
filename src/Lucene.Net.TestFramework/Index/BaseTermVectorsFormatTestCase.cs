@@ -737,7 +737,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestLotsOfFields()
         {
-            RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5000, 10);
+            RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 500, 10);
             foreach (Options options in ValidOptions())
             {
                 Directory dir = NewDirectory();
