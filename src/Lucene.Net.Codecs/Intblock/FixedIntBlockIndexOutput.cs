@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,127 +15,74 @@
  * limitations under the License.
  */
 
-/** Naive int block API that writes vInts.  This is
- *  expected to give poor performance; it's really only for
- *  testing the pluggability.  One should typically use pfor instead. */
+namespace Lucene.Net.Codecs.Intblock
+{
+    using Sep;
+    using IntIndexOutput = Sep.IntIndexOutput;
+    using IndexOutput = Store.IndexOutput;
 
-using System;
-using System.Diagnostics;
-using Lucene.Net.Codecs.Sep;
-using Lucene.Net.Store;
+    /// <summary>
+    /// Naive int block API that writes vInts.  This is
+    ///  expected to give poor performance; it's really only for
+    ///  testing the pluggability.  One should typically use pfor instead. 
+    /// </summary>
 
 
-/// <summary>
-/// Abstract base class that writes fixed-size blocks of ints to an 
-/// IndexOutput. While this is a simple approach, a more 
-/// performant approach would directly create an impl of 
-/// IntIndexOutput inside Directory.  Wrapping a generic IndexInput 
-/// will likely cost performance.
-///
-///  * @lucene.experimental
-/// </summary>
-public abstract class FixedIntBlockIndexOutput : IntIndexOutput {
-
-  protected IndexOutput out;
-  private int blockSize;
-  protected int int[] buffer;
-  private int upto;
-
-  protected FixedIntBlockIndexOutput(IndexOutput out, int fixedBlockSize)  {
-    blockSize = fixedBlockSize;
-    this.out = out;
-    out.WriteVInt(blockSize);
-    buffer = new int[blockSize];
-  }
-
-  protected abstract void flushBlock() ;
-
-  public override IntIndexOutputIndex index() {
-    return new Index();
-  }
-
-    private class Index : IntIndexOutputIndex
+    /// <summary>
+    /// Abstract base class that writes fixed-size blocks of ints
+    ///  to an IndexOutput.  While this is a simple approach, a
+    ///  more performant approach would directly create an impl
+    ///  of IntIndexOutput inside Directory.  Wrapping a generic
+    ///  IndexInput will likely cost performance.
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    public abstract class FixedIntBlockIndexOutput : IntIndexOutput
     {
-        private long fp;
-        private int upto;
-        private long lastFP;
-        private int lastUpto;
+        private readonly int _blockSize;
+        protected internal readonly int[] BUFFER;
 
-        public override void Mark()
+        protected internal FixedIntBlockIndexOutput(IndexOutput output, int fixedBlockSize)
         {
-            fp =out.
-            FilePointer;
-            upto = FixedIntBlockIndexOutput.
-            this.upto;
+            _blockSize = fixedBlockSize;
+            OUTPUT = output;
+            output.WriteVInt(_blockSize);
+            BUFFER = new int[_blockSize];
         }
 
-        public override void CopyFrom(IntIndexOutputIndex other, bool copyLast)
+        protected internal abstract void FlushBlock();
+
+        public override IntIndexOutputIndex Index()
         {
-            Index idx = (Index) other;
-            fp = idx.fp;
-            upto = idx.upto;
-            if (copyLast)
+            return new IntBlockIndexOuput(this);
+        }
+
+        public override void Write(int v)
+        {
+            BUFFER[_upto++] = v;
+            if (_upto == _blockSize)
             {
-                lastFP = fp;
-                lastUpto = upto;
+                FlushBlock();
+                _upto = 0;
             }
         }
 
-        public override void Write(DataOutput indexOut, bool absolute)
+        public override void Dispose()
         {
-            if (absolute)
+            try
             {
-                indexOut.WriteVInt(upto);
-                indexOut.WriteVLong(fp);
+                if (_upto > 0)
+                {
+                    // NOTE: entries in the block after current upto are
+                    // invalid
+                    FlushBlock();
+                }
             }
-            else if (fp == lastFP)
+            finally
             {
-                // same block
-                Debug.Assert(upto >= lastUpto);
-                var uptoDelta = upto - lastUpto;
-                indexOut.WriteVInt(uptoDelta << 1 | 1);
+                OUTPUT.Dispose();
             }
-            else
-            {
-                // new block
-                indexOut.WriteVInt(upto << 1);
-                indexOut.WriteVLong(fp - lastFP);
-            }
-            lastUpto = upto;
-            lastFP = fp;
-        }
-
-        public override String ToString()
-        {
-            return String.Format("fp={0} upto={1}", fp, upto);
         }
     }
 
-    public override void Write(int v)
-    {
-        buffer[upto++] = v;
-        if (upto == blockSize)
-        {
-            flushBlock();
-            upto = 0;
-        }
-    }
-
-    public override void Dispose()
-    {
-        try
-        {
-            if (upto > 0)
-            {
-                // NOTE: entries in the block after current upto are
-                // invalid
-                flushBlock();
-            }
-        }
-        finally
-        {
-        out.
-            Dispose();
-        }
-    }
 }

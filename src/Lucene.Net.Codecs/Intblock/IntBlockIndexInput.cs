@@ -19,13 +19,17 @@ namespace Lucene.Net.Codecs.Intblock
 {
     using Sep;
     using Store;
-    using System;
-    using System.Diagnostics;
-    
-    internal class Index : IntIndexInputIndex 
+
+    internal class IntBlockIndexInput : IntIndexInputIndex
     {
+        private readonly IntIndexInput _outerInstance;
         private long _fp;
         private int _upto;
+
+        public IntBlockIndexInput(IntIndexInput outerInstance)
+        {
+            _outerInstance = outerInstance;
+        }
 
         public override void Read(DataInput indexIn, bool absolute)
         {
@@ -36,43 +40,45 @@ namespace Lucene.Net.Codecs.Intblock
             }
             else
             {
-                var uptoDelta = indexIn.ReadVInt();
+                int uptoDelta = indexIn.ReadVInt();
                 if ((uptoDelta & 1) == 1)
                 {
                     // same block
-                    _upto += (int)((uint)uptoDelta >> 1);
+                    _upto += (int) ((uint) uptoDelta >> 1);
                 }
                 else
                 {
                     // new block
-                    _upto = (int)((uint)uptoDelta >> 1);
+                    _upto = (int) ((uint) uptoDelta >> 1);
                     _fp += indexIn.ReadVLong();
                 }
             }
-            Debug.Assert(_upto < BlockSize);
+            // TODO: we can't do this assert because non-causal
+            // int encoders can have upto over the buffer size
+            //assert upto < maxBlockSize: "upto=" + upto + " max=" + maxBlockSize;
+        }
+
+        public override string ToString()
+        {
+            return "VarIntBlock.Index fp=" + _fp + " upto=" + _upto;
         }
 
         public override void Seek(IntIndexInputReader other)
         {
-            ((Reader) other).Seek(_fp, _upto);
+            ((IntBlockIndexReader)other).Seek(_fp, _upto);
         }
 
         public override void CopyFrom(IntIndexInputIndex other)
         {
-            var idx = (Index) other;
+            var idx = (IntBlockIndexInput)other;
             _fp = idx._fp;
             _upto = idx._upto;
         }
 
         public override IntIndexInputIndex Clone()
         {
-            return new Index {_fp = _fp, _upto = _upto};
+            var other = new IntBlockIndexInput(_outerInstance) {_fp = _fp, _upto = _upto};
+            return other;
         }
-
-        public override String ToString()
-        {
-            return String.Format("fp={0} upto={1}", _fp, _upto);
-        }
-    
     }
 }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,22 +15,25 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Codecs.Sep;
-using Lucene.Net.Store;
-
 namespace Lucene.Net.Codecs.Intblock
 {
 
+    using Sep;
+    using IntIndexInput = Sep.IntIndexInput;
+    using IndexInput = Store.IndexInput;
+
     /// <summary>
     /// Naive int block API that writes vInts.  This is
-    /// expected to give poor performance; it's really only for
-    /// testing the pluggability.  One should typically use pfor instead. */
-    ///
+    ///  expected to give poor performance; it's really only for
+    ///  testing the pluggability.  One should typically use pfor instead. 
+    /// </summary>
+
+    /// <summary>
     /// Abstract base class that reads fixed-size blocks of ints
-    /// from an IndexInput.  While this is a simple approach, a
-    /// more performant approach would directly create an impl
-    /// of IntIndexInput inside Directory.  Wrapping a generic
-    /// IndexInput will likely cost performance.
+    ///  from an IndexInput.  While this is a simple approach, a
+    ///  more performant approach would directly create an impl
+    ///  of IntIndexInput inside Directory.  Wrapping a generic
+    ///  IndexInput will likely cost performance.
     /// 
     /// @lucene.experimental
     /// </summary>
@@ -38,21 +41,20 @@ namespace Lucene.Net.Codecs.Intblock
     {
 
         private readonly IndexInput _input;
-        private readonly int _blockSize;
+        protected internal readonly int BLOCK_SIZE;
 
-        protected FixedIntBlockIndexInput(IndexInput input)
+        public FixedIntBlockIndexInput(IndexInput @in)
         {
-            _input = input;
-            _blockSize = input.ReadVInt();
+            _input = @in;
+            BLOCK_SIZE = @in.ReadVInt();
         }
 
         public override IntIndexInputReader Reader()
         {
-            var buffer = new int[_blockSize];
-            var clone = (IndexInput)_input.Clone();
-
+            var buffer = new int[BLOCK_SIZE];
+            var clone = (IndexInput) _input.Clone();
             // TODO: can this be simplified?
-            return new Reader(clone, buffer, BlockReader(clone, buffer));
+            return new IntBlockIndexReader(clone, buffer, GetBlockReader(clone, buffer));
         }
 
         public override void Dispose()
@@ -62,10 +64,11 @@ namespace Lucene.Net.Codecs.Intblock
 
         public override IntIndexInputIndex Index()
         {
-            return new Index();
+            return new IntBlockIndexInput(this);
         }
 
-        protected abstract VariableIntBlockIndexInput.BlockReader BlockReader(IndexInput input, int[] buffer);
+        protected internal abstract IBlockReader GetBlockReader(IndexInput @in, int[] buffer);
 
     }
+
 }
