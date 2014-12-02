@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
         {
             bdv.Get(idx, scratch);
             idx = scratch.Offset;
-            sbyte b = scratch.Bytes[idx++];
+            var b = scratch.Bytes[idx++];
             long value = b & 0x7FL;
             for (int shift = 7; (b & 0x80L) != 0; shift += 7)
             {
@@ -75,10 +75,10 @@ namespace Lucene.Net.Index
             BytesRef bytes = new BytesRef(10); // negative longs may take 10 bytes
             while ((value & ~0x7FL) != 0L)
             {
-                bytes.Bytes[bytes.Length++] = unchecked((sbyte)((value & 0x7FL) | 0x80L));
+                bytes.Bytes[bytes.Length++] = unchecked((byte)((value & 0x7FL) | 0x80L));
                 value = (long)((ulong)value >> 7);
             }
-            bytes.Bytes[bytes.Length++] = (sbyte)value;
+            bytes.Bytes[bytes.Length++] = (byte)value;
             //    System.err.println("[" + Thread.currentThread().getName() + "] value=" + orig + ", bytes=" + bytes);
             return bytes;
         }

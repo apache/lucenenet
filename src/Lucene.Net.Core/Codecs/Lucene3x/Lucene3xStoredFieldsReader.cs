@@ -318,7 +318,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             else
             {
                 int length = FieldsStream.ReadVInt();
-                sbyte[] bytes = new sbyte[length];
+                var bytes = new byte[length];
                 FieldsStream.ReadBytes(bytes, 0, length);
                 if ((bits & FIELD_IS_BINARY) != 0)
                 {
@@ -326,7 +326,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-                    visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString((byte[])(Array)bytes));
+                    visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString(bytes));
                 }
             }
         }

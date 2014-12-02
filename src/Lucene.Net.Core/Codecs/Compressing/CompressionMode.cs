@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.Compressing
                 // add 7 padding bytes, this is not necessary but can help decompression run faster
                 if (bytes.Bytes.Length < originalLength + 7)
                 {
-                    bytes.Bytes = new sbyte[ArrayUtil.Oversize(originalLength + 7, 1)];
+                    bytes.Bytes = new byte[ArrayUtil.Oversize(originalLength + 7, 1)];
                 }
                 int decompressedLength = LZ4.Decompress(@in, offset + length, bytes.Bytes, 0);
                 if (decompressedLength > originalLength)
@@ -174,14 +174,14 @@ namespace Lucene.Net.Codecs.Compressing
 
         private sealed class LZ4FastCompressor : Compressor
         {
-            internal readonly LZ4.HashTable Ht;
+            private readonly LZ4.HashTable Ht;
 
             internal LZ4FastCompressor()
             {
                 Ht = new LZ4.HashTable();
             }
 
-            public override void Compress(sbyte[] bytes, int off, int len, DataOutput @out)
+            public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {
                 LZ4.Compress(bytes, off, len, @out, Ht);
             }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.Compressing
                 Ht = new LZ4.HCHashTable();
             }
 
-            public override void Compress(sbyte[] bytes, int off, int len, DataOutput @out)
+            public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {
                 LZ4.CompressHC(bytes, off, len, @out, Ht);
             }
@@ -270,8 +270,8 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class DeflateCompressor : Compressor
         {
-            internal readonly Deflater Compressor;
-            internal byte[] Compressed;
+            private readonly Deflater Compressor;
+            private byte[] Compressed;
 
             internal DeflateCompressor(int level)
             {
@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Compressing
                 Compressed = new byte[64];
             }
 
-            public override void Compress(sbyte[] bytes, int off, int len, DataOutput @out)
+            public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {
                 Compressor.Reset();
                 Compressor.SetInput((byte[])(Array)bytes, off, len);

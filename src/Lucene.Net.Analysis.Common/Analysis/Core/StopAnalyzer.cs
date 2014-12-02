@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using org.apache.lucene.analysis.util;
@@ -90,12 +91,12 @@ namespace Lucene.Net.Analysis.Core
 	  /// <summary>
 	  /// Creates
 	  /// <seealso cref="Analyzer.TokenStreamComponents"/>
-	  /// used to tokenize all the text in the provided <seealso cref="Reader"/>.
+	  /// used to tokenize all the text in the provided <seealso cref="TextReader"/>.
 	  /// </summary>
 	  /// <returns> <seealso cref="Analyzer.TokenStreamComponents"/>
 	  ///         built from a <seealso cref="LowerCaseTokenizer"/> filtered with
 	  ///         <seealso cref="StopFilter"/> </returns>
-	  protected internal override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+	  public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 	  {
 		Tokenizer source = new LowerCaseTokenizer(matchVersion, reader);
 		return new Analyzer.TokenStreamComponents(source, new StopFilter(matchVersion, source, stopwords));

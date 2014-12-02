@@ -651,7 +651,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static Random Random()
         {
-            return new Random(1);
+            return new Random();
             //return RandomizedContext.Current.Random;
         }
 
@@ -1409,7 +1409,10 @@ namespace Lucene.Net.Util
                 }
             }
 
-            Trace.TraceInformation("Type of Directory is : {0}", clazzName);
+            if (VERBOSE)
+            {
+                Trace.TraceInformation("Type of Directory is : {0}", clazzName);
+            }
 
             Type clazz = CommandLineUtil.LoadDirectoryClass(clazzName);
             // If it is a FSDirectory type, try its ctor(File)
@@ -2107,7 +2110,7 @@ namespace Lucene.Net.Util
                     else if (code == 2)
                     {
                         // term, but ensure a non-zero offset
-                        sbyte[] newbytes = new sbyte[term.Length + 5];
+                        var newbytes = new byte[term.Length + 5];
                         Array.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
                         tests.Add(new BytesRef(newbytes, 5, term.Length));
                     }
@@ -2120,7 +2123,7 @@ namespace Lucene.Net.Util
                                 break;
 
                             case 1:
-                                tests.Add(new BytesRef(new sbyte[] { unchecked((sbyte)0xFF), unchecked((sbyte)0xFF) })); // past the last term
+                                tests.Add(new BytesRef(new byte[] { unchecked((byte)0xFF), unchecked((byte)0xFF) })); // past the last term
                                 break;
 
                             case 2:

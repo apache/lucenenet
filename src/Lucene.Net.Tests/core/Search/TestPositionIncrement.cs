@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new TokenizerAnonymousInnerClassHelper(this, reader));
             }
@@ -272,9 +272,9 @@ namespace Lucene.Net.Search
                 {
                     Console.WriteLine("doc " + pspans.Doc() + ": span " + pspans.Start() + " to " + pspans.End());
                 }
-                ICollection<sbyte[]> payloads = pspans.Payload;
+                var payloads = pspans.Payload;
                 sawZero |= pspans.Start() == 0;
-                foreach (sbyte[] bytes in payloads)
+                foreach (var bytes in payloads)
                 {
                     count++;
                     if (VERBOSE)
@@ -304,11 +304,11 @@ namespace Lucene.Net.Search
 
             sawZero = false;
             PayloadSpanUtil psu = new PayloadSpanUtil(@is.TopReaderContext);
-            ICollection<sbyte[]> pls = psu.GetPayloadsForQuery(snq);
+            var pls = psu.GetPayloadsForQuery(snq);
             count = pls.Count;
-            foreach (sbyte[] bytes in pls)
+            foreach (var bytes in pls)
             {
-                string s = Encoding.UTF8.GetString((byte[])(Array)bytes);
+                string s = Encoding.UTF8.GetString(bytes);
                 //System.out.println(s);
                 sawZero |= s.Equals("pos: 0");
             }

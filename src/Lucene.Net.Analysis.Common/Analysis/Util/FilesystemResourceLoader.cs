@@ -1,6 +1,7 @@
 ﻿using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
 
 	/*
@@ -80,9 +81,7 @@ namespace org.apache.lucene.analysis.util
 		this.@delegate = @delegate;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public java.io.InputStream openResource(String resource) throws java.io.IOException
-	  public InputStream openResource(string resource)
+	  public Stream OpenResource(string resource)
 	  {
 		try
 		{

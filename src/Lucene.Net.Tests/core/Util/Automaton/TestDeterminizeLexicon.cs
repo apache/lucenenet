@@ -64,7 +64,7 @@ namespace Lucene.Net.Util.Automaton
             var lexByte = new ByteRunAutomaton(lex);
             foreach (string s in terms)
             {
-                sbyte[] bytes = s.GetBytes(Encoding.UTF8);
+                var bytes = s.GetBytes(Encoding.UTF8);
                 Assert.IsTrue(lexByte.Run(bytes, 0, bytes.Length));
             }
         }

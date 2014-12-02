@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis
     {
         private readonly IPayloadAttribute PayloadAtt;
         private readonly Random Random;
-        private readonly sbyte[] Bytes;
+        private readonly byte[] Bytes;
         private readonly BytesRef Payload;
 
         public MockFixedLengthPayloadFilter(Random random, TokenStream @in, int length)
@@ -40,14 +40,14 @@ namespace Lucene.Net.Analysis
                 throw new System.ArgumentException("length must be >= 0");
             }
             this.Random = random;
-            this.Bytes = new sbyte[length];
+            this.Bytes = new byte[length];
             this.Payload = new BytesRef(Bytes);
             this.PayloadAtt = AddAttribute<IPayloadAttribute>();
         }
 
         public override bool IncrementToken()
         {
-            if (Input.IncrementToken())
+            if (input.IncrementToken())
             {
                 Random.NextBytes((byte[])(Array)Bytes);
                 PayloadAtt.Payload = Payload;

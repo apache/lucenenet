@@ -32,11 +32,11 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanNearPayloadCheckQuery : SpanPositionCheckQuery
     {
-        protected internal readonly ICollection<sbyte[]> PayloadToMatch;
+        protected internal readonly ICollection<byte[]> PayloadToMatch;
 
         /// <param name="match">          The underlying <seealso cref="SpanQuery"/> to check </param>
         /// <param name="payloadToMatch"> The <seealso cref="java.util.Collection"/> of payloads to match </param>
-        public SpanNearPayloadCheckQuery(SpanNearQuery match, ICollection<sbyte[]> payloadToMatch)
+        public SpanNearPayloadCheckQuery(SpanNearQuery match, ICollection<byte[]> payloadToMatch)
             : base(match)
         {
             this.PayloadToMatch = payloadToMatch;
@@ -47,16 +47,16 @@ namespace Lucene.Net.Search.Spans
             bool result = spans.PayloadAvailable;
             if (result == true)
             {
-                ICollection<sbyte[]> candidate = spans.Payload;
+                var candidate = spans.Payload;
                 if (candidate.Count == PayloadToMatch.Count)
                 {
                     //TODO: check the byte arrays are the same
                     //hmm, can't rely on order here
                     int matches = 0;
-                    foreach (sbyte[] candBytes in candidate)
+                    foreach (var candBytes in candidate)
                     {
                         //Unfortunately, we can't rely on order, so we need to compare all
-                        foreach (sbyte[] payBytes in PayloadToMatch)
+                        foreach (var payBytes in PayloadToMatch)
                         {
                             if (Arrays.Equals(candBytes, payBytes) == true)
                             {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Spans
             buffer.Append("spanPayCheck(");
             buffer.Append(match.ToString(field));
             buffer.Append(", payloadRef: ");
-            foreach (sbyte[] bytes in PayloadToMatch)
+            foreach (var bytes in PayloadToMatch)
             {
                 ToStringUtils.ByteArray(buffer, bytes);
                 buffer.Append(';');

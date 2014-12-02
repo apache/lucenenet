@@ -374,7 +374,7 @@ namespace Lucene.Net.Util
 
         public static string RandomSimpleString(Random r)
         {
-            return RandomSimpleString(r, 0, 10);
+            return RandomSimpleString(r, 0, 20);
         }
 
         /// <summary>
@@ -1432,5 +1432,12 @@ namespace Lucene.Net.Util
             '\u0009', '\n', '\u000B', '\u000C', '\r', '\u001C', '\u001D', '\u001E', '\u001F', '\u0020', '\u1680', '\u180E', '\u2000',
             '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2008', '\u2009', '\u200A', '\u2028', '\u2029', '\u205F', '\u3000'
         };
+
+        public static byte[] ToByteArray(this sbyte[] arr)
+        {
+            var unsigned = new byte[arr.Length];
+            System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
+            return unsigned;
+        }
     }
 }

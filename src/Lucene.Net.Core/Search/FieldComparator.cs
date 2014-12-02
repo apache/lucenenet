@@ -1412,9 +1412,9 @@ namespace Lucene.Net.Search
         public sealed class TermValComparator : FieldComparator<BytesRef>
         {
             // sentinels, just used internally in this comparator
-            internal static readonly sbyte[] MISSING_BYTES = new sbyte[0];
+            internal static readonly byte[] MISSING_BYTES = new byte[0];
 
-            internal static readonly sbyte[] NON_MISSING_BYTES = new sbyte[0];
+            internal static readonly byte[] NON_MISSING_BYTES = new byte[0];
 
             internal BytesRef[] Values;
             internal BinaryDocValues DocTerms;

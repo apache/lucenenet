@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -35,7 +36,7 @@ namespace Lucene.Net.Search.Spans
         /// Skips to the first match beyond the current, whose document number is
         /// greater than or equal to <i>target</i>.
         /// <p>The behavior of this method is <b>undefined</b> when called with
-        /// <code> target &le; current</code>, or after the iterator has exhausted.
+        /// <code> target &lt;= current</code>, or after the iterator has exhausted.
         /// Both cases may result in unpredicted behavior.
         /// <p>Returns true iff there is such
         /// a match.  <p>Behaves as if written: <pre class="prettyprint">
@@ -82,7 +83,7 @@ namespace Lucene.Net.Search.Spans
         /// <returns> a List of byte arrays containing the data of this payload, otherwise null if isPayloadAvailable is false </returns>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         // TODO: Remove warning after API has been finalized
-        public abstract ICollection<sbyte[]> Payload { get; }
+        public abstract ICollection<byte[]> Payload { get; }
 
         /// <summary>
         /// Checks if a payload can be loaded at this position.

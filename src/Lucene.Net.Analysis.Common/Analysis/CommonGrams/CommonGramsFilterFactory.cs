@@ -92,9 +92,9 @@ namespace Lucene.Net.Analysis.CommonGrams
 		  }
 	  }
 
-	  public override TokenFilter Create(TokenStream input)
+	  public override TokenStream Create(TokenStream input)
 	  {
-		CommonGramsFilter commonGrams = new CommonGramsFilter(luceneMatchVersion, input, commonWords);
+		var commonGrams = new CommonGramsFilter(luceneMatchVersion, input, commonWords);
 		return commonGrams;
 	  }
 	}

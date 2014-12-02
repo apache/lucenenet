@@ -45,13 +45,13 @@ namespace Lucene.Net.Index
             UseNonNrtReaders = Random().NextBoolean();
         }
 
-        protected override void DoSearching(TaskScheduler es, long stopTime)
+        protected override void DoSearching(TaskScheduler es, DateTime stopTime)
         {
             bool anyOpenDelFiles = false;
 
             DirectoryReader r = DirectoryReader.Open(Writer, true);
 
-            while (DateTime.Now.Millisecond < stopTime && !Failed.Get())
+            while (DateTime.UtcNow < stopTime && !Failed.Get())
             {
                 if (Random().NextBoolean())
                 {
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
                 {
                     FixedSearcher = new IndexSearcher(r, es);
                     SmokeTestSearcher(FixedSearcher);
-                    RunSearchThreads(DateTime.Now.Millisecond + 500);
+                    RunSearchThreads(DateTime.UtcNow.AddMilliseconds(500));
                 }
             }
             r.Dispose();

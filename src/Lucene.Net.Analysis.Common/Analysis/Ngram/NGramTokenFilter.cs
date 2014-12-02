@@ -1,4 +1,6 @@
-﻿namespace org.apache.lucene.analysis.ngram
+﻿using Lucene.Net.Analysis.Util;
+
+namespace org.apache.lucene.analysis.ngram
 {
 
 	/*
@@ -23,7 +25,7 @@
 	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 	using PositionLengthAttribute = org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
-	using CharacterUtils = org.apache.lucene.analysis.util.CharacterUtils;
+	using CharacterUtils = CharacterUtils;
 	using Version = org.apache.lucene.util.Version;
 
 	/// <summary>

@@ -60,11 +60,11 @@ namespace Lucene.Net.Index
             ft.Stored = true;
             ft.Freeze();
             int valueLength = RandomInts.NextIntBetween(Random(), 1 << 13, 1 << 20);
-            sbyte[] value = new sbyte[valueLength];
+            var value = new byte[valueLength];
             for (int i = 0; i < valueLength; ++i)
             {
                 // random so that even compressing codecs can't compress it
-                value[i] = (sbyte)Random().Next(256);
+                value[i] = (byte)Random().Next(256);
             }
             Field f = new Field("fld", value, ft);
             doc.Add(f);

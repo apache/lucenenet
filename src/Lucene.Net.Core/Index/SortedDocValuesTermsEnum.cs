@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
                 // TODO: is there a cleaner way?
                 // term.bytes may be pointing to codec-private byte[]
                 // storage, so we must force new byte[] allocation:
-                Term_Renamed.Bytes = new sbyte[text.Length];
+                Term_Renamed.Bytes = new byte[text.Length];
                 Term_Renamed.CopyBytes(text);
                 return SeekStatus.FOUND;
             }
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
                 // TODO: is there a cleaner way?
                 // term.bytes may be pointing to codec-private byte[]
                 // storage, so we must force new byte[] allocation:
-                Term_Renamed.Bytes = new sbyte[text.Length];
+                Term_Renamed.Bytes = new byte[text.Length];
                 Term_Renamed.CopyBytes(text);
                 CurrentOrd = ord;
                 return true;

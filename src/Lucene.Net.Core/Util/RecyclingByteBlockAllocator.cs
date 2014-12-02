@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class RecyclingByteBlockAllocator : ByteBlockPool.Allocator
     {
-        private sbyte[][] FreeByteBlocks;
+        private byte[][] FreeByteBlocks;
         private readonly int MaxBufferedBlocks_Renamed;
         private int FreeBlocks_Renamed = 0;
         private readonly Counter BytesUsed_Renamed;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
         public RecyclingByteBlockAllocator(int blockSize, int maxBufferedBlocks, Counter bytesUsed)
             : base(blockSize)
         {
-            FreeByteBlocks = new sbyte[maxBufferedBlocks][];
+            FreeByteBlocks = new byte[maxBufferedBlocks][];
             this.MaxBufferedBlocks_Renamed = maxBufferedBlocks;
             this.BytesUsed_Renamed = bytesUsed;
         }
@@ -79,28 +79,28 @@ namespace Lucene.Net.Util
         {
         }
 
-        public override sbyte[] ByteBlock
+        public override byte[] ByteBlock
         {
             get
             {
                 if (FreeBlocks_Renamed == 0)
                 {
                     BytesUsed_Renamed.AddAndGet(BlockSize);
-                    return new sbyte[BlockSize];
+                    return new byte[BlockSize];
                 }
-                sbyte[] b = FreeByteBlocks[--FreeBlocks_Renamed];
+                var b = FreeByteBlocks[--FreeBlocks_Renamed];
                 FreeByteBlocks[FreeBlocks_Renamed] = null;
                 return b;
             }
         }
 
-        public override void RecycleByteBlocks(sbyte[][] blocks, int start, int end)
+        public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
         {
             int numBlocks = Math.Min(MaxBufferedBlocks_Renamed - FreeBlocks_Renamed, end - start);
             int size = FreeBlocks_Renamed + numBlocks;
             if (size >= FreeByteBlocks.Length)
             {
-                sbyte[][] newBlocks = new sbyte[ArrayUtil.Oversize(size, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
+                var newBlocks = new byte[ArrayUtil.Oversize(size, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
                 Array.Copy(FreeByteBlocks, 0, newBlocks, 0, FreeBlocks_Renamed);
                 FreeByteBlocks = newBlocks;
             }

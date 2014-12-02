@@ -617,6 +617,7 @@
     <Compile Include="Support\ByteBuffer.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Arrays.cs" />
+    <Compile Include="Support\Compatibility\BinaryWriterDataOutput.cs" />
     <Compile Include="Support\Compatibility\Collections.cs" />
     <Compile Include="Support\ConcurrentHashMap.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
@@ -638,6 +639,7 @@
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
     <Compile Include="Support\SetExtensions.cs" />
+    <Compile Include="Support\StreamUtils.cs" />
     <Compile Include="Support\StringBuilderExtensions.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\StringSupport.cs" />
@@ -675,6 +677,7 @@
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
+    <Compile Include="Util\Accountable.cs" />
     <Compile Include="Util\ArrayInPlaceMergeSorter.cs" />
     <Compile Include="Util\ArrayIntroSorter.cs" />
     <Compile Include="Util\ArrayTimSorter.cs" />

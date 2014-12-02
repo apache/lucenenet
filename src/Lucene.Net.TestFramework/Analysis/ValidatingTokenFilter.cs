@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis
 
         public override bool IncrementToken()
         {
-            if (!Input.IncrementToken())
+            if (!input.IncrementToken())
             {
                 return false;
             }

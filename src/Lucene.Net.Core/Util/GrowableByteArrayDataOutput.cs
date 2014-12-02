@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// The bytes </summary>
-        public sbyte[] Bytes;
+        public byte[] Bytes;
 
         /// <summary>
         /// The length </summary>
@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         /// Create a <seealso cref="GrowableByteArrayDataOutput"/> with the given initial capacity. </summary>
         public GrowableByteArrayDataOutput(int cp)
         {
-            this.Bytes = new sbyte[ArrayUtil.Oversize(cp, 1)];
+            this.Bytes = new byte[ArrayUtil.Oversize(cp, 1)];
             this.Length = 0;
         }
 
@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
             {
                 Bytes = ArrayUtil.Grow(Bytes);
             }
-            Bytes[Length++] = (sbyte)b;
+            Bytes[Length++] = b;
         }
 
         public override void WriteBytes(byte[] b, int off, int len)

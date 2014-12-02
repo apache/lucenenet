@@ -60,11 +60,6 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
             return BYTE_COUNTS[b & 0xFF];
         }
 
-        public static int BitCount(sbyte b)
-        {
-            return BYTE_COUNTS[b & 0xFF];
-        }
-
         /// <summary>
         /// Return the list of bits which are set in b encoded as followed:
         /// <code>(i >>> (4 * n)) & 0x0F</code> is the offset of the n-th set bit of
@@ -75,14 +70,9 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         /// <li><code>(0x43 >>> 8) & 0x0F</code> is 0, meaning there is no more bit set in this byte.</li>
         /// </ul>
         /// </summary>
-        public static int BitList(sbyte b)
-        {
-            return BIT_LISTS[b & 0xFF];
-        }
-
         public static int BitList(byte b)
         {
-            return BitList((sbyte)b);
+            return BIT_LISTS[b & 0xFF];
         }
 
         // The pop methods used to rely on bit-manipulation tricks for speed but it

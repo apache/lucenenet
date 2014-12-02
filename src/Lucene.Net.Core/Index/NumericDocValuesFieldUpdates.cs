@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
                 this.DocsWithField = docsWithField;
             }
 
-            protected internal override void Swap(int i, int j)
+            protected override void Swap(int i, int j)
             {
                 long tmpDoc = Docs.Get(j);
                 Docs.Set(j, Docs.Get(i));
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            protected internal override int Compare(int i, int j)
+            protected override int Compare(int i, int j)
             {
                 int x = (int)Docs.Get(i);
                 int y = (int)Docs.Get(j);

@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Util;
+using org.apache.lucene.analysis.util;
+using Version = System.Version;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
 
 	/*
@@ -20,12 +24,7 @@ namespace org.apache.lucene.analysis.util
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Loader for text files that represent a list of stopwords.
 	/// </summary>
 	/// <seealso cref= IOUtils to obtain <seealso cref="Reader"/> instances
@@ -50,9 +49,7 @@ namespace org.apache.lucene.analysis.util
 	  /// <param name="reader"> Reader containing the wordlist </param>
 	  /// <param name="result"> the <seealso cref="CharArraySet"/> to fill with the readers words </param>
 	  /// <returns> the given <seealso cref="CharArraySet"/> with the reader's words </returns>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public static CharArraySet getWordSet(java.io.Reader reader, CharArraySet result) throws java.io.IOException
-	  public static CharArraySet getWordSet(Reader reader, CharArraySet result)
+	  public static CharArraySet GetWordSet(TextReader reader, CharArraySet result)
 	  {
 		BufferedReader br = null;
 		try
@@ -78,13 +75,11 @@ namespace org.apache.lucene.analysis.util
 	  /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
 	  /// </summary>
 	  /// <param name="reader"> Reader containing the wordlist </param>
-	  /// <param name="matchVersion"> the Lucene <seealso cref="Version"/> </param>
+	  /// <param name="matchVersion"> the Lucene <seealso cref="System.Version"/> </param>
 	  /// <returns> A <seealso cref="CharArraySet"/> with the reader's words </returns>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public static CharArraySet getWordSet(java.io.Reader reader, org.apache.lucene.util.Version matchVersion) throws java.io.IOException
-	  public static CharArraySet getWordSet(Reader reader, Version matchVersion)
+	  public static CharArraySet GetWordSet(TextReader reader, Version matchVersion)
 	  {
-		return getWordSet(reader, new CharArraySet(matchVersion, INITIAL_CAPACITY, false));
+		return GetWordSet(reader, new CharArraySet(matchVersion, INITIAL_CAPACITY, false));
 	  }
 
 	  /// <summary>
@@ -97,11 +92,9 @@ namespace org.apache.lucene.analysis.util
 	  /// <param name="comment"> The string representing a comment. </param>
 	  /// <param name="matchVersion"> the Lucene <seealso cref="Version"/> </param>
 	  /// <returns> A CharArraySet with the reader's words </returns>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public static CharArraySet getWordSet(java.io.Reader reader, String comment, org.apache.lucene.util.Version matchVersion) throws java.io.IOException
-	  public static CharArraySet getWordSet(Reader reader, string comment, Version matchVersion)
+	  public static CharArraySet GetWordSet(TextReader reader, string comment, Version matchVersion)
 	  {
-		return getWordSet(reader, comment, new CharArraySet(matchVersion, INITIAL_CAPACITY, false));
+		return GetWordSet(reader, comment, new CharArraySet(matchVersion, INITIAL_CAPACITY, false));
 	  }
 
 	  /// <summary>
@@ -114,16 +107,14 @@ namespace org.apache.lucene.analysis.util
 	  /// <param name="comment"> The string representing a comment. </param>
 	  /// <param name="result"> the <seealso cref="CharArraySet"/> to fill with the readers words </param>
 	  /// <returns> the given <seealso cref="CharArraySet"/> with the reader's words </returns>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public static CharArraySet getWordSet(java.io.Reader reader, String comment, CharArraySet result) throws java.io.IOException
-	  public static CharArraySet getWordSet(Reader reader, string comment, CharArraySet result)
+	  public static CharArraySet GetWordSet(TextReader reader, string comment, CharArraySet result)
 	  {
 		BufferedReader br = null;
 		try
 		{
 		  br = getBufferedReader(reader);
 		  string word = null;
-		  while ((word = br.readLine()) != null)
+		  while ((word = br.ReadLine()) != null)
 		  {
 			if (word.StartsWith(comment, StringComparison.Ordinal) == false)
 			{
@@ -133,7 +124,7 @@ namespace org.apache.lucene.analysis.util
 		}
 		finally
 		{
-		  IOUtils.close(br);
+		  IOUtils.Close(br);
 		}
 		return result;
 	  }

@@ -1,6 +1,7 @@
 ﻿using System;
+using Lucene.Net.Analysis.Tokenattributes;
 
-namespace org.apache.lucene.analysis.position
+namespace Lucene.Net.Analysis.Position
 {
 
 	/*
@@ -19,10 +20,7 @@ namespace org.apache.lucene.analysis.position
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-
-	/// <summary>
+    /// <summary>
 	/// Set the positionIncrement of all tokens to the "positionIncrement",
 	/// except the first return token which retains its original positionIncrement value.
 	/// The default positionIncrement value is zero. </summary>
@@ -51,8 +49,6 @@ namespace org.apache.lucene.analysis.position
 	  /// all but the first token from the given input stream.
 	  /// </summary>
 	  /// <param name="input"> the input stream </param>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public PositionFilter(final org.apache.lucene.analysis.TokenStream input)
 	  public PositionFilter(TokenStream input) : this(input, 0)
 	  {
 	  }
@@ -64,8 +60,6 @@ namespace org.apache.lucene.analysis.position
 	  /// <param name="input"> the input stream </param>
 	  /// <param name="positionIncrement"> position increment to assign to all but the first
 	  ///  token from the input stream </param>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public PositionFilter(final org.apache.lucene.analysis.TokenStream input, final int positionIncrement)
 	  public PositionFilter(TokenStream input, int positionIncrement) : base(input)
 	  {
 		if (positionIncrement < 0)
@@ -75,11 +69,9 @@ namespace org.apache.lucene.analysis.position
 		this.positionIncrement = positionIncrement;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
-		if (input.incrementToken())
+		if (input.IncrementToken())
 		{
 		  if (firstTokenPositioned)
 		  {
@@ -97,13 +89,10 @@ namespace org.apache.lucene.analysis.position
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+        public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		firstTokenPositioned = false;
 	  }
 	}
-
 }

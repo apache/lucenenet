@@ -1,3 +1,4 @@
+using System.IO;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
@@ -164,7 +165,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <param name="encoded">  a buffer to use to encode data </param>
         /// <param name="out">      the destination output </param>
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        public void WriteBlock(int[] data, sbyte[] encoded, IndexOutput @out)
+        public void WriteBlock(int[] data, byte[] encoded, IndexOutput @out)
         {
             if (IsAllEqual(data))
             {
@@ -181,7 +182,7 @@ namespace Lucene.Net.Codecs.Lucene41
             int encodedSize = EncodedSizes[numBits];
             Debug.Assert(iters * encoder.ByteBlockCount() >= encodedSize);
 
-            @out.WriteByte((sbyte)numBits);
+            @out.WriteByte((byte)numBits);
 
             encoder.Encode(data, 0, encoded, 0, iters);
             @out.WriteBytes(encoded, encodedSize);
@@ -194,7 +195,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <param name="encoded">   a buffer that can be used to store encoded data </param>
         /// <param name="decoded">   where to write decoded data </param>
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        public void ReadBlock(IndexInput @in, sbyte[] encoded, int[] decoded)
+        public void ReadBlock(IndexInput @in, byte[] encoded, int[] decoded)
         {
             int numBits = @in.ReadByte();
             Debug.Assert(numBits <= 32, numBits.ToString());

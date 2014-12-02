@@ -1,5 +1,6 @@
 ﻿using System;
-using FilteringTokenFilter = Lucene.Net.Analysis.Util.FilteringTokenFilter;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -18,50 +19,45 @@ using FilteringTokenFilter = Lucene.Net.Analysis.Util.FilteringTokenFilter;
  * limitations under the License.
  */
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
+    /// <summary>
+    /// A TokenFilter that only keeps tokens with text contained in the
+    /// required words.  This filter behaves like the inverse of StopFilter.
+    /// 
+    /// @since solr 1.3
+    /// </summary>
+    public sealed class KeepWordFilter : FilteringTokenFilter
+    {
+        private readonly CharArraySet words;
+        private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
 
-	using FilteringTokenFilter = FilteringTokenFilter;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
+        /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4. 
+        [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
+        public KeepWordFilter(Version version, bool enablePositionIncrements, TokenStream @in, CharArraySet words)
+            : base(version, enablePositionIncrements, @in)
+        {
+            this.words = words;
+        }
 
-	/// <summary>
-	/// A TokenFilter that only keeps tokens with text contained in the
-	/// required words.  This filter behaves like the inverse of StopFilter.
-	/// 
-	/// @since solr 1.3
-	/// </summary>
-	public sealed class KeepWordFilter : FilteringTokenFilter
-	{
-	  private readonly CharArraySet words;
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        /// <summary>
+        /// Create a new <seealso cref="KeepWordFilter"/>.
+        /// <para><b>NOTE</b>: The words set passed to this constructor will be directly
+        /// used by this filter and should not be modified.
+        /// </para>
+        /// </summary>
+        /// <param name="version"> the Lucene match version </param>
+        /// <param name="in">      the <seealso cref="TokenStream"/> to consume </param>
+        /// <param name="words">   the words to keep </param>
+        public KeepWordFilter(Version version, TokenStream @in, CharArraySet words)
+            : base(version, @in)
+        {
+            this.words = words;
+        }
 
-	  /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4. 
-	  [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
-	  public KeepWordFilter(Version version, bool enablePositionIncrements, TokenStream @in, CharArraySet words) : base(version, enablePositionIncrements, @in)
-	  {
-		this.words = words;
-	  }
-
-	  /// <summary>
-	  /// Create a new <seealso cref="KeepWordFilter"/>.
-	  /// <para><b>NOTE</b>: The words set passed to this constructor will be directly
-	  /// used by this filter and should not be modified.
-	  /// </para>
-	  /// </summary>
-	  /// <param name="version"> the Lucene match version </param>
-	  /// <param name="in">      the <seealso cref="TokenStream"/> to consume </param>
-	  /// <param name="words">   the words to keep </param>
-	  public KeepWordFilter(Version version, TokenStream @in, CharArraySet words) : base(version, @in)
-	  {
-		this.words = words;
-	  }
-
-	  public override bool accept()
-	  {
-		return words.contains(termAtt.buffer(), 0, termAtt.length());
-	  }
-	}
-
+        public override bool Accept()
+        {
+            return words.Contains(termAtt.Buffer(), 0, termAtt.Length);
+        }
+    }
 }

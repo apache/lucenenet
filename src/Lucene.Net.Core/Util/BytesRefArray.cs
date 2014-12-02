@@ -135,14 +135,14 @@ namespace Lucene.Net.Util
                 scratch2 = new BytesRef();
             }
 
-            protected internal override void Swap(int i, int j)
+            protected override void Swap(int i, int j)
             {
                 int o = OrderedEntries[i];
                 OrderedEntries[i] = OrderedEntries[j];
                 OrderedEntries[j] = o;
             }
 
-            protected internal override int Compare(int i, int j)
+            protected override int Compare(int i, int j)
             {
                 int idx1 = OrderedEntries[i], idx2 = OrderedEntries[j];
                 return Comp.Compare(OuterInstance.Get(scratch1, idx1), OuterInstance.Get(scratch2, idx2));

@@ -166,10 +166,10 @@ namespace Lucene.Net.Index
             {
                 if ((Counter % 10) == 3)
                 {
-                    sbyte[] bytes = new sbyte[10];
+                    var bytes = new byte[10];
                     for (int idx = 0; idx < bytes.Length; idx++)
                     {
-                        bytes[idx] = (sbyte)(Counter + idx);
+                        bytes[idx] = (byte)(Counter + idx);
                     }
                     return new BytesRef(bytes, 0, bytes.Length);
                 }

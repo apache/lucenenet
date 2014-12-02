@@ -379,7 +379,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the number of merge threads that are alive. Note that this number
-        /// is &le; <seealso cref="#mergeThreads"/> size.
+        /// is &lt;= <seealso cref="#mergeThreads"/> size.
         /// </summary>
         protected internal virtual int MergeThreadCount()
         {

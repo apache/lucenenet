@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.Text;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using org.apache.lucene.analysis.util;
 
-namespace org.apache.lucene.analysis.commongrams
+namespace Lucene.Net.Analysis.CommonGrams
 {
-
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using PositionLengthAttribute = org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
-
-	/*
+    /*
 	 * TODO: Consider implementing https://issues.apache.org/jira/browse/LUCENE-1688 changes to stop list and associated constructors 
 	 */
 
@@ -98,16 +92,14 @@ namespace org.apache.lucene.analysis.commongrams
 	  /// eliminate the middle bigram "of-the"and save a disk seek and a whole set of
 	  /// position lookups.
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		// get the next piece of input
 		if (savedState != null)
 		{
-		  restoreState(savedState);
+		  RestoreState(savedState);
 		  savedState = null;
-		  saveTermBuffer();
+		  SaveTermBuffer();
 		  return true;
 		}
 		else if (!input.incrementToken())
@@ -121,23 +113,21 @@ namespace org.apache.lucene.analysis.commongrams
 		 */
 		if (lastWasCommon || (Common && buffer.Length > 0))
 		{
-		  savedState = captureState();
-		  gramToken();
+		  savedState = CaptureState();
+		  GramToken();
 		  return true;
 		}
 
-		saveTermBuffer();
+		SaveTermBuffer();
 		return true;
 	  }
 
 	  /// <summary>
 	  /// {@inheritDoc}
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		lastWasCommon = false;
 		savedState = null;
 		buffer.Length = 0;
@@ -153,47 +143,46 @@ namespace org.apache.lucene.analysis.commongrams
 	  {
 		  get
 		  {
-			return commonWords != null && commonWords.contains(termAttribute.buffer(), 0, termAttribute.length());
+			return commonWords != null && commonWords.contains(termAttribute.Buffer(), 0, termAttribute.Length);
 		  }
 	  }
 
 	  /// <summary>
 	  /// Saves this information to form the left part of a gram
 	  /// </summary>
-	  private void saveTermBuffer()
+	  private void SaveTermBuffer()
 	  {
 		buffer.Length = 0;
-		buffer.Append(termAttribute.buffer(), 0, termAttribute.length());
+		buffer.Append(termAttribute.Buffer(), 0, termAttribute.Length);
 		buffer.Append(SEPARATOR);
-		lastStartOffset = offsetAttribute.startOffset();
+		lastStartOffset = offsetAttribute.StartOffset();
 		lastWasCommon = Common;
 	  }
 
 	  /// <summary>
 	  /// Constructs a compound token.
 	  /// </summary>
-	  private void gramToken()
+	  private void GramToken()
 	  {
-		buffer.Append(termAttribute.buffer(), 0, termAttribute.length());
-		int endOffset = offsetAttribute.endOffset();
+		buffer.Append(termAttribute.Buffer(), 0, termAttribute.Length);
+		int endOffset = offsetAttribute.EndOffset();
 
-		clearAttributes();
+		ClearAttributes();
 
 		int length = buffer.Length;
-		char[] termText = termAttribute.buffer();
+		char[] termText = termAttribute.Buffer();
 		if (length > termText.Length)
 		{
-		  termText = termAttribute.resizeBuffer(length);
+		  termText = termAttribute.ResizeBuffer(length);
 		}
 
-		buffer.getChars(0, length, termText, 0);
+		buffer.GetChars(0, length, termText, 0);
 		termAttribute.Length = length;
 		posIncAttribute.PositionIncrement = 0;
 		posLenAttribute.PositionLength = 2; // bigram
-		offsetAttribute.setOffset(lastStartOffset, endOffset);
+		offsetAttribute.SetOffset(lastStartOffset, endOffset);
 		typeAttribute.Type = GRAM_TYPE;
 		buffer.Length = 0;
 	  }
 	}
-
 }

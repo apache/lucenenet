@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
             Directory d = NewDirectory();
             IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             Document doc = new Document();
-            sbyte[] bytes = new sbyte[32764];
+            var bytes = new byte[32764];
             BytesRef b = new BytesRef();
             b.Bytes = bytes;
             b.Length = bytes.Length;
@@ -392,9 +392,9 @@ namespace Lucene.Net.Index
             iwc.SetMergePolicy(NewLogMergePolicy());
             IndexWriter iwriter = new IndexWriter(directory, iwc);
             Document doc = new Document();
-            sbyte[] bytes = new sbyte[100000];
+            var bytes = new byte[100000];
             BytesRef b = new BytesRef(bytes);
-            Random().NextBytes((byte[])(Array)bytes);
+            Random().NextBytes(bytes);
             doc.Add(new SortedDocValuesField("dv", b));
             try
             {
@@ -421,7 +421,7 @@ namespace Lucene.Net.Index
             iwc.SetMergePolicy(NewLogMergePolicy());
             IndexWriter iwriter = new IndexWriter(directory, iwc);
             Document doc = new Document();
-            sbyte[] bytes = new sbyte[100000];
+            byte[] bytes = new byte[100000];
             BytesRef b = new BytesRef(bytes);
             Random().NextBytes((byte[])(Array)bytes);
             doc.Add(new SortedSetDocValuesField("dv", b));

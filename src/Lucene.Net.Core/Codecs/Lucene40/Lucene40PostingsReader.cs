@@ -1028,7 +1028,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (Payload_Renamed == null)
                 {
                     Payload_Renamed = new BytesRef();
-                    Payload_Renamed.Bytes = new sbyte[1];
+                    Payload_Renamed.Bytes = new byte[1];
                 }
 
                 this.LiveDocs = liveDocs;

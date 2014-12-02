@@ -110,12 +110,12 @@ namespace Lucene.Net.Search
             Current = GetSearcher(searcherFactory, DirectoryReader.Open(dir));
         }
 
-        protected internal override void DecRef(IndexSearcher reference)
+        protected override void DecRef(IndexSearcher reference)
         {
             reference.IndexReader.DecRef();
         }
 
-        protected internal override IndexSearcher RefreshIfNeeded(IndexSearcher referenceToRefresh)
+        protected override IndexSearcher RefreshIfNeeded(IndexSearcher referenceToRefresh)
         {
             IndexReader r = referenceToRefresh.IndexReader;
             Debug.Assert(r is DirectoryReader, "searcher's IndexReader should be a DirectoryReader, but got " + r);
@@ -130,12 +130,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override bool TryIncRef(IndexSearcher reference)
+        protected override bool TryIncRef(IndexSearcher reference)
         {
             return reference.IndexReader.TryIncRef();
         }
 
-        protected internal override int GetRefCount(IndexSearcher reference)
+        protected override int GetRefCount(IndexSearcher reference)
         {
             return reference.IndexReader.RefCount;
         }

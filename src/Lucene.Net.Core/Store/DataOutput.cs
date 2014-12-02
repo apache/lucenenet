@@ -255,13 +255,18 @@ namespace Lucene.Net.Store
         /// <seealso cref= DataInput#readString() </seealso>
         public virtual void WriteString(string s)
         {
-            BytesRef utf8Result = new BytesRef(10);
+            var utf8Result = new BytesRef(10);
             UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8Result);
             WriteVInt(utf8Result.Length);
             WriteBytes(utf8Result.Bytes, 0, utf8Result.Length);
         }
 
-        private static int COPY_BUFFER_SIZE = 16384;
+        public void Write(byte[] b, int off, int len)
+        {
+            WriteBytes(b, off, len);
+        }
+
+        private const int COPY_BUFFER_SIZE = 16384;
         private sbyte[] CopyBuffer;
 
         /// <summary>

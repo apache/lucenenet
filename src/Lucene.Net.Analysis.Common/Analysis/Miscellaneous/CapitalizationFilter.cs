@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -20,12 +22,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-
-	/// <summary>
+    /// <summary>
 	/// A filter to apply normal capitalization rules to Tokens.  It will make the first letter
 	/// capital and the rest lower case.
 	/// <p/>
@@ -82,17 +79,15 @@ namespace org.apache.lucene.analysis.miscellaneous
 		this.maxTokenLength = maxTokenLength;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
-		if (!input.incrementToken())
+		if (!input.IncrementToken())
 		{
 			return false;
 		}
 
-		char[] termBuffer = termAtt.buffer();
-		int termBufferLength = termAtt.length();
+		char[] termBuffer = termAtt.Buffer();
+		int termBufferLength = termAtt.Length;
 		char[] backup = null;
 
 		if (maxWordCount < DEFAULT_MAX_WORD_COUNT)
@@ -115,7 +110,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 			  int len = i - lastWordStart;
 			  if (len > 0)
 			  {
-				processWord(termBuffer, lastWordStart, len, wordCount++);
+				ProcessWord(termBuffer, lastWordStart, len, wordCount++);
 				lastWordStart = i + 1;
 				i++;
 			  }
@@ -125,19 +120,19 @@ namespace org.apache.lucene.analysis.miscellaneous
 		  // process the last word
 		  if (lastWordStart < termBufferLength)
 		  {
-			processWord(termBuffer, lastWordStart, termBufferLength - lastWordStart, wordCount++);
+			ProcessWord(termBuffer, lastWordStart, termBufferLength - lastWordStart, wordCount++);
 		  }
 
 		  if (wordCount > maxWordCount)
 		  {
-			termAtt.copyBuffer(backup, 0, termBufferLength);
+			termAtt.CopyBuffer(backup, 0, termBufferLength);
 		  }
 		}
 
 		return true;
 	  }
 
-	  private void processWord(char[] buffer, int offset, int length, int wordCount)
+	  private void ProcessWord(char[] buffer, int offset, int length, int wordCount)
 	  {
 		if (length < 1)
 		{
@@ -154,7 +149,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 		  return;
 		}
 
-		if (keep != null && keep.contains(buffer, offset, length))
+		if (keep != null && keep.Contains(buffer, offset, length))
 		{
 		  if (wordCount == 0 && forceFirstLetter)
 		  {

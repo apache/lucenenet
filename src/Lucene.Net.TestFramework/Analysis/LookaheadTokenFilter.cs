@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis
         where T : LookaheadTokenFilter.Position
     {
         protected const bool DEBUG = 
-#if DEBUG
+#if VERBOSE_TEST_LOGGING
             true
 #else
             false
@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis
                 positions.Get(InputPos).Add(CaptureState());
                 TokenPending = false;
             }
-            bool gotToken = Input.IncrementToken();
+            bool gotToken = input.IncrementToken();
             if (DEBUG)
             {
                 Console.WriteLine("  input.incrToken() returned " + gotToken);

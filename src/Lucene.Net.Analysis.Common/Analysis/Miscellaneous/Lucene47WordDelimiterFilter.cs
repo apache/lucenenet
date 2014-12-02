@@ -17,6 +17,7 @@ using System.Text;
  * limitations under the License.
  */
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Util;
 
 namespace org.apache.lucene.analysis.miscellaneous
 {
@@ -27,7 +28,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+	using CharArraySet = CharArraySet;
 	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
 	using RamUsageEstimator = org.apache.lucene.util.RamUsageEstimator;
 

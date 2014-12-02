@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using org.apache.lucene.analysis.charfilter;
+using org.apache.lucene.analysis.util;
 
-namespace org.apache.lucene.analysis.charfilter
+namespace Lucene.Net.Analysis.CharFilter
 {
 
 	/*
@@ -20,15 +24,7 @@ namespace org.apache.lucene.analysis.charfilter
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using AbstractAnalysisFactory = AbstractAnalysisFactory;
-	using CharFilterFactory = org.apache.lucene.analysis.util.CharFilterFactory;
-	using MultiTermAwareComponent = org.apache.lucene.analysis.util.MultiTermAwareComponent;
-	using ResourceLoader = org.apache.lucene.analysis.util.ResourceLoader;
-	using ResourceLoaderAware = org.apache.lucene.analysis.util.ResourceLoaderAware;
-
-	/// <summary>
+    /// <summary>
 	/// Factory for <seealso cref="MappingCharFilter"/>. 
 	/// <pre class="prettyprint">
 	/// &lt;fieldType name="text_map" class="solr.TextField" positionIncrementGap="100"&gt;
@@ -80,8 +76,6 @@ namespace org.apache.lucene.analysis.charfilter
 			  wlist.AddRange(lines);
 			}
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
 		  NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
 		  parseRules(wlist, builder);
 		  normMap = builder.build();
@@ -94,7 +88,7 @@ namespace org.apache.lucene.analysis.charfilter
 		}
 	  }
 
-	  public override Reader create(Reader input)
+	  public override TextReader Create(TextReader input)
 	  {
 		// if the map is null, it means there's actually no mappings... just return the original stream
 		// as there is nothing to do here.

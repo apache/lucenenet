@@ -90,14 +90,16 @@ namespace Lucene.Net.Analysis
         /// <param name="reader">
         ///          the reader to wrap </param>
         /// <returns> the wrapped reader </returns>
-        protected internal virtual TextReader WrapReader(string fieldName, TextReader reader)
+        protected virtual TextReader WrapReader(string fieldName, TextReader reader)
         {
             return reader;
         }
 
-        protected override sealed TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
+        public override sealed TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
         {
-            return WrapComponents(fieldName, GetWrappedAnalyzer(fieldName).CreateComponents(fieldName, aReader));
+            var wrappedAnalyzer = GetWrappedAnalyzer(fieldName);
+            var component = wrappedAnalyzer.CreateComponents(fieldName, aReader);
+            return WrapComponents(fieldName, component);
         }
 
         public override int GetPositionIncrementGap(string fieldName)

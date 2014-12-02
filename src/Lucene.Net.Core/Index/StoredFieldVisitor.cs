@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Process a binary field. </summary>
         /// <param name="value"> newly allocated byte array with the binary contents.  </param>
-        public virtual void BinaryField(FieldInfo fieldInfo, sbyte[] value)
+        public virtual void BinaryField(FieldInfo fieldInfo, byte[] value)
         {
         }
 

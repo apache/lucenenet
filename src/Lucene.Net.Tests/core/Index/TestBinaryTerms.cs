@@ -49,8 +49,8 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 256; i++)
             {
-                bytes.Bytes[0] = (sbyte)i;
-                bytes.Bytes[1] = unchecked((sbyte)(255 - i));
+                bytes.Bytes[0] = (byte)i;
+                bytes.Bytes[1] = unchecked((byte)(255 - i));
                 bytes.Length = 2;
                 Document doc = new Document();
                 FieldType customType = new FieldType();
@@ -67,8 +67,8 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 256; i++)
             {
-                bytes.Bytes[0] = (sbyte)i;
-                bytes.Bytes[1] = unchecked((sbyte)(255 - i));
+                bytes.Bytes[0] = (byte)i;
+                bytes.Bytes[1] = unchecked((byte)(255 - i));
                 bytes.Length = 2;
                 TopDocs docs = @is.Search(new TermQuery(new Term("bytes", bytes)), 5);
                 Assert.AreEqual(1, docs.TotalHits);
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestToString()
         {
-            Term term = new Term("foo", new BytesRef(new sbyte[] { unchecked((sbyte)0xff), unchecked((sbyte)0xfe) }));
+            Term term = new Term("foo", new BytesRef(new[] { unchecked((byte)0xff), unchecked((byte)0xfe) }));
             Assert.AreEqual("foo:[ff fe]", term.ToString());
         }
     }

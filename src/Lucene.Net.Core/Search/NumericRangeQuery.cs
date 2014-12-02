@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
     ///
     /// <p>this query defaults to {@linkplain
     /// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}.
-    /// With precision steps of &le;4, this query can be run with
+    /// With precision steps of &lt;=4, this query can be run with
     /// one of the BooleanQuery rewrite methods without changing
     /// BooleanQuery's default max clause count.
     ///
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
     ///  <li>Ideal value in most cases for <em>32 bit</em> data types <em>(int, float)</em> is <b>4</b>.
     ///  <li>For low cardinality fields larger precision steps are good. If the cardinality is &lt; 100, it is
     ///  fair to use <seealso cref="Integer#MAX_VALUE"/> (see below).
-    ///  <li>Steps <b>&ge;64</b> for <em>long/double</em> and <b>&ge;32</b> for <em>int/float</em> produces one token
+    ///  <li>Steps <b>&gt;=64</b> for <em>long/double</em> and <b>&gt;=32</b> for <em>int/float</em> produces one token
     ///  per value in the index and querying is as slow as a conventional <seealso cref="TermRangeQuery"/>. But it can be used
     ///  to produce fields, that are solely used for sorting (in this case simply use <seealso cref="Integer#MAX_VALUE"/> as
     ///  <code>precisionStep</code>). Using <seealso cref="IntField"/>,
@@ -518,7 +518,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>long</code>
         /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
-        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
@@ -530,7 +530,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>long</code>
         /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
-        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
@@ -542,7 +542,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>int</code>
         /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
-        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
@@ -554,7 +554,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>int</code>
         /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
-        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
         /// </summary>
@@ -566,7 +566,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>double</code>
         /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
-        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>.
         /// <seealso cref="Double#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
         /// with {@code min == max == Double.NaN}.  By setting inclusive to false, it will
@@ -580,7 +580,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>double</code>
         /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
-        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>.
         /// <seealso cref="Double#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
         /// with {@code min == max == Double.NaN}.  By setting inclusive to false, it will
@@ -594,7 +594,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>float</code>
         /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
-        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>.
         /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
         /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will
@@ -608,7 +608,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>float</code>
         /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
-        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>.
         /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
         /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will

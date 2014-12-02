@@ -61,19 +61,19 @@ namespace Lucene.Net.Util
                 this.BlockSize = blockSize;
             }
 
-            public abstract void RecycleByteBlocks(sbyte[][] blocks, int start, int end);
+            public abstract void RecycleByteBlocks(byte[][] blocks, int start, int end);
 
-            public virtual void RecycleByteBlocks(List<sbyte[]> blocks)
+            public virtual void RecycleByteBlocks(List<byte[]> blocks)
             {
                 var b = blocks.ToArray();
                 RecycleByteBlocks(b, 0, b.Length);
             }
 
-            public virtual sbyte[] ByteBlock
+            public virtual byte[] ByteBlock
             {
                 get
                 {
-                    return new sbyte[BlockSize];
+                    return new byte[BlockSize];
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
             {
             }
 
-            public override void RecycleByteBlocks(sbyte[][] blocks, int start, int end)
+            public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
             {
             }
         }
@@ -116,16 +116,16 @@ namespace Lucene.Net.Util
                 this.BytesUsed = bytesUsed;
             }
 
-            public override sbyte[] ByteBlock
+            public override byte[] ByteBlock
             {
                 get
                 {
                     BytesUsed.AddAndGet(BlockSize);
-                    return new sbyte[BlockSize];
+                    return new byte[BlockSize];
                 }
             }
 
-            public override void RecycleByteBlocks(sbyte[][] blocks, int start, int end)
+            public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
             {
                 BytesUsed.AddAndGet(-((end - start) * BlockSize));
                 for (var i = start; i < end; i++)
@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
         /// array of buffers currently used in the pool. Buffers are allocated if
         /// needed don't modify this outside of this class.
         /// </summary>
-        public sbyte[][] Buffers = new sbyte[10][];
+        public byte[][] Buffers = new byte[10][];
 
         /// <summary>
         /// index into the buffers array pointing to the current buffer used as the head </summary>
@@ -152,7 +152,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Current head buffer
         /// </summary>
-        public sbyte[] Buffer;
+        public byte[] Buffer;
 
         /// <summary>
         /// Current head offset </summary>
@@ -196,11 +196,11 @@ namespace Lucene.Net.Util
                     {
                         // Fully zero fill buffers that we fully used
                         //Array.Clear(Buffers[i], 0, Buffers[i].Length);
-                        Arrays.Fill(Buffers[i], (sbyte)0);
+                        Arrays.Fill(Buffers[i], (byte)0);
                     }
                     // Partial zero fill the final buffer
                     //Array.Clear(Buffers[BufferUpto], 0, BufferUpto);
-                    Arrays.Fill(Buffers[BufferUpto], 0, ByteUpto, (sbyte)0);
+                    Arrays.Fill(Buffers[BufferUpto], 0, ByteUpto, (byte)0);
                 }
 
                 if (BufferUpto > 0 || !reuseFirst)
@@ -239,7 +239,7 @@ namespace Lucene.Net.Util
         {
             if (1 + BufferUpto == Buffers.Length)
             {
-                var newBuffers = new sbyte[ArrayUtil.Oversize(Buffers.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
+                var newBuffers = new byte[ArrayUtil.Oversize(Buffers.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
                 Array.Copy(Buffers, 0, newBuffers, 0, Buffers.Length);
                 Buffers = newBuffers;
             }
@@ -291,7 +291,7 @@ namespace Lucene.Net.Util
         /// Creates a new byte slice with the given starting size and
         /// returns the slices offset in the pool.
         /// </summary>
-        public int AllocSlice(sbyte[] slice, int upto)
+        public int AllocSlice(byte[] slice, int upto)
         {
             int level = slice[upto] & 15;
             int newLevel = NEXT_LEVEL_ARRAY[level];
@@ -314,13 +314,13 @@ namespace Lucene.Net.Util
             Buffer[newUpto + 2] = slice[upto - 1];
 
             // Write forwarding address at end of last slice:
-            slice[upto - 3] = (sbyte)Number.URShift(offset, 24);
-            slice[upto - 2] = (sbyte)Number.URShift(offset, 16);
-            slice[upto - 1] = (sbyte)Number.URShift(offset, 8);
-            slice[upto] = (sbyte)offset;
+            slice[upto - 3] = (byte)Number.URShift(offset, 24);
+            slice[upto - 2] = (byte)Number.URShift(offset, 16);
+            slice[upto - 1] = (byte)Number.URShift(offset, 8);
+            slice[upto] = (byte)offset;
 
             // Write new level:
-            Buffer[ByteUpto - 1] = (sbyte)(16 | newLevel);
+            Buffer[ByteUpto - 1] = (byte)(16 | newLevel);
 
             return newUpto + 3;
         }
@@ -387,18 +387,18 @@ namespace Lucene.Net.Util
         /// length into the given byte array at offset <tt>off</tt>.
         /// <p>Note: this method allows to copy across block boundaries.</p>
         /// </summary>
-        public void ReadBytes(long offset, sbyte[] bytes, int off, int length)
+        public void ReadBytes(long offset, byte[] bytes, int off, int length)
         {
             if (length == 0)
             {
                 return;
             }
-            int bytesOffset = off;
-            int bytesLength = length;
-            int bufferIndex = (int)(offset >> BYTE_BLOCK_SHIFT);
-            sbyte[] buffer = Buffers[bufferIndex];
-            int pos = (int)(offset & BYTE_BLOCK_MASK);
-            int overflow = (pos + length) - BYTE_BLOCK_SIZE;
+            var bytesOffset = off;
+            var bytesLength = length;
+            var bufferIndex = (int)(offset >> BYTE_BLOCK_SHIFT);
+            var buffer = Buffers[bufferIndex];
+            var pos = (int)(offset & BYTE_BLOCK_MASK);
+            var overflow = (pos + length) - BYTE_BLOCK_SIZE;
             do
             {
                 if (overflow <= 0)

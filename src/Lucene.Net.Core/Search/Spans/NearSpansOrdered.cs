@@ -70,7 +70,7 @@ namespace Lucene.Net.Search.Spans
         private int MatchDoc = -1;
         private int MatchStart = -1;
         private int MatchEnd = -1;
-        private List<sbyte[]> MatchPayload;
+        private List<byte[]> MatchPayload;
 
         private readonly Spans[] SubSpansByDoc;
 
@@ -80,19 +80,19 @@ namespace Lucene.Net.Search.Spans
 
         private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
         {
-            private NearSpansOrdered OuterInstance;
+            private readonly NearSpansOrdered OuterInstance;
 
             public InPlaceMergeSorterAnonymousInnerClassHelper(NearSpansOrdered outerInstance)
             {
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override void Swap(int i, int j)
+            protected override void Swap(int i, int j)
             {
                 ArrayUtil.Swap(OuterInstance.SubSpansByDoc, i, j);
             }
 
-            protected internal override int Compare(int i, int j)
+            protected override int Compare(int i, int j)
             {
                 return OuterInstance.SubSpansByDoc[i].Doc() - OuterInstance.SubSpansByDoc[j].Doc();
             }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.Spans
             AllowedSlop = spanNearQuery.Slop;
             SpanQuery[] clauses = spanNearQuery.Clauses;
             subSpans = new Spans[clauses.Length];
-            MatchPayload = new List<sbyte[]>();
+            MatchPayload = new List<byte[]>();
             SubSpansByDoc = new Spans[clauses.Length];
             for (int i = 0; i < clauses.Length; i++)
             {
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Spans
 
         // TODO: Remove warning after API has been finalized
         // TODO: Would be nice to be able to lazy load payloads
-        public override ICollection<sbyte[]> Payload
+        public override ICollection<byte[]> Payload
         {
             get
             {
@@ -344,14 +344,14 @@ namespace Lucene.Net.Search.Spans
         {
             MatchStart = subSpans[subSpans.Length - 1].Start();
             MatchEnd = subSpans[subSpans.Length - 1].End();
-            HashSet<sbyte[]> possibleMatchPayloads = new HashSet<sbyte[]>();
+            var possibleMatchPayloads = new HashSet<byte[]>();
             if (subSpans[subSpans.Length - 1].PayloadAvailable)
             {
                 //LUCENE TO-DO UnionWith or AddAll(Set<>, IEnumerable<>)
                 possibleMatchPayloads.UnionWith(subSpans[subSpans.Length - 1].Payload);
             }
 
-            IList<sbyte[]> possiblePayload = null;
+            IList<byte[]> possiblePayload = null;
 
             int matchSlop = 0;
             int lastStart = MatchStart;
@@ -361,8 +361,8 @@ namespace Lucene.Net.Search.Spans
                 Spans prevSpans = subSpans[i];
                 if (CollectPayloads && prevSpans.PayloadAvailable)
                 {
-                    ICollection<sbyte[]> payload = prevSpans.Payload;
-                    possiblePayload = new List<sbyte[]>(payload.Count);
+                    var payload = prevSpans.Payload;
+                    possiblePayload = new List<byte[]>(payload.Count);
                     possiblePayload.AddRange(payload);
                 }
 
@@ -395,8 +395,8 @@ namespace Lucene.Net.Search.Spans
                             prevEnd = ppEnd;
                             if (CollectPayloads && prevSpans.PayloadAvailable)
                             {
-                                ICollection<sbyte[]> payload = prevSpans.Payload;
-                                possiblePayload = new List<sbyte[]>(payload.Count);
+                                var payload = prevSpans.Payload;
+                                possiblePayload = new List<byte[]>(payload.Count);
                                 possiblePayload.AddRange(payload);
                             }
                         }

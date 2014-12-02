@@ -173,7 +173,7 @@ namespace Lucene.Net.Codecs
                         if (payload == null)
                         {
                             payload = new BytesRef();
-                            payload.Bytes = new sbyte[payloadLength];
+                            payload.Bytes = new byte[payloadLength];
                         }
                         else if (payload.Bytes.Length < payloadLength)
                         {

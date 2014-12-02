@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 
             List<PreviousSearchState> priorSearches = new List<PreviousSearchState>();
             List<BytesRef> terms = null;
-            while (TimeHelper.NanoTime() < EndTimeNanos)
+            while (DateTime.UtcNow < EndTime)
             {
                 bool doFollowon = priorSearches.Count > 0 && Random().Next(7) == 1;
 

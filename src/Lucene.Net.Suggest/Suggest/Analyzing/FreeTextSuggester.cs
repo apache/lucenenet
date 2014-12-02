@@ -782,7 +782,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		  private HashSet<BytesRef> seen;
 		  private BytesRef finalLastToken;
 
-		  public TopNSearcherAnonymousInnerClassHelper<T1>(FreeTextSuggester outerInstance, FST<T1> fst, int num, UnknownType size, UnknownType weightComparator, HashSet<BytesRef> seen, BytesRef finalLastToken) : base(org.apache.lucene.search.suggest.fst, num, size, weightComparator)
+		  public TopNSearcherAnonymousInnerClassHelper(FreeTextSuggester outerInstance, FST<long?> fst, int num, UnknownType size, UnknownType weightComparator, HashSet<BytesRef> seen, BytesRef finalLastToken)
+              : base(fst, num, size, weightComparator)
 		  {
 			  this.outerInstance = outerInstance;
 			  this.seen = seen;
@@ -809,8 +810,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 		  protected override bool AcceptResult(IntsRef input, long? output)
 		  {
 			Util.Fst.Util.ToBytesRef(input, scratchBytes);
-			finalLastToken.Grow(finalLastToken.length + scratchBytes.length);
-			int lenSav = finalLastToken.length;
+			finalLastToken.Grow(finalLastToken.Length + scratchBytes.Length);
+			int lenSav = finalLastToken.Length;
 			finalLastToken.Append(scratchBytes);
 			//System.out.println("    accept? input='" + scratchBytes.utf8ToString() + "'; lastToken='" + finalLastToken.utf8ToString() + "'; return " + (seen.contains(finalLastToken) == false));
 			bool ret = seen.Contains(finalLastToken) == false;
@@ -871,9 +872,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
 		fst.GetFirstArc(arc);
 
-		sbyte[] bytes = scratch.Bytes;
-		int pos = scratch.Offset;
-		int end = pos + scratch.Length;
+		var bytes = scratch.Bytes;
+		var pos = scratch.Offset;
+		var end = pos + scratch.Length;
 		while (pos < end)
 		{
 		  if (fst.FindTargetArc(bytes[pos++] & 0xff, arc, arc, bytesReader) == null)

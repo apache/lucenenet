@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected override void DoSearching(TaskScheduler es, long stopTime)
+        protected override void DoSearching(TaskScheduler es, DateTime stopTime)
         {
             ThreadClass reopenThread = new ThreadAnonymousInnerClassHelper(this, stopTime);
             reopenThread.SetDaemon(true);
@@ -133,9 +133,9 @@ namespace Lucene.Net.Search
         {
             private readonly TestSearcherManager OuterInstance;
 
-            private long StopTime;
+            private DateTime StopTime;
 
-            public ThreadAnonymousInnerClassHelper(TestSearcherManager outerInstance, long stopTime)
+            public ThreadAnonymousInnerClassHelper(TestSearcherManager outerInstance, DateTime stopTime)
             {
                 this.OuterInstance = outerInstance;
                 this.StopTime = stopTime;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
                         Console.WriteLine("[" + Thread.CurrentThread.Name + "]: launch reopen thread");
                     }
 
-                    while (DateTime.Now.Millisecond < StopTime)
+                    while (DateTime.UtcNow < StopTime)
                     {
                         Thread.Sleep(TestUtil.NextInt(Random(), 1, 100));
                         OuterInstance.Writer.Commit();

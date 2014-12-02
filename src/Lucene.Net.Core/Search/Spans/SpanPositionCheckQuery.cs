@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Spans
         {
             SpanPositionCheckQuery clone = null;
 
-            SpanQuery rewritten = (SpanQuery)match.Rewrite(reader);
+            var rewritten = (SpanQuery)match.Rewrite(reader);
             if (rewritten != match)
             {
                 clone = (SpanPositionCheckQuery)this.Clone();
@@ -198,14 +198,14 @@ namespace Lucene.Net.Search.Spans
                 return Spans.End();
             }
 
-            public override ICollection<sbyte[]> Payload
+            public override ICollection<byte[]> Payload
             {
                 get
                 {
-                    List<sbyte[]> result = null;
+                    List<byte[]> result = null;
                     if (Spans.PayloadAvailable)
                     {
-                        result = new List<sbyte[]>(Spans.Payload);
+                        result = new List<byte[]>(Spans.Payload);
                     }
                     return result; //TODO: any way to avoid the new construction?
                 }

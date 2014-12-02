@@ -37,11 +37,11 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class MultiSpansWrapper : Spans // can't be package private due to payloads
     {
-        private SpanQuery Query;
-        private IList<AtomicReaderContext> Leaves;
+        private readonly SpanQuery Query;
+        private readonly IList<AtomicReaderContext> Leaves;
         private int LeafOrd = 0;
         private Spans Current;
-        private IDictionary<Term, TermContext> TermContexts;
+        private readonly IDictionary<Term, TermContext> TermContexts;
         private readonly int NumLeaves;
 
         private MultiSpansWrapper(IList<AtomicReaderContext> leaves, SpanQuery query, IDictionary<Term, TermContext> termContexts)
@@ -177,13 +177,13 @@ namespace Lucene.Net.Search.Spans
             return Current.End();
         }
 
-        public override ICollection<sbyte[]> Payload
+        public override ICollection<byte[]> Payload
         {
             get
             {
                 if (Current == null)
                 {
-                    return new List<sbyte[]>();
+                    return new List<byte[]>();
                 }
                 return Current.Payload;
             }

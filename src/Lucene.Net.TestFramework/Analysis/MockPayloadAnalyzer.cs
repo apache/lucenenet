@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class MockPayloadAnalyzer : Analyzer
     {
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer result = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
             return new TokenStreamComponents(result, new MockPayloadFilter(result, fieldName));
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis
 
         public override bool IncrementToken()
         {
-            if (Input.IncrementToken())
+            if (input.IncrementToken())
             {
                 PayloadAttr.Payload = new BytesRef(("pos: " + Pos)/*.getBytes(IOUtils.CHARSET_UTF_8)*/);
                 int posIncr;

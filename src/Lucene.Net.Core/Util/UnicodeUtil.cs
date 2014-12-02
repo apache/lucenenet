@@ -105,7 +105,7 @@ namespace Lucene.Net.Util
         ///  WARNING: this is not a valid UTF8 Term
         ///
         /// </summary>
-        public static readonly BytesRef BIG_TERM = new BytesRef(new sbyte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }); // TODO this is unrelated here find a better place for it
+        public static readonly BytesRef BIG_TERM = new BytesRef(new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }); // TODO this is unrelated here find a better place for it
 
         public const int UNI_SUR_HIGH_START = 0xD800;
         public const int UNI_SUR_HIGH_END = 0xDBFF;
@@ -131,12 +131,12 @@ namespace Lucene.Net.Util
             int upto = 0;
             int i = offset;
             int end = offset + length;
-            sbyte[] @out = result.Bytes;
+            var @out = result.Bytes;
             // Pre-allocate for worst case 4-for-1
             int maxLen = length * 4;
             if (@out.Length < maxLen)
             {
-                @out = result.Bytes = new sbyte[maxLen];
+                @out = result.Bytes = new byte[maxLen];
             }
             result.Offset = 0;
 
@@ -146,18 +146,18 @@ namespace Lucene.Net.Util
 
                 if (code < 0x80)
                 {
-                    @out[upto++] = (sbyte)code;
+                    @out[upto++] = (byte)code;
                 }
                 else if (code < 0x800)
                 {
-                    @out[upto++] = (sbyte)(0xC0 | (code >> 6));
-                    @out[upto++] = (sbyte)(0x80 | (code & 0x3F));
+                    @out[upto++] = (byte)(0xC0 | (code >> 6));
+                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
                 }
                 else if (code < 0xD800 || code > 0xDFFF)
                 {
-                    @out[upto++] = (sbyte)(0xE0 | (code >> 12));
-                    @out[upto++] = (sbyte)(0x80 | ((code >> 6) & 0x3F));
-                    @out[upto++] = (sbyte)(0x80 | (code & 0x3F));
+                    @out[upto++] = (byte)(0xE0 | (code >> 12));
+                    @out[upto++] = (byte)(0x80 | ((code >> 6) & 0x3F));
+                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
                 }
                 else
                 {
@@ -171,18 +171,18 @@ namespace Lucene.Net.Util
                         {
                             utf32 = (code << 10) + utf32 + SURROGATE_OFFSET;
                             i++;
-                            @out[upto++] = (sbyte)(0xF0 | (utf32 >> 18));
-                            @out[upto++] = (sbyte)(0x80 | ((utf32 >> 12) & 0x3F));
-                            @out[upto++] = (sbyte)(0x80 | ((utf32 >> 6) & 0x3F));
-                            @out[upto++] = (sbyte)(0x80 | (utf32 & 0x3F));
+                            @out[upto++] = (byte)(0xF0 | (utf32 >> 18));
+                            @out[upto++] = (byte)(0x80 | ((utf32 >> 12) & 0x3F));
+                            @out[upto++] = (byte)(0x80 | ((utf32 >> 6) & 0x3F));
+                            @out[upto++] = (byte)(0x80 | (utf32 & 0x3F));
                             continue;
                         }
                     }
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
-                    @out[upto++] = unchecked((sbyte)0xEF);
-                    @out[upto++] = unchecked((sbyte)0xBF);
-                    @out[upto++] = unchecked((sbyte)0xBD);
+                    @out[upto++] = unchecked((byte)0xEF);
+                    @out[upto++] = unchecked((byte)0xBF);
+                    @out[upto++] = unchecked((byte)0xBD);
                 }
             }
             //assert matches(source, offset, length, out, upto);
@@ -198,34 +198,33 @@ namespace Lucene.Net.Util
         {
             int end = offset + length;
 
-            sbyte[] @out = result.Bytes;
+            var @out = result.Bytes;
             result.Offset = 0;
             // Pre-allocate for worst case 4-for-1
             int maxLen = length * 4;
             if (@out.Length < maxLen)
             {
-                @out = result.Bytes = new sbyte[maxLen];
+                @out = result.Bytes = new byte[maxLen];
             }
 
             int upto = 0;
             for (int i = offset; i < end; i++)
             {
-                int code = (int)s[i];
-
+                var code = (int)s[i];
                 if (code < 0x80)
                 {
-                    @out[upto++] = (sbyte)code;
+                    @out[upto++] = (byte)code;
                 }
                 else if (code < 0x800)
                 {
-                    @out[upto++] = (sbyte)(0xC0 | (code >> 6));
-                    @out[upto++] = (sbyte)(0x80 | (code & 0x3F));
+                    @out[upto++] = (byte)(0xC0 | (code >> 6));
+                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
                 }
                 else if (code < 0xD800 || code > 0xDFFF)
                 {
-                    @out[upto++] = (sbyte)(0xE0 | (code >> 12));
-                    @out[upto++] = (sbyte)(0x80 | ((code >> 6) & 0x3F));
-                    @out[upto++] = (sbyte)(0x80 | (code & 0x3F));
+                    @out[upto++] = (byte)(0xE0 | (code >> 12));
+                    @out[upto++] = (byte)(0x80 | ((code >> 6) & 0x3F));
+                    @out[upto++] = (byte)(0x80 | (code & 0x3F));
                 }
                 else
                 {
@@ -239,18 +238,18 @@ namespace Lucene.Net.Util
                         {
                             utf32 = (code << 10) + utf32 + SURROGATE_OFFSET;
                             i++;
-                            @out[upto++] = (sbyte)(0xF0 | (utf32 >> 18));
-                            @out[upto++] = (sbyte)(0x80 | ((utf32 >> 12) & 0x3F));
-                            @out[upto++] = (sbyte)(0x80 | ((utf32 >> 6) & 0x3F));
-                            @out[upto++] = (sbyte)(0x80 | (utf32 & 0x3F));
+                            @out[upto++] = (byte)(0xF0 | (utf32 >> 18));
+                            @out[upto++] = (byte)(0x80 | ((utf32 >> 12) & 0x3F));
+                            @out[upto++] = (byte)(0x80 | ((utf32 >> 6) & 0x3F));
+                            @out[upto++] = (byte)(0x80 | (utf32 & 0x3F));
                             continue;
                         }
                     }
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
-                    @out[upto++] = unchecked((sbyte)0xEF);
-                    @out[upto++] = unchecked((sbyte)0xBF);
-                    @out[upto++] = unchecked((sbyte)0xBD);
+                    @out[upto++] = unchecked((byte)0xEF);
+                    @out[upto++] = unchecked((byte)0xBF);
+                    @out[upto++] = unchecked((byte)0xBD);
                 }
             }
             //assert matches(s, offset, length, out, upto);
@@ -416,7 +415,7 @@ namespace Lucene.Net.Util
         {
             int pos = utf8.Offset;
             int limit = pos + utf8.Length;
-            sbyte[] bytes = utf8.Bytes;
+            var bytes = utf8.Bytes;
 
             int codePointCount = 0;
             for (; pos < limit; codePointCount++)
@@ -461,7 +460,7 @@ namespace Lucene.Net.Util
             int utf32Count = 0;
             int utf8Upto = utf8.Offset;
             int[] ints = utf32.Ints;
-            sbyte[] bytes = utf8.Bytes;
+            var bytes = utf8.Bytes;
             int utf8Limit = utf8.Offset + utf8.Length;
             while (utf8Upto < utf8Limit)
             {
@@ -584,7 +583,7 @@ namespace Lucene.Net.Util
         // for debugging
         public static string ToHexString(string s)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (int i = 0; i < s.Length; i++)
             {
                 char ch = s[i];
@@ -633,14 +632,14 @@ namespace Lucene.Net.Util
         /// Explicit checks for valid UTF-8 are not performed.
         /// </summary>
         // TODO: broken if chars.offset != 0
-        public static void UTF8toUTF16(sbyte[] utf8, int offset, int length, CharsRef chars)
+        public static void UTF8toUTF16(byte[] utf8, int offset, int length, CharsRef chars)
         {
             int out_offset = chars.Offset = 0;
             char[] @out = chars.Chars = ArrayUtil.Grow(chars.Chars, length);
             int limit = offset + length;
             while (offset < limit)
             {
-                int b = utf8[offset++] & 0xff;
+                int b = ((sbyte)utf8[offset++]) & 0xff;
                 if (b < 0xc0)
                 {
                     Debug.Assert(b < 0x80);

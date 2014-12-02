@@ -71,20 +71,20 @@ namespace Lucene.Net.Search
         /// Decrement reference counting on the given reference. </summary>
         /// <exception cref="IOException"> if reference decrement on the given resource failed.
         ///  </exception>
-        protected internal abstract void DecRef(G reference);
+        protected abstract void DecRef(G reference);
 
         /// <summary>
         /// Refresh the given reference if needed. Returns {@code null} if no refresh
         /// was needed, otherwise a new refreshed reference. </summary>
         /// <exception cref="AlreadyClosedException"> if the reference manager has been <seealso cref="#close() closed"/>. </exception>
         /// <exception cref="IOException"> if the refresh operation failed </exception>
-        protected internal abstract G RefreshIfNeeded(G referenceToRefresh);
+        protected abstract G RefreshIfNeeded(G referenceToRefresh);
 
         /// <summary>
         /// Try to increment reference counting on the given reference. Return true if
         /// the operation was successful. </summary>
         /// <exception cref="AlreadyClosedException"> if the reference manager has been <seealso cref="#close() closed"/>.  </exception>
-        protected internal abstract bool TryIncRef(G reference);
+        protected abstract bool TryIncRef(G reference);
 
         /// <summary>
         /// Obtain the current reference. You must match every call to acquire with one
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the current reference count of the given reference.
         /// </summary>
-        protected internal abstract int GetRefCount(G reference);
+        protected abstract int GetRefCount(G reference);
 
         /// <summary>
         ///  Called after close(), so subclass can free any resources. </summary>

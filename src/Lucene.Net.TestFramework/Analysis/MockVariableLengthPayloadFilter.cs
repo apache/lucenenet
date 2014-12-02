@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
 
         private readonly IPayloadAttribute PayloadAtt;
         private readonly Random Random;
-        private readonly sbyte[] Bytes = new sbyte[MAXLENGTH];
+        private readonly byte[] Bytes = new byte[MAXLENGTH];
         private readonly BytesRef Payload;
 
         public MockVariableLengthPayloadFilter(Random random, TokenStream @in)
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
 
         public override bool IncrementToken()
         {
-            if (Input.IncrementToken())
+            if (input.IncrementToken())
             {
                 Random.NextBytes((byte[])(Array)Bytes);
                 Payload.Length = Random.Next(MAXLENGTH);

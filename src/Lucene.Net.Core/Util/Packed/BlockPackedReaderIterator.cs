@@ -98,7 +98,7 @@ namespace Lucene.Net.Util.Packed
         internal readonly int BlockSize;
         internal readonly long[] Values;
         internal readonly LongsRef ValuesRef;
-        internal sbyte[] Blocks;
+        internal byte[] Blocks;
         internal int Off;
         internal long Ord_Renamed;
 
@@ -192,7 +192,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Blocks == null)
                 {
-                    Blocks = new sbyte[BlockSize];
+                    Blocks = new byte[BlockSize];
                 }
                 long skipped = 0;
                 while (skipped < count)
@@ -268,7 +268,7 @@ namespace Lucene.Net.Util.Packed
                 int blocksSize = iterations * decoder.ByteBlockCount();
                 if (Blocks == null || Blocks.Length < blocksSize)
                 {
-                    Blocks = new sbyte[blocksSize];
+                    Blocks = new byte[blocksSize];
                 }
 
                 int valueCount = (int)Math.Min(this.ValueCount - Ord_Renamed, BlockSize);

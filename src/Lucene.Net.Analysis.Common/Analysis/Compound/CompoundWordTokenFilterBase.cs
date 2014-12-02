@@ -1,7 +1,10 @@
-﻿using System.Diagnostics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.analysis.compound
+namespace Lucene.Net.Analysis.Compound
 {
 
 	/*
@@ -20,16 +23,7 @@ namespace org.apache.lucene.analysis.compound
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using AttributeSource = org.apache.lucene.util.AttributeSource;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Base class for decomposition token filters.
 	/// <para>
 	/// 
@@ -86,7 +80,7 @@ namespace org.apache.lucene.analysis.compound
 	  protected internal CompoundWordTokenFilterBase(Version matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch) : base(input)
 	  {
 		this.matchVersion = matchVersion;
-		this.tokens = new LinkedList<>();
+		this.tokens = new LinkedList<CompoundToken>();
 		if (minWordSize < 0)
 		{
 		  throw new System.ArgumentException("minWordSize cannot be negative");
@@ -106,17 +100,15 @@ namespace org.apache.lucene.analysis.compound
 		this.dictionary = dictionary;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		if (tokens.Count > 0)
 		{
 		  Debug.Assert(current != null);
-		  CompoundToken token = tokens.RemoveFirst();
-		  restoreState(current); // keep all other attributes untouched
-		  termAtt.setEmpty().append(token.txt);
-		  offsetAtt.setOffset(token.startOffset, token.endOffset);
+		  CompoundToken token = tokens.First.Value; tokens.RemoveFirst();
+		  RestoreState(current); // keep all other attributes untouched
+		  termAtt.SetEmpty().Append(token.txt);
+		  offsetAtt.SetOffset(token.startOffset, token.endOffset);
 		  posIncAtt.PositionIncrement = 0;
 		  return true;
 		}
@@ -165,7 +157,7 @@ namespace org.apache.lucene.analysis.compound
 	  {
 		  private readonly CompoundWordTokenFilterBase outerInstance;
 
-		public readonly CharSequence txt;
+		public readonly string txt;
 		public readonly int startOffset, endOffset;
 
 		/// <summary>

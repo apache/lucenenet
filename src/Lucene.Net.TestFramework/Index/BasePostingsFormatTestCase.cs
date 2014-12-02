@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
                 }
 
                 FixedPayloads = Random.NextBoolean();
-                sbyte[] payloadBytes = new sbyte[PayloadSize];
+                var payloadBytes = new byte[PayloadSize];
                 Payload_Renamed = new BytesRef(payloadBytes);
                 this.Options = options;
                 DoPositions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(options) <= 0;
