@@ -31,7 +31,7 @@ namespace Lucene.Net.Classification
     ///
     /// @lucene.experimental
     /// </summary>
-    public class SimpleNaiveBayesClassifier : Classifier<BytesRef> 
+    public class SimpleNaiveBayesClassifier : IClassifier<BytesRef>
     {
         private AtomicReader _atomicReader;
         private String[] _textFieldNames;
@@ -57,18 +57,18 @@ namespace Lucene.Net.Classification
 
         public void Train(AtomicReader atomicReader, String[] textFieldNames, String classFieldName, Analyzer analyzer, Query query)
         {
-            this._atomicReader = atomicReader;
-            this._indexSearcher = new IndexSearcher(this._atomicReader);
-            this._textFieldNames = textFieldNames;
-            this._classFieldName = classFieldName;
-            this._analyzer = analyzer;
-            this._query = query;
-            this._docsWithClassSize = CountDocsWithClass();
+            _atomicReader = atomicReader;
+            _indexSearcher = new IndexSearcher(_atomicReader);
+            _textFieldNames = textFieldNames;
+            _classFieldName = classFieldName;
+            _analyzer = analyzer;
+            _query = query;
+            _docsWithClassSize = CountDocsWithClass();
         }
 
         private int CountDocsWithClass() 
         {
-            int docCount = MultiFields.GetTerms(this._atomicReader, this._classFieldName).DocCount;
+            int docCount = MultiFields.GetTerms(_atomicReader, _classFieldName).DocCount;
             if (docCount == -1) 
             { // in case codec doesn't support getDocCount
                 TotalHitCountCollector totalHitCountCollector = new TotalHitCountCollector();

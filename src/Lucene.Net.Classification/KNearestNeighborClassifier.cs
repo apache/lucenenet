@@ -29,10 +29,10 @@ namespace Lucene.Net.Classification
     /// <summary>
     /// A k-Nearest Neighbor classifier (see <code>http://en.wikipedia.org/wiki/K-nearest_neighbors</code>) based
     /// on {@link MoreLikeThis}
-    /// 
+    ///
     /// @lucene.experimental
     /// </summary>
-    public class KNearestNeighborClassifier : Classifier<BytesRef> 
+    public class KNearestNeighborClassifier : IClassifier<BytesRef>
     {
 
         private MoreLikeThis _mlt;
@@ -47,67 +47,68 @@ namespace Lucene.Net.Classification
 
         /// <summary>Create a {@link Classifier} using kNN algorithm</summary>
         /// <param name="k">the number of neighbors to analyze as an <code>int</code></param>
-        public KNearestNeighborClassifier(int k) 
+        public KNearestNeighborClassifier(int k)
         {
-        this._k = k;
+            _k = k;
         }
 
         /// <summary>Create a {@link Classifier} using kNN algorithm</summary>
         /// <param name="k">the number of neighbors to analyze as an <code>int</code></param>
         /// <param name="minDocsFreq">the minimum number of docs frequency for MLT to be set with {@link MoreLikeThis#setMinDocFreq(int)}</param>
         /// <param name="minTermFreq">the minimum number of term frequency for MLT to be set with {@link MoreLikeThis#setMinTermFreq(int)}</param>
-        public KNearestNeighborClassifier(int k, int minDocsFreq, int minTermFreq) 
+        public KNearestNeighborClassifier(int k, int minDocsFreq, int minTermFreq)
         {
-        this._k = k;
-        this._minDocsFreq = minDocsFreq;
-        this._minTermFreq = minTermFreq;
+            _k = k;
+            _minDocsFreq = minDocsFreq;
+            _minTermFreq = minTermFreq;
         }
 
         public ClassificationResult<BytesRef> AssignClass(String text)
         {
-            if (_mlt == null) 
+            if (_mlt == null)
             {
                 throw new IOException("You must first call Classifier#train");
             }
 
             BooleanQuery mltQuery = new BooleanQuery();
-            foreach (String textFieldName in _textFieldNames) 
+            foreach (String textFieldName in _textFieldNames)
             {
                 mltQuery.Add(new BooleanClause(_mlt.Like(new StringReader(text), textFieldName), BooleanClause.Occur.SHOULD));
             }
             Query classFieldQuery = new WildcardQuery(new Term(_classFieldName, "*"));
             mltQuery.Add(new BooleanClause(classFieldQuery, BooleanClause.Occur.MUST));
-            if (_query != null) {
+            if (_query != null)
+            {
                 mltQuery.Add(_query, BooleanClause.Occur.MUST);
             }
             TopDocs topDocs = _indexSearcher.Search(mltQuery, _k);
             return SelectClassFromNeighbors(topDocs);
         }
 
-        private ClassificationResult<BytesRef> SelectClassFromNeighbors(TopDocs topDocs) 
+        private ClassificationResult<BytesRef> SelectClassFromNeighbors(TopDocs topDocs)
         {
             // TODO : improve the nearest neighbor selection
             Dictionary<BytesRef, int> classCounts = new Dictionary<BytesRef, int>();
 
-            foreach (ScoreDoc scoreDoc in topDocs.ScoreDocs) 
+            foreach (ScoreDoc scoreDoc in topDocs.ScoreDocs)
             {
                 BytesRef cl = new BytesRef(_indexSearcher.Doc(scoreDoc.Doc).GetField(_classFieldName).StringValue);
                 int count = classCounts[cl];
                 if (classCounts.ContainsKey(cl))
                 {
                     classCounts[cl] = count + 1;
-                } 
-                else 
+                }
+                else
                 {
                     classCounts.Add(cl, 1);
                 }
             }
             double max = 0;
             BytesRef assignedClass = new BytesRef();
-            foreach (KeyValuePair<BytesRef, int> entry in classCounts) 
+            foreach (KeyValuePair<BytesRef, int> entry in classCounts)
             {
                 int count = entry.Value;
-                if (count > max) 
+                if (count > max)
                 {
                     max = count;
                     assignedClass = (BytesRef)entry.Key.Clone();
@@ -117,34 +118,34 @@ namespace Lucene.Net.Classification
             return new ClassificationResult<BytesRef>(assignedClass, score);
         }
 
-        public void Train(AtomicReader atomicReader, String textFieldName, String classFieldName, Analyzer analyzer) 
+        public void Train(AtomicReader atomicReader, String textFieldName, String classFieldName, Analyzer analyzer)
         {
             Train(atomicReader, textFieldName, classFieldName, analyzer, null);
         }
 
 
-        public void Train(AtomicReader atomicReader, String textFieldName, String classFieldName, Analyzer analyzer, Query query) 
+        public void Train(AtomicReader atomicReader, String textFieldName, String classFieldName, Analyzer analyzer, Query query)
         {
             Train(atomicReader, new String[]{textFieldName}, classFieldName, analyzer, query);
         }
 
         public void Train(AtomicReader atomicReader, String[] textFieldNames, String classFieldName, Analyzer analyzer, Query query)
         {
-            this._textFieldNames = textFieldNames;
-            this._classFieldName = classFieldName;
+            _textFieldNames = textFieldNames;
+            _classFieldName = classFieldName;
             _mlt = new MoreLikeThis(atomicReader);
             _mlt.Analyzer = analyzer;
             _mlt.FieldNames = _textFieldNames;
             _indexSearcher = new IndexSearcher(atomicReader);
-            if (_minDocsFreq > 0) 
+            if (_minDocsFreq > 0)
             {
                 _mlt.MinDocFreq = _minDocsFreq;
             }
-            if (_minTermFreq > 0) 
+            if (_minTermFreq > 0)
             {
                 _mlt.MinTermFreq = _minTermFreq;
             }
-            this._query = query;
+            _query = query;
         }
     }
 }

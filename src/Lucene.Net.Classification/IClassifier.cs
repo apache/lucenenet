@@ -27,7 +27,7 @@ namespace Lucene.Net.Classification
     /// <code>T</code>
     /// @lucene.experimental
     /// </summary>
-    public interface Classifier<T> 
+    public interface IClassifier<T>
     {
         /// <summary>
         /// Assign a class (with score) to the given text String

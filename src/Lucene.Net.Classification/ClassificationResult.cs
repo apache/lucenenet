@@ -21,7 +21,8 @@ namespace Lucene.Net.Classification
     /// The result of a call to {@link Classifier#assignClass(String)} holding an assigned class of type <code>T</code> and a score.
     /// @lucene.experimental
     /// </summary>
-    public class ClassificationResult<T> {
+    public class ClassificationResult<T>
+    {
 
         private readonly T _assignedClass;
         private readonly double _score;
@@ -33,8 +34,8 @@ namespace Lucene.Net.Classification
         /// </summary>
         public ClassificationResult(T assignedClass, double score) 
         {
-            this._assignedClass = assignedClass;
-            this._score = score;
+            _assignedClass = assignedClass;
+            _score = score;
         }
 
         /// <summary>

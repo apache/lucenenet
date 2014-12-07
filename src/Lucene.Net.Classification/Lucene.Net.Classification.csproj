@@ -40,8 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassificationResult.cs" />
-    <Compile Include="Classifier.cs" />
-    <Compile Include="KNearesteighborClassifier.cs" />
+    <Compile Include="IClassifier.cs" />
+    <Compile Include="KNearestNeighborClassifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleNaiveBayesClassifier.cs" />
   </ItemGroup>
