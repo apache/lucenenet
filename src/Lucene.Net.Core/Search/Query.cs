@@ -134,12 +134,17 @@ namespace Lucene.Net.Search
                 return true;
             }
 
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
             var other = obj as Query;
             if (other == null)
             {
                 return false;
             }
-           
+
             if (Number.FloatToIntBits(Boost) != Number.FloatToIntBits(other.Boost))
             {
                 return false;
