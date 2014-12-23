@@ -93,10 +93,9 @@ namespace Lucene.Net.Classification
             foreach (ScoreDoc scoreDoc in topDocs.ScoreDocs)
             {
                 BytesRef cl = new BytesRef(_indexSearcher.Doc(scoreDoc.Doc).GetField(_classFieldName).StringValue);
-                int count = classCounts[cl];
                 if (classCounts.ContainsKey(cl))
                 {
-                    classCounts[cl] = count + 1;
+                    classCounts[cl] = classCounts[cl] + 1;
                 }
                 else
                 {

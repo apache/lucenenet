@@ -91,7 +91,7 @@ namespace Lucene.Net.Classification
                 TokenStream tokenStream = _analyzer.TokenStream(textFieldName, new StringReader(doc));
                 try 
                 {
-                    CharTermAttribute charTermAttribute = tokenStream.AddAttribute<CharTermAttribute>();
+                    ICharTermAttribute charTermAttribute = tokenStream.AddAttribute<ICharTermAttribute>();
                     tokenStream.Reset();
                     while (tokenStream.IncrementToken()) 
                     {
