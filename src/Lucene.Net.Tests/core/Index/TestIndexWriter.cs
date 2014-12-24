@@ -1874,13 +1874,14 @@ namespace Lucene.Net.Index
 
         private class StringSplitTokenizer : Tokenizer
         {
-            internal string[] Tokens;
-            internal int Upto;
-            internal readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
+            private string[] Tokens;
+            private int Upto;
+            private readonly ICharTermAttribute TermAtt;
 
             public StringSplitTokenizer(TextReader r)
                 : base(r)
             {
+                TermAtt = AddAttribute<ICharTermAttribute>();
                 try
                 {
                     Reader = r;

@@ -611,7 +611,7 @@ namespace Lucene.Net.Queries.Mlt
             {
                 int tokenCount = 0;
                 // for every token
-                var termAtt = ts.AddAttribute<CharTermAttribute>();
+                var termAtt = ts.AddAttribute<ICharTermAttribute>();
                 ts.Reset();
                 while (ts.IncrementToken())
                 {
