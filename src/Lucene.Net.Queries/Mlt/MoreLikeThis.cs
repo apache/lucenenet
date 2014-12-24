@@ -566,29 +566,21 @@ namespace Lucene.Net.Queries.Mlt
         /// <param name="vector"> List of terms and their frequencies for a doc/field </param>
         private void AddTermFrequencies(IDictionary<string, Int> termFreqMap, Terms vector)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final org.apache.lucene.index.TermsEnum termsEnum = vector.iterator(null);
-            TermsEnum termsEnum = vector.Iterator(null);
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final org.apache.lucene.util.CharsRef spare = new org.apache.lucene.util.CharsRef();
-            CharsRef spare = new CharsRef();
+            var termsEnum = vector.Iterator(null);
+            var spare = new CharsRef();
             BytesRef text;
             while ((text = termsEnum.Next()) != null)
             {
                 UnicodeUtil.UTF8toUTF16(text, spare);
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final String term = spare.toString();
-                string term = spare.ToString();
+                var term = spare.ToString();
                 if (IsNoiseWord(term))
                 {
                     continue;
                 }
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final int freq = (int) termsEnum.totalTermFreq();
-                int freq = (int)termsEnum.TotalTermFreq();
+                var freq = (int)termsEnum.TotalTermFreq();
 
                 // increment frequency
-                Int cnt = termFreqMap[term];
+                var cnt = termFreqMap[term];
                 if (cnt == null)
                 {
                     cnt = new Int();
@@ -608,15 +600,13 @@ namespace Lucene.Net.Queries.Mlt
         /// <param name="r"> a source of text to be tokenized </param>
         /// <param name="termFreqMap"> a Map of terms and their frequencies </param>
         /// <param name="fieldName"> Used by analyzer for any special per-field analysis </param>
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: private void addTermFrequencies(Reader r, Map<String, Int> termFreqMap, String fieldName) throws IOException
         private void AddTermFrequencies(Reader r, IDictionary<string, Int> termFreqMap, string fieldName)
         {
             if (Analyzer == null)
             {
                 throw new System.NotSupportedException("To use MoreLikeThis without " + "term vectors, you must provide an Analyzer");
             }
-            TokenStream ts = Analyzer.TokenStream(fieldName, r);
+            var ts = Analyzer.TokenStream(fieldName, r);
             try
             {
                 int tokenCount = 0;
