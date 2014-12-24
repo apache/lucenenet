@@ -580,8 +580,8 @@ namespace Lucene.Net.Queries.Mlt
                 var freq = (int)termsEnum.TotalTermFreq();
 
                 // increment frequency
-                var cnt = termFreqMap[term];
-                if (cnt == null)
+                Int cnt;
+                if (!termFreqMap.TryGetValue(term, out cnt))
                 {
                     cnt = new Int();
                     termFreqMap[term] = cnt;
@@ -627,8 +627,8 @@ namespace Lucene.Net.Queries.Mlt
                     }
 
                     // increment frequency
-                    Int cnt = termFreqMap[word];
-                    if (cnt == null)
+                    Int cnt;
+                    if (!termFreqMap.TryGetValue(word, out cnt))
                     {
                         termFreqMap[word] = new Int();
                     }
