@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.Lucene41
         internal readonly int[] OffsetLengthBuffer;
         private int PosBufferUpto;
 
-        private sbyte[] PayloadBytes;
+        private byte[] PayloadBytes;
         private int PayloadByteUpto;
 
         private int LastBlockDocID;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (state.FieldInfos.HasPayloads())
                     {
-                        PayloadBytes = new sbyte[128];
+                        PayloadBytes = new byte[128];
                         PayloadLengthBuffer = new int[ForUtil.MAX_DATA_SIZE];
                     }
                     else
