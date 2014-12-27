@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
             while (last > 0)
             {
                 SegmentCommitInfo info = infos.Info(--last);
-                if (segmentsToMerge[info] != null)
+                if (segmentsToMerge.ContainsKey(info))
                 {
                     last++;
                     break;

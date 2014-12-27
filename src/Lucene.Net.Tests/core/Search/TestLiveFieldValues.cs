@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
                             doc.Add(new IntField("field", (int)field, Field.Store.YES));
                             w.UpdateDocument(new Term("id", id), doc);
                             Rt.Add(id, field);
-                            if (values[id] == null)//Key didn't exist before
+                            if (!values.ContainsKey(id))//Key didn't exist before
                             {
                                 allIDs.Add(id);
                             }
