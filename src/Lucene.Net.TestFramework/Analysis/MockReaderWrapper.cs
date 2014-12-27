@@ -32,17 +32,15 @@ namespace Lucene.Net.Analysis
 
     public class MockReaderWrapper : StringReader
     {
-        private readonly StringReader @in;
         private readonly Random Random;
 
         private int ExcAtChar = -1;
         private int ReadSoFar;
         private bool ThrowExcNext_Renamed;
 
-        public MockReaderWrapper(Random random, StringReader @in)
-            : base(@in.ReadToEnd())
+        public MockReaderWrapper(Random random, string text)
+            : base(text)
         {
-            this.@in = @in;
             this.Random = random;
         }
 
@@ -60,17 +58,18 @@ namespace Lucene.Net.Analysis
             ThrowExcNext_Renamed = true;
         }
 
-        public override void Close()
+        public override int Read()
         {
-            @in.Close();
+            ThrowExceptionIfApplicable();
+
+            var c = base.Read();
+            ReadSoFar += 1;
+            return c;
         }
 
         public override int Read(char[] cbuf, int off, int len)
         {
-            if (ThrowExcNext_Renamed || (ExcAtChar != -1 && ReadSoFar >= ExcAtChar))
-            {
-                throw new Exception("fake exception now!");
-            }
+            ThrowExceptionIfApplicable();
             int read;
             int realLen;
             if (len == 1)
@@ -87,14 +86,14 @@ namespace Lucene.Net.Analysis
             {
                 int left = ExcAtChar - ReadSoFar;
                 Assert.True(left != 0);
-                read = @in.Read(cbuf, off, Math.Min(realLen, left));
+                read = base.Read(cbuf, off, Math.Min(realLen, left));
                 //Characters are left
                 Assert.True(read != 0);
                 ReadSoFar += read;
             }
             else
             {
-                read = @in.Read(cbuf, off, realLen);
+                read = base.Read(cbuf, off, realLen);
                 //Terrible TextReader::Read semantics
                 if (read == 0)
                 {
@@ -102,6 +101,14 @@ namespace Lucene.Net.Analysis
                 }
             }
             return read;
+        }
+
+        private void ThrowExceptionIfApplicable()
+        {
+            if (ThrowExcNext_Renamed || (ExcAtChar != -1 && ReadSoFar >= ExcAtChar))
+            {
+                throw new Exception("fake exception now!");
+            }
         }
 
         public bool MarkSupported()
