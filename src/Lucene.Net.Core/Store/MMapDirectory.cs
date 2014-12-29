@@ -352,7 +352,7 @@ namespace Lucene.Net.Store
              */
 
             if (input.memoryMappedFile == null)
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 100 : length, MemoryMappedFileAccess.ReadWrite, null, HandleInheritability.None, false);
+                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 100 : length, MemoryMappedFileAccess.ReadWrite, null, HandleInheritability.Inheritable, false);
 
             long bufferStart = 0L;
             for (int bufNr = 0; bufNr < nrBuffers; bufNr++)
