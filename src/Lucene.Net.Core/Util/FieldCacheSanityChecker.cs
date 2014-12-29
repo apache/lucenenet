@@ -282,22 +282,21 @@ namespace Lucene.Net.Util
         /// </summary>
         private IList<object> GetAllDescendantReaderKeys(object seed)
         {
-            List<object> all = new List<object>(17); // will grow as we iter
-            all.Add(seed);
-            for (int i = 0; i < all.Count; i++)
+            var all = new List<object>(17) {seed}; // will grow as we iter
+            for (var i = 0; i < all.Count; i++)
             {
-                object obj = all[i];
+                var obj = all[i];
                 // TODO: We don't check closed readers here (as getTopReaderContext
                 // throws AlreadyClosedException), what should we do? Reflection?
-                IndexReader reader = obj as IndexReader;
+                var reader = obj as IndexReader;
                 if (reader != null)
                 {
                     try
                     {
-                        IList<IndexReaderContext> childs = reader.Context.Children;
+                        var childs = reader.Context.Children;
                         if (childs != null) // it is composite reader
                         {
-                            foreach (IndexReaderContext ctx in childs)
+                            foreach (var ctx in childs)
                             {
                                 all.Add(ctx.Reader.CoreCacheKey);
                             }
