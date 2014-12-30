@@ -139,10 +139,23 @@ namespace Lucene.Net.Util
                     // where [Section] is either core, demo, or contrib, and [Build] is either Debug or Release.
                     string assemblyLocation = AssemblyDirectory;
                     int index = -1;
+
+                    var buildPathPart = Path.DirectorySeparatorChar + "build" + Path.DirectorySeparatorChar;
+                    var binPathPart = Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar;
+
                     if (assemblyLocation.IndexOf("build", StringComparison.InvariantCultureIgnoreCase) > -1)
-                        index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "build" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase);
+                    {
+                        index = assemblyLocation.IndexOf(buildPathPart, StringComparison.InvariantCultureIgnoreCase);
+                    }
                     else
-                        index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase);
+                    {
+                        index = assemblyLocation.IndexOf(binPathPart, StringComparison.InvariantCultureIgnoreCase);
+                    }
+
+                    if (index < 0)
+                    {
+                        throw new ArgumentOutOfRangeException("Could not locate project root directory in " + assemblyLocation + ", checked " + buildPathPart + " and " + binPathPart);
+                    }
 
                     int difference = assemblyLocation.Substring(index).Count(o => o == Path.DirectorySeparatorChar);
 
