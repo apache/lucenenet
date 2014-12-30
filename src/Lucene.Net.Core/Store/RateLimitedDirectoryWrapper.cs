@@ -97,7 +97,9 @@ namespace Lucene.Net.Store
                 throw new System.ArgumentException("Context must not be null");
             }
             //int ord = context.ordinal();
-            RateLimiter limiter = ContextRateLimiters[context];
+            RateLimiter limiter;
+            ContextRateLimiters.TryGetValue(context, out limiter);
+
             if (mbPerSec == null)
             {
                 if (limiter != null)

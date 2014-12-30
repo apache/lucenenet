@@ -1901,8 +1901,8 @@ namespace Lucene.Net.Util.Fst
                             bool doWriteTarget = TargetHasArcs(arc) && (flags & BIT_TARGET_NEXT) == 0;
                             if (doWriteTarget)
                             {
-                                int ptr = topNodeMap[(int)arc.Target];
-                                if (ptr != null)
+                                int ptr;
+                                if (topNodeMap.TryGetValue((int)arc.Target, out ptr))
                                 {
                                     absPtr = ptr;
                                 }
