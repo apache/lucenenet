@@ -555,7 +555,7 @@ namespace Lucene.Net.Store
         /// <param name="name"></param>
         protected void Fsync(String name, bool isDir = false)
         {
-            IOUtils.Fsync(Path.Combine(directory.FullName, name), false);            
+            IOUtils.Fsync(Path.Combine(directory.FullName, name), isDir);            
         }
     }
 }

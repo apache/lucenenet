@@ -261,7 +261,7 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestDontCreate()
         {
-            DirectoryInfo path = new DirectoryInfo(Path.Combine(AppSettings.Get("tmpDir", ""), "doesnotexist"));
+            var path = new DirectoryInfo(Path.Combine(AppSettings.Get("tmpDir", ""), "doesnotexist"));
             try
             {
                 Assert.IsTrue(!path.Exists);
@@ -358,46 +358,45 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestFsyncDoesntCreateNewFiles()
         {
-            //File path = CreateTempDir("nocreate");
-            DirectoryInfo path = new DirectoryInfo(Path.Combine(AppSettings.Get("tempDir", ""), "nocreate"));
+            var path = CreateTempDir("nocreate");
             Console.WriteLine(path.FullName);
-            Directory fsdir = new SimpleFSDirectory(path);
 
-            // write a file
-            IndexOutput @out = fsdir.CreateOutput("afile", NewIOContext(Random()));
-            @out.WriteString("boo");
-            @out.Dispose();
-
-            // delete it
-            try
+            using (Directory fsdir = new SimpleFSDirectory(path))
             {
-                var newDir = new DirectoryInfo(Path.Combine(path.FullName, "afile"));
-                newDir.Create();
-                newDir.Delete();
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Deletion of new Directory should never fail.\nException thrown: {0}", e);
-            }
+                // write a file
+                using (var o = fsdir.CreateOutput("afile", NewIOContext(Random())))
+                {
+                    o.WriteString("boo");
+                }
 
-            // directory is empty
-            Assert.AreEqual(0, fsdir.ListAll().Length);
+                // delete it
+                try
+                {
+                    File.Delete(Path.Combine(path.FullName, "afile"));
+                }
+                catch (Exception e)
+                {
+                    Assert.Fail("Deletion of new Directory should never fail.\nException thrown: {0}", e);
+                }
 
-            // fsync it
-            try
-            {
-                fsdir.Sync(CollectionsHelper.Singleton("afile"));
-                Assert.Fail("didn't get expected exception, instead fsync created new files: " + Arrays.AsList(fsdir.ListAll()));
+                // directory is empty
+                Assert.AreEqual(0, fsdir.ListAll().Length);
+
+                // fsync it
+                try
+                {
+                    fsdir.Sync(CollectionsHelper.Singleton("afile"));
+                    Assert.Fail("didn't get expected exception, instead fsync created new files: " +
+                                Arrays.AsList(fsdir.ListAll()));
+                }
+                catch (FileNotFoundException)
+                {
+                    // ok
+                }
+
+                // directory is still empty
+                Assert.AreEqual(0, fsdir.ListAll().Length);
             }
-            catch (FileNotFoundException /*| NoSuchFileException*/ expected)
-            {
-                // ok
-            }
-
-            // directory is still empty
-            Assert.AreEqual(0, fsdir.ListAll().Length);
-
-            fsdir.Dispose();
         }
     }
 }
