@@ -3,7 +3,6 @@ using System.IO;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Core
 {

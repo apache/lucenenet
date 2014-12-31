@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -41,7 +43,7 @@ namespace Lucene.Net.Analysis.Util
 	  ///          a version instance </param>
 	  /// <returns> a <seealso cref="CharacterUtils"/> implementation according to the given
 	  ///         <seealso cref="Version"/> instance. </returns>
-	  public static CharacterUtils getInstance(Version matchVersion)
+	  public static CharacterUtils GetInstance(Version matchVersion)
 	  {
 		return matchVersion.OnOrAfter(Version.LUCENE_31) ? JAVA_5 : JAVA_4;
 	  }
@@ -74,9 +76,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// <exception cref="IndexOutOfBoundsException">
 	  ///           - if the value offset is negative or not less than the length of
 	  ///           the character sequence. </exception>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public abstract int codePointAt(final CharSequence seq, final int offset);
-	  public abstract int codePointAt(CharSequence seq, int offset);
+	  public abstract int CodePointAt(string seq, int offset);
 
 	  /// <summary>
 	  /// Returns the code point at the given index of the char array where only elements
@@ -99,13 +99,11 @@ namespace Lucene.Net.Analysis.Util
 	  /// <exception cref="IndexOutOfBoundsException">
 	  ///           - if the value offset is negative or not less than the length of
 	  ///           the char array. </exception>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public abstract int codePointAt(final char[] chars, final int offset, final int limit);
-	  public abstract int codePointAt(char[] chars, int offset, int limit);
+	  public abstract int CodePointAt(char[] chars, int offset, int limit);
 
 	  /// <summary>
 	  /// Return the number of characters in <code>seq</code>. </summary>
-	  public abstract int codePointCount(CharSequence seq);
+	  public abstract int CodePointCount(string seq);
 
 	  /// <summary>
 	  /// Creates a new <seealso cref="CharacterBuffer"/> and allocates a <code>char[]</code>
@@ -114,9 +112,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// <param name="bufferSize">
 	  ///          the internal char buffer size, must be <code>&gt;= 2</code> </param>
 	  /// <returns> a new <seealso cref="CharacterBuffer"/> instance. </returns>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public static CharacterBuffer newCharacterBuffer(final int bufferSize)
-	  public static CharacterBuffer newCharacterBuffer(int bufferSize)
+	  public static CharacterBuffer NewCharacterBuffer(int bufferSize)
 	  {
 		if (bufferSize < 2)
 		{
@@ -132,15 +128,13 @@ namespace Lucene.Net.Analysis.Util
 	  /// <param name="buffer"> the char buffer to lowercase </param>
 	  /// <param name="offset"> the offset to start at </param>
 	  /// <param name="limit"> the max char in the buffer to lower case </param>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public final void toLowerCase(final char[] buffer, final int offset, final int limit)
 	  public void ToLower(char[] buffer, int offset, int limit)
 	  {
 		Debug.Assert(buffer.Length >= limit);
 		Debug.Assert(offset <= 0 && offset <= buffer.Length);
 		for (int i = offset; i < limit;)
 		{
-		  i += char.toChars(char.ToLower(codePointAt(buffer, i, limit)), buffer, i);
+		  i += char.ToChars(char.ToLower(CodePointAt(buffer, i, limit)), buffer, i);
 		}
 	  }
 
@@ -150,8 +144,6 @@ namespace Lucene.Net.Analysis.Util
 	  /// <param name="buffer"> the char buffer to UPPERCASE </param>
 	  /// <param name="offset"> the offset to start at </param>
 	  /// <param name="limit"> the max char in the buffer to lower case </param>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public final void toUpperCase(final char[] buffer, final int offset, final int limit)
 	  public void ToUpper(char[] buffer, int offset, int limit)
 	  {
 		Debug.Assert(buffer.Length >= limit);
@@ -237,35 +229,27 @@ namespace Lucene.Net.Analysis.Util
 	  /// <returns> <code>false</code> if and only if reader.read returned -1 while trying to fill the buffer </returns>
 	  /// <exception cref="IOException">
 	  ///           if the reader throws an <seealso cref="IOException"/>. </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public abstract boolean fill(CharacterBuffer buffer, java.io.Reader reader, int numChars) throws java.io.IOException;
-	  public abstract bool fill(CharacterBuffer buffer, Reader reader, int numChars);
+	  public abstract bool Fill(CharacterBuffer buffer, Reader reader, int numChars);
 
 	  /// <summary>
 	  /// Convenience method which calls <code>fill(buffer, reader, buffer.buffer.length)</code>. </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public final boolean fill(CharacterBuffer buffer, java.io.Reader reader) throws java.io.IOException
-	  public bool fill(CharacterBuffer buffer, Reader reader)
+	  public virtual bool Fill(CharacterBuffer buffer, Reader reader)
 	  {
-		return fill(buffer, reader, buffer.buffer.Length);
+		return Fill(buffer, reader, buffer.buffer.Length);
 	  }
 
 	  /// <summary>
 	  /// Return the index within <code>buf[start:start+count]</code> which is by <code>offset</code>
 	  ///  code points from <code>index</code>. 
 	  /// </summary>
-	  public abstract int offsetByCodePoints(char[] buf, int start, int count, int index, int offset);
+	  public abstract int OffsetByCodePoints(char[] buf, int start, int count, int index, int offset);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: static int readFully(java.io.Reader reader, char[] dest, int offset, int len) throws java.io.IOException
-	  internal static int readFully(Reader reader, char[] dest, int offset, int len)
+	  internal static int ReadFully(Reader reader, char[] dest, int offset, int len)
 	  {
 		int read = 0;
 		while (read < len)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int r = reader.read(dest, offset + read, len - read);
-		  int r = reader.read(dest, offset + read, len - read);
+		  int r = reader.Read(dest, offset + read, len - read);
 		  if (r == -1)
 		  {
 			break;
@@ -281,36 +265,25 @@ namespace Lucene.Net.Analysis.Util
 		{
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: @Override public int codePointAt(final CharSequence seq, final int offset)
-		public override int codePointAt(CharSequence seq, int offset)
+		public override int CodePointAt(string seq, int offset)
 		{
-		  return char.codePointAt(seq, offset);
+		  return char.CodePointAt(seq, offset);
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: @Override public int codePointAt(final char[] chars, final int offset, final int limit)
-		public override int codePointAt(char[] chars, int offset, int limit)
+		public override int CodePointAt(char[] chars, int offset, int limit)
 		{
-		 return char.codePointAt(chars, offset, limit);
+		 return char.CodePointAt(chars, offset, limit);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean fill(final CharacterBuffer buffer, final java.io.Reader reader, int numChars) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-		public override bool fill(CharacterBuffer buffer, Reader reader, int numChars)
+		public override bool Fill(CharacterBuffer buffer, Reader reader, int numChars)
 		{
 		  Debug.Assert(buffer.buffer.Length >= 2);
 		  if (numChars < 2 || numChars > buffer.buffer.Length)
 		  {
 			throw new System.ArgumentException("numChars must be >= 2 and <= the buffer size");
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] charBuffer = buffer.buffer;
 		  char[] charBuffer = buffer.buffer;
 		  buffer.offset = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offset;
 		  int offset;
 
 		  // Install the previously saved ending high surrogate:
@@ -325,9 +298,7 @@ namespace Lucene.Net.Analysis.Util
 			offset = 0;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int read = readFully(reader, charBuffer, offset, numChars - offset);
-		  int read = readFully(reader, charBuffer, offset, numChars - offset);
+		  int read = ReadFully(reader, charBuffer, offset, numChars - offset);
 
 		  buffer.length = offset + read;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -347,14 +318,14 @@ namespace Lucene.Net.Analysis.Util
 		  return result;
 		}
 
-		public override int codePointCount(CharSequence seq)
+		public override int CodePointCount(string seq)
 		{
-		  return char.codePointCount(seq, 0, seq.length());
+		  return char.CodePointCount(seq, 0, seq.Length);
 		}
 
-		public override int offsetByCodePoints(char[] buf, int start, int count, int index, int offset)
+		public override int OffsetByCodePoints(char[] buf, int start, int count, int index, int offset)
 		{
-		  return char.offsetByCodePoints(buf, start, count, index, offset);
+		  return char.OffsetByCodePoints(buf, start, count, index, offset);
 		}
 	  }
 
@@ -364,16 +335,12 @@ namespace Lucene.Net.Analysis.Util
 		{
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: @Override public int codePointAt(final CharSequence seq, final int offset)
-		public override int codePointAt(CharSequence seq, int offset)
+		public override int CodePointAt(string seq, int offset)
 		{
-		  return seq.charAt(offset);
+		  return seq[offset];
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: @Override public int codePointAt(final char[] chars, final int offset, final int limit)
-		public override int codePointAt(char[] chars, int offset, int limit)
+		public override int CodePointAt(char[] chars, int offset, int limit)
 		{
 		  if (offset >= limit)
 		  {
@@ -382,9 +349,7 @@ namespace Lucene.Net.Analysis.Util
 		  return chars[offset];
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean fill(CharacterBuffer buffer, java.io.Reader reader, int numChars) throws java.io.IOException
-		public override bool fill(CharacterBuffer buffer, Reader reader, int numChars)
+		public override bool Fill(CharacterBuffer buffer, Reader reader, int numChars)
 		{
 		  Debug.Assert(buffer.buffer.Length >= 1);
 		  if (numChars < 1 || numChars > buffer.buffer.Length)
@@ -392,23 +357,19 @@ namespace Lucene.Net.Analysis.Util
 			throw new System.ArgumentException("numChars must be >= 1 and <= the buffer size");
 		  }
 		  buffer.offset = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int read = readFully(reader, buffer.buffer, 0, numChars);
-		  int read = readFully(reader, buffer.buffer, 0, numChars);
+		  int read = ReadFully(reader, buffer.buffer, 0, numChars);
 		  buffer.length = read;
 		  buffer.lastTrailingHighSurrogate = (char)0;
 		  return read == numChars;
 		}
 
-		public override int codePointCount(CharSequence seq)
+		public override int CodePointCount(string seq)
 		{
-		  return seq.length();
+		  return seq.Length;
 		}
 
-		public override int offsetByCodePoints(char[] buf, int start, int count, int index, int offset)
+		public override int OffsetByCodePoints(char[] buf, int start, int count, int index, int offset)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int result = index + offset;
 		  int result = index + offset;
 		  if (result < 0 || result > count)
 		  {

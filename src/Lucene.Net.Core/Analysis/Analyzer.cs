@@ -417,7 +417,7 @@ namespace Lucene.Net.Analysis
 
             public override TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName)
             {
-                IDictionary<string, TokenStreamComponents> componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
+                var componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
                 TokenStreamComponents ret;
                 if (componentsPerField != null)
                 {
@@ -429,7 +429,7 @@ namespace Lucene.Net.Analysis
 
             public override void SetReusableComponents(Analyzer analyzer, string fieldName, TokenStreamComponents components)
             {
-                IDictionary<string, TokenStreamComponents> componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
+                var componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
                 if (componentsPerField == null)
                 {
                     componentsPerField = new Dictionary<string, TokenStreamComponents>();

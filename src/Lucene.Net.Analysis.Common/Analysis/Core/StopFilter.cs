@@ -3,127 +3,129 @@ using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.util;
+using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Core
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
     /// <summary>
-	/// Removes stop words from a token stream.
-	/// 
-	/// <a name="version"/>
-	/// <para>You must specify the required <seealso cref="Version"/>
-	/// compatibility when creating StopFilter:
-	/// <ul>
-	///   <li> As of 3.1, StopFilter correctly handles Unicode 4.0
-	///         supplementary characters in stopwords and position
-	///         increments are preserved
-	/// </ul>
-	/// </para>
-	/// </summary>
-	public sealed class StopFilter : FilteringTokenFilter
-	{
+    /// Removes stop words from a token stream.
+    /// 
+    /// <a name="version"/>
+    /// <para>You must specify the required <seealso cref="Version"/>
+    /// compatibility when creating StopFilter:
+    /// <ul>
+    ///   <li> As of 3.1, StopFilter correctly handles Unicode 4.0
+    ///         supplementary characters in stopwords and position
+    ///         increments are preserved
+    /// </ul>
+    /// </para>
+    /// </summary>
+    public sealed class StopFilter : FilteringTokenFilter
+    {
 
-	  private readonly CharArraySet stopWords;
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        private readonly CharArraySet stopWords;
+        private readonly ICharTermAttribute termAtt;
 
-	  /// <summary>
-	  /// Constructs a filter which removes words from the input TokenStream that are
-	  /// named in the Set.
-	  /// </summary>
-	  /// <param name="matchVersion">
-	  ///          Lucene version to enable correct Unicode 4.0 behavior in the stop
-	  ///          set if Version > 3.0.  See <a href="#version">above</a> for details. </param>
-	  /// <param name="in">
-	  ///          Input stream </param>
-	  /// <param name="stopWords">
-	  ///          A <seealso cref="CharArraySet"/> representing the stopwords. </param>
-	  /// <seealso cref= #makeStopSet(Version, java.lang.String...) </seealso>
-	  public StopFilter(Version matchVersion, TokenStream @in, CharArraySet stopWords) : base(matchVersion, @in)
-	  {
-		this.stopWords = stopWords;
-	  }
+        /// <summary>
+        /// Constructs a filter which removes words from the input TokenStream that are
+        /// named in the Set.
+        /// </summary>
+        /// <param name="matchVersion">
+        ///          Lucene version to enable correct Unicode 4.0 behavior in the stop
+        ///          set if Version > 3.0.  See <a href="#version">above</a> for details. </param>
+        /// <param name="in">
+        ///          Input stream </param>
+        /// <param name="stopWords">
+        ///          A <seealso cref="CharArraySet"/> representing the stopwords. </param>
+        /// <seealso cref= #makeStopSet(Version, java.lang.String...) </seealso>
+        public StopFilter(Version matchVersion, TokenStream @in, CharArraySet stopWords)
+            : base(matchVersion, @in)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+            this.stopWords = stopWords;
+        }
 
-	  /// <summary>
-	  /// Builds a Set from an array of stop words,
-	  /// appropriate for passing into the StopFilter constructor.
-	  /// This permits this stopWords construction to be cached once when
-	  /// an Analyzer is constructed.
-	  /// </summary>
-	  /// <param name="matchVersion"> Lucene version to enable correct Unicode 4.0 behavior in the returned set if Version > 3.0 </param>
-	  /// <param name="stopWords"> An array of stopwords </param>
-	  /// <seealso cref= #makeStopSet(Version, java.lang.String[], boolean) passing false to ignoreCase </seealso>
-	  public static CharArraySet makeStopSet(Version matchVersion, params string[] stopWords)
-	  {
-		return makeStopSet(matchVersion, stopWords, false);
-	  }
+        /// <summary>
+        /// Builds a Set from an array of stop words,
+        /// appropriate for passing into the StopFilter constructor.
+        /// This permits this stopWords construction to be cached once when
+        /// an Analyzer is constructed.
+        /// </summary>
+        /// <param name="matchVersion"> Lucene version to enable correct Unicode 4.0 behavior in the returned set if Version > 3.0 </param>
+        /// <param name="stopWords"> An array of stopwords </param>
+        /// <seealso cref= #makeStopSet(Version, java.lang.String[], boolean) passing false to ignoreCase </seealso>
+        public static CharArraySet makeStopSet(Version matchVersion, params string[] stopWords)
+        {
+            return makeStopSet(matchVersion, stopWords, false);
+        }
 
-	  /// <summary>
-	  /// Builds a Set from an array of stop words,
-	  /// appropriate for passing into the StopFilter constructor.
-	  /// This permits this stopWords construction to be cached once when
-	  /// an Analyzer is constructed.
-	  /// </summary>
-	  /// <param name="matchVersion"> Lucene version to enable correct Unicode 4.0 behavior in the returned set if Version > 3.0 </param>
-	  /// <param name="stopWords"> A List of Strings or char[] or any other toString()-able list representing the stopwords </param>
-	  /// <returns> A Set (<seealso cref="CharArraySet"/>) containing the words </returns>
-	  /// <seealso cref= #makeStopSet(Version, java.lang.String[], boolean) passing false to ignoreCase </seealso>
-	  public static CharArraySet MakeStopSet<T1>(Version matchVersion, IList<T1> stopWords)
-	  {
-		return makeStopSet(matchVersion, stopWords, false);
-	  }
+        /// <summary>
+        /// Builds a Set from an array of stop words,
+        /// appropriate for passing into the StopFilter constructor.
+        /// This permits this stopWords construction to be cached once when
+        /// an Analyzer is constructed.
+        /// </summary>
+        /// <param name="matchVersion"> Lucene version to enable correct Unicode 4.0 behavior in the returned set if Version > 3.0 </param>
+        /// <param name="stopWords"> A List of Strings or char[] or any other toString()-able list representing the stopwords </param>
+        /// <returns> A Set (<seealso cref="CharArraySet"/>) containing the words </returns>
+        /// <seealso cref= #makeStopSet(Version, java.lang.String[], boolean) passing false to ignoreCase </seealso>
+        public static CharArraySet MakeStopSet<T1>(Version matchVersion, IList<T1> stopWords)
+        {
+            return makeStopSet(matchVersion, stopWords, false);
+        }
 
-	  /// <summary>
-	  /// Creates a stopword set from the given stopword array.
-	  /// </summary>
-	  /// <param name="matchVersion"> Lucene version to enable correct Unicode 4.0 behavior in the returned set if Version > 3.0 </param>
-	  /// <param name="stopWords"> An array of stopwords </param>
-	  /// <param name="ignoreCase"> If true, all words are lower cased first. </param>
-	  /// <returns> a Set containing the words </returns>
-	  public static CharArraySet MakeStopSet(Version matchVersion, string[] stopWords, bool ignoreCase)
-	  {
-		CharArraySet stopSet = new CharArraySet(matchVersion, stopWords.Length, ignoreCase);
-		stopSet.AddAll(Arrays.AsList(stopWords));
-		return stopSet;
-	  }
+        /// <summary>
+        /// Creates a stopword set from the given stopword array.
+        /// </summary>
+        /// <param name="matchVersion"> Lucene version to enable correct Unicode 4.0 behavior in the returned set if Version > 3.0 </param>
+        /// <param name="stopWords"> An array of stopwords </param>
+        /// <param name="ignoreCase"> If true, all words are lower cased first. </param>
+        /// <returns> a Set containing the words </returns>
+        public static CharArraySet MakeStopSet(Version matchVersion, string[] stopWords, bool ignoreCase)
+        {
+            CharArraySet stopSet = new CharArraySet(matchVersion, stopWords.Length, ignoreCase);
+            stopSet.AddAll(Arrays.AsList(stopWords));
+            return stopSet;
+        }
 
-	  /// <summary>
-	  /// Creates a stopword set from the given stopword list. </summary>
-	  /// <param name="matchVersion"> Lucene version to enable correct Unicode 4.0 behavior in the returned set if Version > 3.0 </param>
-	  /// <param name="stopWords"> A List of Strings or char[] or any other toString()-able list representing the stopwords </param>
-	  /// <param name="ignoreCase"> if true, all words are lower cased first </param>
-	  /// <returns> A Set (<seealso cref="CharArraySet"/>) containing the words </returns>
-	  public static CharArraySet makeStopSet<T1>(Version matchVersion, IList<T1> stopWords, bool ignoreCase)
-	  {
-		CharArraySet stopSet = new CharArraySet(matchVersion, stopWords.Count, ignoreCase);
-		stopSet.addAll(stopWords);
-		return stopSet;
-	  }
+        /// <summary>
+        /// Creates a stopword set from the given stopword list. </summary>
+        /// <param name="matchVersion"> Lucene version to enable correct Unicode 4.0 behavior in the returned set if Version > 3.0 </param>
+        /// <param name="stopWords"> A List of Strings or char[] or any other toString()-able list representing the stopwords </param>
+        /// <param name="ignoreCase"> if true, all words are lower cased first </param>
+        /// <returns> A Set (<seealso cref="CharArraySet"/>) containing the words </returns>
+        public static CharArraySet MakeStopSet<T1>(Version matchVersion, IList<T1> stopWords, bool ignoreCase)
+        {
+            var stopSet = new CharArraySet(matchVersion, stopWords.Count, ignoreCase);
+            stopSet.AddAll(stopWords);
+            return stopSet;
+        }
 
-	  /// <summary>
-	  /// Returns the next input Token whose term() is not a stop word.
-	  /// </summary>
-	  protected internal override bool Accept()
-	  {
-		return !stopWords.contains(termAtt.buffer(), 0, termAtt.length());
-	  }
+        /// <summary>
+        /// Returns the next input Token whose term() is not a stop word.
+        /// </summary>
+        protected internal override bool Accept()
+        {
+            return !stopWords.Contains(termAtt.Buffer(), 0, termAtt.Length);
+        }
 
-	}
+    }
 
 }

@@ -1,7 +1,8 @@
-﻿using Lucene.Net.Analysis.Core;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.analysis.core
+namespace Lucene.Net.Analysis.Core
 {
 
 	/*
@@ -20,12 +21,7 @@ namespace org.apache.lucene.analysis.core
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using CharacterUtils = CharacterUtils;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Normalizes token text to UPPER CASE.
 	/// <a name="version"/>
 	/// <para>You must specify the required <seealso cref="Version"/>
@@ -41,7 +37,7 @@ namespace org.apache.lucene.analysis.core
 	public sealed class UpperCaseFilter : TokenFilter
 	{
 	  private readonly CharacterUtils charUtils;
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        private readonly ICharTermAttribute termAtt;;
 
 	  /// <summary>
 	  /// Create a new UpperCaseFilter, that normalizes token text to upper case.
@@ -50,16 +46,16 @@ namespace org.apache.lucene.analysis.core
 	  /// <param name="in"> TokenStream to filter </param>
 	  public UpperCaseFilter(Version matchVersion, TokenStream @in) : base(@in)
 	  {
-		charUtils = CharacterUtils.getInstance(matchVersion);
+	      termAtt = AddAttribute<ICharTermAttribute>();
+	      termAtt = AddAttribute<ICharTermAttribute>();
+		charUtils = CharacterUtils.GetInstance(matchVersion);
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
-		if (input.incrementToken())
+		if (input.IncrementToken())
 		{
-		  charUtils.ToUpper(termAtt.buffer(), 0, termAtt.length());
+		  charUtils.ToUpper(termAtt.Buffer(), 0, termAtt.Length);
 		  return true;
 		}
 		else

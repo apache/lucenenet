@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// Clears all entries in this set. This method is supported for reusing, but not <seealso cref="Set#remove"/>. </summary>
 	  public void Clear()
 	  {
-		map.clear();
+		map.Clear();
 	  }
 
 	  /// <summary>
@@ -111,19 +111,19 @@ namespace Lucene.Net.Analysis.Util
 	  /// </summary>
 	  public virtual bool Contains(char[] text, int off, int len)
 	  {
-		return map.containsKey(text, off, len);
+		return map.ContainsKey(text, off, len);
 	  }
 
 	  /// <summary>
 	  /// true if the <code>CharSequence</code> is in the set </summary>
 	  public virtual bool Contains(string cs)
 	  {
-		return map.containsKey(cs);
+		return map.ContainsKey(cs);
 	  }
 
 	  public bool Contains(object o)
 	  {
-		return map.containsKey(o);
+		return map.ContainsKey(o);
 	  }
 
 	  public bool Add(object o)

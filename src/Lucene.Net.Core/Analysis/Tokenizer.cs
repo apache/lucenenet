@@ -130,10 +130,6 @@ namespace Lucene.Net.Analysis
 
         private class ReaderAnonymousInnerClassHelper : TextReader
         {
-            public ReaderAnonymousInnerClassHelper()
-            {
-            }
-
             public override int Read(char[] cbuf, int off, int len)
             {
                 throw new InvalidOperationException("TokenStream contract violation: reset()/close() call missing, " + "reset() called multiple times, or subclass does not call super.reset(). " + "Please see Javadocs of TokenStream class for more information about the correct consuming workflow.");
