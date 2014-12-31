@@ -538,6 +538,19 @@ namespace Lucene.Net.Util
         /// <exception cref="IndexOutOfBoundsException"> If the offset or count are out of bounds. </exception>
         public static string NewString(int[] codePoints, int offset, int count)
         {
+            var chars = ToCharArray(codePoints, offset, count);
+            return new string(chars);
+        }
+
+        /// <summary>
+        /// Generates char array that represents the provided input code points
+        /// </summary>
+        /// <param name="codePoints"> The code array </param>
+        /// <param name="offset"> The start of the text in the code point array </param>
+        /// <param name="count"> The number of code points </param>
+        /// <returns> a char array representing the code points between offset and count </returns>
+        public static char[] ToCharArray(int[] codePoints, int offset, int count)
+        {
             if (count < 0)
             {
                 throw new System.ArgumentException();
@@ -577,7 +590,10 @@ namespace Lucene.Net.Util
                     }
                 }
             }
-            return new string(chars, 0, w);
+
+            var result = new char[w];
+            Array.Copy(chars, result, w);
+            return result;
         }
 
         // for debugging
