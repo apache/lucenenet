@@ -48,10 +48,12 @@ namespace Lucene.Net.Index
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
 
             //provider.register(new MemoryCodec());
-            if ((!"Lucene3x".Equals(Codec.Default.Name)) && Random().NextBoolean())
-            {
-                Codec.Default = TestUtil.AlwaysPostingsFormat(new Codecs.Lucene3x.Lucene3xPostingsFormat(/*Random().NextBoolean(), random.NextDouble()*/));
-            }
+            // LUCENE TODO: uncomment this out once MemoryPostingsFormat is brought over
+            //if ((!"Lucene3x".Equals(Codec.Default.Name)) && Random().NextBoolean())
+            //{
+            //    Codec.Default =
+            //        TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(random().nextBoolean(), random.NextFloat()));
+            //}
 
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
