@@ -356,8 +356,8 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             lock (this)
             {
-                BinaryDocValues instance = BinaryInstances[field.Number];
-                if (instance == null)
+                BinaryDocValues instance;
+                if (!BinaryInstances.TryGetValue(field.Number, out instance))
                 {
                     instance = LoadBinary(field);
                     BinaryInstances[field.Number] = instance;
@@ -435,8 +435,7 @@ namespace Lucene.Net.Codecs.Lucene42
             FST<long> instance;
             lock (this)
             {
-                instance = FstInstances[field.Number];
-                if (instance == null)
+                if (!FstInstances.TryGetValue(field.Number, out instance))
                 {
                     Data.Seek(entry.Offset);
                     instance = new FST<long>(Data, PositiveIntOutputs.Singleton);
@@ -554,8 +553,7 @@ namespace Lucene.Net.Codecs.Lucene42
             FST<long> instance;
             lock (this)
             {
-                instance = FstInstances[field.Number];
-                if (instance == null)
+                if (!FstInstances.TryGetValue(field.Number, out instance))
                 {
                     Data.Seek(entry.Offset);
                     instance = new FST<long>((DataInput)Data, Lucene.Net.Util.Fst.PositiveIntOutputs.Singleton);

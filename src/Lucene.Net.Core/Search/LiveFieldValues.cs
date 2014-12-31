@@ -111,7 +111,8 @@ namespace Lucene.Net.Search
         public virtual T Get(string id)
         {
             // First try to get the "live" value:
-            T value = Current[id];
+            T value;
+            Current.TryGetValue(id, out value);
             if ((object)value == (object)MissingValue)
             {
                 // Deleted but the deletion is not yet reflected in
@@ -124,7 +125,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                value = Old[id];
+                Old.TryGetValue(id, out value);
                 if ((object)value == (object)MissingValue)
                 {
                     // Deleted but the deletion is not yet reflected in
