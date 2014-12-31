@@ -375,9 +375,9 @@ namespace Lucene.Net.Store
                 newDir.Create();
                 newDir.Delete();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Assert.Fail("Deletion of new Directory should never fail.");
+                Assert.Fail("Deletion of new Directory should never fail.\nException thrown: {0}", e);
             }
 
             // directory is empty

@@ -202,7 +202,9 @@ namespace Lucene.Net.Search
             Automaton prefixAutomaton = BasicOperations.Concatenate(pfx, BasicAutomata.MakeAnyString());
             AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), prefixAutomaton);
             Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
-            Assert.IsTrue(aq.GetTermsEnum(terms) is PrefixTermsEnum);
+
+            var en = aq.GetTermsEnum(terms);
+            Assert.IsTrue(en is PrefixTermsEnum, "Expected type PrefixTermEnum but was {0}", en.GetType().Name);
             Assert.AreEqual(3, AutomatonQueryNrHits(aq));
         }
 

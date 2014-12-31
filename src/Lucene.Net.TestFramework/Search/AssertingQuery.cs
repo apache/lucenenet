@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -32,9 +33,11 @@ namespace Lucene.Net.Search
         private readonly Query @in;
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public AssertingQuery(Random random, Query @in)
         {
+            Debug.Assert(@in != null);
             this.Random = random;
             this.@in = @in;
         }
@@ -63,11 +66,11 @@ namespace Lucene.Net.Search
 
         public override bool Equals(object obj)
         {
-            if (obj == null || !(obj is AssertingQuery))
+            var that = obj as AssertingQuery;
+            if (that == null)
             {
                 return false;
             }
-            AssertingQuery that = (AssertingQuery)obj;
             return this.@in.Equals(that.@in);
         }
 
