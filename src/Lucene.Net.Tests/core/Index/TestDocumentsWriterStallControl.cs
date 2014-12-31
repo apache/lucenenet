@@ -131,9 +131,9 @@ namespace Lucene.Net.Index
             int numStallers = AtLeast(1);
             int numReleasers = AtLeast(1);
             int numWaiters = AtLeast(1);
-            Synchronizer sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
-            ThreadClass[] threads = new ThreadClass[numReleasers + numStallers + numWaiters];
-            IList<Exception> exceptions = new ConcurrentList<Exception>(new List<Exception>());
+            var sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
+            var threads = new ThreadClass[numReleasers + numStallers + numWaiters];
+            IList<Exception> exceptions = new SynchronizedCollection<Exception>();
             for (int i = 0; i < numReleasers; i++)
             {
                 threads[i] = new Updater(stop, checkPoint, ctrl, sync, true, exceptions);

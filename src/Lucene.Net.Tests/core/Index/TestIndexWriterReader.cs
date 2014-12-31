@@ -864,11 +864,11 @@ namespace Lucene.Net.Index
             const float SECONDS = 0.5f;
 
             long endTime = (long)(DateTime.Now.Millisecond + 1000.0 * SECONDS);
-            IList<Exception> excs = new ConcurrentList<Exception>(new List<Exception>());
+            IList<Exception> excs = new SynchronizedCollection<Exception>();
 
             // Only one thread can addIndexes at a time, because
             // IndexWriter acquires a write lock in each directory:
-            ThreadClass[] threads = new ThreadClass[1];
+            var threads = new ThreadClass[1];
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousInnerClassHelper(this, writer, dirs, endTime, excs);
@@ -971,7 +971,7 @@ namespace Lucene.Net.Index
         public virtual void TestDuringAddDelete()
         {
             Directory dir1 = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(2)));
+            var writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(2)));
 
             // create the index
             CreateIndexNoClose(false, "test", writer);
@@ -982,9 +982,9 @@ namespace Lucene.Net.Index
             const float SECONDS = 0.5f;
 
             long endTime = (long)(DateTime.Now.Millisecond + 1000.0 * SECONDS);
-            IList<Exception> excs = new ConcurrentList<Exception>(new List<Exception>());
+            IList<Exception> excs = new SynchronizedCollection<Exception>();
 
-            ThreadClass[] threads = new ThreadClass[NumThreads];
+            var threads = new ThreadClass[NumThreads];
             for (int i = 0; i < NumThreads; i++)
             {
                 threads[i] = new ThreadAnonymousInnerClassHelper2(this, writer, r, endTime, excs);

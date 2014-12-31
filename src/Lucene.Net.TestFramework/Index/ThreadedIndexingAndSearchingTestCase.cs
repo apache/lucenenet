@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lucene.Net.Documents;
@@ -601,7 +602,7 @@ namespace Lucene.Net.Index
 
             ISet<string> delIDs = new ConcurrentHashSet<string>(new HashSet<string>());
             ISet<string> delPackIDs = new ConcurrentHashSet<string>(new HashSet<string>());
-            IList<SubDocs> allSubDocs = new ConcurrentList<SubDocs>(new List<SubDocs>());
+            IList<SubDocs> allSubDocs = new SynchronizedCollection<SubDocs>();
 
             DateTime stopTime = DateTime.UtcNow.AddSeconds(RUN_TIME_SEC);
 
@@ -665,7 +666,7 @@ namespace Lucene.Net.Index
             }
 
             // Verify: make sure each group of sub-docs are still in docID order:
-            foreach (SubDocs subDocs in allSubDocs)
+            foreach (SubDocs subDocs in allSubDocs.ToList())
             {
                 TopDocs hits = s.Search(new TermQuery(new Term("packID", subDocs.PackID)), 20);
                 if (!subDocs.Deleted)

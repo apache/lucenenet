@@ -179,7 +179,7 @@ namespace Lucene.Net.Search
                 try
                 {
                     IDictionary<string, int?> values = new Dictionary<string, int?>();
-                    IList<string> allIDs = new ConcurrentList<string>(new List<string>());
+                    IList<string> allIDs = new SynchronizedCollection<string>();
 
                     StartingGun.@await();
                     for (int iter = 0; iter < Iters; iter++)

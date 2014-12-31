@@ -622,7 +622,6 @@
     <Compile Include="Support\ConcurrentHashMap.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
-    <Compile Include="Support\ConcurrentList.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
     <Compile Include="Support\HashCodeMerge.cs" />
     <Compile Include="Support\ICallable.cs" />
