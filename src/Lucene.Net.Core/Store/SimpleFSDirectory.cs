@@ -58,31 +58,28 @@ namespace Lucene.Net.Store
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
-            FileInfo path = new FileInfo(Path.Combine(Directory.FullName, name));
-            FileStream raf = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var path = new FileInfo(Path.Combine(Directory.FullName, name));
+            var raf = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
             return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path.FullName + "\")", raf, context);
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
-            FileStream descriptor = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var file = new FileInfo(Path.Combine(Directory.FullName, name));
+            var descriptor = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
             return new IndexInputSlicerAnonymousInnerClassHelper(this, context, file, descriptor);
         }
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
-            private readonly SimpleFSDirectory OuterInstance;
-
-            private IOContext Context;
-            private FileInfo File;
-            private FileStream Descriptor;
+            private readonly IOContext Context;
+            private readonly FileInfo File;
+            private readonly FileStream Descriptor;
 
             public IndexInputSlicerAnonymousInnerClassHelper(SimpleFSDirectory outerInstance, IOContext context, FileInfo file, FileStream descriptor)
                 : base(outerInstance)
             {
-                this.OuterInstance = outerInstance;
                 this.Context = context;
                 this.File = file;
                 this.Descriptor = descriptor;
@@ -101,6 +98,7 @@ namespace Lucene.Net.Store
                 return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + File.FullName + "\" slice=" + offset + ":" + (offset + length) + ")", Descriptor, offset, length, BufferedIndexInput.BufferSize(Context));
             }
 
+            [Obsolete]
             public override IndexInput OpenFullSlice()
             {
                 try
