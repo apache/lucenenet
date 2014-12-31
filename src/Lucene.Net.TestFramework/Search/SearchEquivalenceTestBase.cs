@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Text;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -204,10 +206,10 @@ namespace Lucene.Net.Search
             Assert.IsTrue(td1.TotalHits <= td2.TotalHits);
 
             // fill the superset into a bitset
-            BitArray bitset = new BitArray(td2.ScoreDocs.Length);
+            var bitset = new BitArray(td2.ScoreDocs.Length);
             for (int i = 0; i < td2.ScoreDocs.Length; i++)
             {
-                bitset.Set(td2.ScoreDocs[i].Doc, true);
+                bitset.SafeSet(td2.ScoreDocs[i].Doc, true);
             }
 
             // check in the subset, that every bit was set by the super
