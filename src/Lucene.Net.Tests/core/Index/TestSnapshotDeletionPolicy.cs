@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal sbyte[] Buffer = new sbyte[4096];
+        internal byte[] Buffer = new byte[4096];
 
         private void ReadFile(Directory dir, string name)
         {

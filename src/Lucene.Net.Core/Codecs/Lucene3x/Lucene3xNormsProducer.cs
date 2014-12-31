@@ -215,7 +215,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         if (Instance_Renamed == null)
                         {
-                            sbyte[] bytes = new sbyte[OuterInstance.Maxdoc];
+                            var bytes = new byte[OuterInstance.Maxdoc];
                             // some norms share fds
                             lock (File)
                             {
@@ -238,13 +238,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
             {
-                private readonly NormsDocValues OuterInstance;
+                private readonly byte[] Bytes;
 
-                private sbyte[] Bytes;
-
-                public NumericDocValuesAnonymousInnerClassHelper(NormsDocValues outerInstance, sbyte[] bytes)
+                public NumericDocValuesAnonymousInnerClassHelper(NormsDocValues outerInstance, byte[] bytes)
                 {
-                    this.OuterInstance = outerInstance;
                     this.Bytes = bytes;
                 }
 

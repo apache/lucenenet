@@ -166,10 +166,10 @@ namespace Lucene.Net.Store
         {
             DirectoryInfo path = CreateTempDir("testDirectInstantiation");
 
-            sbyte[] largeBuffer = new sbyte[Random().Next(256 * 1024)], largeReadBuffer = new sbyte[largeBuffer.Length];
+            byte[] largeBuffer = new byte[Random().Next(256 * 1024)], largeReadBuffer = new byte[largeBuffer.Length];
             for (int i = 0; i < largeBuffer.Length; i++)
             {
-                largeBuffer[i] = (sbyte)i; // automatically loops with modulo
+                largeBuffer[i] = (byte)i; // automatically loops with modulo
             }
 
             FSDirectory[] dirs = new FSDirectory[] { new SimpleFSDirectory(path, null), new NIOFSDirectory(path, null), new MMapDirectory(path, null) };
@@ -199,14 +199,14 @@ namespace Lucene.Net.Store
                     }
 
                     IndexInput input = d2.OpenInput(fname, NewIOContext(Random()));
-                    Assert.AreEqual((sbyte)i, input.ReadByte());
+                    Assert.AreEqual((byte)i, input.ReadByte());
                     // read array with buffering enabled
-                    Arrays.Fill(largeReadBuffer, (sbyte)0);
+                    Arrays.Fill(largeReadBuffer, (byte)0);
                     input.ReadBytes(largeReadBuffer, 0, largeReadBuffer.Length, true);
                     Assert.AreEqual(largeBuffer, largeReadBuffer);
                     // read again without using buffer
                     input.Seek(1L);
-                    Arrays.Fill(largeReadBuffer, (sbyte)0);
+                    Arrays.Fill(largeReadBuffer, (byte)0);
                     input.ReadBytes(largeReadBuffer, 0, largeReadBuffer.Length, false);
                     Assert.AreEqual(largeBuffer, largeReadBuffer);
                     input.Dispose();

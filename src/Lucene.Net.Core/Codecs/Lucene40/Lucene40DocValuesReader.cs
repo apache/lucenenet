@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 throw new CorruptIndexException("invalid valueSize: " + valueSize);
             }
             int maxDoc = State.SegmentInfo.DocCount;
-            sbyte[] values = new sbyte[maxDoc];
+            var values = new byte[maxDoc];
             input.ReadBytes(values, 0, values.Length);
             RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(values));
             return new NumericDocValuesAnonymousInnerClassHelper3(this, values);
@@ -232,13 +232,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private class NumericDocValuesAnonymousInnerClassHelper3 : NumericDocValues
         {
-            private readonly Lucene40DocValuesReader OuterInstance;
+            private readonly byte[] Values;
 
-            private sbyte[] Values;
-
-            public NumericDocValuesAnonymousInnerClassHelper3(Lucene40DocValuesReader outerInstance, sbyte[] values)
+            public NumericDocValuesAnonymousInnerClassHelper3(Lucene40DocValuesReader outerInstance, byte[] values)
             {
-                this.OuterInstance = outerInstance;
                 this.Values = values;
             }
 

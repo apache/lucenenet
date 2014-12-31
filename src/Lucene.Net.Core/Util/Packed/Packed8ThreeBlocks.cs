@@ -32,7 +32,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public sealed class Packed8ThreeBlocks : PackedInts.MutableImpl
     {
-        internal readonly sbyte[] Blocks;
+        readonly byte[] Blocks;
 
         public static readonly int MAX_SIZE = int.MaxValue / 3;
 
@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Packed
             {
                 throw new System.IndexOutOfRangeException("MAX_SIZE exceeded");
             }
-            Blocks = new sbyte[valueCount * 3];
+            Blocks = new byte[valueCount * 3];
         }
 
         internal Packed8ThreeBlocks(int packedIntsVersion, DataInput @in, int valueCount)
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util.Packed
         {
             @in.ReadBytes(Blocks, 0, 3 * valueCount);
             // because packed ints have not always been byte-aligned
-            int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 24) - 3L * valueCount * 1);
+            var remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 24) - 3L * valueCount * 1);
             for (int i = 0; i < remaining; ++i)
             {
                 @in.ReadByte();
@@ -81,9 +81,9 @@ namespace Lucene.Net.Util.Packed
         public override void Set(int index, long value)
         {
             int o = index * 3;
-            Blocks[o] = (sbyte)((long)((ulong)value >> 16));
-            Blocks[o + 1] = (sbyte)((long)((ulong)value >> 8));
-            Blocks[o + 2] = (sbyte)value;
+            Blocks[o] = (byte)((long)((ulong)value >> 16));
+            Blocks[o + 1] = (byte)((long)((ulong)value >> 8));
+            Blocks[o + 2] = (byte)value;
         }
 
         public override int Set(int index, long[] arr, int off, int len)
@@ -96,18 +96,18 @@ namespace Lucene.Net.Util.Packed
             for (int i = off, o = index * 3, end = off + sets; i < end; ++i)
             {
                 long value = arr[i];
-                Blocks[o++] = (sbyte)((long)((ulong)value >> 16));
-                Blocks[o++] = (sbyte)((long)((ulong)value >> 8));
-                Blocks[o++] = (sbyte)value;
+                Blocks[o++] = (byte)((long)((ulong)value >> 16));
+                Blocks[o++] = (byte)((long)((ulong)value >> 8));
+                Blocks[o++] = (byte)value;
             }
             return sets;
         }
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            sbyte block1 = (sbyte)((long)((ulong)val >> 16));
-            sbyte block2 = (sbyte)((long)((ulong)val >> 8));
-            sbyte block3 = (sbyte)val;
+            var block1 = (byte)((long)((ulong)val >> 16));
+            var block2 = (byte)((long)((ulong)val >> 8));
+            var block3 = (byte)val;
             for (int i = fromIndex * 3, end = toIndex * 3; i < end; i += 3)
             {
                 Blocks[i] = block1;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Clear()
         {
-            Arrays.Fill(Blocks, (sbyte)0);
+            Arrays.Fill(Blocks, (byte)0);
         }
 
         public override long RamBytesUsed()

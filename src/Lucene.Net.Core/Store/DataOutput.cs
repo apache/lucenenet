@@ -267,7 +267,7 @@ namespace Lucene.Net.Store
         }
 
         private const int COPY_BUFFER_SIZE = 16384;
-        private sbyte[] CopyBuffer;
+        private byte[] CopyBuffer;
 
         /// <summary>
         /// Copy numBytes bytes from input to ourself. </summary>
@@ -277,7 +277,7 @@ namespace Lucene.Net.Store
             long left = numBytes;
             if (CopyBuffer == null)
             {
-                CopyBuffer = new sbyte[COPY_BUFFER_SIZE];
+                CopyBuffer = new byte[COPY_BUFFER_SIZE];
             }
             while (left > 0)
             {

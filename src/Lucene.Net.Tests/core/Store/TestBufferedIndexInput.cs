@@ -145,7 +145,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private sbyte[] Buffer = new sbyte[10];
+        private byte[] Buffer = new byte[10];
 
         private void CheckReadBytes(IndexInput input, int size, int pos)
         {

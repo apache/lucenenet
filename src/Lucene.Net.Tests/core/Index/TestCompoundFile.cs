@@ -93,8 +93,8 @@ namespace Lucene.Net.Index
             Assert.AreEqual(expected.Length(), test.Length(), msg + " length");
             Assert.AreEqual(expected.FilePointer, test.FilePointer, msg + " position");
 
-            sbyte[] expectedBuffer = new sbyte[512];
-            sbyte[] testBuffer = new sbyte[expectedBuffer.Length];
+            var expectedBuffer = new byte[512];
+            var testBuffer = new byte[expectedBuffer.Length];
 
             long remainder = expected.Length() - expected.FilePointer;
             while (remainder > 0)
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
             AssertSameStreams(msg + ", seek(end+1)", expected, actual, point);
         }
 
-        private void AssertEqualArrays(string msg, sbyte[] expected, sbyte[] test, int start, int len)
+        private void AssertEqualArrays(string msg, byte[] expected, byte[] test, int start, int len)
         {
             Assert.IsNotNull(expected, msg + " null expected");
             Assert.IsNotNull(test, msg + " null test");
@@ -577,10 +577,10 @@ namespace Lucene.Net.Index
         public virtual void TestReadPastEOF()
         {
             SetUp_2();
-            CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
+            var cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
             IndexInput @is = cr.OpenInput("f2", NewIOContext(Random()));
             @is.Seek(@is.Length() - 10);
-            sbyte[] b = new sbyte[100];
+            var b = new byte[100];
             @is.ReadBytes(b, 0, 10);
 
             try

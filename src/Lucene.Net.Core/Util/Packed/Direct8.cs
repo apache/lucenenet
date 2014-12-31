@@ -32,12 +32,12 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public sealed class Direct8 : PackedInts.MutableImpl
     {
-        internal readonly sbyte[] Values;
+        readonly byte[] Values;
 
         public Direct8(int valueCount)
             : base(valueCount, 8)
         {
-            Values = new sbyte[valueCount];
+            Values = new byte[valueCount];
         }
 
         internal Direct8(int packedIntsVersion, DataInput @in, int valueCount)
@@ -59,7 +59,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Set(int index, long value)
         {
-            Values[index] = (sbyte)(value);
+            Values[index] = (byte)(value);
         }
 
         public override long RamBytesUsed()
@@ -69,7 +69,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Clear()
         {
-            Arrays.Fill(Values, (sbyte)0L);
+            Arrays.Fill(Values, (byte)0L);
         }
 
         public override object Array
@@ -108,7 +108,7 @@ namespace Lucene.Net.Util.Packed
             int sets = Math.Min(valueCount - index, len);
             for (int i = index, o = off, end = index + sets; i < end; ++i, ++o)
             {
-                Values[i] = (sbyte)arr[o];
+                Values[i] = (byte)arr[o];
             }
             return sets;
         }
@@ -116,7 +116,7 @@ namespace Lucene.Net.Util.Packed
         public override void Fill(int fromIndex, int toIndex, long val)
         {
             Debug.Assert(val == (val & 0xFFL));
-            Arrays.Fill(Values, fromIndex, toIndex, (sbyte)val);
+            Arrays.Fill(Values, fromIndex, toIndex, (byte)val);
         }
     }
 }
