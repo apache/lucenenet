@@ -671,7 +671,7 @@ namespace Lucene.Net.Index
 
                 output.WriteStringStringMap(si.Attributes());
 
-                output.WriteByte((sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
+                output.WriteByte((byte)(sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
                 output.WriteStringStringMap(si.Diagnostics);
                 output.WriteStringSet(si.Files);
 

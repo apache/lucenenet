@@ -61,7 +61,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             try
             {
                 output = directory.CreateOutput(normsFileName, context);
-                output.WriteBytes(NORMS_HEADER, 0, NORMS_HEADER.Length);
+                // output.WriteBytes(NORMS_HEADER, 0, NORMS_HEADER.Length);
+                foreach (var @sbyte in NORMS_HEADER)
+                {
+                    output.WriteByte((byte)@sbyte);
+                }
                 @out = output;
                 success = true;
             }
@@ -83,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     throw new System.NotSupportedException("3.x cannot index norms that won't fit in a byte, got: " + (long)n);
                 }
-                @out.WriteByte((sbyte)n);
+                @out.WriteByte((byte)(sbyte)n);
             }
             LastFieldNumber = field.Number;
         }

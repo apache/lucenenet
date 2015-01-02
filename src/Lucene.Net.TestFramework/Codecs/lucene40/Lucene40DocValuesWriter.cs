@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (delta < 0)
             {
                 // writes longs
-                output.WriteByte(Lucene40DocValuesFormat.VAR_INTS_FIXED_64);
+                output.WriteByte((byte)Lucene40DocValuesFormat.VAR_INTS_FIXED_64);
                 foreach (long n in values)
                 {
                     output.WriteLong(n == null ? 0 : n);
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene40
             else
             {
                 // writes packed ints
-                output.WriteByte(Lucene40DocValuesFormat.VAR_INTS_PACKED);
+                output.WriteByte((byte)Lucene40DocValuesFormat.VAR_INTS_PACKED);
                 output.WriteLong(minValue);
                 output.WriteLong(0 - minValue); // default value (representation of 0)
                 PackedInts.Writer writer = PackedInts.GetWriter(output, State.SegmentInfo.DocCount, PackedInts.BitsRequired(delta), PackedInts.DEFAULT);
@@ -445,12 +445,12 @@ namespace Lucene.Net.Codecs.Lucene40
             Debug.Assert(i >= 0 && i <= short.MaxValue);
             if (i < 128)
             {
-                o.WriteByte((sbyte)i);
+                o.WriteByte((byte)(sbyte)i);
             }
             else
             {
-                o.WriteByte(unchecked((sbyte)(0x80 | (i >> 8))));
-                o.WriteByte(unchecked((sbyte)(i & 0xff)));
+                o.WriteByte((byte)unchecked((sbyte)(0x80 | (i >> 8))));
+                o.WriteByte((byte)unchecked((sbyte)(i & 0xff)));
             }
         }
 

@@ -181,7 +181,7 @@ namespace Lucene.Net.Store
                 string fname = "foo." + i;
                 string lockname = "foo" + i + ".lck";
                 IndexOutput @out = dir.CreateOutput(fname, NewIOContext(Random()));
-                @out.WriteByte((sbyte)i);
+                @out.WriteByte((byte)(sbyte)i);
                 @out.WriteBytes(largeBuffer, largeBuffer.Length);
                 @out.Dispose();
 

@@ -26,11 +26,11 @@ namespace Lucene.Net.Index
     /// </summary>
     public class MockIndexInput : BufferedIndexInput
     {
-        private sbyte[] Buffer;
+        private byte[] Buffer;
         private int Pointer = 0;
-        private long Length_Renamed;
+        private readonly long Length_Renamed;
 
-        public MockIndexInput(sbyte[] bytes)
+        public MockIndexInput(byte[] bytes)
             : base("MockIndexInput", BufferedIndexInput.BUFFER_SIZE)
         {
             Buffer = bytes;

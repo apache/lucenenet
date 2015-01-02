@@ -64,8 +64,8 @@ namespace Lucene.Net.Index
             IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
             for (int i = 0; i < size; i++)
             {
-                sbyte b = unchecked((sbyte)(new Random(1).NextDouble() * 256));
-                os.WriteByte(b);
+                var b = unchecked((sbyte)(new Random(1).NextDouble() * 256));
+                os.WriteByte((byte)b);
             }
             os.Dispose();
         }
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
             IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
             for (int i = 0; i < size; i++)
             {
-                os.WriteByte(start);
+                os.WriteByte((byte)start);
                 start++;
             }
             os.Dispose();
@@ -308,7 +308,7 @@ namespace Lucene.Net.Index
             IndexOutput os = fsdir.CreateOutput(file, IOContext.DEFAULT);
             for (int i = 0; i < 2000; i++)
             {
-                os.WriteByte((sbyte)i);
+                os.WriteByte((byte)(sbyte)i);
             }
             os.Dispose();
 
@@ -619,10 +619,10 @@ namespace Lucene.Net.Index
         {
             IndexOutput os = Dir.CreateOutput("testBufferStart.txt", NewIOContext(Random()));
 
-            sbyte[] largeBuf = new sbyte[2048];
+            var largeBuf = new byte[2048];
             for (int i = 0; i < largeBuf.Length; i++)
             {
-                largeBuf[i] = unchecked((sbyte)(new Random(1).NextDouble() * 256));
+                largeBuf[i] = (byte)unchecked((sbyte)(new Random(1).NextDouble() * 256));
             }
 
             long currentPos = os.FilePointer;
@@ -813,7 +813,7 @@ namespace Lucene.Net.Index
             for (int fileIdx = 0; fileIdx < FILE_COUNT; fileIdx++)
             {
                 IndexOutput @out = d.CreateOutput("file." + fileIdx, NewIOContext(Random()));
-                @out.WriteByte((sbyte)fileIdx);
+                @out.WriteByte((byte)(sbyte)fileIdx);
                 @out.Dispose();
             }
 

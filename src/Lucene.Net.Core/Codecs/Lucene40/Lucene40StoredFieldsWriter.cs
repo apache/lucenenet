@@ -204,7 +204,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
-            FieldsStream.WriteByte((sbyte)bits);
+            FieldsStream.WriteByte((byte)(sbyte)bits);
 
             if (bytes != null)
             {

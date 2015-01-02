@@ -187,14 +187,14 @@ namespace Lucene.Net.Util
             }
             int blockBits = TestUtil.NextInt(Random(), 14, 28);
             int blockSize = 1 << blockBits;
-            sbyte[] arr = new sbyte[TestUtil.NextInt(Random(), blockSize / 2, blockSize * 2)];
+            var arr = new byte[TestUtil.NextInt(Random(), blockSize / 2, blockSize * 2)];
             for (int i = 0; i < arr.Length; ++i)
             {
-                arr[i] = (sbyte)i;
+                arr[i] = (byte)(sbyte)i;
             }
             long numBytes = (1L << 31) + TestUtil.NextInt(Random(), 1, blockSize * 3);
-            PagedBytes p = new PagedBytes(blockBits);
-            IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT);
+            var p = new PagedBytes(blockBits);
+            var @out = dir.CreateOutput("foo", IOContext.DEFAULT);
             for (long i = 0; i < numBytes; )
             {
                 Assert.AreEqual(i, @out.FilePointer);

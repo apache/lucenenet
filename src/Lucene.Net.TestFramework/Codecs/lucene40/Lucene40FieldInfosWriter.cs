@@ -89,14 +89,14 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     output.WriteString(fi.Name);
                     output.WriteVInt(fi.Number);
-                    output.WriteByte(bits);
+                    output.WriteByte((byte)bits);
 
                     // pack the DV types in one byte
                     sbyte dv = DocValuesByte(fi.DocValuesType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
                     sbyte nrm = DocValuesByte(fi.NormType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY));
                     Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
-                    sbyte val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));
-                    output.WriteByte(val);
+                    var val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));
+                    output.WriteByte((byte)val);
                     output.WriteStringStringMap(fi.Attributes());
                 }
                 success = true;

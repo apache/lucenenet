@@ -134,11 +134,11 @@ namespace Lucene.Net.Util
             }
             // The logic below is similar to ConjunctionScorer
             int numSets = docIdSets.Count;
-            Iterator[] iterators = new Iterator[numSets];
+            var iterators = new Iterator[numSets];
             int i = 0;
             foreach (WAH8DocIdSet set in docIdSets)
             {
-                Iterator it = (Iterator)set.GetIterator();
+                var it = (Iterator)set.GetIterator();
                 iterators[i++] = it;
             }
             Array.Sort(iterators, SERIALIZED_LENGTH_COMPARATOR);
@@ -328,7 +328,7 @@ namespace Lucene.Net.Util
                 {
                     token |= 1 << 3;
                 }
-                @out.WriteByte((sbyte)token);
+                @out.WriteByte((byte)(sbyte)token);
                 if (cleanLengthMinus2 > 0x03)
                 {
                     @out.WriteVInt((int)((uint)cleanLengthMinus2 >> 2));
@@ -396,7 +396,7 @@ namespace Lucene.Net.Util
                                 break;
 
                             case 2:
-                                DirtyWords.WriteByte((sbyte)0);
+                                DirtyWords.WriteByte(0);
                                 DirtyWords.WriteByte(word);
                                 break;
 
@@ -438,7 +438,7 @@ namespace Lucene.Net.Util
                             break;
 
                         case 2:
-                            DirtyWords.WriteByte((sbyte)0);
+                            DirtyWords.WriteByte(0);
                             DirtyWords.WriteByte(word);
                             break;
 

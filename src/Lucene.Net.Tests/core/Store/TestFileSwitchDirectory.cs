@@ -175,7 +175,7 @@ namespace Lucene.Net.Store
             IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
             for (int i = 0; i < size; i++)
             {
-                os.WriteByte(start);
+                os.WriteByte((byte)start);
                 start++;
             }
             os.Dispose();

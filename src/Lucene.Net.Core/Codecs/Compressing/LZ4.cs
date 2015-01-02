@@ -167,15 +167,15 @@ namespace Lucene.Net.Codecs.Compressing
         {
             while (l >= 0xFF)
             {
-                @out.WriteByte(unchecked((sbyte)0xFF));
+                @out.WriteByte(unchecked((byte)(sbyte)0xFF));
                 l -= 0xFF;
             }
-            @out.WriteByte((sbyte)l);
+            @out.WriteByte((byte)(sbyte)l);
         }
 
         private static void EncodeLiterals(byte[] bytes, int token, int anchor, int literalLen, DataOutput @out)
         {
-            @out.WriteByte((sbyte)token);
+            @out.WriteByte((byte)(sbyte)token);
 
             // encode literal length
             if (literalLen >= 0x0F)
@@ -204,8 +204,8 @@ namespace Lucene.Net.Codecs.Compressing
             // encode match dec
             int matchDec = matchOff - matchRef;
             Debug.Assert(matchDec > 0 && matchDec < 1 << 16);
-            @out.WriteByte((sbyte)matchDec);
-            @out.WriteByte((sbyte)((int)((uint)matchDec >> 8)));
+            @out.WriteByte((byte)(sbyte)matchDec);
+            @out.WriteByte((byte)(sbyte)((int)((uint)matchDec >> 8)));
 
             // encode match len
             if (matchLen >= MIN_MATCH + 0x0F)

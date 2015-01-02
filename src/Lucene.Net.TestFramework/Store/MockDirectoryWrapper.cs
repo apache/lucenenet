@@ -321,12 +321,12 @@ namespace Lucene.Net.Store
                         action = "zeroed";
                         // Zero out file entirely
                         long length = FileLength(name);
-                        sbyte[] zeroes = new sbyte[256];
+                        var zeroes = new byte[256]; // LUCENENET TODO: Don't we want to fill the array before writing from it?
                         long upto = 0;
                         IndexOutput @out = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
                         while (upto < length)
                         {
-                            int limit = (int)Math.Min(length - upto, zeroes.Length);
+                            var limit = (int)Math.Min(length - upto, zeroes.Length);
                             @out.WriteBytes(zeroes, 0, limit);
                             upto += limit;
                         }

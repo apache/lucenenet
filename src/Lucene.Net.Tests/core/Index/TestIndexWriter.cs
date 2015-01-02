@@ -2250,14 +2250,14 @@ namespace Lucene.Net.Index
         public virtual void TestOtherFiles()
         {
             Directory dir = NewDirectory();
-            IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            var iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             iw.AddDocument(new Document());
             iw.Dispose();
             try
             {
                 // Create my own random file:
                 IndexOutput @out = dir.CreateOutput("myrandomfile", NewIOContext(Random()));
-                @out.WriteByte((sbyte)42);
+                @out.WriteByte((byte)(sbyte)42);
                 @out.Dispose();
 
                 (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())))).Dispose();
@@ -2367,7 +2367,7 @@ namespace Lucene.Net.Index
             {
                 // Create my own random file:
                 IndexOutput @out = dir.CreateOutput("_a.frq", NewIOContext(Random()));
-                @out.WriteByte((sbyte)42);
+                @out.WriteByte((byte)(sbyte)42);
                 @out.Dispose();
 
                 (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())))).Dispose();

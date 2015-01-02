@@ -445,7 +445,7 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) {
                         //  System.out.println("    write floorLeadByte=" + Integer.toHexString(sub.floorLeadByte&0xff));
                         //}
-                        scratchBytes.WriteByte((sbyte)sub.FloorLeadByte);
+                        scratchBytes.WriteByte((byte)(sbyte)sub.FloorLeadByte);
                         Debug.Assert(sub.Fp > Fp);
                         scratchBytes.WriteVLong((sub.Fp - Fp) << 1 | (sub.HasTerms ? 1 : 0));
                     }

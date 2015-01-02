@@ -1373,7 +1373,7 @@ namespace Lucene.Net.Index
             IndexOutput @out = dir.CreateOutput(IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", 1 + gen), NewIOContext(Random()));
             @out.CopyBytes(@in, @in.Length() - 1);
             byte b = @in.ReadByte();
-            @out.WriteByte((sbyte)(1 + b));
+            @out.WriteByte((byte)(sbyte)(1 + b));
             @out.Dispose();
             @in.Dispose();
 

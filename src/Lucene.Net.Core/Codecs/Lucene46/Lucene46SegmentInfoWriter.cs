@@ -56,7 +56,7 @@ namespace Lucene.Net.Codecs.Lucene46
                 output.WriteString(si.Version);
                 output.WriteInt(si.DocCount);
 
-                output.WriteByte((sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
+                output.WriteByte((byte)(sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
                 output.WriteStringStringMap(si.Diagnostics);
                 output.WriteStringSet(si.Files);
                 CodecUtil.WriteFooter(output);

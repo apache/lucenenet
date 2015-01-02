@@ -44,26 +44,6 @@ namespace Lucene.Net.Store
         /// <seealso cref= IndexInput#readByte() </seealso>
         public abstract void WriteByte(byte b);
 
-        public void WriteByte(sbyte b)
-        {
-            WriteByte((byte)b);
-        }
-
-        /// <summary>
-        /// Writes an array of bytes. </summary>
-        /// <param name="b"> the bytes to write </param>
-        /// <param name="length"> the number of bytes to write </param>
-        /// <seealso cref= DataInput#readBytes(byte[],int,int) </seealso>
-        public void WriteBytes(sbyte[] b, int length)
-        {
-            WriteBytes(b, 0, length);
-        }
-
-        public void WriteBytes(sbyte[] b, int offset, int length)
-        {
-            WriteBytes((byte[])(Array)b, offset, length);
-        }
-
         public void WriteBytes(byte[] b, int length)
         {
             WriteBytes(b, 0, length);
@@ -85,10 +65,10 @@ namespace Lucene.Net.Store
         /// <seealso cref= DataInput#readInt() </seealso>
         public virtual void WriteInt(int i)
         {
-            WriteByte((sbyte)(i >> 24));
-            WriteByte((sbyte)(i >> 16));
-            WriteByte((sbyte)(i >> 8));
-            WriteByte((sbyte)i);
+            WriteByte((byte)(sbyte)(i >> 24));
+            WriteByte((byte)(sbyte)(i >> 16));
+            WriteByte((byte)(sbyte)(i >> 8));
+            WriteByte((byte)(sbyte)i);
         }
 
         /// <summary>
@@ -96,8 +76,8 @@ namespace Lucene.Net.Store
         /// <seealso cref= DataInput#readShort() </seealso>
         public virtual void WriteShort(short i)
         {
-            WriteByte((sbyte)(i >> 8));
-            WriteByte((sbyte)i);
+            WriteByte((byte)(sbyte)(i >> 8));
+            WriteByte((byte)(sbyte)i);
         }
 
         /// <summary>
@@ -210,10 +190,10 @@ namespace Lucene.Net.Store
         {
             while ((i & ~0x7F) != 0)
             {
-                WriteByte(unchecked((sbyte)((i & 0x7F) | 0x80)));
+                WriteByte((byte)unchecked((sbyte)((i & 0x7F) | 0x80)));
                 i = (int)((uint)i >> 7);
             }
-            WriteByte((sbyte)i);
+            WriteByte((byte)(sbyte)i);
         }
 
         /// <summary>
@@ -240,10 +220,10 @@ namespace Lucene.Net.Store
             Debug.Assert(i >= 0L);
             while ((i & ~0x7FL) != 0L)
             {
-                WriteByte(unchecked((sbyte)((i & 0x7FL) | 0x80L)));
+                WriteByte((byte)unchecked((sbyte)((i & 0x7FL) | 0x80L)));
                 i = (long)((ulong)i >> 7);
             }
-            WriteByte((sbyte)i);
+            WriteByte((byte)(sbyte)i);
         }
 
         /// <summary>

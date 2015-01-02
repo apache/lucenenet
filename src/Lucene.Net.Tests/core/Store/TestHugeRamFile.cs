@@ -67,16 +67,16 @@ namespace Lucene.Net.Store
         {
             DenseRAMFile f = new DenseRAMFile();
             // output part
-            RAMOutputStream @out = new RAMOutputStream(f);
-            sbyte[] b1 = new sbyte[RAMOutputStream.BUFFER_SIZE];
-            sbyte[] b2 = new sbyte[RAMOutputStream.BUFFER_SIZE / 3];
+            var @out = new RAMOutputStream(f);
+            var b1 = new byte[RAMOutputStream.BUFFER_SIZE];
+            var b2 = new byte[RAMOutputStream.BUFFER_SIZE / 3];
             for (int i = 0; i < b1.Length; i++)
             {
-                b1[i] = (sbyte)(i & 0x0007F);
+                b1[i] = (byte)(sbyte)(i & 0x0007F);
             }
             for (int i = 0; i < b2.Length; i++)
             {
-                b2[i] = (sbyte)(i & 0x0003F);
+                b2[i] = (byte)(sbyte)(i & 0x0003F);
             }
             long n = 0;
             Assert.AreEqual(n, @out.Length, "output length must match");

@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 format = DELTA_COMPRESSED;
             }
             Meta.WriteVInt(field.Number);
-            Meta.WriteByte(Lucene45DocValuesFormat.NUMERIC);
+            Meta.WriteByte((byte)Lucene45DocValuesFormat.NUMERIC);
             Meta.WriteVInt(format);
             if (missing)
             {
@@ -269,7 +269,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 if (count == 8)
                 {
-                    Data.WriteByte(bits);
+                    Data.WriteByte((byte)bits);
                     count = 0;
                     bits = 0;
                 }
@@ -281,7 +281,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             if (count > 0)
             {
-                Data.WriteByte(bits);
+                Data.WriteByte((byte)bits);
             }
         }
 
@@ -289,7 +289,7 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             // write the byte[] data
             Meta.WriteVInt(field.Number);
-            Meta.WriteByte(Lucene45DocValuesFormat.BINARY);
+            Meta.WriteByte((byte)Lucene45DocValuesFormat.BINARY);
             int minLength = int.MaxValue;
             int maxLength = int.MinValue;
             long startFP = Data.FilePointer;
@@ -374,7 +374,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 // header
                 Meta.WriteVInt(field.Number);
-                Meta.WriteByte(Lucene45DocValuesFormat.BINARY);
+                Meta.WriteByte((byte)Lucene45DocValuesFormat.BINARY);
                 Meta.WriteVInt(BINARY_PREFIX_COMPRESSED);
                 Meta.WriteLong(-1L);
                 // now write the bytes: sharing prefixes within a block
@@ -422,27 +422,20 @@ namespace Lucene.Net.Codecs.Lucene45
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
         {
             Meta.WriteVInt(field.Number);
-            Meta.WriteByte(Lucene45DocValuesFormat.SORTED);
+            Meta.WriteByte((byte)Lucene45DocValuesFormat.SORTED);
             AddTermsDict(field, values);
             AddNumericField(field, docToOrd, false);
         }
 
         private static bool IsSingleValued(IEnumerable<long> docToOrdCount)
         {
-            foreach (long ordCount in docToOrdCount)
-            {
-                if (ordCount > 1)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return docToOrdCount.All(ordCount => ordCount <= 1);
         }
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
         {
             Meta.WriteVInt(field.Number);
-            Meta.WriteByte(Lucene45DocValuesFormat.SORTED_SET);
+            Meta.WriteByte((byte)Lucene45DocValuesFormat.SORTED_SET);
 
             if (IsSingleValued(docToOrdCount))
             {
@@ -463,7 +456,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             // write the doc -> ord count as a absolute index to the stream
             Meta.WriteVInt(field.Number);
-            Meta.WriteByte(Lucene45DocValuesFormat.NUMERIC);
+            Meta.WriteByte((byte)Lucene45DocValuesFormat.NUMERIC);
             Meta.WriteVInt(DELTA_COMPRESSED);
             Meta.WriteLong(-1L);
             Meta.WriteVInt(PackedInts.VERSION_CURRENT);
@@ -471,7 +464,7 @@ namespace Lucene.Net.Codecs.Lucene45
             Meta.WriteVLong(MaxDoc);
             Meta.WriteVInt(BLOCK_SIZE);
 
-            MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(Data, BLOCK_SIZE);
+            var writer = new MonotonicBlockPackedWriter(Data, BLOCK_SIZE);
             long addr = 0;
             foreach (int v in docToOrdCount)
             {

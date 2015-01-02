@@ -196,7 +196,7 @@ namespace Lucene.Net.Util.Fst
             Bytes = new BytesStore(bytesPageBits);
             // pad: ensure no node gets address 0 which is reserved to mean
             // the stop state w/ no arcs
-            Bytes.WriteByte((sbyte)0);
+            Bytes.WriteByte(0);
             NO_OUTPUT = outputs.NoOutput;
             if (willPackFST)
             {
@@ -490,21 +490,21 @@ namespace Lucene.Net.Util.Fst
             CodecUtil.WriteHeader(@out, FILE_FORMAT_NAME, VERSION_CURRENT);
             if (Packed)
             {
-                @out.WriteByte((sbyte)1);
+                @out.WriteByte(1);
             }
             else
             {
-                @out.WriteByte((sbyte)0);
+                @out.WriteByte(0);
             }
             // TODO: really we should encode this as an arc, arriving
             // to the root node, instead of special casing here:
             if (emptyOutput != null)
             {
                 // Accepts empty string
-                @out.WriteByte((sbyte)1);
+                @out.WriteByte(1);
 
                 // Serialize empty-string output:
-                RAMOutputStream ros = new RAMOutputStream();
+                var ros = new RAMOutputStream();
                 Outputs.WriteFinalOutput(emptyOutput, ros);
 
                 var emptyOutputBytes = new byte[(int)ros.FilePointer];
@@ -528,7 +528,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                @out.WriteByte((sbyte)0);
+                @out.WriteByte(0);
             }
             sbyte t;
             if (inputType == INPUT_TYPE.BYTE1)
@@ -543,7 +543,7 @@ namespace Lucene.Net.Util.Fst
             {
                 t = 2;
             }
-            @out.WriteByte(t);
+            @out.WriteByte((byte)t);
             if (Packed)
             {
                 ((PackedInts.Mutable)NodeRefToAddress).Save(@out);
@@ -614,7 +614,7 @@ namespace Lucene.Net.Util.Fst
             if (inputType == INPUT_TYPE.BYTE1)
             {
                 Debug.Assert(v <= 255, "v=" + v);
-                @out.WriteByte((sbyte)v);
+                @out.WriteByte((byte)(sbyte)v);
             }
             else if (inputType == INPUT_TYPE.BYTE2)
             {
@@ -741,7 +741,7 @@ namespace Lucene.Net.Util.Fst
                     flags += BIT_ARC_HAS_OUTPUT;
                 }
 
-                Bytes.WriteByte((sbyte)flags);
+                Bytes.WriteByte((byte)(sbyte)flags);
                 WriteLabel(Bytes, arc.Label);
 
                 // System.out.println("  write arc: label=" + (char) arc.Label + " flags=" + flags + " target=" + target.Node + " pos=" + bytes.getPosition() + " output=" + outputs.outputToString(arc.Output));
@@ -809,9 +809,9 @@ namespace Lucene.Net.Util.Fst
                 // create the header
                 // TODO: clean this up: or just rewind+reuse and deal with it
                 byte[] header = new byte[MAX_HEADER_SIZE];
-                ByteArrayDataOutput bad = new ByteArrayDataOutput(header);
+                var bad = new ByteArrayDataOutput(header);
                 // write a "false" first arc:
-                bad.WriteByte(ARCS_AS_FIXED_ARRAY);
+                bad.WriteByte((byte)ARCS_AS_FIXED_ARRAY);
                 bad.WriteVInt(nodeIn.NumArcs);
                 bad.WriteVInt(maxBytesPerArc);
                 int headerLen = bad.Position;
@@ -1786,7 +1786,7 @@ namespace Lucene.Net.Util.Fst
                 BytesStore writer = fst.Bytes;
 
                 // Skip 0 byte since 0 is reserved target:
-                writer.WriteByte((sbyte)0);
+                writer.WriteByte(0);
 
                 fst.arcWithOutputCount = 0;
                 fst.nodeCount = 0;
@@ -1841,7 +1841,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 bytesPerArc = arc.BytesPerArc;
                             }
-                            writer.WriteByte(ARCS_AS_FIXED_ARRAY);
+                            writer.WriteByte((byte)ARCS_AS_FIXED_ARRAY);
                             writer.WriteVInt(arc.NumArcs);
                             writer.WriteVInt(bytesPerArc);
                             //System.out.println("node " + node + ": " + arc.numArcs + " arcs");
@@ -1921,7 +1921,7 @@ namespace Lucene.Net.Util.Fst
 
                                 if (delta < absPtr)
                                 {
-                                    flags |= (sbyte)BIT_TARGET_DELTA;
+                                    flags |= BIT_TARGET_DELTA;
                                 }
                             }
                             else
@@ -1930,7 +1930,7 @@ namespace Lucene.Net.Util.Fst
                             }
 
                             Debug.Assert(flags != ARCS_AS_FIXED_ARRAY);
-                            writer.WriteByte(flags);
+                            writer.WriteByte((byte)(sbyte)flags);
 
                             fst.WriteLabel(writer, arc.Label);
 

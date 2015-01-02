@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Lucene42
         public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
         {
             Meta.WriteVInt(field.Number);
-            Meta.WriteByte(NUMBER);
+            Meta.WriteByte((byte)NUMBER);
             Meta.WriteLong(Data.FilePointer);
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
@@ -137,18 +137,18 @@ namespace Lucene.Net.Codecs.Lucene42
                 FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(MaxDoc, bitsPerValue, AcceptableOverheadRatio);
                 if (formatAndBits.bitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
                 {
-                    Meta.WriteByte(UNCOMPRESSED); // uncompressed
+                    Meta.WriteByte((byte)UNCOMPRESSED); // uncompressed
                     foreach (long nv in values)
                     {
-                        Data.WriteByte((sbyte)nv);
+                        Data.WriteByte((byte)(sbyte)nv);
                     }
                 }
                 else
                 {
-                    Meta.WriteByte(TABLE_COMPRESSED); // table-compressed
+                    Meta.WriteByte((byte)TABLE_COMPRESSED); // table-compressed
                     //LUCENE TO-DO, ToArray had a parameter to start
-                    long[] decode = uniqueValues.ToArray();
-                    Dictionary<long, int> encode = new Dictionary<long, int>();
+                    var decode = uniqueValues.ToArray();
+                    var encode = new Dictionary<long, int>();
                     Data.WriteVInt(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
@@ -170,13 +170,13 @@ namespace Lucene.Net.Codecs.Lucene42
             }
             else if (gcd != 0 && gcd != 1)
             {
-                Meta.WriteByte(GCD_COMPRESSED);
+                Meta.WriteByte((byte)GCD_COMPRESSED);
                 Meta.WriteVInt(PackedInts.VERSION_CURRENT);
                 Data.WriteLong(minValue);
                 Data.WriteLong(gcd);
                 Data.WriteVInt(BLOCK_SIZE);
 
-                BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
+                var writer = new BlockPackedWriter(Data, BLOCK_SIZE);
                 foreach (long nv in values)
                 {
                     long value = nv;
@@ -186,12 +186,12 @@ namespace Lucene.Net.Codecs.Lucene42
             }
             else
             {
-                Meta.WriteByte(DELTA_COMPRESSED); // delta-compressed
+                Meta.WriteByte((byte)DELTA_COMPRESSED); // delta-compressed
 
                 Meta.WriteVInt(PackedInts.VERSION_CURRENT);
                 Data.WriteVInt(BLOCK_SIZE);
 
-                BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
+                var writer = new BlockPackedWriter(Data, BLOCK_SIZE);
                 foreach (long nv in values)
                 {
                     writer.Add(nv);
