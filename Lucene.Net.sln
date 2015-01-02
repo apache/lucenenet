@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "src\Lucene.Net.Core\Lucene.Net.csproj", "{5D4AD9BE-1FFB-41AB-9943-25737971BF57}"
 EndProject
@@ -14,10 +14,19 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Facet", "src\Lucene.Net.Facet\Lucene.Net.Facet.csproj", "{48F7884A-9454-4E88-8413-9D35992CB440}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Facet", "src\Lucene.Net.Tests.Facet\Lucene.Net.Tests.Facet.csproj", "{4D77E491-F50F-4A0C-9BD9-F9AB655720AD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DE63DB10-975F-460D-AF85-572C17A91284} = {DE63DB10-975F-460D-AF85-572C17A91284}
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3} = {B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Classification", "src\Lucene.Net.Classification\Lucene.Net.Classification.csproj", "{E067B8BB-D8E7-4040-BEB8-EFF8BB4149BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Classification", "src\Lucene.Net.Tests.Classification\Lucene.Net.Tests.Classification.csproj", "{866723F4-E3A4-47C5-A49F-9A68ADD4CFAE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DE63DB10-975F-460D-AF85-572C17A91284} = {DE63DB10-975F-460D-AF85-572C17A91284}
+		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3} = {B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}
+		{69D7956C-C2CC-4708-B399-A188FEC384C4} = {69D7956C-C2CC-4708-B399-A188FEC384C4}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
