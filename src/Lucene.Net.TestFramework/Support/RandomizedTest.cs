@@ -35,14 +35,14 @@ namespace Lucene.Net.TestFramework.Support
             return defaultValue;
         }
 
-        public void AssumeTrue(string msg, bool value)
+        public static void AssumeTrue(string msg, bool value)
         {
-            Assume.That(value);
+            Assume.That(value, msg);
         }
 
-        public void AssumeFalse(string msg, bool value)
+        public static void AssumeFalse(string msg, bool value)
         {
-            Assume.That(!value);
+            Assume.That(!value, msg);
         }
     }
 }

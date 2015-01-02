@@ -340,7 +340,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static bool VERBOSE = RandomizedTest.SystemPropertyAsBoolean("tests.verbose",
 #if DEBUG
-            true
+            false
 #else
             false
 #endif
@@ -822,12 +822,12 @@ namespace Lucene.Net.Util
 
         public static void AssumeTrue(string msg, bool condition)
         {
-            //RandomizedTest.AssumeTrue(msg, condition);
+            RandomizedTest.AssumeTrue(msg, condition);
         }
 
         public static void AssumeFalse(string msg, bool condition)
         {
-            //RandomizedTest.AssumeFalse(msg, condition);
+            RandomizedTest.AssumeFalse(msg, condition);
         }
 
         public static void AssumeNoException(string msg, Exception e)
