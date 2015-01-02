@@ -10,6 +10,7 @@ The Apache Lucene.Net web site is at:
 Please join the Apache Lucene.Net-User mailing list by sending a message to:
   user-subscribe@lucenenet.apache.org
 
+*** This is the main branch where development happens, please don't use any other branches unless you know what you are doing! ***
 
 ## Files
 
