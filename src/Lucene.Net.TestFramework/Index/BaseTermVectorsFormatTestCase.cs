@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
             {
                 fields2.Add(field);
             }
-            Assert.AreEqual(fields1, fields2);
+            Assert.IsTrue(fields1.SetEquals(fields2));
 
             for (int i = 0; i < doc.FieldNames.Length; ++i)
             {
