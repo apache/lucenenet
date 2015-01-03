@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Lucene.Net
@@ -44,6 +45,16 @@ namespace Lucene.Net
         public static void assertEquals(string message, long expected, long actual)
         {
             Assert.AreEqual(expected, actual, message);
+        }
+
+        public static void assertEquals<T>(ISet<T> expected, ISet<T> actual)
+        {
+            Assert.True(expected.SetEquals(actual));
+        }
+
+        public static void assertEquals<T>(string message, ISet<T> expected, ISet<T> actual)
+        {
+            Assert.True(expected.SetEquals(actual), message);
         }
 
         public static void assertNotSame(object unexpected, object actual)
