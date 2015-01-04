@@ -19,113 +19,115 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.CommonGrams
 {
-	/// <summary>
-	/// Wrap a CommonGramsFilter optimizing phrase queries by only returning single
-	/// words when they are not a member of a bigram.
-	/// 
-	/// Example:
-	/// <ul>
-	/// <li>query input to CommonGramsFilter: "the rain in spain falls mainly"
-	/// <li>output of CommomGramsFilter/input to CommonGramsQueryFilter:
-	/// |"the, "the-rain"|"rain" "rain-in"|"in, "in-spain"|"spain"|"falls"|"mainly"
-	/// <li>output of CommonGramsQueryFilter:"the-rain", "rain-in" ,"in-spain",
-	/// "falls", "mainly"
-	/// </ul>
-	/// </summary>
+    /// <summary>
+    /// Wrap a CommonGramsFilter optimizing phrase queries by only returning single
+    /// words when they are not a member of a bigram.
+    /// 
+    /// Example:
+    /// <ul>
+    /// <li>query input to CommonGramsFilter: "the rain in spain falls mainly"
+    /// <li>output of CommomGramsFilter/input to CommonGramsQueryFilter:
+    /// |"the, "the-rain"|"rain" "rain-in"|"in, "in-spain"|"spain"|"falls"|"mainly"
+    /// <li>output of CommonGramsQueryFilter:"the-rain", "rain-in" ,"in-spain",
+    /// "falls", "mainly"
+    /// </ul>
+    /// </summary>
 
-	/*
-	 * See:http://hudson.zones.apache.org/hudson/job/Lucene-trunk/javadoc//all/org/apache/lucene/analysis/TokenStream.html and
-	 * http://svn.apache.org/viewvc/lucene/dev/trunk/lucene/src/java/org/apache/lucene/analysis/package.html?revision=718798
-	 */
-	public sealed class CommonGramsQueryFilter : TokenFilter
-	{
+    /*
+     * See:http://hudson.zones.apache.org/hudson/job/Lucene-trunk/javadoc//all/org/apache/lucene/analysis/TokenStream.html and
+     * http://svn.apache.org/viewvc/lucene/dev/trunk/lucene/src/java/org/apache/lucene/analysis/package.html?revision=718798
+     */
+    public sealed class CommonGramsQueryFilter : TokenFilter
+    {
 
-	  private readonly TypeAttribute typeAttribute = addAttribute(typeof(TypeAttribute));
-	  private readonly PositionIncrementAttribute posIncAttribute = addAttribute(typeof(PositionIncrementAttribute));
+        private readonly ITypeAttribute typeAttribute;
+        private readonly IPositionIncrementAttribute posIncAttribute;
 
-	  private State previous;
-	  private string previousType;
-	  private bool exhausted;
+        private State previous;
+        private string previousType;
+        private bool exhausted;
 
-	  /// <summary>
-	  /// Constructs a new CommonGramsQueryFilter based on the provided CommomGramsFilter 
-	  /// </summary>
-	  /// <param name="input"> CommonGramsFilter the QueryFilter will use </param>
-	  public CommonGramsQueryFilter(CommonGramsFilter input) : base(input)
-	  {
-	  }
+        /// <summary>
+        /// Constructs a new CommonGramsQueryFilter based on the provided CommomGramsFilter 
+        /// </summary>
+        /// <param name="input"> CommonGramsFilter the QueryFilter will use </param>
+        public CommonGramsQueryFilter(CommonGramsFilter input)
+            : base(input)
+        {
+            typeAttribute = AddAttribute<ITypeAttribute>();
+            posIncAttribute = AddAttribute<IPositionIncrementAttribute>();
+        }
 
-	  /// <summary>
-	  /// {@inheritDoc}
-	  /// </summary>
-	  public override void Reset()
-	  {
-		base.Reset();
-		previous = null;
-		previousType = null;
-		exhausted = false;
-	  }
+        /// <summary>
+        /// {@inheritDoc}
+        /// </summary>
+        public override void Reset()
+        {
+            base.Reset();
+            previous = null;
+            previousType = null;
+            exhausted = false;
+        }
 
-	  /// <summary>
-	  /// Output bigrams whenever possible to optimize queries. Only output unigrams
-	  /// when they are not a member of a bigram. Example:
-	  /// <ul>
-	  /// <li>input: "the rain in spain falls mainly"
-	  /// <li>output:"the-rain", "rain-in" ,"in-spain", "falls", "mainly"
-	  /// </ul>
-	  /// </summary>
-	  public override bool IncrementToken()
-	  {
-		while (!exhausted && input.incrementToken())
-		{
-		  State current = CaptureState();
+        /// <summary>
+        /// Output bigrams whenever possible to optimize queries. Only output unigrams
+        /// when they are not a member of a bigram. Example:
+        /// <ul>
+        /// <li>input: "the rain in spain falls mainly"
+        /// <li>output:"the-rain", "rain-in" ,"in-spain", "falls", "mainly"
+        /// </ul>
+        /// </summary>
+        public override bool IncrementToken()
+        {
+            while (!exhausted && input.IncrementToken())
+            {
+                State current = CaptureState();
 
-		  if (previous != null && !GramType)
-		  {
-			RestoreState(previous);
-			previous = current;
-			previousType = typeAttribute.type();
+                if (previous != null && !GramType)
+                {
+                    RestoreState(previous);
+                    previous = current;
+                    previousType = typeAttribute.Type;
 
-			if (GramType)
-			{
-			  posIncAttribute.PositionIncrement = 1;
-			}
-			return true;
-		  }
+                    if (GramType)
+                    {
+                        posIncAttribute.PositionIncrement = 1;
+                    }
+                    return true;
+                }
 
-		  previous = current;
-		}
+                previous = current;
+            }
 
-		exhausted = true;
+            exhausted = true;
 
-		if (previous == null || GRAM_TYPE.Equals(previousType))
-		{
-		  return false;
-		}
+            if (previous == null || CommonGramsFilter.GRAM_TYPE.Equals(previousType))
+            {
+                return false;
+            }
 
-		RestoreState(previous);
-		previous = null;
+            RestoreState(previous);
+            previous = null;
 
-		if (GramType)
-		{
-		  posIncAttribute.PositionIncrement = 1;
-		}
-		return true;
-	  }
+            if (GramType)
+            {
+                posIncAttribute.PositionIncrement = 1;
+            }
+            return true;
+        }
 
-	  // ================================================= Helper Methods ================================================
+        // ================================================= Helper Methods ================================================
 
-	  /// <summary>
-	  /// Convenience method to check if the current type is a gram type
-	  /// </summary>
-	  /// <returns> {@code true} if the current type is a gram type, {@code false} otherwise </returns>
-	  public bool GramType
-	  {
-		  get
-		  {
-			return GRAM_TYPE.Equals(typeAttribute.type());
-		  }
-	  }
-	}
-
+        /// <summary>
+        /// Convenience method to check if the current type is a gram type
+        /// </summary>
+        /// <returns> {@code true} if the current type is a gram type, {@code false} otherwise </returns>
+        public bool GramType
+        {
+            get
+            {
+                return CommonGramsFilter.GRAM_TYPE.Equals(typeAttribute.Type);
+            }
+        }
+    }
 }
