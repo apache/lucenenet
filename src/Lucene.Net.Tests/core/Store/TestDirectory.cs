@@ -253,8 +253,6 @@ namespace Lucene.Net.Store
                 dir.Dispose();
                 Assert.IsFalse(dir.IsOpen);
             }
-
-            System.IO.Directory.Delete(path.FullName, true);
         }
 
         // LUCENE-1464
