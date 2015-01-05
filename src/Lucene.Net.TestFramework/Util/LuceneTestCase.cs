@@ -638,7 +638,6 @@ namespace Lucene.Net.Util
         {
             get
             {
-                //return ClassNameRule.TestClass;
                 return typeof(LuceneTestCase);
             }
         }

@@ -197,22 +197,21 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestNativeFSLockFactory()
         {
-            //NativeFSLockFactory f = new NativeFSLockFactory(CreateTempDir(LuceneTestCase.TestClass.SimpleName));
-            NativeFSLockFactory f = new NativeFSLockFactory(AppSettings.Get("tempDir", Path.GetTempPath()));
+            var f = new NativeFSLockFactory(CreateTempDir("testNativeFsLockFactory"));
 
             f.LockPrefix = "test";
-            Lock l = f.MakeLock("commit");
-            Lock l2 = f.MakeLock("commit");
+            var l = f.MakeLock("commit");
+            var l2 = f.MakeLock("commit");
 
-            Assert.IsTrue(l.Obtain(), "failed to obtain lock");
+            Assert.IsTrue(l.Obtain(), "failed to obtain lock, got exception: {0}", l.FailureReason);
             Assert.IsTrue(!l2.Obtain(), "succeeded in obtaining lock twice");
             l.Dispose();
 
-            Assert.IsTrue(l2.Obtain(), "failed to obtain 2nd lock after first one was freed");
+            Assert.IsTrue(l2.Obtain(), "failed to obtain 2nd lock after first one was freed, got exception: {0}", l2.FailureReason);
             l2.Dispose();
 
             // Make sure we can obtain first one again, test isLocked():
-            Assert.IsTrue(l.Obtain(), "failed to obtain lock");
+            Assert.IsTrue(l.Obtain(), "failed to obtain lock, got exception: {0}", l.FailureReason);
             Assert.IsTrue(l.Locked);
             Assert.IsTrue(l2.Locked);
             l.Dispose();
@@ -224,14 +223,16 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestNativeFSLockFactoryLockExists()
         {
-            DirectoryInfo tempDir = new DirectoryInfo(AppSettings.Get("tempDir", Path.GetTempPath()));
-            FileInfo lockFile = new FileInfo(/*tempDir, */"test.lock");
-            lockFile.Create();
+            DirectoryInfo tempDir = CreateTempDir("testNativeFsLockFactory");
 
-            Lock l = (new NativeFSLockFactory(tempDir)).MakeLock("test.lock");
-            Assert.IsTrue(l.Obtain(), "failed to obtain lock");
+            // Touch the lock file
+            var lockFile = new FileInfo(Path.Combine(tempDir.FullName, "test.lock"));
+            using (lockFile.Create()){};
+
+            var l = (new NativeFSLockFactory(tempDir)).MakeLock("test.lock");
+            Assert.IsTrue(l.Obtain(), "failed to obtain lock, got exception: {0}", l.FailureReason);
             l.Dispose();
-            Assert.IsFalse(l.Locked, "failed to release lock");
+            Assert.IsFalse(l.Locked, "failed to release lock, got exception: {0}", l.FailureReason);
             if (lockFile.Exists)
             {
                 lockFile.Delete();
