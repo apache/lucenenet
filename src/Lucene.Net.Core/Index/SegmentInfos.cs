@@ -348,7 +348,7 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public void Read(Directory directory, string segmentFileName)
         {
-            bool success = false;
+            var success = false;
 
             // Clear any previous segments:
             this.Clear();
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
 
             _lastGeneration = _generation;
 
-            ChecksumIndexInput input = directory.OpenChecksumInput(segmentFileName, IOContext.READ);
+            var input = directory.OpenChecksumInput(segmentFileName, IOContext.READ);
             try
             {
                 int format = input.ReadInt();
