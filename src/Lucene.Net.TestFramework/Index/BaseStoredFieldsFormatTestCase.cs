@@ -401,9 +401,9 @@ namespace Lucene.Net.Index
             foreach (Field fld in fields)
             {
                 string fldName = fld.Name();
-                Document sDoc = reader.Document(docID, CollectionsHelper.Singleton(fldName));
+                Document sDoc = reader.Document(docID, Collections.Singleton(fldName));
                 IndexableField sField = sDoc.GetField(fldName);
-                if (typeof(Field).Equals(fld.GetType()))
+                if (typeof(Field) == fld.GetType())
                 {
                     Assert.AreEqual(fld.BinaryValue(), sField.BinaryValue());
                     Assert.AreEqual(fld.StringValue, sField.StringValue);

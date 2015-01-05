@@ -385,7 +385,7 @@ namespace Lucene.Net.Store
                 // fsync it
                 try
                 {
-                    fsdir.Sync(CollectionsHelper.Singleton("afile"));
+                    fsdir.Sync(Collections.Singleton("afile"));
                     Assert.Fail("didn't get expected exception, instead fsync created new files: " +
                                 Arrays.AsList(fsdir.ListAll()));
                 }

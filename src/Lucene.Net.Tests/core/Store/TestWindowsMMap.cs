@@ -74,31 +74,36 @@ namespace Lucene.Net.Store
             // sometimes the directory is not cleaned by rmDir, because on Windows it
             // may take some time until the files are finally dereferenced. So clean the
             // directory up front, or otherwise new IndexWriter will fail.
-            DirectoryInfo dirPath = CreateTempDir("testLuceneMmap");
+            var dirPath = CreateTempDir("testLuceneMmap");
             RmDir(dirPath);
-            MMapDirectory dir = new MMapDirectory(dirPath, null);
+            var dir = new MMapDirectory(dirPath, null);
 
             // plan to add a set of useful stopwords, consider changing some of the
             // interior filters.
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            // TODO: something about lock timeouts and leftover locks.
-            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
-            writer.Commit();
-            IndexReader reader = DirectoryReader.Open(dir);
-            IndexSearcher searcher = NewSearcher(reader);
-
-            int num = AtLeast(1000);
-            for (int dx = 0; dx < num; dx++)
+            using (var analyzer = new MockAnalyzer(Random()))
             {
-                string f = RandomField();
-                Document doc = new Document();
-                doc.Add(NewTextField("data", f, Field.Store.YES));
-                writer.AddDocument(doc);
-            }
+                // TODO: something about lock timeouts and leftover locks.
+                using (var writer = new IndexWriter(dir,
+                    new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(
+                        IndexWriterConfig.OpenMode_e.CREATE)))
+                {
+                    writer.Commit();
+                    using (IndexReader reader = DirectoryReader.Open(dir))
+                    {
+                        var searcher = NewSearcher(reader);
+                        var num = AtLeast(1000);
+                        for (int dx = 0; dx < num; dx++)
+                        {
+                            var f = RandomField();
+                            var doc = new Document();
+                            doc.Add(NewTextField("data", f, Field.Store.YES));
+                            writer.AddDocument(doc);
+                        }
+                    }
+                }
 
-            reader.Dispose();
-            writer.Dispose();
-            RmDir(dirPath);
+                RmDir(dirPath);
+            }
         }
 
         private static void RmDir(DirectoryInfo dir)
