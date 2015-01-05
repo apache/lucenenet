@@ -824,7 +824,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Sole constructor. </summary>
-            public FindSegmentsFile(Directory directory)
+            protected FindSegmentsFile(Directory directory)
             {
                 this.Directory = directory;
             }

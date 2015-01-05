@@ -172,7 +172,7 @@ namespace Lucene.Net.Store
                 largeBuffer[i] = (byte)i; // automatically loops with modulo
             }
 
-            FSDirectory[] dirs = new FSDirectory[] { new SimpleFSDirectory(path, null), new NIOFSDirectory(path, null), new MMapDirectory(path, null) };
+            var dirs = new FSDirectory[] { new SimpleFSDirectory(path, null), new NIOFSDirectory(path, null), new MMapDirectory(path, null) };
 
             for (int i = 0; i < dirs.Length; i++)
             {
