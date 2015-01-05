@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 
@@ -734,7 +735,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        [Test, Nightly, Timeout(int.MaxValue)]
         public virtual void TestLotsOfFields()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 500, 10);
