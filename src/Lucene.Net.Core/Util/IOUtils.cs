@@ -443,8 +443,11 @@ namespace Lucene.Net.Util
         ///  because not all file systems and operating systems allow to fsync on a directory) </param>
         public static void Fsync(string fileToSync, bool isDir)
         {
-            // Fsync for folders appears to be "undefined" for Windows platform based on the blog article in the comments below
-            if (isDir && Constants.WINDOWS)
+            // Fsync does not appear to function properly for Windows and Linux platforms. In Lucene version
+            // they catch this in IOException branch and return if the call is for the directory. 
+            // In Lucene.Net the exception is UnauthorizedAccessException and is not handled by
+            // IOException block. No need to even attempt to fsync, just return if the call is for directory
+            if (isDir)
             {
                 return;
             }
@@ -468,16 +471,10 @@ namespace Lucene.Net.Util
                     }
                     catch (IOException e)
                     {
-                        if (isDir)
-                        {
-                            Debug.Assert((Constants.LINUX || Constants.MAC_OS_X) == false,
-                                "On Linux and MacOSX fsyncing a directory should not throw IOException, " +
-                                "we just don't want to rely on that in production (undocumented). Got: " + e); // Ignore exception if it is a directory
-                            return;
-                        }
-
                         if (retryCount == 5)
+                        {
                             throw;
+                        }
 
                         // Pause 5 msec
                         Thread.Sleep(5);
