@@ -323,9 +323,9 @@ namespace Lucene.Net.Store
         /// </summary>
         private sealed class SlicedIndexInput : BufferedIndexInput
         {
-            internal IndexInput @base;
-            internal long FileOffset;
-            internal long Length_Renamed;
+            private IndexInput @base;
+            private long FileOffset;
+            private long Length_Renamed;
 
             internal SlicedIndexInput(string sliceDescription, IndexInput @base, long fileOffset, long length)
                 : this(sliceDescription, @base, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
@@ -385,9 +385,6 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual bool IsOpen
-        {
-            get { return IsOpen; }
-        }
+        public virtual bool IsOpen { get { return isOpen; }}
     }
 }

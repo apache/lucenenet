@@ -25,8 +25,6 @@ namespace Lucene.Net.Store
     /// </summary>
     public abstract class BaseDirectory : Directory
     {
-        volatile protected internal bool IsOpen = true;
-
         /// <summary>
         /// Holds the LockFactory instance (implements locking for
         /// this Directory instance).

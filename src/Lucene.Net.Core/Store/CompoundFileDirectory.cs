@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
             this.Directory_Renamed = directory;
             this.FileName = fileName;
             this.ReadBufferSize = BufferedIndexInput.BufferSize(context);
-            this.IsOpen = false;
+            this.isOpen = false;
             this.OpenForWrite = openForWrite;
             if (!openForWrite)
             {
@@ -117,14 +117,14 @@ namespace Lucene.Net.Store
                         IOUtils.CloseWhileHandlingException(Handle);
                     }
                 }
-                this.IsOpen = true;
+                this.isOpen = true;
                 Writer = null;
             }
             else
             {
                 Debug.Assert(!(directory is CompoundFileDirectory), "compound file inside of compound file: " + fileName);
                 this.Entries = SENTINEL;
-                this.IsOpen = true;
+                this.isOpen = true;
                 Writer = new CompoundFileWriter(directory, fileName);
                 Handle = null;
             }
@@ -301,7 +301,7 @@ namespace Lucene.Net.Store
                     // allow double close - usually to be consistent with other closeables
                     return; // already closed
                 }
-                IsOpen = false;
+                isOpen = false;
                 if (Writer != null)
                 {
                     Debug.Assert(OpenForWrite);
