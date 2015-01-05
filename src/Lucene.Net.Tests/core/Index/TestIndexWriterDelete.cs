@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -1298,8 +1299,7 @@ namespace Lucene.Net.Index
 
         // Make sure buffered (pushed) deletes don't use up so
         // much RAM that it forces long tail of tiny segments:
-        //ORIGINAL LINE: @Nightly public void testApplyDeletesOnFlush() throws Exception
-        [Test]
+        [Test, Nightly, Timeout(int.MaxValue)]
         public virtual void TestApplyDeletesOnFlush()
         {
             Directory dir = NewDirectory();

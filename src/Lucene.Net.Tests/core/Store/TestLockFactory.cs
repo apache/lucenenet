@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -148,9 +149,7 @@ namespace Lucene.Net.Store
         // Verify: do stress test, by opening IndexReaders and
         // IndexWriters over & over in 2 threads and making sure
         // no unexpected exceptions are raised:
-        //ORIGINAL LINE: @Nightly public void testStressLocks() throws Exception
-        [Ignore]
-        [Test]
+        [Test, Nightly, Timeout(int.MaxValue)]
         public virtual void TestStressLocks()
         {
             _testStressLocks(null, CreateTempDir("index.TestLockFactory6"));
@@ -160,8 +159,7 @@ namespace Lucene.Net.Store
         // IndexWriters over & over in 2 threads and making sure
         // no unexpected exceptions are raised, but use
         // NativeFSLockFactory:
-        [Ignore]//marked @nightly
-        [Test]
+        [Test, Nightly, Timeout(int.MaxValue)]
         public virtual void TestStressLocksNativeFSLockFactory()
         {
             DirectoryInfo dir = CreateTempDir("index.TestLockFactory7");

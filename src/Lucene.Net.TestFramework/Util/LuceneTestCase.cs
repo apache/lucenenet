@@ -216,54 +216,7 @@ namespace Lucene.Net.Util
         /// <seealso> cref= #ignoreAfterMaxFailures </seealso>
         public const string SYSPROP_FAILFAST = "tests.failfast";
 
-        public interface Nightly
-        {
-        }
-
-        public interface Weekly
-        {
-        }
-
-        /*/// <summary>
-      /// Annotation for tests that should only be run during nightly builds.
-      /// </summary>
-      public class Nightly : System.Attribute
-      /// <summary>
-      /// Annotation for tests that should only be run during weekly builds
-      /// </summary>
-      {
-          private readonly LuceneTestCase OuterInstance;
-
-          public Nightly(LuceneTestCase outerInstance)
-          {
-              this.OuterInstance = outerInstance;
-          }
-      }
-      public class Weekly : System.Attribute
-      /// <summary>
-      /// Annotation for tests which exhibit a known issue and are temporarily disabled.
-      /// </summary>
-      {
-          private readonly LuceneTestCase OuterInstance;
-
-          public Weekly(LuceneTestCase outerInstance)
-          {
-              this.OuterInstance = outerInstance;
-          }
-      }
-      public class AwaitsFix : System.Attribute
-      {
-          private readonly LuceneTestCase OuterInstance;
-
-          public AwaitsFix(LuceneTestCase outerInstance)
-          {
-              this.OuterInstance = outerInstance;
-          }
-
-        /// <summary>
-        /// Point to JIRA entry. </summary>
-        public string bugUrl();
-      }
+        /*     
 
       /// <summary>
       /// Annotation for tests that are slow. Slow tests do run by default but can be

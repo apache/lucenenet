@@ -1,4 +1,5 @@
 using Apache.NMS.Util;
+using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
@@ -670,8 +671,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
-        //ORIGINAL LINE: @Nightly public void testBigDocuments() throws java.io.IOException
+        [Test, Nightly, Timeout(int.MaxValue)]
         public void TestBigDocuments()
         {
             // "big" as "much bigger than the chunk size"

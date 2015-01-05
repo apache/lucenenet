@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
@@ -42,8 +43,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class Test2BPostings : LuceneTestCase
     {
-        //ORIGINAL LINE: @Nightly public void test() throws Exception
-        [Test]
+        [Test, Nightly, Timeout(int.MaxValue)]
         public virtual void Test()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostings"));
