@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Store
@@ -119,18 +120,6 @@ namespace Lucene.Net.Store
         private readonly DirectoryInfo Path;
         private readonly DirectoryInfo LockDir;
 
-      /*
-       * The javadocs for FileChannel state that you should have
-       * a single instance of a FileChannel (per JVM) for all
-       * locking against a given file.  To ensure this, we have
-       * a single (static) HashSet that contains the file paths
-       * of all currently locked locks.  This protects against
-       * possible cases where different Directory instances in
-       * one JVM (each with their own NativeFSLockFactory
-       * instance) have set the same lock dir and lock prefix.
-       */
-        private static readonly ConcurrentDictionary<string, WeakReference<FileStream>> LOCKS_HELD = new ConcurrentDictionary<string, WeakReference<FileStream>>();
-
         public NativeFSLock(DirectoryInfo lockDir, string lockFileName)
         {
             this.LockDir = lockDir;
@@ -141,13 +130,13 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
+                FailureReason = null;
+
                 if (Channel != null)
                 {
                     // Our instance is already locked:
                     return false;
                 }
-
-                //LOCKS_HELD.GetOrAdd(Path.FullName)
 
                 if (!System.IO.Directory.Exists(LockDir.FullName))
                 {
@@ -160,12 +149,12 @@ namespace Lucene.Net.Store
                         throw new System.IO.IOException("Cannot create directory: " + LockDir.FullName);
                     }
                 }
-                else if (System.IO.File.Exists(LockDir.FullName))
+                else if (File.Exists(LockDir.FullName))
                 {
-                    throw new System.IO.IOException("Found regular file where directory expected: " + LockDir.FullName);
+                    throw new IOException("Found regular file where directory expected: " + LockDir.FullName);
                 }
 
-                bool success = false;
+                var success = false;
                 try
                 {
                     Channel = new FileStream(Path.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
@@ -175,30 +164,26 @@ namespace Lucene.Net.Store
                 catch (IOException e)
                 {
                     FailureReason = e;
+                    IOUtils.CloseWhileHandlingException(Channel);
                     Channel = null;
                 }
                 // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
-                catch (System.UnauthorizedAccessException e)
+                catch (UnauthorizedAccessException e)
                 {
                     // On Windows, we can get intermittent "Access
                     // Denied" here.  So, we treat this as failure to
                     // acquire the lock, but, store the reason in case
                     // there is in fact a real error case.
                     FailureReason = e;
+                    IOUtils.CloseWhileHandlingException(Channel);
                     Channel = null;
                 }
                 finally
                 {
                     if (!success)
                     {
-                        try
-                        {
-                            IOUtils.CloseWhileHandlingException(Channel);
-                        }
-                        finally
-                        {
-                            Channel = null;
-                        }
+                        IOUtils.CloseWhileHandlingException(Channel);
+                        Channel = null;
                     }
                 }
 
@@ -218,19 +203,10 @@ namespace Lucene.Net.Store
                     }
                     finally
                     {
-                        try
-                        {
-                            Channel.Close();
-                        }
-                        finally
-                        {
-                            Channel = null;
-//                            lock (LOCK_HELD)
-//                            {
-//                                LOCK_HELD.Remove(Path.FullName);
-//                            }
-                        }
+                        IOUtils.CloseWhileHandlingException(Channel);
+                        Channel = null;
                     }
+
                     bool tmpBool;
                     if (File.Exists(Path.FullName))
                     {
