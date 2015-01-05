@@ -914,7 +914,8 @@ namespace Lucene.Net.Store
                 }
                 if (OpenLocks.Count > 0)
                 {
-                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: " + OpenLocks.ToArray());
+                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
+                        + String.Join(" ,", OpenLocks.ToArray()));
                 }
 
                 IsOpen = false;
