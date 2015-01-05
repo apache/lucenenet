@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -53,8 +54,7 @@ namespace Lucene.Net.Store
 
         // test is occasionally very slow, i dont know why
         // try this seed: 7D7E036AD12927F5:93333EF9E6DE44DE
-        [Ignore]//was marked @nightly
-        [Test]
+        [Test, Nightly, Timeout(int.MaxValue)]
         public virtual void TestThreadSafety()
         {
             BaseDirectoryWrapper dir = NewDirectory();

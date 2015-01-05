@@ -127,6 +127,9 @@
     <Compile Include="Analysis\VocabularyAssert.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Attributes\AwaitsFixAttribute.cs" />
+    <Compile Include="Attributes\NightlyAttribute.cs" />
+    <Compile Include="Attributes\WeeklyAttribute.cs" />
     <Compile Include="Codecs\asserting\AssertingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
