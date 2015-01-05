@@ -443,6 +443,12 @@ namespace Lucene.Net.Util
         ///  because not all file systems and operating systems allow to fsync on a directory) </param>
         public static void Fsync(string fileToSync, bool isDir)
         {
+            // Fsync for folders appears to be "undefined" for Windows platform based on the blog article in the comments below
+            if (isDir && Constants.WINDOWS)
+            {
+                return;
+            }
+
             var retryCount = 1;
             while (true)
             {
