@@ -96,16 +96,18 @@ namespace Lucene.Net.Store
             LockDir = lockDir;
         }
 
+        // LUCENENET NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
+        // IW.Unlock and IW.IsLocked works correctly
+        internal readonly ConcurrentDictionary<string, NativeFSLock> _locks = new ConcurrentDictionary<string, NativeFSLock>(); 
+
         public override Lock MakeLock(string lockName)
         {
-            lock (this)
+            if (LockPrefix_Renamed != null)
             {
-                if (LockPrefix_Renamed != null)
-                {
-                    lockName = LockPrefix_Renamed + "-" + lockName;
-                }
-                return new NativeFSLock(LockDir_Renamed, lockName);
+                lockName = LockPrefix_Renamed + "-" + lockName;
             }
+
+            return _locks.GetOrAdd(lockName, (s) => new NativeFSLock(this, LockDir_Renamed, s));
         }
 
         public override void ClearLock(string lockName)
@@ -118,10 +120,12 @@ namespace Lucene.Net.Store
     {
         private FileStream Channel;
         private readonly DirectoryInfo Path;
+        private readonly NativeFSLockFactory _creatingInstance;
         private readonly DirectoryInfo LockDir;
 
-        public NativeFSLock(DirectoryInfo lockDir, string lockFileName)
+        public NativeFSLock(NativeFSLockFactory creatingInstance, DirectoryInfo lockDir, string lockFileName)
         {
+            _creatingInstance = creatingInstance;
             this.LockDir = lockDir;
             Path = new DirectoryInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
         }
@@ -200,6 +204,9 @@ namespace Lucene.Net.Store
                     try
                     {
                         Channel.Unlock(0, Channel.Length);
+
+                        NativeFSLock _;
+                        _creatingInstance._locks.TryRemove(Path.FullName, out _);
                     }
                     finally
                     {
