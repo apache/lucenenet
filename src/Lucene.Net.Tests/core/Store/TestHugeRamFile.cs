@@ -114,8 +114,8 @@ namespace Lucene.Net.Store
                 @in.Seek(loc);
                 for (int i = 0; i < m; i++)
                 {
-                    sbyte bt = @in.ReadSByte();
-                    sbyte expected = (sbyte)(1 + j + (i & 0x0003F));
+                    var bt = (sbyte)@in.ReadByte();
+                    var expected = (sbyte)(1 + j + (i & 0x0003F));
                     Assert.AreEqual(expected, bt, "must read same value that was written! j=" + j + " i=" + i);
                 }
             }
