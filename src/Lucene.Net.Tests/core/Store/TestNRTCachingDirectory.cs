@@ -138,7 +138,7 @@ namespace Lucene.Net.Store
         }
 
         // LUCENE-3382 -- make sure we get exception if the directory really does not exist.
-        [Test, Timeout(int.MaxValue)]
+        [Test]
         public virtual void TestNoDir()
         {
             // LUCENENET TODO mysterious failure - FSDirectory recreates the folder by design, not sure why this passes for Java Lucene
