@@ -101,17 +101,13 @@ namespace Lucene.Net.Store
             RmDir(dirPath);
         }
 
-        private void RmDir(DirectoryInfo dir)
+        private static void RmDir(DirectoryInfo dir)
         {
             if (!dir.Exists)
             {
                 return;
             }
-            foreach (FileInfo file in dir.GetFiles())
-            {
-                file.Delete();
-            }
-            dir.Delete();
+            dir.Delete(true);
         }
     }
 }
