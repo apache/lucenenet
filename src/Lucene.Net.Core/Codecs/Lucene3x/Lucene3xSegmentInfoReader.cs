@@ -44,7 +44,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         public static void ReadLegacyInfos(SegmentInfos infos, Directory directory, IndexInput input, int format)
         {
-            infos.Version_Renamed = input.ReadLong(); // read version
+            infos.Version = input.ReadLong(); // read version
             infos.Counter = input.ReadInt(); // read counter
             Lucene3xSegmentInfoReader reader = new Lucene3xSegmentInfoReader();
             for (int i = input.ReadInt(); i > 0; i--) // read segmentInfos
@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 infos.Add(siPerCommit);
             }
 
-            infos.UserData_Renamed = input.ReadStringStringMap();
+            infos.UserData = input.ReadStringStringMap();
         }
 
         public override SegmentInfo Read(Directory directory, string segmentName, IOContext context)

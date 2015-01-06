@@ -909,11 +909,13 @@ namespace Lucene.Net.Store
 
                     // RuntimeException instead ofSystem.IO.IOException because
                     // super() does not throwSystem.IO.IOException currently:
-                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: " + OpenFiles, cause);
+                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
+                        + String.Join(" ,", OpenFiles.ToArray().Select(x => x.Key)), cause);
                 }
                 if (OpenLocks.Count > 0)
                 {
-                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: " + OpenLocks);
+                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
+                        + String.Join(" ,", OpenLocks.ToArray()));
                 }
 
                 IsOpen = false;

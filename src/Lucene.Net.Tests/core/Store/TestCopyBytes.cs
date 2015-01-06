@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
                 {
                     if (Random().NextBoolean())
                     {
-                        sbyte v = in2.ReadSByte();
+                        var v = in2.ReadByte();
                         Assert.AreEqual(Value(upto), v);
                         upto++;
                     }

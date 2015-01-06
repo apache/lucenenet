@@ -213,7 +213,7 @@ namespace Lucene.Net.Util
         ///          objects to call <tt>close()</tt> on </param>
         public static void CloseWhileHandlingException(params IDisposable[] objects)
         {
-            foreach (IDisposable o in objects)
+            foreach (var o in objects)
             {
                 try
                 {

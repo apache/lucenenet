@@ -271,7 +271,7 @@ namespace Lucene.Net.Util.Fst
             {
                 emptyOutput = default(T);
             }
-            sbyte t = @in.ReadSByte();
+            var t = @in.ReadByte();
             switch (t)
             {
                 case 0:
@@ -930,7 +930,7 @@ namespace Lucene.Net.Util.Fst
             {
                 @in.Position = GetNodeAddress(follow.Target);
                 arc.Node = follow.Target;
-                sbyte b = @in.ReadSByte();
+                var b = (sbyte)@in.ReadByte();
                 if (b == ARCS_AS_FIXED_ARRAY)
                 {
                     // array: jump straight to end
@@ -979,7 +979,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             ReadUnpackedNodeTarget(@in);
                         }
-                        arc.Flags = @in.ReadSByte();
+                        arc.Flags = (sbyte)@in.ReadByte();
                     }
                     // Undo the byte flags we read:
                     @in.SkipBytes(-1);
@@ -1130,7 +1130,7 @@ namespace Lucene.Net.Util.Fst
                 long pos = GetNodeAddress(arc.NextArc);
                 @in.Position = pos;
 
-                sbyte b = @in.ReadSByte();
+                var b = (sbyte)@in.ReadByte();
                 if (b == ARCS_AS_FIXED_ARRAY)
                 {
                     //System.out.println("    nextArc fixed array");
@@ -1195,7 +1195,7 @@ namespace Lucene.Net.Util.Fst
                 // arcs are packed
                 @in.Position = arc.NextArc;
             }
-            arc.Flags = @in.ReadSByte();
+            arc.Flags = (sbyte)@in.ReadByte();
             arc.Label = ReadLabel(@in);
 
             if (arc.Flag(BIT_ARC_HAS_OUTPUT))
@@ -2166,17 +2166,17 @@ namespace Lucene.Net.Util.Fst
         internal const sbyte ARCS_AS_FIXED_ARRAY = BIT_ARC_HAS_FINAL_OUTPUT;
 
         /// <summary>
-        /// <see cref="UnCompiledNode"/>
+        /// <see cref="Builder{T}.UnCompiledNode{S}"/>
         /// </summary>
         public const int FIXED_ARRAY_SHALLOW_DISTANCE = 3;
 
         /// <summary>
-        /// <see cref="UnCompiledNode"/>
+        /// <see cref="Builder{T}.UnCompiledNode{S}"/>
         /// </summary>
         public const int FIXED_ARRAY_NUM_ARCS_SHALLOW = 5;
 
         /// <summary>
-        /// <see cref="UnCompiledNode"/>
+        /// <see cref="Builder{T}.UnCompiledNode{S}"/>
         /// </summary>
         public const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;
 

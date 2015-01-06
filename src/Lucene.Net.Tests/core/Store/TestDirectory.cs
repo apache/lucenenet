@@ -161,7 +161,7 @@ namespace Lucene.Net.Store
 
         // Test that different instances of FSDirectory can coexist on the same
         // path, can read, write, and lock files.
-        [Test]
+        [Test, Timeout(int.MaxValue)]
         public virtual void TestDirectInstantiation()
         {
             DirectoryInfo path = CreateTempDir("testDirectInstantiation");
@@ -172,7 +172,7 @@ namespace Lucene.Net.Store
                 largeBuffer[i] = (byte)i; // automatically loops with modulo
             }
 
-            FSDirectory[] dirs = new FSDirectory[] { new SimpleFSDirectory(path, null), new NIOFSDirectory(path, null), new MMapDirectory(path, null) };
+            var dirs = new FSDirectory[] { new SimpleFSDirectory(path, null), new NIOFSDirectory(path, null), new MMapDirectory(path, null) };
 
             for (int i = 0; i < dirs.Length; i++)
             {
@@ -253,8 +253,6 @@ namespace Lucene.Net.Store
                 dir.Dispose();
                 Assert.IsFalse(dir.IsOpen);
             }
-
-            System.IO.Directory.Delete(path.FullName, true);
         }
 
         // LUCENE-1464
@@ -385,7 +383,7 @@ namespace Lucene.Net.Store
                 // fsync it
                 try
                 {
-                    fsdir.Sync(CollectionsHelper.Singleton("afile"));
+                    fsdir.Sync(Collections.Singleton("afile"));
                     Assert.Fail("didn't get expected exception, instead fsync created new files: " +
                                 Arrays.AsList(fsdir.ListAll()));
                 }

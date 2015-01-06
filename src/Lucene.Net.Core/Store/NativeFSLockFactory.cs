@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Concurrent;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Store
 {
-    using System.Collections.Generic;
     using System.IO;
 
     /*
@@ -92,16 +96,18 @@ namespace Lucene.Net.Store
             LockDir = lockDir;
         }
 
+        // LUCENENET NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
+        // IW.Unlock and IW.IsLocked works correctly
+        internal readonly ConcurrentDictionary<string, NativeFSLock> _locks = new ConcurrentDictionary<string, NativeFSLock>(); 
+
         public override Lock MakeLock(string lockName)
         {
-            lock (this)
+            if (LockPrefix_Renamed != null)
             {
-                if (LockPrefix_Renamed != null)
-                {
-                    lockName = LockPrefix_Renamed + "-" + lockName;
-                }
-                return new NativeFSLock(LockDir_Renamed, lockName);
+                lockName = LockPrefix_Renamed + "-" + lockName;
             }
+
+            return _locks.GetOrAdd(lockName, (s) => new NativeFSLock(this, LockDir_Renamed, s));
         }
 
         public override void ClearLock(string lockName)
@@ -112,56 +118,31 @@ namespace Lucene.Net.Store
 
     internal class NativeFSLock : Lock
     {
-        private System.IO.FileStream f;
         private FileStream Channel;
-        private bool @lock;
-        private DirectoryInfo Path;
-        private DirectoryInfo LockDir;
+        private readonly DirectoryInfo Path;
+        private readonly NativeFSLockFactory _creatingInstance;
+        private readonly DirectoryInfo LockDir;
 
-        /*
-       * The javadocs for FileChannel state that you should have
-       * a single instance of a FileChannel (per JVM) for all
-       * locking against a given file.  To ensure this, we have
-       * a single (static) HashSet that contains the file paths
-       * of all currently locked locks.  This protects against
-       * possible cases where different Directory instances in
-       * one JVM (each with their own NativeFSLockFactory
-       * instance) have set the same lock dir and lock prefix.
-       */
-        private static HashSet<string> LOCK_HELD = new HashSet<string>();
-
-        public NativeFSLock(DirectoryInfo lockDir, string lockFileName)
+        public NativeFSLock(NativeFSLockFactory creatingInstance, DirectoryInfo lockDir, string lockFileName)
         {
+            _creatingInstance = creatingInstance;
             this.LockDir = lockDir;
             Path = new DirectoryInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
-        }
-
-        private bool LockExists()
-        {
-            lock (this)
-            {
-                return @lock != false;
-            }
         }
 
         public override bool Obtain()
         {
             lock (this)
             {
-                if (LockExists())
+                FailureReason = null;
+
+                if (Channel != null)
                 {
                     // Our instance is already locked:
                     return false;
                 }
 
-                // Ensure that lockDir exists and is a directory.
-                bool tmpBool;
-                if (System.IO.File.Exists(LockDir.FullName))
-                    tmpBool = true;
-                else
-                    tmpBool = System.IO.Directory.Exists(LockDir.FullName);
-
-                if (!tmpBool)
+                if (!System.IO.Directory.Exists(LockDir.FullName))
                 {
                     try
                     {
@@ -172,221 +153,67 @@ namespace Lucene.Net.Store
                         throw new System.IO.IOException("Cannot create directory: " + LockDir.FullName);
                     }
                 }
-                else if (!System.IO.Directory.Exists(LockDir.FullName))
+                else if (File.Exists(LockDir.FullName))
                 {
-                    throw new System.IO.IOException("Found regular file where directory expected: " + LockDir.FullName);
+                    throw new IOException("Found regular file where directory expected: " + LockDir.FullName);
                 }
 
-                string canonicalPath = Path.FullName;
-
-                bool markedHeld = false;
-
+                var success = false;
                 try
                 {
-                    // Make sure nobody else in-process has this lock held
-                    // already, and, mark it held if not:
-
-                    lock (LOCK_HELD)
-                    {
-                        if (LOCK_HELD.Contains(canonicalPath))
-                        {
-                            // Someone else in this JVM already has the lock:
-                            return false;
-                        }
-                        else
-                        {
-                            // This "reserves" the fact that we are the one
-                            // thread trying to obtain this lock, so we own
-                            // the only instance of a channel against this
-                            // file:
-                            LOCK_HELD.Add(canonicalPath);
-                            markedHeld = true;
-                        }
-                    }
-
-                    try
-                    {
-                        f = new System.IO.FileStream(Path.FullName, System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                    }
-                    catch (System.IO.IOException e)
-                    {
-                        // On Windows, we can get intermittent "Access
-                        // Denied" here.  So, we treat this as failure to
-                        // acquire the lock, but, store the reason in case
-                        // there is in fact a real error case.
-                        FailureReason = e;
-                        f = null;
-                    }
-                    // lucene.net: UnauthorizedAccessException does not derive from IOException like in java
-                    catch (System.UnauthorizedAccessException e)
-                    {
-                        // On Windows, we can get intermittent "Access
-                        // Denied" here.  So, we treat this as failure to
-                        // acquire the lock, but, store the reason in case
-                        // there is in fact a real error case.
-                        FailureReason = e;
-                        f = null;
-                    }
-
-                    if (f != null)
-                    {
-                        try
-                        {
-                            Channel = f;
-                            @lock = false;
-                            try
-                            {
-                                Channel.Lock(0, Channel.Length);
-                                @lock = true;
-                            }
-                            catch (System.IO.IOException e)
-                            {
-                                // At least on OS X, we will sometimes get an
-                                // intermittent "Permission Denied" IOException,
-                                // which seems to simply mean "you failed to get
-                                // the lock".  But other IOExceptions could be
-                                // "permanent" (eg, locking is not supported via
-                                // the filesystem).  So, we record the failure
-                                // reason here; the timeout obtain (usually the
-                                // one calling us) will use this as "root cause"
-                                // if it fails to get the lock.
-                                FailureReason = e;
-                            }
-                            // lucene.net: UnauthorizedAccessException does not derive from IOException like in java
-                            catch (System.UnauthorizedAccessException e)
-                            {
-                                // At least on OS X, we will sometimes get an
-                                // intermittent "Permission Denied" IOException,
-                                // which seems to simply mean "you failed to get
-                                // the lock".  But other IOExceptions could be
-                                // "permanent" (eg, locking is not supported via
-                                // the filesystem).  So, we record the failure
-                                // reason here; the timeout obtain (usually the
-                                // one calling us) will use this as "root cause"
-                                // if it fails to get the lock.
-                                FailureReason = e;
-                            }
-                            finally
-                            {
-                                if (@lock == false)
-                                {
-                                    try
-                                    {
-                                        Channel.Close();
-                                    }
-                                    finally
-                                    {
-                                        Channel = null;
-                                    }
-                                }
-                            }
-                        }
-                        finally
-                        {
-                            if (Channel == null)
-                            {
-                                try
-                                {
-                                    f.Close();
-                                }
-                                finally
-                                {
-                                    f = null;
-                                }
-                            }
-                        }
-                    }
+                    Channel = new FileStream(Path.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
+                    Channel.Lock(0, Channel.Length);
+                    success = true;
+                }
+                catch (IOException e)
+                {
+                    FailureReason = e;
+                    IOUtils.CloseWhileHandlingException(Channel);
+                    Channel = null;
+                }
+                // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
+                catch (UnauthorizedAccessException e)
+                {
+                    // On Windows, we can get intermittent "Access
+                    // Denied" here.  So, we treat this as failure to
+                    // acquire the lock, but, store the reason in case
+                    // there is in fact a real error case.
+                    FailureReason = e;
+                    IOUtils.CloseWhileHandlingException(Channel);
+                    Channel = null;
                 }
                 finally
                 {
-                    if (markedHeld && !LockExists())
+                    if (!success)
                     {
-                        lock (LOCK_HELD)
-                        {
-                            if (LOCK_HELD.Contains(canonicalPath))
-                            {
-                                LOCK_HELD.Remove(canonicalPath);
-                            }
-                        }
+                        IOUtils.CloseWhileHandlingException(Channel);
+                        Channel = null;
                     }
                 }
-                return LockExists();
+
+                return Channel != null;
             }
-
-            /*
-
-              Channel = FileChannel.open(Path.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-              bool success = false;
-              try
-              {
-                @lock = Channel.TryLock();
-                success = @lock != null;
-              }
-              catch (System.IO.IOException | OverlappingFileLockException e)
-              {
-                // At least on OS X, we will sometimes get an
-                // intermittent "Permission Denied" System.IO.IOException,
-                // which seems to simply mean "you failed to get
-                // the lock".  But other System.IO.IOExceptions could be
-                // "permanent" (eg, locking is not supported via
-                // the filesystem).  So, we record the failure
-                // reason here; the timeout obtain (usually the
-                // one calling us) will use this as "root cause"
-                // if it fails to get the lock.
-                FailureReason = e;
-              }
-              finally
-              {
-                if (!success)
-                {
-                  try
-                  {
-                    IOUtils.CloseWhileHandlingException(Channel);
-                  }
-                  finally
-                  {
-                    Channel = null;
-                  }
-                }
-              }
-              return @lock != null;
-            }*/
         }
 
         public override void Release()
         {
             lock (this)
             {
-                if (LockExists())
+                if (Channel != null)
                 {
                     try
                     {
                         Channel.Unlock(0, Channel.Length);
+
+                        NativeFSLock _;
+                        _creatingInstance._locks.TryRemove(Path.FullName, out _);
                     }
                     finally
                     {
-                        @lock = false;
-                        try
-                        {
-                            Channel.Close();
-                        }
-                        finally
-                        {
-                            Channel = null;
-                            try
-                            {
-                                f.Close();
-                            }
-                            finally
-                            {
-                                f = null;
-                                lock (LOCK_HELD)
-                                {
-                                    LOCK_HELD.Remove(Path.FullName);
-                                }
-                            }
-                        }
+                        IOUtils.CloseWhileHandlingException(Channel);
+                        Channel = null;
                     }
+
                     bool tmpBool;
                     if (File.Exists(Path.FullName))
                     {
@@ -419,7 +246,7 @@ namespace Lucene.Net.Store
                     // The test for is isLocked is not directly possible with native file locks:
 
                     // First a shortcut, if a lock reference in this instance is available
-                    if (LockExists())
+                    if (Channel != null)
                     {
                         return true;
                     }

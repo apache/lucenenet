@@ -167,9 +167,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 int fieldType = meta.ReadByte();
                 if (fieldType == NUMBER)
                 {
-                    NumericEntry entry = new NumericEntry();
-                    entry.Offset = meta.ReadLong();
-                    entry.Format = meta.ReadSByte();
+                    var entry = new NumericEntry {Offset = meta.ReadLong(), Format = (sbyte)meta.ReadByte()};
                     switch (entry.Format)
                     {
                         case DELTA_COMPRESSED:

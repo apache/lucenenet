@@ -32,9 +32,7 @@ namespace Lucene.Net.Store
     ///   }.run();
     /// </pre>
     /// </summary>
-    /// <seealso cref= Directory#makeLock(String)
-    ///
-    /// @lucene.internal </seealso>
+    /// <seealso cref="Directory#makeLock(String)"/>
     public abstract class Lock : IDisposable
     {
         /// <summary>
@@ -61,7 +59,7 @@ namespace Lucene.Net.Store
         /// with the "root cause" Exception as to why the lock was
         /// not obtained.
         /// </summary>
-        protected internal Exception FailureReason;
+        public Exception FailureReason { get; protected set; }
 
         /// <summary>
         /// Attempts to obtain an exclusive lock within amount of
@@ -121,6 +119,7 @@ namespace Lucene.Net.Store
 
         public virtual void Dispose()
         {
+            Release();
         }
 
         /// <summary>

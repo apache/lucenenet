@@ -189,7 +189,7 @@ namespace Lucene.Net.Util.Fst
                             mid = (int)((uint)(low + high) >> 1);
                             @in.Position = arc.PosArcsStart;
                             @in.SkipBytes(arc.BytesPerArc * mid);
-                            sbyte flags = @in.ReadSByte();
+                            var flags = (sbyte)@in.ReadByte();
                             fst.ReadLabel(@in);
                             long minArcOutput;
                             if ((flags & FST<long>.BIT_ARC_HAS_OUTPUT) != 0)
