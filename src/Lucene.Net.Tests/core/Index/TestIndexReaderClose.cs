@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestCloseUnderException()
         {
-            int iters = 1000 + 1 + Random().Next(20);
+            int iters = 1000 + 1 + Random().Next(20); // LUCENENET TODO why so many times? maybe switch to nightly?
             for (int j = 0; j < iters; j++)
             {
                 Directory dir = NewDirectory();
