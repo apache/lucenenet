@@ -718,7 +718,7 @@ namespace Lucene.Net.Util
             {
                 return false;
             }
-            FixedBitSet other = (FixedBitSet)o;
+            var other = (FixedBitSet)o;
             if (NumBits != other.Length())
             {
                 return false;
