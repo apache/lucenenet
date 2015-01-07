@@ -1477,12 +1477,12 @@ namespace Lucene.Net.Index
 
             // compare
             DirectoryReader ir = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext context in ir.Leaves)
+            foreach (var context in ir.Leaves)
             {
                 AtomicReader r = context.AtomicReader;
                 Bits expected = FieldCache.DEFAULT.GetDocsWithField(r, "indexed");
                 Bits actual = FieldCache.DEFAULT.GetDocsWithField(r, "dv");
-                Assert.AreEqual(expected, actual);
+                AssertEquals(expected, actual);
             }
             ir.Dispose();
             dir.Dispose();

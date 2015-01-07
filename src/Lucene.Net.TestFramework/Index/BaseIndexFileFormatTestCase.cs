@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
             w.Commit();
             w.Dispose();
 
-            Assert.AreEqual(BytesUsedByExtension(dir), BytesUsedByExtension(dir2));
+            assertEquals(BytesUsedByExtension(dir), BytesUsedByExtension(dir2));
 
             reader.Dispose();
             dir.Dispose();
