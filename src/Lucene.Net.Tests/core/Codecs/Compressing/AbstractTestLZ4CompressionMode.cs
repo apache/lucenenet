@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int matchLen = token & 0x0F;
                 if (matchLen == 0x0F)
                 {
-                    while (compressed[off] == unchecked((sbyte)0xFF))
+                    while (compressed[off] == 0xFF)
                     {
                         matchLen += 0xFF;
                         ++off;
