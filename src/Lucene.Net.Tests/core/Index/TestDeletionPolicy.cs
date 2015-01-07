@@ -665,7 +665,7 @@ namespace Lucene.Net.Index
          * around, through creates.
          */
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestKeepLastNDeletionPolicyWithCreates()
         {
             const int N = 10;

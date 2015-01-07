@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestNoExtraFiles()
         {
             Directory directory = NewDirectory();
@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();
@@ -409,7 +409,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestTotalBytesSize()
         {
             Directory d = NewDirectory();

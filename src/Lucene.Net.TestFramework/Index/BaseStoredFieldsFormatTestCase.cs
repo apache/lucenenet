@@ -418,7 +418,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public void TestEmptyDocs()
         {
             Directory dir = NewDirectory();
@@ -447,7 +447,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public void TestConcurrentReads()
         {
             Directory dir = NewDirectory();
@@ -500,8 +500,8 @@ namespace Lucene.Net.Index
             private readonly BaseStoredFieldsFormatTestCase OuterInstance;
 
             private int NumDocs;
-            private DirectoryReader Rd;
-            private IndexSearcher Searcher;
+            private readonly DirectoryReader Rd;
+            private readonly IndexSearcher Searcher;
             private int ReadsPerThread;
             private AtomicReference<Exception> Ex;
             private int i;

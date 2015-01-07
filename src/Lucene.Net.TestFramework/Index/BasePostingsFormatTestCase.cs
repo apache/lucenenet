@@ -1217,71 +1217,71 @@ namespace Lucene.Net.Index
         private void TestFull(FieldInfo.IndexOptions options, bool withPayloads)
         {
             DirectoryInfo path = CreateTempDir("testPostingsFormat.testExact");
-            Directory dir = NewFSDirectory(path);
-
-            // TODO test thread safety of buildIndex too
-            var fieldsProducer = BuildIndex(dir, options, withPayloads, true);
-
-            TestFields(fieldsProducer);
-
-            var allOptions = (FieldInfo.IndexOptions[])Enum.GetValues(typeof(FieldInfo.IndexOptions));//IndexOptions_e.values();
-            int maxIndexOption = Arrays.AsList(allOptions).IndexOf(options);
-
-            for (int i = 0; i <= maxIndexOption; i++)
+            using (Directory dir = NewFSDirectory(path))
             {
-                ISet<Option> allOptionsHashSet = new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>());
-                TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
-                if (withPayloads)
-                {
-                    // If we indexed w/ payloads, also test enums w/o accessing payloads:
-                    ISet<Option> payloadsHashSet = new HashSet<Option>() { Option.PAYLOADS };
-                    var complementHashSet = new HashSet<Option>(allOptionsHashSet.Except(payloadsHashSet));
-                    TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
-                }
-            }
+                // TODO test thread safety of buildIndex too
+                var fieldsProducer = BuildIndex(dir, options, withPayloads, true);
 
-            fieldsProducer.Dispose();
-            dir.Dispose();
-            System.IO.Directory.Delete(path.FullName, true);
+                TestFields(fieldsProducer);
+
+                var allOptions = (FieldInfo.IndexOptions[]) Enum.GetValues(typeof (FieldInfo.IndexOptions));
+                    //IndexOptions_e.values();
+                int maxIndexOption = Arrays.AsList(allOptions).IndexOf(options);
+
+                for (int i = 0; i <= maxIndexOption; i++)
+                {
+                    ISet<Option> allOptionsHashSet = new HashSet<Option>(Enum.GetValues(typeof (Option)).Cast<Option>());
+                    TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
+                    if (withPayloads)
+                    {
+                        // If we indexed w/ payloads, also test enums w/o accessing payloads:
+                        ISet<Option> payloadsHashSet = new HashSet<Option>() {Option.PAYLOADS};
+                        var complementHashSet = new HashSet<Option>(allOptionsHashSet.Except(payloadsHashSet));
+                        TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
+                    }
+                }
+
+                fieldsProducer.Dispose();
+            }
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestDocsOnly()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_ONLY, false);
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqs()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS, false);
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqsAndPositions()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, false);
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqsAndPositionsAndPayloads()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, true);
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqsAndPositionsAndOffsets()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, false);
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads()
         {
             TestFull(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, true);
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestRandom()
         {
             int iters = 5;
