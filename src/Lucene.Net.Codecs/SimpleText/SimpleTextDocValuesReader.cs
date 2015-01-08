@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
 
                 // skip past bytes
-                var bytes = new sbyte[len];
+                var bytes = new byte[len];
                 _input.ReadBytes(bytes, 0, len);
                 SimpleTextUtil.ReadLine(_input, _scratch); // newline
                 SimpleTextUtil.ReadLine(_input, _scratch); // 'T' or 'F'
@@ -415,7 +415,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     throw e;
                 }
 
-                result.Bytes = new sbyte[len];
+                result.Bytes = new byte[len];
                 result.Offset = 0;
                 result.Length = len;
                 _input.ReadBytes(result.Bytes, 0, len);
@@ -500,7 +500,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     throw e;
                 }
 
-                result.Bytes = new sbyte[len];
+                result.Bytes = new byte[len];
                 result.Offset = 0;
                 result.Length = len;
                 _input.ReadBytes(result.Bytes, 0, len);
@@ -591,7 +591,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
                 }
 
-                result.Bytes = new sbyte[len];
+                result.Bytes = new byte[len];
                 result.Offset = 0;
                 result.Length = len;
                 _input.ReadBytes(result.Bytes, 0, len);

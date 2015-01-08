@@ -753,7 +753,7 @@ namespace Lucene.Net.Codecs.Sep
 
                     if (_payload == null)
                     {
-                        _payload = new BytesRef {Bytes = new sbyte[_payloadLength]};
+                        _payload = new BytesRef {Bytes = new byte[_payloadLength]};
                     }
                     else if (_payload.Bytes.Length < _payloadLength)
                     {

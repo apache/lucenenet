@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.Memory
                 count++;
                 if (count >= DirectDocValuesFormat.MAX_SORTED_SET_ORDS)
                 {
-                    throw new ArgumentException("DocValuesField \"" + field.name + "\" is too large, must be <= " +
+                    throw new ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " +
                                                        DirectDocValuesFormat.MAX_SORTED_SET_ORDS + " values/total ords");
                 }
             }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.Memory
                 meta.WriteLong(-1L);
             }
 
-            sbyte byteWidth;
+            byte byteWidth;
             if (minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
             {
                 byteWidth = 1;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Memory
                 switch (byteWidth)
                 {
                     case 1:
-                        data.WriteByte((sbyte) v);
+                        data.WriteByte((byte)(sbyte) v);
                         break;
                     case 2:
                         data.WriteShort((short) v);
@@ -342,8 +342,8 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
 
-                internal long sum;
-                internal bool ended;
+                private long sum;
+                private bool ended;
 
                 public virtual bool HasNext()
                 {
@@ -355,7 +355,7 @@ namespace Lucene.Net.Codecs.Memory
                     long toReturn = sum;
                     if (_iter.hasNext())
                     {
-                        long n = _iter.next();
+                        long n = _iter.Next();
                         if (n != null)
                         {
                             sum += n;

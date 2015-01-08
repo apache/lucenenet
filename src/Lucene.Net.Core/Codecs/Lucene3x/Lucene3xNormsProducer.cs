@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal readonly int Maxdoc;
 
-        private readonly AtomicLong RamBytesUsed_Renamed;
+        private readonly AtomicLong ramBytesUsed;
 
         // note: just like segmentreader in 3.x, we open up all the files here (including separate norms) up front.
         // but we just don't do any seeks or reading yet.
@@ -143,7 +143,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     IOUtils.CloseWhileHandlingException(OpenFiles);
                 }
             }
-            RamBytesUsed_Renamed = new AtomicLong();
+            ramBytesUsed = new AtomicLong();
         }
 
         protected override void Dispose(bool disposing)
@@ -196,9 +196,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             private readonly Lucene3xNormsProducer OuterInstance;
 
-            internal readonly IndexInput File;
-            internal readonly long Offset;
-            internal NumericDocValues Instance_Renamed;
+            private readonly IndexInput File;
+            private readonly long Offset;
+            private NumericDocValues Instance_Renamed;
 
             public NormsDocValues(Lucene3xNormsProducer outerInstance, IndexInput normInput, long normSeek)
             {
@@ -228,7 +228,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                 OuterInstance.OpenFiles.Remove(File);
                                 File.Dispose();
                             }
-                            OuterInstance.RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
+                            OuterInstance.ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
                             Instance_Renamed = new NumericDocValuesAnonymousInnerClassHelper(this, bytes);
                         }
                         return Instance_Renamed;
@@ -281,7 +281,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override long RamBytesUsed()
         {
-            return RamBytesUsed_Renamed.Get();
+            return ramBytesUsed.Get();
         }
 
         public override void CheckIntegrity()

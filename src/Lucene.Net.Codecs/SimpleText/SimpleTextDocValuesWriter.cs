@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // pad to fit
                 for (int i = length; i < maxLength; i++)
                 {
-                    data.WriteByte((sbyte) ' ');
+                    data.WriteByte((byte)(sbyte) ' ');
                 }
                 SimpleTextUtil.WriteNewline(data);
                 SimpleTextUtil.Write(data, value == null ? "F" : "T", scratch);
@@ -205,7 +205,7 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.WriteNewline(data);
 
             int maxBytesLength = Convert.ToString(maxLength).Length;
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (int i = 0; i < maxBytesLength; i++)
             {
                 sb.Append('0');
@@ -249,7 +249,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // pad to fit
                 for (int i = value.Length; i < maxLength; i++)
                 {
-                    data.WriteByte((sbyte) ' ');
+                    data.WriteByte((byte)(sbyte) ' ');
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
@@ -291,7 +291,7 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.WriteNewline(data);
 
             int maxBytesLength = Convert.ToString(maxLength).Length;
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (int i = 0; i < maxBytesLength; i++)
             {
                 sb.Append('0');
@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.SimpleText
             foreach (var n in docToOrdCount)
             {
                 sb2.Length = 0;
-                int count = (int) n;
+                var count = (int) n;
                 for (int i = 0; i < count; i++)
                 {
                     ordStream.MoveNext();
@@ -354,7 +354,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 // pad to fit
                 for (var i = value.Length; i < maxLength; i++)
                 {
-                    data.WriteByte((sbyte) ' ');
+                    data.WriteByte((byte)(sbyte) ' ');
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
