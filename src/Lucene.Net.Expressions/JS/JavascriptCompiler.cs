@@ -17,6 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Security.AccessControl;
@@ -87,10 +89,10 @@ namespace Lucene.Net.Expressions.JS
 		private static readonly MethodInfo EXPRESSION_CTOR = GetMethod("void <init>(String, String[])"
 			);
 
-		private static readonly MethodInfo EVALUATE_METHOD = GetMethod("double evaluate(int, "
+		private static readonly MethodInfo EVALUATE_METHOD = GetMethod("double Evaluate(int, "
 			 + typeof(FunctionValues).FullName + "[])");
 
-		private static readonly MethodInfo DOUBLE_VAL_METHOD = GetMethod("double doubleVal(int)"
+		private static readonly MethodInfo DOUBLE_VAL_METHOD = GetMethod("double DoubleVal(int)"
 			);
 
 		// We use the same class name for all generated classes as they all have their own class loader.
@@ -105,13 +107,12 @@ namespace Lucene.Net.Expressions.JS
 
 		private readonly string sourceText;
 
-		private readonly IDictionary<string, int> externalsMap = new LinkedHashMap<string
-			, int>();
+		private readonly IDictionary<string, int> externalsMap = new HashMap<string, int>();
 
 		private readonly ClassWriter classWriter = new System.Linq.Expressions. ClassWriter(ClassWriter.COMPUTE_FRAMES
 			 | ClassWriter.COMPUTE_MAXS);
 
-		private GeneratorAdapter gen;
+		private TypeBuilder gen;
 
 		private readonly IDictionary<string, MethodInfo> functions;
 
@@ -153,8 +154,7 @@ namespace Lucene.Net.Expressions.JS
 		/// </param>
 		/// <returns>A new compiled expression</returns>
 		/// <exception cref="Sharpen.ParseException">on failure to compile</exception>
-		public static Expression Compile(string sourceText, IDictionary<string, MethodInfo
-			> functions, ClassLoader parent)
+		public static Expression Compile(string sourceText, IDictionary<string, MethodInfo> functions, ClassLoader parent)
 		{
 			if (parent == null)
 			{
@@ -208,11 +208,10 @@ namespace Lucene.Net.Expressions.JS
 		{
 			try
 			{
-                
-
-				ITree antlrTree = GetAntlrComputedExpressionTree();
+			    
+			    ITree antlrTree = GetAntlrComputedExpressionTree();
 				BeginCompile();
-				RecursiveCompile(antlrTree, Type.DOUBLE_TYPE);
+				RecursiveCompile(antlrTree, typeof(double));
 				EndCompile();
 				Type evaluatorClass = new Loader(parent).Define(COMPILED_EXPRESSION_CLASS, classWriter.ToByteArray());
 				Constructor<Expression> constructor = evaluatorClass.GetConstructor(typeof(string
@@ -244,21 +243,14 @@ namespace Lucene.Net.Expressions.JS
 
 		private void BeginCompile()
 		{
-			classWriter.Visit(CLASSFILE_VERSION, Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER | Opcodes
-				.ACC_FINAL | Opcodes.ACC_SYNTHETIC, COMPILED_EXPRESSION_INTERNAL, null, EXPRESSION_TYPE
-				.GetInternalName(), null);
-			string clippedSourceText = (sourceText.Length <= MAX_SOURCE_LENGTH) ? sourceText : 
-				(Sharpen.Runtime.Substring(sourceText, 0, MAX_SOURCE_LENGTH - 3) + "...");
-			classWriter.VisitSource(clippedSourceText, null);
-			GeneratorAdapter constructor = new GeneratorAdapter(Opcodes.ACC_PUBLIC | Opcodes.
-				ACC_SYNTHETIC, EXPRESSION_CTOR, null, null, classWriter);
-			constructor.LoadThis();
-			constructor.LoadArgs();
-			constructor.InvokeConstructor(EXPRESSION_TYPE, EXPRESSION_CTOR);
-			constructor.ReturnValue();
-			constructor.EndMethod();
-			gen = new GeneratorAdapter(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, EVALUATE_METHOD
-				, null, null, classWriter);
+		    var assemblyName = new AssemblyName("Lucene.Net.Expressions$" + new Random().Next());
+		    AssemblyBuilder asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndCollect);
+		    ModuleBuilder modBuilder = asmBuilder.DefineDynamicModule("ExpressionsModule");
+		    gen = modBuilder.DefineType(COMPILED_EXPRESSION_CLASS,
+		        TypeAttributes.AnsiClass | TypeAttributes.AutoClass | TypeAttributes.Public | TypeAttributes.Class |
+		        TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout,typeof(Expression));
+
+		    
 		}
 
 		private void RecursiveCompile(ITree current, Type expected)
@@ -519,31 +511,26 @@ namespace Lucene.Net.Expressions.JS
 			}
 		}
 
-		private void PushArith(int op, ITree current, Type expected
-			)
+		private void PushArith(int op, ITree current, Type expected)
 		{
-			PushBinaryOp(op, current, expected, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE, Type
-				.DOUBLE_TYPE);
+			PushBinaryOp(op, current, expected, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE);
 		}
 
-		private void PushShift(int op,ITree current, Type expected
-			)
+		private void PushShift(int op,ITree current, Type expected)
 		{
-			PushBinaryOp(op, current, expected, Type.LONG_TYPE, Type.INT_TYPE, Type.LONG_TYPE
-				);
+			PushBinaryOp(op, current, expected, Type.LONG_TYPE, Type.INT_TYPE, Type.LONG_TYPE);
 		}
 
-		private void PushBitwise(int op, ITree current, Type
-			 expected)
+		private void PushBitwise(int op, ITree current, Type expected)
 		{
-			PushBinaryOp(op, current, expected, Type.LONG_TYPE, Type.LONG_TYPE, Type.LONG_TYPE
-				);
+			PushBinaryOp(op, current, expected, Type.LONG_TYPE, Type.LONG_TYPE, Type.LONG_TYPE);
 		}
 
 		private void PushBinaryOp(int op, ITree current, Type expected, Type arg1, Type arg2, Type returnType)
 		{
 			RecursiveCompile(current.GetChild(0), arg1);
 			RecursiveCompile(current.GetChild(1), arg2);
+            
 			gen.VisitInsn(op);
 			gen.Cast(returnType, expected);
 		}
@@ -668,33 +655,34 @@ namespace Lucene.Net.Expressions.JS
 			IDictionary<string, MethodInfo> map = new Dictionary<string, MethodInfo>();
 			try
 			{
-				Properties props = new Properties();
-				props.Load(@in);
-				foreach (string call in props.StringPropertyNames())
-				{
-					string[] vals = props.GetProperty(call).Split(",");
-					if (vals.Length != 3)
-					{
-						throw new Error("Syntax error while reading Javascript functions from resource");
-					}
-					Type clazz = Sharpen.Runtime.GetType(vals[0].Trim());
-					string methodName = vals[1].Trim();
-					int arity = System.Convert.ToInt32(vals[2].Trim());
-					Type[] args = new Type[arity];
-					Arrays.Fill(args, typeof(double));
-					MethodInfo method = clazz.GetMethod(methodName, args);
-					CheckFunction(method, typeof(JavascriptCompiler).GetClassLoader());
-					map.Put(call, method);
-				}
+			    var props = Properties.Settings.Default;
+			    foreach (SettingsProperty property in props.Properties)
+			    {
+			        string[] vals = props[property.Name].ToString().Split(',');
+			        if (vals.Length!=3)
+			        {
+			            throw new Exception("Error reading Javascript functions from settings");
+			        }
+			        Type clazz = Type.GetType(vals[0], true);
+			        string methodName = vals[1].Trim();
+			        int arity = int.Parse(vals[2]);
+			        Type[] args = new Type[arity];
+			        Arrays.Fill(args,typeof(double));
+			        MethodInfo method = clazz.GetMethod(methodName, args);
+			        CheckFunction(method, typeof (JavascriptCompiler));
+			        map[property.Name] = method;
+			    }
+
+			    
 			}
 			catch (Exception e)
 			{
-				throw new Error("Cannot resolve function", e);
+				throw new Exception("Cannot resolve function", e);
 			}
-			DEFAULT_FUNCTIONS = Sharpen.Collections.UnmodifiableMap(map);
+		    DEFAULT_FUNCTIONS = map;
 		}
 
-		private static void CheckFunction(MethodInfo method, ClassLoader parent)
+		private static void CheckFunction(MethodInfo method, Type parent)
 		{
 			// We can only call the function if the given parent class loader of our compiled class has access to the method:
 			ClassLoader functionClassloader = method.DeclaringType.GetClassLoader();
@@ -718,24 +706,21 @@ namespace Lucene.Net.Expressions.JS
 				}
 			}
 			// do some checks if the signature is "compatible":
-			if (!Modifier.IsStatic(method.GetModifiers()))
+			if (!(method.IsStatic))
 			{
 				throw new ArgumentException(method + " is not static.");
 			}
-			if (!Modifier.IsPublic(method.GetModifiers()))
+			if (!(method.IsPublic))
 			{
 				throw new ArgumentException(method + " is not public.");
 			}
-			if (!Modifier.IsPublic(method.DeclaringType.GetModifiers()))
+			if (!(method.DeclaringType.IsPublic))
 			{
 				throw new ArgumentException(method.DeclaringType.FullName + " is not public.");
 			}
-			foreach (Type clazz in Sharpen.Runtime.GetParameterTypes(method))
+			if (method.GetParameters().Any(parmType => parmType.ParameterType != (typeof(double))))
 			{
-				if (!clazz.Equals(typeof(double)))
-				{
-					throw new ArgumentException(method + " must take only double parameters");
-				}
+			    throw new ArgumentException(method + " must take only double parameters");
 			}
 			if (method.ReturnType != typeof(double))
 			{
