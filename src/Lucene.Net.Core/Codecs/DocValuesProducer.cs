@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public abstract void CheckIntegrity();
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);

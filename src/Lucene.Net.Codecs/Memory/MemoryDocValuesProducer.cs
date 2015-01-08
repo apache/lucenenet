@@ -29,6 +29,9 @@ using Lucene.Net.Util.Packed;
 
 namespace Lucene.Net.Codecs.Memory
 {
+
+    using Util = Lucene.Net.Util.Fst.Util;
+
     /// <summary>
     /// Reader for <seealso cref="MemoryDocValuesFormat"/>
     /// </summary>
@@ -43,7 +46,7 @@ namespace Lucene.Net.Codecs.Memory
         // ram instances we have already loaded
         private readonly IDictionary<int?, NumericDocValues> numericInstances = new Dictionary<int?, NumericDocValues>();
         private readonly IDictionary<int?, BinaryDocValues> binaryInstances = new Dictionary<int?, BinaryDocValues>();
-        private readonly IDictionary<int?, FST<long?>> fstInstances = new Dictionary<int?, FST<long?>>();
+        private readonly IDictionary<int?, FST<long>> fstInstances = new Dictionary<int?, FST<long>>();
         private readonly IDictionary<int?, Bits> docsWithFieldInstances = new Dictionary<int?, Bits>();
 
         private readonly int maxDoc;
@@ -137,9 +140,7 @@ namespace Lucene.Net.Codecs.Memory
                 int fieldType = meta.ReadByte();
                 if (fieldType == NUMBER)
                 {
-                    NumericEntry entry = new NumericEntry();
-                    entry.offset = meta.ReadLong();
-                    entry.missingOffset = meta.ReadLong();
+                    var entry = new NumericEntry {offset = meta.ReadLong(), missingOffset = meta.ReadLong()};
                     if (entry.missingOffset != -1)
                     {
                         entry.missingBytes = meta.ReadLong();
@@ -167,10 +168,12 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 else if (fieldType == BYTES)
                 {
-                    BinaryEntry entry = new BinaryEntry();
-                    entry.offset = meta.ReadLong();
-                    entry.numBytes = meta.ReadLong();
-                    entry.missingOffset = meta.ReadLong();
+                    var entry = new BinaryEntry
+                    {
+                        offset = meta.ReadLong(),
+                        numBytes = meta.ReadLong(),
+                        missingOffset = meta.ReadLong()
+                    };
                     if (entry.missingOffset != -1)
                     {
                         entry.missingBytes = meta.ReadLong();
@@ -208,7 +211,7 @@ namespace Lucene.Net.Codecs.Memory
                 NumericDocValues instance = numericInstances[field.Number];
                 if (instance == null)
                 {
-                    instance = loadNumeric(field);
+                    instance = LoadNumeric(field);
                     numericInstances[field.Number] = instance;
                 }
                 return instance;
@@ -248,7 +251,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     int formatID = data.ReadVInt();
                     int bitsPerValue = data.ReadVInt();
-                    PackedInts.Reader ordsReader = PackedInts.GetReaderNoHeader(data, PackedInts.Format.byId(formatID),
+                    var ordsReader = PackedInts.GetReaderNoHeader(data, PackedInts.Format.ById(formatID),
                         entry.packedIntsVersion, maxDoc, bitsPerValue);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(decode) + ordsReader.RamBytesUsed());
                     return new NumericDocValuesAnonymousInnerClassHelper(this, decode, ordsReader);
@@ -281,10 +284,10 @@ namespace Lucene.Net.Codecs.Memory
             private readonly MemoryDocValuesProducer outerInstance;
 
             private readonly long[] decode;
-            private readonly IntIndexInput.Reader ordsReader;
+            private readonly PackedInts.Reader ordsReader;
 
             public NumericDocValuesAnonymousInnerClassHelper(MemoryDocValuesProducer outerInstance, long[] decode,
-                IntIndexInput.Reader ordsReader)
+                PackedInts.Reader ordsReader)
             {
                 this.outerInstance = outerInstance;
                 this.decode = decode;
@@ -316,8 +319,6 @@ namespace Lucene.Net.Codecs.Memory
 
         private class NumericDocValuesAnonymousInnerClassHelper3 : NumericDocValues
         {
-            private readonly MemoryDocValuesProducer outerInstance;
-
             private readonly long min;
             private readonly long mult;
             private readonly BlockPackedReader quotientReader;
@@ -325,7 +326,6 @@ namespace Lucene.Net.Codecs.Memory
             public NumericDocValuesAnonymousInnerClassHelper3(MemoryDocValuesProducer outerInstance, long min, long mult,
                 BlockPackedReader quotientReader)
             {
-                this.outerInstance = outerInstance;
                 this.min = min;
                 this.mult = mult;
                 this.quotientReader = quotientReader;
@@ -344,7 +344,7 @@ namespace Lucene.Net.Codecs.Memory
                 BinaryDocValues instance = binaryInstances[field.Number];
                 if (instance == null)
                 {
-                    instance = loadBinary(field);
+                    instance = LoadBinary(field);
                     binaryInstances[field.Number] = instance;
                 }
                 return instance;
@@ -357,7 +357,7 @@ namespace Lucene.Net.Codecs.Memory
             data.Seek(entry.offset);
             var bytes = new PagedBytes(16);
             bytes.Copy(data, entry.numBytes);
-            PagedBytes.Reader bytesReader = bytes.Freeze(true);
+            var bytesReader = bytes.Freeze(true);
             if (entry.minLength == entry.maxLength)
             {
                 int fixedLength = entry.minLength;
@@ -376,15 +376,12 @@ namespace Lucene.Net.Codecs.Memory
 
         private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
         {
-            private readonly MemoryDocValuesProducer outerInstance;
-
-            private readonly IntIndexInput.Reader bytesReader;
+            private readonly PagedBytes.Reader bytesReader;
             private readonly int fixedLength;
 
             public BinaryDocValuesAnonymousInnerClassHelper(MemoryDocValuesProducer outerInstance,
-                IntIndexInput.Reader bytesReader, int fixedLength)
+                PagedBytes.Reader bytesReader, int fixedLength)
             {
-                this.outerInstance = outerInstance;
                 this.bytesReader = bytesReader;
                 this.fixedLength = fixedLength;
             }
@@ -399,11 +396,11 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly MemoryDocValuesProducer outerInstance;
 
-            private readonly IntIndexInput.Reader bytesReader;
+            private readonly PagedBytes.Reader bytesReader;
             private readonly MonotonicBlockPackedReader addresses;
 
             public BinaryDocValuesAnonymousInnerClassHelper2(MemoryDocValuesProducer outerInstance,
-                IntIndexInput.Reader bytesReader, MonotonicBlockPackedReader addresses)
+                PagedBytes.Reader bytesReader, MonotonicBlockPackedReader addresses)
             {
                 this.outerInstance = outerInstance;
                 this.bytesReader = bytesReader;
@@ -412,126 +409,86 @@ namespace Lucene.Net.Codecs.Memory
 
             public override void Get(int docID, BytesRef result)
             {
-                long startAddress = docID == 0 ? 0 : addresses.Get(docID - 1);
-                long endAddress = addresses.Get(docID);
+                var startAddress = docID == 0 ? 0 : addresses.Get(docID - 1);
+                var endAddress = addresses.Get(docID);
                 bytesReader.FillSlice(result, startAddress, (int) (endAddress - startAddress));
             }
         }
 
         public override SortedDocValues GetSorted(FieldInfo field)
         {
-            FSTEntry entry = fsts[field.number];
+            FSTEntry entry = fsts[field.Number];
             if (entry.numOrds == 0)
             {
                 return DocValues.EMPTY_SORTED;
             }
-            FST<long?> instance;
+            FST<long> instance;
             lock (this)
             {
-                instance = fstInstances[field.number];
+                instance = fstInstances[field.Number];
                 if (instance == null)
                 {
-                    data.seek(entry.offset);
-                    instance = new FST<>(data, PositiveIntOutputs.Singleton);
-                    ramBytesUsed.addAndGet(instance.sizeInBytes());
-                    fstInstances[field.number] = instance;
+                    data.Seek(entry.offset);
+                    instance = new FST<long>(data, PositiveIntOutputs.Singleton);
+                    ramBytesUsed.AddAndGet(instance.SizeInBytes());
+                    fstInstances[field.Number] = instance;
                 }
             }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.NumericDocValues docToOrd = getNumeric(field);
-            NumericDocValues docToOrd = getNumeric(field);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST<Long> fst = instance;
-            FST<long?> fst = instance;
+            var docToOrd = GetNumeric(field);
+            var fst = instance;
 
             // per-thread resources
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.BytesReader in = fst.getBytesReader();
-            FST.BytesReader @in = fst.BytesReader;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.Arc<Long> firstArc = new util.fst.FST.Arc<>();
-            FST.Arc<long?> firstArc = new FST.Arc<long?>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.Arc<Long> scratchArc = new util.fst.FST.Arc<>();
-            FST.Arc<long?> scratchArc = new FST.Arc<long?>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.IntsRef scratchInts = new util.IntsRef();
-            IntsRef scratchInts = new IntsRef();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.BytesRefFSTEnum<Long> fstEnum = new util.fst.BytesRefFSTEnum<>(fst);
-            BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
+            var @in = fst.BytesReader;
+            var firstArc = new FST.Arc<long>();
+            var scratchArc = new FST.Arc<long>();
+            var scratchInts = new IntsRef();
+            var fstEnum = new BytesRefFSTEnum<long>(fst);
 
-            return new SortedDocValuesAnonymousInnerClassHelper(this, entry, docToOrd, fst, @in, firstArc, scratchArc,
+            return new SortedDocValuesAnonymousInnerClassHelper(entry, docToOrd, fst, @in, firstArc, scratchArc,
                 scratchInts, fstEnum);
         }
 
         private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
         {
-            private readonly MemoryDocValuesProducer outerInstance;
+            private readonly MemoryDocValuesProducer.FSTEntry entry;
+            private readonly NumericDocValues docToOrd;
+            private readonly FST<long> fst;
+            private readonly FST.BytesReader @in;
+            private readonly FST.Arc<long> firstArc;
+            private readonly FST.Arc<long> scratchArc;
+            private readonly IntsRef scratchInts;
+            private readonly BytesRefFSTEnum<long> fstEnum;
 
-            private MemoryDocValuesProducer.FSTEntry entry;
-            private NumericDocValues docToOrd;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private util.fst.FST<long?> fst;
-            private FST<long?> fst;
-            private FST.BytesReader @in;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private util.fst.FST.Arc<long?> firstArc;
-            private FST.Arc<long?> firstArc;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private util.fst.FST.Arc<long?> scratchArc;
-            private FST.Arc<long?> scratchArc;
-            private IntsRef scratchInts;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private util.fst.BytesRefFSTEnum<long?> fstEnum;
-            private BytesRefFSTEnum<long?> fstEnum;
-
-            public SortedDocValuesAnonymousInnerClassHelper<T1, T2, T3, T4> 
-        (
-            private MemoryDocValuesProducer outerInstance, org
-        .
-            private MemoryDocValuesProducer.FSTEntry entry, NumericDocValues
-            private docToOrd 
-        ,
-            private FST<T1> fst, FST
-        .
-            private FST.BytesReader @in, FST
-        .
-            private Arc<T2> firstArc, FST
-        .
-            private Arc<T3> scratchArc, IntsRef
-            private scratchInts 
-        ,
-            private BytesRefFSTEnum<T4> fstEnum 
-        )
-        {
-            this.outerInstance = outerInstance;
-            this.entry = entry;
-            this.docToOrd = docToOrd;
-            this.fst = fst;
-            this.@in = @in;
-            this.firstArc = firstArc;
-            this.scratchArc = scratchArc;
-            this.scratchInts = scratchInts;
-            this.fstEnum = fstEnum;
-        }
-
-            public override int getOrd(int docID)
+            public SortedDocValuesAnonymousInnerClassHelper(FSTEntry fstEntry,
+                NumericDocValues numericDocValues, FST<long> fst1, FST.BytesReader @in, FST.Arc<long> arc, FST.Arc<long> scratchArc1,
+                IntsRef intsRef, BytesRefFSTEnum<long> bytesRefFstEnum)
             {
-                return (int) docToOrd.get(docID);
+                entry = fstEntry;
+                docToOrd = numericDocValues;
+                fst = fst1;
+                this.@in = @in;
+                firstArc = arc;
+                scratchArc = scratchArc1;
+                scratchInts = intsRef;
+                fstEnum = bytesRefFstEnum;
             }
 
-            public override void lookupOrd(int ord, BytesRef result)
+            public override int GetOrd(int docID)
+            {
+                return (int) docToOrd.Get(docID);
+            }
+
+            public override void LookupOrd(int ord, BytesRef result)
             {
                 try
                 {
                     @in.Position = 0;
-                    fst.getFirstArc(firstArc);
-                    IntsRef output = Util.getByOutput(fst, ord, @in, firstArc, scratchArc, scratchInts);
-                    result.bytes = new sbyte[output.length];
-                    result.offset = 0;
-                    result.length = 0;
-                    Util.toBytesRef(output, result);
+                    fst.GetFirstArc(firstArc);
+                    IntsRef output = Util.GetByOutput(fst, ord, @in, firstArc, scratchArc, scratchInts);
+                    result.Bytes = new byte[output.Length];
+                    result.Offset = 0;
+                    result.Length = 0;
+                    Util.ToBytesRef(output, result);
                 }
                 catch (IOException bogus)
                 {
@@ -543,18 +500,18 @@ namespace Lucene.Net.Codecs.Memory
             {
                 try
                 {
-                    BytesRefFSTEnum.InputOutput<long?> o = fstEnum.seekCeil(key);
+                    var o = fstEnum.SeekCeil(key);
                     if (o == null)
                     {
                         return -ValueCount - 1;
                     }
-                    else if (o.input.Equals(key))
+                    else if (o.Input.Equals(key))
                     {
-                        return (int) o.output;
+                        return (int) o.Output;
                     }
                     else
                     {
-                        return (int) -o.output - 1;
+                        return (int) -o.Output - 1;
                     }
                 }
                 catch (IOException bogus)
@@ -574,125 +531,74 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public index.SortedSetDocValues getSortedSet(index.FieldInfo field) throws java.io.IOException
-        public override SortedSetDocValues getSortedSet(FieldInfo field)
+        public override SortedSetDocValues GetSortedSet(FieldInfo field)
         {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FSTEntry entry = fsts.get(field.number);
-            FSTEntry entry = fsts[field.number];
+            var entry = fsts[field.Number];
             if (entry.numOrds == 0)
             {
                 return DocValues.EMPTY_SORTED_SET; // empty FST!
             }
-            FST<long?> instance;
+            FST<long> instance;
             lock (this)
             {
-                instance = fstInstances[field.number];
+                instance = fstInstances[field.Number];
                 if (instance == null)
                 {
-                    data.seek(entry.offset);
-                    instance = new FST<>(data, PositiveIntOutputs.Singleton);
-                    ramBytesUsed.addAndGet(instance.sizeInBytes());
-                    fstInstances[field.number] = instance;
+                    data.Seek(entry.offset);
+                    instance = new FST<long>(data, PositiveIntOutputs.Singleton);
+                    ramBytesUsed.AddAndGet(instance.SizeInBytes());
+                    fstInstances[field.Number] = instance;
                 }
             }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.BinaryDocValues docToOrds = getBinary(field);
-            BinaryDocValues docToOrds = GetBinary(field);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST<Long> fst = instance;
-            FST<long?> fst = instance;
+            var docToOrds = GetBinary(field);
+            var fst = instance;
 
             // per-thread resources
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.BytesReader in = fst.getBytesReader();
-            FST.BytesReader @in = fst.BytesReader;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.Arc<Long> firstArc = new util.fst.FST.Arc<>();
-            FST.Arc<long?> firstArc = new FST.Arc<long?>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.Arc<Long> scratchArc = new util.fst.FST.Arc<>();
-            FST.Arc<long?> scratchArc = new FST.Arc<long?>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.IntsRef scratchInts = new util.IntsRef();
-            IntsRef scratchInts = new IntsRef();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.BytesRefFSTEnum<Long> fstEnum = new util.fst.BytesRefFSTEnum<>(fst);
-            BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.BytesRef ref = new util.BytesRef();
-            BytesRef @ref = new BytesRef();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final store.ByteArrayDataInput input = new store.ByteArrayDataInput();
-            ByteArrayDataInput input = new ByteArrayDataInput();
-            return new SortedSetDocValuesAnonymousInnerClassHelper(this, entry, docToOrds, fst, @in, firstArc,
+            var @in = fst.BytesReader;
+            var firstArc = new FST.Arc<long>();
+            var scratchArc = new FST.Arc<long>();
+            var scratchInts = new IntsRef();
+            var fstEnum = new BytesRefFSTEnum<long>(fst);
+            var @ref = new BytesRef();
+            var input = new ByteArrayDataInput();
+            return new SortedSetDocValuesAnonymousInnerClassHelper(entry, docToOrds, fst, @in, firstArc,
                 scratchArc, scratchInts, fstEnum, @ref, input);
         }
 
         private class SortedSetDocValuesAnonymousInnerClassHelper : SortedSetDocValues
         {
-            private readonly MemoryDocValuesProducer outerInstance;
+            private readonly MemoryDocValuesProducer.FSTEntry entry;
+            private readonly BinaryDocValues docToOrds;
+            private readonly FST<long> fst;
+            private readonly FST.BytesReader @in;
+            private readonly FST.Arc<long> firstArc;
+            private readonly FST.Arc<long> scratchArc;
+            private readonly IntsRef scratchInts;
+            private readonly BytesRefFSTEnum<long> fstEnum;
+            private readonly BytesRef @ref;
+            private readonly ByteArrayDataInput input;
 
-            private MemoryDocValuesProducer.FSTEntry entry;
-            private BinaryDocValues docToOrds;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private util.fst.FST<long?> fst;
-            private FST<long?> fst;
-            private FST.BytesReader @in;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private util.fst.FST.Arc<long?> firstArc;
-            private FST.Arc<long?> firstArc;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private util.fst.FST.Arc<long?> scratchArc;
-            private FST.Arc<long?> scratchArc;
-            private IntsRef scratchInts;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private util.fst.BytesRefFSTEnum<long?> fstEnum;
-            private BytesRefFSTEnum<long?> fstEnum;
-            private BytesRef @ref;
-            private ByteArrayDataInput input;
+            private long currentOrd;
 
-            public SortedSetDocValuesAnonymousInnerClassHelper<T1, T2, T3, T4> 
-        (
-            private MemoryDocValuesProducer outerInstance, org
-        .
-            private MemoryDocValuesProducer.FSTEntry entry, BinaryDocValues
-            private docToOrds 
-        ,
-            private FST<T1> fst, FST
-        .
-            private BytesReader @in, FST
-        .
-            private Arc<T2> firstArc, FST
-        .
-            private Arc<T3> scratchArc, IntsRef
-            private scratchInts 
-        ,
-            private BytesRefFSTEnum<T4> fstEnum, BytesRef
-            private @ref 
-        ,
-            private ByteArrayDataInput input 
-        )
-        {
-            this.outerInstance = outerInstance;
-            this.entry = entry;
-            this.docToOrds = docToOrds;
-            this.fst = fst;
-            this.@in = @in;
-            this.firstArc = firstArc;
-            this.scratchArc = scratchArc;
-            this.scratchInts = scratchInts;
-            this.fstEnum = fstEnum;
-            this.@ref = @ref;
-            this.input = input;
-        }
-
-            internal long currentOrd;
-
-            public override long nextOrd()
+            public SortedSetDocValuesAnonymousInnerClassHelper(FSTEntry fstEntry, BinaryDocValues binaryDocValues, FST<long> fst1,
+                FST.BytesReader @in, FST.Arc<long> arc, FST.Arc<long> scratchArc1, IntsRef intsRef, BytesRefFSTEnum<long> bytesRefFstEnum,
+                BytesRef @ref, ByteArrayDataInput byteArrayDataInput)
             {
-                if (input.eof())
+                entry = fstEntry;
+                docToOrds = binaryDocValues;
+                fst = fst1;
+                this.@in = @in;
+                firstArc = arc;
+                scratchArc = scratchArc1;
+                scratchInts = intsRef;
+                fstEnum = bytesRefFstEnum;
+                this.@ref = @ref;
+                input = byteArrayDataInput;
+            }
+
+            public override long NextOrd()
+            {
+                if (input.Eof())
                 {
                     return NO_MORE_ORDS;
                 }
@@ -707,23 +613,23 @@ namespace Lucene.Net.Codecs.Memory
             {
                 set
                 {
-                    docToOrds.get(value, @ref);
-                    input.reset(@ref.bytes, @ref.offset, @ref.length);
+                    docToOrds.Get(value, @ref);
+                    input.Reset(@ref.Bytes, @ref.Offset, @ref.Length);
                     currentOrd = 0;
                 }
             }
 
-            public override void lookupOrd(long ord, BytesRef result)
+            public override void LookupOrd(long ord, BytesRef result)
             {
                 try
                 {
                     @in.Position = 0;
-                    fst.getFirstArc(firstArc);
-                    IntsRef output = Util.getByOutput(fst, ord, @in, firstArc, scratchArc, scratchInts);
-                    result.bytes = new sbyte[output.length];
-                    result.offset = 0;
-                    result.length = 0;
-                    Util.toBytesRef(output, result);
+                    fst.GetFirstArc(firstArc);
+                    IntsRef output = Util.GetByOutput(fst, ord, @in, firstArc, scratchArc, scratchInts);
+                    result.Bytes = new byte[output.Length];
+                    result.Offset = 0;
+                    result.Length = 0;
+                    Util.ToBytesRef(output, result);
                 }
                 catch (IOException bogus)
                 {
@@ -735,18 +641,18 @@ namespace Lucene.Net.Codecs.Memory
             {
                 try
                 {
-                    BytesRefFSTEnum.InputOutput<long?> o = fstEnum.seekCeil(key);
+                    var o = fstEnum.SeekCeil(key);
                     if (o == null)
                     {
                         return -ValueCount - 1;
                     }
-                    else if (o.input.Equals(key))
+                    else if (o.Input.Equals(key))
                     {
-                        return (int) o.output;
+                        return o.Output;
                     }
                     else
                     {
-                        return -o.output - 1;
+                        return -o.Output - 1;
                     }
                 }
                 catch (IOException bogus)
@@ -760,20 +666,17 @@ namespace Lucene.Net.Codecs.Memory
                 get { return entry.numOrds; }
             }
 
-            public override TermsEnum termsEnum()
+            public override TermsEnum TermsEnum()
             {
                 return new FSTTermsEnum(fst);
             }
         }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private util.Bits getMissingBits(int fieldNumber, final long offset, final long length) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-        private Bits getMissingBits(int fieldNumber, long offset, long length)
+        private Bits GetMissingBits(int fieldNumber, long offset, long length)
         {
             if (offset == -1)
             {
-                return new Bits.MatchAllBits(maxDoc);
+                return new Bits_MatchAllBits(maxDoc);
             }
             else
             {
@@ -783,11 +686,11 @@ namespace Lucene.Net.Codecs.Memory
                     instance = docsWithFieldInstances[fieldNumber];
                     if (instance == null)
                     {
-                        IndexInput data = this.data.clone();
-                        data.seek(offset);
+                        var data = (IndexInput)this.data.Clone();
+                        data.Seek(offset);
                         Debug.Assert(length%8 == 0);
-                        long[] bits = new long[(int) length >> 3];
-                        for (int i = 0; i < bits.Length; i++)
+                        var bits = new long[(int) length >> 3];
+                        for (var i = 0; i < bits.Length; i++)
                         {
                             bits[i] = data.ReadLong();
                         }
@@ -804,23 +707,24 @@ namespace Lucene.Net.Codecs.Memory
             switch (field.DocValuesType)
             {
                 case SORTED_SET:
-                    return DocValues.docsWithValue(getSortedSet(field), maxDoc);
+                    return DocValues.DocsWithValue(GetSortedSet(field), maxDoc);
                 case SORTED:
-                    return DocValues.docsWithValue(getSorted(field), maxDoc);
+                    return DocValues.DocsWithValue(GetSorted(field), maxDoc);
                 case BINARY:
-                    BinaryEntry be = binaries[field.number];
-                    return getMissingBits(field.number, be.missingOffset, be.missingBytes);
+                    var be = binaries[field.Number];
+                    return GetMissingBits(field.Number, be.missingOffset, be.missingBytes);
                 case NUMERIC:
-                    NumericEntry ne = numerics[field.number];
-                    return getMissingBits(field.number, ne.missingOffset, ne.missingBytes);
+                    var ne = numerics[field.Number];
+                    return GetMissingBits(field.Number, ne.missingOffset, ne.missingBytes);
                 default:
                     throw new AssertionError();
             }
         }
 
-        public override void Close()
+        public override void Dispose()
         {
-            data.Close();
+            data.Dispose();
+            base.Dispose();
         }
 
         internal class NumericEntry
@@ -853,27 +757,27 @@ namespace Lucene.Net.Codecs.Memory
         // exposes FSTEnum directly as a TermsEnum: avoids binary-search next()
         internal class FSTTermsEnum : TermsEnum
         {
-            internal readonly BytesRefFSTEnum<long?> @in;
+            internal readonly BytesRefFSTEnum<long> @in;
 
             // this is all for the complicated seek(ord)...
             // maybe we should add a FSTEnum that supports this operation?
-            internal readonly FST<long?> fst;
+            internal readonly FST<long> fst;
             internal readonly FST.BytesReader bytesReader;
-            internal readonly FST.Arc<long?> firstArc = new FST.Arc<long?>();
-            internal readonly FST.Arc<long?> scratchArc = new FST.Arc<long?>();
+            internal readonly FST.Arc<long> firstArc = new FST.Arc<long>();
+            internal readonly FST.Arc<long> scratchArc = new FST.Arc<long>();
             internal readonly IntsRef scratchInts = new IntsRef();
             internal readonly BytesRef scratchBytes = new BytesRef();
 
-            internal FSTTermsEnum(FST<long?> fst)
+            internal FSTTermsEnum(FST<long> fst)
             {
                 this.fst = fst;
-                @in = new BytesRefFSTEnum<>(fst);
+                @in = new BytesRefFSTEnum<long>(fst);
                 bytesReader = fst.BytesReader;
             }
 
             public override BytesRef Next()
             {
-                BytesRefFSTEnum.InputOutput<long?> io = @in.Next();
+                var io = @in.Next();
                 return io == null ? null : io.Input;
             }
 
@@ -912,7 +816,7 @@ namespace Lucene.Net.Codecs.Memory
                 bytesReader.Position = 0;
                 fst.GetFirstArc(firstArc);
                 IntsRef output = Util.GetByOutput(fst, ord, bytesReader, firstArc, scratchArc, scratchInts);
-                scratchBytes.Bytes = new sbyte[output.Length];
+                scratchBytes.Bytes = new byte[output.Length];
                 scratchBytes.Offset = 0;
                 scratchBytes.Length = 0;
                 Util.ToBytesRef(output, scratchBytes);

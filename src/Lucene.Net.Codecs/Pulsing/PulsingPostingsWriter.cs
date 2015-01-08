@@ -404,7 +404,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
 
                 state.BYTES = new byte[(int) _buffer.FilePointer];
-                _buffer.WriteTo((sbyte[])(Array)state.BYTES, 0);
+                _buffer.WriteTo(state.BYTES, 0);
                 _buffer.Reset();
             }
             _pendingCount = 0;

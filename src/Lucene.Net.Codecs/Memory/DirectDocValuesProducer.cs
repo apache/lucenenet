@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Collections.Generic;
 using Lucene.Net.Index;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 
@@ -24,25 +25,6 @@ namespace Lucene.Net.Codecs.Memory
 	 * limitations under the License.
 	 */
 
-
-	using BinaryDocValues = index.BinaryDocValues;
-	using CorruptIndexException = index.CorruptIndexException;
-	using DocValues = index.DocValues;
-	using FieldInfo = index.FieldInfo;
-	using IndexFileNames = index.IndexFileNames;
-	using NumericDocValues = index.NumericDocValues;
-	using RandomAccessOrds = index.RandomAccessOrds;
-	using SegmentReadState = index.SegmentReadState;
-	using SortedDocValues = index.SortedDocValues;
-	using SortedSetDocValues = index.SortedSetDocValues;
-	using ChecksumIndexInput = store.ChecksumIndexInput;
-	using IndexInput = store.IndexInput;
-	using Bits = util.Bits;
-	using BytesRef = util.BytesRef;
-	using FixedBitSet = util.FixedBitSet;
-	using IOUtils = util.IOUtils;
-	using RamUsageEstimator = util.RamUsageEstimator;
-
 	/// <summary>
 	/// Reader for <seealso cref="DirectDocValuesFormat"/>
 	/// </summary>
@@ -64,7 +46,7 @@ namespace Lucene.Net.Codecs.Memory
 	  private readonly IDictionary<int?, Bits> docsWithFieldInstances = new Dictionary<int?, Bits>();
 
 	  private readonly int maxDoc;
-	  private readonly AtomicLong ramBytesUsed_Renamed;
+	  private readonly AtomicLong ramBytesUsed;
 	  private readonly int version;
 
 	  internal const sbyte NUMBER = 0;
@@ -76,28 +58,26 @@ namespace Lucene.Net.Codecs.Memory
 	  internal const int VERSION_CHECKSUM = 1;
 	  internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: DirectDocValuesProducer(index.SegmentReadState state, String dataCodec, String dataExtension, String metaCodec, String metaExtension) throws java.io.IOException
 	  internal DirectDocValuesProducer(SegmentReadState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension)
 	  {
-		maxDoc = state.segmentInfo.DocCount;
-		string metaName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, metaExtension);
+		maxDoc = state.SegmentInfo.DocCount;
+		string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
 		// read in the entries from the metadata file.
-		ChecksumIndexInput @in = state.directory.openChecksumInput(metaName, state.context);
-		ramBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.shallowSizeOfInstance(this.GetType()));
+		ChecksumIndexInput @in = state.Directory.OpenChecksumInput(metaName, state.Context);
+		ramBytesUsed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
 		bool success = false;
 		try
 		{
-		  version = CodecUtil.checkHeader(@in, metaCodec, VERSION_START, VERSION_CURRENT);
-		  readFields(@in);
+		  version = CodecUtil.CheckHeader(@in, metaCodec, VERSION_START, VERSION_CURRENT);
+		  ReadFields(@in);
 
 		  if (version >= VERSION_CHECKSUM)
 		  {
-			CodecUtil.checkFooter(@in);
+			CodecUtil.CheckFooter(@in);
 		  }
 		  else
 		  {
-			CodecUtil.checkEOF(@in);
+			CodecUtil.CheckEOF(@in);
 		  }
 		  success = true;
 		}
@@ -105,22 +85,20 @@ namespace Lucene.Net.Codecs.Memory
 		{
 		  if (success)
 		  {
-			IOUtils.close(@in);
+			IOUtils.Close(@in);
 		  }
 		  else
 		  {
-			IOUtils.closeWhileHandlingException(@in);
+			IOUtils.CloseWhileHandlingException(@in);
 		  }
 		}
 
 		success = false;
 		try
 		{
-		  string dataName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, dataExtension);
-		  data = state.directory.openInput(dataName, state.context);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int version2 = codecs.CodecUtil.checkHeader(data, dataCodec, VERSION_START, VERSION_CURRENT);
-		  int version2 = CodecUtil.checkHeader(data, dataCodec, VERSION_START, VERSION_CURRENT);
+		  string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
+		  data = state.Directory.OpenInput(dataName, state.Context);
+		  int version2 = CodecUtil.CheckHeader(data, dataCodec, VERSION_START, VERSION_CURRENT);
 		  if (version != version2)
 		  {
 			throw new CorruptIndexException("Format versions mismatch");
@@ -132,44 +110,37 @@ namespace Lucene.Net.Codecs.Memory
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(this.data);
+			IOUtils.CloseWhileHandlingException(this.data);
 		  }
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private NumericEntry readNumericEntry(store.IndexInput meta) throws java.io.IOException
-	  private NumericEntry readNumericEntry(IndexInput meta)
+	  private static NumericEntry ReadNumericEntry(IndexInput meta)
 	  {
-		NumericEntry entry = new NumericEntry();
-		entry.offset = meta.readLong();
-		entry.count = meta.readInt();
-		entry.missingOffset = meta.readLong();
-		if (entry.missingOffset != -1)
+		var entry = new NumericEntry {offset = meta.ReadLong(), count = meta.ReadInt(), missingOffset = meta.ReadLong()};
+	      if (entry.missingOffset != -1)
 		{
-		  entry.missingBytes = meta.readLong();
+		  entry.missingBytes = meta.ReadLong();
 		}
 		else
 		{
 		  entry.missingBytes = 0;
 		}
-		entry.byteWidth = meta.readByte();
+		entry.byteWidth = meta.ReadByte();
 
 		return entry;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private BinaryEntry readBinaryEntry(store.IndexInput meta) throws java.io.IOException
 	  private BinaryEntry readBinaryEntry(IndexInput meta)
 	  {
-		BinaryEntry entry = new BinaryEntry();
-		entry.offset = meta.readLong();
-		entry.numBytes = meta.readInt();
-		entry.count = meta.readInt();
-		entry.missingOffset = meta.readLong();
+		var entry = new BinaryEntry();
+		entry.offset = meta.ReadLong();
+		entry.numBytes = meta.ReadInt();
+		entry.count = meta.ReadInt();
+		entry.missingOffset = meta.ReadLong();
 		if (entry.missingOffset != -1)
 		{
-		  entry.missingBytes = meta.readLong();
+		  entry.missingBytes = meta.ReadLong();
 		}
 		else
 		{
@@ -179,38 +150,32 @@ namespace Lucene.Net.Codecs.Memory
 		return entry;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private SortedEntry readSortedEntry(store.IndexInput meta) throws java.io.IOException
-	  private SortedEntry readSortedEntry(IndexInput meta)
+	  private SortedEntry ReadSortedEntry(IndexInput meta)
 	  {
-		SortedEntry entry = new SortedEntry();
-		entry.docToOrd = readNumericEntry(meta);
+		var entry = new SortedEntry();
+		entry.docToOrd = ReadNumericEntry(meta);
+		entry.values = ReadBinaryEntry(meta);
+		return entry;
+	  }
+
+	  private SortedSetEntry ReadSortedSetEntry(IndexInput meta)
+	  {
+		var entry = new SortedSetEntry();
+		entry.docToOrdAddress = ReadNumericEntry(meta);
+		entry.ords = ReadNumericEntry(meta);
 		entry.values = readBinaryEntry(meta);
 		return entry;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private SortedSetEntry readSortedSetEntry(store.IndexInput meta) throws java.io.IOException
-	  private SortedSetEntry readSortedSetEntry(IndexInput meta)
+	  private void ReadFields(IndexInput meta)
 	  {
-		SortedSetEntry entry = new SortedSetEntry();
-		entry.docToOrdAddress = readNumericEntry(meta);
-		entry.ords = readNumericEntry(meta);
-		entry.values = readBinaryEntry(meta);
-		return entry;
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void readFields(store.IndexInput meta) throws java.io.IOException
-	  private void readFields(IndexInput meta)
-	  {
-		int fieldNumber = meta.readVInt();
+		int fieldNumber = meta.ReadVInt();
 		while (fieldNumber != -1)
 		{
-		  int fieldType = meta.readByte();
+		  int fieldType = meta.ReadByte();
 		  if (fieldType == NUMBER)
 		  {
-			numerics[fieldNumber] = readNumericEntry(meta);
+			numerics[fieldNumber] = ReadNumericEntry(meta);
 		  }
 		  else if (fieldType == BYTES)
 		  {
@@ -218,106 +183,92 @@ namespace Lucene.Net.Codecs.Memory
 		  }
 		  else if (fieldType == SORTED)
 		  {
-			sorteds[fieldNumber] = readSortedEntry(meta);
+			sorteds[fieldNumber] = ReadSortedEntry(meta);
 		  }
 		  else if (fieldType == SORTED_SET)
 		  {
-			sortedSets[fieldNumber] = readSortedSetEntry(meta);
+			sortedSets[fieldNumber] = ReadSortedSetEntry(meta);
 		  }
 		  else
 		  {
 			throw new CorruptIndexException("invalid entry type: " + fieldType + ", input=" + meta);
 		  }
-		  fieldNumber = meta.readVInt();
+		  fieldNumber = meta.ReadVInt();
 		}
 	  }
 
-	  public override long ramBytesUsed()
+	  public override long RamBytesUsed()
 	  {
-		return ramBytesUsed_Renamed.get();
+		return ramBytesUsed.Get();
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void checkIntegrity() throws java.io.IOException
-	  public override void checkIntegrity()
+	  public override void CheckIntegrity()
 	  {
 		if (version >= VERSION_CHECKSUM)
 		{
-		  CodecUtil.checksumEntireFile(data);
+		  CodecUtil.ChecksumEntireFile(data);
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public synchronized index.NumericDocValues getNumeric(index.FieldInfo field) throws java.io.IOException
-	  public override NumericDocValues getNumeric(FieldInfo field)
+	  public override NumericDocValues GetNumeric(FieldInfo field)
 	  {
 		  lock (this)
 		  {
-			NumericDocValues instance = numericInstances[field.number];
+			var instance = numericInstances[field.Number];
 			if (instance == null)
 			{
 			  // Lazy load
-			  instance = loadNumeric(numerics[field.number]);
-			  numericInstances[field.number] = instance;
+			  instance = LoadNumeric(numerics[field.Number]);
+			  numericInstances[field.Number] = instance;
 			}
 			return instance;
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private index.NumericDocValues loadNumeric(NumericEntry entry) throws java.io.IOException
-	  private NumericDocValues loadNumeric(NumericEntry entry)
+	  private NumericDocValues LoadNumeric(NumericEntry entry)
 	  {
-		data.seek(entry.offset + entry.missingBytes);
+		data.Seek(entry.offset + entry.missingBytes);
 		switch (entry.byteWidth)
 		{
 		case 1:
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] values = new byte[entry.count];
-			sbyte[] values = new sbyte[entry.count];
-			data.readBytes(values, 0, entry.count);
-			ramBytesUsed_Renamed.addAndGet(RamUsageEstimator.sizeOf(values));
-			return new NumericDocValuesAnonymousInnerClassHelper(this, values);
+			var values = new byte[entry.count];
+			data.ReadBytes(values, 0, entry.count);
+			ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
+			return new NumericDocValuesAnonymousInnerClassHelper(values);
 		}
 
 		case 2:
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final short[] values = new short[entry.count];
-			short[] values = new short[entry.count];
+			var values = new short[entry.count];
 			for (int i = 0;i < entry.count;i++)
 			{
-			  values[i] = data.readShort();
+			  values[i] = data.ReadShort();
 			}
-			ramBytesUsed_Renamed.addAndGet(RamUsageEstimator.sizeOf(values));
+			ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
 			return new NumericDocValuesAnonymousInnerClassHelper2(this, values);
 		}
 
 		case 4:
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] values = new int[entry.count];
-			int[] values = new int[entry.count];
-			for (int i = 0;i < entry.count;i++)
+			var values = new int[entry.count];
+			for (var i = 0;i < entry.count;i++)
 			{
-			  values[i] = data.readInt();
+			  values[i] = data.ReadInt();
 			}
-			ramBytesUsed_Renamed.addAndGet(RamUsageEstimator.sizeOf(values));
-			return new NumericDocValuesAnonymousInnerClassHelper3(this, values);
+			ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
+			return new NumericDocValuesAnonymousInnerClassHelper3(values);
 		}
 
 		case 8:
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long[] values = new long[entry.count];
-			long[] values = new long[entry.count];
+			var values = new long[entry.count];
 			for (int i = 0;i < entry.count;i++)
 			{
-			  values[i] = data.readLong();
+			  values[i] = data.ReadLong();
 			}
-			ramBytesUsed_Renamed.addAndGet(RamUsageEstimator.sizeOf(values));
-			return new NumericDocValuesAnonymousInnerClassHelper4(this, values);
+			ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
+			return new NumericDocValuesAnonymousInnerClassHelper4(values);
 		}
 
 		default:
@@ -327,17 +278,14 @@ namespace Lucene.Net.Codecs.Memory
 
 	  private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
 	  {
-		  private readonly DirectDocValuesProducer outerInstance;
+	      private readonly byte[] values;
 
-		  private sbyte[] values;
-
-		  public NumericDocValuesAnonymousInnerClassHelper(DirectDocValuesProducer outerInstance, sbyte[] values)
+		  public NumericDocValuesAnonymousInnerClassHelper(byte[] values)
 		  {
-			  this.outerInstance = outerInstance;
-			  this.values = values;
+		      this.values = values;
 		  }
 
-		  public override long get(int idx)
+		  public override long Get(int idx)
 		  {
 			return values[idx];
 		  }
@@ -345,17 +293,14 @@ namespace Lucene.Net.Codecs.Memory
 
 	  private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
 	  {
-		  private readonly DirectDocValuesProducer outerInstance;
-
-		  private short[] values;
+	      private readonly short[] values;
 
 		  public NumericDocValuesAnonymousInnerClassHelper2(DirectDocValuesProducer outerInstance, short[] values)
 		  {
-			  this.outerInstance = outerInstance;
-			  this.values = values;
+		      this.values = values;
 		  }
 
-		  public override long get(int idx)
+		  public override long Get(int idx)
 		  {
 			return values[idx];
 		  }
@@ -363,17 +308,14 @@ namespace Lucene.Net.Codecs.Memory
 
 	  private class NumericDocValuesAnonymousInnerClassHelper3 : NumericDocValues
 	  {
-		  private readonly DirectDocValuesProducer outerInstance;
+	      private readonly int[] values;
 
-		  private int[] values;
-
-		  public NumericDocValuesAnonymousInnerClassHelper3(DirectDocValuesProducer outerInstance, int[] values)
+		  public NumericDocValuesAnonymousInnerClassHelper3(int[] values)
 		  {
-			  this.outerInstance = outerInstance;
-			  this.values = values;
+		      this.values = values;
 		  }
 
-		  public override long get(int idx)
+		  public override long Get(int idx)
 		  {
 			return values[idx];
 		  }
@@ -381,116 +323,92 @@ namespace Lucene.Net.Codecs.Memory
 
 	  private class NumericDocValuesAnonymousInnerClassHelper4 : NumericDocValues
 	  {
-		  private readonly DirectDocValuesProducer outerInstance;
+	      private readonly long[] values;
 
-		  private long[] values;
-
-		  public NumericDocValuesAnonymousInnerClassHelper4(DirectDocValuesProducer outerInstance, long[] values)
+		  public NumericDocValuesAnonymousInnerClassHelper4(long[] values)
 		  {
-			  this.outerInstance = outerInstance;
-			  this.values = values;
+		      this.values = values;
 		  }
 
-		  public override long get(int idx)
+		  public override long Get(int idx)
 		  {
 			return values[idx];
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public synchronized index.BinaryDocValues getBinary(index.FieldInfo field) throws java.io.IOException
-	  public override BinaryDocValues getBinary(FieldInfo field)
+	  public override BinaryDocValues GetBinary(FieldInfo field)
 	  {
 		  lock (this)
 		  {
-			BinaryDocValues instance = binaryInstances[field.number];
+			var instance = binaryInstances[field.Number];
 			if (instance == null)
 			{
 			  // Lazy load
-			  instance = loadBinary(binaries[field.number]);
-			  binaryInstances[field.number] = instance;
+			  instance = LoadBinary(binaries[field.Number]);
+			  binaryInstances[field.Number] = instance;
 			}
 			return instance;
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private index.BinaryDocValues loadBinary(BinaryEntry entry) throws java.io.IOException
-	  private BinaryDocValues loadBinary(BinaryEntry entry)
+	  private BinaryDocValues LoadBinary(BinaryEntry entry)
 	  {
-		data.seek(entry.offset);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bytes = new byte[entry.numBytes];
-		sbyte[] bytes = new sbyte[entry.numBytes];
-		data.readBytes(bytes, 0, entry.numBytes);
-		data.seek(entry.offset + entry.numBytes + entry.missingBytes);
+		data.Seek(entry.offset);
+		var bytes = new byte[entry.numBytes];
+		data.ReadBytes(bytes, 0, entry.numBytes);
+		data.Seek(entry.offset + entry.numBytes + entry.missingBytes);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] address = new int[entry.count+1];
-		int[] address = new int[entry.count + 1];
+		var address = new int[entry.count + 1];
 		for (int i = 0;i < entry.count;i++)
 		{
-		  address[i] = data.readInt();
+		  address[i] = data.ReadInt();
 		}
-		address[entry.count] = data.readInt();
+		address[entry.count] = data.ReadInt();
 
-		ramBytesUsed_Renamed.addAndGet(RamUsageEstimator.sizeOf(bytes) + RamUsageEstimator.sizeOf(address));
+		ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes) + RamUsageEstimator.SizeOf(address));
 
-		return new BinaryDocValuesAnonymousInnerClassHelper(this, bytes, address);
+		return new BinaryDocValuesAnonymousInnerClassHelper(bytes, address);
 	  }
 
 	  private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
 	  {
-		  private readonly DirectDocValuesProducer outerInstance;
+	      private readonly byte[] bytes;
+		  private readonly int[] address;
 
-		  private sbyte[] bytes;
-		  private int[] address;
-
-		  public BinaryDocValuesAnonymousInnerClassHelper(DirectDocValuesProducer outerInstance, sbyte[] bytes, int[] address)
+		  public BinaryDocValuesAnonymousInnerClassHelper(byte[] bytes, int[] address)
 		  {
-			  this.outerInstance = outerInstance;
-			  this.bytes = bytes;
+		      this.bytes = bytes;
 			  this.address = address;
 		  }
 
-		  public override void get(int docID, BytesRef result)
+		  public override void Get(int docID, BytesRef result)
 		  {
-			result.bytes = bytes;
-			result.offset = address[docID];
-			result.length = address[docID + 1] - result.offset;
-		  };
+			result.Bytes = bytes;
+			result.Offset = address[docID];
+			result.Length = address[docID + 1] - result.Offset;
+		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public synchronized index.SortedDocValues getSorted(index.FieldInfo field) throws java.io.IOException
-	  public override SortedDocValues getSorted(FieldInfo field)
+	  public override SortedDocValues GetSorted(FieldInfo field)
 	  {
 		  lock (this)
 		  {
-			SortedDocValues instance = sortedInstances[field.number];
+			var instance = sortedInstances[field.Number];
 			if (instance == null)
 			{
 			  // Lazy load
-			  instance = loadSorted(field);
-			  sortedInstances[field.number] = instance;
+			  instance = LoadSorted(field);
+			  sortedInstances[field.Number] = instance;
 			}
 			return instance;
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private index.SortedDocValues loadSorted(index.FieldInfo field) throws java.io.IOException
-	  private SortedDocValues loadSorted(FieldInfo field)
+	  private SortedDocValues LoadSorted(FieldInfo field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SortedEntry entry = sorteds.get(field.number);
-		SortedEntry entry = sorteds[field.number];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.NumericDocValues docToOrd = loadNumeric(entry.docToOrd);
-		NumericDocValues docToOrd = loadNumeric(entry.docToOrd);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.BinaryDocValues values = loadBinary(entry.values);
-		BinaryDocValues values = loadBinary(entry.values);
+		SortedEntry entry = sorteds[field.Number];
+		NumericDocValues docToOrd = LoadNumeric(entry.docToOrd);
+		BinaryDocValues values = LoadBinary(entry.values);
 
 		return new SortedDocValuesAnonymousInnerClassHelper(this, entry, docToOrd, values);
 	  }
@@ -499,11 +417,11 @@ namespace Lucene.Net.Codecs.Memory
 	  {
 		  private readonly DirectDocValuesProducer outerInstance;
 
-		  private Lucene.Net.Codecs.Memory.DirectDocValuesProducer.SortedEntry entry;
-		  private NumericDocValues docToOrd;
-		  private BinaryDocValues values;
+		  private readonly SortedEntry entry;
+		  private readonly NumericDocValues docToOrd;
+		  private readonly BinaryDocValues values;
 
-		  public SortedDocValuesAnonymousInnerClassHelper(DirectDocValuesProducer outerInstance, Lucene.Net.Codecs.Memory.DirectDocValuesProducer.SortedEntry entry, NumericDocValues docToOrd, BinaryDocValues values)
+		  public SortedDocValuesAnonymousInnerClassHelper(DirectDocValuesProducer outerInstance, SortedEntry entry, NumericDocValues docToOrd, BinaryDocValues values)
 		  {
 			  this.outerInstance = outerInstance;
 			  this.entry = entry;
@@ -512,14 +430,14 @@ namespace Lucene.Net.Codecs.Memory
 		  }
 
 
-		  public override int getOrd(int docID)
+		  public override int GetOrd(int docID)
 		  {
-			return (int) docToOrd.get(docID);
+			return (int) docToOrd.Get(docID);
 		  }
 
-		  public override void lookupOrd(int ord, BytesRef result)
+		  public override void LookupOrd(int ord, BytesRef result)
 		  {
-			values.get(ord, result);
+			values.Get(ord, result);
 		  }
 
 		  public override int ValueCount
@@ -535,32 +453,22 @@ namespace Lucene.Net.Codecs.Memory
 		  // Leave termsEnum to super
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public synchronized index.SortedSetDocValues getSortedSet(index.FieldInfo field) throws java.io.IOException
-	  public override SortedSetDocValues getSortedSet(FieldInfo field)
+	  public override SortedSetDocValues GetSortedSet(FieldInfo field)
 	  {
 		  lock (this)
 		  {
-			SortedSetRawValues instance = sortedSetInstances[field.number];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SortedSetEntry entry = sortedSets.get(field.number);
-			SortedSetEntry entry = sortedSets[field.number];
+			var instance = sortedSetInstances[field.Number];
+			var entry = sortedSets[field.Number];
 			if (instance == null)
 			{
 			  // Lazy load
-			  instance = loadSortedSet(entry);
-			  sortedSetInstances[field.number] = instance;
+			  instance = LoadSortedSet(entry);
+			  sortedSetInstances[field.Number] = instance;
 			}
         
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.NumericDocValues docToOrdAddress = instance.docToOrdAddress;
-			NumericDocValues docToOrdAddress = instance.docToOrdAddress;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.NumericDocValues ords = instance.ords;
-			NumericDocValues ords = instance.ords;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.BinaryDocValues values = instance.values;
-			BinaryDocValues values = instance.values;
+			var docToOrdAddress = instance.docToOrdAddress;
+			var ords = instance.ords;
+			var values = instance.values;
         
 			// Must make a new instance since the iterator has state:
 			return new RandomAccessOrdsAnonymousInnerClassHelper(this, entry, docToOrdAddress, ords, values);
@@ -569,27 +477,24 @@ namespace Lucene.Net.Codecs.Memory
 
 	  private class RandomAccessOrdsAnonymousInnerClassHelper : RandomAccessOrds
 	  {
-		  private readonly DirectDocValuesProducer outerInstance;
+	      private readonly SortedSetEntry entry;
+		  private readonly NumericDocValues docToOrdAddress;
+		  private readonly NumericDocValues ords;
+		  private readonly BinaryDocValues values;
 
-		  private Lucene.Net.Codecs.Memory.DirectDocValuesProducer.SortedSetEntry entry;
-		  private NumericDocValues docToOrdAddress;
-		  private NumericDocValues ords;
-		  private BinaryDocValues values;
-
-		  public RandomAccessOrdsAnonymousInnerClassHelper(DirectDocValuesProducer outerInstance, Lucene.Net.Codecs.Memory.DirectDocValuesProducer.SortedSetEntry entry, NumericDocValues docToOrdAddress, NumericDocValues ords, BinaryDocValues values)
+		  public RandomAccessOrdsAnonymousInnerClassHelper(DirectDocValuesProducer outerInstance, SortedSetEntry entry, NumericDocValues docToOrdAddress, NumericDocValues ords, BinaryDocValues values)
 		  {
-			  this.outerInstance = outerInstance;
-			  this.entry = entry;
+		      this.entry = entry;
 			  this.docToOrdAddress = docToOrdAddress;
 			  this.ords = ords;
 			  this.values = values;
 		  }
 
-		  internal int ordStart;
-		  internal int ordUpto;
-		  internal int ordLimit;
+	      private int ordStart;
+	      private int ordUpto;
+	      private int ordLimit;
 
-		  public override long nextOrd()
+		  public override long NextOrd()
 		  {
 			if (ordUpto == ordLimit)
 			{
@@ -597,7 +502,7 @@ namespace Lucene.Net.Codecs.Memory
 			}
 			else
 			{
-			  return ords.get(ordUpto++);
+			  return ords.Get(ordUpto++);
 			}
 		  }
 
@@ -605,14 +510,14 @@ namespace Lucene.Net.Codecs.Memory
 		  {
 			  set
 			  {
-				ordStart = ordUpto = (int) docToOrdAddress.get(value);
-				ordLimit = (int) docToOrdAddress.get(value+1);
+				ordStart = ordUpto = (int) docToOrdAddress.Get(value);
+				ordLimit = (int) docToOrdAddress.Get(value+1);
 			  }
 		  }
 
-		  public override void lookupOrd(long ord, BytesRef result)
+		  public override void LookupOrd(long ord, BytesRef result)
 		  {
-			values.get((int) ord, result);
+			values.Get((int) ord, result);
 		  }
 
 		  public override long ValueCount
@@ -623,12 +528,12 @@ namespace Lucene.Net.Codecs.Memory
 			  }
 		  }
 
-		  public override long ordAt(int index)
+		  public override long OrdAt(int index)
 		  {
-			return ords.get(ordStart + index);
+			return ords.Get(ordStart + index);
 		  }
 
-		  public override int cardinality()
+		  public override int Cardinality()
 		  {
 			return ordLimit - ordStart;
 		  }
@@ -638,25 +543,20 @@ namespace Lucene.Net.Codecs.Memory
 		  // Leave termsEnum to super
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private SortedSetRawValues loadSortedSet(SortedSetEntry entry) throws java.io.IOException
-	  private SortedSetRawValues loadSortedSet(SortedSetEntry entry)
+	  private SortedSetRawValues LoadSortedSet(SortedSetEntry entry)
 	  {
-		SortedSetRawValues instance = new SortedSetRawValues();
-		instance.docToOrdAddress = loadNumeric(entry.docToOrdAddress);
-		instance.ords = loadNumeric(entry.ords);
-		instance.values = loadBinary(entry.values);
+		var instance = new SortedSetRawValues();
+		instance.docToOrdAddress = LoadNumeric(entry.docToOrdAddress);
+		instance.ords = LoadNumeric(entry.ords);
+		instance.values = LoadBinary(entry.values);
 		return instance;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private util.Bits getMissingBits(int fieldNumber, final long offset, final long length) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  private Bits getMissingBits(int fieldNumber, long offset, long length)
+	  private Bits GetMissingBits(int fieldNumber, long offset, long length)
 	  {
 		if (offset == -1)
 		{
-		  return new Bits.MatchAllBits(maxDoc);
+		  return new Bits_MatchAllBits(maxDoc);
 		}
 		else
 		{
@@ -666,13 +566,13 @@ namespace Lucene.Net.Codecs.Memory
 			instance = docsWithFieldInstances[fieldNumber];
 			if (instance == null)
 			{
-			  IndexInput data = this.data.clone();
-			  data.seek(offset);
+			  var data = (IndexInput)this.data.Clone();
+			  data.Seek(offset);
 			  Debug.Assert(length % 8 == 0);
-			  long[] bits = new long[(int) length >> 3];
-			  for (int i = 0; i < bits.Length; i++)
+			  var bits = new long[(int) length >> 3];
+			  for (var i = 0; i < bits.Length; i++)
 			  {
-				bits[i] = data.readLong();
+				bits[i] = data.ReadLong();
 			  }
 			  instance = new FixedBitSet(bits, maxDoc);
 			  docsWithFieldInstances[fieldNumber] = instance;
@@ -682,35 +582,32 @@ namespace Lucene.Net.Codecs.Memory
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public util.Bits getDocsWithField(index.FieldInfo field) throws java.io.IOException
-	  public override Bits getDocsWithField(FieldInfo field)
+	  public override Bits GetDocsWithField(FieldInfo field)
 	  {
 		switch (field.DocValuesType)
 		{
 		  case SORTED_SET:
-			return DocValues.docsWithValue(getSortedSet(field), maxDoc);
+			return DocValues.DocsWithValue(GetSortedSet(field), maxDoc);
 		  case SORTED:
-			return DocValues.docsWithValue(getSorted(field), maxDoc);
+			return DocValues.DocsWithValue(GetSorted(field), maxDoc);
 		  case BINARY:
-			BinaryEntry be = binaries[field.number];
-			return getMissingBits(field.number, be.missingOffset, be.missingBytes);
+			BinaryEntry be = binaries[field.Number];
+			return GetMissingBits(field.Number, be.missingOffset, be.missingBytes);
 		  case NUMERIC:
-			NumericEntry ne = numerics[field.number];
-			return getMissingBits(field.number, ne.missingOffset, ne.missingBytes);
+			NumericEntry ne = numerics[field.Number];
+			return GetMissingBits(field.Number, ne.missingOffset, ne.missingBytes);
 		  default:
 			throw new AssertionError();
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void close() throws java.io.IOException
-	  public override void close()
-	  {
-		data.close();
-	  }
+	    protected override void Dispose(bool disposing)
+	    {
+	        if (disposing)
+	            data.Dispose();
+	    }
 
-	  internal class SortedSetRawValues
+	    internal class SortedSetRawValues
 	  {
 		internal NumericDocValues docToOrdAddress;
 		internal NumericDocValues ords;
@@ -723,7 +620,7 @@ namespace Lucene.Net.Codecs.Memory
 		internal int count;
 		internal long missingOffset;
 		internal long missingBytes;
-		internal sbyte byteWidth;
+		internal byte byteWidth;
 		internal int packedIntsVersion;
 	  }
 
@@ -759,5 +656,4 @@ namespace Lucene.Net.Codecs.Memory
 		internal long numOrds;
 	  }
 	}
-
 }

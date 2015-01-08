@@ -20,5 +20,10 @@ namespace Lucene.Net
         {
             return ImmutableList.Create<T>(items.ToArray());
         }
+
+        public static ISet<T> UnmodifiableSet<T>(IEnumerable<T> items)
+        {
+            return ImmutableHashSet.Create<T>(items.ToArray());
+        }
     }
 }
