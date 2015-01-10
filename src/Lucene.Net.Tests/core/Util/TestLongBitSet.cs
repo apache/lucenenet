@@ -168,6 +168,8 @@ namespace Lucene.Net.Util
                 {
                     Assert.AreEqual(a.Cardinality(), b.Cardinality());
 
+                    a0.Length = a.Length;
+
                     BitArray a_and = (BitArray)a.Clone();
                     a_and = a_and.And(a0);
                     BitArray a_or = (BitArray)a.Clone();
