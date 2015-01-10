@@ -309,7 +309,7 @@ namespace Lucene.Net.Util
                 }
             }
             // need to skip the first, because it was the seed
-            return all.GetRange(1, all.Count);
+            return all.GetRange(1, all.Count - 1);
         }
 
         /// <summary>
