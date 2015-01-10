@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
         /// Creates a <seealso cref="CompositeReaderContext"/> for intermediate readers that aren't
         /// not top-level readers in the current context
         /// </summary>
-        internal CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent, int docbaseInParent, IList<IndexReaderContext> children)
+        internal CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent, int docbaseInParent, List<IndexReaderContext> children)
             : this(parent, reader, ordInParent, docbaseInParent, children, null)
         {
         }
@@ -48,15 +48,15 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Creates a <seealso cref="CompositeReaderContext"/> for top-level readers with parent set to <code>null</code>
         /// </summary>
-        internal CompositeReaderContext(CompositeReader reader, IList<IndexReaderContext> children, IList<AtomicReaderContext> leaves)
+        internal CompositeReaderContext(CompositeReader reader, List<IndexReaderContext> children, IList<AtomicReaderContext> leaves)
             : this(null, reader, 0, 0, children, leaves)
         {
         }
 
-        private CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent, int docbaseInParent, IList<IndexReaderContext> children, IList<AtomicReaderContext> leaves)
+        private CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent, int docbaseInParent, List<IndexReaderContext> children, IList<AtomicReaderContext> leaves)
             : base(parent, ordInParent, docbaseInParent)
         {
-            this.children = new UnmodifiableList<IndexReaderContext>(children);
+            this.children = children.AsReadOnly();
             this.leaves = leaves;
             this.reader = reader;
         }
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
                 {
                     CompositeReader cr = (CompositeReader)reader;
                     var sequentialSubReaders = cr.GetSequentialSubReaders();
-                    IList<IndexReaderContext> children = Arrays.AsList(new IndexReaderContext[sequentialSubReaders.Count]);
+                    var children = Arrays.AsList(new IndexReaderContext[sequentialSubReaders.Count]);
                     CompositeReaderContext newParent;
                     if (parent == null)
                     {
