@@ -1410,7 +1410,7 @@ namespace Lucene.Net.Index
         /// Returns all contained segments as an <b>unmodifiable</b> <seealso cref="List"/> view. </summary>
         public IList<SegmentCommitInfo> AsList()
         {
-            return Collections.UnmodifiableList<SegmentCommitInfo>(segments.ToArray());
+            return Collections.UnmodifiableList<SegmentCommitInfo>(segments);
         }
 
         /// <summary>
