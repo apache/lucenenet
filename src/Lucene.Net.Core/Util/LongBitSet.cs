@@ -355,12 +355,11 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            int startWord = (int)(startIndex >> 6);
-            int endWord = (int)((endIndex - 1) >> 6);
-
-            //LUCENE TO-DO
-            long startmask = -1L << (int)startIndex;
-            long endmask = (long)(0xffffffffffffffffUL >> (int)-endIndex);//-(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            int startWord;
+            int endWord;
+            long startmask;
+            long endmask;
+            CalculateStartEndMasks(out startWord, startIndex, endIndex, out endWord, out startmask, out endmask);
 
             if (startWord == endWord)
             {
@@ -387,12 +386,11 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            int startWord = (int)(startIndex >> 6);
-            int endWord = (int)((endIndex - 1) >> 6);
-
-            //LUCENE TO-DO
-            long startmask = -1L << (int)startIndex;
-            long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            int startWord;
+            int endWord;
+            long startmask;
+            long endmask;
+            CalculateStartEndMasks(out startWord, startIndex, endIndex, out endWord, out startmask, out endmask);
 
             // invert masks since we are clearing
             startmask = ~startmask;
@@ -407,6 +405,17 @@ namespace Lucene.Net.Util
             bits[startWord] &= startmask;
             Arrays.Fill(bits, startWord + 1, endWord, 0L);
             bits[endWord] &= endmask;
+        }
+
+        private static void CalculateStartEndMasks(out int startWord, long startIndex, long endIndex, out int endWord,
+            out long startmask, out long endmask)
+        {
+            startWord = (int) (startIndex >> 6);
+            endWord = (int) ((endIndex - 1) >> 6);
+
+            //LUCENE TO-DO
+            startmask = -1L << (int) startIndex;
+            endmask = (long)(0xffffffffffffffffUL >> (int)-endIndex); //-(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
         }
 
         public LongBitSet Clone()
