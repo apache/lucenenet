@@ -22,6 +22,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Security.AccessControl;
+using System.Text;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
 using Lucene.Net.Queries.Function;
@@ -64,20 +65,7 @@ namespace Lucene.Net.Expressions.JS
 	/// <lucene.experimental></lucene.experimental>
 	public class JavascriptCompiler
 	{
-		internal sealed class Loader : ClassLoader
-		{
-			protected internal Loader(ClassLoader parent) : base(parent)
-			{
-			}
-
-			public Type Define(string className, byte[] bytecode)
-			{
-				return DefineClass(className, bytecode, 0, bytecode.Length).AsSubclass<Expression>();
-			}
-		}
-
-		private const int CLASSFILE_VERSION = Opcodes.V1_7;
-
+		
 		private static readonly string COMPILED_EXPRESSION_CLASS = typeof(JavascriptCompiler).FullName + "$CompiledExpression";
 
 		private static readonly string COMPILED_EXPRESSION_INTERNAL = COMPILED_EXPRESSION_CLASS.Replace('.', '/');
@@ -86,21 +74,20 @@ namespace Lucene.Net.Expressions.JS
 
 		private static readonly Type FUNCTION_VALUES_TYPE = Type.GetType(typeof(FunctionValues).FullName);
 
-		private static readonly MethodInfo EXPRESSION_CTOR = GetMethod("void <init>(String, String[])"
-			);
+		private static readonly MethodInfo EXPRESSION_CTOR = GetMethod(typeof(Expression), "<init>",new []{typeof(String),typeof(String[])});
 
-		private static readonly MethodInfo EVALUATE_METHOD = GetMethod("double Evaluate(int, "
-			 + typeof(FunctionValues).FullName + "[])");
+        private static readonly MethodInfo EVALUATE_METHOD = GetMethod(EXPRESSION_TYPE, "Evaluate", new[] { typeof(int), typeof(FunctionValues[]) });
 
-		private static readonly MethodInfo DOUBLE_VAL_METHOD = GetMethod("double DoubleVal(int)"
-			);
+	    private static readonly MethodInfo DOUBLE_VAL_METHOD = GetMethod(FUNCTION_VALUES_TYPE, "DoubleVal", 
+            new[] {typeof (int)});
+			
 
 		// We use the same class name for all generated classes as they all have their own class loader.
 		// The source code is displayed as "source file name" in stack trace.
 		// to work around import clash:
-		private static MethodInfo GetMethod(string method)
+		private static MethodInfo GetMethod(Type type, string method, Type[] parms)
 		{
-			return Method.GetMethod(method);
+		    return type.GetMethod(method, parms);
 		}
 
 		private const int MAX_SOURCE_LENGTH = 16384;
@@ -109,10 +96,9 @@ namespace Lucene.Net.Expressions.JS
 
 		private readonly IDictionary<string, int> externalsMap = new HashMap<string, int>();
 
-		private readonly ClassWriter classWriter = new System.Linq.Expressions. ClassWriter(ClassWriter.COMPUTE_FRAMES
-			 | ClassWriter.COMPUTE_MAXS);
+		
 
-		private TypeBuilder gen;
+		private TypeBuilder dynamicType;
 
 		private readonly IDictionary<string, MethodInfo> functions;
 
@@ -122,11 +108,10 @@ namespace Lucene.Net.Expressions.JS
 		/// <remarks>Compiles the given expression.</remarks>
 		/// <param name="sourceText">The expression to compile</param>
 		/// <returns>A new compiled expression</returns>
-		/// <exception cref="Sharpen.ParseException">on failure to compile</exception>
+		
 		public static Expression Compile(string sourceText)
 		{
-			return new JavascriptCompiler(sourceText).CompileExpression(typeof(JavascriptCompiler
-				).GetClassLoader());
+			return new JavascriptCompiler(sourceText).CompileExpression();
 		}
 
 		/// <summary>Compiles the given expression with the supplied custom functions.</summary>
@@ -153,18 +138,15 @@ namespace Lucene.Net.Expressions.JS
 		/// .
 		/// </param>
 		/// <returns>A new compiled expression</returns>
-		/// <exception cref="Sharpen.ParseException">on failure to compile</exception>
-		public static Expression Compile(string sourceText, IDictionary<string, MethodInfo> functions, ClassLoader parent)
+		
+		public static Expression Compile(string sourceText, IDictionary<string, MethodInfo> functions)
 		{
-			if (parent == null)
-			{
-				throw new ArgumentNullException("A parent ClassLoader must be given.");
-			}
+			
 			foreach (MethodInfo m in functions.Values)
 			{
-				CheckFunction(m, parent);
+				CheckFunction(m);
 			}
-			return new JavascriptCompiler(sourceText, functions).CompileExpression(parent);
+			return new JavascriptCompiler(sourceText, functions).CompileExpression();
 		}
 
 		/// <summary>This method is unused, it is just here to make sure that the function signatures don't change.
@@ -181,7 +163,7 @@ namespace Lucene.Net.Expressions.JS
 		}
 
 		/// <summary>Constructs a compiler for expressions.</summary>
-		/// <remarks>Constructs a compiler for expressions.</remarks>
+		
 		/// <param name="sourceText">The expression to compile</param>
 		private JavascriptCompiler(string sourceText) : this(sourceText, DEFAULT_FUNCTIONS
 			)
@@ -204,7 +186,7 @@ namespace Lucene.Net.Expressions.JS
 		/// <summary>Compiles the given expression with the specified parent classloader</summary>
 		/// <returns>A new compiled expression</returns>
 		
-		private Expression CompileExpression(ClassLoader parent)
+		private Expression CompileExpression()
 		{
 			try
 			{
@@ -213,23 +195,11 @@ namespace Lucene.Net.Expressions.JS
 				BeginCompile();
 				RecursiveCompile(antlrTree, typeof(double));
 				EndCompile();
-				Type evaluatorClass = new Loader(parent).Define(COMPILED_EXPRESSION_CLASS, classWriter.ToByteArray());
-				Constructor<Expression> constructor = evaluatorClass.GetConstructor(typeof(string
-					), typeof(string[]));
-				return constructor.NewInstance(sourceText, Sharpen.Collections.ToArray(externalsMap
-					.Keys, new string[externalsMap.Count]));
+			    return (Expression) Activator.CreateInstance(dynamicType.CreateType(),new object[] {sourceText,externalsMap.Keys});
+				
 			}
-			catch (InstantiationException exception)
-			{
-				throw new InvalidOperationException("An internal error occurred attempting to compile the expression ("
-					 + sourceText + ").", exception);
-			}
+			
 			catch (MemberAccessException exception)
-			{
-				throw new InvalidOperationException("An internal error occurred attempting to compile the expression ("
-					 + sourceText + ").", exception);
-			}
-			catch (NoSuchMethodException exception)
 			{
 				throw new InvalidOperationException("An internal error occurred attempting to compile the expression ("
 					 + sourceText + ").", exception);
@@ -246,11 +216,18 @@ namespace Lucene.Net.Expressions.JS
 		    var assemblyName = new AssemblyName("Lucene.Net.Expressions$" + new Random().Next());
 		    AssemblyBuilder asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndCollect);
 		    ModuleBuilder modBuilder = asmBuilder.DefineDynamicModule("ExpressionsModule");
-		    gen = modBuilder.DefineType(COMPILED_EXPRESSION_CLASS,
+		    dynamicType = modBuilder.DefineType(COMPILED_EXPRESSION_CLASS,
 		        TypeAttributes.AnsiClass | TypeAttributes.AutoClass | TypeAttributes.Public | TypeAttributes.Class |
-		        TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout,typeof(Expression));
-
+		        TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout,EXPRESSION_TYPE);
+		    dynamicType.DefineConstructor(MethodAttributes.Public, CallingConventions.HasThis,
+		        new[] {typeof (string), typeof (string[])});
+		    var evalMethod = dynamicType.DefineMethod("Evaluate", MethodAttributes.Public | MethodAttributes.Virtual, typeof (double),
+		        new[] {typeof (int), typeof (FunctionValues[])});
+		    gen = evalMethod.GetILGenerator();
 		    
+            
+		    dynamicType.DefineMethodOverride(evalMethod,EVALUATE_METHOD);
+            
 		}
 
 		private void RecursiveCompile(ITree current, Type expected)
@@ -277,10 +254,9 @@ namespace Lucene.Net.Expressions.JS
 					}
 					for (int argument = 1; argument <= arguments; ++argument)
 					{
-						RecursiveCompile(current.GetChild(argument), Type.DOUBLE_TYPE);
+						RecursiveCompile(current.GetChild(argument), typeof(double));
 					}
-					gen.InvokeStatic(Type.GetType(method.DeclaringType), Method.GetMethod(method));
-					gen.Cast(Type.DOUBLE_TYPE, expected);
+                    gen.Emit(OpCodes.Call,method);
 					break;
 				}
 
@@ -289,187 +265,191 @@ namespace Lucene.Net.Expressions.JS
 					int index;
 					if (externalsMap.ContainsKey(text))
 					{
-						index = externalsMap.Get(text);
+						index = externalsMap[text];
 					}
 					else
 					{
 						index = externalsMap.Count;
-						externalsMap.Put(text, index);
+						externalsMap[text] = index;
 					}
-					gen.LoadArg(1);
-					gen.Push(index);
-					gen.ArrayLoad(FUNCTION_VALUES_TYPE);
-					gen.LoadArg(0);
-					gen.InvokeVirtual(FUNCTION_VALUES_TYPE, DOUBLE_VAL_METHOD);
-					gen.Cast(Type.DOUBLE_TYPE, expected);
+                    gen.Emit(OpCodes.Newarr,typeof(FunctionValues));
+                    gen.Emit(OpCodes.Ldarg_2);
+                    gen.Emit(OpCodes.Ldc_I4_0);
+                    gen.Emit(OpCodes.Ldelem_Ref);
+                    gen.Emit(OpCodes.Callvirt,DOUBLE_VAL_METHOD);
+                    gen.Emit(OpCodes.Ldarg_2);
+                    gen.Emit(OpCodes.Ldc_I4_1);
+                    gen.Emit(OpCodes.Ldelem_Ref);
+                    gen.Emit(OpCodes.Callvirt,DOUBLE_VAL_METHOD);
 					break;
 				}
 
 				case JavascriptParser.HEX:
 				{
-					PushLong(expected, long.Parse(Sharpen.Runtime.Substring(text, 2), 16));
+					PushLong(expected, Convert.ToInt64(text.Substring(2),16));
 					break;
 				}
 
 				case JavascriptParser.OCTAL:
 				{
-					PushLong(expected, long.Parse(Sharpen.Runtime.Substring(text, 1), 8));
+                    PushLong(expected, Convert.ToInt64(text.Substring(2), 8));
 					break;
 				}
 
 				case JavascriptParser.DECIMAL:
 				{
-					gen.Push(double.ParseDouble(text));
-					gen.Cast(Type.DOUBLE_TYPE, expected);
+                    //dynamicType.Push(double.ParseDouble(text));
+                    //dynamicType.Cast(typeof(double), expected);
 					break;
 				}
 
 				case JavascriptParser.AT_NEGATE:
 				{
-					RecursiveCompile(current.GetChild(0), Type.DOUBLE_TYPE);
-					gen.VisitInsn(Opcodes.DNEG);
-					gen.Cast(Type.DOUBLE_TYPE, expected);
+					RecursiveCompile(current.GetChild(0), typeof(double));
+					/*dynamicType.VisitInsn(Opcodes.DNEG);
+					dynamicType.Cast(typeof(double), expected);*/
 					break;
 				}
 
 				case JavascriptParser.AT_ADD:
 				{
-					PushArith(Opcodes.DADD, current, expected);
+					PushArith(OpCodes.Add, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_SUBTRACT:
 				{
-					PushArith(Opcodes.DSUB, current, expected);
+					PushArith(OpCodes.Sub, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_MULTIPLY:
 				{
-					PushArith(Opcodes.DMUL, current, expected);
+					PushArith(OpCodes.Mul, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_DIVIDE:
 				{
-					PushArith(Opcodes.DDIV, current, expected);
+					PushArith(OpCodes.Div, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_MODULO:
 				{
-					PushArith(Opcodes.DREM, current, expected);
+					PushArith(OpCodes.Rem, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_BIT_SHL:
 				{
-					PushShift(Opcodes.LSHL, current, expected);
+					PushShift(OpCodes.Shl, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_BIT_SHR:
 				{
-					PushShift(Opcodes.LSHR, current, expected);
+					PushShift(OpCodes.Shr, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_BIT_SHU:
 				{
-					PushShift(Opcodes.LUSHR, current, expected);
+					PushShift(OpCodes.Shr_Un, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_BIT_AND:
 				{
-					PushBitwise(Opcodes.LAND, current, expected);
+					PushBitwise(OpCodes.And, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_BIT_OR:
 				{
-					PushBitwise(Opcodes.LOR, current, expected);
+					PushBitwise(OpCodes.Or, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_BIT_XOR:
 				{
-					PushBitwise(Opcodes.LXOR, current, expected);
+					PushBitwise(OpCodes.Xor, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_BIT_NOT:
 				{
-					RecursiveCompile(current.GetChild(0), Type.LONG_TYPE);
-					gen.Push(-1L);
-					gen.VisitInsn(Opcodes.LXOR);
-					gen.Cast(Type.LONG_TYPE, expected);
+					RecursiveCompile(current.GetChild(0), typeof(long));
+					gen.Emit(OpCodes.Ldc_I4_M1);
+                    //dynamicType.Push(-1L);
+                    //dynamicType.VisitInsn(Opcodes.LXOR);
+                    //dynamicType.Cast(typeof(long), expected);
 					break;
 				}
 
 				case JavascriptParser.AT_COMP_EQ:
 				{
-					PushCond(GeneratorAdapter.EQ, current, expected);
+					PushCond(OpCodes.Ceq, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_COMP_NEQ:
 				{
-					PushCond(GeneratorAdapter.NE, current, expected);
+					//PushCond(OpCodes, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_COMP_LT:
 				{
-					PushCond(GeneratorAdapter.LT, current, expected);
+					PushCond(OpCodes.Clt, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_COMP_GT:
 				{
-					PushCond(GeneratorAdapter.GT, current, expected);
+					PushCond(OpCodes.Cgt, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_COMP_LTE:
 				{
-					PushCond(GeneratorAdapter.LE, current, expected);
+					//PushCond(OpCodes.Clt | OpCodes.Ceq, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_COMP_GTE:
 				{
-					PushCond(GeneratorAdapter.GE, current, expected);
+					//PushCond(GeneratorAdapter.GE, current, expected);
 					break;
 				}
 
 				case JavascriptParser.AT_BOOL_NOT:
 				{
-					Label labelNotTrue = new Label();
+					/*Label labelNotTrue = new Label();
 					Label labelNotReturn = new Label();
 					RecursiveCompile(current.GetChild(0), Type.INT_TYPE);
-					gen.VisitJumpInsn(Opcodes.IFEQ, labelNotTrue);
+					dynamicType.VisitJumpInsn(Opcodes.IFEQ, labelNotTrue);
 					PushBoolean(expected, false);
-					gen.GoTo(labelNotReturn);
-					gen.VisitLabel(labelNotTrue);
+					dynamicType.GoTo(labelNotReturn);
+					dynamicType.VisitLabel(labelNotTrue);
 					PushBoolean(expected, true);
-					gen.VisitLabel(labelNotReturn);
+					dynamicType.VisitLabel(labelNotReturn);*/
 					break;
 				}
 
 				case JavascriptParser.AT_BOOL_AND:
 				{
-					Label andFalse = new Label();
+					/*Label andFalse = new Label();
 					Label andEnd = new Label();
 					RecursiveCompile(current.GetChild(0), Type.INT_TYPE);
-					gen.VisitJumpInsn(Opcodes.IFEQ, andFalse);
+					dynamicType.VisitJumpInsn(Opcodes.IFEQ, andFalse);
 					RecursiveCompile(current.GetChild(1), Type.INT_TYPE);
-					gen.VisitJumpInsn(Opcodes.IFEQ, andFalse);
+					dynamicType.VisitJumpInsn(Opcodes.IFEQ, andFalse);
 					PushBoolean(expected, true);
-					gen.GoTo(andEnd);
-					gen.VisitLabel(andFalse);
+					dynamicType.GoTo(andEnd);
+					dynamicType.VisitLabel(andFalse);
 					PushBoolean(expected, false);
-					gen.VisitLabel(andEnd);
+					dynamicType.VisitLabel(andEnd);*/
 					break;
 				}
 
@@ -477,76 +457,75 @@ namespace Lucene.Net.Expressions.JS
 				{
 					Label orTrue = new Label();
 					Label orEnd = new Label();
-					RecursiveCompile(current.GetChild(0), Type.INT_TYPE);
-					gen.VisitJumpInsn(Opcodes.IFNE, orTrue);
+					/*RecursiveCompile(current.GetChild(0), Type.INT_TYPE);
+					dynamicType.VisitJumpInsn(Opcodes.IFNE, orTrue);
 					RecursiveCompile(current.GetChild(1), Type.INT_TYPE);
-					gen.VisitJumpInsn(Opcodes.IFNE, orTrue);
+					dynamicType.VisitJumpInsn(Opcodes.IFNE, orTrue);
 					PushBoolean(expected, false);
-					gen.GoTo(orEnd);
-					gen.VisitLabel(orTrue);
+					dynamicType.GoTo(orEnd);
+					dynamicType.VisitLabel(orTrue);
 					PushBoolean(expected, true);
-					gen.VisitLabel(orEnd);
+					dynamicType.VisitLabel(orEnd);*/
 					break;
 				}
 
 				case JavascriptParser.AT_COND_QUE:
 				{
-					Label condFalse = new Label();
+					/*Label condFalse = new Label();
 					Label condEnd = new Label();
 					RecursiveCompile(current.GetChild(0), Type.INT_TYPE);
-					gen.VisitJumpInsn(Opcodes.IFEQ, condFalse);
+					dynamicType.VisitJumpInsn(Opcodes.IFEQ, condFalse);
 					RecursiveCompile(current.GetChild(1), expected);
-					gen.GoTo(condEnd);
-					gen.VisitLabel(condFalse);
+					dynamicType.GoTo(condEnd);
+					dynamicType.VisitLabel(condFalse);
 					RecursiveCompile(current.GetChild(2), expected);
-					gen.VisitLabel(condEnd);
+					dynamicType.VisitLabel(condEnd);*/
 					break;
 				}
 
 				default:
 				{
-					throw new InvalidOperationException("Unknown operation specified: (" + current.GetText
-						() + ").");
+					throw new InvalidOperationException("Unknown operation specified: (" + current.Text + ").");
 				}
 			}
 		}
 
-		private void PushArith(int op, ITree current, Type expected)
+		private void PushArith(OpCode op, ITree current, Type expected)
 		{
-			PushBinaryOp(op, current, expected, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE);
+			PushBinaryOp(op, current, expected, typeof(double), typeof(double), typeof(double));
 		}
 
-		private void PushShift(int op,ITree current, Type expected)
+		private void PushShift(OpCode op,ITree current, Type expected)
 		{
-			PushBinaryOp(op, current, expected, Type.LONG_TYPE, Type.INT_TYPE, Type.LONG_TYPE);
+			PushBinaryOp(op, current, expected, typeof(long), typeof(int), typeof(long));
 		}
 
-		private void PushBitwise(int op, ITree current, Type expected)
+		private void PushBitwise(OpCode op, ITree current, Type expected)
 		{
-			PushBinaryOp(op, current, expected, Type.LONG_TYPE, Type.LONG_TYPE, Type.LONG_TYPE);
+			PushBinaryOp(op, current, expected, typeof(long), typeof(long), typeof(long));
 		}
 
-		private void PushBinaryOp(int op, ITree current, Type expected, Type arg1, Type arg2, Type returnType)
+		private void PushBinaryOp(OpCode op, ITree current, Type expected, Type arg1, Type arg2, Type returnType)
 		{
 			RecursiveCompile(current.GetChild(0), arg1);
 			RecursiveCompile(current.GetChild(1), arg2);
             
-			gen.VisitInsn(op);
-			gen.Cast(returnType, expected);
+			/*dynamicType.VisitInsn(op);
+			dynamicType.Cast(returnType, expected);*/
 		}
 
-		private void PushCond(int @operator, ITree current, Type expected)
+		private void PushCond(OpCode @operator, ITree current, Type expected)
 		{
 			Label labelTrue = new Label();
 			Label labelReturn = new Label();
-			RecursiveCompile(current.GetChild(0), Type.DOUBLE_TYPE);
-			RecursiveCompile(current.GetChild(1), Type.DOUBLE_TYPE);
-			gen.IfCmp(Type.DOUBLE_TYPE, @operator, labelTrue);
+			RecursiveCompile(current.GetChild(0), typeof(double));
+			RecursiveCompile(current.GetChild(1), typeof(double));
+			/*dynamicType.IfCmp(typeof(double), @operator, labelTrue);
 			PushBoolean(expected, false);
-			gen.GoTo(labelReturn);
-			gen.VisitLabel(labelTrue);
+			dynamicType.GoTo(labelReturn);
+			dynamicType.VisitLabel(labelTrue);
 			PushBoolean(expected, true);
-			gen.VisitLabel(labelReturn);
+			dynamicType.VisitLabel(labelReturn);*/
 		}
 
 		private void PushBoolean(Type expected, bool truth)
@@ -555,19 +534,19 @@ namespace Lucene.Net.Expressions.JS
 			{
 				case Type.INT:
 				{
-					gen.Push(truth);
+					dynamicType.Push(truth);
 					break;
 				}
 
 				case Type.LONG:
 				{
-					gen.Push(truth ? 1L : 0L);
+					dynamicType.Push(truth ? 1L : 0L);
 					break;
 				}
 
 				case Type.DOUBLE:
 				{
-					gen.Push(truth ? 1. : 0.);
+					dynamicType.Push(truth ? 1. : 0.);
 					break;
 				}
 
@@ -584,19 +563,19 @@ namespace Lucene.Net.Expressions.JS
 			{
 				case Type.INT:
 				{
-					gen.Push((int)i);
+					dynamicType.Push((int)i);
 					break;
 				}
 
 				case Type.LONG:
 				{
-					gen.Push(i);
+					dynamicType.Push(i);
 					break;
 				}
 
 				case Type.DOUBLE:
 				{
-					gen.Push((double)i);
+					dynamicType.Push((double)i);
 					break;
 				}
 
@@ -609,9 +588,9 @@ namespace Lucene.Net.Expressions.JS
 
 		private void EndCompile()
 		{
-			gen.ReturnValue();
-			gen.EndMethod();
-			classWriter.VisitEnd();
+			/*dynamicType.ReturnValue();
+			dynamicType.EndMethod();
+			classWriter.VisitEnd();*/
 		}
 
 		
@@ -623,7 +602,7 @@ namespace Lucene.Net.Expressions.JS
 			JavascriptParser parser = new JavascriptParser(tokens);
 			try
 			{
-				return parser.Expression().tree;
+				return parser.Expression().Tree;
 			}
 			catch (RecognitionException re)
 			{
@@ -650,7 +629,9 @@ namespace Lucene.Net.Expressions.JS
 		/// </remarks>
 		public static readonly IDictionary<string, MethodInfo> DEFAULT_FUNCTIONS;
 
-		static JavascriptCompiler()
+	    private ILGenerator gen;
+
+	    static JavascriptCompiler()
 		{
 			IDictionary<string, MethodInfo> map = new Dictionary<string, MethodInfo>();
 			try
@@ -669,7 +650,7 @@ namespace Lucene.Net.Expressions.JS
 			        Type[] args = new Type[arity];
 			        Arrays.Fill(args,typeof(double));
 			        MethodInfo method = clazz.GetMethod(methodName, args);
-			        CheckFunction(method, typeof (JavascriptCompiler));
+			        CheckFunction(method);
 			        map[property.Name] = method;
 			    }
 
@@ -682,29 +663,9 @@ namespace Lucene.Net.Expressions.JS
 		    DEFAULT_FUNCTIONS = map;
 		}
 
-		private static void CheckFunction(MethodInfo method, Type parent)
+		private static void CheckFunction(MethodInfo method)
 		{
-			// We can only call the function if the given parent class loader of our compiled class has access to the method:
-			ClassLoader functionClassloader = method.DeclaringType.GetClassLoader();
-			if (functionClassloader != null)
-			{
-				// it is a system class iff null!
-				bool found = false;
-				while (parent != null)
-				{
-					if (parent == functionClassloader)
-					{
-						found = true;
-						break;
-					}
-					parent = parent.GetParent();
-				}
-				if (!found)
-				{
-					throw new ArgumentException(method + " is not declared by a class which is accessible by the given parent ClassLoader."
-						);
-				}
-			}
+			
 			// do some checks if the signature is "compatible":
 			if (!(method.IsStatic))
 			{

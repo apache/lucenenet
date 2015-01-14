@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
+using Lucene.Net.Expressions.JS;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Expressions.JS
 {
-	/// <summary>Tests customing the function map</summary>
-	public class TestCustomFunctions : LuceneTestCase
+	[TestFixture]
+	public class TestCustomFunctions : Util.LuceneTestCase
 	{
 		private static double DELTA = 0.0000001;
 
@@ -15,15 +18,15 @@ namespace Lucene.Net.Tests.Expressions.JS
 		/// <exception cref="System.Exception"></exception>
 		public virtual void TestEmpty()
 		{
-			IDictionary<string, MethodInfo> functions = Collections.EmptyMap();
+			IDictionary<string, MethodInfo> functions = new HashMap<string,MethodInfo>();
 			try
 			{
 				JavascriptCompiler.Compile("sqrt(20)", functions, GetType().GetClassLoader());
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException e)
 			{
-				NUnit.Framework.Assert.IsTrue(e.Message.Contains("Unrecognized method"));
+				IsTrue(e.Message.Contains("Unrecognized method"));
 			}
 		}
 
@@ -34,7 +37,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 			IDictionary<string, MethodInfo> functions = JavascriptCompiler.DEFAULT_FUNCTIONS;
 			Expression expr = JavascriptCompiler.Compile("sqrt(20)", functions, GetType().GetClassLoader
 				());
-			NUnit.Framework.Assert.AreEqual(Math.Sqrt(20), expr.Evaluate(0, null), DELTA);
+			AreEqual(Math.Sqrt(20), expr.Evaluate(0, null), DELTA);
 		}
 
 		public static double ZeroArgMethod()
@@ -50,7 +53,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 			functions.Put("foo", GetType().GetMethod("zeroArgMethod"));
 			Expression expr = JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader
 				());
-			NUnit.Framework.Assert.AreEqual(5, expr.Evaluate(0, null), DELTA);
+			AreEqual(5, expr.Evaluate(0, null), DELTA);
 		}
 
 		public static double OneArgMethod(double arg1)
@@ -66,7 +69,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 			functions.Put("foo", GetType().GetMethod("oneArgMethod", typeof(double)));
 			Expression expr = JavascriptCompiler.Compile("foo(3)", functions, GetType().GetClassLoader
 				());
-			NUnit.Framework.Assert.AreEqual(6, expr.Evaluate(0, null), DELTA);
+			AreEqual(6, expr.Evaluate(0, null), DELTA);
 		}
 
 		public static double ThreeArgMethod(double arg1, double arg2, double arg3)
@@ -83,7 +86,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 				double), typeof(double)));
 			Expression expr = JavascriptCompiler.Compile("foo(3, 4, 5)", functions, GetType()
 				.GetClassLoader());
-			NUnit.Framework.Assert.AreEqual(12, expr.Evaluate(0, null), DELTA);
+			AreEqual(12, expr.Evaluate(0, null), DELTA);
 		}
 
 		/// <summary>tests a map with 2 functions</summary>
@@ -95,7 +98,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 			functions.Put("bar", GetType().GetMethod("oneArgMethod", typeof(double)));
 			Expression expr = JavascriptCompiler.Compile("foo() + bar(3)", functions, GetType
 				().GetClassLoader());
-			NUnit.Framework.Assert.AreEqual(11, expr.Evaluate(0, null), DELTA);
+			AreEqual(11, expr.Evaluate(0, null), DELTA);
 		}
 
 		public static string BogusReturnType()
@@ -112,11 +115,11 @@ namespace Lucene.Net.Tests.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader());
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException e)
 			{
-				NUnit.Framework.Assert.IsTrue(e.Message.Contains("does not return a double"));
+				IsTrue(e.Message.Contains("does not return a double"));
 			}
 		}
 
@@ -134,11 +137,11 @@ namespace Lucene.Net.Tests.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo(2)", functions, GetType().GetClassLoader());
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException e)
 			{
-				NUnit.Framework.Assert.IsTrue(e.Message.Contains("must take only double parameters"
+				IsTrue(e.Message.Contains("must take only double parameters"
 					));
 			}
 		}
@@ -157,11 +160,11 @@ namespace Lucene.Net.Tests.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader());
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException e)
 			{
-				NUnit.Framework.Assert.IsTrue(e.Message.Contains("is not static"));
+				IsTrue(e.Message.Contains("is not static"));
 			}
 		}
 
@@ -180,11 +183,11 @@ namespace Lucene.Net.Tests.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader());
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException e)
 			{
-				NUnit.Framework.Assert.IsTrue(e.Message.Contains("is not public"));
+				IsTrue(e.Message.Contains("is not public"));
 			}
 		}
 
@@ -206,11 +209,11 @@ namespace Lucene.Net.Tests.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader());
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException e)
 			{
-				NUnit.Framework.Assert.IsTrue(e.Message.Contains("is not public"));
+				IsTrue(e.Message.Contains("is not public"));
 			}
 		}
 
@@ -261,21 +264,21 @@ namespace Lucene.Net.Tests.Expressions.JS
 			MethodInfo barMethod = fooClass.GetMethod("bar");
 			IDictionary<string, MethodInfo> functions = Sharpen.Collections.SingletonMap("bar"
 				, barMethod);
-			NUnit.Framework.Assert.AreNotSame(thisLoader, fooClass.GetClassLoader());
-			NUnit.Framework.Assert.AreNotSame(thisLoader, barMethod.DeclaringType.GetClassLoader
+			AreNotSame(thisLoader, fooClass.GetClassLoader());
+			AreNotSame(thisLoader, barMethod.DeclaringType.GetClassLoader
 				());
 			// this should pass:
 			Expression expr = JavascriptCompiler.Compile("bar()", functions, childLoader);
-			NUnit.Framework.Assert.AreEqual(2.0, expr.Evaluate(0, null), DELTA);
+			AreEqual(2.0, expr.Evaluate(0, null), DELTA);
 			// use our classloader, not the foreign one, which should fail!
 			try
 			{
 				JavascriptCompiler.Compile("bar()", functions, thisLoader);
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException e)
 			{
-				NUnit.Framework.Assert.IsTrue(e.Message.Contains("is not declared by a class which is accessible by the given parent ClassLoader"
+				IsTrue(e.Message.Contains("is not declared by a class which is accessible by the given parent ClassLoader"
 					));
 			}
 			// mix foreign and default functions
@@ -283,18 +286,18 @@ namespace Lucene.Net.Tests.Expressions.JS
 				>(JavascriptCompiler.DEFAULT_FUNCTIONS);
 			mixedFunctions.PutAll(functions);
 			expr = JavascriptCompiler.Compile("bar()", mixedFunctions, childLoader);
-			NUnit.Framework.Assert.AreEqual(2.0, expr.Evaluate(0, null), DELTA);
+			AreEqual(2.0, expr.Evaluate(0, null), DELTA);
 			expr = JavascriptCompiler.Compile("sqrt(20)", mixedFunctions, childLoader);
-			NUnit.Framework.Assert.AreEqual(Math.Sqrt(20), expr.Evaluate(0, null), DELTA);
+			AreEqual(Math.Sqrt(20), expr.Evaluate(0, null), DELTA);
 			// use our classloader, not the foreign one, which should fail!
 			try
 			{
 				JavascriptCompiler.Compile("bar()", mixedFunctions, thisLoader);
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException e)
 			{
-				NUnit.Framework.Assert.IsTrue(e.Message.Contains("is not declared by a class which is accessible by the given parent ClassLoader"
+				IsTrue(e.Message.Contains("is not declared by a class which is accessible by the given parent ClassLoader"
 					));
 			}
 		}
@@ -324,16 +327,16 @@ namespace Lucene.Net.Tests.Expressions.JS
 			try
 			{
 				expr.Evaluate(0, null);
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArithmeticException e)
 			{
-				NUnit.Framework.Assert.AreEqual(MESSAGE, e.Message);
+				AreEqual(MESSAGE, e.Message);
 				StringWriter sw = new StringWriter();
 				PrintWriter pw = new PrintWriter(sw);
 				Sharpen.Runtime.PrintStackTrace(e, pw);
 				pw.Flush();
-				NUnit.Framework.Assert.IsTrue(sw.ToString().Contains("JavascriptCompiler$CompiledExpression.evaluate("
+				IsTrue(sw.ToString().Contains("JavascriptCompiler$CompiledExpression.evaluate("
 					 + source + ")"));
 			}
 		}
@@ -348,7 +351,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 			string source = "foo.bar()";
 			Expression expr = JavascriptCompiler.Compile(source, functions, GetType().GetClassLoader
 				());
-			NUnit.Framework.Assert.AreEqual(5, expr.Evaluate(0, null), DELTA);
+			AreEqual(5, expr.Evaluate(0, null), DELTA);
 		}
 	}
 }

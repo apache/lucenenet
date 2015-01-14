@@ -1,59 +1,51 @@
-/*
- * This code is derived from MyJavaLibrary (http://somelinktomycoollibrary)
- * 
- * If this is an open source Java library, include the proper license and copyright attributions here!
- */
+using Lucene.Net.Expressions;
+using Lucene.Net.Expressions.JS;
+using Lucene.Net.Search;
+using NUnit.Framework;
 
-using Org.Apache.Lucene.Expressions;
-using Org.Apache.Lucene.Expressions.JS;
-using Org.Apache.Lucene.Search;
-using Org.Apache.Lucene.Util;
-using Sharpen;
-
-namespace Org.Apache.Lucene.Expressions
+namespace Lucene.Net.Tests.Expressions
 {
-	public class TestExpressionSortField : LuceneTestCase
+	public class TestExpressionSortField : Util.LuceneTestCase
 	{
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestToString()
 		{
 			Expression expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("_score", SortField.Type.SCORE));
-			bindings.Add(new SortField("popularity", SortField.Type.INT));
+			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
+			bindings.Add(new SortField("popularity", SortField.Type_e.INT));
 			SortField sf = expr.GetSortField(bindings, true);
-			NUnit.Framework.Assert.AreEqual("<expr \"sqrt(_score) + ln(popularity)\">!", sf.ToString
-				());
+			AreEqual("<expr \"sqrt(_score) + ln(popularity)\">!", sf.ToString());
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestEquals()
 		{
 			Expression expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("_score", SortField.Type.SCORE));
-			bindings.Add(new SortField("popularity", SortField.Type.INT));
+			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
+			bindings.Add(new SortField("popularity", SortField.Type_e.INT));
 			SimpleBindings otherBindings = new SimpleBindings();
-			otherBindings.Add(new SortField("_score", SortField.Type.LONG));
-			otherBindings.Add(new SortField("popularity", SortField.Type.INT));
+			otherBindings.Add(new SortField("_score", SortField.Type_e.LONG));
+			otherBindings.Add(new SortField("popularity", SortField.Type_e.INT));
 			SortField sf1 = expr.GetSortField(bindings, true);
 			// different order
 			SortField sf2 = expr.GetSortField(bindings, false);
-			NUnit.Framework.Assert.IsFalse(sf1.Equals(sf2));
+			IsFalse(sf1.Equals(sf2));
 			// different bindings
 			sf2 = expr.GetSortField(otherBindings, true);
-			NUnit.Framework.Assert.IsFalse(sf1.Equals(sf2));
+			IsFalse(sf1.Equals(sf2));
 			// different expression
 			Expression other = JavascriptCompiler.Compile("popularity/2");
 			sf2 = other.GetSortField(bindings, true);
-			NUnit.Framework.Assert.IsFalse(sf1.Equals(sf2));
+			IsFalse(sf1.Equals(sf2));
 			// null
-			NUnit.Framework.Assert.IsFalse(sf1.Equals(null));
+			IsFalse(sf1.Equals(null));
 			// same instance:
-			NUnit.Framework.Assert.AreEqual(sf1, sf1);
+			AreEqual(sf1, sf1);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestNeedsScores()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -75,8 +67,8 @@ namespace Org.Apache.Lucene.Expressions
 			Expression exprH = JavascriptCompiler.Compile("b / c + e * g - sqrt(f)");
 			// several variables
 			Expression exprI = JavascriptCompiler.Compile("b / c + e * g");
-			bindings.Add(new SortField("_score", SortField.Type.SCORE));
-			bindings.Add(new SortField("intfield", SortField.Type.INT));
+			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
+			bindings.Add(new SortField("intfield", SortField.Type_e.INT));
 			bindings.Add("a", exprA);
 			bindings.Add("b", exprB);
 			bindings.Add("c", exprC);
@@ -86,15 +78,15 @@ namespace Org.Apache.Lucene.Expressions
 			bindings.Add("g", exprG);
 			bindings.Add("h", exprH);
 			bindings.Add("i", exprI);
-			NUnit.Framework.Assert.IsTrue(exprA.GetSortField(bindings, true).NeedsScores());
-			NUnit.Framework.Assert.IsFalse(exprB.GetSortField(bindings, true).NeedsScores());
-			NUnit.Framework.Assert.IsFalse(exprC.GetSortField(bindings, true).NeedsScores());
-			NUnit.Framework.Assert.IsTrue(exprD.GetSortField(bindings, true).NeedsScores());
-			NUnit.Framework.Assert.IsFalse(exprE.GetSortField(bindings, true).NeedsScores());
-			NUnit.Framework.Assert.IsTrue(exprF.GetSortField(bindings, true).NeedsScores());
-			NUnit.Framework.Assert.IsFalse(exprG.GetSortField(bindings, true).NeedsScores());
-			NUnit.Framework.Assert.IsTrue(exprH.GetSortField(bindings, true).NeedsScores());
-			NUnit.Framework.Assert.IsFalse(exprI.GetSortField(bindings, false).NeedsScores());
+			IsTrue(exprA.GetSortField(bindings, true).NeedsScores());
+			IsFalse(exprB.GetSortField(bindings, true).NeedsScores());
+			IsFalse(exprC.GetSortField(bindings, true).NeedsScores());
+			IsTrue(exprD.GetSortField(bindings, true).NeedsScores());
+			IsFalse(exprE.GetSortField(bindings, true).NeedsScores());
+			IsTrue(exprF.GetSortField(bindings, true).NeedsScores());
+			IsFalse(exprG.GetSortField(bindings, true).NeedsScores());
+			IsTrue(exprH.GetSortField(bindings, true).NeedsScores());
+			IsFalse(exprI.GetSortField(bindings, false).NeedsScores());
 		}
 	}
 }

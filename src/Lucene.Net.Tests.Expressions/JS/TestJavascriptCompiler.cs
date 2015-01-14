@@ -16,18 +16,18 @@ namespace Org.Apache.Lucene.Expressions.JS
 		/// <exception cref="System.Exception"></exception>
 		public virtual void TestValidCompiles()
 		{
-			NUnit.Framework.Assert.IsNotNull(JavascriptCompiler.Compile("100"));
-			NUnit.Framework.Assert.IsNotNull(JavascriptCompiler.Compile("valid0+100"));
-			NUnit.Framework.Assert.IsNotNull(JavascriptCompiler.Compile("valid0+\n100"));
-			NUnit.Framework.Assert.IsNotNull(JavascriptCompiler.Compile("logn(2, 20+10-5.0)")
+			IsNotNull(JavascriptCompiler.Compile("100"));
+			IsNotNull(JavascriptCompiler.Compile("valid0+100"));
+			IsNotNull(JavascriptCompiler.Compile("valid0+\n100"));
+			IsNotNull(JavascriptCompiler.Compile("logn(2, 20+10-5.0)")
 				);
 		}
 
 		/// <exception cref="System.Exception"></exception>
 		public virtual void TestValidNamespaces()
 		{
-			NUnit.Framework.Assert.IsNotNull(JavascriptCompiler.Compile("object.valid0"));
-			NUnit.Framework.Assert.IsNotNull(JavascriptCompiler.Compile("object0.object1.valid1"
+			IsNotNull(JavascriptCompiler.Compile("object.valid0"));
+			IsNotNull(JavascriptCompiler.Compile("object0.object1.valid1"
 				));
 		}
 
@@ -37,7 +37,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("object.0invalid");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -46,7 +46,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("0.invalid");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -55,7 +55,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("object..invalid");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -64,7 +64,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile(".invalid");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -78,7 +78,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("100 100");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -87,7 +87,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("7*/-8");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -96,7 +96,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("0y1234");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -105,7 +105,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("500EE");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -114,7 +114,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("500.5EE");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -127,7 +127,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile(string.Empty);
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -136,7 +136,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("()");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -145,7 +145,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("   \r\n   \n \t");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ParseException)
 			{
@@ -159,7 +159,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile(null);
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentNullException)
 			{
@@ -173,21 +173,21 @@ namespace Org.Apache.Lucene.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("tan()");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException expected)
 			{
-				NUnit.Framework.Assert.IsTrue(expected.Message.Contains("arguments for method call"
+				IsTrue(expected.Message.Contains("arguments for method call"
 					));
 			}
 			try
 			{
 				JavascriptCompiler.Compile("tan(1, 1)");
-				NUnit.Framework.Assert.Fail();
+				Fail();
 			}
 			catch (ArgumentException expected)
 			{
-				NUnit.Framework.Assert.IsTrue(expected.Message.Contains("arguments for method call"
+				IsTrue(expected.Message.Contains("arguments for method call"
 					));
 			}
 		}

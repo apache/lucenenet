@@ -21,7 +21,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 		{
 			Expression evaluator = JavascriptCompiler.Compile(expression);
 			double actual = evaluator.Evaluate(0, null);
-			NUnit.Framework.Assert.AreEqual(expected, actual, DELTA);
+			AreEqual(expected, actual, DELTA);
 		}
 
 		/// <exception cref="System.Exception"></exception>

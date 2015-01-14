@@ -1,29 +1,23 @@
-/*
- * This code is derived from MyJavaLibrary (http://somelinktomycoollibrary)
- * 
- * If this is an open source Java library, include the proper license and copyright attributions here!
- */
-
 using System;
-using Org.Apache.Lucene.Expressions;
-using Org.Apache.Lucene.Expressions.JS;
-using Org.Apache.Lucene.Search;
-using Org.Apache.Lucene.Util;
-using Sharpen;
+using Lucene.Net.Expressions;
+using Lucene.Net.Expressions.JS;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
 namespace Org.Apache.Lucene.Expressions
 {
 	/// <summary>Tests validation of bindings</summary>
 	public class TestExpressionValidation : LuceneTestCase
 	{
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestValidExternals()
 		{
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("valid0", SortField.Type.INT));
-			bindings.Add(new SortField("valid1", SortField.Type.INT));
-			bindings.Add(new SortField("valid2", SortField.Type.INT));
-			bindings.Add(new SortField("_score", SortField.Type.SCORE));
+			bindings.Add(new SortField("valid0", SortField.Type_e.INT));
+			bindings.Add(new SortField("valid1", SortField.Type_e.INT));
+			bindings.Add(new SortField("valid2", SortField.Type_e.INT));
+			bindings.Add(new SortField("_score", SortField.Type_e.SCORE));
 			bindings.Add("valide0", JavascriptCompiler.Compile("valid0 - valid1 + valid2 + _score"
 				));
 			bindings.Validate();
@@ -33,41 +27,41 @@ namespace Org.Apache.Lucene.Expressions
 			bindings.Validate();
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestInvalidExternal()
 		{
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("valid", SortField.Type.INT));
+			bindings.Add(new SortField("valid", SortField.Type_e.INT));
 			bindings.Add("invalid", JavascriptCompiler.Compile("badreference"));
 			try
 			{
 				bindings.Validate();
-				NUnit.Framework.Assert.Fail("didn't get expected exception");
+				Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				NUnit.Framework.Assert.IsTrue(expected.Message.Contains("Invalid reference"));
+				IsTrue(expected.Message.Contains("Invalid reference"));
 			}
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestInvalidExternal2()
 		{
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("valid", SortField.Type.INT));
+			bindings.Add(new SortField("valid", SortField.Type_e.INT));
 			bindings.Add("invalid", JavascriptCompiler.Compile("valid + badreference"));
 			try
 			{
 				bindings.Validate();
-				NUnit.Framework.Assert.Fail("didn't get expected exception");
+				Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				NUnit.Framework.Assert.IsTrue(expected.Message.Contains("Invalid reference"));
+				IsTrue(expected.Message.Contains("Invalid reference"));
 			}
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestSelfRecursion()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -75,15 +69,15 @@ namespace Org.Apache.Lucene.Expressions
 			try
 			{
 				bindings.Validate();
-				NUnit.Framework.Assert.Fail("didn't get expected exception");
+				Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				NUnit.Framework.Assert.IsTrue(expected.Message.Contains("Cycle detected"));
+				IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestCoRecursion()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -92,15 +86,15 @@ namespace Org.Apache.Lucene.Expressions
 			try
 			{
 				bindings.Validate();
-				NUnit.Framework.Assert.Fail("didn't get expected exception");
+				Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				NUnit.Framework.Assert.IsTrue(expected.Message.Contains("Cycle detected"));
+				IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestCoRecursion2()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -110,15 +104,15 @@ namespace Org.Apache.Lucene.Expressions
 			try
 			{
 				bindings.Validate();
-				NUnit.Framework.Assert.Fail("didn't get expected exception");
+				Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				NUnit.Framework.Assert.IsTrue(expected.Message.Contains("Cycle detected"));
+				IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestCoRecursion3()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -128,15 +122,15 @@ namespace Org.Apache.Lucene.Expressions
 			try
 			{
 				bindings.Validate();
-				NUnit.Framework.Assert.Fail("didn't get expected exception");
+				Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				NUnit.Framework.Assert.IsTrue(expected.Message.Contains("Cycle detected"));
+				IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestCoRecursion4()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -147,11 +141,11 @@ namespace Org.Apache.Lucene.Expressions
 			try
 			{
 				bindings.Validate();
-				NUnit.Framework.Assert.Fail("didn't get expected exception");
+				Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				NUnit.Framework.Assert.IsTrue(expected.Message.Contains("Cycle detected"));
+				IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 	}

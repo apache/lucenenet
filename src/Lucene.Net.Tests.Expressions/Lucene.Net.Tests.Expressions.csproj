@@ -59,6 +59,14 @@
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Expressions\Lucene.Net.Expressions.csproj">
+      <Project>{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}</Project>
+      <Name>Lucene.Net.Expressions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <Project>{69D7956C-C2CC-4708-B399-A188FEC384C4}</Project>
+      <Name>Lucene.Net.Queries</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
       <Project>{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}</Project>
       <Name>Lucene.Net.TestFramework</Name>
