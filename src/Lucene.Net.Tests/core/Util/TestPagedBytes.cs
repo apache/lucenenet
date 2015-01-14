@@ -22,6 +22,7 @@ using System;
 
 namespace Lucene.Net.Util
 {
+    using System.Diagnostics;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
@@ -178,27 +179,29 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        [Timeout(0)]
         public virtual void TestOverflow() // memory hole
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper) dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
             }
             int blockBits = TestUtil.NextInt(Random(), 14, 28);
             int blockSize = 1 << blockBits;
             var arr = new byte[TestUtil.NextInt(Random(), blockSize / 2, blockSize * 2)];
             for (int i = 0; i < arr.Length; ++i)
             {
-                arr[i] = (byte)(sbyte)i;
+                arr[i] = (byte) (sbyte) i;
             }
+
             long numBytes = (1L << 31) + TestUtil.NextInt(Random(), 1, blockSize * 3);
             var p = new PagedBytes(blockBits);
             var @out = dir.CreateOutput("foo", IOContext.DEFAULT);
-            for (long i = 0; i < numBytes; )
+            for (long i = 0; i < numBytes;)
             {
                 Assert.AreEqual(i, @out.FilePointer);
-                int len = (int)Math.Min(arr.Length, numBytes - i);
+                int len = (int) Math.Min(arr.Length, numBytes - i);
                 @out.WriteBytes(arr, len);
                 i += len;
             }
@@ -212,7 +215,7 @@ namespace Lucene.Net.Util
             {
                 BytesRef b = new BytesRef();
                 reader.FillSlice(b, offset, 1);
-                Assert.AreEqual(arr[(int)(offset % arr.Length)], b.Bytes[b.Offset]);
+                Assert.AreEqual(arr[(int) (offset%arr.Length)], b.Bytes[b.Offset]);
             }
             @in.Dispose();
             dir.Dispose();
