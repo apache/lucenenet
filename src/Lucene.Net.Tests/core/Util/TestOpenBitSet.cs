@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -163,40 +164,38 @@ namespace Lucene.Net.Util
 
         internal virtual void DoRandomSets(int maxSize, int iter, int mode)
         {
-            BitArray a0 = null;
-            OpenBitSet b0 = null;
-
+            Random random = new Random(12345);
             for (int i = 0; i < iter; i++)
             {
-                int sz = Random().Next(maxSize);
+                int sz = random.Next(maxSize);
                 BitArray a = new BitArray(sz);
                 OpenBitSet b = new OpenBitSet(sz);
 
                 // test the various ways of setting bits
                 if (sz > 0)
                 {
-                    int nOper = Random().Next(sz);
+                    int nOper = random.Next(sz);
                     for (int j = 0; j < nOper; j++)
                     {
                         int idx;
 
-                        idx = Random().Next(sz);
+                        idx = random.Next(sz);
                         a.SafeSet(idx, true);
                         b.FastSet(idx);
 
-                        idx = Random().Next(sz);
+                        idx = random.Next(sz);
                         a.SafeSet(idx, true);
                         b.FastSet((long)idx);
 
-                        idx = Random().Next(sz);
+                        idx = random.Next(sz);
                         a.SafeSet(idx, false);
                         b.FastClear(idx);
 
-                        idx = Random().Next(sz);
+                        idx = random.Next(sz);
                         a.SafeSet(idx, false);
                         b.FastClear((long)idx);
 
-                        idx = Random().Next(sz);
+                        idx = random.Next(sz);
                         a.SafeSet(idx, !a.SafeGet(idx));
                         b.FastFlip(idx);
 
@@ -204,7 +203,7 @@ namespace Lucene.Net.Util
                         bool val2 = b.FlipAndGet(idx);
                         Assert.IsTrue(val != val2);
 
-                        idx = Random().Next(sz);
+                        idx = random.Next(sz);
                         a.SafeSet(idx, !a.SafeGet(idx));
                         b.FastFlip((long)idx);
 
@@ -230,17 +229,20 @@ namespace Lucene.Net.Util
 
                 // test ranges, including possible extension
                 int fromIndex, toIndex;
-                fromIndex = Random().Next(sz + 80);
-                toIndex = fromIndex + Random().Next((sz >> 1) + 1);
-                BitArray aa = (BitArray)a.Clone();
+                fromIndex = random.Next(sz + 80);
+                toIndex = Math.Min(fromIndex + random.Next((sz >> 1) + 1), sz);  // We don't want to go out of bounds, because BitArray does not
+                                                                                    // dynamic sizing
+                BitArray aa = (BitArray)a.Clone();     
                 aa.Flip(fromIndex, toIndex);
                 OpenBitSet bb = (OpenBitSet)b.Clone();
                 bb.Flip(fromIndex, toIndex);
 
                 DoIterate(aa, bb, mode); // a problem here is from flip or doIterate
 
-                fromIndex = Random().Next(sz + 80);
-                toIndex = fromIndex + Random().Next((sz >> 1) + 1);
+                DoNextSetBit(aa, bb);
+
+                fromIndex = random.Next(sz + 80);
+                toIndex = Math.Min(fromIndex + random.Next((sz >> 1) + 1), sz);
                 aa = (BitArray)a.Clone();
                 aa.Clear(fromIndex, toIndex);
                 bb = (OpenBitSet)b.Clone();
@@ -252,8 +254,8 @@ namespace Lucene.Net.Util
                 DoPrevSetBit(aa, bb);
                 DoPrevSetBitLong(aa, bb);
 
-                fromIndex = Random().Next(sz + 80);
-                toIndex = fromIndex + Random().Next((sz >> 1) + 1);
+                fromIndex = random.Next(sz + 80);
+                toIndex = Math.Min(fromIndex + random.Next((sz >> 1) + 1), sz);
                 aa = (BitArray)a.Clone();
                 aa.Set(fromIndex, toIndex);
                 bb = (OpenBitSet)b.Clone();
@@ -265,56 +267,119 @@ namespace Lucene.Net.Util
                 DoPrevSetBit(aa, bb);
                 DoPrevSetBitLong(aa, bb);
 
-                if (a0 != null)
+                BitArray a0 = new BitArray(sz);
+                OpenBitSet b0 = new OpenBitSet(sz);
+
+                // a better way to generate random bit arrays than using previous iteration's a and b arrays
+                for (int j = 0; j < sz / 2; j++)
                 {
-                    Assert.AreEqual(a.BitWiseEquals(a0), b.Equals(b0));
-
-                    Assert.AreEqual(a.Cardinality(), b.Cardinality());
-
-                    BitArray a_and = (BitArray)a.Clone();
-                    a_and = a_and.And(a0);
-                    BitArray a_or = (BitArray)a.Clone();
-                    a_or = a_or.Or(a0);
-                    BitArray a_xor = (BitArray)a.Clone();
-                    a_xor = a_xor.Xor(a0);
-                    BitArray a_andn = (BitArray)a.Clone();
-                    a_andn.AndNot(a0);
-
-                    OpenBitSet b_and = (OpenBitSet)b.Clone();
-                    Assert.AreEqual(b, b_and);
-                    b_and.And(b0);
-                    OpenBitSet b_or = (OpenBitSet)b.Clone();
-                    b_or.Or(b0);
-                    OpenBitSet b_xor = (OpenBitSet)b.Clone();
-                    b_xor.Xor(b0);
-                    OpenBitSet b_andn = (OpenBitSet)b.Clone();
-                    b_andn.AndNot(b0);
-
-                    DoIterate(a_and, b_and, mode);
-                    DoIterate(a_or, b_or, mode);
-                    DoIterate(a_xor, b_xor, mode);
-                    DoIterate(a_andn, b_andn, mode);
-
-                    Assert.AreEqual(a_and.Cardinality(), b_and.Cardinality());
-                    Assert.AreEqual(a_or.Cardinality(), b_or.Cardinality());
-                    Assert.AreEqual(a_xor.Cardinality(), b_xor.Cardinality());
-                    Assert.AreEqual(a_andn.Cardinality(), b_andn.Cardinality());
-
-                    // test non-mutating popcounts
-                    Assert.AreEqual(b_and.Cardinality(), OpenBitSet.IntersectionCount(b, b0));
-                    Assert.AreEqual(b_or.Cardinality(), OpenBitSet.UnionCount(b, b0));
-                    Assert.AreEqual(b_xor.Cardinality(), OpenBitSet.XorCount(b, b0));
-                    Assert.AreEqual(b_andn.Cardinality(), OpenBitSet.AndNotCount(b, b0));
+                    int index = random.Next(sz);
+                    a0.Set(index);
+                    b0.Set(index);
                 }
 
-                a0 = a;
-                b0 = b;
+                Assert.AreEqual(a.BitWiseEquals(a0), b.Equals(b0));
+
+                Assert.AreEqual(a.Cardinality(), b.Cardinality());
+
+                BitArray a_and = (BitArray)a.Clone();
+                a_and = a_and.And(a0);
+                BitArray a_or = (BitArray)a.Clone();
+                a_or = a_or.Or(a0);
+                BitArray a_xor = (BitArray)a.Clone();
+                a_xor = a_xor.Xor(a0);
+                BitArray a_andn = (BitArray)a.Clone();
+                a_andn.AndNot(a0);
+
+                OpenBitSet b_and = (OpenBitSet)b.Clone();
+                Assert.AreEqual(b, b_and);
+                b_and.And(b0);
+                OpenBitSet b_or = (OpenBitSet)b.Clone();
+                b_or.Or(b0);
+                OpenBitSet b_xor = (OpenBitSet)b.Clone();
+                b_xor.Xor(b0);
+                OpenBitSet b_andn = (OpenBitSet)b.Clone();
+                b_andn.AndNot(b0);
+
+                DoIterate(a_and, b_and, mode);
+                DoIterate(a_or, b_or, mode);
+                DoIterate(a_xor, b_xor, mode);
+                DoIterate(a_andn, b_andn, mode);
+
+                Assert.AreEqual(a_and.Cardinality(), b_and.Cardinality());
+                Assert.AreEqual(a_or.Cardinality(), b_or.Cardinality());
+                Assert.AreEqual(a_xor.Cardinality(), b_xor.Cardinality());
+                Assert.AreEqual(a_andn.Cardinality(), b_andn.Cardinality());
+
+                // test non-mutating popcounts
+                Assert.AreEqual(b_and.Cardinality(), OpenBitSet.IntersectionCount(b, b0));
+                Assert.AreEqual(b_or.Cardinality(), OpenBitSet.UnionCount(b, b0));
+                Assert.AreEqual(b_xor.Cardinality(), OpenBitSet.XorCount(b, b0));
+                Assert.AreEqual(b_andn.Cardinality(), OpenBitSet.AndNotCount(b, b0));
+            }
+        }
+
+        [Test]
+        public void TestClearSmall()
+        {
+            OpenBitSet a = new OpenBitSet(30);   // 0110010111001000101101001001110...0
+            int[] onesA = {1, 2, 5, 7, 8, 9, 12, 16, 18, 19, 21, 24, 27, 28, 29};
+
+            for (int i = 0; i < onesA.size(); i++)
+            {
+                a.Set(onesA[i]);   
+            }
+
+            OpenBitSet b = new OpenBitSet(30);   // 0110000001001000101101001001110...0
+            int[] onesB = {1, 2,          9, 12, 16, 18, 19, 21, 24, 27, 28, 29};
+
+            for (int i = 0; i < onesB.size(); i++)
+            {
+                b.Set(onesB[i]);
+            }
+
+            a.Clear(5, 9);
+            Assert.True(a.Equals(b));
+
+            a.Clear(9, 10);
+            Assert.False(a.Equals(b));
+
+            a.Set(9);
+            Assert.True(a.Equals(b));
+        }
+
+        [Test]
+        public void TestClearLarge()
+        {
+            int iters = AtLeast(1000);
+            for (int it = 0; it < iters; it++)
+            {
+                Random random = new Random();
+                int sz = AtLeast(1200);
+                OpenBitSet a = new OpenBitSet(sz);
+                OpenBitSet b = new OpenBitSet(sz);
+                int from = random.Next(sz - 1);
+                int to = random.Next(from, sz);
+
+                for (int i = 0; i < sz / 2; i++)
+                {
+                    int index = random.Next(sz - 1);
+                    a.Set(index);
+
+                    if (index < from || index >= to)
+                    {
+                        b.Set(index);
+                    }
+                }
+
+                a.Clear(from, to);
+                Assert.True(a.Equals(b));
             }
         }
 
         // large enough to flush obvious bugs, small enough to run in <.5 sec as part of a
         // larger testsuite.
-        [Test]
+        [Test, Timeout(100000)]
         public virtual void TestSmall()
         {
             DoRandomSets(AtLeast(1200), AtLeast(1000), 1);
