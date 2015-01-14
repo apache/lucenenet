@@ -113,7 +113,7 @@ namespace Lucene.Net.Util
         // Writes random byte/s into PagedBytes via
         // .getDataOutput(), then verifies with
         // PagedBytes.getDataInput():
-        [Test]
+        [Test, Timeout(100000)]
         public virtual void TestDataInputOutput2()
         {
             Random random = Random();
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Test]
+        [Test, Timeout(100000)]
         public virtual void TestOverflow() // memory hole
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
