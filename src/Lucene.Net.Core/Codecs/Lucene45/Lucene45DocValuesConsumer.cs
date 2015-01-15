@@ -123,7 +123,6 @@ namespace Lucene.Net.Codecs.Lucene45
             bool missing = false;
             // TODO: more efficient?
             HashSet<long> uniqueValues = null;
-            // LUCENE TODO: is this necessary because of multiple iterations?
             
             if (optimizeStorage)
             {
