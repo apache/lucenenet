@@ -74,10 +74,10 @@ namespace Lucene.Net.Codecs.asserting
                 this.MaxDoc = maxDoc;
             }
 
-            public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+            public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
             {
                 int count = 0;
-                foreach (long v in values)
+                foreach (var v in values)
                 {
                     count++;
                 }
@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.asserting
                 @in.AddBinaryField(field, values);
             }
 
-            public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+            public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
             {
                 int valueCount = 0;
                 BytesRef lastValue = null;
@@ -119,10 +119,10 @@ namespace Lucene.Net.Codecs.asserting
                 FixedBitSet seenOrds = new FixedBitSet(valueCount);
 
                 int count = 0;
-                foreach (long v in docToOrd)
+                foreach (long? v in docToOrd)
                 {
                     Debug.Assert(v != null);
-                    int ord = (int)v;
+                    int ord = (int)v.Value;
                     Debug.Assert(ord >= -1 && ord < valueCount);
                     if (ord >= 0)
                     {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Codecs.asserting
                 @in.AddSortedField(field, values, docToOrd);
             }
 
-            public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+            public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
                 long valueCount = 0;
                 BytesRef lastValue = null;
@@ -157,11 +157,11 @@ namespace Lucene.Net.Codecs.asserting
                 int docCount = 0;
                 long ordCount = 0;
                 LongBitSet seenOrds = new LongBitSet(valueCount);
-                IEnumerator<long> ordIterator = ords.GetEnumerator();
-                foreach (long v in docToOrdCount)
+                IEnumerator<long?> ordIterator = ords.GetEnumerator();
+                foreach (long? v in docToOrdCount)
                 {
                     Debug.Assert(v != null);
-                    int count = (int)v;
+                    int count = (int)v.Value;
                     Debug.Assert(count >= 0);
                     docCount++;
                     ordCount += count;
@@ -170,9 +170,9 @@ namespace Lucene.Net.Codecs.asserting
                     for (int i = 0; i < count; i++)
                     {
                         ordIterator.MoveNext();
-                        long o = ordIterator.Current;
+                        long? o = ordIterator.Current;
                         Debug.Assert(o != null);
-                        long ord = (long)o;
+                        long ord = o.Value;
                         Debug.Assert(ord >= 0 && ord < valueCount);
                         Debug.Assert(ord > lastOrd, "ord=" + ord + ",lastOrd=" + lastOrd);
                         seenOrds.Set(ord);
@@ -207,10 +207,10 @@ namespace Lucene.Net.Codecs.asserting
                 this.MaxDoc = maxDoc;
             }
 
-            public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+            public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
             {
                 int count = 0;
-                foreach (long v in values)
+                foreach (long? v in values)
                 {
                     Debug.Assert(v != null);
                     count++;
@@ -231,12 +231,12 @@ namespace Lucene.Net.Codecs.asserting
                 throw new InvalidOperationException();
             }
 
-            public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+            public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
             {
                 throw new InvalidOperationException();
             }
 
-            public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+            public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
                 throw new InvalidOperationException();
             }

@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             Meta.WriteVInt(field.Number);
             Meta.WriteByte((byte)NUMBER);
@@ -91,10 +91,10 @@ namespace Lucene.Net.Codecs.Lucene42
                 uniqueValues = new HashSet<long>();
 
                 long count = 0;
-                foreach (long nv in values)
+                foreach (long? nv in values)
                 {
                     Debug.Assert(nv != null);
-                    long v = nv;
+                    long v = nv.Value;
 
                     if (gcd != 1)
                     {
@@ -138,9 +138,9 @@ namespace Lucene.Net.Codecs.Lucene42
                 if (formatAndBits.bitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
                 {
                     Meta.WriteByte((byte)UNCOMPRESSED); // uncompressed
-                    foreach (long nv in values)
+                    foreach (long? nv in values)
                     {
-                        Data.WriteByte((byte)(sbyte)nv);
+                        Data.WriteByte(nv == null ? (byte)0 : (byte)(sbyte)nv.Value);
                     }
                 }
                 else
@@ -161,9 +161,9 @@ namespace Lucene.Net.Codecs.Lucene42
                     Data.WriteVInt(formatAndBits.bitsPerValue);
 
                     PackedInts.Writer writer = PackedInts.GetWriterNoHeader(Data, formatAndBits.format, MaxDoc, formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
-                    foreach (long nv in values)
+                    foreach (long? nv in values)
                     {
-                        writer.Add(encode[nv == null ? 0 : nv]);
+                        writer.Add(encode[nv == null ? 0 : nv.Value]);
                     }
                     writer.Finish();
                 }
@@ -177,9 +177,9 @@ namespace Lucene.Net.Codecs.Lucene42
                 Data.WriteVInt(BLOCK_SIZE);
 
                 var writer = new BlockPackedWriter(Data, BLOCK_SIZE);
-                foreach (long nv in values)
+                foreach (long? nv in values)
                 {
-                    long value = nv;
+                    long value = nv == null ? 0 : nv.Value;
                     writer.Add((value - minValue) / gcd);
                 }
                 writer.Finish();
@@ -192,9 +192,9 @@ namespace Lucene.Net.Codecs.Lucene42
                 Data.WriteVInt(BLOCK_SIZE);
 
                 var writer = new BlockPackedWriter(Data, BLOCK_SIZE);
-                foreach (long nv in values)
+                foreach (long? nv in values)
                 {
-                    writer.Add(nv);
+                    writer.Add(nv == null ? 0 : nv.Value);
                 }
                 writer.Finish();
             }
@@ -238,12 +238,12 @@ namespace Lucene.Net.Codecs.Lucene42
             throw new System.NotSupportedException();
         }
 
-        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             throw new System.NotSupportedException();
         }
 
-        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             throw new System.NotSupportedException();
         }
