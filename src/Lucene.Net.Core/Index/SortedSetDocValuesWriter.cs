@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<long> GetOrdsEnumberable(int maxDoc)
+        private IEnumerable<long?> GetOrdsEnumberable(int maxDoc)
         {
             AppendingDeltaPackedLongBuffer.Iterator iter = PendingCounts.GetIterator();
 
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<long> GetOrdCountEnumberable(int maxCountPerDoc, int[] ordMap)
+        private IEnumerable<long?> GetOrdCountEnumberable(int maxCountPerDoc, int[] ordMap)
         {
             int currentUpTo = 0, currentLength = 0;
             AppendingPackedLongBuffer.Iterator iter = Pending.GetIterator();

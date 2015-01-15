@@ -79,12 +79,12 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             AddNumericField(field, values, true);
         }
 
-        internal virtual void AddNumericField(FieldInfo field, IEnumerable<long> values, bool optimizeStorage)
+        internal virtual void AddNumericField(FieldInfo field, IEnumerable<long?> values, bool optimizeStorage)
         {
             Meta.WriteVInt(field.Number);
             Meta.WriteByte((byte)Lucene42DocValuesProducer.NUMBER);
@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 uniqueValues = new HashSet<long>();
 
                 long count = 0;
-                foreach (long nv in values)
+                foreach (long? nv in values)
                 {
                     // TODO: support this as MemoryDVFormat (and be smart about missing maybe)
                     long v = nv == null ? 0 : (long)nv;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 if (formatAndBits.bitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
                 {
                     Meta.WriteByte((byte)Lucene42DocValuesProducer.UNCOMPRESSED); // uncompressed
-                    foreach (long nv in values)
+                    foreach (long? nv in values)
                     {
                         Data.WriteByte(nv == null ? (byte)0 : (byte)nv);
                     }
@@ -168,7 +168,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     Data.WriteVInt(formatAndBits.bitsPerValue);
 
                     PackedInts.Writer writer = PackedInts.GetWriterNoHeader(Data, formatAndBits.format, MaxDoc, formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
-                    foreach (long nv in values)
+                    foreach (long? nv in values)
                     {
                         writer.Add(encode[nv == null ? 0 : (long)nv]);
                     }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 Data.WriteVInt(Lucene42DocValuesProducer.BLOCK_SIZE);
 
                 BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
-                foreach (long nv in values)
+                foreach (long? nv in values)
                 {
                     long value = nv == null ? 0 : (long)nv;
                     writer.Add((value - minValue) / gcd);
@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 Data.WriteVInt(Lucene42DocValuesProducer.BLOCK_SIZE);
 
                 BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
-                foreach (long nv in values)
+                foreach (long? nv in values)
                 {
                     writer.Add(nv == null ? 0 : (long)nv);
                 }
@@ -304,16 +304,16 @@ namespace Lucene.Net.Codecs.Lucene42
             Meta.WriteVLong(ord);
         }
 
-        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             // three cases for simulating the old writer:
             // 1. no missing
             // 2. missing (and empty string in use): remap ord=-1 -> ord=0
             // 3. missing (and empty string not in use): remap all ords +1, insert empty string into values
             bool anyMissing = false;
-            foreach (long n in docToOrd)
+            foreach (long? n in docToOrd)
             {
-                if ((long)n == -1)
+                if (n.Value == -1)
                 {
                     anyMissing = true;
                     break;
@@ -349,7 +349,7 @@ namespace Lucene.Net.Codecs.Lucene42
         }
 
         // note: this might not be the most efficient... but its fairly simple
-        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             // write the ordinals as a binary field
             AddBinaryField(field, new IterableAnonymousInnerClassHelper(this, values, docToOrdCount, ords));
@@ -362,11 +362,11 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             private readonly Lucene42DocValuesConsumer OuterInstance;
 
-            private IEnumerable<long> DocToOrdCount;
-            private IEnumerable<long> Ords;
+            private IEnumerable<long?> DocToOrdCount;
+            private IEnumerable<long?> Ords;
             private IEnumerable<BytesRef> Values;
 
-            public IterableAnonymousInnerClassHelper(Lucene42DocValuesConsumer outerInstance, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+            public IterableAnonymousInnerClassHelper(Lucene42DocValuesConsumer outerInstance, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
                 this.OuterInstance = outerInstance;
                 this.Values = values;
@@ -393,10 +393,10 @@ namespace Lucene.Net.Codecs.Lucene42
             internal BytesRef @ref = new BytesRef();
 
             internal readonly IEnumerator<BytesRef> Values;
-            internal readonly IEnumerator<long> Counts;
-            internal readonly IEnumerator<long> Ords;
+            internal readonly IEnumerator<long?> Counts;
+            internal readonly IEnumerator<long?> Ords;
 
-            internal SortedSetIterator(IEnumerator<BytesRef> values, IEnumerator<long> counts, IEnumerator<long> ords)
+            internal SortedSetIterator(IEnumerator<BytesRef> values, IEnumerator<long?> counts, IEnumerator<long?> ords)
             {
                 this.Values = values;
                 this.Counts = counts;
@@ -453,7 +453,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 for (int i = 0; i < count; i++)
                 {
                     Ords.MoveNext();
-                    long ord = Ords.Current;
+                    long ord = Ords.Current.Value;
                     @out.WriteVLong(ord - lastOrd);
                     lastOrd = ord;
                 }

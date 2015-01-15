@@ -78,10 +78,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             Debug.Assert(field.Number > LastFieldNumber, "writing norms fields out of order" + LastFieldNumber + " -> " + field.Number);
-            foreach (long n in values)
+            foreach (long? n in values)
             {
                 if ((long)n < sbyte.MinValue || (long)n > sbyte.MaxValue)
                 {
@@ -103,12 +103,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             throw new InvalidOperationException();
         }
 
-        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             throw new InvalidOperationException();
         }
 
-        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             throw new InvalidOperationException();
         }
