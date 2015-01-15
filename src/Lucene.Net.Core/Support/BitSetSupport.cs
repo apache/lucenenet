@@ -74,7 +74,7 @@ namespace Lucene.Net.Support
             BitArray bits = new BitArray(maxIdx);
             for (int i = 0; i < maxIdx; i++)
             {
-                bitsA[i] = bitsA[i] & bitsB[i];
+                bits[i] = bitsA[i] & bitsB[i];
             }
             return bits;
         }
