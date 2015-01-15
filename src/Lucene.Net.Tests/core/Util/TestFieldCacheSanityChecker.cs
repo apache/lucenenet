@@ -55,7 +55,10 @@ namespace Lucene.Net.Util
             IndexWriter wB = new IndexWriter(DirB, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
             long theLong = long.MaxValue;
-            double theDouble = double.MaxValue;
+            // We can not use double.MaxValue here because Double.Parse(Double.MaxValue.ToString()) fails.
+            // This is because the output is rounded off and is actualy out of range when you print it.
+            // To fix this take double.MaxValue "1.79769313486232E+308" and change the 2 before the E to a 1.
+            double theDouble = double.Parse("1.79769313486231E+308"); 
             sbyte theByte = sbyte.MaxValue;
             short theShort = short.MaxValue;
             int theInt = int.MaxValue;
