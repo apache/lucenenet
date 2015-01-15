@@ -414,7 +414,7 @@ namespace Lucene.Net.Util
             endWord = (int) ((endIndex - 1) >> 6);
 
             //LUCENE TO-DO
-            startmask = -1L << (int) startIndex;
+            startmask = -1L << (int)startIndex;    //  the shift count is given by the low-order six bits of the second operand
             endmask = (long)(0xffffffffffffffffUL >> (int)-endIndex); //-(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
         }
 
