@@ -605,11 +605,14 @@ namespace Lucene.Net.Util
         /// // tight loop with many invocations.
         /// </pre>
         /// </summary>
+        private static Random _random = new Random(8221969);
         public static Random Random()
         {
-            return new Random();
             //return RandomizedContext.Current.Random;
+            //return new Random();
+            return _random;
         }
+
 
         /// <summary>
         /// Registers a <seealso cref="IDisposable"/> resource that should be closed after the test

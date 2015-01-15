@@ -681,12 +681,18 @@ namespace Lucene.Net.Util
             int startWord = startIndex >> 6;
             int endWord = (endIndex - 1) >> 6;
 
-            long startmask = -1L << startIndex;
-            long endmask = -(int)((uint)1L >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
-
+            //long startmask = -1L << startIndex;
+            long startmask = (-1L) << (startIndex & 0x3f);  // -1 << (startIndex mod 64)
+            //long endmask = -(int)((uint)1L >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+            long endmask = (-1L) << (endIndex & 0x3f);      // -1 << (endIndex mod 64)
+            if ((endIndex & 0x3f) == 0)
+            {
+                endmask = 0;
+            }
+                
             // invert masks since we are clearing
             startmask = ~startmask;
-            endmask = ~endmask;
+            //endmask = ~endmask;
 
             if (startWord == endWord)
             {
