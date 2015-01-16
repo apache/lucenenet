@@ -482,12 +482,8 @@ namespace Lucene.Net.Util.Fst
                 }
                 set
                 {
-                    // NOTE: a little weird because if you
-                    // setPosition(0), the next byte you read is
-                    // bytes[0] ... but I would expect bytes[-1] (ie,
-                    // EOF)...?
                     int bufferIndex = (int)(value >> OuterInstance.blockBits);
-                    nextBuffer = bufferIndex - 1;
+                    nextBuffer = bufferIndex + 1;
                     OuterInstance.Current = OuterInstance.Blocks[bufferIndex];
                     nextRead = (int)(value & OuterInstance.BlockMask);
                     Debug.Assert(OuterInstance.Position == value, "pos=" + value + " getPos()=" + OuterInstance.Position);
@@ -564,12 +560,15 @@ namespace Lucene.Net.Util.Fst
                 }
                 set
                 {
+                    // NOTE: a little weird because if you
+                    // setPosition(0), the next byte you read is
+                    // bytes[0] ... but I would expect bytes[-1] (ie,
+                    // EOF)...?
                     int bufferIndex = (int)(value >> OuterInstance.blockBits);
-                    nextBuffer = bufferIndex + 1;
+                    nextBuffer = bufferIndex - 1;
                     OuterInstance.Current = OuterInstance.Blocks[bufferIndex];
                     nextRead = (int)(value & OuterInstance.BlockMask);
-                    //LUCENE TODO: Put this back
-                    //Debug.Assert(OuterInstance.Position == value);
+                    Debug.Assert(OuterInstance.Position == value, "value=" + value + " this.Position=" + this.Position);
                 }
             }
 
