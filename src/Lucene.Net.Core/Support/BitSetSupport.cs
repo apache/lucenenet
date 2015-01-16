@@ -82,9 +82,9 @@ namespace Lucene.Net.Support
         // Produces a bitwise-or of the two BitArrays without requiring they be the same length
         public static BitArray Or_UnequalLengths(this BitArray bitsA, BitArray bitsB)
         {
-            BitArray shorter = bitsA.Length < bitsB.Length ? bitsA : bitsB;
-            BitArray longer = bitsA.Length >= bitsB.Length ? bitsA : bitsB;
-            BitArray bits = new BitArray(longer.Length);
+            var shorter = bitsA.Length < bitsB.Length ? bitsA : bitsB;
+            var longer = bitsA.Length >= bitsB.Length ? bitsA : bitsB;
+            var bits = new BitArray(longer.Length);
             for (int i = 0; i < longer.Length; i++)
             {
                 if (i >= shorter.Length)
@@ -103,9 +103,9 @@ namespace Lucene.Net.Support
         // Produces a bitwise-xor of the two BitArrays without requiring they be the same length
         public static BitArray Xor_UnequalLengths(this BitArray bitsA, BitArray bitsB)
         {
-            BitArray shorter = bitsA.Length < bitsB.Length ? bitsA : bitsB;
-            BitArray longer = bitsA.Length >= bitsB.Length ? bitsA : bitsB;
-            BitArray bits = new BitArray(longer.Length);
+            var shorter = bitsA.Length < bitsB.Length ? bitsA : bitsB;
+            var longer = bitsA.Length >= bitsB.Length ? bitsA : bitsB;
+            var bits = new BitArray(longer.Length);
             for (int i = 0; i < longer.Length; i++)
             {
                 if (i >= shorter.Length)
@@ -233,7 +233,7 @@ namespace Lucene.Net.Support
         // Prevents exceptions from being thrown when the index is too high.
         public static bool SafeGet(this BitArray a, int loc)
         {
-            return loc >= a.Count ? false : a.Get(loc);
+            return loc < a.Count && a.Get(loc);
         }
 
         //Emulates the Java BitSet.Set() method. Required to reconcile differences between Java BitSet and C# BitArray
