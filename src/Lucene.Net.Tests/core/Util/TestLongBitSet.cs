@@ -175,7 +175,7 @@ namespace Lucene.Net.Util
                     BitArray a_xor = (BitArray)a.Clone();
                     a_xor = a_xor.Xor_UnequalLengths(a0);
                     BitArray a_andn = (BitArray)a.Clone();
-                    a_andn.And_UnequalLengths(a0);
+                    a_andn.AndNot(a0);
 
                     LongBitSet b_and = b.Clone();
                     Assert.AreEqual(b, b_and);
