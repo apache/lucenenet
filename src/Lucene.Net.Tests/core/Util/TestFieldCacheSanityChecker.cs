@@ -67,7 +67,8 @@ namespace Lucene.Net.Util
             {
                 Document doc = new Document();
                 doc.Add(NewStringField("theLong", Convert.ToString(theLong--), Field.Store.NO));
-                doc.Add(NewStringField("theDouble", Convert.ToString(theDouble--), Field.Store.NO));
+                doc.Add(NewStringField("theDouble", theDouble.ToString("R"), Field.Store.NO));
+                theDouble--;
                 doc.Add(NewStringField("theByte", Convert.ToString(theByte--), Field.Store.NO));
                 doc.Add(NewStringField("theShort", Convert.ToString(theShort--), Field.Store.NO));
                 doc.Add(NewStringField("theInt", Convert.ToString(theInt--), Field.Store.NO));

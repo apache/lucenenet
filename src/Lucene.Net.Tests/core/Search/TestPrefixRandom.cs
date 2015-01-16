@@ -145,7 +145,6 @@ namespace Lucene.Net.Search
         /// check that the # of hits is the same as from a very
         /// simple prefixquery implementation.
         /// </summary>
-        [Test]
         private void AssertSame(string prefix)
         {
             PrefixQuery smart = new PrefixQuery(new Term("field", prefix));

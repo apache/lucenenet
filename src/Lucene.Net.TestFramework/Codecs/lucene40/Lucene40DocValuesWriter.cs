@@ -49,12 +49,12 @@ namespace Lucene.Net.Codecs.Lucene40
             this.Dir = new CompoundFileDirectory(state.Directory, filename, state.Context, true);
         }
 
-        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             // examine the values to determine best type to use
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
-            foreach (long n in values)
+            foreach (long? n in values)
             {
                 long v = n == null ? 0 : (long)n;
                 minValue = Math.Min(minValue, v);
@@ -100,40 +100,40 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private void AddBytesField(FieldInfo field, IndexOutput output, IEnumerable<long> values)
+        private void AddBytesField(FieldInfo field, IndexOutput output, IEnumerable<long?> values)
         {
             field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_8.Name);
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
             output.WriteInt(1); // size
-            foreach (long n in values)
+            foreach (long? n in values)
             {
                 output.WriteByte(n == null ? (byte)0 : (byte)n);
             }
         }
 
-        private void AddShortsField(FieldInfo field, IndexOutput output, IEnumerable<long> values)
+        private void AddShortsField(FieldInfo field, IndexOutput output, IEnumerable<long?> values)
         {
             field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_16.Name);
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
             output.WriteInt(2); // size
-            foreach (long n in values)
+            foreach (long? n in values)
             {
                 output.WriteShort(n == null ? (short)0 : (short)n);
             }
         }
 
-        private void AddIntsField(FieldInfo field, IndexOutput output, IEnumerable<long> values)
+        private void AddIntsField(FieldInfo field, IndexOutput output, IEnumerable<long?> values)
         {
             field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_32.Name);
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
             output.WriteInt(4); // size
-            foreach (long n in values)
+            foreach (long? n in values)
             {
                 output.WriteInt(n == null ? 0 : (int)n);
             }
         }
 
-        private void AddVarIntsField(FieldInfo field, IndexOutput output, IEnumerable<long> values, long minValue, long maxValue)
+        private void AddVarIntsField(FieldInfo field, IndexOutput output, IEnumerable<long?> values, long minValue, long maxValue)
         {
             field.PutAttribute(LegacyKey, LegacyDocValuesType.VAR_INTS.Name);
 
@@ -145,9 +145,9 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 // writes longs
                 output.WriteByte((byte)Lucene40DocValuesFormat.VAR_INTS_FIXED_64);
-                foreach (long n in values)
+                foreach (long? n in values)
                 {
-                    output.WriteLong(n == null ? 0 : n);
+                    output.WriteLong(n == null ? 0 : n.Value);
                 }
             }
             else
@@ -157,7 +157,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 output.WriteLong(minValue);
                 output.WriteLong(0 - minValue); // default value (representation of 0)
                 PackedInts.Writer writer = PackedInts.GetWriter(output, State.SegmentInfo.DocCount, PackedInts.BitsRequired(delta), PackedInts.DEFAULT);
-                foreach (long n in values)
+                foreach (long? n in values)
                 {
                     long v = n == null ? 0 : (long)n;
                     writer.Add(v - minValue);
@@ -454,7 +454,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             // examine the values to determine best type to use
             int minLength = int.MaxValue;
@@ -526,7 +526,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private void AddFixedSortedBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd, int length)
+        private void AddFixedSortedBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd, int length)
         {
             field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_SORTED.Name);
 
@@ -557,7 +557,7 @@ namespace Lucene.Net.Codecs.Lucene40
             w.Finish();
         }
 
-        private void AddVarSortedBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        private void AddVarSortedBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_SORTED.Name);
 
@@ -607,7 +607,7 @@ namespace Lucene.Net.Codecs.Lucene40
             ords.Finish();
         }
 
-        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             throw new System.NotSupportedException("Lucene 4.0 does not support SortedSet docvalues");
         }

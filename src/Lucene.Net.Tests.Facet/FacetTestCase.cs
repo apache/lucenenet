@@ -248,7 +248,6 @@ namespace Lucene.Net.Facet
             }
         }
 
-        [Test]
         protected internal virtual void AssertFloatValuesEquals(IList<FacetResult> a, IList<FacetResult> b)
         {
             Assert.AreEqual(a.Count, b.Count);
@@ -274,7 +273,6 @@ namespace Lucene.Net.Facet
             }
         }
 
-        [Test]
         protected internal virtual void AssertFloatValuesEquals(FacetResult a, FacetResult b)
         {
             Assert.AreEqual(a.Dim, b.Dim);
