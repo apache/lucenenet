@@ -70,11 +70,11 @@ namespace Lucene.Net.Support
         public static BitArray And_UnequalLengths(this BitArray bitsA, BitArray bitsB)
         {
             //Cycle only through fewest bits neccessary without requiring size equality
-            int maxIdx = Math.Min(bitsA.Length, bitsB.Length);//exclusive
-            BitArray bits = new BitArray(maxIdx);
+            var maxIdx = Math.Min(bitsA.Length, bitsB.Length);//exclusive
+            var bits = new BitArray(maxIdx);
             for (int i = 0; i < maxIdx; i++)
             {
-                bitsA[i] = bitsA[i] & bitsB[i];
+                bits[i] = bitsA[i] & bitsB[i];
             }
             return bits;
         }
