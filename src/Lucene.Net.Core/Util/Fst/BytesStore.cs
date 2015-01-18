@@ -486,7 +486,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex + 1;
                     OuterInstance.Current = OuterInstance.Blocks[bufferIndex];
                     nextRead = (int)(value & OuterInstance.BlockMask);
-                    Debug.Assert(OuterInstance.Position == value, "pos=" + value + " getPos()=" + OuterInstance.Position);
+                    Debug.Assert(this.Position == value, "pos=" + value + " getPos()=" + this.Position);
                 }
             }
 
@@ -568,7 +568,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex - 1;
                     OuterInstance.Current = OuterInstance.Blocks[bufferIndex];
                     nextRead = (int)(value & OuterInstance.BlockMask);
-                    Debug.Assert(OuterInstance.Position == value, "value=" + value + " this.Position=" + this.Position);
+                    Debug.Assert(this.Position == value, "value=" + value + " this.Position=" + this.Position);
                 }
             }
 
