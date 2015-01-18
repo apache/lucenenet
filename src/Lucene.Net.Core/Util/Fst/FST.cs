@@ -715,14 +715,14 @@ namespace Lucene.Net.Util.Fst
                 if (arc.IsFinal)
                 {
                     flags += BIT_FINAL_ARC;
-                    if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                    if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
                     {
                         flags += BIT_ARC_HAS_FINAL_OUTPUT;
                     }
                 }
                 else
                 {
-                    Debug.Assert((object)arc.NextFinalOutput == (object)NO_OUTPUT);
+                    Debug.Assert(arc.NextFinalOutput.Equals(NO_OUTPUT));
                 }
 
                 bool targetHasArcs = target.Node > 0;
@@ -736,7 +736,7 @@ namespace Lucene.Net.Util.Fst
                     InCounts.Set((int)target.Node, InCounts.Get((int)target.Node) + 1);
                 }
 
-                if ((object)arc.Output != (object)NO_OUTPUT)
+                if (!arc.Output.Equals(NO_OUTPUT))
                 {
                     flags += BIT_ARC_HAS_OUTPUT;
                 }
@@ -746,14 +746,14 @@ namespace Lucene.Net.Util.Fst
 
                 // System.out.println("  write arc: label=" + (char) arc.Label + " flags=" + flags + " target=" + target.Node + " pos=" + bytes.getPosition() + " output=" + outputs.outputToString(arc.Output));
 
-                if ((object)arc.Output != (object)NO_OUTPUT)
+                if (!arc.Output.Equals(NO_OUTPUT))
                 {
                     Outputs.Write(arc.Output, Bytes);
                     //System.out.println("    write output");
                     arcWithOutputCount++;
                 }
 
-                if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
                 {
                     //System.out.println("    write final output");
                     Outputs.WriteFinalOutput(arc.NextFinalOutput, Bytes);
@@ -888,7 +888,7 @@ namespace Lucene.Net.Util.Fst
             {
                 arc.Flags = (sbyte)(BIT_FINAL_ARC | BIT_LAST_ARC);
                 arc.NextFinalOutput = emptyOutput;
-                if ((object)emptyOutput != (object)NO_OUTPUT)
+                if (!emptyOutput.Equals(NO_OUTPUT))
                 {
                     arc.Flags |= (sbyte)BIT_ARC_HAS_FINAL_OUTPUT;
                 }
@@ -1878,21 +1878,21 @@ namespace Lucene.Net.Util.Fst
                             if (arc.Final)
                             {
                                 flags += (sbyte)BIT_FINAL_ARC;
-                                if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                                if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
                                 {
                                     flags += (sbyte)BIT_ARC_HAS_FINAL_OUTPUT;
                                 }
                             }
                             else
                             {
-                                Debug.Assert((object)arc.NextFinalOutput == (object)NO_OUTPUT);
+                                Debug.Assert(arc.NextFinalOutput.Equals(NO_OUTPUT));
                             }
                             if (!TargetHasArcs(arc))
                             {
                                 flags += (sbyte)BIT_STOP_NODE;
                             }
 
-                            if ((object)arc.Output != (object)NO_OUTPUT)
+                            if (!arc.Output.Equals(NO_OUTPUT))
                             {
                                 flags += (sbyte)BIT_ARC_HAS_OUTPUT;
                             }
@@ -1934,7 +1934,7 @@ namespace Lucene.Net.Util.Fst
 
                             fst.WriteLabel(writer, arc.Label);
 
-                            if ((object)arc.Output != (object)NO_OUTPUT)
+                            if (!arc.Output.Equals(NO_OUTPUT))
                             {
                                 Outputs.Write(arc.Output, writer);
                                 if (!retry)
@@ -1942,7 +1942,7 @@ namespace Lucene.Net.Util.Fst
                                     fst.arcWithOutputCount++;
                                 }
                             }
-                            if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                            if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
                             {
                                 Outputs.WriteFinalOutput(arc.NextFinalOutput, writer);
                             }
