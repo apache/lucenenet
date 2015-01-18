@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.SimpleText
             numDocs = state.SegmentInfo.DocCount;
         }
 
-        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             Debug.Assert(FieldSeen(field.Name));
             Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType_e.NUMERIC ||
@@ -74,8 +74,8 @@ namespace Lucene.Net.Codecs.SimpleText
             foreach (var n in values)
             {
                 var v = n;
-                minValue = Math.Min(minValue, v);
-                maxValue = Math.Max(maxValue, v);
+                minValue = Math.Min(minValue, v.Value); // Added .Value to account for long?
+                maxValue = Math.Max(maxValue, v.Value); // Added .Value to account for long?
             }
 
             // write our minimum value to the .dat, all entries are deltas from that
@@ -103,8 +103,10 @@ namespace Lucene.Net.Codecs.SimpleText
             int numDocsWritten = 0;
 
             // second pass to write the values
-            foreach (var value in values)
+            foreach (var n in values)
             {
+                long value = n == null ? 0 : n.Value;
+
                 Debug.Assert(value >= minValue);
 
                 var delta = value - minValue;
@@ -180,7 +182,7 @@ namespace Lucene.Net.Codecs.SimpleText
             Debug.Assert(numDocs == numDocsWritten);
         }
 
-        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             Debug.Assert(FieldSeen(field.Name));
             Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType_e.SORTED);
@@ -260,13 +262,13 @@ namespace Lucene.Net.Codecs.SimpleText
 
             foreach (var ord in docToOrd)
             {
-                SimpleTextUtil.Write(data, (ord + 1).ToString(ordEncoderFormat), scratch);
+                SimpleTextUtil.Write(data, (ord + 1).Value.ToString(ordEncoderFormat), scratch);
                 SimpleTextUtil.WriteNewline(data);
             }
         }
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values,
-            IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+            IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             Debug.Assert(FieldSeen(field.Name));
             Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType_e.SORTED_SET);

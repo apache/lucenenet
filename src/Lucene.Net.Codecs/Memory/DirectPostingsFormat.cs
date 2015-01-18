@@ -546,7 +546,7 @@ namespace Lucene.Net.Codecs.Memory
                             {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int freq = docsEnum2.freq();
-                                int freq = docsEnum2.freq();
+                                int freq = docsEnum2.Freq();
                                 freqs[upto] = freq;
                                 if (hasPos)
                                 {
@@ -569,23 +569,23 @@ namespace Lucene.Net.Codecs.Memory
                                     int posUpto = 0;
                                     for (int pos = 0; pos < freq; pos++)
                                     {
-                                        positions[upto][posUpto] = docsAndPositionsEnum.nextPosition();
+                                        positions[upto][posUpto] = docsAndPositionsEnum.NextPosition();
                                         if (hasPayloads_Renamed)
                                         {
                                             BytesRef payload = docsAndPositionsEnum.Payload;
                                             if (payload != null)
                                             {
-                                                sbyte[] payloadBytes = new sbyte[payload.length];
-                                                Array.Copy(payload.bytes, payload.offset, payloadBytes, 0,
-                                                    payload.length);
+                                                sbyte[] payloadBytes = new sbyte[payload.Length];
+                                                Array.Copy(payload.Bytes, payload.Offset, payloadBytes, 0,
+                                                    payload.Length);
                                                 payloads[upto][pos] = payloadBytes;
                                             }
                                         }
                                         posUpto++;
                                         if (hasOffsets_Renamed)
                                         {
-                                            positions[upto][posUpto++] = docsAndPositionsEnum.startOffset();
-                                            positions[upto][posUpto++] = docsAndPositionsEnum.endOffset();
+                                            positions[upto][posUpto++] = docsAndPositionsEnum.StartOffset();
+                                            positions[upto][posUpto++] = docsAndPositionsEnum.EndOffset();
                                         }
                                     }
                                 }
@@ -605,7 +605,7 @@ namespace Lucene.Net.Codecs.Memory
                 // End sentinel:
                 termOffsets[count] = termOffset;
 
-                finishSkips();
+                FinishSkips();
 
                 //System.out.println(skipCount + " skips: " + field);
 
@@ -694,17 +694,14 @@ namespace Lucene.Net.Codecs.Memory
 
                 if (sameCounts.Length < termLength)
                 {
-                    sameCounts = ArrayUtil.grow(sameCounts, termLength);
+                    sameCounts = ArrayUtil.Grow(sameCounts, termLength);
                 }
 
                 // Update skip pointers:
                 if (termOrd > 0)
                 {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int lastTermLength = termOffsets[termOrd] - termOffsets[termOrd-1];
+
                     int lastTermLength = termOffsets[termOrd] - termOffsets[termOrd - 1];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = Math.min(termLength, lastTermLength);
                     int limit = Math.Min(termLength, lastTermLength);
 
                     int lastTermOffset = termOffsets[termOrd - 1];
@@ -724,7 +721,7 @@ namespace Lucene.Net.Codecs.Memory
                                 if (sameCounts[i] >= minSkipCount)
                                 {
                                     // Go back and add a skip pointer:
-                                    saveSkip(termOrd, sameCounts[i]);
+                                    SaveSkip(termOrd, sameCounts[i]);
                                 }
                                 sameCounts[i] = 1;
                             }
@@ -737,7 +734,7 @@ namespace Lucene.Net.Codecs.Memory
                         if (sameCounts[i] >= minSkipCount)
                         {
                             // Go back and add a skip pointer:
-                            saveSkip(termOrd, sameCounts[i]);
+                            SaveSkip(termOrd, sameCounts[i]);
                         }
                         sameCounts[i] = 0;
                     }
@@ -755,7 +752,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            internal void finishSkips()
+            internal void FinishSkips()
             {
                 Debug.Assert(count == terms.Length);
                 int lastTermOffset = termOffsets[count - 1];
@@ -766,7 +763,7 @@ namespace Lucene.Net.Codecs.Memory
                     if (sameCounts[i] >= minSkipCount)
                     {
                         // Go back and add a skip pointer:
-                        saveSkip(count, sameCounts[i]);
+                        SaveSkip(count, sameCounts[i]);
                     }
                 }
 
@@ -778,12 +775,8 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         for (int pos = 0; pos < term.skips.Length/2; pos++)
                         {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int otherPos = term.skips.length-pos-1;
                             int otherPos = term.skips.Length - pos - 1;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int temp = term.skips[pos];
                             int temp = term.skips[pos];
                             term.skips[pos] = term.skips[otherPos];
                             term.skips[otherPos] = temp;
@@ -792,10 +785,8 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            internal void saveSkip(int ord, int backCount)
+            internal void SaveSkip(int ord, int backCount)
             {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermAndSkip term = terms[ord - backCount];
                 TermAndSkip term = terms[ord - backCount];
                 skipCount++;
                 if (term.skips == null)
