@@ -1,3 +1,4 @@
+using System;
 using Antlr.Runtime;
 
 namespace Lucene.Net.Expressions.JS
@@ -87,14 +88,12 @@ namespace Lucene.Net.Expressions.JS
 		public const int WS = 43;
 
 		// ANTLR GENERATED CODE: DO NOT EDIT
-		public override void DisplayRecognitionError(string[] tokenNames, RecognitionException
-			 re)
+		public override void DisplayRecognitionError(string[] tokenNames, RecognitionException re)
 		{
 			string message = " unexpected character '" + (char)re.Character + "' at position (" + re.CharPositionInLine + ").";
-			ParseException parseException = new ParseException(message, re.CharPositionInLine
-				);
-			Sharpen.Extensions.InitCause(parseException, re);
-			throw new RuntimeException(parseException);
+			ParseException parseException = new ParseException(message, re.CharPositionInLine);
+			
+			throw new SystemException(parseException.Message, parseException);
 		}
 
 		// delegates
@@ -123,7 +122,7 @@ namespace Lucene.Net.Expressions.JS
 
 		public override string GrammarFileName
 		{
-		    get { return "src/java/org/apache/lucene/expressions/js/Javascript.g"; }
+		    get { return ""; }
 		}
 
 		// $ANTLR start "AT_ADD"
@@ -935,7 +934,7 @@ loop3_break: ;
 				int _channel = TokenChannels.Default;
 				// src/java/org/apache/lucene/expressions/js/Javascript.g:347:5: ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? )
 				int alt9 = 3;
-				alt9 = dfa9.Predict(input);
+				//alt9 = dfa9.Predict(input);
 				switch (alt9)
 				{
 					case 1:
@@ -2167,4 +2166,12 @@ loop16_break: ;
 			private readonly JavascriptLexer _enclosing;
 		}
 	}
+
+    public class ParseException:Exception
+    {
+        public ParseException(string message, int charPositionInLine)
+        {
+            
+        }
+    }
 }

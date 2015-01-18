@@ -101,7 +101,8 @@ namespace Lucene.Net.Tests.Expressions
 				        SortField.Type_e.FLOAT, reversed), new SortField("double", SortField.Type_e.DOUBLE, 
 				            reversed), new SortField("intdocvalues", SortField.Type_e.INT, reversed), new SortField
 				                ("floatdocvalues", SortField.Type_e.FLOAT, reversed), new SortField("score", SortField.Type_e.SCORE) };
-                Collections.Shuffle(Arrays.AsList(fields), Random());
+                //TODO: Add Shuffle extension
+                //Collections.Shuffle(Arrays.AsList(fields), Random());
                 int numSorts = TestUtil.NextInt(Random(), 1, fields.Length);
                 AssertQuery(query, filter, new Sort(Arrays.CopyOfRange(fields, 0, numSorts)));
             }

@@ -97,7 +97,7 @@ namespace Lucene.Net.Tests.Expressions
 			{
 				FieldDoc d = (FieldDoc)td.ScoreDocs[i];
 				float expected = (float)Math.Sqrt(d.Score);
-				float actual = ((float)d.Fields[0]);
+				float actual = (float)((double)d.Fields[0]);
 				AreEqual(expected, actual, CheckHits.ExplainToleranceDelta(expected, actual));
 			}
 		}
@@ -116,7 +116,7 @@ namespace Lucene.Net.Tests.Expressions
 			{
 				FieldDoc d = (FieldDoc)td.ScoreDocs[i];
 				float expected = 2 * d.Score;
-				float actual = ((float)d.Fields[0]);
+				float actual = (float)((double)d.Fields[0]);
 				AreEqual(expected, actual, CheckHits.ExplainToleranceDelta
 					(expected, actual));
 			}
@@ -177,7 +177,7 @@ namespace Lucene.Net.Tests.Expressions
 			{
 				FieldDoc d = (FieldDoc)td.ScoreDocs[i_1];
 				float expected = n * d.Score;
-				float actual = ((float)d.Fields[0]);
+				float actual = (float)((double)d.Fields[0]);
 				AreEqual(expected, actual, CheckHits.ExplainToleranceDelta(expected, actual));
 			}
 		}

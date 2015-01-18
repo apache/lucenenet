@@ -15,13 +15,13 @@ namespace Lucene.Net.Tests.Expressions.JS
 		private static double DELTA = 0.0000001;
 
 		/// <summary>empty list of methods</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestEmpty()
 		{
 			IDictionary<string, MethodInfo> functions = new HashMap<string,MethodInfo>();
 			try
 			{
-				JavascriptCompiler.Compile("sqrt(20)", functions, GetType().GetClassLoader());
+				JavascriptCompiler.Compile("sqrt(20)", functions);
 				Fail();
 			}
 			catch (ArgumentException e)
@@ -31,12 +31,11 @@ namespace Lucene.Net.Tests.Expressions.JS
 		}
 
 		/// <summary>using the default map explicitly</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestDefaultList()
 		{
 			IDictionary<string, MethodInfo> functions = JavascriptCompiler.DEFAULT_FUNCTIONS;
-			Expression expr = JavascriptCompiler.Compile("sqrt(20)", functions, GetType().GetClassLoader
-				());
+			var expr = JavascriptCompiler.Compile("sqrt(20)", functions);
 			AreEqual(Math.Sqrt(20), expr.Evaluate(0, null), DELTA);
 		}
 
@@ -46,13 +45,12 @@ namespace Lucene.Net.Tests.Expressions.JS
 		}
 
 		/// <summary>tests a method with no arguments</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestNoArgMethod()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", GetType().GetMethod("zeroArgMethod"));
-			Expression expr = JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader
-				());
+			functions["foo"] = GetType().GetMethod("zeroArgMethod");
+			var expr = JavascriptCompiler.Compile("foo()", functions);
 			AreEqual(5, expr.Evaluate(0, null), DELTA);
 		}
 
@@ -62,13 +60,12 @@ namespace Lucene.Net.Tests.Expressions.JS
 		}
 
 		/// <summary>tests a method with one arguments</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestOneArgMethod()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", GetType().GetMethod("oneArgMethod", typeof(double)));
-			Expression expr = JavascriptCompiler.Compile("foo(3)", functions, GetType().GetClassLoader
-				());
+			functions["foo"] = GetType().GetMethod("oneArgMethod", new []{ typeof(double)});
+			var expr = JavascriptCompiler.Compile("foo(3)", functions);
 			AreEqual(6, expr.Evaluate(0, null), DELTA);
 		}
 
@@ -78,26 +75,24 @@ namespace Lucene.Net.Tests.Expressions.JS
 		}
 
 		/// <summary>tests a method with three arguments</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestThreeArgMethod()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", GetType().GetMethod("threeArgMethod", typeof(double), typeof(
-				double), typeof(double)));
-			Expression expr = JavascriptCompiler.Compile("foo(3, 4, 5)", functions, GetType()
-				.GetClassLoader());
+			functions["foo"] = GetType().GetMethod("threeArgMethod", new []{ typeof(double), typeof(
+				double), typeof(double)});
+			var expr = JavascriptCompiler.Compile("foo(3, 4, 5)", functions);
 			AreEqual(12, expr.Evaluate(0, null), DELTA);
 		}
 
 		/// <summary>tests a map with 2 functions</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestTwoMethods()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", GetType().GetMethod("zeroArgMethod"));
-			functions.Put("bar", GetType().GetMethod("oneArgMethod", typeof(double)));
-			Expression expr = JavascriptCompiler.Compile("foo() + bar(3)", functions, GetType
-				().GetClassLoader());
+			functions["foo"] = GetType().GetMethod("zeroArgMethod");
+			functions["bar"] = GetType().GetMethod("oneArgMethod", new []{typeof(double)});
+			var expr = JavascriptCompiler.Compile("foo() + bar(3)", functions);
 			AreEqual(11, expr.Evaluate(0, null), DELTA);
 		}
 
@@ -107,14 +102,14 @@ namespace Lucene.Net.Tests.Expressions.JS
 		}
 
 		/// <summary>wrong return type: must be double</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestWrongReturnType()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", GetType().GetMethod("bogusReturnType"));
+			functions["foo"] = GetType().GetMethod("bogusReturnType");
 			try
 			{
-				JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader());
+				JavascriptCompiler.Compile("foo()", functions);
 				Fail();
 			}
 			catch (ArgumentException e)
@@ -129,14 +124,14 @@ namespace Lucene.Net.Tests.Expressions.JS
 		}
 
 		/// <summary>wrong param type: must be doubles</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestWrongParameterType()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", GetType().GetMethod("bogusParameterType", typeof(string)));
+			functions["foo"] = GetType().GetMethod("bogusParameterType", new []{ typeof(string)});
 			try
 			{
-				JavascriptCompiler.Compile("foo(2)", functions, GetType().GetClassLoader());
+				JavascriptCompiler.Compile("foo(2)", functions);
 				Fail();
 			}
 			catch (ArgumentException e)
@@ -152,14 +147,14 @@ namespace Lucene.Net.Tests.Expressions.JS
 		}
 
 		/// <summary>wrong modifiers: must be static</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestWrongNotStatic()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", GetType().GetMethod("nonStaticMethod"));
+			functions["foo"] = GetType().GetMethod("nonStaticMethod");
 			try
 			{
-				JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader());
+				JavascriptCompiler.Compile("foo()", functions);
 				Fail();
 			}
 			catch (ArgumentException e)
@@ -174,15 +169,15 @@ namespace Lucene.Net.Tests.Expressions.JS
 		}
 
 		/// <summary>wrong modifiers: must be public</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestWrongNotPublic()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", Sharpen.Runtime.GetDeclaredMethod(GetType(), "nonPublicMethod"
-				));
+			functions["foo"] = GetType().GetMethod("NonPublicMethod",BindingFlags.NonPublic|BindingFlags.Static);
+				
 			try
 			{
-				JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader());
+				JavascriptCompiler.Compile("foo()", functions);
 				Fail();
 			}
 			catch (ArgumentException e)
@@ -200,15 +195,14 @@ namespace Lucene.Net.Tests.Expressions.JS
 		}
 
 		/// <summary>wrong class modifiers: class containing method is not public</summary>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestWrongNestedNotPublic()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", typeof(TestCustomFunctions.NestedNotPublic).GetMethod("method"
-				));
+			functions["foo"] = typeof(NestedNotPublic).GetMethod("method");
 			try
 			{
-				JavascriptCompiler.Compile("foo()", functions, GetType().GetClassLoader());
+				JavascriptCompiler.Compile("foo()", functions);
 				Fail();
 			}
 			catch (ArgumentException e)
@@ -219,7 +213,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 
 		/// <summary>Classloader that can be used to create a fake static class that has one method returning a static var
 		/// 	</summary>
-		internal sealed class Loader : ClassLoader, Opcodes
+		/*internal sealed class Loader : ClassLoader, Opcodes
 		{
 			protected Loader(ClassLoader parent) : base(parent)
 			{
@@ -248,14 +242,14 @@ namespace Lucene.Net.Tests.Expressions.JS
 				byte[] bc = classWriter.ToByteArray();
 				return DefineClass(className, bc, 0, bc.Length);
 			}
-		}
+		}*/
 
 		/// <summary>
 		/// uses this test with a different classloader and tries to
 		/// register it using the default classloader, which should fail
 		/// </summary>
 		/// <exception cref="System.Exception"></exception>
-		public virtual void TestClassLoader()
+		/*public virtual void TestClassLoader()
 		{
 			ClassLoader thisLoader = GetType().GetClassLoader();
 			TestCustomFunctions.Loader childLoader = new TestCustomFunctions.Loader(thisLoader
@@ -300,7 +294,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 				IsTrue(e.Message.Contains("is not declared by a class which is accessible by the given parent ClassLoader"
 					));
 			}
-		}
+		}*/
 
 		internal static string MESSAGE = "This should not happen but it happens";
 
@@ -315,15 +309,13 @@ namespace Lucene.Net.Tests.Expressions.JS
 		/// <summary>the method throws an exception.</summary>
 		/// <remarks>the method throws an exception. We should check the stack trace that it contains the source code of the expression as file name.
 		/// 	</remarks>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestThrowingException()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo", typeof(TestCustomFunctions.StaticThrowingException).GetMethod
-				("method"));
+			functions["foo"] = typeof(StaticThrowingException).GetMethod("method");
 			string source = "3 * foo() / 5";
-			Expression expr = JavascriptCompiler.Compile(source, functions, GetType().GetClassLoader
-				());
+			var expr = JavascriptCompiler.Compile(source, functions);
 			try
 			{
 				expr.Evaluate(0, null);
@@ -333,9 +325,8 @@ namespace Lucene.Net.Tests.Expressions.JS
 			{
 				AreEqual(MESSAGE, e.Message);
 				StringWriter sw = new StringWriter();
-				PrintWriter pw = new PrintWriter(sw);
-				Sharpen.Runtime.PrintStackTrace(e, pw);
-				pw.Flush();
+				e.printStackTrace();
+                
 				IsTrue(sw.ToString().Contains("JavascriptCompiler$CompiledExpression.evaluate("
 					 + source + ")"));
 			}
@@ -343,14 +334,13 @@ namespace Lucene.Net.Tests.Expressions.JS
 
 		/// <summary>test that namespaces work with custom expressions.</summary>
 		/// <remarks>test that namespaces work with custom expressions.</remarks>
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestNamespaces()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions.Put("foo.bar", GetType().GetMethod("zeroArgMethod"));
+			functions["foo.bar"] = GetType().GetMethod("zeroArgMethod");
 			string source = "foo.bar()";
-			Expression expr = JavascriptCompiler.Compile(source, functions, GetType().GetClassLoader
-				());
+			var expr = JavascriptCompiler.Compile(source, functions);
 			AreEqual(5, expr.Evaluate(0, null), DELTA);
 		}
 	}

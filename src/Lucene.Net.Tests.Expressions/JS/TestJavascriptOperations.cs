@@ -1,19 +1,12 @@
-/*
- * This code is derived from MyJavaLibrary (http://somelinktomycoollibrary)
- * 
- * If this is an open source Java library, include the proper license and copyright attributions here!
- */
+using Lucene.Net.Expressions;
+using Lucene.Net.Expressions.JS;
+using NUnit.Framework;
 
-using Org.Apache.Lucene.Expressions;
-using Org.Apache.Lucene.Expressions.JS;
-using Org.Apache.Lucene.Util;
-using Sharpen;
-
-namespace Org.Apache.Lucene.Expressions.JS
+namespace Lucene.Net.Tests.Expressions.JS
 {
-	public class TestJavascriptOperations : LuceneTestCase
+	public class TestJavascriptOperations : Util.LuceneTestCase
 	{
-		/// <exception cref="System.Exception"></exception>
+		
 		private void AssertEvaluatesTo(string expression, long expected)
 		{
 			Expression evaluator = JavascriptCompiler.Compile(expression);
@@ -21,7 +14,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AreEqual(expected, actual);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestNegationOperation()
 		{
 			AssertEvaluatesTo("-1", -1);
@@ -31,7 +24,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("--0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestAddOperation()
 		{
 			AssertEvaluatesTo("1+1", 2);
@@ -45,7 +38,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("0+0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestSubtractOperation()
 		{
 			AssertEvaluatesTo("1-1", 0);
@@ -59,7 +52,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("0-0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestMultiplyOperation()
 		{
 			AssertEvaluatesTo("1*1", 1);
@@ -72,7 +65,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("0*0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestDivisionOperation()
 		{
 			AssertEvaluatesTo("1*1", 1);
@@ -84,7 +77,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("1/0", 9223372036854775807L);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestModuloOperation()
 		{
 			AssertEvaluatesTo("1%1", 0);
@@ -94,7 +87,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("27%(9%5)", 3);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestLessThanOperation()
 		{
 			AssertEvaluatesTo("1 < 1", 0);
@@ -107,7 +100,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-1 < 0", 1);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestLessThanEqualsOperation()
 		{
 			AssertEvaluatesTo("1 <= 1", 1);
@@ -120,7 +113,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-1 <= 0", 1);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestGreaterThanOperation()
 		{
 			AssertEvaluatesTo("1 > 1", 0);
@@ -133,7 +126,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-1 > 0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestGreaterThanEqualsOperation()
 		{
 			AssertEvaluatesTo("1 >= 1", 1);
@@ -146,7 +139,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-1 >= 0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestEqualsOperation()
 		{
 			AssertEvaluatesTo("1 == 1", 1);
@@ -163,7 +156,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-2 == -1", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestNotEqualsOperation()
 		{
 			AssertEvaluatesTo("1 != 1", 0);
@@ -180,7 +173,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-2 != -1", 1);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBoolNotOperation()
 		{
 			AssertEvaluatesTo("!1", 0);
@@ -192,7 +185,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("!-2", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBoolAndOperation()
 		{
 			AssertEvaluatesTo("1 && 1", 1);
@@ -205,7 +198,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-0 && -0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBoolOrOperation()
 		{
 			AssertEvaluatesTo("1 || 1", 1);
@@ -218,7 +211,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-0 || -0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestConditionalOperation()
 		{
 			AssertEvaluatesTo("1 ? 2 : 3", 2);
@@ -234,7 +227,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("(0 ? 1 : 0) ? 3 : 4", 4);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBitShiftLeft()
 		{
 			AssertEvaluatesTo("1 << 1", 2);
@@ -250,7 +243,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-15 << 62", 4611686018427387904L);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBitShiftRight()
 		{
 			AssertEvaluatesTo("1 >> 1", 0);
@@ -266,7 +259,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("-2147483646 >> 1", -1073741823);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBitShiftRightUnsigned()
 		{
 			AssertEvaluatesTo("1 >>> 1", 0);
@@ -282,7 +275,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("2147483648 >>> 1", 1073741824);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBitwiseAnd()
 		{
 			AssertEvaluatesTo("4 & 4", 4);
@@ -295,7 +288,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("1 & 0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBitwiseOr()
 		{
 			AssertEvaluatesTo("4 | 4", 4);
@@ -308,7 +301,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("1 | 0", 1);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBitwiseXor()
 		{
 			AssertEvaluatesTo("4 ^ 4", 0);
@@ -322,7 +315,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("0 ^ 0", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBitwiseNot()
 		{
 			AssertEvaluatesTo("~-5", 4);
@@ -331,7 +324,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("~-1", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestDecimalConst()
 		{
 			AssertEvaluatesTo("0", 0);
@@ -342,7 +335,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("500E-2", 5);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestHexConst()
 		{
 			AssertEvaluatesTo("0x0", 0);
@@ -355,7 +348,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("0xA << 2", unchecked((int)(0xA)) << 2);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestHexConst2()
 		{
 			AssertEvaluatesTo("0X0", 0);
@@ -364,7 +357,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("0X1234ABCDEF", 78193085935L);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestOctalConst()
 		{
 			AssertEvaluatesTo("00", 0);

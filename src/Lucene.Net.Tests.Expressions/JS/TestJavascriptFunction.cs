@@ -1,22 +1,15 @@
-/*
- * This code is derived from MyJavaLibrary (http://somelinktomycoollibrary)
- * 
- * If this is an open source Java library, include the proper license and copyright attributions here!
- */
-
 using System;
-using Org.Apache.Lucene.Expressions;
-using Org.Apache.Lucene.Expressions.JS;
-using Org.Apache.Lucene.Util;
-using Sharpen;
+using Lucene.Net.Expressions;
+using Lucene.Net.Expressions.JS;
+using NUnit.Framework;
 
-namespace Org.Apache.Lucene.Expressions.JS
+namespace Lucene.Net.Tests.Expressions.JS
 {
-	public class TestJavascriptFunction : LuceneTestCase
+	public class TestJavascriptFunction : Util.LuceneTestCase
 	{
 		private static double DELTA = 0.0000001;
 
-		/// <exception cref="System.Exception"></exception>
+		
 		private void AssertEvaluatesTo(string expression, double expected)
 		{
 			Expression evaluator = JavascriptCompiler.Compile(expression);
@@ -24,7 +17,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AreEqual(expected, actual, DELTA);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestAbsMethod()
 		{
 			AssertEvaluatesTo("abs(0)", 0);
@@ -34,7 +27,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("abs(-1)", 1);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestAcosMethod()
 		{
 			AssertEvaluatesTo("acos(-1)", Math.PI);
@@ -48,7 +41,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("acos(1)", 0);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestAcoshMethod()
 		{
 			AssertEvaluatesTo("acosh(1)", 0);
@@ -56,7 +49,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("acosh(1234567.89)", 14.719378760739708);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestAsinMethod()
 		{
 			AssertEvaluatesTo("asin(-1)", -Math.PI / 2);
@@ -70,7 +63,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("asin(1)", Math.PI / 2);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestAsinhMethod()
 		{
 			AssertEvaluatesTo("asinh(-1234567.89)", -14.719378760740035);
@@ -82,7 +75,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("asinh(1234567.89)", 14.719378760740035);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestAtanMethod()
 		{
 			AssertEvaluatesTo("atan(-1.732050808)", -Math.PI / 3);
@@ -94,7 +87,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("atan(1.732050808)", Math.PI / 3);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestAtan2Method()
 		{
 			AssertEvaluatesTo("atan2(+0,+0)", +0.0);
@@ -107,7 +100,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("atan2(-2,-2)", -Math.PI * 3 / 4);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestAtanhMethod()
 		{
 			AssertEvaluatesTo("atanh(-1)", double.NegativeInfinity);
@@ -117,7 +110,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("atanh(1)", double.PositiveInfinity);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestCeilMethod()
 		{
 			AssertEvaluatesTo("ceil(0)", 0);
@@ -129,7 +122,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("ceil(-1.1)", -1);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestCosMethod()
 		{
 			AssertEvaluatesTo("cos(0)", 1);
@@ -143,7 +136,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("cos(" + -Math.PI / 6 + ")", 0.8660254);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestCoshMethod()
 		{
 			AssertEvaluatesTo("cosh(0)", 1);
@@ -155,7 +148,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("cosh(12.3456789)", 114982.09728671524);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestExpMethod()
 		{
 			AssertEvaluatesTo("exp(0)", 1);
@@ -167,7 +160,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("exp(12.3456789)", 229964.194569);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestFloorMethod()
 		{
 			AssertEvaluatesTo("floor(0)", 0);
@@ -179,14 +172,14 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("floor(-1.1)", -2);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestHaversinMethod()
 		{
 			AssertEvaluatesTo("haversin(40.7143528,-74.0059731,40.759011,-73.9844722)", 5.284299568309
 				);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestLnMethod()
 		{
 			AssertEvaluatesTo("ln(0)", double.NegativeInfinity);
@@ -197,7 +190,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("ln(12.3456789)", 2.51330611521);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestLog10Method()
 		{
 			AssertEvaluatesTo("log10(0)", double.NegativeInfinity);
@@ -207,7 +200,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("log10(12.3456789)", 1.0915149771692705);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestLognMethod()
 		{
 			AssertEvaluatesTo("logn(2, 0)", double.NegativeInfinity);
@@ -222,7 +215,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("logn(2.5, 12.3456789)", 2.7429133874016745);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestMaxMethod()
 		{
 			AssertEvaluatesTo("max(0, 0)", 0);
@@ -232,7 +225,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("max(25, 23)", 25);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestMinMethod()
 		{
 			AssertEvaluatesTo("min(0, 0)", 0);
@@ -242,7 +235,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("min(25, 23)", 23);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestPowMethod()
 		{
 			AssertEvaluatesTo("pow(0, 0)", 1);
@@ -254,7 +247,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("pow(-1.1, 2)", 1.21);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestSinMethod()
 		{
 			AssertEvaluatesTo("sin(0)", 0);
@@ -268,7 +261,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("sin(" + -Math.PI / 6 + ")", -0.5);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestSinhMethod()
 		{
 			AssertEvaluatesTo("sinh(0)", 0);
@@ -280,7 +273,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("sinh(12.3456789)", 114982.09728236674);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestSqrtMethod()
 		{
 			AssertEvaluatesTo("sqrt(0)", 0);
@@ -289,7 +282,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("sqrt(49)", 7);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestTanMethod()
 		{
 			AssertEvaluatesTo("tan(0)", 0);
@@ -301,7 +294,7 @@ namespace Org.Apache.Lucene.Expressions.JS
 			AssertEvaluatesTo("tan(1.3)", 3.60210244797);
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestTanhMethod()
 		{
 			AssertEvaluatesTo("tanh(0)", 0);

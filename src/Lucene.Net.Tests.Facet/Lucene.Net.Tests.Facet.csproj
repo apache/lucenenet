@@ -36,9 +36,6 @@
     <Reference Include="Lucene.Net.TestFramework">
       <HintPath>..\Lucene.Net.Tests\bin\Debug\Lucene.Net.TestFramework.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />

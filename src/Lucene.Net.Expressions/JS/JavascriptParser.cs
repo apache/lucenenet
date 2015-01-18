@@ -349,6 +349,10 @@ namespace Lucene.Net.Expressions.JS
             }
         }
 
+        internal class ExpressionReturn<TToken> : ParserRuleReturnScope<TToken>
+        {
+
+        }
 
         // $ANTLR start "expression"
         // src/java/org/apache/lucene/expressions/js/Javascript.g:250:1: expression : conditional EOF !;
@@ -1869,4 +1873,6 @@ namespace Lucene.Net.Expressions.JS
         // $ANTLR end "numeric"
         // Delegated rules
     }
+
+
 }
