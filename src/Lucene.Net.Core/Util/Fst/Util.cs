@@ -122,14 +122,14 @@ namespace Lucene.Net.Util.Fst
         ///  2, ...), or file offets (when appending to a file)
         ///  fit this.
         /// </summary>
-        public static IntsRef GetByOutput(FST<long> fst, long targetOutput)
+        public static IntsRef GetByOutput(FST<long?> fst, long targetOutput)
         {
             var @in = fst.BytesReader;
 
             // TODO: would be nice not to alloc this on every lookup
-            FST<long>.Arc<long> arc = fst.GetFirstArc(new FST<long>.Arc<long>());
+            FST<long?>.Arc<long?> arc = fst.GetFirstArc(new FST<long?>.Arc<long?>());
 
-            FST<long>.Arc<long> scratchArc = new FST<long>.Arc<long>();
+            FST<long?>.Arc<long?> scratchArc = new FST<long?>.Arc<long?>();
 
             IntsRef result = new IntsRef();
 
@@ -140,9 +140,9 @@ namespace Lucene.Net.Util.Fst
         /// Expert: like <seealso cref="Util#getByOutput(FST, long)"/> except reusing
         /// BytesReader, initial and scratch Arc, and result.
         /// </summary>
-        public static IntsRef GetByOutput(FST<long> fst, long targetOutput, FST<long>.BytesReader @in, FST<long>.Arc<long> arc, FST<long>.Arc<long> scratchArc, IntsRef result)
+        public static IntsRef GetByOutput(FST<long?> fst, long targetOutput, FST<long?>.BytesReader @in, FST<long?>.Arc<long?> arc, FST<long?>.Arc<long?> scratchArc, IntsRef result)
         {
-            long output = arc.Output;
+            long output = arc.Output.Value;
             int upto = 0;
 
             //System.out.println("reverseLookup output=" + targetOutput);
@@ -152,7 +152,7 @@ namespace Lucene.Net.Util.Fst
                 //System.out.println("loop: output=" + output + " upto=" + upto + " arc=" + arc);
                 if (arc.Final)
                 {
-                    long finalOutput = output + arc.NextFinalOutput;
+                    long finalOutput = output + arc.NextFinalOutput.Value;
                     //System.out.println("  isFinal finalOutput=" + finalOutput);
                     if (finalOutput == targetOutput)
                     {
@@ -167,7 +167,7 @@ namespace Lucene.Net.Util.Fst
                     }
                 }
 
-                if (FST<long>.TargetHasArcs(arc))
+                if (FST<long?>.TargetHasArcs(arc))
                 {
                     //System.out.println("  targetHasArcs");
                     if (result.Ints.Length == upto)
@@ -194,7 +194,7 @@ namespace Lucene.Net.Util.Fst
                             long minArcOutput;
                             if ((flags & FST<long>.BIT_ARC_HAS_OUTPUT) != 0)
                             {
-                                long arcOutput = fst.Outputs.Read(@in);
+                                long arcOutput = fst.Outputs.Read(@in).Value;
                                 minArcOutput = output + arcOutput;
                             }
                             else
@@ -231,11 +231,11 @@ namespace Lucene.Net.Util.Fst
 
                         fst.ReadNextRealArc(arc, @in);
                         result.Ints[upto++] = arc.Label;
-                        output += arc.Output;
+                        output += arc.Output.Value;
                     }
                     else
                     {
-                        FST<long>.Arc<long> prevArc = null;
+                        FST<long?>.Arc<long?> prevArc = null;
 
                         while (true)
                         {
@@ -243,7 +243,7 @@ namespace Lucene.Net.Util.Fst
 
                             // this is the min output we'd hit if we follow
                             // this arc:
-                            long minArcOutput = output + arc.Output;
+                            long minArcOutput = output + arc.Output.Value;
 
                             if (minArcOutput == targetOutput)
                             {
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Fst
                                     // Recurse on previous arc:
                                     arc.CopyFrom(prevArc);
                                     result.Ints[upto++] = arc.Label;
-                                    output += arc.Output;
+                                    output += arc.Output.Value;
                                     //System.out.println("    recurse prev label=" + (char) arc.label + " output=" + output);
                                     break;
                                 }
