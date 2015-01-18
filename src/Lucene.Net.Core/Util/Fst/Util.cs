@@ -780,7 +780,7 @@ namespace Lucene.Net.Util.Fst
                 if (startArc.Final)
                 {
                     isFinal = true;
-                    finalOutput = (object)startArc.NextFinalOutput == (object)NO_OUTPUT ? default(T) : startArc.NextFinalOutput;
+                    finalOutput = startArc.NextFinalOutput.Equals(NO_OUTPUT) ? default(T) : startArc.NextFinalOutput;
                 }
                 else
                 {
@@ -848,7 +848,7 @@ namespace Lucene.Net.Util.Fst
                                 }
 
                                 string finalOutput;
-                                if (arc.NextFinalOutput != null && (object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                                if (arc.NextFinalOutput != null && !arc.NextFinalOutput.Equals(NO_OUTPUT))
                                 {
                                     finalOutput = fst.Outputs.OutputToString(arc.NextFinalOutput);
                                 }
@@ -866,7 +866,7 @@ namespace Lucene.Net.Util.Fst
                             }
 
                             string outs;
-                            if ((object)arc.Output != (object)NO_OUTPUT)
+                            if (!arc.Output.Equals(NO_OUTPUT))
                             {
                                 outs = "/" + fst.Outputs.OutputToString(arc.Output);
                             }
@@ -875,7 +875,7 @@ namespace Lucene.Net.Util.Fst
                                 outs = "";
                             }
 
-                            if (!FST<T>.TargetHasArcs(arc) && arc.Final && (object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                            if (!FST<T>.TargetHasArcs(arc) && arc.Final && !arc.NextFinalOutput.Equals(NO_OUTPUT))
                             {
                                 // Tricky special case: sometimes, due to
                                 // pruning, the builder can [sillily] produce
