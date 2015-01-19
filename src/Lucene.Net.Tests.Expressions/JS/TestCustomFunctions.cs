@@ -79,7 +79,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestThreeArgMethod()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo"] = GetType().GetMethod("threeArgMethod", new []{ typeof(double), typeof(
+			functions["foo"] = GetType().GetMethod("ThreeArgMethod", new []{ typeof(double), typeof(
 				double), typeof(double)});
 			var expr = JavascriptCompiler.Compile("foo(3, 4, 5)", functions);
 			AreEqual(12, expr.Evaluate(0, null), DELTA);

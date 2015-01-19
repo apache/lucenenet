@@ -4,6 +4,7 @@ using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Expressions
 {
@@ -15,7 +16,7 @@ namespace Lucene.Net.Tests.Expressions
 
 		internal Directory dir;
 
-		/// <exception cref="System.Exception"></exception>
+		[SetUp]
 		public override void SetUp()
 		{
 			base.SetUp();
@@ -48,7 +49,7 @@ namespace Lucene.Net.Tests.Expressions
 			iw.Dispose();
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[TearDown]
 		public override void TearDown()
 		{
 			reader.Dispose();
@@ -56,7 +57,7 @@ namespace Lucene.Net.Tests.Expressions
 			base.TearDown();
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		[Test]
 		public virtual void TestBasic()
 		{
 			// create a sort field and sort by it (reverse order)

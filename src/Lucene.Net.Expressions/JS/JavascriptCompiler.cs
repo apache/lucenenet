@@ -124,6 +124,7 @@ namespace Lucene.Net.Expressions.JS
         private int lineNum = 1;
         private StreamWriter file;
         private MethodBuilder evalMethod;
+        private bool negate;
 
         // This maximum length is theoretically 65535 bytes, but as its CESU-8 encoded we dont know how large it is in bytes, so be safe
         // rcmuir: "If your ranking function is that large you need to check yourself into a mental institution!"
@@ -279,7 +280,7 @@ namespace Lucene.Net.Expressions.JS
             {
                 file = File.CreateText(fileName);
             }
-
+           
             switch (type)
             {
                 case JavascriptParser.AT_CALL:
@@ -341,7 +342,15 @@ namespace Lucene.Net.Expressions.JS
                          gen.Emit(OpCodes.Ldelem_Ref, debugDoc, file, lineNum++);
                          gen.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD, debugDoc, file, lineNum++);*/
                         gen.Emit(OpCodes.Ldarg_2);
-                        gen.Emit(OpCodes.Ldc_I4_0);
+                        gen.Emit(OpCodes.Ldc_I4,index);
+                        /*if (index==0)
+                        {
+                            gen.Emit(OpCodes.Ldc_I4_0);
+                        }
+                        if (index==1)
+                        {
+                            gen.Emit(OpCodes.Ldc_I4_1);
+                        }*/
                         gen.Emit(OpCodes.Ldelem_Ref);
                         gen.Emit(OpCodes.Ldarg_1);
                         gen.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD);
@@ -363,15 +372,20 @@ namespace Lucene.Net.Expressions.JS
                     }
 
                 case JavascriptParser.DECIMAL:
+                {
+                    gen.Emit(OpCodes.Ldc_R8,double.Parse(text));
+                    if (negate)
                     {
-                        //dynamicType.Push(double.ParseDouble(text));
-                        //dynamicType.Cast(typeof(double), expected);
-                        break;
+                        gen.Emit(OpCodes.Neg);
+                        negate = false;
                     }
+                    break;
+                }
 
                 case JavascriptParser.AT_NEGATE:
-                    {
-                        RecursiveCompile(current.GetChild(0), typeof(double));
+                {
+                    negate = true;
+                    RecursiveCompile(current.GetChild(0), typeof(double));
                         /*dynamicType.VisitInsn(Opcodes.DNEG);
 					dynamicType.Cast(typeof(double), expected);*/
                         break;
@@ -581,7 +595,7 @@ namespace Lucene.Net.Expressions.JS
             gen.Emit(OpCodes.Stloc_0, debugDoc, file, lineNum++);
             gen.Emit(OpCodes.Br_S, debugDoc, file, lineNum++);
             gen.Emit(OpCodes.Ldloc_0, debugDoc, file, lineNum++);*/
-            gen.Emit(OpCodes.Add);
+            gen.Emit(op);
             /*dynamicType.VisitInsn(op);
 			dynamicType.Cast(returnType, expected);*/
         }
@@ -670,6 +684,7 @@ namespace Lucene.Net.Expressions.JS
                 file.Flush();
                 file.Dispose();
             }
+            
             
         }
 

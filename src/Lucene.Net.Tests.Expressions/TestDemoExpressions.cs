@@ -138,7 +138,7 @@ namespace Lucene.Net.Tests.Expressions
 			{
 				FieldDoc d = (FieldDoc)td.ScoreDocs[i];
 				float expected = 2 * d.Score;
-				float actual = ((float)d.Fields[0]);
+				float actual = (float)((double)d.Fields[0]);
 				AreEqual(expected, actual, CheckHits.ExplainToleranceDelta
 					(expected, actual));
 			}
@@ -185,8 +185,7 @@ namespace Lucene.Net.Tests.Expressions
 		[Test]
 		public virtual void TestDistanceSort()
 		{
-			var distance = JavascriptCompiler.Compile("haversin(40.7143528,-74.0059731,latitude,longitude)"
-				);
+			var distance = JavascriptCompiler.Compile("haversin(40.7143528,-74.0059731,latitude,longitude)");
 			SimpleBindings bindings = new SimpleBindings();
 			bindings.Add(new SortField("latitude", SortField.Type_e.DOUBLE));
 			bindings.Add(new SortField("longitude", SortField.Type_e.DOUBLE));
