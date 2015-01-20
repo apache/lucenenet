@@ -50,22 +50,20 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 
 ###Code that is currently pending being ported from scratch (+ tests) == up for grabs:
 
-* <https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/queryparser>
-* <https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/join>
-* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Classification>
+* [QueryParser](https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/queryparser)
+* [Join](https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/join)
+* [Lucene.Net.Classification](<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Classification)
 (missing tests)
-* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Queries>
+* [Lucene.Net.Queries](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Queries)
 (missing tests)
 * The spatial module (the situation there is a bit subtle, if you are
 interested let me know)
 
 Also, some analysis modules:
 
-* <https://github.com/apache/lucene-solr/tree/trunk/lucene/analysis> (common is
-already mid-porting, see below)
-* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Misc>
-(missing tests)
-* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Memory>
+* [Analysis](https://github.com/apache/lucene-solr/tree/trunk/lucene/analysis) (common is already mid-porting, see below)
+* [Lucene.Net.Misc](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Misc) (missing tests)
+* [Lucene.Net.Memory](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Memory)
 (missing tests)
 
 ###Code that is ported and now pending manual cleanup, and then once its compiling porting of its tests == up for grabs:
