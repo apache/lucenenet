@@ -1,4 +1,4 @@
-Contributing To Lucene .NET
+Lucene.NET Contributor's Guide
 ---
 Hello new contributors, thanks for getting on board!
 
