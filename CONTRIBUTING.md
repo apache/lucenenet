@@ -48,33 +48,33 @@ with minimal cleaning up procedure. We are working on tools and code
 helpers to help with that, see for examples see our [Java style methods to avoid many search-replace in porting tests](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.TestFramework/JavaCompatibility), and a
 [R# plugin that will help making some stuff auto-port when pasting](https://resharper-plugins.jetbrains.com/packages/ReSharper.ExJava/).
 
-Code that is currently pending being ported from scratch (+ tests) == up
-for grabs:
+###Code that is currently pending being ported from scratch (+ tests) == up for grabs:
 
-<https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/queryparser>
-<https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/join>
-<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Classification>
+* <https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/queryparser>
+* <https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/join>
+* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Classification>
 (missing tests)
-<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Queries>
+* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Queries>
 (missing tests)
-The spatial module (the situation there is a bit subtle, if you are
+* The spatial module (the situation there is a bit subtle, if you are
 interested let me know)
-More analysis modules:
-<https://github.com/apache/lucene-solr/tree/trunk/lucene/analysis> (common is
+
+Also, some analysis modules:
+
+* <https://github.com/apache/lucene-solr/tree/trunk/lucene/analysis> (common is
 already mid-porting, see below)
-<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Misc>
+* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Misc>
 (missing tests)
-<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Memory>
+* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Memory>
 (missing tests)
 
-Code that is ported and now pending manual cleanup, and then once its
-compiling porting of its tests == up for grabs:
+###Code that is ported and now pending manual cleanup, and then once its compiling porting of its tests == up for grabs:
 
-<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Analysis.Common>
-<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Suggest>
+*  <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Analysis.Common>
+* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Suggest>
 (depends on Analysis.Common)
 
-The rest is pretty much under control already
+The rest is pretty much under control already.
 
 If you are more into Fixing Existing Tests
 ---
