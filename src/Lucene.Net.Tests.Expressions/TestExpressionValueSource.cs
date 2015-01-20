@@ -77,7 +77,7 @@ namespace Lucene.Net.Tests.Expressions
 			AreEqual(10, values.IntVal(0));
 			AreEqual(10, values.ShortVal(0));
 			AreEqual(10, values.ByteVal(0));
-			AreEqual("10.0", values.StrVal(0));
+			AreEqual("10", values.StrVal(0));
 			AreEqual(System.Convert.ToDouble(10), values.ObjectVal(0));
 			AreEqual(40, values.DoubleVal(1), 0);
 			AreEqual(40, values.FloatVal(1), 0);
@@ -85,7 +85,7 @@ namespace Lucene.Net.Tests.Expressions
 			AreEqual(40, values.IntVal(1));
 			AreEqual(40, values.ShortVal(1));
 			AreEqual(40, values.ByteVal(1));
-			AreEqual("40.0", values.StrVal(1));
+			AreEqual("40", values.StrVal(1));
 			AreEqual(System.Convert.ToDouble(40), values.ObjectVal(1));
 			AreEqual(4, values.DoubleVal(2), 0);
 			AreEqual(4, values.FloatVal(2), 0);
@@ -93,7 +93,7 @@ namespace Lucene.Net.Tests.Expressions
 			AreEqual(4, values.IntVal(2));
 			AreEqual(4, values.ShortVal(2));
 			AreEqual(4, values.ByteVal(2));
-			AreEqual("4.0", values.StrVal(2));
+			AreEqual("4", values.StrVal(2));
 			AreEqual(System.Convert.ToDouble(4), values.ObjectVal(2));
 		}
 

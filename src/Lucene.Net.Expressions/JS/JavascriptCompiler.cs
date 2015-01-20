@@ -241,19 +241,14 @@ namespace Lucene.Net.Expressions.JS
         private void BeginCompile()
         {
             var assemblyName = new AssemblyName("Lucene.Net.Expressions.Dynamic" + new Random().Next());
-            asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave);
-            Type debugAttribute = typeof(DebuggableAttribute);
-            var debugCtor = debugAttribute.GetConstructor(new Type[] { typeof(DebuggableAttribute.DebuggingModes) });
-            var debugBuilder = new CustomAttributeBuilder(debugCtor,
-                new object[] { DebuggableAttribute.DebuggingModes.DisableOptimizations | DebuggableAttribute.DebuggingModes.Default });
-            asmBuilder.SetCustomAttribute(debugBuilder);
-            ModuleBuilder modBuilder = asmBuilder.DefineDynamicModule(assemblyName.Name + ".dll", true);
+            asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndCollect);
+
+            ModuleBuilder modBuilder = asmBuilder.DefineDynamicModule(assemblyName.Name + ".dll");
             dynamicType = modBuilder.DefineType(COMPILED_EXPRESSION_CLASS,
                 TypeAttributes.AnsiClass | TypeAttributes.AutoClass | TypeAttributes.Public | TypeAttributes.Class |
                 TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout, EXPRESSION_TYPE);
-            fileName = dynamicType.Name + ".il";
-            debugDoc = modBuilder.DefineDocument(fileName, SymDocumentType.Text, SymLanguageType.ILAssembly,
-                SymLanguageVendor.Microsoft);
+
+
             ConstructorBuilder constructorBuilder = dynamicType.DefineConstructor(MethodAttributes.Public,
                 CallingConventions.HasThis,
                 new[] { typeof(string), typeof(string[]) });
@@ -276,11 +271,8 @@ namespace Lucene.Net.Expressions.JS
         {
             int type = current.Type;
             string text = current.Text;
-            if (file == null)
-            {
-                file = File.CreateText(fileName);
-            }
-           
+
+
             switch (type)
             {
                 case JavascriptParser.AT_CALL:
@@ -304,15 +296,9 @@ namespace Lucene.Net.Expressions.JS
                             RecursiveCompile(current.GetChild(argument), typeof(double));
                         }
                         gen.Emit(OpCodes.Call, method);
-                        /*gen.Emit(OpCodes.Ldloc_0,debugDoc,file,lineNum++);
-                        gen.Emit(OpCodes.Call, method,debugDoc,file,lineNum++);
-                        gen.Emit(OpCodes.Stloc_1, debugDoc, file, lineNum++);
-                        gen.Emit(OpCodes.Br_S, debugDoc, file, lineNum++);
-                        gen.Emit(OpCodes.Ldloc_1, debugDoc, file, lineNum++);
-                        gen.Emit(OpCodes.Ret, debugDoc, file, lineNum++);*/
-                        //gen.Emit(OpCodes.Ldloc_0);
-                        
-                        
+
+
+
                         break;
                     }
 
@@ -328,34 +314,16 @@ namespace Lucene.Net.Expressions.JS
                             index = externalsMap.Count;
                             externalsMap[text] = index;
                         }
-                        gen.Emit(OpCodes.Nop, debugDoc, file, lineNum++);
-                        //gen.Emit(OpCodes.Newarr,typeof(FunctionValues));
-                        //gen.Emit(OpCodes.Ldarg_2, debugDoc, file, lineNum++);
-                        /*gen.Emit(OpCodes.Ldc_I4_0, debugDoc, file, lineNum++);
-                        gen.Emit(OpCodes.Ldelem_Ref, debugDoc, file, lineNum++);
-                        gen.Emit(OpCodes.Ldarg_1, debugDoc, file, lineNum++);
-                        gen.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD, debugDoc, file, lineNum++);*/
-                        //gen.Emit(OpCodes.Stloc_0, debugDoc, file, lineNum++);
-                        
-                        /* gen.Emit(OpCodes.Ldarg_2, debugDoc, file, lineNum++);
-                         gen.Emit(OpCodes.Ldc_I4_1, debugDoc, file, lineNum++);
-                         gen.Emit(OpCodes.Ldelem_Ref, debugDoc, file, lineNum++);
-                         gen.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD, debugDoc, file, lineNum++);*/
+                        gen.Emit(OpCodes.Nop);
+
                         gen.Emit(OpCodes.Ldarg_2);
-                        gen.Emit(OpCodes.Ldc_I4,index);
-                        /*if (index==0)
-                        {
-                            gen.Emit(OpCodes.Ldc_I4_0);
-                        }
-                        if (index==1)
-                        {
-                            gen.Emit(OpCodes.Ldc_I4_1);
-                        }*/
+                        gen.Emit(OpCodes.Ldc_I4, index);
+
                         gen.Emit(OpCodes.Ldelem_Ref);
                         gen.Emit(OpCodes.Ldarg_1);
                         gen.Emit(OpCodes.Callvirt, DOUBLE_VAL_METHOD);
-                        
-                        /*gen.Emit(OpCodes.Stloc_0);*/
+
+
                         break;
                     }
 
@@ -372,95 +340,94 @@ namespace Lucene.Net.Expressions.JS
                     }
 
                 case JavascriptParser.DECIMAL:
-                {
-                    gen.Emit(OpCodes.Ldc_R8,double.Parse(text));
-                    if (negate)
                     {
-                        gen.Emit(OpCodes.Neg);
-                        negate = false;
+                        gen.Emit(OpCodes.Ldc_R8, double.Parse(text));
+                        if (negate)
+                        {
+                            gen.Emit(OpCodes.Neg);
+                            negate = false;
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 case JavascriptParser.AT_NEGATE:
-                {
-                    negate = true;
-                    RecursiveCompile(current.GetChild(0), typeof(double));
-                        /*dynamicType.VisitInsn(Opcodes.DNEG);
-					dynamicType.Cast(typeof(double), expected);*/
+                    {
+                        negate = true;
+                        RecursiveCompile(current.GetChild(0), typeof(double));
+
                         break;
                     }
 
                 case JavascriptParser.AT_ADD:
                     {
-                        PushArith(OpCodes.Add, current, expected, file);
+                        PushArith(OpCodes.Add, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_SUBTRACT:
                     {
-                        PushArith(OpCodes.Sub, current, expected, file);
+                        PushArith(OpCodes.Sub, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_MULTIPLY:
                     {
-                        PushArith(OpCodes.Mul, current, expected, file);
+                        PushArith(OpCodes.Mul, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_DIVIDE:
                     {
-                        PushArith(OpCodes.Div, current, expected, file);
+                        PushArith(OpCodes.Div, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_MODULO:
                     {
-                        PushArith(OpCodes.Rem, current, expected, file);
+                        PushArith(OpCodes.Rem, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_BIT_SHL:
                     {
-                        PushShift(OpCodes.Shl, current, expected, file);
+                        PushShift(OpCodes.Shl, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_BIT_SHR:
                     {
-                        PushShift(OpCodes.Shr, current, expected, file);
+                        PushShift(OpCodes.Shr, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_BIT_SHU:
                     {
-                        PushShift(OpCodes.Shr_Un, current, expected, file);
+                        PushShift(OpCodes.Shr_Un, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_BIT_AND:
                     {
-                        PushBitwise(OpCodes.And, current, expected, file);
+                        PushBitwise(OpCodes.And, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_BIT_OR:
                     {
-                        PushBitwise(OpCodes.Or, current, expected, file);
+                        PushBitwise(OpCodes.Or, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_BIT_XOR:
                     {
-                        PushBitwise(OpCodes.Xor, current, expected, file);
+                        PushBitwise(OpCodes.Xor, current, expected);
                         break;
                     }
 
                 case JavascriptParser.AT_BIT_NOT:
                     {
                         RecursiveCompile(current.GetChild(0), typeof(long));
-                        gen.Emit(OpCodes.Ldc_I4_M1, debugDoc, file, lineNum++);
+                        gen.Emit(OpCodes.Ldc_I4_M1);
                         //dynamicType.Push(-1L);
                         //dynamicType.VisitInsn(Opcodes.LXOR);
                         //dynamicType.Cast(typeof(long), expected);
@@ -571,30 +538,30 @@ namespace Lucene.Net.Expressions.JS
 
         }
 
-        private void PushArith(OpCode op, ITree current, Type expected, StreamWriter file)
+        private void PushArith(OpCode op, ITree current, Type expected)
         {
-            PushBinaryOp(op, current, expected, typeof(double), typeof(double), typeof(double), file);
+            PushBinaryOp(op, current, expected, typeof(double), typeof(double), typeof(double));
         }
 
-        private void PushShift(OpCode op, ITree current, Type expected, StreamWriter file)
+        private void PushShift(OpCode op, ITree current, Type expected)
         {
-            PushBinaryOp(op, current, expected, typeof(long), typeof(int), typeof(long), file);
+            PushBinaryOp(op, current, expected, typeof(long), typeof(int), typeof(long));
         }
 
-        private void PushBitwise(OpCode op, ITree current, Type expected, StreamWriter file)
+        private void PushBitwise(OpCode op, ITree current, Type expected)
         {
-            PushBinaryOp(op, current, expected, typeof(long), typeof(long), typeof(long), file);
+            PushBinaryOp(op, current, expected, typeof(long), typeof(long), typeof(long));
         }
 
-        private void PushBinaryOp(OpCode op, ITree current, Type expected, Type arg1, Type arg2, Type returnType, StreamWriter file)
+        private void PushBinaryOp(OpCode op, ITree current, Type expected, Type arg1, Type arg2, Type returnType)
         {
             gen.Emit(OpCodes.Nop);
             RecursiveCompile(current.GetChild(0), arg1);
             RecursiveCompile(current.GetChild(1), arg2);
-           /* gen.Emit(OpCodes.Add, debugDoc, file, lineNum++);
-            gen.Emit(OpCodes.Stloc_0, debugDoc, file, lineNum++);
-            gen.Emit(OpCodes.Br_S, debugDoc, file, lineNum++);
-            gen.Emit(OpCodes.Ldloc_0, debugDoc, file, lineNum++);*/
+            /* gen.Emit(OpCodes.Add, debugDoc, file, lineNum++);
+             gen.Emit(OpCodes.Stloc_0, debugDoc, file, lineNum++);
+             gen.Emit(OpCodes.Br_S, debugDoc, file, lineNum++);
+             gen.Emit(OpCodes.Ldloc_0, debugDoc, file, lineNum++);*/
             gen.Emit(op);
             /*dynamicType.VisitInsn(op);
 			dynamicType.Cast(returnType, expected);*/
@@ -679,13 +646,6 @@ namespace Lucene.Net.Expressions.JS
         {
             gen.Emit(OpCodes.Ret);
             dynamicType.DefineMethodOverride(evalMethod, EVALUATE_METHOD);
-            if (file != null)
-            {
-                file.Flush();
-                file.Dispose();
-            }
-            
-            
         }
 
 
@@ -768,7 +728,11 @@ namespace Lucene.Net.Expressions.JS
             }
             if (!(method.DeclaringType.IsPublic))
             {
-                throw new ArgumentException(method.DeclaringType.FullName + " is not public.");
+                //.NET Port. Inner class is being returned as not public even when declared public
+                if (method.DeclaringType.DeclaringType==null || (method.DeclaringType.DeclaringType!=null && !method.DeclaringType.IsPublic))
+                {
+                    throw new ArgumentException(method.DeclaringType.FullName + " is not public.");
+                }
             }
             if (method.GetParameters().Any(parmType => parmType.ParameterType != (typeof(double))))
             {
@@ -781,81 +745,5 @@ namespace Lucene.Net.Expressions.JS
         }
     }
 
-    internal static class DebuggingILGeneratorExtensions
-    {
-        public static void Generate(this ILGenerator ilGen, Type target, ISymbolDocumentWriter doc, StreamWriter sw)
-        {
-            int lineNum = 1;
-            //ilGen.Emit();
-        }
-
-        public static void Emit(this ILGenerator ilGen, OpCode opCode, MethodInfo method,
-            ISymbolDocumentWriter docWriter, StreamWriter sw, int lineNum)
-        {
-            var line = opCode.Name + " " + new MethodDescriptor(
-                method, method.DeclaringType.Assembly).Value;
-            sw.WriteLine(line);
-            ilGen.MarkSequencePoint(docWriter, lineNum, 1, lineNum, line.Length + 1);
-            ilGen.Emit(opCode, method);
-        }
-
-        public static void Emit(this ILGenerator ilGen, OpCode opCode,
-            ISymbolDocumentWriter docWriter, StreamWriter sw, int lineNum)
-        {
-            var line = opCode.Name;
-            sw.WriteLine(line);
-            ilGen.MarkSequencePoint(docWriter, lineNum, 1, lineNum, line.Length + 1);
-            ilGen.Emit(opCode);
-        }
-
-        public static string GetName(this MemberInfo @this, Assembly containingAssembly)
-        {
-            return new TypeDescriptor(
-                @this.DeclaringType, containingAssembly,
-                @this.DeclaringType.IsGenericType).Value + "::" +
-                @this.Name;
-        }
-
-        internal static Type GetRootElementType(this Type @this)
-        {
-            var rootType = @this;
-
-            while (rootType.HasElementType)
-            {
-                rootType = rootType.GetElementType();
-            }
-
-            return rootType;
-        }
-
-        internal static string GetCallingConventions(this MethodBase @this)
-        {
-            var callingConventions = new List<string>();
-
-            if ((@this.CallingConvention & CallingConventions.VarArgs) == CallingConventions.VarArgs)
-            {
-                callingConventions.Add("vararg");
-            }
-
-            if ((@this.CallingConvention & CallingConventions.ExplicitThis) == CallingConventions.ExplicitThis)
-            {
-                callingConventions.Add("explicit");
-            }
-
-            return string.Join(" ", callingConventions.ToArray()).Trim();
-        }
-
-        internal static Type[] GetParameterTypes(this MethodBase @this)
-        {
-            var parameterTypes = Type.EmptyTypes;
-
-            if (!(@this is MethodBuilder) && !(@this is ConstructorBuilder))
-            {
-                parameterTypes = Array.ConvertAll<ParameterInfo, Type>(
-                    @this.GetParameters(), (target) => target.ParameterType);
-            }
-
-            return parameterTypes;
-        }
-    }
+    
 }

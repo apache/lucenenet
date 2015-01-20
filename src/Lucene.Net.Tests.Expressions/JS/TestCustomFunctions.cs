@@ -49,7 +49,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestNoArgMethod()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo"] = GetType().GetMethod("zeroArgMethod");
+			functions["foo"] = GetType().GetMethod("ZeroArgMethod");
 			var expr = JavascriptCompiler.Compile("foo()", functions);
 			AreEqual(5, expr.Evaluate(0, null), DELTA);
 		}
@@ -64,7 +64,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestOneArgMethod()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo"] = GetType().GetMethod("oneArgMethod", new []{ typeof(double)});
+			functions["foo"] = GetType().GetMethod("OneArgMethod", new []{ typeof(double)});
 			var expr = JavascriptCompiler.Compile("foo(3)", functions);
 			AreEqual(6, expr.Evaluate(0, null), DELTA);
 		}
@@ -90,8 +90,8 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestTwoMethods()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo"] = GetType().GetMethod("zeroArgMethod");
-			functions["bar"] = GetType().GetMethod("oneArgMethod", new []{typeof(double)});
+			functions["foo"] = GetType().GetMethod("ZeroArgMethod");
+			functions["bar"] = GetType().GetMethod("OneArgMethod", new []{typeof(double)});
 			var expr = JavascriptCompiler.Compile("foo() + bar(3)", functions);
 			AreEqual(11, expr.Evaluate(0, null), DELTA);
 		}
@@ -106,7 +106,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestWrongReturnType()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo"] = GetType().GetMethod("bogusReturnType");
+			functions["foo"] = GetType().GetMethod("BogusReturnType");
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions);
@@ -128,7 +128,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestWrongParameterType()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo"] = GetType().GetMethod("bogusParameterType", new []{ typeof(string)});
+			functions["foo"] = GetType().GetMethod("BogusParameterType", new []{ typeof(string)});
 			try
 			{
 				JavascriptCompiler.Compile("foo(2)", functions);
@@ -151,7 +151,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestWrongNotStatic()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo"] = GetType().GetMethod("nonStaticMethod");
+			functions["foo"] = GetType().GetMethod("NonStaticMethod");
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions);
@@ -199,7 +199,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestWrongNestedNotPublic()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo"] = typeof(NestedNotPublic).GetMethod("method");
+			functions["foo"] = typeof(NestedNotPublic).GetMethod("Method");
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions);
@@ -313,7 +313,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestThrowingException()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo"] = typeof(StaticThrowingException).GetMethod("method");
+			functions["foo"] = typeof(StaticThrowingException).GetMethod("Method");
 			string source = "3 * foo() / 5";
 			var expr = JavascriptCompiler.Compile(source, functions);
 			try
@@ -326,8 +326,8 @@ namespace Lucene.Net.Tests.Expressions.JS
 				AreEqual(MESSAGE, e.Message);
 				StringWriter sw = new StringWriter();
 				e.printStackTrace();
-                
-				IsTrue(sw.ToString().Contains("JavascriptCompiler$CompiledExpression.evaluate("
+                //.NET Port
+				IsTrue(e.StackTrace.Contains(typeof(Expression).Namespace + ".CompiledExpression.Evaluate("
 					 + source + ")"));
 			}
 		}
@@ -338,7 +338,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 		public virtual void TestNamespaces()
 		{
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
-			functions["foo.bar"] = GetType().GetMethod("zeroArgMethod");
+			functions["foo.bar"] = GetType().GetMethod("ZeroArgMethod");
 			string source = "foo.bar()";
 			var expr = JavascriptCompiler.Compile(source, functions);
 			AreEqual(5, expr.Evaluate(0, null), DELTA);

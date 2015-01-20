@@ -2,6 +2,7 @@ using System;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
 
+
 namespace Lucene.Net.Expressions.JS
 {
     internal class JavascriptParser : Parser

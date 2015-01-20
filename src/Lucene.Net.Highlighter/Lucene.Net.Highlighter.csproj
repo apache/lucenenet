@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2F458B53-E352-4064-8809-857BBF0C350B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Highlighter</RootNamespace>
+    <AssemblyName>Lucene.Net.Highlighter</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Highlight\DefaultEncoder.cs" />
+    <Compile Include="Highlight\Encoder.cs" />
+    <Compile Include="Highlight\Formatter.cs" />
+    <Compile Include="Highlight\Fragmenter.cs" />
+    <Compile Include="Highlight\GradientFormatter.cs" />
+    <Compile Include="Highlight\Highlighter.cs" />
+    <Compile Include="Highlight\InvalidTokenOffsetsException.cs" />
+    <Compile Include="Highlight\NullFragmenter.cs" />
+    <Compile Include="Highlight\OffsetLimitTokenFilter.cs" />
+    <Compile Include="Highlight\PositionSpan.cs" />
+    <Compile Include="Highlight\QueryScorer.cs" />
+    <Compile Include="Highlight\QueryTermExtractor.cs" />
+    <Compile Include="Highlight\QueryTermScorer.cs" />
+    <Compile Include="Highlight\Scorer.cs" />
+    <Compile Include="Highlight\SimpleFragmenter.cs" />
+    <Compile Include="Highlight\SimpleHTMLEncoder.cs" />
+    <Compile Include="Highlight\SimpleHTMLFormatter.cs" />
+    <Compile Include="Highlight\SimpleSpanFragmenter.cs" />
+    <Compile Include="Highlight\SpanGradientFormatter.cs" />
+    <Compile Include="Highlight\TextFragment.cs" />
+    <Compile Include="Highlight\TokenGroup.cs" />
+    <Compile Include="Highlight\TokenSources.cs" />
+    <Compile Include="Highlight\TokenStreamFromTermPositionVector.cs" />
+    <Compile Include="Highlight\WeightedSpanTerm.cs" />
+    <Compile Include="Highlight\WeightedSpanTermExtractor.cs" />
+    <Compile Include="Highlight\WeightedTerm.cs" />
+    <Compile Include="Postingshighlight\DefaultPassageFormatter.cs" />
+    <Compile Include="Postingshighlight\MultiTermHighlighting.cs" />
+    <Compile Include="Postingshighlight\Passage.cs" />
+    <Compile Include="Postingshighlight\PassageFormatter.cs" />
+    <Compile Include="Postingshighlight\PassageScorer.cs" />
+    <Compile Include="Postingshighlight\PostingsHighlighter.cs" />
+    <Compile Include="Postingshighlight\WholeBreakIterator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Vectorhighlight\BaseFragListBuilder.cs" />
+    <Compile Include="Vectorhighlight\BaseFragmentsBuilder.cs" />
+    <Compile Include="Vectorhighlight\BoundaryScanner.cs" />
+    <Compile Include="Vectorhighlight\BreakIteratorBoundaryScanner.cs" />
+    <Compile Include="Vectorhighlight\FastVectorHighlighter.cs" />
+    <Compile Include="Vectorhighlight\FieldFragList.cs" />
+    <Compile Include="Vectorhighlight\FieldPhraseList.cs" />
+    <Compile Include="Vectorhighlight\FieldQuery.cs" />
+    <Compile Include="Vectorhighlight\FieldTermStack.cs" />
+    <Compile Include="Vectorhighlight\FragListBuilder.cs" />
+    <Compile Include="Vectorhighlight\FragmentsBuilder.cs" />
+    <Compile Include="Vectorhighlight\ScoreOrderFragmentsBuilder.cs" />
+    <Compile Include="Vectorhighlight\SimpleBoundaryScanner.cs" />
+    <Compile Include="Vectorhighlight\SimpleFieldFragList.cs" />
+    <Compile Include="Vectorhighlight\SimpleFragListBuilder.cs" />
+    <Compile Include="Vectorhighlight\SimpleFragmentsBuilder.cs" />
+    <Compile Include="Vectorhighlight\SingleFragListBuilder.cs" />
+    <Compile Include="Vectorhighlight\WeightedFieldFragList.cs" />
+    <Compile Include="Vectorhighlight\WeightedFragListBuilder.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
