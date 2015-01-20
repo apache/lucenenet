@@ -2,10 +2,6 @@ Lucene.NET Contributor's Guide
 ---
 Hello new contributors, thanks for getting on board!
 
-This is going to be a long mail... Since this has the chance of becoming
-one monstrous thread - please start a new thread for any question / comment
-on any of the items below. *PLEASE do your best not to reply to this email.*
-
 Before anything else, please read
 https://cwiki.apache.org/confluence/display/LUCENENET/Getting+Involved. In
 particular, we will need you to have an ICLA with Apache and to feel
