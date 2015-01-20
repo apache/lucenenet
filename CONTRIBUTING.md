@@ -52,19 +52,15 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 
 * [QueryParser](https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/queryparser)
 * [Join](https://github.com/apache/lucene-solr/tree/lucene_solr_4_8_0/lucene/join)
-* [Lucene.Net.Classification](<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Classification)
-(missing tests)
-* [Lucene.Net.Queries](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Queries)
-(missing tests)
-* The spatial module (the situation there is a bit subtle, if you are
-interested let me know)
+* [Lucene.Net.Classification](<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Classification) (missing tests)
+* [Lucene.Net.Queries](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Queries) (missing tests)
+* The spatial module (the situation there is a bit subtle, if you are interested let me know)
 
 Also, some analysis modules:
 
 * [Analysis](https://github.com/apache/lucene-solr/tree/trunk/lucene/analysis) (common is already mid-porting, see below)
 * [Lucene.Net.Misc](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Misc) (missing tests)
-* [Lucene.Net.Memory](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Memory)
-(missing tests)
+* [Lucene.Net.Memory](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Memory) (missing tests)
 
 ###Code that is ported and now pending manual cleanup, and then once its compiling porting of its tests == up for grabs:
 
