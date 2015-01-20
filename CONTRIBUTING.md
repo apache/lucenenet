@@ -3,18 +3,16 @@ Lucene.NET Contributor's Guide
 Hello new contributors, thanks for getting on board!
 
 Before anything else, please read
-<https://cwiki.apache.org/confluence/display/LUCENENET/Getting+Involved>. In
+[The Getting Involved article at apache.org](https://cwiki.apache.org/confluence/display/LUCENENET/Getting+Involved). In
 particular, we will need you to have an ICLA with Apache and to feel
 comfortable with Git and GitHub.
 
-Start by forking <https://github.com/apache/lucenenet> on github. For every
+Start by forking [Lucene.NET on GitHub](https://github.com/apache/lucenenet). For every
 contribution you are about to make, you should create a branch (tracking
 master!) with some descriptive name, and send us a Pull Request once it is
 ready to be reviewed and merged.
 
-And please git rebase
-<https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase> when
-pulling from origin/master instead of merging :)
+And please git rebase when pulling from origin/master instead of merging :) [More information can be found over at Atlassian](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase).
 
 If You are Willing to Help with Porting Code
 ---
@@ -26,11 +24,8 @@ member will then either approve or alert you someone else is working on
 that part already.
 
 * Use automated tools to do the basic porting work, and then start a manual
-clean-up process. For automatic conversion we are using
-<http://www.tangiblesoftwaresolutions.com/Product_Details/Java_to_CSharp_Converter.html>
-(we have licenses to give to committers) and it proved to work quite
-nicely, but I also hear good things on Sharpen. Check this version out:
-<https://github.com/imazen/sharpen>. Pick the tool you are more comfortable
+clean-up process. For automatic conversion we are using [Tangible's Java to C# Converter](http://www.tangiblesoftwaresolutions.com/Product_Details/Java_to_CSharp_Converter.html).
+We have licenses to give to committers) and it proved to work quite nicely, but I also hear good things on Sharpen. [Check it out here](https://github.com/imazen/sharpen) and pick the tool you are more comfortable
 with.
 
 * Conventions & standards: not too picky at this point, but we should
@@ -50,11 +45,8 @@ ship fast and then iterate on improving later.
 * While porting tests, we don't care about all those conventions and
 .NETification. Porting tests should be reduced to a copy-paste procedure
 with minimal cleaning up procedure. We are working on tools and code
-helpers to help with that, see for examples see:
-<https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.TestFramework/JavaCompatibility>
-(Java style methods to avoid many search-replace in porting tests), and a
-R# plugin that will help making some stuff auto-port when pasting
-<https://resharper-plugins.jetbrains.com/packages/ReSharper.ExJava/>
+helpers to help with that, see for examples see our [Java style methods to avoid many search-replace in porting tests](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.TestFramework/JavaCompatibility), and a
+[R# plugin that will help making some stuff auto-port when pasting](https://resharper-plugins.jetbrains.com/packages/ReSharper.ExJava/).
 
 Code that is currently pending being ported from scratch (+ tests) == up
 for grabs:
