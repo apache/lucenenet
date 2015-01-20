@@ -16,7 +16,8 @@ And please git rebase
 <https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase> when
 pulling from origin/master instead of merging :)
 
-*If you are willing to help with porting code:*
+If You are Willing to Help with Porting Code
+---
 
 * Please make sure nobody else is working on porting it already. We would
 like to avoid doing redundant work. We ask that you communicate clearly in
@@ -83,7 +84,8 @@ compiling porting of its tests == up for grabs:
 
 The rest is pretty much under control already
 
-*If you are more into fixing existing tests:*
+If you are more into Fixing Existing Tests
+---
 
 * First we want to get all the Core tests green. We are about 200 (out of
 ~2300) short of that. Since tests are using randomized testing, failures
@@ -109,9 +111,13 @@ you will receive notifications also via this list.
 other sub-projects. Some are already up for grabs if you want to have a
 stab at them.
 
-*Other types of help*
+Other types of help
+---
 
 We will definitely need more help (like normalizing tabs/spaces, license
 headers, automating stuff, etc) but we are not there yet!
+
+Thank You!
+---
 
 Again, thank you very much for your contribution. May the fork be with you!
