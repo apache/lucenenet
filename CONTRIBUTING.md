@@ -93,8 +93,8 @@ and
 send a PR as fast as possible. There are multiple people working in this
 area, and we want to make sure your contribution doesn't go stale. Any such
 PR should have a descriptive name and a short description of what happened
-and what is your solution. There are some good past examples here:
-<https://github.com/apache/lucenenet/pulls?q=is%3Apr+is%3Aclosed>
+and what is your solution. There are [some good past examples here](https://github.com/apache/lucenenet/pulls?q=is%3Apr+is%3Aclosed).
+
 
 * If we will have comments, we will use github's excellent interface and
 you will receive notifications also via this list.
