@@ -1,21 +1,15 @@
-/*
- * This code is derived from MyJavaLibrary (http://somelinktomycoollibrary)
- * 
- * If this is an open source Java library, include the proper license and copyright attributions here!
- */
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Lucene.Net.Grouping.Function;
+using Lucene.Net.Grouping.Term;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
-using Lucene.Net.Search.Grouping.Function;
 using Lucene.Net.Search.Grouping.Term;
 using Lucene.Net.Util;
-using Sharpen;
 
-namespace Lucene.Net.Search.Grouping
+namespace Lucene.Net.Grouping
 {
 	/// <summary>Convenience class to perform grouping in a non distributed environment.</summary>
 	/// <remarks>Convenience class to perform grouping in a non distributed environment.</remarks>
@@ -131,7 +125,7 @@ namespace Lucene.Net.Search.Grouping
 		public virtual TopGroups<T> Search<T>(IndexSearcher searcher, Query query, int groupOffset
 			, int groupLimit)
 		{
-			return Search(searcher, null, query, groupOffset, groupLimit);
+			return Search<T>(searcher, null, query, groupOffset, groupLimit);
 		}
 
 		/// <summary>Executes a grouped search.</summary>
@@ -157,34 +151,26 @@ namespace Lucene.Net.Search.Grouping
 		public virtual TopGroups<T> Search<T>(IndexSearcher searcher, Filter filter, Query
 			 query, int groupOffset, int groupLimit)
 		{
-			if (groupField != null || groupFunction != null)
+		    if (groupField != null || groupFunction != null)
 			{
 				return GroupByFieldOrFunction(searcher, filter, query, groupOffset, groupLimit);
 			}
-			else
-			{
-				if (groupEndDocs != null)
-				{
-					return (TopGroups<T>)GroupByDocBlock(searcher, filter, query, groupOffset, groupLimit
-						);
-				}
-				else
-				{
-					throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set."
-						);
-				}
-			}
+		    if (groupEndDocs != null)
+		    {
+		        return (TopGroups<T>)GroupByDocBlock(searcher, filter, query, groupOffset, groupLimit);
+		    }
+		    throw new InvalidOperationException("Either groupField, groupFunction or groupEndDocs must be set.");
 		}
 
-		// This can't happen...
-		/// <exception cref="System.IO.IOException"></exception>
-		protected internal virtual TopGroups GroupByFieldOrFunction(IndexSearcher searcher
+	    // This can't happen...
+		
+		protected internal virtual TopGroups<> GroupByFieldOrFunction(IndexSearcher searcher
 			, Filter filter, Query query, int groupOffset, int groupLimit)
 		{
 			int topN = groupOffset + groupLimit;
 			AbstractFirstPassGroupingCollector firstPassCollector;
 			AbstractAllGroupsCollector allGroupsCollector;
-			AbstractAllGroupHeadsCollector allGroupHeadsCollector;
+			AbstractAllGroupHeadsCollector<> allGroupHeadsCollector;
 			if (groupFunction != null)
 			{
 				firstPassCollector = new FunctionFirstPassGroupingCollector(groupFunction, valueSourceContext
@@ -348,7 +334,7 @@ namespace Lucene.Net.Search.Grouping
 		/// 	</param>
 		/// <param name="cacheScores">Whether to cache the scores</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetCachingInMB(double
+		public virtual GroupingSearch SetCachingInMB(double
 			 maxCacheRAMMB, bool cacheScores)
 		{
 			this.maxCacheRAMMB = maxCacheRAMMB;
@@ -367,7 +353,7 @@ namespace Lucene.Net.Search.Grouping
 		/// 	</param>
 		/// <param name="cacheScores">Whether to cache the scores</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetCaching(int maxDocsToCache
+		public virtual GroupingSearch SetCaching(int maxDocsToCache
 			, bool cacheScores)
 		{
 			this.maxDocsToCache = maxDocsToCache;
@@ -379,7 +365,7 @@ namespace Lucene.Net.Search.Grouping
 		/// <summary>Disables any enabled cache.</summary>
 		/// <remarks>Disables any enabled cache.</remarks>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch DisableCaching()
+		public virtual GroupingSearch DisableCaching()
 		{
 			this.maxCacheRAMMB = null;
 			this.maxDocsToCache = null;
@@ -396,7 +382,7 @@ namespace Lucene.Net.Search.Grouping
 		/// </remarks>
 		/// <param name="groupSort">The sort for the groups.</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetGroupSort(Sort
+		public virtual GroupingSearch SetGroupSort(Sort
 			 groupSort)
 		{
 			this.groupSort = groupSort;
@@ -413,7 +399,7 @@ namespace Lucene.Net.Search.Grouping
 		/// </remarks>
 		/// <param name="sortWithinGroup">The sort for documents inside a group</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetSortWithinGroup
+		public virtual GroupingSearch SetSortWithinGroup
 			(Sort sortWithinGroup)
 		{
 			this.sortWithinGroup = sortWithinGroup;
@@ -424,7 +410,7 @@ namespace Lucene.Net.Search.Grouping
 		/// <remarks>Specifies the offset for documents inside a group.</remarks>
 		/// <param name="groupDocsOffset">The offset for documents inside a</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetGroupDocsOffset
+		public virtual GroupingSearch SetGroupDocsOffset
 			(int groupDocsOffset)
 		{
 			this.groupDocsOffset = groupDocsOffset;
@@ -437,7 +423,7 @@ namespace Lucene.Net.Search.Grouping
 		/// 	</remarks>
 		/// <param name="groupDocsLimit">The number of documents to return inside a group</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetGroupDocsLimit
+		public virtual GroupingSearch SetGroupDocsLimit
 			(int groupDocsLimit)
 		{
 			this.groupDocsLimit = groupDocsLimit;
@@ -451,7 +437,7 @@ namespace Lucene.Net.Search.Grouping
 		/// <param name="fillSortFields">Whether to also fill the sort fields per returned group and groups docs
 		/// 	</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetFillSortFields
+		public virtual GroupingSearch SetFillSortFields
 			(bool fillSortFields)
 		{
 			this.fillSortFields = fillSortFields;
@@ -462,7 +448,7 @@ namespace Lucene.Net.Search.Grouping
 		/// <remarks>Whether to include the scores per doc inside a group.</remarks>
 		/// <param name="includeScores">Whether to include the scores per doc inside a group</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetIncludeScores(
+		public virtual GroupingSearch SetIncludeScores(
 			bool includeScores)
 		{
 			this.includeScores = includeScores;
@@ -474,7 +460,7 @@ namespace Lucene.Net.Search.Grouping
 		/// <param name="includeMaxScore">Whether to include the score of the most relevant document per group
 		/// 	</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetIncludeMaxScore
+		public virtual GroupingSearch SetIncludeMaxScore
 			(bool includeMaxScore)
 		{
 			this.includeMaxScore = includeMaxScore;
@@ -493,7 +479,7 @@ namespace Lucene.Net.Search.Grouping
 		/// </remarks>
 		/// <param name="allGroups">to also compute all groups matching the query</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetAllGroups(bool
+		public virtual GroupingSearch SetAllGroups(bool
 			 allGroups)
 		{
 			this.allGroups = allGroups;
@@ -523,7 +509,7 @@ namespace Lucene.Net.Search.Grouping
 		/// <param name="allGroupHeads">Whether to compute all group heads (most relevant document per group) matching the query
 		/// 	</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetAllGroupHeads(
+		public virtual GroupingSearch SetAllGroupHeads(
 			bool allGroupHeads)
 		{
 			this.allGroupHeads = allGroupHeads;
@@ -560,7 +546,7 @@ namespace Lucene.Net.Search.Grouping
 		/// </remarks>
 		/// <param name="initialSize">The initial size of some internal used data structures</param>
 		/// <returns><code>this</code></returns>
-		public virtual Lucene.Net.Search.Grouping.GroupingSearch SetInitialSize(int
+		public virtual GroupingSearch SetInitialSize(int
 			 initialSize)
 		{
 			this.initialSize = initialSize;

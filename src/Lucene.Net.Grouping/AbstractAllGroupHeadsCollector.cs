@@ -1,16 +1,8 @@
-/*
- * This code is derived from MyJavaLibrary (http://somelinktomycoollibrary)
- * 
- * If this is an open source Java library, include the proper license and copyright attributions here!
- */
-
 using System.Collections.Generic;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Grouping;
 using Lucene.Net.Util;
-using Sharpen;
 
-namespace Lucene.Net.Search.Grouping
+namespace Lucene.Net.Grouping
 {
 	/// <summary>This collector specializes in collecting the most relevant document (group head) for each group that match the query.
 	/// 	</summary>

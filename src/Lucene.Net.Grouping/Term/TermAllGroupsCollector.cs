@@ -1,17 +1,10 @@
-/*
- * This code is derived from MyJavaLibrary (http://somelinktomycoollibrary)
- * 
- * If this is an open source Java library, include the proper license and copyright attributions here!
- */
-
 using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
 using Lucene.Net.Util;
-using Sharpen;
 
-namespace Lucene.Net.Search.Grouping.Term
+namespace Lucene.Net.Grouping.Term
 {
 	/// <summary>
 	/// A collector that collects all groups that match the

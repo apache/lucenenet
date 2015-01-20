@@ -1,18 +1,11 @@
-/*
- * This code is derived from MyJavaLibrary (http://somelinktomycoollibrary)
- * 
- * If this is an open source Java library, include the proper license and copyright attributions here!
- */
-
 using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
 using Lucene.Net.Util.Mutable;
-using Sharpen;
 
-namespace Lucene.Net.Search.Grouping.Function
+namespace Lucene.Net.Grouping.Function
 {
 	/// <summary>
 	/// Concrete implementation of
@@ -25,14 +18,13 @@ namespace Lucene.Net.Search.Grouping.Function
 	/// instances.
 	/// </summary>
 	/// <lucene.experimental></lucene.experimental>
-	public class FunctionFirstPassGroupingCollector : AbstractFirstPassGroupingCollector
-		<MutableValue>
+	public class FunctionFirstPassGroupingCollector : AbstractFirstPassGroupingCollector<MutableValue>
 	{
 		private readonly ValueSource groupByVS;
 
 		private readonly IDictionary<object, object> vsContext;
 
-		private FunctionValues.ValueFiller filler;
+		private FunctionValues.AbstractValueFiller filler;
 
 		private MutableValue mval;
 
@@ -82,13 +74,13 @@ namespace Lucene.Net.Search.Grouping.Function
 			return groupValue.Duplicate();
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
+		
 		public override void SetNextReader(AtomicReaderContext readerContext)
 		{
 			base.SetNextReader(readerContext);
 			FunctionValues values = groupByVS.GetValues(vsContext, readerContext);
-			filler = values.GetValueFiller();
-			mval = filler.GetValue();
+			filler = values.ValueFiller;
+			mval = filler.Value;
 		}
 	}
 }

@@ -1,22 +1,14 @@
-/*
- * This code is derived from MyJavaLibrary (http://somelinktomycoollibrary)
- * 
- * If this is an open source Java library, include the proper license and copyright attributions here!
- */
-
 using System.Collections.Generic;
+using Lucene.Net.Grouping;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Grouping;
-using Lucene.Net.Search.Grouping.Term;
 using Lucene.Net.Util;
-using Sharpen;
 
-namespace Lucene.Net.Search.Grouping.Term
+namespace Lucene.Net.Grouping.Term
 {
 	/// <summary>
 	/// A base implementation of
-	/// <see cref="Lucene.Net.Search.Grouping.AbstractAllGroupHeadsCollector{GH}">Lucene.Net.Search.Grouping.AbstractAllGroupHeadsCollector&lt;GH&gt;
+	/// <see cref="AbstractAllGroupHeadsCollector{GH}">Lucene.Net.Search.Grouping.AbstractAllGroupHeadsCollector&lt;GH&gt;
 	/// 	</see>
 	/// for retrieving the most relevant groups when grouping
 	/// on a string based group field. More specifically this all concrete implementations of this base implementation

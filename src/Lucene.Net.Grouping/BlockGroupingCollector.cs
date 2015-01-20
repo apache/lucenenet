@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Grouping.Term;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
@@ -32,7 +33,7 @@ namespace Lucene.Net.Search.Grouping
 	/// being that the documents in each group must always be
 	/// indexed as a block.  This collector also fills in
 	/// TopGroups.totalGroupCount without requiring the separate
-	/// <see cref="Lucene.Net.Search.Grouping.Term.TermAllGroupsCollector">Lucene.Net.Search.Grouping.Term.TermAllGroupsCollector
+	/// <see cref="TermAllGroupsCollector">Lucene.Net.Search.Grouping.Term.TermAllGroupsCollector
 	/// 	</see>
 	/// .  However, this collector does
 	/// not fill in the groupValue of each group; this field

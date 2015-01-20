@@ -12,8 +12,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 			IsNotNull(JavascriptCompiler.Compile("100"));
 			IsNotNull(JavascriptCompiler.Compile("valid0+100"));
 			IsNotNull(JavascriptCompiler.Compile("valid0+\n100"));
-			IsNotNull(JavascriptCompiler.Compile("logn(2, 20+10-5.0)")
-				);
+			IsNotNull(JavascriptCompiler.Compile("logn(2, 20+10-5.0)"));
 		}
 
 		[Test]
