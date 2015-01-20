@@ -99,8 +99,7 @@ stab at them.
 Other types of help
 ---
 
-We will definitely need more help (like normalizing tabs/spaces, license
-headers, automating stuff, etc) but we are not there yet!
+We will definitely need more help (like normalizing tabs/spaces, license headers, automating stuff, etc) but we are not there yet!
 
 Thank You!
 ---
