@@ -1,5 +1,5 @@
 Lucene.NET Contributor's Guide
----
+===
 Hello new contributors, thanks for getting on board!
 
 Before anything else, please read
