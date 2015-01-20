@@ -1,5 +1,4 @@
-Lucene.NET Contributor's Guide
-===
+#Lucene.NET Contributor's Guide
 Hello new contributors, thanks for getting on board!
 
 Before anything else, please read
@@ -14,8 +13,7 @@ ready to be reviewed and merged.
 
 And please git rebase when pulling from origin/master instead of merging :) [More information can be found over at Atlassian](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase).
 
-If You are Willing to Help with Porting Code
----
+##If You are Willing to Help with Porting Code
 
 * Please make sure nobody else is working on porting it already. We would
 like to avoid doing redundant work. We ask that you communicate clearly in
@@ -69,8 +67,7 @@ Also, some analysis modules:
 
 The rest is pretty much under control already.
 
-If you are more into Fixing Existing Tests
----
+##If you are more into Fixing Existing Tests
 
 * First we want to get all the Core tests green. We are about 200 (out of
 ~2300) short of that. Since tests are using randomized testing, failures
@@ -96,12 +93,10 @@ you will receive notifications also via this list.
 other sub-projects. Some are already up for grabs if you want to have a
 stab at them.
 
-Other types of help
----
+##Other types of help
 
 We will definitely need more help (like normalizing tabs/spaces, license headers, automating stuff, etc) but we are not there yet!
 
-Thank You!
----
+##Thank You!
 
 Again, thank you very much for your contribution. May the fork be with you!
