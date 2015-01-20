@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "src\Lucene.Net.Core\Lucene.Net.csproj", "{5D4AD9BE-1FFB-41AB-9943-25737971BF57}"
 EndProject
@@ -26,6 +26,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Classifica
 		{DE63DB10-975F-460D-AF85-572C17A91284} = {DE63DB10-975F-460D-AF85-572C17A91284}
 		{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3} = {B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}
 		{69D7956C-C2CC-4708-B399-A188FEC384C4} = {69D7956C-C2CC-4708-B399-A188FEC384C4}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Markdown", "Markdown", "{09D9B760-EACB-4570-998B-529BA5047C95}"
+	ProjectSection(SolutionItems) = preProject
+		CONTRIBUTING.md = CONTRIBUTING.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
