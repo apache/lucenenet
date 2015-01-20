@@ -64,9 +64,8 @@ Also, some analysis modules:
 
 ###Code that is ported and now pending manual cleanup, and then once its compiling porting of its tests == up for grabs:
 
-*  <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Analysis.Common>
-* <https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Suggest>
-(depends on Analysis.Common)
+*  [Lucene.Net.Analysis.Common](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Analysis.Common)
+* [Lucene.Net.Suggest](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Suggest) (depends on Analysis.Common)
 
 The rest is pretty much under control already.
 
