@@ -30,7 +30,7 @@ clean-up process. For automatic conversion we are using
 <http://www.tangiblesoftwaresolutions.com/Product_Details/Java_to_CSharp_Converter.html>
 (we have licenses to give to committers) and it proved to work quite
 nicely, but I also hear good things on Sharpen. Check this version out:
-https://github.com/imazen/sharpen. Pick the tool you are more comfortable
+<https://github.com/imazen/sharpen>. Pick the tool you are more comfortable
 with.
 
 * Conventions & standards: not too picky at this point, but we should
