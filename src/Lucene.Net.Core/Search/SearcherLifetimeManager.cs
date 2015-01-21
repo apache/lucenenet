@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Support;
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 
     /*
@@ -90,16 +91,14 @@ namespace Lucene.Net.Search
     /// searchers; but large merges don't complete very often and
     /// it's unlikely you'll hit two of them in your expiration
     /// window.  Still you should budget plenty of heap in the
-    /// JVM to have a good safety margin.
-    ///
-    /// @lucene.experimental
+    /// JVM to have a good safety margin.</p>
     /// </summary>
 
     public class SearcherLifetimeManager : IDisposable
     {
         internal const double NANOS_PER_SEC = 1000000000.0;
 
-        private class SearcherTracker : IComparable<SearcherTracker>, IDisposable
+        private sealed class SearcherTracker : IComparable<SearcherTracker>, IDisposable
         {
             public readonly IndexSearcher Searcher;
             public readonly double RecordTimeSec;
@@ -107,7 +106,7 @@ namespace Lucene.Net.Search
 
             public SearcherTracker(IndexSearcher searcher)
             {
-                this.Searcher = searcher;
+                Searcher = searcher;
                 Version = ((DirectoryReader)searcher.IndexReader).Version;
                 searcher.IndexReader.IncRef();
                 // Use nanoTime not currentTimeMillis since it [in
@@ -116,7 +115,7 @@ namespace Lucene.Net.Search
             }
 
             // Newer searchers are sort before older ones:
-            public virtual int CompareTo(SearcherTracker other)
+            public int CompareTo(SearcherTracker other)
             {
                 return other.RecordTimeSec.CompareTo(RecordTimeSec);
             }
@@ -130,16 +129,16 @@ namespace Lucene.Net.Search
             }
         }
 
-        private volatile bool Closed;
+        private volatile bool _closed;
 
         // TODO: we could get by w/ just a "set"; need to have
         // Tracker hash by its version and have compareTo(Long)
         // compare to its version
-        private readonly ConcurrentHashMap<long, SearcherTracker> Searchers = new ConcurrentHashMap<long, SearcherTracker>();
+        private readonly ConcurrentDictionary<long, SearcherTracker> _searchers = new ConcurrentDictionary<long, SearcherTracker>();
 
         private void EnsureOpen()
         {
-            if (Closed)
+            if (_closed)
             {
                 throw new AlreadyClosedException("this SearcherLifetimeManager instance is closed");
             }
@@ -157,7 +156,7 @@ namespace Lucene.Net.Search
         ///  You should record this long token in the search results
         ///  sent to your user, such that if the user performs a
         ///  follow-on action (clicks next page, drills down, etc.)
-        ///  the token is returned.
+        ///  the token is returned.</p>
         /// </summary>
         public virtual long Record(IndexSearcher searcher)
         {
@@ -165,22 +164,12 @@ namespace Lucene.Net.Search
             // TODO: we don't have to use IR.getVersion to track;
             // could be risky (if it's buggy); we could get better
             // bug isolation if we assign our own private ID:
-            long version = ((DirectoryReader)searcher.IndexReader).Version;
-            SearcherTracker tracker = Searchers[version];
-            if (tracker == null)
+            var version = ((DirectoryReader)searcher.IndexReader).Version;
+            var factoryMethodCalled = false;
+            var tracker = _searchers.GetOrAdd(version, l => { factoryMethodCalled = true; return new SearcherTracker(searcher); });
+            if (!factoryMethodCalled && tracker.Searcher != searcher)
             {
-                //System.out.println("RECORD version=" + version + " ms=" + System.currentTimeMillis());
-                tracker = new SearcherTracker(searcher);
-                if (Searchers.AddIfAbsent(version, tracker) != null)
-                {
-                    // Another thread beat us -- must decRef to undo
-                    // incRef done by SearcherTracker ctor:
-                    tracker.Dispose();
-                }
-            }
-            else if (tracker.Searcher != searcher)
-            {
-                throw new System.ArgumentException("the provided searcher has the same underlying reader version yet the searcher instance differs from before (new=" + searcher + " vs old=" + tracker.Searcher);
+                throw new ArgumentException("the provided searcher has the same underlying reader version yet the searcher instance differs from before (new=" + searcher + " vs old=" + tracker.Searcher);
             }
 
             return version;
@@ -194,16 +183,16 @@ namespace Lucene.Net.Search
         ///  requested searcher has already timed out.  When this
         ///  happens you should notify your user that their session
         ///  timed out and that they'll have to restart their
-        ///  search.
+        ///  search.</p>
         ///
         ///  <p>If this returns a non-null result, you must match
         ///  later call <seealso cref="#release"/> on this searcher, best
-        ///  from a finally clause.
+        ///  from a finally clause.</p>
         /// </summary>
         public virtual IndexSearcher Acquire(long version)
         {
             EnsureOpen();
-            SearcherTracker tracker = Searchers[version];
+            SearcherTracker tracker = _searchers[version];
             if (tracker != null && tracker.Searcher.IndexReader.TryIncRef())
             {
                 return tracker.Searcher;
@@ -277,15 +266,11 @@ namespace Lucene.Net.Search
                 // (not thread-safe since the values can change while
                 // ArrayList is init'ing itself); must instead iterate
                 // ourselves:
-                List<SearcherTracker> trackers = new List<SearcherTracker>();
-                foreach (SearcherTracker tracker in Searchers.Values)
-                {
-                    trackers.Add(tracker);
-                }
+                var trackers = _searchers.Values.ToList();
                 trackers.Sort();
-                double lastRecordTimeSec = 0.0;
-                double now = DateTime.Now.ToFileTime() / 100.0d / NANOS_PER_SEC;
-                foreach (SearcherTracker tracker in trackers)
+                var lastRecordTimeSec = 0.0;
+                var now = DateTime.Now.ToFileTime() / 100.0d / NANOS_PER_SEC;
+                foreach (var tracker in trackers)
                 {
                     double ageSec;
                     if (lastRecordTimeSec == 0.0)
@@ -303,7 +288,8 @@ namespace Lucene.Net.Search
                     if (pruner.DoPrune(ageSec, tracker.Searcher))
                     {
                         //System.out.println("PRUNE version=" + tracker.version + " age=" + ageSec + " ms=" + System.currentTimeMillis());
-                        Searchers.Remove(tracker.Version);
+                        SearcherTracker _;
+                        _searchers.TryRemove(tracker.Version, out _);
                         tracker.Dispose();
                     }
                     lastRecordTimeSec = tracker.RecordTimeSec;
@@ -326,20 +312,21 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
-                Closed = true;
-                IList<SearcherTracker> toClose = new List<SearcherTracker>(Searchers.Values);
+                _closed = true;
+                IList<SearcherTracker> toClose = new List<SearcherTracker>(_searchers.Values);
 
                 // Remove up front in case exc below, so we don't
                 // over-decRef on double-close:
-                foreach (SearcherTracker tracker in toClose)
+                foreach (var tracker in toClose)
                 {
-                    Searchers.Remove(tracker.Version);
+                    SearcherTracker _;
+                    _searchers.TryRemove(tracker.Version, out _);
                 }
 
                 IOUtils.Close(toClose);
 
                 // Make some effort to catch mis-use:
-                if (Searchers.Count != 0)
+                if (_searchers.Count != 0)
                 {
                     throw new InvalidOperationException("another thread called record while this SearcherLifetimeManager instance was being closed; not all searchers were closed");
                 }

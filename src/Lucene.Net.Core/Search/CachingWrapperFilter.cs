@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Search
 {
@@ -35,17 +36,17 @@ namespace Lucene.Net.Search
     /// </summary>
     public class CachingWrapperFilter : Filter
     {
-        private readonly Filter Filter_Renamed;
+        private readonly Filter _filter;
 
         //private readonly IDictionary<object, DocIdSet> Cache = Collections.synchronizedMap(new WeakHashMap<object, DocIdSet>());
-        private readonly IDictionary<object, DocIdSet> Cache = new ConcurrentHashMapWrapper<object, DocIdSet>(new WeakDictionary<object, DocIdSet>());
+        private readonly IDictionary<object, DocIdSet> _cache = new ConcurrentHashMapWrapper<object, DocIdSet>(new WeakDictionary<object, DocIdSet>());
 
         /// <summary>
         /// Wraps another filter's result and caches it. </summary>
         /// <param name="filter"> Filter to cache results of </param>
         public CachingWrapperFilter(Filter filter)
         {
-            this.Filter_Renamed = filter;
+            this._filter = filter;
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Filter_Renamed;
+                return _filter;
             }
         }
 
@@ -114,7 +115,7 @@ namespace Lucene.Net.Search
             var reader = context.AtomicReader;
             object key = reader.CoreCacheKey;
 
-            DocIdSet docIdSet = Cache[key];
+            DocIdSet docIdSet = _cache[key];
             if (docIdSet != null)
             {
                 HitCount++;
@@ -122,9 +123,9 @@ namespace Lucene.Net.Search
             else
             {
                 MissCount++;
-                docIdSet = DocIdSetToCache(Filter_Renamed.GetDocIdSet(context, null), reader);
+                docIdSet = DocIdSetToCache(_filter.GetDocIdSet(context, null), reader);
                 Debug.Assert(docIdSet.Cacheable);
-                Cache[key] = docIdSet;
+                _cache[key] = docIdSet;
             }
 
             return docIdSet == EMPTY_DOCIDSET ? null : BitsFilteredDocIdSet.Wrap(docIdSet, acceptDocs);
@@ -132,7 +133,7 @@ namespace Lucene.Net.Search
 
         public override string ToString()
         {
-            return this.GetType().Name + "(" + Filter_Renamed + ")";
+            return this.GetType().Name + "(" + _filter + ")";
         }
 
         public override bool Equals(object o)
@@ -142,12 +143,12 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            return this.Filter_Renamed.Equals(other.Filter_Renamed);
+            return _filter.Equals(other._filter);
         }
 
         public override int GetHashCode()
         {
-            return (Filter_Renamed.GetHashCode() ^ this.GetType().GetHashCode());
+            return (_filter.GetHashCode() ^ this.GetType().GetHashCode());
         }
 
         /// <summary>
@@ -156,10 +157,6 @@ namespace Lucene.Net.Search
 
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
-            public DocIdSetAnonymousInnerClassHelper()
-            {
-            }
-
             public override DocIdSetIterator GetIterator()
             {
                 return DocIdSetIterator.Empty();
@@ -185,19 +182,11 @@ namespace Lucene.Net.Search
         public virtual long SizeInBytes()
         {
             // Sync only to pull the current set of values:
-            IList<DocIdSet> docIdSets;
-            lock (Cache)
+            lock (_cache)
             {
-                docIdSets = new List<DocIdSet>(Cache.Values);
+                IList<DocIdSet> docIdSets = new List<DocIdSet>(_cache.Values);
+                return docIdSets.Sum(dis => RamUsageEstimator.SizeOf(dis));
             }
-
-            long total = 0;
-            foreach (DocIdSet dis in docIdSets)
-            {
-                total += RamUsageEstimator.SizeOf(dis);
-            }
-
-            return total;
         }
     }
 }

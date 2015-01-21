@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// An object of a enumerator Context type
         /// </summary>
-        public readonly Context_e Context;
+        public readonly Context_e? Context;
 
         public readonly MergeInfo MergeInfo;
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Store
             this.FlushInfo = flushInfo;
         }
 
-        public IOContext(Context_e context)
+        public IOContext(Context_e? context)
             : this(context, null)
         {
         }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Store
         {
         }
 
-        private IOContext(Context_e context, MergeInfo mergeInfo)
+        private IOContext(Context_e? context, MergeInfo mergeInfo)
         {
             Debug.Assert(context != Context_e.MERGE || mergeInfo != null, "MergeInfo must not be null if context is MERGE");
             Debug.Assert(context != Context_e.FLUSH, "Use IOContext(FlushInfo) to create a FLUSH IOContext");

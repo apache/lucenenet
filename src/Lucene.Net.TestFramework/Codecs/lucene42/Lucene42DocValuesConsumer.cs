@@ -288,7 +288,7 @@ namespace Lucene.Net.Codecs.Lucene42
             Meta.WriteByte((byte)Lucene42DocValuesProducer.FST);
             Meta.WriteLong(Data.FilePointer);
             PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-            Builder<long> builder = new Builder<long>(INPUT_TYPE.BYTE1, outputs);
+            Builder<long?> builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
             IntsRef scratch = new IntsRef();
             long ord = 0;
             foreach (BytesRef v in values)
@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 builder.Add(Util.ToIntsRef(v, scratch), ord);
                 ord++;
             }
-            Lucene.Net.Util.Fst.FST<long> fst = builder.Finish();
+            Lucene.Net.Util.Fst.FST<long?> fst = builder.Finish();
             if (fst != null)
             {
                 fst.Save(Data);

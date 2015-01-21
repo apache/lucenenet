@@ -401,16 +401,16 @@ namespace Lucene.Net.Util.Fst
         // FST is complete
         private void VerifyUnPruned(int inputMode, FST<T> fst)
         {
-            FST<long> fstLong;
-            ISet<long> validOutputs;
+            FST<long?> fstLong;
+            ISet<long?> validOutputs;
             long minLong = long.MaxValue;
             long maxLong = long.MinValue;
 
             if (DoReverseLookup)
             {
-                FST<long> fstLong0 = fst as FST<long>;
+                FST<long?> fstLong0 = fst as FST<long?>;
                 fstLong = fstLong0;
-                validOutputs = new HashSet<long>();
+                validOutputs = new HashSet<long?>();
                 foreach (InputOutput<T> pair in Pairs)
                 {
                     long? output = pair.Output as long?;

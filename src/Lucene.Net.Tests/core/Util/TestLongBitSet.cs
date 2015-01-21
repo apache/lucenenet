@@ -171,11 +171,11 @@ namespace Lucene.Net.Util
                     a0.Length = a.Length;
 
                     BitArray a_and = (BitArray)a.Clone();
-                    a_and = a_and.And(a0);
+                    a_and = a_and.And_UnequalLengths(a0);
                     BitArray a_or = (BitArray)a.Clone();
-                    a_or = a_or.Or(a0);
+                    a_or = a_or.Or_UnequalLengths(a0);
                     BitArray a_xor = (BitArray)a.Clone();
-                    a_xor = a_xor.Xor(a0);
+                    a_xor = a_xor.Xor_UnequalLengths(a0);
                     BitArray a_andn = (BitArray)a.Clone();
                     a_andn.AndNot(a0);
 
