@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
-    using Lucene.Net.Support;
     using System.Collections.Generic;
 
     /*
@@ -34,7 +35,7 @@ namespace Lucene.Net.Store
         // we need to be volatile here to make sure we see all the values that are set
         // / modified concurrently
         //private volatile RateLimiter[] ContextRateLimiters = new RateLimiter[Enum.GetValues(typeof(IOContext.Context_e)).Length];
-        private IDictionary<IOContext.Context_e?, RateLimiter> ContextRateLimiters = new ConcurrentHashMap<IOContext.Context_e?, RateLimiter>();
+        private readonly IDictionary<IOContext.Context_e?, RateLimiter> _contextRateLimiters = new ConcurrentDictionary<IOContext.Context_e?, RateLimiter>();
 
         public RateLimitedDirectoryWrapper(Directory wrapped)
             : base(wrapped)
@@ -44,8 +45,8 @@ namespace Lucene.Net.Store
         public override IndexOutput CreateOutput(string name, IOContext context)
         {
             EnsureOpen();
-            IndexOutput output = base.CreateOutput(name, context);
-            RateLimiter limiter = GetRateLimiter(context.Context);
+            var output = base.CreateOutput(name, context);
+            var limiter = GetRateLimiter(context.Context);
             if (limiter != null)
             {
                 return new RateLimitedIndexOutput(limiter, output);
@@ -65,10 +66,11 @@ namespace Lucene.Net.Store
             @in.Copy(to, src, dest, context);
         }
 
-        private RateLimiter GetRateLimiter(IOContext.Context_e context)
+        private RateLimiter GetRateLimiter(IOContext.Context_e? context)
         {
             Debug.Assert(context != null);
-            return ContextRateLimiters[context];
+            RateLimiter ret;
+            return _contextRateLimiters.TryGetValue(context, out ret) ? ret : null;
         }
 
         /// <summary>
@@ -89,7 +91,7 @@ namespace Lucene.Net.Store
         ///           if context is <code>null</code> </exception>
         /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
-        public void SetMaxWriteMBPerSec(double mbPerSec, IOContext.Context_e? context)
+        public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.Context_e? context)
         {
             EnsureOpen();
             if (context == null)
@@ -98,24 +100,24 @@ namespace Lucene.Net.Store
             }
             //int ord = context.ordinal();
             RateLimiter limiter;
-            ContextRateLimiters.TryGetValue(context, out limiter);
+            _contextRateLimiters.TryGetValue(context, out limiter);
 
             if (mbPerSec == null)
             {
                 if (limiter != null)
                 {
                     limiter.MbPerSec = double.MaxValue;
-                    ContextRateLimiters[context] = null;
+                    _contextRateLimiters[context] = null;
                 }
             }
             else if (limiter != null)
             {
-                limiter.MbPerSec = mbPerSec;
-                ContextRateLimiters[context] = limiter; // cross the mem barrier again
+                limiter.MbPerSec = mbPerSec.Value;
+                _contextRateLimiters[context] = limiter; // cross the mem barrier again
             }
             else
             {
-                ContextRateLimiters[context] = new RateLimiter.SimpleRateLimiter(mbPerSec);
+                _contextRateLimiters[context] = new RateLimiter.SimpleRateLimiter(mbPerSec.Value);
             }
         }
 
@@ -130,35 +132,27 @@ namespace Lucene.Net.Store
         /// allows to use the same limiter instance across several directories globally
         /// limiting IO across them.
         /// </summary>
-        /// <exception cref="IllegalArgumentException">
+        /// <exception cref="ArgumentException">
         ///           if context is <code>null</code> </exception>
         /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
         public void SetRateLimiter(RateLimiter mergeWriteRateLimiter, IOContext.Context_e context)
         {
             EnsureOpen();
-            if (context == null)
-            {
-                throw new System.ArgumentException("Context must not be null");
-            }
-            ContextRateLimiters[context] = mergeWriteRateLimiter;
+            _contextRateLimiters[context] = mergeWriteRateLimiter;
         }
 
         /// <summary>
         /// See <seealso cref="#setMaxWriteMBPerSec"/>.
         /// </summary>
-        /// <exception cref="IllegalArgumentException">
+        /// <exception cref="ArgumentException">
         ///           if context is <code>null</code> </exception>
         /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
         public double GetMaxWriteMBPerSec(IOContext.Context_e context)
         {
             EnsureOpen();
-            if (context == null)
-            {
-                throw new System.ArgumentException("Context must not be null");
-            }
-            RateLimiter limiter = GetRateLimiter(context);
+            var limiter = GetRateLimiter(context);
             return limiter == null ? 0 : limiter.MbPerSec;
         }
     }

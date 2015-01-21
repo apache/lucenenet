@@ -234,8 +234,8 @@ namespace Lucene.Net.Util.Fst
                 // size = 3GB
                 {
                     Console.WriteLine("\nTEST: 3 GB size; doPack=" + doPack + " outputs=long");
-                    Outputs<long> outputs = PositiveIntOutputs.Singleton;
-                    Builder<long> b = new Builder<long>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInts.COMPACT, true, 15);
+                    Outputs<long?> outputs = PositiveIntOutputs.Singleton;
+                    Builder<long?> b = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInts.COMPACT, true, 15);
 
                     long output = 1;
 
@@ -259,7 +259,7 @@ namespace Lucene.Net.Util.Fst
                         NextInput(r, ints);
                     }
 
-                    FST<long> fst = b.Finish();
+                    FST<long?> fst = b.Finish();
 
                     for (int verify = 0; verify < 2; verify++)
                     {
@@ -285,7 +285,7 @@ namespace Lucene.Net.Util.Fst
                         }
 
                         Console.WriteLine("\nTEST: enum all input/outputs");
-                        IntsRefFSTEnum<long> fstEnum = new IntsRefFSTEnum<long>(fst);
+                        IntsRefFSTEnum<long?> fstEnum = new IntsRefFSTEnum<long?>(fst);
 
                         Arrays.Fill(ints, 0);
                         r = new Random(seed);
@@ -293,13 +293,13 @@ namespace Lucene.Net.Util.Fst
                         output = 1;
                         while (true)
                         {
-                            IntsRefFSTEnum<long>.InputOutput<long> pair = fstEnum.Next();
+                            IntsRefFSTEnum<long?>.InputOutput<long?> pair = fstEnum.Next();
                             if (pair == null)
                             {
                                 break;
                             }
                             Assert.AreEqual(input, pair.Input);
-                            Assert.AreEqual(output, (long)pair.Output);
+                            Assert.AreEqual(output, pair.Output.Value);
                             output += 1 + r.Next(10);
                             upto++;
                             NextInput(r, ints);
@@ -313,7 +313,7 @@ namespace Lucene.Net.Util.Fst
                             fst.Save(@out);
                             @out.Dispose();
                             IndexInput @in = dir.OpenInput("fst", IOContext.DEFAULT);
-                            fst = new FST<long>(@in, outputs);
+                            fst = new FST<long?>(@in, outputs);
                             @in.Dispose();
                         }
                         else

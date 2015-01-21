@@ -71,22 +71,20 @@ namespace Lucene.Net.Codecs
 
                 public bool MoveNext()
                 {
-                    if (seenEmpty || !@in.MoveNext())
-                    {
-                        return false;
-                    }
-
                     if (!seenEmpty)
                     {
                         seenEmpty = true;
                         current = new BytesRef();
-                    }
-                    else
-                    {
-                        current = @in.Current;
+                        return true;
                     }
 
-                    return true;
+                    if (@in.MoveNext())
+                    {
+                        current = @in.Current;
+                        return true;
+                    }
+
+                    return false;
                 }
 
                 public BytesRef Current

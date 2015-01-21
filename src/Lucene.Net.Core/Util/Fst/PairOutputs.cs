@@ -91,7 +91,7 @@ namespace Lucene.Net.Util.Fst
                 b = Outputs2.NoOutput;
             }
 
-            if ((object)a == (object)Outputs1.NoOutput && (object)b == (object)Outputs2.NoOutput)
+            if (a.Equals(Outputs1.NoOutput) && b.Equals(Outputs2.NoOutput))
             {
                 return NO_OUTPUT;
             }
@@ -109,19 +109,19 @@ namespace Lucene.Net.Util.Fst
             bool noOutput1 = pair.Output1.Equals(Outputs1.NoOutput);
             bool noOutput2 = pair.Output2.Equals(Outputs2.NoOutput);
 
-            if (noOutput1 && (object)pair.Output1 != (object)Outputs1.NoOutput)
+            if (noOutput1 && !pair.Output1.Equals(Outputs1.NoOutput))
             {
                 return false;
             }
 
-            if (noOutput2 && (object)pair.Output2 != (object)Outputs2.NoOutput)
+            if (noOutput2 && !pair.Output2.Equals(Outputs2.NoOutput))
             {
                 return false;
             }
 
             if (noOutput1 && noOutput2)
             {
-                if (pair != NO_OUTPUT)
+                if (!pair.Equals(NO_OUTPUT))
                 {
                     return false;
                 }
