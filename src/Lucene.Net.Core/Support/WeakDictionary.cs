@@ -251,8 +251,8 @@ namespace Lucene.Net.Support
         /// </summary>
         private class WeakKey<T>
         {
-            private WeakReference reference;
-            private int hashCode;
+            private readonly WeakReference reference;
+            private readonly int hashCode;
 
             public WeakKey(T key)
             {
