@@ -243,8 +243,7 @@ namespace Lucene.Net.Tests.Expressions.JS
 				StringWriter sw = new StringWriter();
 				e.printStackTrace();
                 //.NET Port
-				IsTrue(e.StackTrace.Contains(typeof(Expression).Namespace + ".CompiledExpression.Evaluate("
-					 + source + ")"));
+                IsTrue(e.StackTrace.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32 , FunctionValues[] )"));
 			}
 		}
 

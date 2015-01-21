@@ -934,7 +934,7 @@ loop3_break: ;
 				int _channel = TokenChannels.Default;
 				// src/java/org/apache/lucene/expressions/js/Javascript.g:347:5: ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? )
 				int alt9 = 3;
-				//alt9 = dfa9.Predict(input);
+				alt9 = dfa9.Predict(input);
 				switch (alt9)
 				{
 					case 1:
