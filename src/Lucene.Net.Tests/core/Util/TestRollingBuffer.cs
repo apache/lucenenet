@@ -53,10 +53,10 @@ namespace Lucene.Net.Util
                         int inc = random.Next(limit);
                         int pos = freeBeforePos + inc;
                         posUpto = Math.Max(posUpto, pos);
-                        //if (VERBOSE)
-                        //{
-                        //    Console.WriteLine("  check pos=" + pos + " posUpto=" + posUpto);
-                        //}
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("  check pos=" + pos + " posUpto=" + posUpto);
+                        }
                         Position posData = buffer.Get(pos);
                         if (!posSet.GetAndSet(pos))
                         {
@@ -74,10 +74,10 @@ namespace Lucene.Net.Util
                         {
                             freeBeforePos += random.Next(posUpto - freeBeforePos);
                         }
-                        //if (VERBOSE)
-                        //{
-                        //    Console.WriteLine("  freeBeforePos=" + freeBeforePos);
-                        //}
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("  freeBeforePos=" + freeBeforePos);
+                        }
                         buffer.FreeBefore(freeBeforePos);
                     }
                 }
