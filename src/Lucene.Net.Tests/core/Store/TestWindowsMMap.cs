@@ -75,7 +75,7 @@ namespace Lucene.Net.Store
             // may take some time until the files are finally dereferenced. So clean the
             // directory up front, or otherwise new IndexWriter will fail.
             var dirPath = CreateTempDir("testLuceneMmap");
-            RmDir(dirPath);
+            RmDir(dirPath.FullName);
             var dir = new MMapDirectory(dirPath, null);
 
             // plan to add a set of useful stopwords, consider changing some of the
@@ -99,20 +99,29 @@ namespace Lucene.Net.Store
                             doc.Add(NewTextField("data", f, Field.Store.YES));
                             writer.AddDocument(doc);
                         }
-                    }
+                   }
                 }
 
-                RmDir(dirPath);
+                //File.Create(Path.Combine(dirPath.FullName, "segments.gen")).Close();
+
+                RmDir(dirPath.FullName);
             }
         }
 
-        private static void RmDir(DirectoryInfo dir)
+        //private static void RmDir(DirectoryInfo dir)
+        private static void RmDir(string dir)
         {
-            if (!dir.Exists)
+            if (!System.IO.Directory.Exists(dir))
             {
                 return;
             }
-            dir.Delete(true);
+
+            foreach (string f in System.IO.Directory.GetFiles(dir))
+            {
+                System.IO.File.Delete(f);
+            }
+
+            System.IO.Directory.Delete(dir);
         }
     }
 }
