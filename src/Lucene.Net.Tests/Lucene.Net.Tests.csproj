@@ -519,6 +519,9 @@
     <Compile Include="core\Util\TestFixedBitSet.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestIndexableBinaryStringTools.cs"> 
+      <SubType>Code</SubType> 
+    </Compile>
     <Compile Include="core\Util\TestInPlaceMergeSorter.cs">
       <SubType>Code</SubType>
     </Compile>

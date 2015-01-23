@@ -745,6 +745,7 @@
     <Compile Include="Util\IAttribute.cs" />
     <Compile Include="Util\IAttributeReflector.cs" />
     <Compile Include="Util\IBoostAttribute.cs" />
+    <Compile Include="Util\IndexableBinaryStringTools.cs" />
     <Compile Include="Util\InfoStream.cs" />
     <Compile Include="Util\InPlaceMergeSorter.cs" />
     <Compile Include="Util\IntBlockPool.cs" />
