@@ -298,10 +298,7 @@ namespace Lucene.Net.Util
                         {
                             foreach (var ctx in childs)
                             {
-                                if (ctx != null)
-                                {
-                                    all.Add(ctx.Reader.CoreCacheKey);
-                                }
+                                all.Add(ctx.Reader.CoreCacheKey);
                             }
                         }
                     }
