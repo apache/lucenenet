@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace Lucene.Net
+namespace Lucene.Net.Util
 {
     public abstract partial class LuceneTestCase
     {
@@ -57,6 +56,14 @@ namespace Lucene.Net
             Assert.True(expected.SetEquals(actual), message);
         }
 
+        public static void assertEquals<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
+        {
+            Assert.AreEqual(expected.Count, actual.Count);
+            foreach (var key in expected.Keys)
+            {
+                Assert.AreEqual(expected[key], actual[key]);
+            }
+        }
         public static void assertNotSame(object unexpected, object actual)
         {
             Assert.AreNotSame(unexpected, actual);
