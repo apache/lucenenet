@@ -33,9 +33,6 @@
     <Reference Include="Apache.NMS">
       <HintPath>..\..\packages\Apache.NMS.1.6.0.3083\lib\net40\Apache.NMS.dll</HintPath>
     </Reference>
-    <Reference Include="Lucene.Net.TestFramework">
-      <HintPath>..\Lucene.Net.Tests\bin\Debug\Lucene.Net.TestFramework.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -82,6 +79,10 @@
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
       <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
       <Name>Lucene.Net.Queries</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
+      <Name>Lucene.Net.TestFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
