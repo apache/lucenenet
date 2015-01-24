@@ -108,7 +108,6 @@ namespace Lucene.Net.Store
             }
         }
 
-        //private static void RmDir(DirectoryInfo dir)
         private static void RmDir(string dir)
         {
             if (!System.IO.Directory.Exists(dir))
