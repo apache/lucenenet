@@ -609,8 +609,8 @@ namespace Lucene.Net.Util
         public static Random Random()
         {
             //return RandomizedContext.Current.Random;
-            //return new Random();
-            return _random;
+            return new Random();
+            //return _random;
         }
 
 
