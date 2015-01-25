@@ -44,7 +44,14 @@ namespace Lucene.Net.Index
         {
             MinMergeSize = (long)(DEFAULT_MIN_MERGE_MB * 1024 * 1024);
             MaxMergeSize = (long)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
-            MaxMergeSizeForForcedMerge = (long)(DEFAULT_MAX_MERGE_MB_FOR_FORCED_MERGE * 1024 * 1024);
+            
+            // .Net port, original line is inappropriate, overflows in .NET 
+            // and the property gets set to a negative value.
+            // In Java however such statements results in long.MaxValue
+
+            //MaxMergeSizeForForcedMerge = (long)(DEFAULT_MAX_MERGE_MB_FOR_FORCED_MERGE * 1024 * 1024);
+            MaxMergeSizeForForcedMerge = long.MaxValue;
+            
         }
 
         protected internal override long Size(SegmentCommitInfo info)
@@ -70,6 +77,10 @@ namespace Lucene.Net.Index
             set
             {
                 MaxMergeSize = (long)(value * 1024 * 1024);
+                if (MaxMergeSize < 0)
+                {
+                    MaxMergeSize = long.MaxValue;
+                }
             }
             get
             {
@@ -89,6 +100,10 @@ namespace Lucene.Net.Index
             set
             {
                 MaxMergeSizeForForcedMerge = (long)(value * 1024 * 1024);
+                if (MaxMergeSizeForForcedMerge < 0)
+                {
+                    MaxMergeSizeForForcedMerge = long.MaxValue;
+                }
             }
             get
             {
@@ -112,6 +127,10 @@ namespace Lucene.Net.Index
             set
             {
                 MinMergeSize = (long)(value * 1024 * 1024);
+                if (MinMergeSize < 0)
+                {
+                    MinMergeSize = long.MaxValue;
+                }
             }
             get
             {
