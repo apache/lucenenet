@@ -1,4 +1,4 @@
-
+using System;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 
@@ -37,8 +37,7 @@ namespace Lucene.Net.Documents
     /// If you also need to store the value, you should add a
     /// separate <seealso cref="StoredField"/> instance.
     /// </summary>
-    /// <seealso cref= BinaryDocValues
-    ///  </seealso>
+    /// <seealso cref= BinaryDocValues</seealso>
     public class BinaryDocValuesField : Field
     {
         /// <summary>
@@ -56,7 +55,7 @@ namespace Lucene.Net.Documents
         /// Create a new binary DocValues field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> binary content </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field name is null </exception>
         public BinaryDocValuesField(string name, BytesRef value)
             : base(name, fType)
         {
