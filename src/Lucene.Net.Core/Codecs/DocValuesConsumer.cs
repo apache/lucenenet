@@ -112,19 +112,19 @@ namespace Lucene.Net.Codecs
         /// The default implementation calls <seealso cref="#addNumericField"/>, passing
         /// an Iterable that merges and filters deleted documents on the fly.
         /// </summary>
-        // LUCENENET TODO This is a bit wacky
-        public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge/*, IList<Bits> docsWithField*/)
+        public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<Bits> docsWithField)
         {
-            AddNumericField(fieldInfo, GetMergeNumericFieldEnumerable(fieldInfo, mergeState, toMerge));
+            AddNumericField(fieldInfo, GetMergeNumericFieldEnumerable(fieldInfo, mergeState, toMerge, docsWithField));
         }
 
-        private IEnumerable<long?> GetMergeNumericFieldEnumerable(FieldInfo fieldinfo, MergeState mergeState, IList<NumericDocValues> toMerge)
+        private IEnumerable<long?> GetMergeNumericFieldEnumerable(FieldInfo fieldinfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<Bits> docsWithField)
         {
             int readerUpto = -1;
             int docIDUpto = 0;
             AtomicReader currentReader = null;
             NumericDocValues currentValues = null;
             Bits currentLiveDocs = null;
+            Bits currentDocsWithField = null;
 
             while (true)
             {
@@ -140,6 +140,7 @@ namespace Lucene.Net.Codecs
                     {
                         currentReader = mergeState.Readers[readerUpto];
                         currentValues = toMerge[readerUpto];
+                        currentDocsWithField = docsWithField[readerUpto];
                         currentLiveDocs = currentReader.LiveDocs;
                     }
                     docIDUpto = 0;
@@ -148,163 +149,16 @@ namespace Lucene.Net.Codecs
 
                 if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
                 {
-                    yield return currentValues.Get(docIDUpto++);
-                    continue;
-                }
-
-                docIDUpto++;
-            }
-        }
-
-        /*
-	  private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
-	  {
-		  private readonly DocValuesConsumer OuterInstance;
-
-		  private MergeState MergeState;
-		  private IList<NumericDocValues> ToMerge;
-		  private IList<Bits> DocsWithField;
-
-		  public IterableAnonymousInnerClassHelper(DocValuesConsumer outerInstance, MergeState mergeState, IList<NumericDocValues> toMerge, IList<Bits> docsWithField)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.MergeState = mergeState;
-			  this.ToMerge = toMerge;
-			  this.DocsWithField = docsWithField;
-		  }
-
-		  public virtual IEnumerator<Number> GetEnumerator()
-		  {
-			return new IteratorAnonymousInnerClassHelper(this);
-		  }
-
-		  private class IteratorAnonymousInnerClassHelper : IEnumerator<Number>
-		  {
-			  private readonly IterableAnonymousInnerClassHelper OuterInstance;
-
-			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance)
-			  {
-				  this.OuterInstance = outerInstance;
-				  readerUpto = -1;
-			  }
-
-			  internal int readerUpto;
-			  internal int docIDUpto;
-			  internal long? nextValue;
-			  internal AtomicReader currentReader;
-			  internal NumericDocValues currentValues;
-			  internal Bits currentLiveDocs;
-			  internal Bits currentDocsWithField;
-			  internal bool nextIsSet;
-
-			  public virtual bool HasNext()
-			  {
-				return nextIsSet || SetNext();
-			  }
-
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException();
-			  }
-
-			  public virtual Number Next()
-			  {
-				if (!HasNext())
-				{
-				  throw new Exception();
-				}
-				Debug.Assert(nextIsSet);
-				nextIsSet = false;
-				return nextValue;
-			  }
-
-			  private bool SetNext()
-			  {
-				while (true)
-				{
-				  if (readerUpto == OuterInstance.ToMerge.Count)
-				  {
-					return false;
-				  }
-
-				  if (currentReader == null || docIDUpto == currentReader.MaxDoc)
-				  {
-					readerUpto++;
-					if (readerUpto < OuterInstance.ToMerge.Count)
-					{
-					  currentReader = OuterInstance.MergeState.Readers.get(readerUpto);
-					  currentValues = OuterInstance.ToMerge[readerUpto];
-					  currentLiveDocs = currentReader.LiveDocs;
-					  currentDocsWithField = OuterInstance.DocsWithField[readerUpto];
-					}
-					docIDUpto = 0;
-					continue;
-				  }
-
-				  if (currentLiveDocs == null || currentLiveDocs.get(docIDUpto))
-				  {
-					nextIsSet = true;
-					if (currentDocsWithField.get(docIDUpto))
-					{
-					  nextValue = currentValues.get(docIDUpto);
-					}
-					else
-					{
-					  nextValue = null;
-					}
-					docIDUpto++;
-					return true;
-				  }
-
-				  docIDUpto++;
-				}
-			  }
-		  }
-	  }*/
-
-        /// <summary>
-        /// Merges the binary docvalues from <code>toMerge</code>.
-        /// <p>
-        /// The default implementation calls <seealso cref="#addBinaryField"/>, passing
-        /// an Iterable that merges and filters deleted documents on the fly.
-        /// </summary>
-        public void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge/*, IList<Bits> docsWithField*/)
-        {
-            AddBinaryField(fieldInfo, GetMergeBinaryFieldEnumerable(fieldInfo, mergeState, toMerge/*, docsWithField*/));
-        }
-
-        private IEnumerable<BytesRef> GetMergeBinaryFieldEnumerable(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge)
-        {
-            int readerUpto = -1;
-            int docIDUpto = 0;
-            AtomicReader currentReader = null;
-            BinaryDocValues currentValues = null;
-            Bits currentLiveDocs = null;
-            BytesRef nextValue = new BytesRef();
-
-            while (true)
-            {
-                if (readerUpto == toMerge.Count)
-                {
-                    yield break;
-                }
-
-                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
-                {
-                    readerUpto++;
-                    if (readerUpto < toMerge.Count)
+                    long? nextValue;
+                    if (currentDocsWithField.Get(docIDUpto))
                     {
-                        currentReader = mergeState.Readers[readerUpto];
-                        currentValues = toMerge[readerUpto];
-                        currentLiveDocs = currentReader.LiveDocs;
+                        nextValue = currentValues.Get(docIDUpto);
                     }
-                    docIDUpto = 0;
-                    continue;
-                }
+                    else
+                    {
+                        nextValue = null;
+                    }
 
-                if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
-                {
-                    currentValues.Get(docIDUpto, nextValue);
                     docIDUpto++;
                     yield return nextValue;
                     continue;
@@ -314,114 +168,68 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        /*
-        private class IterableAnonymousInnerClassHelper2 : IEnumerable<BytesRef>
+        /// <summary>
+        /// Merges the binary docvalues from <code>toMerge</code>.
+        /// <p>
+        /// The default implementation calls <seealso cref="#addBinaryField"/>, passing
+        /// an Iterable that merges and filters deleted documents on the fly.
+        /// </summary>
+        public void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
         {
-            private readonly DocValuesConsumer OuterInstance;
+            AddBinaryField(fieldInfo, GetMergeBinaryFieldEnumerable(fieldInfo, mergeState, toMerge, docsWithField));
+        }
 
-            private MergeState MergeState;
-            private IList<BinaryDocValues> ToMerge;
-            private IList<Bits> DocsWithField;
+        private IEnumerable<BytesRef> GetMergeBinaryFieldEnumerable(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
+        {
+            int readerUpto = -1;
+            int docIDUpto = 0;
+            AtomicReader currentReader = null;
+            BinaryDocValues currentValues = null;
+            Bits currentLiveDocs = null;
+            Bits currentDocsWithField = null;
 
-            public IterableAnonymousInnerClassHelper2(DocValuesConsumer outerInstance, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
+            while (true)
             {
-                this.OuterInstance = outerInstance;
-                this.MergeState = mergeState;
-                this.ToMerge = toMerge;
-                this.DocsWithField = docsWithField;
-            }
-
-            public virtual IEnumerator<BytesRef> GetEnumerator()
-            {
-              return new IteratorAnonymousInnerClassHelper2(this);
-            }
-
-            private class IteratorAnonymousInnerClassHelper2 : IEnumerator<BytesRef>
-            {
-                private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
-
-                public IteratorAnonymousInnerClassHelper2(IterableAnonymousInnerClassHelper2 outerInstance)
+                if (readerUpto == toMerge.Count)
                 {
-                    this.OuterInstance = outerInstance;
-                    readerUpto = -1;
-                    nextValue = new BytesRef();
+                    yield break;
                 }
 
-                internal int readerUpto;
-                internal int docIDUpto;
-                internal BytesRef nextValue;
-                internal BytesRef nextPointer; // points to null if missing, or nextValue
-                internal AtomicReader currentReader;
-                internal BinaryDocValues currentValues;
-                internal Bits currentLiveDocs;
-                internal Bits currentDocsWithField;
-                internal bool nextIsSet;
-
-                public virtual bool HasNext()
+                if (currentReader == null || docIDUpto == currentReader.MaxDoc)
                 {
-                  return nextIsSet || SetNext();
-                }
-
-                public virtual void Remove()
-                {
-                  throw new System.NotSupportedException();
-                }
-
-                public virtual BytesRef Next()
-                {
-                  if (!HasNext())
-                  {
-                    throw new Exception();
-                  }
-                  Debug.Assert(nextIsSet);
-                  nextIsSet = false;
-                  return nextPointer;
-                }
-
-                private bool SetNext()
-                {
-                  while (true)
-                  {
-                    if (readerUpto == OuterInstance.ToMerge.Count)
+                    readerUpto++;
+                    if (readerUpto < toMerge.Count)
                     {
-                      return false;
-                    }
-
-                    if (currentReader == null || docIDUpto == currentReader.MaxDoc)
-                    {
-                      readerUpto++;
-                      if (readerUpto < OuterInstance.ToMerge.Count)
-                      {
-                        currentReader = OuterInstance.MergeState.Readers[readerUpto];
-                        currentValues = OuterInstance.ToMerge[readerUpto];
-                        currentDocsWithField = OuterInstance.DocsWithField[readerUpto];
+                        currentReader = mergeState.Readers[readerUpto];
+                        currentValues = toMerge[readerUpto];
+                        currentDocsWithField = docsWithField[readerUpto];
                         currentLiveDocs = currentReader.LiveDocs;
-                      }
-                      docIDUpto = 0;
-                      continue;
                     }
+                    docIDUpto = 0;
+                    continue;
+                }
 
-                    if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
+                if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
+                {
+                    BytesRef nextValue = new BytesRef();
+
+                    if (currentDocsWithField.Get(docIDUpto))
                     {
-                      nextIsSet = true;
-                      if (currentDocsWithField.Get(docIDUpto))
-                      {
                         currentValues.Get(docIDUpto, nextValue);
-                        nextPointer = nextValue;
-                      }
-                      else
-                      {
-                        nextPointer = null;
-                      }
-                      docIDUpto++;
-                      return true;
+                    }
+                    else
+                    {
+                        nextValue = null;
                     }
 
                     docIDUpto++;
-                  }
+                    yield return nextValue;
+                    continue;
                 }
+
+                docIDUpto++;
             }
-        }*/
+        }
 
         /// <summary>
         /// Merges the sorted docvalues from <code>toMerge</code>.
