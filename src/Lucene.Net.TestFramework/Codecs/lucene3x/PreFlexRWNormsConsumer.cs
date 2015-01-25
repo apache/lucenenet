@@ -81,11 +81,11 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             Debug.Assert(field.Number > LastFieldNumber, "writing norms fields out of order" + LastFieldNumber + " -> " + field.Number);
-            foreach (long? n in values)
+            foreach (var n in values)
             {
-                if ((long)n < sbyte.MinValue || (long)n > sbyte.MaxValue)
+                if (((sbyte)(byte)(long)n) < sbyte.MinValue || ((sbyte)(byte)(long)n) > sbyte.MaxValue)
                 {
-                    throw new System.NotSupportedException("3.x cannot index norms that won't fit in a byte, got: " + (long)n);
+                    throw new System.NotSupportedException("3.x cannot index norms that won't fit in a byte, got: " + ((sbyte)(byte)(long)n));
                 }
                 @out.WriteByte((byte)(sbyte)n);
             }
