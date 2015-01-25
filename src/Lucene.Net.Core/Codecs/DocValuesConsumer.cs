@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs
         /// The default implementation calls <seealso cref="#addNumericField"/>, passing
         /// an Iterable that merges and filters deleted documents on the fly.
         /// </summary>
-        // LUCENE TO-DO This is a bit wacky
+        // LUCENENET TODO This is a bit wacky
         public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge/*, IList<Bits> docsWithField*/)
         {
             AddNumericField(fieldInfo, GetMergeNumericFieldEnumerable(fieldInfo, mergeState, toMerge));

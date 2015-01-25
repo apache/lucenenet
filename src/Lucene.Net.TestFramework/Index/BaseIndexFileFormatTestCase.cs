@@ -97,28 +97,31 @@ namespace Lucene.Net.Index
             // do not use newMergePolicy that might return a MockMergePolicy that ignores the no-CFS ratio
             MergePolicy mp = NewTieredMergePolicy();
             mp.NoCFSRatio = 0;
-            IndexWriterConfig cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetUseCompoundFile(false).SetMergePolicy(mp);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, cfg);
-            int numDocs = AtLeast(500);
-            for (int i = 0; i < numDocs; ++i)
+            var cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetUseCompoundFile(false).SetMergePolicy(mp);
+            using (var w = new RandomIndexWriter(Random(), dir, cfg))
             {
-                Document d = new Document();
-                AddRandomFields(d);
-                w.AddDocument(d);
+                var numDocs = AtLeast(500);
+                for (var i = 0; i < numDocs; ++i)
+                {
+                    var d = new Document();
+                    AddRandomFields(d);
+                    w.AddDocument(d);
+                }
+                w.ForceMerge(1);
+                w.Commit();
             }
-            w.ForceMerge(1);
-            w.Commit();
-            w.Dispose();
             IndexReader reader = DirectoryReader.Open(dir);
 
             Directory dir2 = NewDirectory();
             mp = NewTieredMergePolicy();
             mp.NoCFSRatio = 0;
             cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetUseCompoundFile(false).SetMergePolicy(mp);
-            w = new RandomIndexWriter(Random(), dir2, cfg);
-            w.AddIndexes(reader);
-            w.Commit();
-            w.Dispose();
+
+            using (var w = new RandomIndexWriter(Random(), dir2, cfg))
+            {
+                w.AddIndexes(reader);
+                w.Commit();
+            }
 
             assertEquals(BytesUsedByExtension(dir), BytesUsedByExtension(dir2));
 

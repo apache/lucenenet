@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
                                 norms = DocValues.EMPTY_NUMERIC;
                             }
                             toMerge.Add(norms);
-                            //docsWithField.Add(new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
+                            // LUCENENET TODO docsWithField.Add(new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
                         }
                         consumer.MergeNumericField(field, MergeState, toMerge/*, docsWithField*/);
                     }

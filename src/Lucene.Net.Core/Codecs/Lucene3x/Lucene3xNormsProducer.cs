@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         // holds a file+offset pointing to a norms, and lazy-loads it
         // to a singleton NumericDocValues instance
-        private class NormsDocValues
+        private sealed class NormsDocValues
         {
             private readonly Lucene3xNormsProducer OuterInstance;
 
@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 this.Offset = normSeek;
             }
 
-            internal virtual NumericDocValues Instance
+            internal NumericDocValues Instance
             {
                 get
                 {
@@ -254,7 +254,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
-            NormsDocValues dv = Norms[field.Name];
+            var dv = Norms[field.Name];
             Debug.Assert(dv != null);
             return dv.Instance;
         }
