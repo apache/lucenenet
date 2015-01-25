@@ -30,5 +30,12 @@ namespace Lucene.Net
         {
             return ImmutableHashSet.Create<T>(items.ToArray());
         }
+
+        public static IDictionary<T, TS> UnmodifiableMap<T, TS>(IDictionary<T, TS> d)
+        {
+            var builder = ImmutableDictionary.CreateBuilder<T, TS>();
+            builder.AddRange(d);
+            return builder.ToImmutable();
+        }
     }
 }

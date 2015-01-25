@@ -148,12 +148,17 @@ namespace Lucene.Net.Analysis.Util
 		return map.put(text, PLACEHOLDER) == null;
 	  }
 
-	  public override int Size()
-	  {
-		return map.size();
-	  }
+        public override int Size
+        {
+            get
+            {
+                {
+                    return map.size();
+                }
+            }
+        }
 
-	  /// <summary>
+        /// <summary>
 	  /// Returns an unmodifiable <seealso cref="CharArraySet"/>. This allows to provide
 	  /// unmodifiable views of internal sets for "read-only" use.
 	  /// </summary>

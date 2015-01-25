@@ -152,12 +152,12 @@ namespace Lucene.Net.Analysis.Query
 
         protected override TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
         {
-            HashSet<string> stopWords = stopWordsPerField[fieldName];
+            var stopWords = stopWordsPerField[fieldName];
             if (stopWords == null)
             {
                 return components;
             }
-            StopFilter stopFilter = new StopFilter(matchVersion, components.TokenStream, new CharArraySet(matchVersion, stopWords, false));
+            var stopFilter = new StopFilter(matchVersion, components.TokenStream, new CharArraySet(matchVersion, stopWords, false));
             return new TokenStreamComponents(components.Tokenizer, stopFilter);
         }
 
@@ -168,9 +168,9 @@ namespace Lucene.Net.Analysis.Query
         ///                  method calls will be returned </param>
         /// <returns> the stop words identified for a field </returns>
         public string[] GetStopWords(string fieldName)
-        {
-            HashSet<string> stopWords = stopWordsPerField[fieldName];
-            return stopWords != null ? stopWords.ToArray(new string[stopWords.Count]) : new string[0];
+        {            
+            var stopWords = stopWordsPerField[fieldName];
+            return stopWords != null ? stopWords.ToArray() : new string[0];
         }
 
         /// <summary>

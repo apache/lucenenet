@@ -1,7 +1,8 @@
 ﻿using System;
-using FilteringTokenFilter = Lucene.Net.Analysis.Util.FilteringTokenFilter;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -20,12 +21,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using FilteringTokenFilter = FilteringTokenFilter;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Removes words that are too long or too short from the stream.
 	/// <para>
 	/// Note: Length is calculated as the number of UTF-16 code units.
@@ -37,7 +33,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  private readonly int min;
 	  private readonly int max;
 
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+	  private readonly ICharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
 
 	  /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4. 
 	  [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4.")]
@@ -77,11 +73,9 @@ namespace org.apache.lucene.analysis.miscellaneous
 		this.max = max;
 	  }
 
-	  public override bool accept()
+	  public override bool Accept()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int len = termAtt.length();
-		int len = termAtt.length();
+		int len = termAtt.Length;
 		return (len >= min && len <= max);
 	  }
 	}

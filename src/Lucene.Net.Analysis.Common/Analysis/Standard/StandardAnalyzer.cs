@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Core;
+﻿using System.IO;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using org.apache.lucene.analysis.standard;
@@ -84,7 +85,7 @@ namespace Lucene.Net.Analysis.Standard
 	  /// <param name="matchVersion"> Lucene version to match See {@link
 	  /// <a href="#version">above</a>} </param>
 	  /// <param name="stopwords"> Reader to read stop words from  </param>
-	  public StandardAnalyzer(Version matchVersion, Reader stopwords) : this(matchVersion, loadStopwordSet(stopwords, matchVersion))
+	  public StandardAnalyzer(Version matchVersion, TextReader stopwords) : this(matchVersion, loadStopwordSet(stopwords, matchVersion))
 	  {
 	  }
 
@@ -109,7 +110,7 @@ namespace Lucene.Net.Analysis.Standard
 
 	  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
 	  {
-		StandardTokenizer src = new StandardTokenizer(matchVersion, reader);
+		var src = new StandardTokenizer(matchVersion, reader);
 		src.MaxTokenLength = maxTokenLength;
 		TokenStream tok = new StandardFilter(matchVersion, src);
 		tok = new LowerCaseFilter(matchVersion, tok);
@@ -121,8 +122,8 @@ namespace Lucene.Net.Analysis.Standard
 	  {
 		  private readonly StandardAnalyzer outerInstance;
 
-		  private Reader reader;
-		  private StandardTokenizer src;
+		  private TextReader reader;
+		  private readonly StandardTokenizer src;
 
 		  public TokenStreamComponentsAnonymousInnerClassHelper(StandardAnalyzer outerInstance, StandardTokenizer src, TokenStream tok, Reader reader) : base(src, tok)
 		  {

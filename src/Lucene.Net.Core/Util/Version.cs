@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
     /// <p><b>WARNING</b>: When changing the version parameter
     /// that you supply to components in Lucene, do not simply
     /// change the version at search-time, but instead also adjust
-    /// your indexing code to match, and re-index.
+    /// your indexing code to match, and re-index.</p>
     /// </summary>
     public enum Version
     {

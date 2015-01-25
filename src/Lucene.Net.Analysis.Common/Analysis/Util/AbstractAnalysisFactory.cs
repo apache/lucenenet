@@ -44,19 +44,17 @@ namespace Lucene.Net.Analysis.Util
 
 	  /// <summary>
 	  /// the luceneVersion arg </summary>
-	  protected internal readonly Lucene.Net.Util.Version luceneMatchVersion;
-	  /// <summary>
-	  /// whether the luceneMatchVersion arg is explicitly specified in the serialized schema </summary>
-	  private bool isExplicitLuceneMatchVersion = false;
+	  protected internal readonly Lucene.Net.Util.Version? luceneMatchVersion;
 
-	  /// <summary>
+        /// <summary>
 	  /// Initialize this factory via a set of key-value pairs.
 	  /// </summary>
 	  protected internal AbstractAnalysisFactory(IDictionary<string, string> args)
 	  {
-		originalArgs = Collections.UnmodifiableMap(new Dictionary<>(args));
+	      ExplicitLuceneMatchVersion = false;
+	      originalArgs = Collections.UnmodifiableMap(args);
 		string version = get(args, LUCENE_MATCH_VERSION_PARAM);
-		luceneMatchVersion = version == null ? null : Version.ParseLeniently(version);
+		luceneMatchVersion = version == null ? null : Lucene.Net.Util.Version.ParseLeniently(version);
 		args.Remove(CLASS_NAME); // consume the class arg
 	  }
 
@@ -304,8 +302,6 @@ namespace Lucene.Net.Analysis.Util
 	  /// <summary>
 	  /// Returns the resource's lines (with content treated as UTF-8)
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected final java.util.List<String> getLines(ResourceLoader loader, String resource) throws java.io.IOException
 	  protected internal IList<string> getLines(ResourceLoader loader, string resource)
 	  {
 		return WordlistLoader.getLines(loader.openResource(resource), StandardCharsets.UTF_8);
@@ -315,8 +311,6 @@ namespace Lucene.Net.Analysis.Util
 	  /// same as <seealso cref="#getWordSet(ResourceLoader, String, boolean)"/>,
 	  /// except the input is in snowball format. 
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected final CharArraySet getSnowballWordSet(ResourceLoader loader, String wordFiles, boolean ignoreCase) throws java.io.IOException
 	  protected internal CharArraySet getSnowballWordSet(ResourceLoader loader, string wordFiles, bool ignoreCase)
 	  {
 		assureMatchVersion();
@@ -389,18 +383,6 @@ namespace Lucene.Net.Analysis.Util
 		  }
 	  }
 
-	  public virtual bool ExplicitLuceneMatchVersion
-	  {
-		  get
-		  {
-			return isExplicitLuceneMatchVersion;
-		  }
-		  set
-		  {
-			this.isExplicitLuceneMatchVersion = value;
-		  }
-	  }
-
+        public virtual bool ExplicitLuceneMatchVersion { get; set; }
 	}
-
 }
