@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
                         if (type == DocValuesType_e.NUMERIC)
                         {
                             IList<NumericDocValues> toMerge = new List<NumericDocValues>();
-                            //IList<Bits> docsWithField = new List<Bits>();
+                            IList<Bits> docsWithField = new List<Bits>();
                             foreach (AtomicReader reader in MergeState.Readers)
                             {
                                 NumericDocValues values = reader.GetNumericDocValues(field.Name);
@@ -200,14 +200,14 @@ namespace Lucene.Net.Index
                                     bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
                                 }
                                 toMerge.Add(values);
-                                //docsWithField.Add(bits);
+                                docsWithField.Add(bits);
                             }
-                            consumer.MergeNumericField(field, MergeState, toMerge/*, docsWithField*/);
+                            consumer.MergeNumericField(field, MergeState, toMerge, docsWithField);
                         }
                         else if (type == DocValuesType_e.BINARY)
                         {
                             IList<BinaryDocValues> toMerge = new List<BinaryDocValues>();
-                            //IList<Bits> docsWithField = new List<Bits>();
+                            IList<Bits> docsWithField = new List<Bits>();
                             foreach (AtomicReader reader in MergeState.Readers)
                             {
                                 BinaryDocValues values = reader.GetBinaryDocValues(field.Name);
@@ -218,9 +218,9 @@ namespace Lucene.Net.Index
                                     bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc);
                                 }
                                 toMerge.Add(values);
-                                //docsWithField.Add(bits);
+                                docsWithField.Add(bits);
                             }
-                            consumer.MergeBinaryField(field, MergeState, toMerge/*, docsWithField*/);
+                            consumer.MergeBinaryField(field, MergeState, toMerge, docsWithField);
                         }
                         else if (type == DocValuesType_e.SORTED)
                         {
@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
                     if (field.HasNorms())
                     {
                         IList<NumericDocValues> toMerge = new List<NumericDocValues>();
-                        //IList<Bits> docsWithField = new List<Bits>();
+                        IList<Bits> docsWithField = new List<Bits>();
                         foreach (AtomicReader reader in MergeState.Readers)
                         {
                             NumericDocValues norms = reader.GetNormValues(field.Name);
@@ -291,9 +291,9 @@ namespace Lucene.Net.Index
                                 norms = DocValues.EMPTY_NUMERIC;
                             }
                             toMerge.Add(norms);
-                            //docsWithField.Add(new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
+                            docsWithField.Add(new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc));
                         }
-                        consumer.MergeNumericField(field, MergeState, toMerge/*, docsWithField*/);
+                        consumer.MergeNumericField(field, MergeState, toMerge, docsWithField);
                     }
                 }
                 success = true;
