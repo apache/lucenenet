@@ -155,11 +155,13 @@ namespace Lucene.Net.Index
 
         protected internal virtual FieldType FieldType(Options options)
         {
-            FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.StoreTermVectors = true;
-            ft.StoreTermVectorPositions = (new OptionsWrapper(options)).positions;
-            ft.StoreTermVectorOffsets = (new OptionsWrapper(options)).offsets;
-            ft.StoreTermVectorPayloads = (new OptionsWrapper(options)).payloads;
+            var ft = new FieldType(TextField.TYPE_NOT_STORED)
+            {
+                StoreTermVectors = true,
+                StoreTermVectorPositions = (new OptionsWrapper(options)).positions,
+                StoreTermVectorOffsets = (new OptionsWrapper(options)).offsets,
+                StoreTermVectorPayloads = (new OptionsWrapper(options)).payloads
+            };
             ft.Freeze();
             return ft;
         }

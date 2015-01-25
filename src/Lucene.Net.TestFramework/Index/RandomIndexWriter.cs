@@ -517,7 +517,7 @@ namespace Lucene.Net.Index
 
             public TestPointInfoStream(InfoStream @delegate, TestPoint testPoint)
             {
-                this.@delegate = @delegate == null ? new NullInfoStream() : @delegate;
+                this.@delegate = @delegate ?? new NullInfoStream();
                 this.TestPoint = testPoint;
             }
 
