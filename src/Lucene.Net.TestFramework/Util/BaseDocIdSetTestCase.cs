@@ -121,7 +121,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Compare the content of the set against a <seealso cref="BitSet"/>.
         /// </summary>
-        [Test, Timeout(40000)]
+        [Test, Timeout(150000)]
         public void TestAgainstBitSet()
         {
             int numBits = TestUtil.NextInt(Random(), 100, 1 << 20);
