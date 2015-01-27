@@ -1,14 +1,11 @@
 using System.IO;
 using System.Linq;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Lucene.Net.Codecs
 {
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -39,6 +36,7 @@ namespace Lucene.Net.Codecs
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
+    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
     /// <summary>
     /// Abstract API that consumes numeric, binary and
@@ -110,7 +108,7 @@ namespace Lucene.Net.Codecs
         /// Merges the numeric docvalues from <code>toMerge</code>.
         /// <p>
         /// The default implementation calls <seealso cref="#addNumericField"/>, passing
-        /// an Iterable that merges and filters deleted documents on the fly.
+        /// an Iterable that merges and filters deleted documents on the fly.</p>
         /// </summary>
         public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<Bits> docsWithField)
         {
@@ -211,7 +209,7 @@ namespace Lucene.Net.Codecs
 
                 if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
                 {
-                    BytesRef nextValue = new BytesRef();
+                    var nextValue = new BytesRef();
 
                     if (currentDocsWithField.Get(docIDUpto))
                     {
@@ -235,7 +233,7 @@ namespace Lucene.Net.Codecs
         /// Merges the sorted docvalues from <code>toMerge</code>.
         /// <p>
         /// The default implementation calls <seealso cref="#addSortedField"/>, passing
-        /// an Iterable that merges ordinals and values and filters deleted documents .
+        /// an Iterable that merges ordinals and values and filters deleted documents.</p>
         /// </summary>
         public virtual void MergeSortedField(FieldInfo fieldInfo, MergeState mergeState, IList<SortedDocValues> toMerge)
         {
@@ -243,7 +241,7 @@ namespace Lucene.Net.Codecs
             SortedDocValues[] dvs = toMerge.ToArray();
 
             // step 1: iterate thru each sub and mark terms still in use
-            TermsEnum[] liveTerms = new TermsEnum[dvs.Length];
+            var liveTerms = new TermsEnum[dvs.Length];
             for (int sub = 0; sub < liveTerms.Length; sub++)
             {
                 AtomicReader reader = readers[sub];
@@ -255,7 +253,7 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    LongBitSet bitset = new LongBitSet(dv.ValueCount);
+                    var bitset = new LongBitSet(dv.ValueCount);
                     for (int i = 0; i < reader.MaxDoc; i++)
                     {
                         if (liveDocs.Get(i))
@@ -272,7 +270,7 @@ namespace Lucene.Net.Codecs
             }
 
             // step 2: create ordinal map (this conceptually does the "merging")
-            OrdinalMap map = new OrdinalMap(this, liveTerms);
+            var map = new OrdinalMap(this, liveTerms);
 
             // step 3: add field
             AddSortedField(fieldInfo, GetMergeSortValuesEnumerable(map, dvs),
@@ -283,13 +281,13 @@ namespace Lucene.Net.Codecs
 
         private IEnumerable<BytesRef> GetMergeSortValuesEnumerable(OrdinalMap map, SortedDocValues[] dvs)
         {
-            BytesRef scratch = new BytesRef();
+            var scratch = new BytesRef();
             int currentOrd = 0;
 
             while (currentOrd < map.ValueCount)
             {
                 int segmentNumber = map.GetFirstSegmentNumber(currentOrd);
-                int segmentOrd = (int)map.GetFirstSegmentOrd(currentOrd);
+                var segmentOrd = (int)map.GetFirstSegmentOrd(currentOrd);
                 dvs[segmentNumber].LookupOrd(segmentOrd, scratch);
                 currentOrd++;
                 yield return scratch;
@@ -497,23 +495,23 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public virtual void MergeSortedSetField(FieldInfo fieldInfo, MergeState mergeState, IList<SortedSetDocValues> toMerge)
         {
-            AtomicReader[] readers = mergeState.Readers.ToArray();
-            SortedSetDocValues[] dvs = toMerge.ToArray();
+            var readers = mergeState.Readers.ToArray();
+            var dvs = toMerge.ToArray();
 
             // step 1: iterate thru each sub and mark terms still in use
-            TermsEnum[] liveTerms = new TermsEnum[dvs.Length];
+            var liveTerms = new TermsEnum[dvs.Length];
             for (int sub = 0; sub < liveTerms.Length; sub++)
             {
-                AtomicReader reader = readers[sub];
-                SortedSetDocValues dv = dvs[sub];
-                Bits liveDocs = reader.LiveDocs;
+                var reader = readers[sub];
+                var dv = dvs[sub];
+                var liveDocs = reader.LiveDocs;
                 if (liveDocs == null)
                 {
                     liveTerms[sub] = dv.TermsEnum();
                 }
                 else
                 {
-                    LongBitSet bitset = new LongBitSet(dv.ValueCount);
+                    var bitset = new LongBitSet(dv.ValueCount);
                     for (int i = 0; i < reader.MaxDoc; i++)
                     {
                         if (liveDocs.Get(i))
@@ -531,7 +529,7 @@ namespace Lucene.Net.Codecs
             }
 
             // step 2: create ordinal map (this conceptually does the "merging")
-            OrdinalMap map = new OrdinalMap(this, liveTerms);
+            var map = new OrdinalMap(this, liveTerms);
 
             // step 3: add field
             AddSortedSetField(fieldInfo, GetMergeSortedSetValuesEnumerable(map, dvs),
@@ -544,7 +542,7 @@ namespace Lucene.Net.Codecs
 
         private IEnumerable<BytesRef> GetMergeSortedSetValuesEnumerable(OrdinalMap map, SortedSetDocValues[] dvs)
         {
-            BytesRef scratch = new BytesRef();
+            var scratch = new BytesRef();
             long currentOrd = 0;
 
             while (currentOrd < map.ValueCount)
@@ -607,7 +605,7 @@ namespace Lucene.Net.Codecs
             int docIDUpto = 0;
             AtomicReader currentReader = null;
             Bits currentLiveDocs = null;
-            long[] ords = new long[8];
+            var ords = new long[8];
             int ordUpto = 0;
             int ordLength = 0;
 
@@ -947,19 +945,12 @@ namespace Lucene.Net.Codecs
                 : base(@in, false)
             {
                 Debug.Assert(liveTerms != null);
-                this.LiveTerms = liveTerms;
+                LiveTerms = liveTerms;
             }
 
             protected internal override AcceptStatus Accept(BytesRef term)
             {
-                if (LiveTerms.Get(Ord()))
-                {
-                    return AcceptStatus.YES;
-                }
-                else
-                {
-                    return AcceptStatus.NO;
-                }
+                return LiveTerms.Get(Ord()) ? AcceptStatus.YES : AcceptStatus.NO;
             }
         }
 
