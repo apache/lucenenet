@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -232,7 +233,14 @@ namespace Lucene.Net.Util
                 int fromIndex, toIndex;
                 fromIndex = Random().Next(sz + 80);
                 toIndex = fromIndex + Random().Next((sz >> 1) + 1);
+
                 BitArray aa = (BitArray)a.Clone();
+                // C# BitArray class does not support dynamic sizing.
+                // We have to explicitly change its size using the Length attribute.
+                if (toIndex > aa.Length)
+                {
+                    aa.Length = toIndex;
+                }
                 aa.Flip(fromIndex, toIndex);
                 OpenBitSet bb = (OpenBitSet)b.Clone();
                 bb.Flip(fromIndex, toIndex);
@@ -242,6 +250,10 @@ namespace Lucene.Net.Util
                 fromIndex = Random().Next(sz + 80);
                 toIndex = fromIndex + Random().Next((sz >> 1) + 1);
                 aa = (BitArray)a.Clone();
+                if (toIndex > aa.Length)
+                {
+                    aa.Length = toIndex;
+                }
                 aa.Clear(fromIndex, toIndex);
                 bb = (OpenBitSet)b.Clone();
                 bb.Clear(fromIndex, toIndex);
@@ -255,6 +267,10 @@ namespace Lucene.Net.Util
                 fromIndex = Random().Next(sz + 80);
                 toIndex = fromIndex + Random().Next((sz >> 1) + 1);
                 aa = (BitArray)a.Clone();
+                if (toIndex > aa.Length)
+                {
+                    aa.Length = toIndex;
+                }
                 aa.Set(fromIndex, toIndex);
                 bb = (OpenBitSet)b.Clone();
                 bb.Set(fromIndex, toIndex);
@@ -267,16 +283,23 @@ namespace Lucene.Net.Util
 
                 if (a0 != null)
                 {
-                    Assert.AreEqual(a.BitWiseEquals(a0), b.Equals(b0));
+                    aa = (BitArray)a.Clone();
+                    BitArray aa0 = (BitArray) a0.Clone();
+                    int largest = Math.Max(a.Length, a0.Length);
+                    aa.Length = aa0.Length = largest;
+                    // BitWiseEquals needs both arrays to be the same size for succeeding.
+                    // We could enlarge the smallest of a and a0, but then the tests below
+                    // won't test "UnequalLengths" operations.
+                    Assert.AreEqual(aa.BitWiseEquals(aa0), b.Equals(b0));
 
                     Assert.AreEqual(a.Cardinality(), b.Cardinality());
 
                     BitArray a_and = (BitArray)a.Clone();
-                    a_and = a_and.And(a0);
+                    a_and = a_and.And_UnequalLengths(a0);
                     BitArray a_or = (BitArray)a.Clone();
-                    a_or = a_or.Or(a0);
+                    a_or = a_or.Or_UnequalLengths(a0);
                     BitArray a_xor = (BitArray)a.Clone();
-                    a_xor = a_xor.Xor(a0);
+                    a_xor = a_xor.Xor_UnequalLengths(a0);
                     BitArray a_andn = (BitArray)a.Clone();
                     a_andn.AndNot(a0);
 
@@ -319,6 +342,64 @@ namespace Lucene.Net.Util
         {
             DoRandomSets(AtLeast(1200), AtLeast(1000), 1);
             DoRandomSets(AtLeast(1200), AtLeast(1000), 2);
+        }
+
+        [Test]
+        public void TestClearSmall()
+        {
+            OpenBitSet a = new OpenBitSet(30);   // 0110010111001000101101001001110...0
+            int[] onesA = { 1, 2, 5, 7, 8, 9, 12, 16, 18, 19, 21, 24, 27, 28, 29 };
+
+            for (int i = 0; i < onesA.size(); i++)
+            {
+                a.Set(onesA[i]);
+            }
+
+            OpenBitSet b = new OpenBitSet(30);   // 0110000001001000101101001001110...0
+            int[] onesB = { 1, 2, 9, 12, 16, 18, 19, 21, 24, 27, 28, 29 };
+
+            for (int i = 0; i < onesB.size(); i++)
+            {
+                b.Set(onesB[i]);
+            }
+
+            a.Clear(5, 9);
+            Assert.True(a.Equals(b));
+
+            a.Clear(9, 10);
+            Assert.False(a.Equals(b));
+
+            a.Set(9);
+            Assert.True(a.Equals(b));
+        }
+
+        [Test]
+        public void TestClearLarge()
+        {
+            int iters = AtLeast(1000);
+            for (int it = 0; it < iters; it++)
+            {
+                Random random = new Random();
+                int sz = AtLeast(1200);
+                OpenBitSet a = new OpenBitSet(sz);
+                OpenBitSet b = new OpenBitSet(sz);
+                int from = random.Next(sz - 1);
+                int to = random.Next(from, sz);
+
+                for (int i = 0; i < sz / 2; i++)
+                {
+                    int index = random.Next(sz - 1);
+                    a.Set(index);
+
+                    if (index < from || index >= to)
+                    {
+                        b.Set(index);
+                    }
+                }
+
+                a.Clear(from, to);
+                Assert.True(a.Equals(b));
+            }
         }
 
         // uncomment to run a bigger test (~2 minutes).
