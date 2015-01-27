@@ -200,7 +200,9 @@ namespace Lucene.Net.Store
             EnsureOpen();
             FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
 
-            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);  /* We need to open in ReadWrite sharing 
+                                                                                                                 * because FSIndexOutput opens in Write mode
+                                                                                                                 * (there might be other threads writing in the file) */
 
             return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file.ToString() + "\")", c);
         }

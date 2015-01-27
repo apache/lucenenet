@@ -115,10 +115,6 @@ namespace Lucene.Net.Store
         {
             try
             {
-                CurBuf.Get(b, offset, len);
-            }
-            catch (BufferUnderflowException)
-            {
                 int curAvail = CurBuf.Remaining;
                 while (len > curAvail)
                 {

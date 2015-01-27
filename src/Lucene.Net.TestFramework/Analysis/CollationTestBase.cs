@@ -64,23 +64,24 @@ namespace Lucene.Net.Analysis
         protected internal string SecondRangeBeginningOriginal = "\u0633";
         protected internal string SecondRangeEndOriginal = "\u0638";
 
-        /// <summary>
-        /// Convenience method to perform the same function as CollationKeyFilter.
-        /// </summary>
-        /// <param name="keyBits"> the result from
-        ///  collator.getCollationKey(original).toByteArray() </param>
-        /// <returns> The encoded collation key for the original String </returns>
-        /// @deprecated only for testing deprecated filters
-        [Obsolete("only for testing deprecated filters")]
-        protected internal virtual string EncodeCollationKey(sbyte[] keyBits)
-        {
-            // Ensure that the backing char[] array is large enough to hold the encoded
-            // Binary String
-            int encodedLength = IndexableBinaryStringTools.GetEncodedLength(keyBits, 0, keyBits.Length);
-            char[] encodedBegArray = new char[encodedLength];
-            IndexableBinaryStringTools.Encode(keyBits, 0, keyBits.Length, encodedBegArray, 0, encodedLength);
-            return new string(encodedBegArray);
-        }
+        /// <summary> 
+        /// Convenience method to perform the same function as CollationKeyFilter. 
+        /// </summary> 
+        /// <param name="keyBits"> the result from 
+        ///  collator.getCollationKey(original).toByteArray() </param> 
+        /// <returns> The encoded collation key for the original String </returns> 
+        /// @deprecated only for testing deprecated filters 
+        [Obsolete("only for testing deprecated filters")] 
+        protected internal virtual string EncodeCollationKey(sbyte[] keyBits) 
+        { 
+            // Ensure that the backing char[] array is large enough to hold the encoded 
+            // Binary String 
+            int encodedLength = IndexableBinaryStringTools.GetEncodedLength(keyBits, 0, keyBits.Length); 
+            char[] encodedBegArray = new char[encodedLength]; 
+            IndexableBinaryStringTools.Encode(keyBits, 0, keyBits.Length, encodedBegArray, 0, encodedLength); 
+            return new string(encodedBegArray); 
+        } 
+
 
         public virtual void TestFarsiRangeFilterCollating(Analyzer analyzer, BytesRef firstBeg, BytesRef firstEnd, BytesRef secondBeg, BytesRef secondEnd)
         {

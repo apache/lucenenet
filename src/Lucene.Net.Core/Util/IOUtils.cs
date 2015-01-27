@@ -456,30 +456,41 @@ namespace Lucene.Net.Util
             while (true)
             {
                 FileStream file = null;
-                using (file)
+                bool success = false;
+                try
                 {
-                    try
+                    // If the file is a directory we have to open read-only, for regular files we must open r/w for the fsync to have an effect.
+                    // See http://blog.httrack.com/blog/2013/11/15/everything-you-always-wanted-to-know-about-fsync/
+                    file = new FileStream(fileToSync, FileMode.Open,    /* We shouldn't create a file when syncing */
+                        /*isDir ? FileAccess.Read :*/ FileAccess.Write,
+                        /*isDir ? FileShare.Read :*/ FileShare.ReadWrite);
+                    //FileSupport.Sync(file);
+                    file.Flush(true);
+                    success = true;
+                }
+                catch (IOException e)
+                {
+                    if (retryCount == 5)
                     {
-                        // If the file is a directory we have to open read-only, for regular files we must open r/w for the fsync to have an effect.
-                        // See http://blog.httrack.com/blog/2013/11/15/everything-you-always-wanted-to-know-about-fsync/
-                        file = new FileStream(fileToSync, FileMode.OpenOrCreate,
-                            isDir ? FileAccess.Read : FileAccess.Write,
-                            isDir ? FileShare.Read : FileShare.ReadWrite);
-                        //FileSupport.Sync(file);
-                        file.Flush(true);
-                        return;
+                        throw;
                     }
-                    catch (IOException e)
-                    {
-                        if (retryCount == 5)
-                        {
-                            throw;
-                        }
 
-                        // Pause 5 msec
-                        Thread.Sleep(5);
+                    // Pause 5 msec
+                    Thread.Sleep(5);
+                }
+                finally
+                {
+                    if (file != null)
+                    {
+                        file.Dispose();
                     }
                 }
+
+                if (success)
+                {
+                    return;
+                }
+
                 retryCount++;
             }
         }

@@ -22,6 +22,7 @@ using System;
 
 namespace Lucene.Net.Util
 {
+    using System.Diagnostics;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
@@ -39,7 +40,6 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestDataInputOutput()
         {
-            Random random = Random();
             for (int iter = 0; iter < 5 * RANDOM_MULTIPLIER; iter++)
             {
                 BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
                 {
                     ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
                 }
-                int blockBits = TestUtil.NextInt(random, 1, 20);
+                int blockBits = TestUtil.NextInt(Random(), 1, 20);
                 int blockSize = 1 << blockBits;
                 PagedBytes p = new PagedBytes(blockBits);
                 IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT);
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
                 DataInput @in = (DataInput)input.Clone();
 
                 p.Copy(input, input.Length());
-                PagedBytes.Reader reader = p.Freeze(random.NextBoolean());
+                PagedBytes.Reader reader = p.Freeze(Random().NextBoolean());
 
                 byte[] verify = new byte[numBytes];
                 int read = 0;
@@ -97,8 +97,8 @@ namespace Lucene.Net.Util
                 BytesRef slice = new BytesRef();
                 for (int iter2 = 0; iter2 < 100; iter2++)
                 {
-                    int pos = random.Next(numBytes - 1);
-                    int len = random.Next(Math.Min(blockSize + 1, numBytes - pos));
+                    int pos = Random().Next(numBytes - 1);
+                    int len = Random().Next(Math.Min(blockSize + 1, numBytes - pos));
                     reader.FillSlice(slice, pos, len);
                     for (int byteUpto = 0; byteUpto < len; byteUpto++)
                     {
@@ -113,13 +113,12 @@ namespace Lucene.Net.Util
         // Writes random byte/s into PagedBytes via
         // .getDataOutput(), then verifies with
         // PagedBytes.getDataInput():
-        [Test]
+        [Test, Timeout(100000)]
         public virtual void TestDataInputOutput2()
         {
-            Random random = Random();
             for (int iter = 0; iter < 5 * RANDOM_MULTIPLIER; iter++)
             {
-                int blockBits = TestUtil.NextInt(random, 1, 20);
+                int blockBits = TestUtil.NextInt(Random(), 1, 20);
                 int blockSize = 1 << blockBits;
                 PagedBytes p = new PagedBytes(blockBits);
                 DataOutput @out = p.DataOutput;
@@ -142,7 +141,7 @@ namespace Lucene.Net.Util
                     }
                 }
 
-                PagedBytes.Reader reader = p.Freeze(random.NextBoolean());
+                PagedBytes.Reader reader = p.Freeze(Random().NextBoolean());
 
                 DataInput @in = p.DataInput;
 
@@ -166,8 +165,8 @@ namespace Lucene.Net.Util
                 BytesRef slice = new BytesRef();
                 for (int iter2 = 0; iter2 < 100; iter2++)
                 {
-                    int pos = random.Next(numBytes - 1);
-                    int len = random.Next(Math.Min(blockSize + 1, numBytes - pos));
+                    int pos = Random().Next(numBytes - 1);
+                    int len = Random().Next(Math.Min(blockSize + 1, numBytes - pos));
                     reader.FillSlice(slice, pos, len);
                     for (int byteUpto = 0; byteUpto < len; byteUpto++)
                     {
@@ -177,28 +176,29 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Test]
+        [Test, Timeout(1000000)]
         public virtual void TestOverflow() // memory hole
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper) dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
             }
             int blockBits = TestUtil.NextInt(Random(), 14, 28);
             int blockSize = 1 << blockBits;
             var arr = new byte[TestUtil.NextInt(Random(), blockSize / 2, blockSize * 2)];
             for (int i = 0; i < arr.Length; ++i)
             {
-                arr[i] = (byte)(sbyte)i;
+                arr[i] = (byte) (sbyte) i;
             }
+
             long numBytes = (1L << 31) + TestUtil.NextInt(Random(), 1, blockSize * 3);
             var p = new PagedBytes(blockBits);
             var @out = dir.CreateOutput("foo", IOContext.DEFAULT);
-            for (long i = 0; i < numBytes; )
+            for (long i = 0; i < numBytes;)
             {
                 Assert.AreEqual(i, @out.FilePointer);
-                int len = (int)Math.Min(arr.Length, numBytes - i);
+                int len = (int) Math.Min(arr.Length, numBytes - i);
                 @out.WriteBytes(arr, len);
                 i += len;
             }
@@ -212,7 +212,7 @@ namespace Lucene.Net.Util
             {
                 BytesRef b = new BytesRef();
                 reader.FillSlice(b, offset, 1);
-                Assert.AreEqual(arr[(int)(offset % arr.Length)], b.Bytes[b.Offset]);
+                Assert.AreEqual(arr[(int) (offset%arr.Length)], b.Bytes[b.Offset]);
             }
             @in.Dispose();
             dir.Dispose();

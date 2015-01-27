@@ -168,6 +168,8 @@ namespace Lucene.Net.Util
                 {
                     Assert.AreEqual(a.Cardinality(), b.Cardinality());
 
+                    a0.Length = a.Length;
+
                     BitArray a_and = (BitArray)a.Clone();
                     a_and = a_and.And_UnequalLengths(a0);
                     BitArray a_or = (BitArray)a.Clone();
@@ -198,6 +200,63 @@ namespace Lucene.Net.Util
 
                 a0 = a;
                 b0 = b;
+            }
+        }
+
+        [Test]
+        public void TestClearSmall()
+        {
+            LongBitSet a = new LongBitSet(30);   // 0110010111001000101101001001110...0
+            int[] onesA = { 1, 2, 5, 7, 8, 9, 12, 16, 18, 19, 21, 24, 27, 28, 29 };
+
+            for (int i = 0; i < onesA.size(); i++)
+            {
+                a.Set(onesA[i]);
+            }
+
+            LongBitSet b = new LongBitSet(30);   // 0110000001001000101101001001110...0
+            int[] onesB = { 1, 2, 9, 12, 16, 18, 19, 21, 24, 27, 28, 29 };
+
+            for (int i = 0; i < onesB.size(); i++)
+            {
+                b.Set(onesB[i]);
+            }
+
+            a.Clear(5, 9);
+            Assert.True(a.Equals(b));
+
+            a.Clear(9, 10);
+            Assert.False(a.Equals(b));
+
+            a.Set(9);
+            Assert.True(a.Equals(b));
+        }
+
+        [Test]
+        public void TestClearLarge()
+        {
+            int iters = AtLeast(1000);
+            for (int it = 0; it < iters; it++)
+            {
+                int sz = AtLeast(1200);
+                LongBitSet a = new LongBitSet(sz);
+                LongBitSet b = new LongBitSet(sz);
+                int from = Random().Next(sz - 1);
+                int to = Random().Next(from, sz);
+
+                for (int i = 0; i < sz / 2; i++)
+                {
+                    int index = Random().Next(sz - 1);
+                    a.Set(index);
+
+                    if (index < from || index >= to)
+                    {
+                        b.Set(index);
+                    }
+                }
+
+                a.Clear(from, to);
+                Assert.True(a.Equals(b));
             }
         }
 
