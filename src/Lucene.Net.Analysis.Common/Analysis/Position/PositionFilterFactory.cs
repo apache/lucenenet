@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Position
 {
@@ -33,9 +34,7 @@ namespace Lucene.Net.Analysis.Position
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</pre>
     /// </summary>
-    /// <seealso cref= org.apache.lucene.analysis.position.PositionFilter
-    /// @since solr 1.4 </seealso>
-    /// @deprecated (4.4) 
+    /// <seealso cref=PositionFilter/>
     [Obsolete("(4.4)")]
     public class PositionFilterFactory : TokenFilterFactory
     {
@@ -51,7 +50,7 @@ namespace Lucene.Net.Analysis.Position
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
             }
-            if (luceneMatchVersion != null && luceneMatchVersion.onOrAfter(Version.LUCENE_44))
+            if (luceneMatchVersion != null && luceneMatchVersion.OnOrAfter(Lucene.Net.Util.Version.LUCENE_44))
             {
                 throw new System.ArgumentException("PositionFilter is deprecated as of Lucene 4.4. You should either fix your code to not use it or use Lucene 4.3 version compatibility");
             }

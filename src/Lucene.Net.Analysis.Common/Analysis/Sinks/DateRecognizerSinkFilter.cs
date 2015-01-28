@@ -1,6 +1,8 @@
 ﻿using System;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.analysis.sinks
+namespace Lucene.Net.Analysis.Sinks
 {
 
 	/*
@@ -19,12 +21,7 @@ namespace org.apache.lucene.analysis.sinks
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using AttributeSource = org.apache.lucene.util.AttributeSource;
-
-	/// <summary>
+    /// <summary>
 	/// Attempts to parse the <seealso cref="CharTermAttribute#buffer()"/> as a Date using a <seealso cref="java.text.DateFormat"/>.
 	/// If the value is a Date, it will add it to the sink.
 	/// <p/> 
@@ -52,15 +49,15 @@ namespace org.apache.lucene.analysis.sinks
 		this.dateFormat = dateFormat;
 	  }
 
-	  public override bool accept(AttributeSource source)
+	  public override bool Accept(AttributeSource source)
 	  {
 		if (termAtt == null)
 		{
-		  termAtt = source.addAttribute(typeof(CharTermAttribute));
+            termAtt = source.AddAttribute <ICharTermAttribute>();
 		}
 		try
 		{
-		  DateTime date = dateFormat.parse(termAtt.ToString()); //We don't care about the date, just that we can parse it as a date
+		  DateTime date = dateFormat.Parse(termAtt.ToString()); //We don't care about the date, just that we can parse it as a date
 		  if (date != null)
 		  {
 			return true;

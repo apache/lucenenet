@@ -294,11 +294,11 @@ namespace Lucene.Net.Util
         /// </summary>
         public static bool VERBOSE = RandomizedTest.SystemPropertyAsBoolean("tests.verbose",
 #if DEBUG
-            true
+ true
 #else
             false
 #endif
-            );
+);
 
         /// <summary>
         /// TODO: javadoc? </summary>
@@ -1371,7 +1371,7 @@ namespace Lucene.Net.Util
 
             Type clazz = CommandLineUtil.LoadDirectoryClass(clazzName);
             // If it is a FSDirectory type, try its ctor(File)
-            if (clazz.IsSubclassOf(typeof (FSDirectory)))
+            if (clazz.IsSubclassOf(typeof(FSDirectory)))
             {
                 DirectoryInfo dir = CreateTempDir("index-" + clazzName);
                 dir.Create(); // ensure it's created so we 'have' it.
@@ -1379,7 +1379,7 @@ namespace Lucene.Net.Util
             }
 
             // try empty ctor
-            return (Directory) Activator.CreateInstance(clazz);
+            return (Directory)Activator.CreateInstance(clazz);
         }
 
         /// <summary>

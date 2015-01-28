@@ -87,18 +87,18 @@ namespace Lucene.Net.Documents
         /// Intended only for custom Field subclasses. </summary>
         /// <param name="name"> field name </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="IllegalArgumentException"> if either the name or type
+        /// <exception cref="ArgumentNullException"> if either the name or type
         ///         is null. </exception>
         protected internal Field(string name, FieldType type)
         {
             if (name == null)
             {
-                throw new System.ArgumentException("name cannot be null");
+                throw new System.ArgumentNullException("name", "name cannot be null");
             }
             this.Name_Renamed = name;
             if (type == null)
             {
-                throw new System.ArgumentException("type cannot be null");
+                throw new System.ArgumentNullException("type", "type cannot be null");
             }
             this.Type = type;
         }
@@ -108,23 +108,23 @@ namespace Lucene.Net.Documents
         /// <param name="name"> field name </param>
         /// <param name="reader"> reader value </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="IllegalArgumentException"> if either the name or type
+        /// <exception cref="ArgumentNullException"> if either the name or type
         ///         is null, or if the field's type is stored(), or
         ///         if tokenized() is false. </exception>
-        /// <exception cref="NullPointerException"> if the reader is null </exception>
+        /// <exception cref="ArgumentNullException"> if the reader is null </exception>
         public Field(string name, TextReader reader, FieldType type)
         {
             if (name == null)
             {
-                throw new System.ArgumentException("name cannot be null");
+                throw new System.ArgumentNullException("name", "name cannot be null");
             }
             if (type == null)
             {
-                throw new System.ArgumentException("type cannot be null");
+                throw new System.ArgumentNullException("type", "type cannot be null");
             }
             if (reader == null)
             {
-                throw new System.NullReferenceException("reader cannot be null");
+                throw new System.ArgumentNullException("reader", "reader cannot be null");
             }
             if (type.Stored)
             {
@@ -145,19 +145,19 @@ namespace Lucene.Net.Documents
         /// <param name="name"> field name </param>
         /// <param name="tokenStream"> TokenStream value </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="IllegalArgumentException"> if either the name or type
+        /// <exception cref="ArgumentException"> if either the name or type
         ///         is null, or if the field's type is stored(), or
         ///         if tokenized() is false, or if indexed() is false. </exception>
-        /// <exception cref="NullPointerException"> if the tokenStream is null </exception>
+        /// <exception cref="ArgumentNullException"> if the tokenStream is null </exception>
         public Field(string name, TokenStream tokenStream, FieldType type)
         {
             if (name == null)
             {
-                throw new System.ArgumentException("name cannot be null");
+                throw new System.ArgumentNullException("name", "name cannot be null");
             }
             if (tokenStream == null)
             {
-                throw new System.NullReferenceException("tokenStream cannot be null");
+                throw new System.ArgumentNullException("tokenStream","tokenStream cannot be null");
             }
             if (!type.Indexed || !type.Tokenized)
             {
@@ -182,9 +182,9 @@ namespace Lucene.Net.Documents
         /// <param name="name"> field name </param>
         /// <param name="value"> byte array pointing to binary content (not copied) </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null,
+        /// <exception cref="ArgumentException"> if the field name is null,
         ///         or the field's type is indexed() </exception>
-        /// <exception cref="NullPointerException"> if the type is null </exception>
+        /// <exception cref="ArgumentNullException"> if the type is null </exception>
         public Field(string name, byte[] value, FieldType type)
             : this(name, value, 0, value.Length, type)
         {
@@ -200,9 +200,9 @@ namespace Lucene.Net.Documents
         /// <param name="offset"> starting position of the byte array </param>
         /// <param name="length"> valid length of the byte array </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null,
+        /// <exception cref="ArgumentException"> if the field name is null,
         ///         or the field's type is indexed() </exception>
-        /// <exception cref="NullPointerException"> if the type is null </exception>
+        /// <exception cref="ArgumentNullException"> if the type is null </exception>
         public Field(string name, byte[] value, int offset, int length, FieldType type)
             : this(name, new BytesRef(value, offset, length), type)
         {
@@ -216,14 +216,14 @@ namespace Lucene.Net.Documents
         /// <param name="name"> field name </param>
         /// <param name="bytes"> BytesRef pointing to binary content (not copied) </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null,
+        /// <exception cref="ArgumentException"> if the field name is null,
         ///         or the field's type is indexed() </exception>
-        /// <exception cref="NullPointerException"> if the type is null </exception>
+        /// <exception cref="ArgumentNullException"> if the type is null </exception>
         public Field(string name, BytesRef bytes, FieldType type)
         {
             if (name == null)
             {
-                throw new System.ArgumentException("name cannot be null");
+                throw new System.ArgumentNullException("name", "name cannot be null");
             }
             if (type.Indexed)
             {
@@ -241,19 +241,19 @@ namespace Lucene.Net.Documents
         /// <param name="name"> field name </param>
         /// <param name="value"> string value </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="IllegalArgumentException"> if either the name or value
+        /// <exception cref="ArgumentException"> if either the name or value
         ///         is null, or if the field's type is neither indexed() nor stored(),
         ///         or if indexed() is false but storeTermVectors() is true. </exception>
-        /// <exception cref="NullPointerException"> if the type is null </exception>
+        /// <exception cref="ArgumentNullException"> if the type is null </exception>
         public Field(string name, string value, FieldType type)
         {
             if (name == null)
             {
-                throw new System.ArgumentException("name cannot be null");
+                throw new System.ArgumentNullException("name", "name cannot be null");
             }
             if (value == null)
             {
-                throw new System.ArgumentException("value cannot be null");
+                throw new System.ArgumentNullException("value", "value cannot be null");
             }
             if (!type.Stored && !type.Indexed)
             {

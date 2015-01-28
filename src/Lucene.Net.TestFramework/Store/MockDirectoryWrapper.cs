@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -83,7 +84,7 @@ namespace Lucene.Net.Store
 
         // use this for tracking files for crash.
         // additionally: provides debugging information in case you leave one open
-        private IDictionary<IDisposable, Exception> OpenFileHandles = new ConcurrentHashMap<IDisposable, Exception>();
+        private readonly ConcurrentDictionary<IDisposable, Exception> OpenFileHandles = new ConcurrentDictionary<IDisposable, Exception>();
 
         // NOTE: we cannot initialize the Map here due to the
         // order in which our constructor actually does this
@@ -293,8 +294,8 @@ namespace Lucene.Net.Store
                 UnSyncedFiles = new HashSet<string>();
                 // first force-close all files, so we can corrupt on windows etc.
                 // clone the file map, as these guys want to remove themselves on close.
-                IDictionary<IDisposable, Exception> m = new HashMap<IDisposable, Exception>(OpenFileHandles);
-                foreach (IDisposable f in m.Keys)
+                var m = OpenFileHandles.Keys.ToArray();
+                foreach (IDisposable f in m)
                 {
                     try
                     {
@@ -541,7 +542,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                foreach (KeyValuePair<IDisposable, Exception> ent in OpenFileHandles)
+                foreach (var ent in OpenFileHandles)
                 {
                     if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).Name.Equals(name))
                     {
@@ -909,11 +910,13 @@ namespace Lucene.Net.Store
 
                     // RuntimeException instead ofSystem.IO.IOException because
                     // super() does not throwSystem.IO.IOException currently:
-                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: " + OpenFiles, cause);
+                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
+                        + String.Join(" ,", OpenFiles.ToArray().Select(x => x.Key)), cause);
                 }
                 if (OpenLocks.Count > 0)
                 {
-                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: " + OpenLocks);
+                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
+                        + String.Join(" ,", OpenLocks.ToArray()));
                 }
 
                 IsOpen = false;
@@ -1080,7 +1083,8 @@ namespace Lucene.Net.Store
                     if (v == 1)
                     {
                         OpenFiles.Remove(name);
-                        OpenFileHandles.Remove(c);
+                        Exception _;
+                        OpenFileHandles.TryRemove(c, out _);
                     }
                     else
                     {

@@ -109,12 +109,12 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             AddNumericField(field, values, true);
         }
 
-        internal virtual void AddNumericField(FieldInfo field, IEnumerable<long> values, bool optimizeStorage)
+        internal virtual void AddNumericField(FieldInfo field, IEnumerable<long?> values, bool optimizeStorage)
         {
             long count = 0;
             long minValue = long.MaxValue;
@@ -123,11 +123,12 @@ namespace Lucene.Net.Codecs.Lucene45
             bool missing = false;
             // TODO: more efficient?
             HashSet<long> uniqueValues = null;
+            
             if (optimizeStorage)
             {
                 uniqueValues = new HashSet<long>();
 
-                foreach (long nv in values)
+                foreach (long? nv in values)
                 {
                     long v;
                     if (nv == null)
@@ -137,7 +138,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     else
                     {
-                        v = nv;
+                        v = nv.Value;
                     }
 
                     if (gcd != 1)
@@ -174,7 +175,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
             else
             {
-                foreach (long nv in values)
+                foreach (var nv in values)
                 {
                     ++count;
                 }
@@ -201,8 +202,7 @@ namespace Lucene.Net.Codecs.Lucene45
             if (missing)
             {
                 Meta.WriteLong(Data.FilePointer);
-                //LUCENE TO-DO
-                //WriteMissingBitset(values);
+                WriteMissingBitset(values);
             }
             else
             {
@@ -219,9 +219,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     Meta.WriteLong(minValue);
                     Meta.WriteLong(gcd);
                     BlockPackedWriter quotientWriter = new BlockPackedWriter(Data, BLOCK_SIZE);
-                    foreach (long nv in values)
+                    foreach (long? nv in values)
                     {
-                        long value = nv == null ? 0 : nv;
+                        long value = nv == null ? 0 : nv.Value;
                         quotientWriter.Add((value - minValue) / gcd);
                     }
                     quotientWriter.Finish();
@@ -229,9 +229,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
                 case DELTA_COMPRESSED:
                     BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
-                    foreach (long nv in values)
+                    foreach (long? nv in values)
                     {
-                        writer.Add(nv == null ? 0 : nv);
+                        writer.Add(nv == null ? 0 : nv.Value);
                     }
                     writer.Finish();
                     break;
@@ -247,9 +247,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     int bitsRequired = PackedInts.BitsRequired(uniqueValues.Count - 1);
                     PackedInts.Writer ordsWriter = PackedInts.GetWriterNoHeader(Data, PackedInts.Format.PACKED, (int)count, bitsRequired, PackedInts.DEFAULT_BUFFER_SIZE);
-                    foreach (long nv in values)
+                    foreach (long? nv in values)
                     {
-                        ordsWriter.Add(encode[nv == null ? 0 : nv]);
+                        ordsWriter.Add(encode[nv == null ? 0 : nv.Value]);
                     }
                     ordsWriter.Finish();
                     break;
@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
         // but this is very simple, and algorithms only check this for values of 0 anyway (doesnt slow down normal decode)
-        internal virtual void WriteMissingBitset(IEnumerable<object> values)
+        internal virtual void WriteMissingBitset(IEnumerable values)
         {
             sbyte bits = 0;
             int count = 0;
@@ -319,8 +319,7 @@ namespace Lucene.Net.Codecs.Lucene45
             if (missing)
             {
                 Meta.WriteLong(Data.FilePointer);
-                //LUCENE TO-DO
-                //WriteMissingBitset(values);
+                WriteMissingBitset(values);
             }
             else
             {
@@ -419,7 +418,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             Meta.WriteVInt(field.Number);
             Meta.WriteByte((byte)Lucene45DocValuesFormat.SORTED);
@@ -427,12 +426,12 @@ namespace Lucene.Net.Codecs.Lucene45
             AddNumericField(field, docToOrd, false);
         }
 
-        private static bool IsSingleValued(IEnumerable<long> docToOrdCount)
+        private static bool IsSingleValued(IEnumerable<long?> docToOrdCount)
         {
             return docToOrdCount.All(ordCount => ordCount <= 1);
         }
 
-        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             Meta.WriteVInt(field.Number);
             Meta.WriteByte((byte)Lucene45DocValuesFormat.SORTED_SET);
@@ -466,24 +465,24 @@ namespace Lucene.Net.Codecs.Lucene45
 
             var writer = new MonotonicBlockPackedWriter(Data, BLOCK_SIZE);
             long addr = 0;
-            foreach (int v in docToOrdCount)
+            foreach (long? v in docToOrdCount)
             {
-                addr += (long)v;
+                addr += v.Value;
                 writer.Add(addr);
             }
             writer.Finish();
         }
 
-        private IEnumerable<long> GetSortedSetEnumerable(IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+        private IEnumerable<long?> GetSortedSetEnumerable(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            IEnumerator<long> docToOrdCountIter = docToOrdCount.GetEnumerator();
-            IEnumerator<long> ordsIter = ords.GetEnumerator();
+            IEnumerator<long?> docToOrdCountIter = docToOrdCount.GetEnumerator();
+            IEnumerator<long?> ordsIter = ords.GetEnumerator();
 
             const long MISSING_ORD = -1;
 
             while (docToOrdCountIter.MoveNext())
             {
-                long current = docToOrdCountIter.Current;
+                long current = docToOrdCountIter.Current.Value;
                 if (current == 0)
                 {
                     yield return MISSING_ORD;

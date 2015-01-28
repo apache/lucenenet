@@ -433,16 +433,19 @@ namespace org.apache.lucene.analysis.util
 		throw new System.NotSupportedException();
 	  }
 
-	  public override int size()
-	  {
-		return count;
-	  }
+	    public override int Size
+	    {
+	        get
+	        {
+	            {
+	                return count;
+	            }
+	        }
+	    }
 
-	  public override string ToString()
+	    public override string ToString()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder sb = new StringBuilder("{");
-		StringBuilder sb = new StringBuilder("{");
+		var sb = new StringBuilder("{");
 		foreach (KeyValuePair<object, V> entry in entrySet())
 		{
 		  if (sb.Length > 1)

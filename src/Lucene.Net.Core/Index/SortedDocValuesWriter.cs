@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<long> GetOrdsEnumberable(int maxDoc, int[] ordMap)
+        private IEnumerable<long?> GetOrdsEnumberable(int maxDoc, int[] ordMap)
         {
             AppendingDeltaPackedLongBuffer.Iterator iter = Pending.GetIterator();
 

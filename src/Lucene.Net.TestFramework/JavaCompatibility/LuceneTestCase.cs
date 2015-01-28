@@ -64,6 +64,7 @@ namespace Lucene.Net.Util
                 Assert.AreEqual(expected[key], actual[key]);
             }
         }
+
         public static void assertNotSame(object unexpected, object actual)
         {
             Assert.AreNotSame(unexpected, actual);

@@ -55,8 +55,8 @@ namespace Lucene.Net.Index
 
         private class FindSegmentsFileAnonymousInnerClassHelper : SegmentInfos.FindSegmentsFile
         {
-            private new Directory Directory;
-            private int TermInfosIndexDivisor;
+            private new readonly Directory Directory;
+            private readonly int TermInfosIndexDivisor;
 
             public FindSegmentsFileAnonymousInnerClassHelper(Directory directory, int termInfosIndexDivisor)
                 : base(directory)
@@ -67,9 +67,9 @@ namespace Lucene.Net.Index
 
             protected internal override object DoBody(string segmentFileName)
             {
-                SegmentInfos sis = new SegmentInfos();
+                var sis = new SegmentInfos();
                 sis.Read(Directory, segmentFileName);
-                SegmentReader[] readers = new SegmentReader[sis.Size()];
+                var readers = new SegmentReader[sis.Size()];
                 for (int i = sis.Size() - 1; i >= 0; i--)
                 {
                     System.IO.IOException prior = null;

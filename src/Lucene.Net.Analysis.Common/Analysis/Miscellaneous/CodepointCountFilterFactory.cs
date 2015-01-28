@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+using Lucene.Net.Analysis.Util;
+using org.apache.lucene.analysis.miscellaneous;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -20,10 +21,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using TokenFilterFactory = TokenFilterFactory;
-
-	/// <summary>
+    /// <summary>
 	/// Factory for <seealso cref="CodepointCountFilter"/>. 
 	/// <pre class="prettyprint">
 	/// &lt;fieldType name="text_lngth" class="solr.TextField" positionIncrementGap="100"&gt;
@@ -52,10 +50,9 @@ namespace org.apache.lucene.analysis.miscellaneous
 		}
 	  }
 
-	  public override CodepointCountFilter create(TokenStream input)
+	  public override CodepointCountFilter Create(TokenStream input)
 	  {
 		return new CodepointCountFilter(luceneMatchVersion, input, min, max);
 	  }
 	}
-
 }

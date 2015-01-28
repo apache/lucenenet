@@ -1,4 +1,5 @@
 using Apache.NMS.Util;
+using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
@@ -401,9 +402,9 @@ namespace Lucene.Net.Index
             foreach (Field fld in fields)
             {
                 string fldName = fld.Name();
-                Document sDoc = reader.Document(docID, CollectionsHelper.Singleton(fldName));
+                Document sDoc = reader.Document(docID, Collections.Singleton(fldName));
                 IndexableField sField = sDoc.GetField(fldName);
-                if (typeof(Field).Equals(fld.GetType()))
+                if (typeof(Field) == fld.GetType())
                 {
                     Assert.AreEqual(fld.BinaryValue(), sField.BinaryValue());
                     Assert.AreEqual(fld.StringValue, sField.StringValue);
@@ -418,7 +419,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public void TestEmptyDocs()
         {
             Directory dir = NewDirectory();
@@ -447,7 +448,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public void TestConcurrentReads()
         {
             Directory dir = NewDirectory();
@@ -500,8 +501,8 @@ namespace Lucene.Net.Index
             private readonly BaseStoredFieldsFormatTestCase OuterInstance;
 
             private int NumDocs;
-            private DirectoryReader Rd;
-            private IndexSearcher Searcher;
+            private readonly DirectoryReader Rd;
+            private readonly IndexSearcher Searcher;
             private int ReadsPerThread;
             private AtomicReference<Exception> Ex;
             private int i;
@@ -670,8 +671,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
-        //ORIGINAL LINE: @Nightly public void testBigDocuments() throws java.io.IOException
+        [Test, Nightly, Timeout(int.MaxValue)]
         public void TestBigDocuments()
         {
             // "big" as "much bigger than the chunk size"

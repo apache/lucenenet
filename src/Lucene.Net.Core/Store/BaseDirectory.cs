@@ -25,13 +25,11 @@ namespace Lucene.Net.Store
     /// </summary>
     public abstract class BaseDirectory : Directory
     {
-        volatile protected internal bool IsOpen = true;
-
         /// <summary>
         /// Holds the LockFactory instance (implements locking for
         /// this Directory instance).
         /// </summary>
-        protected internal LockFactory LockFactory_Renamed;
+        protected internal LockFactory _lockFactory;
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -42,14 +40,14 @@ namespace Lucene.Net.Store
 
         public override Lock MakeLock(string name)
         {
-            return LockFactory_Renamed.MakeLock(name);
+            return _lockFactory.MakeLock(name);
         }
 
         public override void ClearLock(string name)
         {
-            if (LockFactory_Renamed != null)
+            if (_lockFactory != null)
             {
-                LockFactory_Renamed.ClearLock(name);
+                _lockFactory.ClearLock(name);
             }
         }
 
@@ -58,12 +56,12 @@ namespace Lucene.Net.Store
             set
             {
                 Debug.Assert(value != null);
-                this.LockFactory_Renamed = value;
+                this._lockFactory = value;
                 value.LockPrefix = this.LockID;
             }
             get
             {
-                return this.LockFactory_Renamed;
+                return this._lockFactory;
             }
         }
 

@@ -1,4 +1,4 @@
-
+using System;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Documents
         /// Create a new sorted DocValues field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="bytes"> binary content </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field name is null </exception>
         public SortedDocValuesField(string name, BytesRef bytes)
             : base(name, TYPE)
         {

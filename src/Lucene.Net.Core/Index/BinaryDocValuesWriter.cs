@@ -159,33 +159,38 @@ namespace Lucene.Net.Index
             // Use yield return instead of ucsom IEnumerable
 
             BytesRef value = new BytesRef();
-            AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = (AppendingDeltaPackedLongBuffer.Iterator)Lengths.GetIterator();
+            AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = Lengths.GetIterator();
             int size = (int)Lengths.Size();
             DataInput bytesIterator = Bytes.DataInput;
             int maxDoc = maxDocParam;
             int upto = 0;
-            long byteOffset = 0L;
 
             while (upto < maxDoc)
             {
+                BytesRef v;
                 if (upto < size)
                 {
                     int length = (int)lengthsIterator.Next();
                     value.Grow(length);
                     value.Length = length;
-                    //LUCENE TODO: This modification is slightly fishy, 4x port uses ByteBlockPool
-                    bytesIterator.ReadBytes(/*byteOffset,*/ value.Bytes, value.Offset, value.Length);
-                    byteOffset += length;
+                    bytesIterator.ReadBytes(value.Bytes, value.Offset, value.Length);
+
+                    if (DocsWithField.Get(upto))
+                    {
+                        v = value;
+                    }
+                    else
+                    {
+                        v = null;
+                    }
                 }
                 else
                 {
-                    // This is to handle last N documents not having
-                    // this DV field in the end of the segment:
-                    value.Length = 0;
+                    v = null;
                 }
 
                 upto++;
-                yield return value;
+                yield return v;
             }
         }
 

@@ -2,7 +2,7 @@
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -21,16 +21,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using StopAnalyzer = StopAnalyzer;
-	using StopFilter = StopFilter;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using CharArraySet = CharArraySet;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Efficient Lucene analyzer/tokenizer that preferably operates on a String rather than a
 	/// <seealso cref="java.io.Reader"/>, that can flexibly separate text into terms via a regular expression <seealso cref="Pattern"/>
 	/// (with behaviour identical to <seealso cref="String#split(String)"/>),

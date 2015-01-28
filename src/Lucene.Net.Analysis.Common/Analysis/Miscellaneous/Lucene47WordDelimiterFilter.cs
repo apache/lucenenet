@@ -16,21 +16,12 @@ using System.Text;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 
 namespace org.apache.lucene.analysis.miscellaneous
 {
-
-	using WhitespaceTokenizer = WhitespaceTokenizer;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using CharArraySet = CharArraySet;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using RamUsageEstimator = org.apache.lucene.util.RamUsageEstimator;
 
 	/// <summary>
 	/// Old Broken version of <seealso cref="WordDelimiterFilter"/>
@@ -194,21 +185,19 @@ namespace org.apache.lucene.analysis.miscellaneous
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		while (true)
 		{
 		  if (!hasSavedState)
 		  {
 			// process a new input word
-			if (!input.incrementToken())
+			if (!input.IncrementToken())
 			{
 			  return false;
 			}
 
-			int termLength = termAttribute.length();
+			int termLength = termAttribute.Length();
 			char[] termBuffer = termAttribute.buffer();
 
 			accumPosInc += posIncAttribute.PositionIncrement;
@@ -328,11 +317,9 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  /// <summary>
 	  /// {@inheritDoc}
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		hasSavedState = false;
 		concat.clear();
 		concatAll.clear();
@@ -355,7 +342,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 
 		if (savedBuffer.Length < termAttribute.length())
 		{
-		  savedBuffer = new char[ArrayUtil.oversize(termAttribute.length(), RamUsageEstimator.NUM_BYTES_CHAR)];
+		  savedBuffer = new char[ArrayUtil.Oversize(termAttribute.Length(), RamUsageEstimator.NUM_BYTES_CHAR)];
 		}
 
 		Array.Copy(termAttribute.buffer(), 0, savedBuffer, 0, termAttribute.length());
@@ -561,9 +548,9 @@ namespace org.apache.lucene.analysis.miscellaneous
 		/// <summary>
 		/// Writes the concatenation to the attributes
 		/// </summary>
-		internal void write()
+		private void Write()
 		{
-		  clearAttributes();
+		  ClearAttributes();
 		  if (outerInstance.termAttribute.length() < buffer.Length)
 		  {
 			outerInstance.termAttribute.resizeBuffer(buffer.Length);

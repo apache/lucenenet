@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -99,24 +100,31 @@ namespace Lucene.Net.Index
             dvConsumer.AddNumericField(FieldInfo, GetNumericIterator(maxDoc));
         }
 
-        private IEnumerable<long> GetNumericIterator(int maxDoc)
+        private IEnumerable<long?> GetNumericIterator(int maxDoc)
         {
             // .NET Port: using yield return instead of custom iterator type. Much less code.
-
             AbstractAppendingLongBuffer.Iterator iter = Pending.GetIterator();
             int size = (int)Pending.Size();
             int upto = 0;
 
             while (upto < maxDoc)
             {
-                long value;
+                long? value;
                 if (upto < size)
                 {
-                    value = iter.Next();
+                    var v = iter.Next();
+                    if (DocsWithField == null || DocsWithField.Get(upto))
+                    {
+                        value = v;
+                    }
+                    else
+                    {
+                        value = null;
+                    }
                 }
                 else
                 {
-                    value = 0;
+                    value = DocsWithField != null ? (long?) null : MISSING;
                 }
                 upto++;
                 // TODO: make reusable Number

@@ -1,4 +1,6 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
+﻿using Lucene.Net.Analysis.Miscellaneous;
+
+namespace org.apache.lucene.analysis.miscellaneous
 {
 
 	/*

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+using Lucene.Net.Analysis.Util;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -20,10 +20,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using TokenFilterFactory = TokenFilterFactory;
-
-	/// <summary>
+    /// <summary>
 	/// Factory for <seealso cref="HyphenatedWordsFilter"/>.
 	/// <pre class="prettyprint">
 	/// &lt;fieldType name="text_hyphn" class="solr.TextField" positionIncrementGap="100"&gt;
@@ -46,7 +43,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 		}
 	  }
 
-	  public override HyphenatedWordsFilter create(TokenStream input)
+	  public override TokenStream Create(TokenStream input)
 	  {
 		return new HyphenatedWordsFilter(input);
 	  }

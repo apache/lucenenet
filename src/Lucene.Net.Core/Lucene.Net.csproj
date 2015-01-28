@@ -617,7 +617,6 @@
     <Compile Include="Support\Arrays.cs" />
     <Compile Include="Support\Compatibility\BinaryWriterDataOutput.cs" />
     <Compile Include="Support\Compatibility\Collections.cs" />
-    <Compile Include="Support\ConcurrentHashMap.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />

@@ -311,7 +311,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(40000)]
         public virtual void TestTermVectors()
         {
             Directory d = NewDirectory();

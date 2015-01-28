@@ -1,3 +1,4 @@
+using System.Threading;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -98,9 +99,9 @@ namespace Lucene.Net.Store
         {
             private readonly NIOFSDirectory OuterInstance;
 
-            private Lucene.Net.Store.IOContext Context;
-            private FileInfo Path;
-            private FileStream Descriptor;
+            private readonly IOContext Context;
+            private readonly FileInfo Path;
+            private readonly FileStream Descriptor;
 
             public IndexInputSlicerAnonymousInnerClassHelper(NIOFSDirectory outerInstance, Lucene.Net.Store.IOContext context, FileInfo path, FileStream descriptor)
                 : base(outerInstance)

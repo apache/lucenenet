@@ -5654,9 +5654,9 @@ namespace Lucene.Net.Index
                 EnsureOpen();
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", "nrtIsCurrent: infoVersion matches: " + (infos.Version_Renamed == segmentInfos.Version_Renamed) + "; DW changes: " + DocWriter.AnyChanges() + "; BD changes: " + BufferedUpdatesStream.Any());
+                    infoStream.Message("IW", "nrtIsCurrent: infoVersion matches: " + (infos.Version == segmentInfos.Version) + "; DW changes: " + DocWriter.AnyChanges() + "; BD changes: " + BufferedUpdatesStream.Any());
                 }
-                return infos.Version_Renamed == segmentInfos.Version_Renamed && !DocWriter.AnyChanges() && !BufferedUpdatesStream.Any();
+                return infos.Version == segmentInfos.Version && !DocWriter.AnyChanges() && !BufferedUpdatesStream.Any();
             }
         }
 
