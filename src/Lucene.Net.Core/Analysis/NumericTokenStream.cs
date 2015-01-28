@@ -229,7 +229,7 @@ namespace Lucene.Net.Analysis
             {
                 FillBytesRef();
                 reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(_bytes));
-                reflector.Reflect(typeof(INumericTermAttribute), "shift", _shift);
+                reflector.Reflect(typeof(INumericTermAttribute), "shift", Shift);
                 reflector.Reflect(typeof(INumericTermAttribute), "rawValue", RawValue);
                 reflector.Reflect(typeof(INumericTermAttribute), "valueSize", ValueSize);
             }
@@ -237,7 +237,7 @@ namespace Lucene.Net.Analysis
             public override void CopyTo(Util.Attribute target)
             {
                 var a = (NumericTermAttribute)target;
-                a.Init(_value, ValueSize, _precisionStep, _shift);
+                a.Init(_value, ValueSize, _precisionStep, Shift);
             }
         }
 
