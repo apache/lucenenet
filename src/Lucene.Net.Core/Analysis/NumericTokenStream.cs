@@ -1,4 +1,7 @@
+using System.Diagnostics;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 
@@ -136,7 +139,7 @@ namespace Lucene.Net.Analysis
         // just a wrapper to prevent adding CTA
         private sealed class NumericAttributeFactory : AttributeSource.AttributeFactory
         {
-            internal readonly AttributeSource.AttributeFactory @delegate;
+            private readonly AttributeSource.AttributeFactory @delegate;
 
             internal NumericAttributeFactory(AttributeSource.AttributeFactory @delegate)
             {
@@ -161,77 +164,59 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public sealed class NumericTermAttribute : Util.Attribute, INumericTermAttribute, ITermToBytesRefAttribute
         {
-            internal long Value = 0L;
-            internal int ValueSize_Renamed = 0, Shift_Renamed = 0, PrecisionStep = 0;
-            internal BytesRef Bytes = new BytesRef();
+            private long _value = 0L;
+            private int _precisionStep = 0;
+            private readonly BytesRef _bytes = new BytesRef();
 
-            /// <summary>
-            /// Creates, but does not yet initialize this attribute instance </summary>
-            /// <seealso> cref= #init(long, int, int, int) </seealso>
             public NumericTermAttribute()
             {
+                ValueSize = 0;
             }
 
             public BytesRef BytesRef
             {
                 get
                 {
-                    return Bytes;
+                    return _bytes;
                 }
             }
 
             public void FillBytesRef()
             {
-                //Debug.Assert(ValueSize_Renamed == 64 || ValueSize_Renamed == 32);
-                if (ValueSize_Renamed == 64)
+                Debug.Assert(ValueSize == 64 || ValueSize == 32);
+                if (ValueSize == 64)
                 {
-                    NumericUtils.LongToPrefixCoded(Value, Shift_Renamed, Bytes);
+                    NumericUtils.LongToPrefixCoded(_value, Shift, _bytes);
                 }
                 else
                 {
-                    NumericUtils.IntToPrefixCoded((int)Value, Shift_Renamed, Bytes);
+                    NumericUtils.IntToPrefixCoded((int)_value, Shift, _bytes);
                 }
             }
 
-            public int Shift
-            {
-                get
-                {
-                    return Shift_Renamed;
-                }
-                set
-                {
-                    this.Shift_Renamed = value;
-                }
-            }
+            public int Shift { get; set; }
 
             public int IncShift()
             {
-                return (Shift_Renamed += PrecisionStep);
+                return (Shift += _precisionStep);
             }
 
             public long RawValue
             {
                 get
                 {
-                    return Value & ~((1L << Shift_Renamed) - 1L);
+                    return _value & ~((1L << Shift) - 1L);
                 }
             }
 
-            public int ValueSize
-            {
-                get
-                {
-                    return ValueSize_Renamed;
-                }
-            }
+            public int ValueSize { get; private set; }
 
             public void Init(long value, int valueSize, int precisionStep, int shift)
             {
-                this.Value = value;
-                this.ValueSize_Renamed = valueSize;
-                this.PrecisionStep = precisionStep;
-                this.Shift_Renamed = shift;
+                this._value = value;
+                this.ValueSize = valueSize;
+                this._precisionStep = precisionStep;
+                this.Shift = shift;
             }
 
             public override void Clear()
@@ -243,16 +228,16 @@ namespace Lucene.Net.Analysis
             public override void ReflectWith(IAttributeReflector reflector)
             {
                 FillBytesRef();
-                reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
-                reflector.Reflect(typeof(INumericTermAttribute), "shift", Shift_Renamed);
+                reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(_bytes));
+                reflector.Reflect(typeof(INumericTermAttribute), "shift", _shift);
                 reflector.Reflect(typeof(INumericTermAttribute), "rawValue", RawValue);
-                reflector.Reflect(typeof(INumericTermAttribute), "valueSize", ValueSize_Renamed);
+                reflector.Reflect(typeof(INumericTermAttribute), "valueSize", ValueSize);
             }
 
             public override void CopyTo(Util.Attribute target)
             {
-                NumericTermAttribute a = (NumericTermAttribute)target;
-                a.Init(Value, ValueSize_Renamed, PrecisionStep, Shift_Renamed);
+                var a = (NumericTermAttribute)target;
+                a.Init(_value, ValueSize, _precisionStep, _shift);
             }
         }
 

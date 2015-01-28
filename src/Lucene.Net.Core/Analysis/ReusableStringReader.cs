@@ -23,56 +23,52 @@ namespace Lucene.Net.Analysis
     /// Internal class to enable reuse of the string reader by <seealso cref="Analyzer#tokenStream(String,String)"/> </summary>
     public sealed class ReusableStringReader : System.IO.TextReader
     {
-        private int Pos = 0, Size = 0;
-        private string s = null;
-
-        public ReusableStringReader()
-        {
-        }
+        private int _pos = 0, _size = 0;
+        private string _s = null;
 
         public string Value
         {
             set
             {
-                this.s = value;
-                this.Size = value.Length;
-                this.Pos = 0;
+                this._s = value;
+                this._size = value.Length;
+                this._pos = 0;
             }
         }
 
         public override int Read()
         {
-            if (Pos < Size)
+            if (_pos < _size)
             {
-                return s[Pos++];
+                return _s[_pos++];
             }
             else
             {
-                s = null;
+                _s = null;
                 return -1;
             }
         }
 
         public override int Read(char[] c, int off, int len)
         {
-            if (Pos < Size)
+            if (_pos < _size)
             {
-                len = Math.Min(len, Size - Pos);
-                s.CopyTo(Pos, c, off, Pos + len - Pos);
-                Pos += len;
+                len = Math.Min(len, _size - _pos);
+                _s.CopyTo(_pos, c, off, _pos + len - _pos);
+                _pos += len;
                 return len;
             }
             else
             {
-                s = null;
+                _s = null;
                 return -1;
             }
         }
 
         public override void Close()
         {
-            Pos = Size; // this prevents NPE when reading after close!
-            s = null;
+            _pos = _size; // this prevents NPE when reading after close!
+            _s = null;
         }
     }
 }
