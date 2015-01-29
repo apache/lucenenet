@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
@@ -107,7 +109,7 @@ namespace Lucene.Net.Analysis
             //Debug.Assert(AssertFinal());
         }
 
-        /* LUCENE TO-DO
+        /* LUCENENET TO-DO
         private bool AssertFinal()
         {
           try
