@@ -180,13 +180,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns total byte size used by cached filters. </summary>
         public virtual long SizeInBytes()
-        {
-            // Sync only to pull the current set of values:
-            lock (_cache)
-            {
-                IList<DocIdSet> docIdSets = new List<DocIdSet>(_cache.Values);
-                return docIdSets.Sum(dis => RamUsageEstimator.SizeOf(dis));
-            }
+        {            
+            IList<DocIdSet> docIdSets = new List<DocIdSet>(_cache.Values);
+            return docIdSets.Sum(dis => RamUsageEstimator.SizeOf(dis));
         }
     }
 }

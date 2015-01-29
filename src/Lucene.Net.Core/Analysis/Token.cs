@@ -1,8 +1,8 @@
+using Lucene.Net.Index;
+
 namespace Lucene.Net.Analysis
 {
     using Lucene.Net.Analysis.Tokenattributes;
-
-    // for javadoc
     using Attribute = Lucene.Net.Util.Attribute;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis
     ///  if you know that your text is shorter than the capacity of the termBuffer
     ///  or <seealso cref="#resizeBuffer(int)"/>, if there is any possibility
     ///  that you may need to grow the buffer. Fill in the characters of your term into this
-    ///  buffer, with <seealso cref="String#getChars(int, int, char[], int)"/> if loading from a string,
+    ///  buffer, with <seealso cref="string#getChars(int, int, char[], int)"/> if loading from a string,
     ///  or with <seealso cref="System#arraycopy(Object, int, Object, int, int)"/>, and finally call <seealso cref="#setLength(int)"/> to
     ///  set the length of the term text.  See <a target="_top"
     ///  href="https://issues.apache.org/jira/browse/LUCENE-969">LUCENE-969</a>
@@ -353,7 +353,7 @@ namespace Lucene.Net.Analysis
 
         public override object Clone()
         {
-            Token t = (Token)base.Clone();
+            var t = (Token)base.Clone();
             // Do a deep clone
             if (payload != null)
             {
@@ -371,10 +371,12 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public virtual Token Clone(char[] newTermBuffer, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset)
         {
-            Token t = new Token(newTermBuffer, newTermOffset, newTermLength, newStartOffset, newEndOffset);
-            t.positionIncrement = positionIncrement;
-            t.flags = flags;
-            t.type = type;
+            var t = new Token(newTermBuffer, newTermOffset, newTermLength, newStartOffset, newEndOffset)
+            {
+                positionIncrement = positionIncrement,
+                flags = flags,
+                type = type
+            };
             if (payload != null)
             {
                 t.payload = (BytesRef)payload.Clone();
@@ -389,9 +391,9 @@ namespace Lucene.Net.Analysis
                 return true;
             }
 
-            if (obj is Token)
+            var other = obj as Token;
+            if (other != null)
             {
-                Token other = (Token)obj;
                 return (startOffset == other.startOffset && endOffset == other.endOffset && flags == other.flags && positionIncrement == other.positionIncrement && (type == null ? other.type == null : type.Equals(other.type)) && (payload == null ? other.payload == null : payload.Equals(other.payload)) && base.Equals(obj));
             }
             else
@@ -580,9 +582,9 @@ namespace Lucene.Net.Analysis
 
         public override void CopyTo(Attribute target)
         {
-            if (target is Token)
+            var to = target as Token;
+            if (to != null)
             {
-                Token to = (Token)target;
                 to.Reinit(this);
                 // reinit shares the payload, so clone it:
                 if (payload != null)
@@ -658,9 +660,10 @@ namespace Lucene.Net.Analysis
                 {
                     return true;
                 }
-                if (other is TokenAttributeFactory)
+
+                var af = other as TokenAttributeFactory;
+                if (af != null)
                 {
-                    TokenAttributeFactory af = (TokenAttributeFactory)other;
                     return this.@delegate.Equals(af.@delegate);
                 }
                 return false;
