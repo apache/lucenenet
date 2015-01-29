@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "src\Lucene.Net.Core\Lucene.Net.csproj", "{5D4AD9BE-1FFB-41AB-9943-25737971BF57}"
 EndProject
@@ -123,26 +123,6 @@ Global
 		{866723F4-E3A4-47C5-A49F-9A68ADD4CFAE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{866723F4-E3A4-47C5-A49F-9A68ADD4CFAE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{866723F4-E3A4-47C5-A49F-9A68ADD4CFAE}.Release|x86.ActiveCfg = Release|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{DC83004C-183A-4E1A-ABEA-4FE95B4BC079}.Release|x86.ActiveCfg = Release|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{F4873D95-4300-4E83-AFFA-EF796495D0F0}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
