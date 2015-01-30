@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         protected internal readonly Version version;
-        private readonly PositionIncrementAttribute posIncrAtt = addAttribute(typeof(PositionIncrementAttribute));
+        private readonly IPositionIncrementAttribute posIncrAtt;
         private bool enablePositionIncrements; // no init needed, as ctor enforces setting value!
         private bool first = true;
         private int skippedPositions;
@@ -56,9 +56,10 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="input">                    the input to consume </param>
         /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4 
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4")]
-        public FilteringTokenFilter(Version version, bool enablePositionIncrements, TokenStream input)
+        public FilteringTokenFilter(Lucene.Net.Util.Version version, bool enablePositionIncrements, TokenStream input)
             : this(version, input)
         {
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
             CheckPositionIncrement(version, enablePositionIncrements);
             this.enablePositionIncrements = enablePositionIncrements;
         }
