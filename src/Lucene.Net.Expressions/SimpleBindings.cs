@@ -59,16 +59,18 @@ namespace Lucene.Net.Expressions
 
 		public override ValueSource GetValueSource(string name)
 		{
-		    object o = map[name];
-			if (o == null)
+		    object o;
+			if (!map.TryGetValue(name, out o))
 			{
 				throw new ArgumentException("Invalid reference '" + name + "'");
 			}
+
 		    var expression = o as Expression;
 		    if (expression != null)
 		    {
 		        return expression.GetValueSource(this);
 		    }
+
 		    SortField field = (SortField)o;
 			switch (field.Type)
 			{
