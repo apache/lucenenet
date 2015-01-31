@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.Memory
         internal class TermData
         {
             internal readonly long[] LONGS;
-            internal readonly sbyte[] BYTES;
+            internal readonly byte[] BYTES;
             internal readonly int DOC_FREQ;
             internal readonly long TOTAL_TERM_FREQ;
 
@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs.Memory
                 TOTAL_TERM_FREQ = -1;
             }
 
-            internal TermData(long[] longs, sbyte[] bytes, int docFreq, long totalTermFreq)
+            internal TermData(long[] longs, byte[] bytes, int docFreq, long totalTermFreq)
             {
                 LONGS = longs;
                 BYTES = bytes;
@@ -259,17 +259,17 @@ namespace Lucene.Net.Codecs.Memory
                 if (data.BYTES.Length < 32)
                 {
                     bits |= (data.BYTES.Length << 3);
-                    output.WriteByte((sbyte) bits);
+                    output.WriteByte((byte) bits);
                 }
                 else
                 {
-                    output.WriteByte((sbyte) bits);
+                    output.WriteByte((byte) bits);
                     output.WriteVInt(data.BYTES.Length);
                 }
             }
             else
             {
-                output.WriteByte((sbyte) bits);
+                output.WriteByte((byte) bits);
             }
             if (bit0 > 0) // not all-zero case
             {
@@ -306,7 +306,7 @@ namespace Lucene.Net.Codecs.Memory
         public override TermData Read(DataInput input)
         {
             var longs = new long[_longsSize];
-            sbyte[] bytes = null;
+            byte[] bytes = null;
             int docFreq = 0;
             long totalTermFreq = -1;
             int bits = input.ReadByte() & 0xff;
@@ -327,7 +327,7 @@ namespace Lucene.Net.Codecs.Memory
             }
             if (bit1 > 0) // bytes exists
             {
-                bytes = new sbyte[bytesSize];
+                bytes = new byte[bytesSize];
                 input.ReadBytes(bytes, 0, bytesSize);
             }
             if (bit2 > 0) // stats exist
