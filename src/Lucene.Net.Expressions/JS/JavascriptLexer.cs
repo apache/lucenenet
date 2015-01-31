@@ -90,10 +90,9 @@ namespace Lucene.Net.Expressions.JS
 		// ANTLR GENERATED CODE: DO NOT EDIT
 		public override void DisplayRecognitionError(string[] tokenNames, RecognitionException re)
 		{
-			string message = " unexpected character '" + (char)re.Character + "' at position (" + re.CharPositionInLine + ").";
-			ParseException parseException = new ParseException(message, re.CharPositionInLine);
-			
-			throw new SystemException(parseException.Message, parseException);
+            var message = string.Format("Unable to parse '{0}': unexpected character '{1}' at position ({2}).", re.Input
+                , (char)re.Character, re.CharPositionInLine);
+			throw new ParseException(message, re.CharPositionInLine);
 		}
 
 		// delegates
@@ -2169,9 +2168,11 @@ loop16_break: ;
 
     public class ParseException:Exception
     {
-        public ParseException(string message, int charPositionInLine)
+        private readonly int _charPositionInLine;
+
+        public ParseException(string message, int charPositionInLine) : base(message)
         {
-            
+            _charPositionInLine = charPositionInLine;
         }
     }
 }
