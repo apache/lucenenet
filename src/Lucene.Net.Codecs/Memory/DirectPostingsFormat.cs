@@ -133,31 +133,30 @@ namespace Lucene.Net.Codecs.Memory
         {
             internal readonly IDictionary<string, DirectField> fields = new SortedDictionary<string, DirectField>();
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public DirectFields(index.SegmentReadState state, index.Fields fields, int minSkipCount, int lowFreqCutoff) throws java.io.IOException
             public DirectFields(SegmentReadState state, Fields fields, int minSkipCount, int lowFreqCutoff)
             {
                 foreach (string field in fields)
                 {
-                    this.fields[field] = new DirectField(state, field, fields.terms(field), minSkipCount, lowFreqCutoff);
+                    this.fields[field] = new DirectField(state, field, fields.Terms(field), minSkipCount, lowFreqCutoff);
                 }
             }
 
-            public override IEnumerator<string> iterator()
+            public override IEnumerator<string> GetEnumerator()
             {
-                return Collections.unmodifiableSet(fields.Keys).GetEnumerator();
+                return Collections.UnmodifiableSet<string>(fields.Keys).GetEnumerator();
             }
 
-            public override Terms terms(string field)
+            public override Terms Terms(string field)
             {
                 return fields[field];
             }
 
-            public override int size()
+            public override int Size
             {
-                return fields.Count;
+                get { return fields.Count; }
             }
 
+            [Obsolete]
             public override long UniqueTermCount
             {
                 get
@@ -171,24 +170,22 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override void close()
+            public override void Dispose()
             {
             }
 
-            public override long ramBytesUsed()
+            public override long RamBytesUsed()
             {
                 long sizeInBytes = 0;
                 foreach (KeyValuePair<string, DirectField> entry in fields.SetOfKeyValuePairs())
                 {
-                    sizeInBytes += entry.Key.length()*RamUsageEstimator.NUM_BYTES_CHAR;
-                    sizeInBytes += entry.Value.ramBytesUsed();
+                    sizeInBytes += entry.Key.Length*RamUsageEstimator.NUM_BYTES_CHAR;
+                    sizeInBytes += entry.Value.RamBytesUsed();
                 }
                 return sizeInBytes;
             }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void checkIntegrity() throws java.io.IOException
-            public override void checkIntegrity()
+            public override void CheckIntegrity()
             {
                 // if we read entirely into ram, we already validated.
                 // otherwise returned the raw postings reader
@@ -204,17 +201,17 @@ namespace Lucene.Net.Codecs.Memory
 
                 /// <summary>
                 /// Returns the approximate number of RAM bytes used </summary>
-                public abstract long ramBytesUsed();
+                public abstract long RamBytesUsed();
             }
 
             private sealed class LowFreqTerm : TermAndSkip
             {
                 public readonly int[] postings;
-                public readonly sbyte[] payloads;
+                public readonly byte[] payloads;
                 public readonly int docFreq;
                 public readonly int totalTermFreq;
 
-                public LowFreqTerm(int[] postings, sbyte[] payloads, int docFreq, int totalTermFreq)
+                public LowFreqTerm(int[] postings, byte[] payloads, int docFreq, int totalTermFreq)
                 {
                     this.postings = postings;
                     this.payloads = payloads;
@@ -222,10 +219,10 @@ namespace Lucene.Net.Codecs.Memory
                     this.totalTermFreq = totalTermFreq;
                 }
 
-                public override long ramBytesUsed()
+                public override long RamBytesUsed()
                 {
-                    return ((postings != null) ? RamUsageEstimator.sizeOf(postings) : 0) +
-                           ((payloads != null) ? RamUsageEstimator.sizeOf(payloads) : 0);
+                    return ((postings != null) ? RamUsageEstimator.SizeOf(postings) : 0) +
+                           ((payloads != null) ? RamUsageEstimator.SizeOf(payloads) : 0);
                 }
             }
 
@@ -248,17 +245,17 @@ namespace Lucene.Net.Codecs.Memory
                     this.totalTermFreq = totalTermFreq;
                 }
 
-                public override long ramBytesUsed()
+                public override long RamBytesUsed()
                 {
                     long sizeInBytes = 0;
-                    sizeInBytes += (docIDs != null) ? RamUsageEstimator.sizeOf(docIDs) : 0;
-                    sizeInBytes += (freqs != null) ? RamUsageEstimator.sizeOf(freqs) : 0;
+                    sizeInBytes += (docIDs != null) ? RamUsageEstimator.SizeOf(docIDs) : 0;
+                    sizeInBytes += (freqs != null) ? RamUsageEstimator.SizeOf(freqs) : 0;
 
                     if (positions != null)
                     {
                         foreach (int[] position in positions)
                         {
-                            sizeInBytes += (position != null) ? RamUsageEstimator.sizeOf(position) : 0;
+                            sizeInBytes += (position != null) ? RamUsageEstimator.SizeOf(position) : 0;
                         }
                     }
 
@@ -270,7 +267,7 @@ namespace Lucene.Net.Codecs.Memory
                             {
                                 foreach (sbyte[] pload in payload)
                                 {
-                                    sizeInBytes += (pload != null) ? RamUsageEstimator.sizeOf(pload) : 0;
+                                    sizeInBytes += (pload != null) ? RamUsageEstimator.SizeOf(pload) : 0;
                                 }
                             }
                         }
@@ -327,21 +324,15 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public DirectField(index.SegmentReadState state, String field, index.Terms termsIn, int minSkipCount, int lowFreqCutoff) throws java.io.IOException
             public DirectField(SegmentReadState state, string field, Terms termsIn, int minSkipCount, int lowFreqCutoff)
             {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.FieldInfo fieldInfo = state.fieldInfos.fieldInfo(field);
-                FieldInfo fieldInfo = state.fieldInfos.fieldInfo(field);
+                FieldInfo fieldInfo = state.FieldInfos.FieldInfo(field);
 
                 sumTotalTermFreq = termsIn.SumTotalTermFreq;
                 sumDocFreq = termsIn.SumDocFreq;
                 docCount = termsIn.DocCount;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numTerms = (int) termsIn.size();
-                int numTerms = (int) termsIn.size();
+                int numTerms = (int) termsIn.Size();
                 if (numTerms == -1)
                 {
                     throw new System.ArgumentException("codec does not provide Terms.size()");
@@ -353,40 +344,30 @@ namespace Lucene.Net.Codecs.Memory
 
                 this.minSkipCount = minSkipCount;
 
-                hasFreq = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_ONLY) > 0;
-                hasPos = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS) > 0;
-                hasOffsets_Renamed = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) > 0;
-                hasPayloads_Renamed = fieldInfo.hasPayloads();
+                hasFreq = fieldInfo.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_ONLY) > 0;
+                hasPos = fieldInfo.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS) > 0;
+                hasOffsets_Renamed = fieldInfo.FieldIndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) > 0;
+                hasPayloads_Renamed = fieldInfo.HasPayloads();
 
                 BytesRef term;
                 DocsEnum docsEnum = null;
                 DocsAndPositionsEnum docsAndPositionsEnum = null;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.TermsEnum termsEnum = termsIn.iterator(null);
-                TermsEnum termsEnum = termsIn.iterator(null);
+                TermsEnum termsEnum = termsIn.Iterator(null);
                 int termOffset = 0;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IntArrayWriter scratch = new IntArrayWriter();
                 IntArrayWriter scratch = new IntArrayWriter();
 
                 // Used for payloads, if any:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final store.RAMOutputStream ros = new store.RAMOutputStream();
                 RAMOutputStream ros = new RAMOutputStream();
 
                 // if (DEBUG) {
                 //   System.out.println("\nLOAD terms seg=" + state.segmentInfo.name + " field=" + field + " hasOffsets=" + hasOffsets + " hasFreq=" + hasFreq + " hasPos=" + hasPos + " hasPayloads=" + hasPayloads);
                 // }
 
-                while ((term = termsEnum.next()) != null)
+                while ((term = termsEnum.Next()) != null)
                 {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docFreq = termsEnum.docFreq();
-                    int docFreq = termsEnum.docFreq();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long totalTermFreq = termsEnum.totalTermFreq();
-                    long totalTermFreq = termsEnum.totalTermFreq();
+                    int docFreq = termsEnum.DocFreq();
+                    long totalTermFreq = termsEnum.TotalTermFreq();
 
                     // if (DEBUG) {
                     //   System.out.println("  term=" + term.utf8ToString());
@@ -394,29 +375,25 @@ namespace Lucene.Net.Codecs.Memory
 
                     termOffsets[count] = termOffset;
 
-                    if (termBytes.Length < (termOffset + term.length))
+                    if (termBytes.Length < (termOffset + term.Length))
                     {
-                        termBytes = ArrayUtil.grow(termBytes, termOffset + term.length);
+                        termBytes = ArrayUtil.Grow(termBytes, termOffset + term.Length);
                     }
-                    Array.Copy(term.bytes, term.offset, termBytes, termOffset, term.length);
-                    termOffset += term.length;
+                    Array.Copy(term.Bytes, term.Offset, termBytes, termOffset, term.Length);
+                    termOffset += term.Length;
                     termOffsets[count + 1] = termOffset;
 
                     if (hasPos)
                     {
-                        docsAndPositionsEnum = termsEnum.docsAndPositions(null, docsAndPositionsEnum);
+                        docsAndPositionsEnum = termsEnum.DocsAndPositions(null, docsAndPositionsEnum);
                     }
                     else
                     {
-                        docsEnum = termsEnum.docs(null, docsEnum);
+                        docsEnum = termsEnum.Docs(null, docsEnum);
                     }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermAndSkip ent;
                     TermAndSkip ent;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.DocsEnum docsEnum2;
                     DocsEnum docsEnum2;
                     if (hasPos)
                     {
@@ -432,37 +409,33 @@ namespace Lucene.Net.Codecs.Memory
                     if (docFreq <= lowFreqCutoff)
                     {
 
-                        ros.reset();
+                        ros.Reset();
 
                         // Pack postings for low-freq terms into a single int[]:
-                        while ((docID = docsEnum2.nextDoc()) != DocsEnum.NO_MORE_DOCS)
+                        while ((docID = docsEnum2.NextDoc()) != DocsEnum.NO_MORE_DOCS)
                         {
                             scratch.add(docID);
                             if (hasFreq)
                             {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int freq = docsEnum2.freq();
-                                int freq = docsEnum2.freq();
+                                int freq = docsEnum2.Freq();
                                 scratch.add(freq);
                                 if (hasPos)
                                 {
                                     for (int pos = 0; pos < freq; pos++)
                                     {
-                                        scratch.add(docsAndPositionsEnum.nextPosition());
+                                        scratch.add(docsAndPositionsEnum.NextPosition());
                                         if (hasOffsets_Renamed)
                                         {
-                                            scratch.add(docsAndPositionsEnum.startOffset());
-                                            scratch.add(docsAndPositionsEnum.endOffset());
+                                            scratch.add(docsAndPositionsEnum.StartOffset());
+                                            scratch.add(docsAndPositionsEnum.EndOffset());
                                         }
                                         if (hasPayloads_Renamed)
                                         {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.BytesRef payload = docsAndPositionsEnum.getPayload();
                                             BytesRef payload = docsAndPositionsEnum.Payload;
                                             if (payload != null)
                                             {
-                                                scratch.add(payload.length);
-                                                ros.writeBytes(payload.bytes, payload.offset, payload.length);
+                                                scratch.add(payload.Length);
+                                                ros.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
                                             }
                                             else
                                             {
@@ -474,40 +447,30 @@ namespace Lucene.Net.Codecs.Memory
                             }
                         }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] payloads;
-                        sbyte[] payloads;
+
+                        byte[] payloads;
                         if (hasPayloads_Renamed)
                         {
-                            ros.flush();
-                            payloads = new sbyte[(int) ros.length()];
-                            ros.writeTo(payloads, 0);
+                            ros.Flush();
+                            payloads = new byte[(int) ros.Length];
+                            ros.WriteTo(payloads, 0);
                         }
                         else
                         {
                             payloads = null;
                         }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] postings = scratch.get();
                         int[] postings = scratch.get();
 
                         ent = new LowFreqTerm(postings, payloads, docFreq, (int) totalTermFreq);
                     }
                     else
                     {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] docs = new int[docFreq];
                         int[] docs = new int[docFreq];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] freqs;
                         int[] freqs;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[][] positions;
                         int[][] positions;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[][][] payloads;
                         sbyte[][][] payloads;
+
                         if (hasFreq)
                         {
                             freqs = new int[docFreq];
@@ -539,19 +502,15 @@ namespace Lucene.Net.Codecs.Memory
                         // Use separate int[] for the postings for high-freq
                         // terms:
                         int upto = 0;
-                        while ((docID = docsEnum2.nextDoc()) != DocsEnum.NO_MORE_DOCS)
+                        while ((docID = docsEnum2.NextDoc()) != DocsEnum.NO_MORE_DOCS)
                         {
                             docs[upto] = docID;
                             if (hasFreq)
                             {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int freq = docsEnum2.freq();
                                 int freq = docsEnum2.Freq();
                                 freqs[upto] = freq;
                                 if (hasPos)
                                 {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int mult;
                                     int mult;
                                     if (hasOffsets_Renamed)
                                     {
@@ -598,7 +557,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
 
                     terms[count] = ent;
-                    setSkips(count, termBytes);
+                    SetSkips(count, termBytes);
                     count++;
                 }
 
@@ -619,8 +578,6 @@ namespace Lucene.Net.Codecs.Memory
                 int skipOffset = 0;
                 for (int i = 0; i < numTerms; i++)
                 {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] termSkips = terms[i].skips;
                     int[] termSkips = terms[i].skips;
                     skipOffsets[i] = skipOffset;
                     if (termSkips != null)
@@ -634,22 +591,21 @@ namespace Lucene.Net.Codecs.Memory
                 Debug.Assert(skipOffset == skipCount);
             }
 
-            /// <summary>
-            /// Returns approximate RAM bytes used </summary>
-            public long ramBytesUsed()
+            /// <summary>Returns approximate RAM bytes used </summary>
+            public long RamBytesUsed()
             {
                 long sizeInBytes = 0;
-                sizeInBytes += ((termBytes != null) ? RamUsageEstimator.sizeOf(termBytes) : 0);
-                sizeInBytes += ((termOffsets != null) ? RamUsageEstimator.sizeOf(termOffsets) : 0);
-                sizeInBytes += ((skips != null) ? RamUsageEstimator.sizeOf(skips) : 0);
-                sizeInBytes += ((skipOffsets != null) ? RamUsageEstimator.sizeOf(skipOffsets) : 0);
-                sizeInBytes += ((sameCounts != null) ? RamUsageEstimator.sizeOf(sameCounts) : 0);
+                sizeInBytes += ((termBytes != null) ? RamUsageEstimator.SizeOf(termBytes) : 0);
+                sizeInBytes += ((termOffsets != null) ? RamUsageEstimator.SizeOf(termOffsets) : 0);
+                sizeInBytes += ((skips != null) ? RamUsageEstimator.SizeOf(skips) : 0);
+                sizeInBytes += ((skipOffsets != null) ? RamUsageEstimator.SizeOf(skipOffsets) : 0);
+                sizeInBytes += ((sameCounts != null) ? RamUsageEstimator.SizeOf(sameCounts) : 0);
 
                 if (terms != null)
                 {
                     foreach (TermAndSkip termAndSkip in terms)
                     {
-                        sizeInBytes += (termAndSkip != null) ? termAndSkip.ramBytesUsed() : 0;
+                        sizeInBytes += (termAndSkip != null) ? termAndSkip.RamBytesUsed() : 0;
                     }
                 }
 
@@ -657,21 +613,15 @@ namespace Lucene.Net.Codecs.Memory
             }
 
             // Compares in unicode (UTF8) order:
-            internal int compare(int ord, BytesRef other)
+            internal int Compare(int ord, BytesRef other)
             {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] otherBytes = other.bytes;
-                sbyte[] otherBytes = other.bytes;
+                byte[] otherBytes = other.Bytes;
 
                 int upto = termOffsets[ord];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termLen = termOffsets[1+ord] - upto;
                 int termLen = termOffsets[1 + ord] - upto;
-                int otherUpto = other.offset;
+                int otherUpto = other.Offset;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int stop = upto + Math.min(termLen, other.length);
-                int stop = upto + Math.Min(termLen, other.length);
+                int stop = upto + Math.Min(termLen, other.Length);
                 while (upto < stop)
                 {
                     int diff = (termBytes[upto++] & 0xFF) - (otherBytes[otherUpto++] & 0xFF);
@@ -682,14 +632,11 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 // One is a prefix of the other, or, they are equal:
-                return termLen - other.length;
+                return termLen - other.Length;
             }
 
-            internal void setSkips(int termOrd, sbyte[] termBytes)
+            internal void SetSkips(int termOrd, sbyte[] termBytes)
             {
-
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termLength = termOffsets[termOrd+1] - termOffsets[termOrd];
                 int termLength = termOffsets[termOrd + 1] - termOffsets[termOrd];
 
                 if (sameCounts.Length < termLength)
@@ -799,8 +746,6 @@ namespace Lucene.Net.Codecs.Memory
                     // given that the skips themselves are already log(N)
                     // we can grow by only 1 and still have amortized
                     // linear time:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] newSkips = new int[term.skips.length+1];
                     int[] newSkips = new int[term.skips.Length + 1];
                     Array.Copy(term.skips, 0, newSkips, 0, term.skips.Length);
                     term.skips = newSkips;
@@ -808,13 +753,13 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override TermsEnum iterator(TermsEnum reuse)
+            public override TermsEnum Iterator(TermsEnum reuse)
             {
                 DirectTermsEnum termsEnum;
                 if (reuse != null && reuse is DirectTermsEnum)
                 {
                     termsEnum = (DirectTermsEnum) reuse;
-                    if (!termsEnum.canReuse(terms))
+                    if (!termsEnum.CanReuse(terms))
                     {
                         termsEnum = new DirectTermsEnum(this);
                     }
@@ -827,14 +772,12 @@ namespace Lucene.Net.Codecs.Memory
                 return termsEnum;
             }
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: @Override public index.TermsEnum intersect(util.automaton.CompiledAutomaton compiled, final util.BytesRef startTerm)
-            public override TermsEnum intersect(CompiledAutomaton compiled, BytesRef startTerm)
+            public override TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
             {
                 return new DirectIntersectTermsEnum(this, compiled, startTerm);
             }
 
-            public override long size()
+            public override long Size()
             {
                 return terms.Length;
             }
@@ -856,25 +799,25 @@ namespace Lucene.Net.Codecs.Memory
 
             public override IComparer<BytesRef> Comparator
             {
-                get { return BytesRef.UTF8SortedAsUnicodeComparator; }
+                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
             }
 
-            public override bool hasFreqs()
+            public override bool HasFreqs()
             {
                 return hasFreq;
             }
 
-            public override bool hasOffsets()
+            public override bool HasOffsets()
             {
                 return hasOffsets_Renamed;
             }
 
-            public override bool hasPositions()
+            public override bool HasPositions()
             {
                 return hasPos;
             }
 
-            public override bool hasPayloads()
+            public override bool HasPayloads()
             {
                 return hasPayloads_Renamed;
             }
@@ -883,25 +826,24 @@ namespace Lucene.Net.Codecs.Memory
             {
                 private readonly DirectPostingsFormat.DirectField outerInstance;
 
+                internal readonly BytesRef scratch = new BytesRef();
+                internal int termOrd;
+
                 public DirectTermsEnum(DirectPostingsFormat.DirectField outerInstance)
                 {
                     this.outerInstance = outerInstance;
                 }
 
-
-                internal readonly BytesRef scratch = new BytesRef();
-                internal int termOrd;
-
-                internal bool canReuse(TermAndSkip[] other)
+                internal bool CanReuse(TermAndSkip[] other)
                 {
                     return outerInstance.terms == other;
                 }
 
-                internal BytesRef setTerm()
+                internal BytesRef SetTerm()
                 {
-                    scratch.bytes = outerInstance.termBytes;
-                    scratch.offset = outerInstance.termOffsets[termOrd];
-                    scratch.length = outerInstance.termOffsets[termOrd + 1] - outerInstance.termOffsets[termOrd];
+                    scratch.Bytes = outerInstance.TermBytes;
+                    scratch.Offset = outerInstance.termOffsets[termOrd];
+                    scratch.Length = outerInstance.termOffsets[termOrd + 1] - outerInstance.termOffsets[termOrd];
                     return scratch;
                 }
 
@@ -912,15 +854,15 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override IComparer<BytesRef> Comparator
                 {
-                    get { return BytesRef.UTF8SortedAsUnicodeComparator; }
+                    get { return BytesRef.UTF8SortedAsUnicodeComparer; }
                 }
 
-                public override BytesRef next()
+                public override BytesRef Next()
                 {
                     termOrd++;
                     if (termOrd < outerInstance.terms.Length)
                     {
-                        return setTerm();
+                        return SetTerm();
                     }
                     else
                     {
@@ -928,16 +870,16 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override TermState termState()
+                public override TermState TermState()
                 {
                     OrdTermState state = new OrdTermState();
-                    state.ord = termOrd;
+                    state.Ord = termOrd;
                     return state;
                 }
 
                 // If non-negative, exact match; else, -ord-1, where ord
                 // is where you would insert the term.
-                internal int findTerm(BytesRef term)
+                internal int FindTerm(BytesRef term)
                 {
 
                     // Just do binary search: should be (constant factor)
@@ -948,7 +890,7 @@ namespace Lucene.Net.Codecs.Memory
                     while (low <= high)
                     {
                         int mid = (int) ((uint) (low + high) >> 1);
-                        int cmp = outerInstance.compare(mid, term);
+                        int cmp = outerInstance.Compare(mid, term);
                         if (cmp < 0)
                         {
                             low = mid + 1;
@@ -966,22 +908,20 @@ namespace Lucene.Net.Codecs.Memory
                     return -(low + 1); // key not found.
                 }
 
-                public override SeekStatus seekCeil(BytesRef term)
+                public override SeekStatus SeekCeil(BytesRef term)
                 {
                     // TODO: we should use the skip pointers; should be
                     // faster than bin search; we should also hold
                     // & reuse current state so seeking forwards is
                     // faster
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ord = findTerm(term);
-                    int ord = findTerm(term);
+                    int ord = FindTerm(term);
                     // if (DEBUG) {
                     //   System.out.println("  find term=" + term.utf8ToString() + " ord=" + ord);
                     // }
                     if (ord >= 0)
                     {
                         termOrd = ord;
-                        setTerm();
+                        SetTerm();
                         return SeekStatus.FOUND;
                     }
                     else if (ord == -outerInstance.terms.Length - 1)
@@ -991,24 +931,22 @@ namespace Lucene.Net.Codecs.Memory
                     else
                     {
                         termOrd = -ord - 1;
-                        setTerm();
+                        SetTerm();
                         return SeekStatus.NOT_FOUND;
                     }
                 }
 
-                public override bool seekExact(BytesRef term)
+                public override bool SeekExact(BytesRef term)
                 {
                     // TODO: we should use the skip pointers; should be
                     // faster than bin search; we should also hold
                     // & reuse current state so seeking forwards is
                     // faster
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ord = findTerm(term);
-                    int ord = findTerm(term);
+                    int ord = FindTerm(term);
                     if (ord >= 0)
                     {
                         termOrd = ord;
-                        setTerm();
+                        SetTerm();
                         return true;
                     }
                     else
@@ -1017,32 +955,30 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override void seekExact(long ord)
+                public override void SeekExact(long ord)
                 {
                     termOrd = (int) ord;
-                    setTerm();
+                    SetTerm();
                 }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void seekExact(util.BytesRef term, index.TermState state) throws java.io.IOException
-                public override void seekExact(BytesRef term, TermState state)
+                public override void SeekExact(BytesRef term, TermState state)
                 {
-                    termOrd = (int) ((OrdTermState) state).ord;
-                    setTerm();
+                    termOrd = (int) ((OrdTermState) state).Ord;
+                    SetTerm();
                     Debug.Assert(term.Equals(scratch));
                 }
 
-                public override BytesRef term()
+                public override BytesRef Term()
                 {
                     return scratch;
                 }
 
-                public override long ord()
+                public override long Ord()
                 {
                     return termOrd;
                 }
 
-                public override int docFreq()
+                public override int DocFreq()
                 {
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
@@ -1054,7 +990,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override long totalTermFreq()
+                public override long TotalTermFreq()
                 {
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
@@ -1066,15 +1002,13 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override DocsEnum docs(Bits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
                 {
                     // TODO: implement reuse, something like Pulsing:
                     // it's hairy!
 
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] postings = ((LowFreqTerm) terms[termOrd]).postings;
                         int[] postings = ((LowFreqTerm) outerInstance.terms[termOrd]).postings;
                         if (outerInstance.hasFreq)
                         {
@@ -1097,7 +1031,7 @@ namespace Lucene.Net.Codecs.Memory
                                 if (reuse is LowFreqDocsEnum)
                                 {
                                     docsEnum = (LowFreqDocsEnum) reuse;
-                                    if (!docsEnum.canReuse(liveDocs, posLen))
+                                    if (!docsEnum.CanReuse(liveDocs, posLen))
                                     {
                                         docsEnum = new LowFreqDocsEnum(liveDocs, posLen);
                                     }
@@ -1107,7 +1041,7 @@ namespace Lucene.Net.Codecs.Memory
                                     docsEnum = new LowFreqDocsEnum(liveDocs, posLen);
                                 }
 
-                                return docsEnum.reset(postings);
+                                return docsEnum.Reset(postings);
                             }
                             else
                             {
@@ -1115,7 +1049,7 @@ namespace Lucene.Net.Codecs.Memory
                                 if (reuse is LowFreqDocsEnumNoPos)
                                 {
                                     docsEnum = (LowFreqDocsEnumNoPos) reuse;
-                                    if (!docsEnum.canReuse(liveDocs))
+                                    if (!docsEnum.CanReuse(liveDocs))
                                     {
                                         docsEnum = new LowFreqDocsEnumNoPos(liveDocs);
                                     }
@@ -1125,7 +1059,7 @@ namespace Lucene.Net.Codecs.Memory
                                     docsEnum = new LowFreqDocsEnumNoPos(liveDocs);
                                 }
 
-                                return docsEnum.reset(postings);
+                                return docsEnum.Reset(postings);
                             }
                         }
                         else
@@ -1134,7 +1068,7 @@ namespace Lucene.Net.Codecs.Memory
                             if (reuse is LowFreqDocsEnumNoTF)
                             {
                                 docsEnum = (LowFreqDocsEnumNoTF) reuse;
-                                if (!docsEnum.canReuse(liveDocs))
+                                if (!docsEnum.CanReuse(liveDocs))
                                 {
                                     docsEnum = new LowFreqDocsEnumNoTF(liveDocs);
                                 }
@@ -1144,13 +1078,11 @@ namespace Lucene.Net.Codecs.Memory
                                 docsEnum = new LowFreqDocsEnumNoTF(liveDocs);
                             }
 
-                            return docsEnum.reset(postings);
+                            return docsEnum.Reset(postings);
                         }
                     }
                     else
                     {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final HighFreqTerm term = (HighFreqTerm) terms[termOrd];
                         HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
 
                         HighFreqDocsEnum docsEnum;
@@ -1168,11 +1100,11 @@ namespace Lucene.Net.Codecs.Memory
                         }
 
                         //System.out.println("  DE for term=" + new BytesRef(terms[termOrd].term).utf8ToString() + ": " + term.docIDs.length + " docs");
-                        return docsEnum.reset(term.docIDs, term.freqs);
+                        return docsEnum.Reset(term.docIDs, term.freqs);
                     }
                 }
 
-                public override DocsAndPositionsEnum docsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
+                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
                     int flags)
                 {
                     if (!outerInstance.hasPos)
@@ -1185,24 +1117,15 @@ namespace Lucene.Net.Codecs.Memory
 
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final LowFreqTerm term = ((LowFreqTerm) terms[termOrd]);
                         LowFreqTerm term = ((LowFreqTerm) outerInstance.terms[termOrd]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] postings = term.postings;
                         int[] postings = term.postings;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] payloads = term.payloads;
-                        sbyte[] payloads = term.payloads;
+                        byte[] payloads = term.payloads;
                         return
                             (new LowFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets_Renamed,
                                 outerInstance.hasPayloads_Renamed)).reset(postings, payloads);
                     }
                     else
-                    {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final HighFreqTerm term = (HighFreqTerm) terms[termOrd];
-                        HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
+                    {   HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
                         return
                             (new HighFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets_Renamed)).Reset(
                                 term.docIDs, term.freqs, term.positions, term.payloads);
@@ -1243,14 +1166,14 @@ namespace Lucene.Net.Codecs.Memory
                     CompiledAutomaton compiled, BytesRef startTerm)
                 {
                     this.outerInstance = outerInstance;
-                    runAutomaton = compiled.runAutomaton;
+                    runAutomaton = compiled.RunAutomaton;
                     compiledAutomaton = compiled;
                     termOrd = -1;
                     states = new State[1];
                     states[0] = new State(this);
                     states[0].changeOrd = outerInstance.terms.Length;
                     states[0].state = runAutomaton.InitialState;
-                    states[0].transitions = compiledAutomaton.sortedTransitions[states[0].state];
+                    states[0].transitions = compiledAutomaton.SortedTransitions[states[0].state];
                     states[0].transitionUpto = -1;
                     states[0].transitionMax = -1;
 
@@ -1259,7 +1182,7 @@ namespace Lucene.Net.Codecs.Memory
                     if (startTerm != null)
                     {
                         int skipUpto = 0;
-                        if (startTerm.length == 0)
+                        if (startTerm.Length == 0)
                         {
                             if (outerInstance.terms.Length > 0 && outerInstance.termOffsets[1] == 0)
                             {
@@ -1270,11 +1193,9 @@ namespace Lucene.Net.Codecs.Memory
                         {
                             termOrd++;
 
-                            for (int i = 0; i < startTerm.length; i++)
+                            for (int i = 0; i < startTerm.Length; i++)
                             {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int label = startTerm.bytes[startTerm.offset+i] & 0xFF;
-                                int label = startTerm.bytes[startTerm.offset + i] & 0xFF;
+                                int label = startTerm.Bytes[startTerm.Offset + i] & 0xFF;
 
                                 while (label > states[i].transitionMax)
                                 {
@@ -1292,17 +1213,9 @@ namespace Lucene.Net.Codecs.Memory
                                 // the label at this position:
                                 while (termOrd < outerInstance.terms.Length)
                                 {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int skipOffset = skipOffsets[termOrd];
                                     int skipOffset = outerInstance.skipOffsets[termOrd];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSkips = skipOffsets[termOrd+1] - skipOffset;
                                     int numSkips = outerInstance.skipOffsets[termOrd + 1] - skipOffset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termOffset = termOffsets[termOrd];
                                     int termOffset = outerInstance.termOffsets[termOrd];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termLength = termOffsets[1+termOrd] - termOffset;
                                     int termLength = outerInstance.termOffsets[1 + termOrd] - termOffset;
 
                                     // if (DEBUG) {
@@ -1344,11 +1257,9 @@ namespace Lucene.Net.Codecs.Memory
                                         // }
                                         if (skipUpto < numSkips)
                                         {
-                                            grow();
+                                            Grow();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int nextState = runAutomaton.step(states[stateUpto].state, label);
-                                            int nextState = runAutomaton.step(states[stateUpto].state, label);
+                                            int nextState = runAutomaton.Step(states[stateUpto].state, label);
 
                                             // Automaton is required to accept startTerm:
                                             Debug.Assert(nextState != -1);
@@ -1357,7 +1268,7 @@ namespace Lucene.Net.Codecs.Memory
                                             states[stateUpto].changeOrd = outerInstance.skips[skipOffset + skipUpto++];
                                             states[stateUpto].state = nextState;
                                             states[stateUpto].transitions =
-                                                compiledAutomaton.sortedTransitions[nextState];
+                                                compiledAutomaton.SortedTransitions[nextState];
                                             states[stateUpto].transitionUpto = -1;
                                             states[stateUpto].transitionMax = -1;
                                             //System.out.println("  push " + states[stateUpto].transitions.length + " trans");
@@ -1377,11 +1288,10 @@ namespace Lucene.Net.Codecs.Memory
                                             // Index exhausted: just scan now (the
                                             // number of scans required will be less
                                             // than the minSkipCount):
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int startTermOrd = termOrd;
+
                                             int startTermOrd = termOrd;
                                             while (termOrd < outerInstance.terms.Length &&
-                                                   outerInstance.compare(termOrd, startTerm) <= 0)
+                                                   outerInstance.Compare(termOrd, startTerm) <= 0)
                                             {
                                                 Debug.Assert(termOrd == startTermOrd ||
                                                              outerInstance.skipOffsets[termOrd] ==
@@ -1431,11 +1341,7 @@ namespace Lucene.Net.Codecs.Memory
                             ;
                         }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termOffset = termOffsets[termOrd];
                         int termOffset = outerInstance.termOffsets[termOrd];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termLen = termOffsets[1+termOrd] - termOffset;
                         int termLen = outerInstance.termOffsets[1 + termOrd] - termOffset;
 
                         if (termOrd >= 0 &&
@@ -1452,15 +1358,13 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override IComparer<BytesRef> Comparator
                 {
-                    get { return BytesRef.UTF8SortedAsUnicodeComparator; }
+                    get { return BytesRef.UTF8SortedAsUnicodeComparer; }
                 }
 
-                internal void grow()
+                internal void Grow()
                 {
                     if (states.Length == 1 + stateUpto)
                     {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State[] newStates = new State[states.length+1];
                         State[] newStates = new State[states.Length + 1];
                         Array.Copy(states, 0, newStates, 0, states.Length);
                         newStates[states.Length] = new State(this);
@@ -1468,7 +1372,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override BytesRef next()
+                public override BytesRef Next()
                 {
                     // if (DEBUG) {
                     //   System.out.println("\nIE.next");
@@ -1484,11 +1388,11 @@ namespace Lucene.Net.Codecs.Memory
                         // if (DEBUG) {
                         //   System.out.println("  visit empty string");
                         // }
-                        if (runAutomaton.isAccept(states[0].state))
+                        if (runAutomaton.IsAccept(states[0].state))
                         {
-                            scratch.bytes = outerInstance.termBytes;
-                            scratch.offset = 0;
-                            scratch.length = 0;
+                            scratch.Bytes = outerInstance.termBytes;
+                            scratch.Offset = 0;
+                            scratch.Length = 0;
                             return scratch;
                         }
                         termOrd++;
@@ -1508,8 +1412,6 @@ namespace Lucene.Net.Codecs.Memory
                             return null;
                         }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State state = states[stateUpto];
                         State state = states[stateUpto];
                         if (termOrd == state.changeOrd)
                         {
@@ -1518,31 +1420,13 @@ namespace Lucene.Net.Codecs.Memory
                             //   System.out.println("  pop stateUpto=" + stateUpto);
                             // }
                             stateUpto--;
-                            /*
-				if (DEBUG) {
-				  try {
-				    //System.out.println("    prefix pop " + new BytesRef(terms[termOrd].term, 0, Math.min(stateUpto, terms[termOrd].term.length)).utf8ToString());
-				    System.out.println("    prefix pop " + new BytesRef(terms[termOrd].term, 0, Math.min(stateUpto, terms[termOrd].term.length)));
-				  } catch (ArrayIndexOutOfBoundsException aioobe) {
-				    System.out.println("    prefix pop " + new BytesRef(terms[termOrd].term, 0, Math.min(stateUpto, terms[termOrd].term.length)));
-				  }
-				}
-				*/
 
                             continue;
                         }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termOffset = termOffsets[termOrd];
                         int termOffset = outerInstance.termOffsets[termOrd];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termLength = termOffsets[termOrd+1] - termOffset;
                         int termLength = outerInstance.termOffsets[termOrd + 1] - termOffset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int skipOffset = skipOffsets[termOrd];
                         int skipOffset = outerInstance.skipOffsets[termOrd];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSkips = skipOffsets[termOrd+1] - skipOffset;
                         int numSkips = outerInstance.skipOffsets[termOrd + 1] - skipOffset;
 
                         // if (DEBUG) {
@@ -1552,8 +1436,6 @@ namespace Lucene.Net.Codecs.Memory
                         Debug.Assert(termOrd < state.changeOrd);
 
                         Debug.Assert(stateUpto <= termLength, "term.length=" + termLength + "; stateUpto=" + stateUpto);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int label = termBytes[termOffset+stateUpto] & 0xFF;
                         int label = outerInstance.termBytes[termOffset + stateUpto] & 0xFF;
 
                         while (label > state.transitionMax)
@@ -1593,17 +1475,6 @@ namespace Lucene.Net.Codecs.Memory
                             Debug.Assert(state.transitionMax <= 255);
                         }
 
-                        /*
-			  if (DEBUG) {
-			    System.out.println("    check ord=" + termOrd + " term[" + stateUpto + "]=" + (char) label + "(" + label + ") term=" + new BytesRef(terms[termOrd].term).utf8ToString() + " trans " +
-			                       (char) state.transitionMin + "(" + state.transitionMin + ")" + "-" + (char) state.transitionMax + "(" + state.transitionMax + ") nextChange=+" + (state.changeOrd - termOrd) + " skips=" + (skips == null ? "null" : Arrays.toString(skips)));
-			    System.out.println("    check ord=" + termOrd + " term[" + stateUpto + "]=" + Integer.toHexString(label) + "(" + label + ") term=" + new BytesRef(termBytes, termOffset, termLength) + " trans " +
-			                       Integer.toHexString(state.transitionMin) + "(" + state.transitionMin + ")" + "-" + Integer.toHexString(state.transitionMax) + "(" + state.transitionMax + ") nextChange=+" + (state.changeOrd - termOrd) + " skips=" + (skips == null ? "null" : Arrays.toString(skips)));
-			  }
-			  */
-
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetLabel = state.transitionMin;
                         int targetLabel = state.transitionMin;
 
                         if ((outerInstance.termBytes[termOffset + stateUpto] & 0xFF) < targetLabel)
@@ -1662,7 +1533,7 @@ namespace Lucene.Net.Codecs.Memory
                             }
                         }
 
-                        int nextState = runAutomaton.step(states[stateUpto].state, label);
+                        int nextState = runAutomaton.Step(states[stateUpto].state, label);
 
                         if (nextState == -1)
                         {
@@ -1685,26 +1556,11 @@ namespace Lucene.Net.Codecs.Memory
                         }
                         else if (skipUpto < numSkips)
                         {
-                            // Push:
-                            // if (DEBUG) {
-                            //   System.out.println("  push");
-                            // }
-                            /*
-				if (DEBUG) {
-				  try {
-				    //System.out.println("    prefix push " + new BytesRef(term, 0, stateUpto+1).utf8ToString());
-				    System.out.println("    prefix push " + new BytesRef(term, 0, stateUpto+1));
-				  } catch (ArrayIndexOutOfBoundsException aioobe) {
-				    System.out.println("    prefix push " + new BytesRef(term, 0, stateUpto+1));
-				  }
-				}
-				*/
-
-                            grow();
+                            Grow();
                             stateUpto++;
                             states[stateUpto].state = nextState;
                             states[stateUpto].changeOrd = outerInstance.skips[skipOffset + skipUpto++];
-                            states[stateUpto].transitions = compiledAutomaton.sortedTransitions[nextState];
+                            states[stateUpto].transitions = compiledAutomaton.SortedTransitions[nextState];
                             states[stateUpto].transitionUpto = -1;
                             states[stateUpto].transitionMax = -1;
 
@@ -1713,14 +1569,14 @@ namespace Lucene.Net.Codecs.Memory
                                 // if (DEBUG) {
                                 //   System.out.println("  term ends after push");
                                 // }
-                                if (runAutomaton.isAccept(nextState))
+                                if (runAutomaton.IsAccept(nextState))
                                 {
                                     // if (DEBUG) {
                                     //   System.out.println("  automaton accepts: return");
                                     // }
-                                    scratch.bytes = outerInstance.termBytes;
-                                    scratch.offset = outerInstance.termOffsets[termOrd];
-                                    scratch.length = outerInstance.termOffsets[1 + termOrd] - scratch.offset;
+                                    scratch.Bytes = outerInstance.termBytes;
+                                    scratch.Offset = outerInstance.termOffsets[termOrd];
+                                    scratch.Length = outerInstance.termOffsets[1 + termOrd] - scratch.Offset;
                                     // if (DEBUG) {
                                     //   System.out.println("  ret " + scratch.utf8ToString());
                                     // }
@@ -1742,21 +1598,21 @@ namespace Lucene.Net.Codecs.Memory
 
                             // TODO: add assert that we don't inc too many times
 
-                            if (compiledAutomaton.commonSuffixRef != null)
+                            if (compiledAutomaton.CommonSuffixRef != null)
                             {
                                 //System.out.println("suffix " + compiledAutomaton.commonSuffixRef.utf8ToString());
-                                Debug.Assert(compiledAutomaton.commonSuffixRef.offset == 0);
-                                if (termLength < compiledAutomaton.commonSuffixRef.length)
+                                Debug.Assert(compiledAutomaton.CommonSuffixRef.Offset == 0);
+                                if (termLength < compiledAutomaton.CommonSuffixRef.Length)
                                 {
                                     termOrd++;
                                     skipUpto = 0;
                                     goto nextTermContinue;
                                 }
-                                int offset = termOffset + termLength - compiledAutomaton.commonSuffixRef.length;
-                                for (int suffix = 0; suffix < compiledAutomaton.commonSuffixRef.length; suffix++)
+                                int offset = termOffset + termLength - compiledAutomaton.CommonSuffixRef.Length;
+                                for (int suffix = 0; suffix < compiledAutomaton.CommonSuffixRef.Length; suffix++)
                                 {
                                     if (outerInstance.termBytes[offset + suffix] !=
-                                        compiledAutomaton.commonSuffixRef.bytes[suffix])
+                                        compiledAutomaton.CommonSuffixRef.Bytes[suffix])
                                     {
                                         termOrd++;
                                         skipUpto = 0;
@@ -1768,8 +1624,7 @@ namespace Lucene.Net.Codecs.Memory
                             int upto = stateUpto + 1;
                             while (upto < termLength)
                             {
-                                nextState = runAutomaton.step(nextState,
-                                    outerInstance.termBytes[termOffset + upto] & 0xFF);
+                                nextState = runAutomaton.Step(nextState, outerInstance.termBytes[termOffset + upto] & 0xFF);
                                 if (nextState == -1)
                                 {
                                     termOrd++;
@@ -1782,11 +1637,11 @@ namespace Lucene.Net.Codecs.Memory
                                 upto++;
                             }
 
-                            if (runAutomaton.isAccept(nextState))
+                            if (runAutomaton.IsAccept(nextState))
                             {
-                                scratch.bytes = outerInstance.termBytes;
-                                scratch.offset = outerInstance.termOffsets[termOrd];
-                                scratch.length = outerInstance.termOffsets[1 + termOrd] - scratch.offset;
+                                scratch.Bytes = outerInstance.termBytes;
+                                scratch.Offset = outerInstance.termOffsets[termOrd];
+                                scratch.Length = outerInstance.termOffsets[1 + termOrd] - scratch.Offset;
                                 // if (DEBUG) {
                                 //   System.out.println("  match tail; return " + scratch.utf8ToString());
                                 //   System.out.println("  ret2 " + scratch.utf8ToString());
@@ -1805,28 +1660,29 @@ namespace Lucene.Net.Codecs.Memory
                         nextTermContinue:
                         ;
                     }
+
                     nextTermBreak:
                     ;
                 }
 
-                public override TermState termState()
+                public override TermState TermState()
                 {
                     OrdTermState state = new OrdTermState();
-                    state.ord = termOrd;
+                    state.Ord = termOrd;
                     return state;
                 }
 
-                public override BytesRef term()
+                public override BytesRef Term()
                 {
                     return scratch;
                 }
 
-                public override long ord()
+                public override long Ord()
                 {
                     return termOrd;
                 }
 
-                public override int docFreq()
+                public override int DocFreq()
                 {
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
@@ -1838,7 +1694,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override long totalTermFreq()
+                public override long TotalTermFreq()
                 {
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
@@ -1850,15 +1706,13 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override DocsEnum docs(Bits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
                 {
                     // TODO: implement reuse, something like Pulsing:
                     // it's hairy!
 
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] postings = ((LowFreqTerm) terms[termOrd]).postings;
                         int[] postings = ((LowFreqTerm) outerInstance.terms[termOrd]).postings;
                         if (outerInstance.hasFreq)
                         {
@@ -1877,29 +1731,27 @@ namespace Lucene.Net.Codecs.Memory
                                 {
                                     posLen++;
                                 }
-                                return (new LowFreqDocsEnum(liveDocs, posLen)).reset(postings);
+                                return (new LowFreqDocsEnum(liveDocs, posLen)).Reset(postings);
                             }
                             else
                             {
-                                return (new LowFreqDocsEnumNoPos(liveDocs)).reset(postings);
+                                return (new LowFreqDocsEnumNoPos(liveDocs)).Reset(postings);
                             }
                         }
                         else
                         {
-                            return (new LowFreqDocsEnumNoTF(liveDocs)).reset(postings);
+                            return (new LowFreqDocsEnumNoTF(liveDocs)).Reset(postings);
                         }
                     }
                     else
                     {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final HighFreqTerm term = (HighFreqTerm) terms[termOrd];
                         HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
                         //  System.out.println("DE for term=" + new BytesRef(terms[termOrd].term).utf8ToString() + ": " + term.docIDs.length + " docs");
-                        return (new HighFreqDocsEnum(liveDocs)).reset(term.docIDs, term.freqs);
+                        return (new HighFreqDocsEnum(liveDocs)).Reset(term.docIDs, term.freqs);
                     }
                 }
 
-                public override DocsAndPositionsEnum docsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
+                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse,
                     int flags)
                 {
                     if (!outerInstance.hasPos)
@@ -1912,23 +1764,15 @@ namespace Lucene.Net.Codecs.Memory
 
                     if (outerInstance.terms[termOrd] is LowFreqTerm)
                     {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final LowFreqTerm term = ((LowFreqTerm) terms[termOrd]);
                         LowFreqTerm term = ((LowFreqTerm) outerInstance.terms[termOrd]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] postings = term.postings;
                         int[] postings = term.postings;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] payloads = term.payloads;
-                        sbyte[] payloads = term.payloads;
+                        byte[] payloads = term.payloads;
                         return
                             (new LowFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets_Renamed,
-                                outerInstance.hasPayloads_Renamed)).reset(postings, payloads);
+                                outerInstance.hasPayloads_Renamed)).Reset(postings, payloads);
                     }
                     else
                     {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final HighFreqTerm term = (HighFreqTerm) terms[termOrd];
                         HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
                         return
                             (new HighFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets_Renamed)).Reset(
@@ -1936,12 +1780,12 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override SeekStatus seekCeil(BytesRef term)
+                public override SeekStatus SeekCeil(BytesRef term)
                 {
                     throw new System.NotSupportedException();
                 }
 
-                public override void seekExact(long ord)
+                public override void SeekExact(long ord)
                 {
                     throw new System.NotSupportedException();
                 }
@@ -1960,12 +1804,12 @@ namespace Lucene.Net.Codecs.Memory
                 this.liveDocs = liveDocs;
             }
 
-            public bool canReuse(Bits liveDocs)
+            public bool CanReuse(Bits liveDocs)
             {
                 return liveDocs == this.liveDocs;
             }
 
-            public DocsEnum reset(int[] postings)
+            public DocsEnum Reset(int[] postings)
             {
                 this.postings = postings;
                 upto = -1;
@@ -1974,7 +1818,7 @@ namespace Lucene.Net.Codecs.Memory
 
             // TODO: can do this w/o setting members?
 
-            public override int nextDoc()
+            public override int NextDoc()
             {
                 upto++;
                 if (liveDocs == null)
@@ -1988,7 +1832,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     while (upto < postings.Length)
                     {
-                        if (liveDocs.get(postings[upto]))
+                        if (liveDocs.Get(postings[upto]))
                         {
                             return postings[upto];
                         }
@@ -1998,7 +1842,7 @@ namespace Lucene.Net.Codecs.Memory
                 return NO_MORE_DOCS;
             }
 
-            public override int docID()
+            public override int DocID()
             {
                 if (upto < 0)
                 {
@@ -2014,21 +1858,19 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int freq()
+            public override int Freq()
             {
                 return 1;
             }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int advance(int target) throws java.io.IOException
-            public override int advance(int target)
+            public override int Advance(int target)
             {
                 // Linear scan, but this is low-freq term so it won't
                 // be costly:
-                return slowAdvance(target);
+                return SlowAdvance(target);
             }
 
-            public override long cost()
+            public override long Cost()
             {
                 return postings.Length;
             }
@@ -2046,12 +1888,12 @@ namespace Lucene.Net.Codecs.Memory
                 this.liveDocs = liveDocs;
             }
 
-            public bool canReuse(Bits liveDocs)
+            public bool CanReuse(Bits liveDocs)
             {
                 return liveDocs == this.liveDocs;
             }
 
-            public DocsEnum reset(int[] postings)
+            public DocsEnum Reset(int[] postings)
             {
                 this.postings = postings;
                 upto = -2;
@@ -2059,7 +1901,7 @@ namespace Lucene.Net.Codecs.Memory
             }
 
             // TODO: can do this w/o setting members?
-            public override int nextDoc()
+            public override int NextDoc()
             {
                 upto += 2;
                 if (liveDocs == null)
@@ -2073,7 +1915,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     while (upto < postings.Length)
                     {
-                        if (liveDocs.get(postings[upto]))
+                        if (liveDocs.Get(postings[upto]))
                         {
                             return postings[upto];
                         }
@@ -2083,7 +1925,7 @@ namespace Lucene.Net.Codecs.Memory
                 return NO_MORE_DOCS;
             }
 
-            public override int docID()
+            public override int DocID()
             {
                 if (upto < 0)
                 {
@@ -2099,21 +1941,19 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int freq()
+            public override int Freq()
             {
                 return postings[upto + 1];
             }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int advance(int target) throws java.io.IOException
-            public override int advance(int target)
+            public override int Advance(int target)
             {
                 // Linear scan, but this is low-freq term so it won't
                 // be costly:
-                return slowAdvance(target);
+                return SlowAdvance(target);
             }
 
-            public override long cost()
+            public override long Cost()
             {
                 return postings.Length/2;
             }
@@ -2137,12 +1977,12 @@ namespace Lucene.Net.Codecs.Memory
                 // }
             }
 
-            public bool canReuse(Bits liveDocs, int posMult)
+            public bool CanReuse(Bits liveDocs, int posMult)
             {
                 return liveDocs == this.liveDocs && posMult == this.posMult;
             }
 
-            public DocsEnum reset(int[] postings)
+            public DocsEnum Reset(int[] postings)
             {
                 this.postings = postings;
                 upto = -2;
@@ -2151,7 +1991,7 @@ namespace Lucene.Net.Codecs.Memory
             }
 
             // TODO: can do this w/o setting members?
-            public override int nextDoc()
+            public override int NextDoc()
             {
                 upto += 2 + freq_Renamed*posMult;
                 // if (DEBUG) {
@@ -2172,7 +2012,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         freq_Renamed = postings[upto + 1];
                         Debug.Assert(freq_Renamed > 0);
-                        if (liveDocs.get(postings[upto]))
+                        if (liveDocs.Get(postings[upto]))
                         {
                             return postings[upto];
                         }
@@ -2182,7 +2022,7 @@ namespace Lucene.Net.Codecs.Memory
                 return NO_MORE_DOCS;
             }
 
-            public override int docID()
+            public override int DocID()
             {
                 // TODO: store docID member?
                 if (upto < 0)
@@ -2199,22 +2039,20 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int freq()
+            public override int Freq()
             {
                 // TODO: can I do postings[upto+1]?
                 return freq_Renamed;
             }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int advance(int target) throws java.io.IOException
-            public override int advance(int target)
+            public override int Advance(int target)
             {
                 // Linear scan, but this is low-freq term so it won't
                 // be costly:
-                return slowAdvance(target);
+                return SlowAdvance(target);
             }
 
-            public override long cost()
+            public override long Cost()
             {
                 // TODO: could do a better estimate
                 return postings.Length/2;
@@ -2238,7 +2076,7 @@ namespace Lucene.Net.Codecs.Memory
             internal int lastPayloadOffset;
             internal int payloadOffset;
             internal int payloadLength;
-            internal sbyte[] payloadBytes;
+            internal byte[] payloadBytes;
 
             public LowFreqDocsAndPositionsEnum(Bits liveDocs, bool hasOffsets, bool hasPayloads)
             {
@@ -2266,7 +2104,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public DocsAndPositionsEnum reset(int[] postings, sbyte[] payloadBytes)
+            public DocsAndPositionsEnum Reset(int[] postings, byte[] payloadBytes)
             {
                 this.postings = postings;
                 upto = 0;
@@ -2279,7 +2117,7 @@ namespace Lucene.Net.Codecs.Memory
                 return this;
             }
 
-            public override int nextDoc()
+            public override int NextDoc()
             {
                 if (hasPayloads)
                 {
@@ -2314,7 +2152,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         docID_Renamed = postings[upto++];
                         freq_Renamed = postings[upto++];
-                        if (liveDocs.get(docID_Renamed))
+                        if (liveDocs.Get(docID_Renamed))
                         {
                             skipPositions = freq_Renamed;
                             return docID_Renamed;
@@ -2341,22 +2179,21 @@ namespace Lucene.Net.Codecs.Memory
                 return docID_Renamed = NO_MORE_DOCS;
             }
 
-            public override int docID()
+            public override int DocID()
             {
                 return docID_Renamed;
             }
 
-            public override int freq()
+            public override int Freq()
             {
                 return freq_Renamed;
             }
 
-            public override int nextPosition()
+            public override int NextPosition()
             {
                 Debug.Assert(skipPositions > 0);
                 skipPositions--;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = postings[upto++];
+
                 int pos = postings[upto++];
                 if (hasOffsets)
                 {
@@ -2372,21 +2209,19 @@ namespace Lucene.Net.Codecs.Memory
                 return pos;
             }
 
-            public override int startOffset()
+            public override int StartOffset()
             {
                 return startOffset_Renamed;
             }
 
-            public override int endOffset()
+            public override int EndOffset()
             {
                 return endOffset_Renamed;
             }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int advance(int target) throws java.io.IOException
-            public override int advance(int target)
+            public override int Advance(int target)
             {
-                return slowAdvance(target);
+                return SlowAdvance(target);
             }
 
             public override BytesRef Payload
@@ -2395,9 +2230,9 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     if (payloadLength > 0)
                     {
-                        payload.bytes = payloadBytes;
-                        payload.offset = lastPayloadOffset;
-                        payload.length = payloadLength;
+                        payload.Bytes = payloadBytes;
+                        payload.Offset = lastPayloadOffset;
+                        payload.Length = payloadLength;
                         return payload;
                     }
                     else
@@ -2407,7 +2242,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override long cost()
+            public override long Cost()
             {
                 // TODO: could do a better estimate
                 return postings.Length/2;
@@ -2443,7 +2278,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { return freqs; }
             }
 
-            public DocsEnum reset(int[] docIDs, int[] freqs)
+            public DocsEnum Reset(int[] docIDs, int[] freqs)
             {
                 this.docIDs = docIDs;
                 this.freqs = freqs;
@@ -2451,7 +2286,7 @@ namespace Lucene.Net.Codecs.Memory
                 return this;
             }
 
-            public override int nextDoc()
+            public override int NextDoc()
             {
                 upto++;
                 if (liveDocs == null)
@@ -2468,7 +2303,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     while (upto < docIDs.Length)
                     {
-                        if (liveDocs.get(docIDs[upto]))
+                        if (liveDocs.Get(docIDs[upto]))
                         {
                             return docID_Renamed = docIDs[upto];
                         }
@@ -2478,12 +2313,12 @@ namespace Lucene.Net.Codecs.Memory
                 return docID_Renamed = NO_MORE_DOCS;
             }
 
-            public override int docID()
+            public override int DocID()
             {
                 return docID_Renamed;
             }
 
-            public override int freq()
+            public override int Freq()
             {
                 if (freqs == null)
                 {
@@ -2495,34 +2330,9 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int advance(int target)
+            public override int Advance(int target)
             {
-                /*
-		  upto++;
-		  if (upto == docIDs.length) {
-		    return docID = NO_MORE_DOCS;
-		  }
-		  final int index = Arrays.binarySearch(docIDs, upto, docIDs.length, target);
-		  if (index < 0) {
-		    upto = -index - 1;
-		  } else {
-		    upto = index;
-		  }
-		  if (liveDocs != null) {
-		    while (upto < docIDs.length) {
-		      if (liveDocs.get(docIDs[upto])) {
-		        break;
-		      }
-		      upto++;
-		    }
-		  }
-		  if (upto == docIDs.length) {
-		    return NO_MORE_DOCS;
-		  } else {
-		    return docID = docIDs[upto];
-		  }
-		  */
-
+       
                 //System.out.println("  advance target=" + target + " cur=" + docID() + " upto=" + upto + " of " + docIDs.length);
                 // if (DEBUG) {
                 //   System.out.println("advance target=" + target + " len=" + docIDs.length);
@@ -2601,7 +2411,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     while (upto < docIDs.Length)
                     {
-                        if (liveDocs.get(docIDs[upto]))
+                        if (liveDocs.Get(docIDs[upto]))
                         {
                             break;
                         }
@@ -2620,7 +2430,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override long cost()
+            public override long Cost()
             {
                 return docIDs.Length;
             }
@@ -2635,7 +2445,7 @@ namespace Lucene.Net.Codecs.Memory
             internal int[] docIDs;
             internal int[] freqs;
             internal int[][] positions;
-            internal sbyte[][][] payloads;
+            internal byte[][][] payloads;
             internal readonly Bits liveDocs;
             internal readonly bool hasOffsets;
             internal readonly int posJump;
