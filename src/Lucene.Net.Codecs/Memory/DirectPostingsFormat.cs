@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Memory
         public override FieldsProducer FieldsProducer(SegmentReadState state)
         {
             var postings = ForName("Lucene41").FieldsProducer(state);
-            if (state.Context.Context != IOContext.Context.MERGE)
+            if (state.Context.Context != IOContext.Context_e.MERGE)
             {
                 FieldsProducer loadedPostings;
                 try
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Memory
         private sealed class DirectField : Terms
         {
 
-            private abstract class TermAndSkip
+            internal abstract class TermAndSkip
             {
                 public int[] skips;
 
@@ -233,9 +233,9 @@ namespace Lucene.Net.Codecs.Memory
                 public readonly int[] docIDs;
                 public readonly int[] freqs;
                 public readonly int[][] positions;
-                public readonly sbyte[][][] payloads;
+                public readonly byte[][][] payloads;
 
-                public HighFreqTerm(int[] docIDs, int[] freqs, int[][] positions, sbyte[][][] payloads,
+                public HighFreqTerm(int[] docIDs, int[] freqs, int[][] positions, byte[][][] payloads,
                     long totalTermFreq)
                 {
                     this.docIDs = docIDs;
@@ -261,11 +261,11 @@ namespace Lucene.Net.Codecs.Memory
 
                     if (payloads != null)
                     {
-                        foreach (sbyte[][] payload in payloads)
+                        foreach (var payload in payloads)
                         {
                             if (payload != null)
                             {
-                                foreach (sbyte[] pload in payload)
+                                foreach (var pload in payload)
                                 {
                                     sizeInBytes += (pload != null) ? RamUsageEstimator.SizeOf(pload) : 0;
                                 }
@@ -277,7 +277,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            internal readonly sbyte[] termBytes;
+            internal readonly byte[] termBytes;
             internal readonly int[] termOffsets;
 
             internal readonly int[] skips;
@@ -308,7 +308,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     if (ints.Length == upto)
                     {
-                        ints = ArrayUtil.grow(ints);
+                        ints = ArrayUtil.Grow(ints);
                     }
                     ints[upto++] = value;
                 }
@@ -469,7 +469,7 @@ namespace Lucene.Net.Codecs.Memory
                         int[] docs = new int[docFreq];
                         int[] freqs;
                         int[][] positions;
-                        sbyte[][][] payloads;
+                        byte[][][] payloads;
 
                         if (hasFreq)
                         {
@@ -479,7 +479,7 @@ namespace Lucene.Net.Codecs.Memory
                                 positions = new int[docFreq][];
                                 if (hasPayloads_Renamed)
                                 {
-                                    payloads = new sbyte[docFreq][][];
+                                    payloads = new byte[docFreq][][];
                                 }
                                 else
                                 {
@@ -522,7 +522,7 @@ namespace Lucene.Net.Codecs.Memory
                                     }
                                     if (hasPayloads_Renamed)
                                     {
-                                        payloads[upto] = new sbyte[freq][];
+                                        payloads[upto] = new byte[freq][];
                                     }
                                     positions[upto] = new int[mult*freq];
                                     int posUpto = 0;
@@ -534,7 +534,7 @@ namespace Lucene.Net.Codecs.Memory
                                             BytesRef payload = docsAndPositionsEnum.Payload;
                                             if (payload != null)
                                             {
-                                                sbyte[] payloadBytes = new sbyte[payload.Length];
+                                                var payloadBytes = new byte[payload.Length];
                                                 Array.Copy(payload.Bytes, payload.Offset, payloadBytes, 0,
                                                     payload.Length);
                                                 payloads[upto][pos] = payloadBytes;
@@ -568,7 +568,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 //System.out.println(skipCount + " skips: " + field);
 
-                this.termBytes = new sbyte[termOffset];
+                this.termBytes = new byte[termOffset];
                 Array.Copy(termBytes, 0, this.termBytes, 0, termOffset);
 
                 // Pack skips:
@@ -768,7 +768,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     termsEnum = new DirectTermsEnum(this);
                 }
-                termsEnum.reset();
+                termsEnum.Reset();
                 return termsEnum;
             }
 
@@ -841,13 +841,13 @@ namespace Lucene.Net.Codecs.Memory
 
                 internal BytesRef SetTerm()
                 {
-                    scratch.Bytes = outerInstance.TermBytes;
+                    scratch.Bytes = outerInstance.termBytes;
                     scratch.Offset = outerInstance.termOffsets[termOrd];
                     scratch.Length = outerInstance.termOffsets[termOrd + 1] - outerInstance.termOffsets[termOrd];
                     return scratch;
                 }
 
-                public void reset()
+                public void Reset()
                 {
                     termOrd = -1;
                 }
@@ -1122,7 +1122,7 @@ namespace Lucene.Net.Codecs.Memory
                         byte[] payloads = term.payloads;
                         return
                             (new LowFreqDocsAndPositionsEnum(liveDocs, outerInstance.hasOffsets_Renamed,
-                                outerInstance.hasPayloads_Renamed)).reset(postings, payloads);
+                                outerInstance.hasPayloads_Renamed)).Reset(postings, payloads);
                     }
                     else
                     {   HighFreqTerm term = (HighFreqTerm) outerInstance.terms[termOrd];
@@ -1142,7 +1142,7 @@ namespace Lucene.Net.Codecs.Memory
                 internal int termOrd;
                 internal readonly BytesRef scratch = new BytesRef();
 
-                private sealed class State
+                internal sealed class State
                 {
                     private readonly DirectPostingsFormat.DirectField.DirectIntersectTermsEnum outerInstance;
 
@@ -1215,8 +1215,8 @@ namespace Lucene.Net.Codecs.Memory
                                 {
                                     int skipOffset = outerInstance.skipOffsets[termOrd];
                                     int numSkips = outerInstance.skipOffsets[termOrd + 1] - skipOffset;
-                                    int termOffset = outerInstance.termOffsets[termOrd];
-                                    int termLength = outerInstance.termOffsets[1 + termOrd] - termOffset;
+                                    int termOffset_i = outerInstance.termOffsets[termOrd];
+                                    int termLength = outerInstance.termOffsets[1 + termOrd] - termOffset_i;
 
                                     // if (DEBUG) {
                                     //   System.out.println("  check termOrd=" + termOrd + " term=" + new BytesRef(termBytes, termOffset, termLength).utf8ToString() + " skips=" + Arrays.toString(skips) + " i=" + i);
@@ -1240,7 +1240,7 @@ namespace Lucene.Net.Codecs.Memory
                                         //   System.out.println("    term too short; next term");
                                         // }
                                     }
-                                    else if (label < (outerInstance.termBytes[termOffset + i] & 0xFF))
+                                    else if (label < (outerInstance.termBytes[termOffset_i + i] & 0xFF))
                                     {
                                         termOrd--;
                                         // if (DEBUG) {
@@ -1250,7 +1250,7 @@ namespace Lucene.Net.Codecs.Memory
                                         Debug.Assert(stateUpto >= 0);
                                         return;
                                     }
-                                    else if (label == (outerInstance.termBytes[termOffset + i] & 0xFF))
+                                    else if (label == (outerInstance.termBytes[termOffset_i + i] & 0xFF))
                                     {
                                         // if (DEBUG) {
                                         //   System.out.println("    label[" + i + "] matches");
@@ -2481,7 +2481,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { return liveDocs; }
             }
 
-            public DocsAndPositionsEnum Reset(int[] docIDs, int[] freqs, int[][] positions, sbyte[][][] payloads)
+            public DocsAndPositionsEnum Reset(int[] docIDs, int[] freqs, int[][] positions, byte[][][] payloads)
             {
                 this.docIDs = docIDs;
                 this.freqs = freqs;
