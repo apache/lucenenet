@@ -241,7 +241,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override long Get(int docID)
             {
-                return Values[docID];
+                return (sbyte)Values[docID];
             }
         }
 
