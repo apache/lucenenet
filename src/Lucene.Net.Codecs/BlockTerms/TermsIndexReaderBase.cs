@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public abstract class FieldIndexEnum
         {
             /** Returns -1 at end */
-            public abstract long Next { get; }
+            public abstract long? Next { get; }
 
             public abstract BytesRef Term { get; set; }
 
@@ -72,14 +72,14 @@ namespace Lucene.Net.Codecs.BlockTerms
             /// <remarks>Only implemented if {@link TermsIndexReaderBase.supportsOrd()} 
             /// returns true</remarks>
             /// <returns></returns>
-            public abstract long Seek(long ord);
+            public abstract long? Seek(long ord);
         
             /// <summary> 
             /// Seeks to "largest" indexed term that's less than or equal
             /// to term; returns file pointer index (into the main
             /// terms index file) for that term 
             /// </summary>
-            public abstract long Seek(BytesRef term);
+            public abstract long? Seek(BytesRef term);
         }
 
     }

@@ -380,7 +380,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.ReadLine(_input, _scratch);
                 try
                 {
-                    return _scratch.Utf8ToString().ToString(_ordDecoderFormat) - 1;
+                    return int.Parse(Decimal.Parse(_scratch.Utf8ToString()).ToString(_ordDecoderFormat)) - 1;
                 }
                 catch (Exception pe)
                 {
@@ -404,10 +404,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 try
                 {
                     len =
-                        (int)
+                        int.Parse(
                             Decimal.Parse(_scratch.Bytes.SubList(
                                 _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString()).ToString(_decoderFormat);
+                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString()).ToString(_decoderFormat));
                 }
                 catch (Exception pe)
                 {
@@ -489,10 +489,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 try
                 {
                     len =
-                        (int)
-                            _decoderFormat.parse(_scratch.Bytes.SubList(
+                        int.Parse(
+                            Decimal.Parse(_scratch.Bytes.SubList(
                                 _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
+                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString()).ToString(_decoderFormat));
                 }
                 catch (Exception pe)
                 {

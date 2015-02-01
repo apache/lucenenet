@@ -50,10 +50,10 @@ namespace Lucene.Net.Codecs.Memory
         /// </summary>
         internal class TermData
         {
-            internal readonly long[] LONGS;
-            internal readonly byte[] BYTES;
-            internal readonly int DOC_FREQ;
-            internal readonly long TOTAL_TERM_FREQ;
+            internal long[] LONGS;
+            internal byte[] BYTES;
+            internal int DOC_FREQ;
+            internal long TOTAL_TERM_FREQ;
 
             internal TermData()
             {

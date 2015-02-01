@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Memory
                 var bytesSize = (int) _metaWriter.FilePointer;
                 if (bytesSize > 0)
                 {
-                    meta.BYTES = new sbyte[bytesSize];
+                    meta.BYTES = new byte[bytesSize];
                     _metaWriter.WriteTo(meta.BYTES, 0);
                     _metaWriter.Reset();
                 }

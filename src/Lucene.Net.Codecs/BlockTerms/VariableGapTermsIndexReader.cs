@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private readonly long _indexStart;
             // Set only if terms index is loaded:
-            public volatile FST<long> Fst;
+            public volatile FST<long?> Fst;
             private readonly VariableGapTermsIndexReader _vgtir;
 
             public FieldIndexData(long indexStart, VariableGapTermsIndexReader vgtir)
@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 var clone = (IndexInput) _vgtir._input.Clone();
                 clone.Seek(_indexStart);
-                Fst = new FST<long>(clone, _vgtir._fstOutputs);
+                Fst = new FST<long?>(clone, _vgtir._fstOutputs);
                 clone.Dispose();
 
                 /*
@@ -198,11 +198,11 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // subsample
                     var scratchIntsRef = new IntsRef();
                     var outputs = PositiveIntOutputs.Singleton;
-                    var builder = new Builder<long>(FST.INPUT_TYPE.BYTE1, outputs);
-                    var fstEnum = new BytesRefFSTEnum<long>(Fst);
+                    var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+                    var fstEnum = new BytesRefFSTEnum<long?>(Fst);
                     var count = _vgtir._indexDivisor;
                         
-                    BytesRefFSTEnum<long>.InputOutput<long> result;
+                    BytesRefFSTEnum<long?>.InputOutput<long?> result;
                     while ((result = fstEnum.Next()) != null)
                     {
                         if (count == _vgtir._indexDivisor)
@@ -225,12 +225,12 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         protected class IndexEnum : FieldIndexEnum
         {
-            private readonly BytesRefFSTEnum<long> _fstEnum;
-            private BytesRefFSTEnum<long>.InputOutput<long> _current;
+            private readonly BytesRefFSTEnum<long?> _fstEnum;
+            private BytesRefFSTEnum<long?>.InputOutput<long?> _current;
 
-            public IndexEnum(FST<long> fst)
+            public IndexEnum(FST<long?> fst)
             {
-                _fstEnum = new BytesRefFSTEnum<long>(fst);
+                _fstEnum = new BytesRefFSTEnum<long?>(fst);
             }
 
             public override BytesRef Term
@@ -239,13 +239,13 @@ namespace Lucene.Net.Codecs.BlockTerms
                 set { }
             }
 
-            public override long Seek(BytesRef target)
+            public override long? Seek(BytesRef target)
             {
                 _current = _fstEnum.SeekFloor(target);
                 return _current.Output;
             }
 
-            public override long Next
+            public override long? Next
             {
                 get
                 {
@@ -263,7 +263,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 set { }
             }
 
-            public override long Seek(long ord)
+            public override long? Seek(long ord)
             {
                 throw new NotImplementedException();
             }

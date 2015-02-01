@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs.SimpleText
                                 }
                                 else
                                 {
-                                    var payloadBytes = new sbyte[_scratch.Length - SimpleTextTermVectorsWriter.PAYLOAD.Length];
+                                    var payloadBytes = new byte[_scratch.Length - SimpleTextTermVectorsWriter.PAYLOAD.Length];
                                     Array.Copy(_scratch.Bytes, _scratch.Offset + SimpleTextTermVectorsWriter.PAYLOAD.Length, payloadBytes, 0,
                                         payloadBytes.Length);
                                     postings.PAYLOADS[k] = new BytesRef(payloadBytes);

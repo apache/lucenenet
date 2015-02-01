@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private class FstFieldWriter : FieldWriter
         {
-            private readonly Builder<long> _fstBuilder;
+            private readonly Builder<long?> _fstBuilder;
             private readonly long _startTermsFilePointer;
             private readonly BytesRef _lastTerm = new BytesRef();
             private readonly IntsRef _scratchIntsRef = new IntsRef();
@@ -241,14 +241,14 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public long IndexStart { get; private set; }
             public FieldInfo FieldInfo { get; private set; }
-            public FST<long> Fst { get; private set; }
+            public FST<long?> Fst { get; private set; }
 
             public FstFieldWriter(FieldInfo fieldInfo, long termsFilePointer, VariableGapTermsIndexWriter vgtiw)
             {
                 _vgtiw = vgtiw;
                 FieldInfo = fieldInfo;
                 PositiveIntOutputs fstOutputs = PositiveIntOutputs.Singleton;
-                _fstBuilder = new Builder<long>(FST.INPUT_TYPE.BYTE1, fstOutputs);
+                _fstBuilder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, fstOutputs);
                 IndexStart = _vgtiw.Output.FilePointer;
 
                 // Always put empty string in

@@ -115,14 +115,14 @@ namespace Lucene.Net.Codecs.SimpleText
             private long _totalTermFreq;
             private long _docsStart;
             
-            private readonly BytesRefFSTEnum<PairOutputs<long, PairOutputs.Pair>.Pair> _fstEnum;
+            private readonly BytesRefFSTEnum<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> _fstEnum;
 
             public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance,
-                FST<PairOutputs<long, PairOutputs.Pair>.Pair> fst, IndexOptions indexOptions)
+                FST<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> fst, IndexOptions indexOptions)
             {
                 _outerInstance = outerInstance;
                 _indexOptions = indexOptions;
-                _fstEnum = new BytesRefFSTEnum<PairOutputs<long, PairOutputs.Pair>.Pair>(fst);
+                _fstEnum = new BytesRefFSTEnum<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair>(fst);
             }
 
             public override bool SeekExact(BytesRef text)
@@ -134,9 +134,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 
                 var pair1 = result.Output;
                 var pair2 = pair1.Output2;
-                _docsStart = pair1.Output1;
+                _docsStart = pair1.Output1.Value;
                 _docFreq = (int) pair2.Output1;
-                _totalTermFreq = pair2.Output2;
+                _totalTermFreq = pair2.Output2.Value;
                 return true;
             }
 
@@ -148,9 +148,9 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 var pair1 = result.Output;
                 var pair2 = pair1.Output2;
-                _docsStart = pair1.Output1;
+                _docsStart = pair1.Output1.Value;
                 _docFreq = (int) pair2.Output1;
-                _totalTermFreq = pair2.Output2;
+                _totalTermFreq = pair2.Output2.Value;
 
                 return result.Input.Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
 
@@ -164,9 +164,9 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 var pair1 = result.Output;
                 var pair2 = pair1.Output2;
-                _docsStart = pair1.Output1;
+                _docsStart = pair1.Output1.Value;
                 _docFreq = (int)pair2.Output1;
-                _totalTermFreq = pair2.Output2;
+                _totalTermFreq = pair2.Output2.Value;
                 return result.Input;
             }
 
@@ -583,7 +583,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private long _sumTotalTermFreq;
             private long _sumDocFreq;
             private int _docCount;
-            private FST<PairOutputs<long, PairOutputs.Pair>.Pair> _fst;
+            private FST<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> _fst;
             private int _termCount;
             private readonly BytesRef _scratch = new BytesRef(10);
             private readonly CharsRef _scratchUtf16 = new CharsRef(10);
@@ -600,12 +600,11 @@ namespace Lucene.Net.Codecs.SimpleText
             private void LoadTerms()
             {
                 var posIntOutputs = PositiveIntOutputs.Singleton;
-                var outputsInner = new PairOutputs<long, long>(posIntOutputs, posIntOutputs);
-                //var outputs = new PairOutputs<long, PairOutputs.Pair<long, long>>(posIntOutputs, outputsInner);
-                var outputs = new PairOutputs<long, PairOutputs.Pair>(posIntOutputs, outputsInner);
-
+                var outputsInner = new PairOutputs<long?, long?>(posIntOutputs, posIntOutputs);
+                var outputs = new PairOutputs<long?, PairOutputs<long?,long?>.Pair>(posIntOutputs, outputsInner);
+                
                 // honestly, wtf kind of generic mess is this.
-                var b = new Builder<PairOutputs<long, PairOutputs.Pair>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
+                var b = new Builder<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
                 var input = (IndexInput) _outerInstance._input.Clone();
                 input.Seek(_termsStart);
 
