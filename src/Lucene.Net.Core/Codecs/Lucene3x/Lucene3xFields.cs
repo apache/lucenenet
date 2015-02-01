@@ -299,8 +299,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             internal SegmentTermEnum SeekTermEnum;
 
-            private const sbyte UTF8_NON_BMP_LEAD = unchecked((sbyte) 0xf0);
-            private const sbyte UTF8_HIGH_BMP_LEAD = unchecked((sbyte) 0xee);
+            private static readonly sbyte UTF8_NON_BMP_LEAD = unchecked((sbyte) 0xf0);
+            private static readonly sbyte UTF8_HIGH_BMP_LEAD = unchecked((sbyte) 0xee);
 
             // Returns true if the unicode char is "after" the
             // surrogates in UTF16, ie >= U+E000 and <= U+FFFF:
