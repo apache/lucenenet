@@ -561,7 +561,7 @@ namespace Lucene.Net.Search
 
                 values = new sbyte[maxDoc];
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(this, values, parser);
+                Uninvert u = new UninvertAnonymousInnerClassHelper(values, parser);
 
                 u.DoUninvert(reader, key.Field, setDocsWithField);
 
@@ -575,14 +575,11 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly ByteCache OuterInstance;
+                private readonly sbyte[] Values;
+                private readonly FieldCache.IByteParser Parser;
 
-                private sbyte[] Values;
-                private FieldCache.IByteParser Parser;
-
-                public UninvertAnonymousInnerClassHelper(ByteCache outerInstance, sbyte[] values, FieldCache.IByteParser parser)
+                public UninvertAnonymousInnerClassHelper(sbyte[] values, FieldCache.IByteParser parser)
                 {
-                    this.OuterInstance = outerInstance;
                     this.Values = values;
                     this.Parser = parser;
                 }

@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         /// <summary>
         /// norms header placeholder </summary>
-        internal static readonly sbyte[] NORMS_HEADER = new sbyte[] { (sbyte)'N', (sbyte)'R', (sbyte)'M', -1 };
+        internal static readonly sbyte[] NORMS_HEADER = { (sbyte)'N', (sbyte)'R', (sbyte)'M', -1 };
 
         /// <summary>
         /// Extension of norms file </summary>

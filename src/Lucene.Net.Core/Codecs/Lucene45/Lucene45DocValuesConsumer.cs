@@ -581,7 +581,7 @@ catch (System.IO.IOException)
 throw;
 }
 
-bytesRef.Bytes = (sbyte[])(Array)buffer;
+bytesRef.Bytes = buffer;
 bytesRef.Offset = 0;
 bytesRef.Length = output.Position;
 
