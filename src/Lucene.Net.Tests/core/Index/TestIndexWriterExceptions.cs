@@ -705,7 +705,7 @@ namespace Lucene.Net.Index
                         {
                             break;
                         }
-                        if (typeof(FreqProxTermsWriterPerField).Name.Equals(frame.GetType().Name) && "Flush".Equals(method.Name))
+                        if (typeof(FreqProxTermsWriterPerField).Name.Equals(method.DeclaringType.Name) && "Flush".Equals(method.Name))
                         {
                             sawAppend = true;
                         }
@@ -1055,7 +1055,7 @@ namespace Lucene.Net.Index
                     foreach (var frame in trace.GetFrames())
                     {
                         var method = frame.GetMethod();
-                        if (DoFail && typeof(MockDirectoryWrapper).Name.Equals(frame.GetType().Name) && "Sync".Equals(method.Name))
+                        if (DoFail && typeof(MockDirectoryWrapper).Name.Equals(method.DeclaringType.Name) && "Sync".Equals(method.Name))
                         {
                             DidFail = true;
                             if (VERBOSE)
@@ -1120,8 +1120,8 @@ namespace Lucene.Net.Index
         {
             internal bool FailOnCommit, FailOnDeleteFile;
             internal readonly bool DontFailDuringGlobalFieldMap;
-            internal const string PREPARE_STAGE = "prepareCommit";
-            internal const string FINISH_STAGE = "finishCommit";
+            internal const string PREPARE_STAGE = "PrepareCommit";
+            internal const string FINISH_STAGE = "FinishCommit";
             internal readonly string Stage;
 
             public FailOnlyInCommit(bool dontFailDuringGlobalFieldMap, string stage)
@@ -1132,7 +1132,7 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                var trace = new StackTrace(new Exception());
+                var trace = new StackTrace();
                 bool isCommit = false;
                 bool isDelete = false;
                 bool isInGlobalFieldMap = false;
@@ -1143,15 +1143,16 @@ namespace Lucene.Net.Index
                     {
                         break;
                     }
-                    if (typeof(SegmentInfos).Name.Equals(frame.GetType().Name) && Stage.Equals(method.Name))
+
+                    if (typeof(SegmentInfos).Name.Equals(method.DeclaringType.Name) && Stage.Equals(method.Name))
                     {
                         isCommit = true;
                     }
-                    if (typeof(MockDirectoryWrapper).Name.Equals(frame.GetType().Name) && "DeleteFile".Equals(method.Name))
+                    if (typeof(MockDirectoryWrapper).Name.Equals(method.DeclaringType.Name) && "DeleteFile".Equals(method.Name))
                     {
                         isDelete = true;
                     }
-                    if (typeof(SegmentInfos).Name.Equals(frame.GetType().Name) && "WriteGlobalFieldMap".Equals(method.Name))
+                    if (typeof(SegmentInfos).Name.Equals(method.DeclaringType.Name) && "WriteGlobalFieldMap".Equals(method.Name))
                     {
                         isInGlobalFieldMap = true;
                     }
@@ -1660,8 +1661,8 @@ namespace Lucene.Net.Index
 
         private class FailOnTermVectors : MockDirectoryWrapper.Failure
         {
-            internal const string INIT_STAGE = "initTermVectorsWriter";
-            internal const string AFTER_INIT_STAGE = "finishDocument";
+            internal const string INIT_STAGE = "InitTermVectorsWriter";
+            internal const string AFTER_INIT_STAGE = "FinishDocument";
             internal const string EXC_MSG = "FOTV";
             internal readonly string Stage;
 
@@ -1677,7 +1678,7 @@ namespace Lucene.Net.Index
                 foreach (var frame in trace.GetFrames())
                 {
                     var method = frame.GetMethod();
-                    if (typeof(TermVectorsConsumer).Name.Equals(frame.GetType().Name) && Stage.Equals(method.Name))
+                    if (typeof(TermVectorsConsumer).Name.Equals(method.DeclaringType.Name) && Stage.Equals(method.Name))
                     {
                         fail = true;
                         break;
