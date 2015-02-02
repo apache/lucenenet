@@ -704,6 +704,11 @@ namespace Lucene.Net.Index
             return (IndexWriterConfig)base.SetUseCompoundFile(useCompoundFile);
         }
 
+        public IndexWriterConfig SetCheckIntegrityAtMerge(bool checkIntegrityAtMerge)
+        {
+            return (IndexWriterConfig)base.SetCheckIntegrityAtMerge(checkIntegrityAtMerge);
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder(base.ToString());
