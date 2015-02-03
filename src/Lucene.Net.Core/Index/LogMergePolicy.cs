@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
             int numSegments = infos.Size();
             int numToMerge = 0;
             SegmentCommitInfo mergeInfo = null;
-            bool? segmentIsOriginal = false;
+            bool segmentIsOriginal = false;
             for (int i = 0; i < numSegments && numToMerge <= maxNumSegments; i++)
             {
                 SegmentCommitInfo info = infos.Info(i);
@@ -232,13 +232,13 @@ namespace Lucene.Net.Index
                 segmentsToMerge.TryGetValue(info, out isOriginal);
                 if (isOriginal != null)
                 {
-                    segmentIsOriginal = isOriginal;
+                    segmentIsOriginal = isOriginal.Value;
                     numToMerge++;
                     mergeInfo = info;
                 }
             }
 
-            return numToMerge <= maxNumSegments && (numToMerge != 1 || segmentIsOriginal != false || IsMerged(infos, mergeInfo));
+            return numToMerge <= maxNumSegments && (numToMerge != 1 || !segmentIsOriginal || IsMerged(infos, mergeInfo));
         }
 
         /// <summary>

@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
             tp.NextPosition();
             BytesRef b = tp.Payload;
             Assert.AreEqual(1, b.Length);
-            Assert.AreEqual((sbyte)target, b.Bytes[b.Offset], "Wrong payload for the target " + target + ": " + b.Bytes[b.Offset]);
+            Assert.AreEqual((sbyte)target, (sbyte)b.Bytes[b.Offset], "Wrong payload for the target " + target + ": " + (sbyte)b.Bytes[b.Offset]);
         }
 
         private class PayloadAnalyzer : Analyzer
