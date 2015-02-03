@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
         {
             /*Linked*/
             HashMap<Term, BinaryDocValuesUpdate> fieldUpdates;
-            if (!BinaryUpdates.TryGetValue(update.Field, out fieldUpdates)) ;
+            if (!BinaryUpdates.TryGetValue(update.Field, out fieldUpdates))
             {
                 fieldUpdates = new /*Linked*/HashMap<Term, BinaryDocValuesUpdate>();
                 BinaryUpdates[update.Field] = fieldUpdates;
