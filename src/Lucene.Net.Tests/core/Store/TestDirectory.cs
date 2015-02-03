@@ -260,17 +260,11 @@ namespace Lucene.Net.Store
         public virtual void TestDontCreate()
         {
             var path = new DirectoryInfo(Path.Combine(AppSettings.Get("tmpDir", ""), "doesnotexist"));
-            try
-            {
-                Assert.IsTrue(!path.Exists);
-                Directory dir = new SimpleFSDirectory(path, null);
-                Assert.IsTrue(!path.Exists);
-                dir.Dispose();
-            }
-            finally
-            {
-                System.IO.Directory.Delete(path.FullName, true);
-            }
+
+            Assert.IsTrue(!path.Exists);
+            Directory dir = new SimpleFSDirectory(path, null);
+            Assert.IsTrue(!path.Exists);
+            dir.Dispose();
         }
 
         // LUCENE-1468
