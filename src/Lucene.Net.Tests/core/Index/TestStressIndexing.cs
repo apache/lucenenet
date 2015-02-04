@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -200,6 +201,7 @@ namespace Lucene.Net.Index
         */
 
         [Test]
+        [LongRunningTest]
         public virtual void TestStressIndexAndSearching()
         {
             Directory directory = NewDirectory();

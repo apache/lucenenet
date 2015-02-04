@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 
@@ -225,7 +226,7 @@ namespace Lucene.Net.Index
         }
 
         // Tests Terms.intersect
-        [Test]
+        [Test, LongRunningTest, Timeout(int.MaxValue)]
         public virtual void TestIntersectRandom()
         {
             Directory dir = NewDirectory();

@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         // Writes random byte/s to "normal" file in dir, then
         // copies into PagedBytes and verifies with
         // PagedBytes.Reader:
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestDataInputOutput()
         {
             Random random = Random();
@@ -114,7 +114,7 @@ namespace Lucene.Net.Util
         // Writes random byte/s into PagedBytes via
         // .getDataOutput(), then verifies with
         // PagedBytes.getDataInput():
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestDataInputOutput2()
         {
             Random random = Random();
