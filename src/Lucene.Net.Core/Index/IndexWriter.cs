@@ -2135,7 +2135,7 @@ namespace Lucene.Net.Index
                 SegmentsToMerge.Clear();
                 foreach (SegmentCommitInfo info in segmentInfos.Segments)
                 {
-                    SegmentsToMerge[info] = true;
+                    if (info != null) SegmentsToMerge[info] = true;
                 }
                 MergeMaxNumSegments = maxNumSegments;
 
@@ -2144,13 +2144,13 @@ namespace Lucene.Net.Index
                 foreach (MergePolicy.OneMerge merge in PendingMerges)
                 {
                     merge.MaxNumSegments = maxNumSegments;
-                    SegmentsToMerge[merge.Info] = true;
+                    if (merge.Info != null) SegmentsToMerge[merge.Info] = true;
                 }
 
                 foreach (MergePolicy.OneMerge merge in RunningMerges)
                 {
                     merge.MaxNumSegments = maxNumSegments;
-                    SegmentsToMerge[merge.Info] = true;
+                    if (merge.Info != null) SegmentsToMerge[merge.Info] = true;
                 }
             }
 
