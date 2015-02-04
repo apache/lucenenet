@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 
         public class OneMerge
         {
-            internal SegmentCommitInfo Info_Renamed; // used by IndexWriter
+            internal SegmentCommitInfo info; // used by IndexWriter
             internal bool RegisterDone; // used by IndexWriter
             internal long MergeGen; // used by IndexWriter
             internal bool IsExternal; // used by IndexWriter
@@ -191,11 +191,11 @@ namespace Lucene.Net.Index
             {
                 set
                 {
-                    this.Info_Renamed = value;
+                    this.info = value;
                 }
                 get
                 {
-                    return Info_Renamed;
+                    return info;
                 }
             }
 
@@ -352,9 +352,9 @@ namespace Lucene.Net.Index
                     }
                     b.Append(Segments[i].ToString(dir, 0));
                 }
-                if (Info_Renamed != null)
+                if (info != null)
                 {
-                    b.Append(" into ").Append(Info_Renamed.Info.Name);
+                    b.Append(" into ").Append(info.Info.Name);
                 }
                 if (MaxNumSegments != -1)
                 {

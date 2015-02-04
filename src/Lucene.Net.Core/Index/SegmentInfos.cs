@@ -1363,7 +1363,7 @@ namespace Lucene.Net.Index
                 {
                     if (!inserted && !dropSegment)
                     {
-                        segments[segIdx] = merge.Info_Renamed;
+                        segments[segIdx] = merge.info;
                         inserted = true;
                         newSegIdx++;
                     }
@@ -1385,7 +1385,7 @@ namespace Lucene.Net.Index
             // we insert it at the beginning if it should not be dropped:
             if (!inserted && !dropSegment)
             {
-                segments.Insert(0, merge.Info_Renamed);
+                segments.Insert(0, merge.info);
             }
         }
 
