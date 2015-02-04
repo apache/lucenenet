@@ -671,7 +671,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, Nightly, Timeout(int.MaxValue)]
+        [Test, LongRunningTest, Timeout(int.MaxValue)]
         public void TestBigDocuments()
         {
             // "big" as "much bigger than the chunk size"

@@ -734,7 +734,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, Nightly, Timeout(int.MaxValue)]
+        [Test, LongRunningTest, Timeout(int.MaxValue)]
         public virtual void TestLotsOfFields()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 500, 10);
