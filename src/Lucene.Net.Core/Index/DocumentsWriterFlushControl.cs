@@ -734,20 +734,28 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                IEnumerator<BlockedFlush> iterator = BlockedFlushes.GetEnumerator();
-                while (iterator.MoveNext())
+                var toRemove = new List<BlockedFlush>();
+
+                try
                 {
-                    BlockedFlush blockedFlush = iterator.Current;
-                    if (blockedFlush.Dwpt.DeleteQueue == flushingQueue)
+                    IEnumerator<BlockedFlush> iterator = BlockedFlushes.GetEnumerator();
+                    while (iterator.MoveNext())
                     {
-                        //LUCENE TODO: Move to try finally
-                        BlockedFlushes.Remove(blockedFlush);
-                        Debug.Assert(!FlushingWriters.ContainsKey(blockedFlush.Dwpt), "DWPT is already flushing");
-                        // Record the flushing DWPT to reduce flushBytes in doAfterFlush
-                        FlushingWriters[blockedFlush.Dwpt] = Convert.ToInt64(blockedFlush.Bytes);
-                        // don't decr pending here - its already done when DWPT is blocked
-                        FlushQueue.Enqueue(blockedFlush.Dwpt);
+                        BlockedFlush blockedFlush = iterator.Current;
+                        if (blockedFlush.Dwpt.DeleteQueue == flushingQueue)
+                        {
+                            toRemove.Add(blockedFlush);
+                            Debug.Assert(!FlushingWriters.ContainsKey(blockedFlush.Dwpt), "DWPT is already flushing");
+                            // Record the flushing DWPT to reduce flushBytes in doAfterFlush
+                            FlushingWriters[blockedFlush.Dwpt] = Convert.ToInt64(blockedFlush.Bytes);
+                            // don't decr pending here - its already done when DWPT is blocked
+                            FlushQueue.Enqueue(blockedFlush.Dwpt);
+                        }
                     }
+                }
+                finally
+                {
+                    BlockedFlushes.RemoveAll(toRemove);
                 }
             }
         }
