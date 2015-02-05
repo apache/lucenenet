@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using Lucene.Net.Documents;
@@ -86,48 +89,49 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// A TokenStream using the default attribute factory.
         /// </summary>
-        protected internal TokenStream()
+        protected TokenStream()
         {
-            //Debug.Assert(AssertFinal());
+            Debug.Assert(AssertFinal());
         }
 
         /// <summary>
         /// A TokenStream that uses the same attributes as the supplied one.
         /// </summary>
-        protected internal TokenStream(AttributeSource input)
+        protected TokenStream(AttributeSource input)
             : base(input)
         {
-            //Debug.Assert(AssertFinal());
+            Debug.Assert(AssertFinal());
         }
 
         /// <summary>
         /// A TokenStream using the supplied AttributeFactory for creating new <seealso cref="Attribute"/> instances.
         /// </summary>
-        protected internal TokenStream(AttributeFactory factory)
+        protected TokenStream(AttributeFactory factory)
             : base(factory)
         {
-            //Debug.Assert(AssertFinal());
+            Debug.Assert(AssertFinal());
         }
 
-        /* LUCENENET TO-DO
         private bool AssertFinal()
         {
-          try
-          {
-            Type clazz = this.GetType();
-            if (!clazz.desiredAssertionStatus())
+            var type = this.GetType();
+
+            //if (!type.desiredAssertionStatus()) return true; // not supported in .NET
+
+            var hasCompilerGeneratedAttribute =
+                type.GetCustomAttributes(typeof (CompilerGeneratedAttribute), false).Any();
+            var isAnonymousType = hasCompilerGeneratedAttribute && type.FullName.Contains("AnonymousType");
+
+            var method = type.GetMethod("IncrementToken", BindingFlags.Public | BindingFlags.Instance);
+
+            if (!(isAnonymousType || type.IsSealed || (method != null && method.IsFinal)))            
             {
-              return true;
+                // Original Java code throws an AssertException via Java's assert, we can't do this here
+                throw new InvalidOperationException("TokenStream implementation classes or at least their IncrementToken() implementation must be marked sealed");
             }
-            Debug.Assert(clazz.AnonymousClass || (clazz.Modifiers & (Modifier.FINAL | Modifier.PRIVATE)) != 0 || Modifier.isFinal(clazz.GetMethod("incrementToken").Modifiers), "TokenStream implementation classes or at least their IncrementToken() implementation must be final");
+
             return true;
-          }
-          catch (Exception nsme)
-          {
-            return false;
-          }
         }
-        */
 
         /// <summary>
         /// Consumers (i.e., <seealso cref="IndexWriter"/>) use this method to advance the stream to
