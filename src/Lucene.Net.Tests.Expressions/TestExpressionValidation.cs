@@ -60,7 +60,7 @@ namespace Lucene.Net.Tests.Expressions
 			}
 		}
 
-        [Test, Ignore("Causing the runner to crash. revisit after all tests are fixed")]
+        [Test,Ignore("StackOverflowException can't be caught in .NET")]
 		public virtual void TestSelfRecursion()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -76,7 +76,7 @@ namespace Lucene.Net.Tests.Expressions
 			}
 		}
 
-		[Test, Ignore("Causing the runner to crash. revisit after all tests are fixed")]
+        [Test, Ignore("StackOverflowException can't be caught in .NET")]
 		public virtual void TestCoRecursion()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -93,7 +93,7 @@ namespace Lucene.Net.Tests.Expressions
 			}
 		}
 
-        [Test, Ignore("Causing the runner to crash. revisit after all tests are fixed")]
+        [Test, Ignore("StackOverflowException can't be caught in .NET")]
 		public virtual void TestCoRecursion2()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -111,7 +111,7 @@ namespace Lucene.Net.Tests.Expressions
 			}
 		}
 
-        [Test, Ignore("Causing the runner to crash. revisit after all tests are fixed")]
+        [Test, Ignore("StackOverflowException can't be caught in .NET")]
 		public virtual void TestCoRecursion3()
 		{
 			SimpleBindings bindings = new SimpleBindings();
@@ -129,7 +129,7 @@ namespace Lucene.Net.Tests.Expressions
 			}
 		}
 
-        [Test, Ignore("Causing the runner to crash. revisit after all tests are fixed")]
+        [Test, Ignore("StackOverflowException can't be caught in .NET")]
 		public virtual void TestCoRecursion4()
 		{
 			SimpleBindings bindings = new SimpleBindings();
