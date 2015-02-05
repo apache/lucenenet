@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -307,10 +308,25 @@ namespace Lucene.Net.Util.Packed
         [Test]
         public virtual void TestStrictMonotoneSequences()
         {
-            // for (int s = 2; s < 1222; s++) {
+            for (int s = 2; s < 1222; s++)
+            {
+                var values = new long[s];
+                for (int i = 0; i < s; i++)
+                {
+                    values[i] = i * ((long)i - 1) / 2; // Add a gap of (s-1) to previous
+                    // s = (s*(s+1) - (s-1)*s)/2
+                }
+                TstEFS2(values);
+            }
+        }
+
+        [Test]
+        [LongRunningTest]
+        public virtual void TestStrictMonotoneSequencesLonger()
+        {
             for (int s = 2; s < 4422; s++)
             {
-                long[] values = new long[s];
+                var values = new long[s];
                 for (int i = 0; i < s; i++)
                 {
                     values[i] = i * ((long)i - 1) / 2; // Add a gap of (s-1) to previous
