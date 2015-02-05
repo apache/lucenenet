@@ -155,5 +155,4 @@ namespace Lucene.Net.Analysis.Miscellaneous
             hyphenated.Length = 0;
         }
     }
-
 }

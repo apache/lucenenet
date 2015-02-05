@@ -536,9 +536,9 @@ namespace Lucene.Net.Store
             }
         }
 
-        // sets the cause of the incoming ioe to be the stack
-        // trace when the offending file name was opened
-        private Exception FillOpenTrace(Exception t, string name, bool input)
+        // if there are any exceptions in OpenFileHandles
+        // capture those as inner exceptions
+        private Exception WithAdditionalErrorInformation(Exception t, string name, bool input)
         {
             lock (this)
             {
@@ -546,17 +546,22 @@ namespace Lucene.Net.Store
                 {
                     if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).Name.Equals(name))
                     {
-                        t = new Exception(ent.Value.Message, ent.Value);
+                        t = CreateException(t, ent.Value);
                         break;
                     }
                     else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).Name.Equals(name))
                     {
-                        t = new Exception(ent.Value.Message, ent.Value);
+                        t = CreateException(t, ent.Value);
                         break;
                     }
                 }
                 return t;
             }
+        }
+
+        private Exception CreateException(Exception exception, Exception innerException)
+        {
+            return (Exception)Activator.CreateInstance(exception.GetType(), exception.Message, innerException);
         }
 
         private void MaybeYield()
@@ -592,11 +597,11 @@ namespace Lucene.Net.Store
 
                         if (!assertNoDeleteOpenFile)
                         {
-                            throw FillOpenTrace(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                            throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                         }
                         else
                         {
-                            throw FillOpenTrace(new AssertionException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                            throw WithAdditionalErrorInformation(new AssertionException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                         }
                     }
                     else
@@ -776,7 +781,7 @@ namespace Lucene.Net.Store
                 // output, except for segments.gen and segments_N
                 if (!AllowReadingFilesStillOpenForWrite_Renamed && OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
                 {
-                    throw FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
+                    throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
                 }
 
                 IndexInput delegateInput = @in.OpenInput(name, LuceneTestCase.NewIOContext(RandomState, context));
@@ -1304,7 +1309,7 @@ namespace Lucene.Net.Store
 
             if (OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
             {
-                throw (System.IO.IOException)FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
+                throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
             }
 
             IndexInputSlicer delegateHandle = @in.CreateSlicer(name, context);

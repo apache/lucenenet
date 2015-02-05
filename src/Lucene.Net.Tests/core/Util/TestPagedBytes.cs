@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -178,6 +179,7 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        [LongRunningTest]
         public virtual void TestOverflow() // memory hole
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));

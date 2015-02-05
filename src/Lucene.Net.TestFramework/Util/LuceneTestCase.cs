@@ -974,9 +974,8 @@ namespace Lucene.Net.Util
 
         public static LogMergePolicy NewLogMergePolicy(Random r)
         {
-            // LUCENENET TODO: don't use LogByteSizeMergePolicy until it is fixed
-            //LogMergePolicy logmp = r.NextBoolean() ? (LogMergePolicy)new LogDocMergePolicy() : new LogByteSizeMergePolicy();
-            LogMergePolicy logmp = new LogDocMergePolicy();
+            LogMergePolicy logmp = r.NextBoolean() ? (LogMergePolicy)new LogDocMergePolicy() : new LogByteSizeMergePolicy();
+            
             logmp.CalibrateSizeByDeletes = r.NextBoolean();
             if (Rarely(r))
             {
