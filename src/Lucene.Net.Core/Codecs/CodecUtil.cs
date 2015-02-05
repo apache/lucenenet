@@ -127,7 +127,7 @@ namespace Lucene.Net.Codecs
             int actualHeader = @in.ReadInt();
             if (actualHeader != CODEC_MAGIC)
             {
-                throw new Exception("codec header mismatch: actual header=" + actualHeader + " vs expected header=" + CODEC_MAGIC + " (resource: " + @in + ")");
+                throw new System.IO.IOException("codec header mismatch: actual header=" + actualHeader + " vs expected header=" + CODEC_MAGIC + " (resource: " + @in + ")");
             }
             return CheckHeaderNoMagic(@in, codec, minVersion, maxVersion);
         }
@@ -143,17 +143,17 @@ namespace Lucene.Net.Codecs
             string actualCodec = @in.ReadString();
             if (!actualCodec.Equals(codec))
             {
-                throw new Exception("codec mismatch: actual codec=" + actualCodec + " vs expected codec=" + codec + " (resource: " + @in + ")");
+                throw new System.IO.IOException("codec mismatch: actual codec=" + actualCodec + " vs expected codec=" + codec + " (resource: " + @in + ")");
             }
 
             int actualVersion = @in.ReadInt();
             if (actualVersion < minVersion)
             {
-                throw new Exception("Version: " + actualVersion + " is not supported. Minimum Version number is " + minVersion + ".");
+                throw new System.IO.IOException("Version: " + actualVersion + " is not supported. Minimum Version number is " + minVersion + ".");
             }
             if (actualVersion > maxVersion)
             {
-                throw new Exception("Version: " + actualVersion + " is not supported. Maximum Version number is " + maxVersion + ".");
+                throw new System.IO.IOException("Version: " + actualVersion + " is not supported. Maximum Version number is " + maxVersion + ".");
             }
 
             return actualVersion;
@@ -183,6 +183,7 @@ namespace Lucene.Net.Codecs
         {
             @out.WriteInt(FOOTER_MAGIC);
             @out.WriteInt(0);
+            Debug.WriteLine("Checksum = {0}", @out.Checksum);
             @out.WriteLong(@out.Checksum);
         }
 
@@ -209,11 +210,11 @@ namespace Lucene.Net.Codecs
             long expectedChecksum = @in.ReadLong();
             if (expectedChecksum != actualChecksum)
             {
-                throw new Exception("checksum failed (hardware problem?) : expected=" + expectedChecksum.ToString("x") + " actual=" + actualChecksum.ToString("x") + " (resource=" + @in + ")");
+                throw new System.IO.IOException("checksum failed (hardware problem?) : expected=" + expectedChecksum.ToString("x") + " actual=" + actualChecksum.ToString("x") + " (resource=" + @in + ")");
             }
             if (@in.FilePointer != @in.Length())
             {
-                throw new Exception("did not read all bytes from file: read " + @in.FilePointer + " vs size " + @in.Length() + " (resource: " + @in + ")");
+                throw new System.IO.IOException("did not read all bytes from file: read " + @in.FilePointer + " vs size " + @in.Length() + " (resource: " + @in + ")");
             }
             return actualChecksum;
         }
@@ -234,13 +235,13 @@ namespace Lucene.Net.Codecs
             int magic = @in.ReadInt();
             if (magic != FOOTER_MAGIC)
             {
-                throw new Exception("codec footer mismatch: actual footer=" + magic + " vs expected footer=" + FOOTER_MAGIC + " (resource: " + @in + ")");
+                throw new System.IO.IOException("codec footer mismatch: actual footer=" + magic + " vs expected footer=" + FOOTER_MAGIC + " (resource: " + @in + ")");
             }
 
             int algorithmID = @in.ReadInt();
             if (algorithmID != 0)
             {
-                throw new Exception("codec footer mismatch: unknown algorithmID: " + algorithmID);
+                throw new System.IO.IOException("codec footer mismatch: unknown algorithmID: " + algorithmID);
             }
         }
 
@@ -252,7 +253,7 @@ namespace Lucene.Net.Codecs
         {
             if (@in.FilePointer != @in.Length())
             {
-                throw new Exception("did not read all bytes from file: read " + @in.FilePointer + " vs size " + @in.Length() + " (resource: " + @in + ")");
+                throw new System.IO.IOException("did not read all bytes from file: read " + @in.FilePointer + " vs size " + @in.Length() + " (resource: " + @in + ")");
             }
         }
 
