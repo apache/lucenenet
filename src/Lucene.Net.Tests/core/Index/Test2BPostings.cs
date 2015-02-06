@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class Test2BPostings : LuceneTestCase
     {
-        [Test, Nightly, Timeout(int.MaxValue)]
+        [Test, LongRunningTest, Timeout(int.MaxValue)]
         public virtual void Test()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostings"));
