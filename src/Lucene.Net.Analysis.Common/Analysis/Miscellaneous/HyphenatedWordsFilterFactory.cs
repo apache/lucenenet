@@ -48,5 +48,4 @@ namespace Lucene.Net.Analysis.Miscellaneous
 		return new HyphenatedWordsFilter(input);
 	  }
 	}
-
 }

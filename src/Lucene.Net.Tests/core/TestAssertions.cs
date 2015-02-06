@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Lucene.Net.Tests
 {
     using NUnit.Framework;
@@ -30,7 +32,7 @@ namespace Lucene.Net.Tests
 
         internal class TestTokenStream1 : TokenStream
         {
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 return false;
             }
@@ -55,19 +57,21 @@ namespace Lucene.Net.Tests
         [Test]
         public virtual void TestTokenStreams()
         {
-            new TestTokenStream1();
-            new TestTokenStream2();
-            bool doFail = false;
+            // In Java, an AssertionError is expected: TokenStream implementation classes or at least their incrementToken() implementation must be final
+
+            var a = new TestTokenStream1();
+            var b = new TestTokenStream2();
+            var doFail = false;
             try
             {
-                new TestTokenStream3();
+                var c = new TestTokenStream3();
                 doFail = true;
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 // expected
             }
-            Assert.IsFalse(doFail, "TestTokenStream3 should fail assertion");
+            assertFalse("TestTokenStream3 should fail assertion", doFail);
         }
     }
 

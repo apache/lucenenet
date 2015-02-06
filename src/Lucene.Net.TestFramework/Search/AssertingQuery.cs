@@ -46,7 +46,8 @@ namespace Lucene.Net.Search
         /// Wrap a query if necessary. </summary>
         public static Query Wrap(Random random, Query query)
         {
-            return query is AssertingQuery ? query : new AssertingQuery(random, query);
+            var aq = query as AssertingQuery;
+            return aq ?? new AssertingQuery(random, query);
         }
 
         public override Weight CreateWeight(IndexSearcher searcher)
@@ -105,7 +106,8 @@ namespace Lucene.Net.Search
             }
             set
             {
-                @in.Boost = value;
+                if (@in != null)
+                    @in.Boost = value;
             }
         }
     }

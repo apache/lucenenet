@@ -1,4 +1,7 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
+﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Miscellaneous;
+
+namespace org.apache.lucene.analysis.miscellaneous
 {
 
 	/*
@@ -28,7 +31,7 @@
 	public class PrefixAndSuffixAwareTokenFilter : TokenStream
 	{
 
-	  private PrefixAwareTokenFilter suffix;
+	  private readonly PrefixAwareTokenFilter suffix;
 
 	  public PrefixAndSuffixAwareTokenFilter(TokenStream prefix, TokenStream input, TokenStream suffix) : base(suffix)
 	  {
@@ -68,29 +71,24 @@
 
 	  public virtual Token updateInputToken(Token inputToken, Token lastPrefixToken)
 	  {
-		inputToken.setOffset(lastPrefixToken.endOffset() + inputToken.startOffset(), lastPrefixToken.endOffset() + inputToken.endOffset());
+		inputToken.SetOffset(lastPrefixToken.endOffset() + inputToken.startOffset(), lastPrefixToken.endOffset() + inputToken.endOffset());
 		return inputToken;
 	  }
 
 	  public virtual Token updateSuffixToken(Token suffixToken, Token lastInputToken)
 	  {
-		suffixToken.setOffset(lastInputToken.endOffset() + suffixToken.startOffset(), lastInputToken.endOffset() + suffixToken.endOffset());
+		suffixToken.SetOffset(lastInputToken.endOffset() + suffixToken.startOffset(), lastInputToken.endOffset() + suffixToken.endOffset());
 		return suffixToken;
 	  }
 
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		return suffix.incrementToken();
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		suffix.reset();
+		suffix.Reset();
 	  }
 
 

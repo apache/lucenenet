@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
-using org.apache.lucene.analysis.miscellaneous;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -50,7 +49,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 		}
 	  }
 
-	  public override CodepointCountFilter Create(TokenStream input)
+	  public override TokenStream Create(TokenStream input)
 	  {
 		return new CodepointCountFilter(luceneMatchVersion, input, min, max);
 	  }

@@ -182,9 +182,9 @@ namespace Lucene.Net.Search
             // see http://docs.oracle.com/javase/7/docs/api/java/lang/SafeVarargs.html
             IEnumerable<ISet<string>> occurList = Arrays.AsList(Collections.Singleton("MUST"), new HashSet<string>(Arrays.AsList("MUST", "SHOULD")));
 
-            foreach (HashSet<string> occur in occurList)
+            foreach (var occur in occurList)
             {
-                CountingCollector c = new CountingCollector(TopScoreDocCollector.Create(10, true), occur);
+                var c = new CountingCollector(TopScoreDocCollector.Create(10, true), occur);
                 s.Search(query, null, c);
                 int maxDocs = s.IndexReader.MaxDoc;
                 Assert.AreEqual(maxDocs, c.DocCounts.Count);

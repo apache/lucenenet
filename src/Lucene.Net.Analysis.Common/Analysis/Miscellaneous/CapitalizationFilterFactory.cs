@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
-using org.apache.lucene.analysis.miscellaneous;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {

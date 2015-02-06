@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// <param name="ignoreCase">
 	  ///          <code>false</code> if and only if the set should be case sensitive
 	  ///          otherwise <code>true</code>. </param>
-	  public CharArraySet(Version matchVersion, int startSize, bool ignoreCase) : this(new CharArrayMap<>(matchVersion, startSize, ignoreCase))
+	  public CharArraySet(Lucene.Net.Util.Version matchVersion, int startSize, bool ignoreCase) : this(new CharArrayMap<>(matchVersion, startSize, ignoreCase))
 	  {
 	  }
 

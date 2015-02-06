@@ -2101,9 +2101,9 @@ loop16_break: ;
 
 		internal static readonly string DFA9_eofS = "\x7\uffff";
 
-		internal static readonly string DFA9_minS = "\x3\x2E\x3\uffff\x1\x2E";
+		internal static readonly string DFA9_minS = "\x3\x30\x3\uffff\x1\x30";
 
-		internal static readonly string DFA9_maxS = "\x1\x39\x1\x2E\x1\x39\x3\uffff\x1\x39";
+		internal static readonly string DFA9_maxS = "\x1\x49\x1\x30\x1\x49\x3\uffff\x1\x49";
 
 		internal static readonly string DFA9_acceptS = "\x3\uffff\x1\x2\x1\x3\x1\x1\x1\uffff";
 
@@ -2117,10 +2117,9 @@ loop16_break: ;
 
 		internal static readonly short[] DFA9_eof = DFA.UnpackEncodedString(DFA9_eofS);
 
-        //internal static readonly char[] DFA9_min = {'.','.','.','?','?','?','.'}; 
-	    internal static readonly char[] DFA9_min = DFA.UnpackEncodedStringToUnsignedChars(DFA9_minS);
-        //{'9', '.', '9', '?', '?', '?', '9'};
-	    internal static readonly char[] DFA9_max = DFA.UnpackEncodedStringToUnsignedChars(DFA9_maxS);
+	    internal static readonly char[] DFA9_min = {'.','.','.','?','?','?','.'}; //DFA.UnpackEncodedStringToUnsignedChars(DFA9_minS);
+
+	    internal static readonly char[] DFA9_max = {'9', '.', '9', '?', '?', '?', '9'}; //DFA.UnpackEncodedStringToUnsignedChars(DFA9_maxS);
 
 		internal static readonly short[] DFA9_accept = DFA.UnpackEncodedString(DFA9_acceptS
 			);

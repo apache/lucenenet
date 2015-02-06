@@ -299,12 +299,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             internal SegmentTermEnum SeekTermEnum;
 
-            internal static readonly sbyte UTF8_NON_BMP_LEAD = unchecked((sbyte)0xf0);
-            internal static readonly sbyte UTF8_HIGH_BMP_LEAD = unchecked((sbyte)0xee);
+            private static readonly sbyte UTF8_NON_BMP_LEAD = unchecked((sbyte) 0xf0);
+            private static readonly sbyte UTF8_HIGH_BMP_LEAD = unchecked((sbyte) 0xee);
 
             // Returns true if the unicode char is "after" the
             // surrogates in UTF16, ie >= U+E000 and <= U+FFFF:
-            private bool IsHighBMPChar(byte[] b, int idx)
+            private static bool IsHighBMPChar(byte[] b, int idx)
             {
                 return (((sbyte)b[idx]) & UTF8_HIGH_BMP_LEAD) == UTF8_HIGH_BMP_LEAD;
             }
@@ -312,7 +312,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // Returns true if the unicode char in the UTF8 byte
             // sequence starting at idx encodes a char outside of
             // BMP (ie what would be a surrogate pair in UTF16):
-            private bool IsNonBMPChar(byte[] b, int idx)
+            private static bool IsNonBMPChar(byte[] b, int idx)
             {
                 return (((sbyte)b[idx]) & UTF8_NON_BMP_LEAD) == UTF8_NON_BMP_LEAD;
             }
