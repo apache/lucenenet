@@ -90,9 +90,10 @@ namespace Lucene.Net.Expressions.JS
 		// ANTLR GENERATED CODE: DO NOT EDIT
 		public override void DisplayRecognitionError(string[] tokenNames, RecognitionException re)
 		{
-            var message = string.Format("Unable to parse '{0}': unexpected character '{1}' at position ({2}).", re.Input
-                , (char)re.Character, re.CharPositionInLine);
-			throw new ParseException(message, re.CharPositionInLine);
+			string message = " unexpected character '" + (char)re.Character + "' at position (" + re.CharPositionInLine + ").";
+			ParseException parseException = new ParseException(message, re.CharPositionInLine);
+			
+			throw new SystemException(parseException.Message, parseException);
 		}
 
 		// delegates
@@ -927,166 +928,170 @@ loop3_break: ;
 		/// <exception cref="Org.Antlr.Runtime.RecognitionException"></exception>
 		public void MDECIMAL()
 		{
-			try
-			{
-				int _type = DECIMAL;
-				int _channel = TokenChannels.Default;
-				// src/java/org/apache/lucene/expressions/js/Javascript.g:347:5: ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? )
-				int alt9 = 3;
-				alt9 = dfa9.Predict(input);
-				switch (alt9)
-				{
-					case 1:
-					{
-						// src/java/org/apache/lucene/expressions/js/Javascript.g:347:7: DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )?
-						MDECIMALINTEGER();
-						MAT_DOT();
-						// src/java/org/apache/lucene/expressions/js/Javascript.g:347:29: ( DECIMALDIGIT )*
-						while (true)
-						{
-							int alt4 = 2;
-							int LA4_0 = input.LA(1);
-							if (((LA4_0 >= '0' && LA4_0 <= '9')))
-							{
-								alt4 = 1;
-							}
-							switch (alt4)
-							{
-								case 1:
-								{
-									// src/java/org/apache/lucene/expressions/js/Javascript.g:
-									if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
-									{
-										input.Consume();
-									}
-									else
-									{
-										MismatchedSetException mse = new MismatchedSetException(null, input);
-										Recover(mse);
-										throw mse;
-									}
-									break;
-								}
+		    try
+		    {
+		        int type = DECIMAL;
+		        int channel = TokenChannels.Default;
+		        // src/java/org/apache/lucene/expressions/js/Javascript.g:347:5: ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? )
+		        int alt9 = 3;
+		        alt9 = dfa9.Predict(input);
+		        switch (alt9)
+		        {
+		            case 1:
+		            {
+		                // src/java/org/apache/lucene/expressions/js/Javascript.g:347:7: DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )?
+		                MDECIMALINTEGER();
+		                MAT_DOT();
+		                // src/java/org/apache/lucene/expressions/js/Javascript.g:347:29: ( DECIMALDIGIT )*
+		                while (true)
+		                {
+		                    int alt4 = 2;
+		                    int LA4_0 = input.LA(1);
+		                    if (((LA4_0 >= '0' && LA4_0 <= '9')))
+		                    {
+		                        alt4 = 1;
+		                    }
+		                    switch (alt4)
+		                    {
+		                        case 1:
+		                        {
+		                            // src/java/org/apache/lucene/expressions/js/Javascript.g:
+		                            if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
+		                            {
+		                                input.Consume();
+		                            }
+		                            else
+		                            {
+		                                MismatchedSetException mse = new MismatchedSetException(null, input);
+		                                Recover(mse);
+		                                throw mse;
+		                            }
+		                            break;
+		                        }
 
-								default:
-								{
-									goto loop4_break;
-									break;
-								}
-							}
-loop4_continue: ;
-						}
-loop4_break: ;
-						// src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: ( EXPONENT )?
-						int alt5 = 2;
-						int LA5_0 = input.LA(1);
-						if ((LA5_0 == 'E' || LA5_0 == 'e'))
-						{
-							alt5 = 1;
-						}
-						switch (alt5)
-						{
-							case 1:
-							{
-								// src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: EXPONENT
-								MEXPONENT();
-								break;
-							}
-						}
-						break;
-					}
+		                        default:
+		                        {
+		                            goto loop4_break;
+		                            break;
+		                        }
+		                    }
+		                    loop4_continue:
+		                    ;
+		                }
+		                loop4_break:
+		                ;
+		                // src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: ( EXPONENT )?
+		                int alt5 = 2;
+		                int LA5_0 = input.LA(1);
+		                if ((LA5_0 == 'E' || LA5_0 == 'e'))
+		                {
+		                    alt5 = 1;
+		                }
+		                switch (alt5)
+		                {
+		                    case 1:
+		                    {
+		                        // src/java/org/apache/lucene/expressions/js/Javascript.g:347:43: EXPONENT
+		                        MEXPONENT();
+		                        break;
+		                    }
+		                }
+		                break;
+		            }
 
-					case 2:
-					{
-						// src/java/org/apache/lucene/expressions/js/Javascript.g:348:7: AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )?
-						MAT_DOT();
-						// src/java/org/apache/lucene/expressions/js/Javascript.g:348:14: ( DECIMALDIGIT )+
-						int cnt6 = 0;
-						while (true)
-						{
-							int alt6 = 2;
-							int LA6_0 = input.LA(1);
-							if (((LA6_0 >= '0' && LA6_0 <= '9')))
-							{
-								alt6 = 1;
-							}
-							switch (alt6)
-							{
-								case 1:
-								{
-									// src/java/org/apache/lucene/expressions/js/Javascript.g:
-									if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
-									{
-										input.Consume();
-									}
-									else
-									{
-										MismatchedSetException mse = new MismatchedSetException(null, input);
-										Recover(mse);
-										throw mse;
-									}
-									break;
-								}
+		            case 2:
+		            {
+		                // src/java/org/apache/lucene/expressions/js/Javascript.g:348:7: AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )?
+		                MAT_DOT();
+		                // src/java/org/apache/lucene/expressions/js/Javascript.g:348:14: ( DECIMALDIGIT )+
+		                int cnt6 = 0;
+		                while (true)
+		                {
+		                    int alt6 = 2;
+		                    int LA6_0 = input.LA(1);
+		                    if (((LA6_0 >= '0' && LA6_0 <= '9')))
+		                    {
+		                        alt6 = 1;
+		                    }
+		                    switch (alt6)
+		                    {
+		                        case 1:
+		                        {
+		                            // src/java/org/apache/lucene/expressions/js/Javascript.g:
+		                            if ((input.LA(1) >= '0' && input.LA(1) <= '9'))
+		                            {
+		                                input.Consume();
+		                            }
+		                            else
+		                            {
+		                                MismatchedSetException mse = new MismatchedSetException(null, input);
+		                                Recover(mse);
+		                                throw mse;
+		                            }
+		                            break;
+		                        }
 
-								default:
-								{
-									if (cnt6 >= 1)
-									{
-										goto loop6_break;
-									}
-									EarlyExitException eee = new EarlyExitException(6, input);
-									throw eee;
-								}
-							}
-							cnt6++;
-loop6_continue: ;
-						}
-loop6_break: ;
-						// src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: ( EXPONENT )?
-						int alt7 = 2;
-						int LA7_0 = input.LA(1);
-						if ((LA7_0 == 'E' || LA7_0 == 'e'))
-						{
-							alt7 = 1;
-						}
-						switch (alt7)
-						{
-							case 1:
-							{
-								// src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: EXPONENT
-								MEXPONENT();
-								break;
-							}
-						}
-						break;
-					}
+		                        default:
+		                        {
+		                            if (cnt6 >= 1)
+		                            {
+		                                goto loop6_break;
+		                            }
+		                            EarlyExitException eee = new EarlyExitException(6, input);
+		                            throw eee;
+		                        }
+		                    }
+		                    cnt6++;
+		                    loop6_continue:
+		                    ;
+		                }
+		                loop6_break:
+		                ;
+		                // src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: ( EXPONENT )?
+		                int alt7 = 2;
+		                int LA7_0 = input.LA(1);
+		                if ((LA7_0 == 'E' || LA7_0 == 'e'))
+		                {
+		                    alt7 = 1;
+		                }
+		                switch (alt7)
+		                {
+		                    case 1:
+		                    {
+		                        // src/java/org/apache/lucene/expressions/js/Javascript.g:348:28: EXPONENT
+		                        MEXPONENT();
+		                        break;
+		                    }
+		                }
+		                break;
+		            }
 
-					case 3:
-					{
-						// src/java/org/apache/lucene/expressions/js/Javascript.g:349:7: DECIMALINTEGER ( EXPONENT )?
-						MDECIMALINTEGER();
-						// src/java/org/apache/lucene/expressions/js/Javascript.g:349:22: ( EXPONENT )?
-						int alt8 = 2;
-						int LA8_0 = input.LA(1);
-						if ((LA8_0 == 'E' || LA8_0 == 'e'))
-						{
-							alt8 = 1;
-						}
-						switch (alt8)
-						{
-							case 1:
-							{
-								// src/java/org/apache/lucene/expressions/js/Javascript.g:349:22: EXPONENT
-								MEXPONENT();
-								break;
-							}
-						}
-						break;
-					}
-				}
-				state.type = _type;
-				state.channel = _channel;
-			}
+		            case 3:
+		            {
+		                // src/java/org/apache/lucene/expressions/js/Javascript.g:349:7: DECIMALINTEGER ( EXPONENT )?
+		                MDECIMALINTEGER();
+		                // src/java/org/apache/lucene/expressions/js/Javascript.g:349:22: ( EXPONENT )?
+		                int alt8 = 2;
+		                int LA8_0 = input.LA(1);
+		                if ((LA8_0 == 'E' || LA8_0 == 'e'))
+		                {
+		                    alt8 = 1;
+		                }
+		                switch (alt8)
+		                {
+		                    case 1:
+		                    {
+		                        // src/java/org/apache/lucene/expressions/js/Javascript.g:349:22: EXPONENT
+		                        MEXPONENT();
+		                        break;
+		                    }
+		                }
+		                break;
+		            }
+		        }
+		        state.type = type;
+		        state.channel = channel;
+		    }
 			finally
 			{
 			}
@@ -2096,9 +2101,9 @@ loop16_break: ;
 
 		internal static readonly string DFA9_eofS = "\x7\uffff";
 
-		internal static readonly string DFA9_minS = "\x3\x38\x3\uffff\x1\x38";
+		internal static readonly string DFA9_minS = "\x3\x30\x3\uffff\x1\x30";
 
-		internal static readonly string DFA9_maxS = "\x1\x47\x1\x38\x1\x47\x3\uffff\x1\x47";
+		internal static readonly string DFA9_maxS = "\x1\x49\x1\x30\x1\x49\x3\uffff\x1\x49";
 
 		internal static readonly string DFA9_acceptS = "\x3\uffff\x1\x2\x1\x3\x1\x1\x1\uffff";
 
@@ -2112,11 +2117,9 @@ loop16_break: ;
 
 		internal static readonly short[] DFA9_eof = DFA.UnpackEncodedString(DFA9_eofS);
 
-		internal static readonly char[] DFA9_min = DFA.UnpackEncodedStringToUnsignedChars
-			(DFA9_minS);
+	    internal static readonly char[] DFA9_min = {'.','.','.','?','?','?','.'}; //DFA.UnpackEncodedStringToUnsignedChars(DFA9_minS);
 
-		internal static readonly char[] DFA9_max = DFA.UnpackEncodedStringToUnsignedChars
-			(DFA9_maxS);
+	    internal static readonly char[] DFA9_max = {'9', '.', '9', '?', '?', '?', '9'}; //DFA.UnpackEncodedStringToUnsignedChars(DFA9_maxS);
 
 		internal static readonly short[] DFA9_accept = DFA.UnpackEncodedString(DFA9_acceptS
 			);
@@ -2144,13 +2147,13 @@ loop16_break: ;
 				this._enclosing = _enclosing;
 				this.recognizer = recognizer;
 				this.decisionNumber = 9;
-				this.eot = JavascriptLexer.DFA9_eot;
-				this.eof = JavascriptLexer.DFA9_eof;
-				this.min = JavascriptLexer.DFA9_min;
-				this.max = JavascriptLexer.DFA9_max;
-				this.accept = JavascriptLexer.DFA9_accept;
-				this.special = JavascriptLexer.DFA9_special;
-				this.transition = JavascriptLexer.DFA9_transition;
+				this.eot = DFA9_eot;
+				this.eof = DFA9_eof;
+				this.min = DFA9_min;
+				this.max = DFA9_max;
+				this.accept = DFA9_accept;
+				this.special = DFA9_special;
+				this.transition = DFA9_transition;
 			}
 
 			public override string Description
@@ -2168,11 +2171,9 @@ loop16_break: ;
 
     public class ParseException:Exception
     {
-        private readonly int _charPositionInLine;
-
-        public ParseException(string message, int charPositionInLine) : base(message)
+        public ParseException(string message, int charPositionInLine)
         {
-            _charPositionInLine = charPositionInLine;
+            
         }
     }
 }
