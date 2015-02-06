@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
 
             if (isTop)
             {
-                Assert.IsTrue(allTerms.Equals(seenTerms));
+                Assert.IsTrue(allTerms.SetEquals(seenTerms));
             }
 
             // Test seeking:
