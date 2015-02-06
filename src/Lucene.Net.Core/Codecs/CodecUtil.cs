@@ -183,7 +183,6 @@ namespace Lucene.Net.Codecs
         {
             @out.WriteInt(FOOTER_MAGIC);
             @out.WriteInt(0);
-            Debug.WriteLine("Checksum = {0}", @out.Checksum);
             @out.WriteLong(@out.Checksum);
         }
 
