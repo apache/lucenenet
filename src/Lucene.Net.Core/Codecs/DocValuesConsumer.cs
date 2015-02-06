@@ -324,7 +324,7 @@ namespace Lucene.Net.Codecs
                 {
                     int segOrd = dvs[readerUpTo].GetOrd(docIDUpTo);
                     docIDUpTo++;
-                    yield return map.GetGlobalOrd(readerUpTo, segOrd);
+                    yield return segOrd == -1 ? -1 : map.GetGlobalOrd(readerUpTo, segOrd);
                     continue;
                 }
 
@@ -618,8 +618,9 @@ namespace Lucene.Net.Codecs
 
                 if (ordUpto < ordLength)
                 {
+                    var value = ords[ordUpto];
                     ordUpto++;
-                    yield return ords[ordUpto];
+                    yield return value;
                     continue;
                 }
 

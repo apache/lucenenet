@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace Lucene.Net.Index
 {
@@ -126,21 +127,21 @@ namespace Lucene.Net.Index
 
         // Map<dvField,Map<updateTerm,NumericUpdate>>
         // For each field we keep an ordered list of NumericUpdates, key'd by the
-        // update Term. LinkedHashMap guarantees we will later traverse the map in
+        // update Term. OrderedDictionary guarantees we will later traverse the map in
         // insertion order (so that if two terms affect the same document, the last
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        internal readonly IDictionary<string, /*Linked*/HashMap<Term, NumericDocValuesUpdate>> NumericUpdates = new Dictionary<string, /*Linked*/HashMap<Term, NumericDocValuesUpdate>>();
+        internal readonly IDictionary<string, OrderedDictionary> NumericUpdates = new Dictionary<string, OrderedDictionary>();
 
         // Map<dvField,Map<updateTerm,BinaryUpdate>>
         // For each field we keep an ordered list of BinaryUpdates, key'd by the
-        // update Term. LinkedHashMap guarantees we will later traverse the map in
+        // update Term. OrderedDictionary guarantees we will later traverse the map in
         // insertion order (so that if two terms affect the same document, the last
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        internal readonly IDictionary<string, /*Linked*/HashMap<Term, BinaryDocValuesUpdate>> BinaryUpdates = new Dictionary<string, /*Linked*/HashMap<Term, BinaryDocValuesUpdate>>();
+        internal readonly IDictionary<string, OrderedDictionary> BinaryUpdates = new Dictionary<string, OrderedDictionary>();
 
         public static readonly int MAX_INT = Convert.ToInt32(int.MaxValue);
 
@@ -246,15 +247,21 @@ namespace Lucene.Net.Index
 
         public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
         {
-            /*Linked*/HashMap<Term, NumericDocValuesUpdate> fieldUpdates;
+            OrderedDictionary fieldUpdates = null;
             if (!NumericUpdates.TryGetValue(update.Field, out fieldUpdates))
             {
-                fieldUpdates = new /*Linked*/HashMap<Term, NumericDocValuesUpdate>();
+                fieldUpdates = new OrderedDictionary();
                 NumericUpdates[update.Field] = fieldUpdates;
                 BytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
             }
-            NumericDocValuesUpdate current;
-            if (fieldUpdates.TryGetValue(update.Term, out current) && docIDUpto < current.DocIDUpto)
+
+            NumericDocValuesUpdate current = null;
+            if (fieldUpdates.Contains(update.Term))
+            {
+                current = fieldUpdates[update.Term] as NumericDocValuesUpdate;
+            }
+
+            if (current != null && docIDUpto < current.DocIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the
@@ -264,7 +271,7 @@ namespace Lucene.Net.Index
             }
 
             update.DocIDUpto = docIDUpto;
-            // since it's a LinkedHashMap, we must first remove the Term entry so that
+            // since it's an OrderedDictionary, we must first remove the Term entry so that
             // it's added last (we're interested in insertion-order).
             if (current != null)
             {
@@ -280,16 +287,21 @@ namespace Lucene.Net.Index
 
         public virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto)
         {
-            /*Linked*/
-            HashMap<Term, BinaryDocValuesUpdate> fieldUpdates;
-            if (!BinaryUpdates.TryGetValue(update.Field, out fieldUpdates)) ;
+            OrderedDictionary fieldUpdates;
+            if (!BinaryUpdates.TryGetValue(update.Field, out fieldUpdates))
             {
-                fieldUpdates = new /*Linked*/HashMap<Term, BinaryDocValuesUpdate>();
+                fieldUpdates = new OrderedDictionary();
                 BinaryUpdates[update.Field] = fieldUpdates;
                 BytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
             }
-            BinaryDocValuesUpdate current;
-            if (fieldUpdates.TryGetValue(update.Term, out current) && docIDUpto < current.DocIDUpto)
+
+            BinaryDocValuesUpdate current = null;
+            if (fieldUpdates.Contains(update.Term))
+            {
+                current = fieldUpdates[update.Term] as BinaryDocValuesUpdate;
+            }
+
+            if (current != null && docIDUpto < current.DocIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the
@@ -299,7 +311,7 @@ namespace Lucene.Net.Index
             }
 
             update.DocIDUpto = docIDUpto;
-            // since it's a LinkedHashMap, we must first remove the Term entry so that
+            // since it's an OrderedDictionary, we must first remove the Term entry so that
             // it's added last (we're interested in insertion-order).
             if (current != null)
             {

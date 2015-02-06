@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
             target.Dispose();
         }
 
-        //LUCENE TODO: What is synthetic checking? is that what breaks the MethodInfo subM line?
+        //LUCENENET TODO: What is synthetic checking? is that what breaks the MethodInfo subM line?
         private static void CheckOverrideMethods(Type clazz)
         {
             Type superClazz = clazz.BaseType;

@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 		this.max = max;
 	  }
 
-	  public override bool Accept()
+        protected internal override bool Accept()
 	  {
 		int len = termAtt.Length;
 		return (len >= min && len <= max);

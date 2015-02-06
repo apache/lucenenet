@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
             // updated.
             IList<NumericDocValuesUpdate> allNumericUpdates = new List<NumericDocValuesUpdate>();
             int numericUpdatesSize = 0;
-            foreach (/*Linked*/HashMap<Term, NumericDocValuesUpdate> numericUpdates in deletes.NumericUpdates.Values)
+            foreach (var numericUpdates in deletes.NumericUpdates.Values)
             {
                 foreach (NumericDocValuesUpdate update in numericUpdates.Values)
                 {
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
             // updated.
             IList<BinaryDocValuesUpdate> allBinaryUpdates = new List<BinaryDocValuesUpdate>();
             int binaryUpdatesSize = 0;
-            foreach (/*Linked*/HashMap<Term, BinaryDocValuesUpdate> binaryUpdates in deletes.BinaryUpdates.Values)
+            foreach (var binaryUpdates in deletes.BinaryUpdates.Values)
             {
                 foreach (BinaryDocValuesUpdate update in binaryUpdates.Values)
                 {

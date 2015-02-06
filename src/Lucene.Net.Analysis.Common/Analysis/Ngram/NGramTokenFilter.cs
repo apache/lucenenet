@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
 
 namespace org.apache.lucene.analysis.ngram
 {
@@ -20,7 +21,7 @@ namespace org.apache.lucene.analysis.ngram
 	 * limitations under the License.
 	 */
 
-	using CodepointCountFilter = org.apache.lucene.analysis.miscellaneous.CodepointCountFilter;
+	using CodepointCountFilter = CodepointCountFilter;
 	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
