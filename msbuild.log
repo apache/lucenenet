@@ -1,0 +1,15 @@
+Build started 1/2/2015 4:43:13 PM.
+     1>Project "C:\Projects\GitHub\lucene.net\Lucene.Net.sln" on node 1 (default targets).
+     1>C:\Projects\GitHub\lucene.net\Lucene.Net.sln.metaproj : error MSB4126: The specified solution configuration "Release|x64" is invalid. Please specify a valid solution configuration using the Configuration and Platform properties (e.g. MSBuild.exe Solution.sln /p:Configuration=Debug /p:Platform="Any CPU") or leave those properties blank to use the default solution configuration. [C:\Projects\GitHub\lucene.net\Lucene.Net.sln]
+     1>Done Building Project "C:\Projects\GitHub\lucene.net\Lucene.Net.sln" (default targets) -- FAILED.
+
+Build FAILED.
+
+       "C:\Projects\GitHub\lucene.net\Lucene.Net.sln" (default target) (1) ->
+       (ValidateSolutionConfiguration target) -> 
+         C:\Projects\GitHub\lucene.net\Lucene.Net.sln.metaproj : error MSB4126: The specified solution configuration "Release|x64" is invalid. Please specify a valid solution configuration using the Configuration and Platform properties (e.g. MSBuild.exe Solution.sln /p:Configuration=Debug /p:Platform="Any CPU") or leave those properties blank to use the default solution configuration. [C:\Projects\GitHub\lucene.net\Lucene.Net.sln]
+
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.91

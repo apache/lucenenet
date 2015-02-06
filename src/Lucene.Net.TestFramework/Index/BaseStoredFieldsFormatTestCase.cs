@@ -195,13 +195,14 @@ namespace Lucene.Net.Index
         {
             Directory d = NewDirectory();
             IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            Document doc = new Document();
 
-            FieldType customType = new FieldType();
-            customType.Stored = true;
-            doc.Add(NewField("zzz", "a b c", customType));
-            doc.Add(NewField("aaa", "a b c", customType));
-            doc.Add(NewField("zzz", "1 2 3", customType));
+            FieldType customType = new FieldType {Stored = true};
+            Document doc = new Document
+            {
+                NewField("zzz", "a b c", customType),
+                NewField("aaa", "a b c", customType),
+                NewField("zzz", "1 2 3", customType)
+            };
             w.AddDocument(doc);
             IndexReader r = w.Reader;
             Document doc2 = r.Document(0);
@@ -580,14 +581,14 @@ namespace Lucene.Net.Index
             }*/
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
+            iwConf.SetMaxBufferedDocs(Random().NextIntBetween(2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, (IndexWriterConfig)iwConf.Clone());
 
             int docCount = AtLeast(200);
             var data = new byte[docCount][][];
             for (int i = 0; i < docCount; ++i)
             {
-                int fieldCount = Rarely() ? RandomInts.NextIntBetween(Random(), 1, 500) : RandomInts.NextIntBetween(Random(), 1, 5);
+                int fieldCount = Rarely() ? Random().NextIntBetween(1, 500) : Random().NextIntBetween(1, 5);
                 data[i] = new byte[fieldCount][];
                 for (int j = 0; j < fieldCount; ++j)
                 {
@@ -597,8 +598,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            FieldType type = new FieldType(StringField.TYPE_STORED);
-            type.Indexed = false;
+            FieldType type = new FieldType(StringField.TYPE_STORED) {Indexed = false};
             type.Freeze();
             IntField id = new IntField("id", 0, Field.Store.YES);
             for (int i = 0; i < data.Length; ++i)
