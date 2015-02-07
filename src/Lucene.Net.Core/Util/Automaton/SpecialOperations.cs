@@ -1,3 +1,4 @@
+using System;
 using Lucene.Net.Support;
 using System.Collections;
 using System.Collections.Generic;
@@ -135,7 +136,9 @@ namespace Lucene.Net.Util.Automaton
                     if (t.Min_Renamed == t.Max_Renamed && !visited.Contains(t.To))
                     {
                         //b.appendCodePoint(t.Min_Renamed);
-                        b.Append(t.Min_Renamed);
+
+                        b.Append(Character.ToChars(t.Min_Renamed));
+
                         s = t.To;
                         done = false;
                     }
