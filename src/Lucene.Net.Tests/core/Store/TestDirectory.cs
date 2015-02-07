@@ -134,6 +134,7 @@ namespace Lucene.Net.Store
                             try
                             {
                                 IndexInput input = outerBDWrapper.OpenInput(file, NewIOContext(Random()));
+                                input.Dispose();
                             }
                             catch (FileNotFoundException fne)
                             {
