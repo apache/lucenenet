@@ -35,7 +35,7 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestDetectClose()
         {
-            DirectoryInfo tempDir = new System.IO.DirectoryInfo(AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));//CreateTempDir(LuceneTestCase.TestClass.SimpleName);
+            DirectoryInfo tempDir = new System.IO.DirectoryInfo("TestDetectClose");// LUCENENET TODO LuceneTestCase.TestClass.SimpleName
             Directory[] dirs = new Directory[] { new RAMDirectory(), new SimpleFSDirectory(tempDir), new NIOFSDirectory(tempDir) };
 
             foreach (Directory dir in dirs)
@@ -82,8 +82,8 @@ namespace Lucene.Net.Store
 
         private class TheThread : ThreadClass
         {
-            private string name;
-            private BaseDirectoryWrapper outerBDWrapper;
+            private readonly string name;
+            private readonly BaseDirectoryWrapper outerBDWrapper;
 
             public TheThread(string name, BaseDirectoryWrapper baseDirectoryWrapper)
             {
@@ -99,8 +99,7 @@ namespace Lucene.Net.Store
 
                     try
                     {
-                        IndexOutput output = outerBDWrapper.CreateOutput(fileName, NewIOContext(Random()));
-                        output.Dispose();
+                        using (IndexOutput output = outerBDWrapper.CreateOutput(fileName, NewIOContext(Random()))) { }
                         Assert.IsTrue(SlowFileExists(outerBDWrapper, fileName));
                     }
                     catch (IOException e)
@@ -113,12 +112,12 @@ namespace Lucene.Net.Store
 
         private class TheThread2 : ThreadClass
         {
-            private string name;
-            private BaseDirectoryWrapper outerBDWrapper;
+            private string _name;
+            private readonly BaseDirectoryWrapper outerBDWrapper;
 
             public TheThread2(string name, BaseDirectoryWrapper baseDirectoryWrapper)
             {
-                this.name = name;
+                this._name = name;
                 outerBDWrapper = baseDirectoryWrapper;
             }
 
@@ -133,8 +132,7 @@ namespace Lucene.Net.Store
                         {
                             try
                             {
-                                IndexInput input = outerBDWrapper.OpenInput(file, NewIOContext(Random()));
-                                input.Dispose();
+                                using (IndexInput input = outerBDWrapper.OpenInput(file, NewIOContext(Random()))) { }
                             }
                             catch (FileNotFoundException fne)
                             {
@@ -339,7 +337,7 @@ namespace Lucene.Net.Store
                 Assert.IsTrue(SlowFileExists(fsDir, "afile"));
                 try
                 {
-                    new SimpleFSDirectory(new DirectoryInfo(Path.Combine(path.FullName, "afile")), null);
+                    var d = new SimpleFSDirectory(new DirectoryInfo(Path.Combine(path.FullName, "afile")), null);
                     Assert.Fail("did not hit expected exception");
                 }
                 catch (NoSuchDirectoryException nsde)
