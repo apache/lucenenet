@@ -366,9 +366,10 @@ namespace Lucene.Net.Index
             }
 
             FixedBitSet isS1 = new FixedBitSet(NUM_DOCS);
+            var rnd = Random();
             for (int idx = 0; idx < NUM_DOCS; idx++)
             {
-                if (Random().NextBoolean())
+                if (rnd.NextBoolean())
                 {
                     isS1.Set(idx);
                 }
