@@ -356,7 +356,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             int catIDInteger = Convert.ToInt32(ordinal);
             lock (categoryCache)
             {
-                var res = categoryCache.Get(catIDInteger,false);
+                var res = categoryCache.Get(catIDInteger);
                 if (res != null)
                 {
                     return res;
