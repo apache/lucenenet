@@ -80,15 +80,16 @@ namespace Lucene.Net.Support
 
         public static int ToChars(int codePoint, char[] dst, int dstIndex)
         {
-            // .NET Port: we don't have to do anything funky with surrogates here. chars are always UTF-16.
-            dst[dstIndex] = (char)codePoint;
-            return 1; // always 1 char written in .NET
+            var converted = UnicodeUtil.ToCharArray(new[] {codePoint}, 0, 1);
+
+            Array.Copy(converted, 0, dst, dstIndex, converted.Length);
+
+            return converted.Length;
         }
 
         public static char[] ToChars(int codePoint)
         {
-            // .NET Port: we don't have to do anything funky with surrogates here. chars are always UTF-16.
-            return new[] { (char)codePoint };
+            return UnicodeUtil.ToCharArray(new[] {codePoint}, 0, 1);
         }
 
         public static int ToCodePoint(char high, char low)
@@ -104,8 +105,11 @@ namespace Lucene.Net.Support
 
         public static int ToLowerCase(int codePoint)
         {
-            // .NET Port: chars are always UTF-16 in .NET
-            return (int)char.ToLower((char)codePoint);
+            var str = UnicodeUtil.NewString(new[] {codePoint}, 0, 1);
+
+            str = str.ToLower();
+
+            return CodePointAt(str, 0);
         }
 
         public static int CharCount(int codePoint)

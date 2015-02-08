@@ -89,7 +89,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             int token = (bitsRequired << BPV_SHIFT) | (min == 0 ? MIN_VALUE_EQUALS_0 : 0);
-            @out.WriteByte((sbyte)token);
+            @out.WriteByte((byte)(sbyte)token);
 
             if (min != 0)
             {

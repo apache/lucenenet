@@ -374,7 +374,7 @@ namespace Lucene.Net.Util
 
         public static string RandomSimpleString(Random r)
         {
-            return RandomSimpleString(r, 0, 10);
+            return RandomSimpleString(r, 0, 20);
         }
 
         /// <summary>
@@ -678,15 +678,15 @@ namespace Lucene.Net.Util
                             switch (NextInt(random, 0, 3))
                             {
                                 case 0:
-                                    sb.Append(RandomlyRecaseCodePoints(random, "script"));
+                                    sb.Append(RandomlyRecaseString(random, "script"));
                                     break;
 
                                 case 1:
-                                    sb.Append(RandomlyRecaseCodePoints(random, "style"));
+                                    sb.Append(RandomlyRecaseString(random, "style"));
                                     break;
 
                                 case 2:
-                                    sb.Append(RandomlyRecaseCodePoints(random, "br"));
+                                    sb.Append(RandomlyRecaseString(random, "br"));
                                     break;
                                 // default: append nothing
                             }
@@ -704,26 +704,36 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Randomly upcases, downcases, or leaves intact each code point in the given string
         /// </summary>
-        public static string RandomlyRecaseCodePoints(Random random, string str)
+        public static string RandomlyRecaseString(Random random, string str)
         {
             var builder = new StringBuilder();
             int pos = 0;
             while (pos < str.Length)
             {
-                int codePoint = Character.CodePointAt(str, pos);
-                pos += Character.CharCount(codePoint);
+                string toRecase;
+
+                // check if the next char sequence is a surrogate pair
+                if (pos + 1 < str.Length && char.IsSurrogatePair(str[pos], str[pos+1]))
+                {
+                    toRecase = str.Substring(pos, 2);
+                }
+                else
+                {
+                    toRecase = str.Substring(pos, 1);
+                }
+
+                pos += toRecase.Length;
+
                 switch (NextInt(random, 0, 2))
                 {
                     case 0:
-                        builder.Append(char.ToUpper((char)codePoint));
+                        builder.Append(toRecase.ToUpper());
                         break;
-
                     case 1:
-                        builder.Append(char.ToLower((char)codePoint));
+                        builder.Append(toRecase.ToLower());
                         break;
-
-                    case 2: // leave intact
-                        builder.Append((char)codePoint);
+                    case 2:
+                        builder.Append(toRecase);
                         break;
                 }
             }
@@ -1415,7 +1425,7 @@ namespace Lucene.Net.Util
             if (random.Next(17) == 0)
             {
                 // mix up case
-                string mixedUp = TestUtil.RandomlyRecaseCodePoints(random, sb.ToString());
+                string mixedUp = TestUtil.RandomlyRecaseString(random, sb.ToString());
                 Assert.True(mixedUp.Length == sb.Length, "Lengths are not the same: mixedUp = " + mixedUp + ", length = " + mixedUp.Length + ", sb = " + sb + ", length = " + sb.Length);
                 return mixedUp;
             }

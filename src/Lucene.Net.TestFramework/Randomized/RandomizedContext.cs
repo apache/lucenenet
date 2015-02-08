@@ -64,6 +64,7 @@ namespace Lucene.Net.Randomized
             }
         }
 
+        // LUCENENET TODO
         /*public Random Random
         {
             get { return this.Randomness.Random; }
@@ -167,7 +168,6 @@ namespace Lucene.Net.Randomized
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
     }
 }

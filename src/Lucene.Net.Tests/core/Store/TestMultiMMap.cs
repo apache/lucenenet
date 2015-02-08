@@ -47,6 +47,7 @@ namespace Lucene.Net.Store
         public override void SetUp()
         {
             base.SetUp();
+            // LUCENENET TODO: what?!?!?!?!?!
             AssumeTrue("test requires a jre that supports unmapping", MMapDirectory.UNMAP_SUPPORTED);
         }
 

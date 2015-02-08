@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 bits |= Lucene3xTermVectorsReader.STORE_OFFSET_WITH_TERMVECTOR;
             }
-            Tvf.WriteByte(bits);
+            Tvf.WriteByte((byte)bits);
 
             Debug.Assert(FieldCount <= NumVectorFields);
             if (FieldCount == NumVectorFields)

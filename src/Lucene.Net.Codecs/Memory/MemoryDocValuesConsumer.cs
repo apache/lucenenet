@@ -1,51 +1,48 @@
-﻿	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-
-using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Collections.Generic;
-using Lucene.Net.Codecs.Memory;
-using Lucene.Net.Index;
-using Lucene.Net.Util.Fst;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 namespace Lucene.Net.Codecs.Memory
 {
 
-
-    using FieldInfo = Index.FieldInfo;
-    using IndexFileNames = Index.IndexFileNames;
-    using SegmentWriteState = Index.SegmentWriteState;
-    using ByteArrayDataOutput = Store.ByteArrayDataOutput;
-    using IndexOutput = Store.IndexOutput;
+    using Lucene.Net.Util.Fst;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
     using ArrayUtil = Util.ArrayUtil;
-    using BytesRef = Util.BytesRef;
-    using IOUtils = Util.IOUtils;
-    using IntsRef = Util.IntsRef;
-    using MathUtil = Util.MathUtil;
-    using Builder = Util.Fst.Builder;
-    using INPUT_TYPE = Util.Fst.FST.INPUT_TYPE;
-    using FST = Util.Fst.FST;
-    using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
-    using Util = Util.Fst.Util;
     using BlockPackedWriter = Util.Packed.BlockPackedWriter;
-    using MonotonicBlockPackedWriter = Util.Packed.MonotonicBlockPackedWriter;
+    using ByteArrayDataOutput = Store.ByteArrayDataOutput;
+    using BytesRef = Util.BytesRef;
+    using FieldInfo = Index.FieldInfo;
     using FormatAndBits = Util.Packed.PackedInts.FormatAndBits;
+    using FST = Util.Fst.FST;
+    using IndexFileNames = Index.IndexFileNames;
+    using IndexOutput = Store.IndexOutput;
+    using INPUT_TYPE = Util.Fst.FST.INPUT_TYPE;
+    using IntsRef = Util.IntsRef;
+    using IOUtils = Util.IOUtils;
+    using MathUtil = Util.MathUtil;
+    using MonotonicBlockPackedWriter = Util.Packed.MonotonicBlockPackedWriter;
     using PackedInts = Util.Packed.PackedInts;
+    using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
+    using SegmentWriteState = Index.SegmentWriteState;
+    using Util = Util.Fst.Util;
+
 
     /// <summary>
     /// Writer for <seealso cref="MemoryDocValuesFormat"/>
@@ -82,12 +79,12 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             AddNumericField(field, values, true);
         }
 
-        internal virtual void AddNumericField(FieldInfo field, IEnumerable<long> values, bool optimizeStorage)
+        internal virtual void AddNumericField(FieldInfo field, IEnumerable<long?> values, bool optimizeStorage)
         {
             meta.WriteVInt(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.NUMBER);
@@ -100,12 +97,12 @@ namespace Lucene.Net.Codecs.Memory
             HashSet<long?> uniqueValues = null;
             if (optimizeStorage)
             {
-                uniqueValues = new HashSet<>();
+                uniqueValues = new HashSet<long?>();
 
                 long count = 0;
                 foreach (var nv in values)
                 {
-                    long v = nv;
+                    long v = nv.Value;
 
                     if (gcd != 1)
                     {
@@ -165,31 +162,33 @@ namespace Lucene.Net.Codecs.Memory
                     meta.WriteByte(MemoryDocValuesProducer.UNCOMPRESSED); // uncompressed
                     foreach (var nv in values)
                     {
-                        data.WriteByte(nv == null ? 0 : (long) (sbyte) nv);
+                        data.WriteByte(!nv.HasValue ? (byte)0 : (byte)nv.Value);
                     }
                 }
                 else
                 {
                     meta.WriteByte(MemoryDocValuesProducer.TABLE_COMPRESSED); // table-compressed
-                    long?[] decode = uniqueValues.toArray(new long?[uniqueValues.Count]);
+                    long?[] decode = uniqueValues.ToArray();
 
                     var encode = new Dictionary<long?, int?>();
                     data.WriteVInt(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        data.WriteLong(decode[i]);
+                        data.WriteLong(decode[i].Value);
                         encode[decode[i]] = i;
                     }
 
                     meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                    data.WriteVInt(formatAndBits.format.Id);
+                    data.WriteVInt(formatAndBits.format.id);
                     data.WriteVInt(formatAndBits.bitsPerValue);
 
                     PackedInts.Writer writer = PackedInts.GetWriterNoHeader(data, formatAndBits.format, maxDoc,
                         formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
-                    foreach (long nv in values)
+                    foreach (var nv in values)
                     {
-                        writer.Add(encode[nv == null ? 0 : (long) nv]);
+                        var v = encode[nv.HasValue ? nv.Value : 0];
+
+                        writer.Add((long)v);
                     }
                     writer.Finish();
                 }
@@ -205,7 +204,7 @@ namespace Lucene.Net.Codecs.Memory
                 var writer = new BlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
                 foreach (var nv in values)
                 {
-                    writer.Add((nv - minValue)/gcd);
+                    writer.Add((nv.Value - minValue)/gcd);
                 }
                 writer.Finish();
             }
@@ -219,7 +218,7 @@ namespace Lucene.Net.Codecs.Memory
                 var writer = new BlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
                 foreach (var nv in values)
                 {
-                    writer.Add(nv);
+                    writer.Add(nv.Value);
                 }
                 writer.Finish();
             }
@@ -332,7 +331,7 @@ namespace Lucene.Net.Codecs.Memory
         private void WriteFST(FieldInfo field, IEnumerable<BytesRef> values)
         {
             meta.WriteVInt(field.Number);
-            meta.WriteByte(FST);
+            meta.WriteByte(MemoryDocValuesProducer.FST);
             meta.WriteLong(data.FilePointer);
             PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
             var builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
@@ -378,7 +377,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             // write the ordinals as numerics
             AddNumericField(field, docToOrd, false);
@@ -389,7 +388,7 @@ namespace Lucene.Net.Codecs.Memory
 
         // note: this might not be the most efficient... but its fairly simple
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values,
-            IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+            IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             // write the ordinals as a binary field
             AddBinaryField(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount, ords));
@@ -400,11 +399,11 @@ namespace Lucene.Net.Codecs.Memory
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
         {
-            private readonly IEnumerable<long> _docToOrdCount;
-            private readonly IEnumerable<long> _ords;
+            private readonly IEnumerable<long?> _docToOrdCount;
+            private readonly IEnumerable<long?> _ords;
 
             public IterableAnonymousInnerClassHelper(MemoryDocValuesConsumer outerInstance,
-                IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+                IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
                 _docToOrdCount = docToOrdCount;
                 _ords = ords;
@@ -414,40 +413,53 @@ namespace Lucene.Net.Codecs.Memory
             {
                 return new SortedSetIterator(_docToOrdCount.GetEnumerator(), _ords.GetEnumerator());
             }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this.GetEnumerator();
+            }
         }
 
         // per-document vint-encoded byte[]
         internal class SortedSetIterator : IEnumerator<BytesRef>
         {
-            internal sbyte[] buffer = new sbyte[10];
+            internal byte[] buffer = new byte[10];
             internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
-            internal BytesRef @ref = new BytesRef();
+            internal BytesRef _current = new BytesRef();
 
-            internal readonly IEnumerator<long> counts;
-            internal readonly IEnumerator<long> ords;
+            internal readonly IEnumerator<long?> counts;
+            internal readonly IEnumerator<long?> ords;
 
-            internal SortedSetIterator(IEnumerator<long> counts, IEnumerator<long> ords)
+            public BytesRef Current
+            {
+                get
+                {
+                    return _current;
+                }
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return this.Current;
+                }
+            }
+
+            internal SortedSetIterator(IEnumerator<long?> counts, IEnumerator<long?> ords)
             {
                 this.counts = counts;
                 this.ords = ords;
             }
 
-            public override bool HasNext()
+            public bool MoveNext()
             {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-                return counts.hasNext();
-            }
 
-            public override BytesRef Next()
-            {
-                if (!HasNext())
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
+                if (!counts.MoveNext())
+                    return false;
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-                int count = (int) counts.next();
-                int maxSize = count*9; // worst case
+                int count = (int) counts.Current;
+                int maxSize = count * 9; // worst case
                 if (maxSize > buffer.Length)
                 {
                     buffer = ArrayUtil.Grow(buffer, maxSize);
@@ -456,11 +468,11 @@ namespace Lucene.Net.Codecs.Memory
                 EncodeValues(count);
                 
 
-                @ref.Bytes = buffer;
-                @ref.Offset = 0;
-                @ref.Length = @out.Position;
+                _current.Bytes = buffer;
+                _current.Offset = 0;
+                _current.Length = @out.Position;
 
-                return @ref;
+                return true;
             }
 
             // encodes count values to buffer
@@ -470,16 +482,24 @@ namespace Lucene.Net.Codecs.Memory
                 long lastOrd = 0;
                 for (int i = 0; i < count; i++)
                 {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-                    long ord = (long) ords.next();
-                    @out.writeVLong(ord - lastOrd);
+                    if (!ords.MoveNext())
+                        break;
+
+                    long ord = ords.Current.Value;
+                    @out.WriteVLong(ord - lastOrd);
                     lastOrd = ord;
                 }
             }
 
-            public override void Remove()
+
+            public void Dispose()
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
+            }
+
+            public void Reset()
+            {
+                throw new NotImplementedException();
             }
         }
     }

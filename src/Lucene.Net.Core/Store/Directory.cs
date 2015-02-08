@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Store
 {
@@ -66,8 +68,8 @@ namespace Lucene.Net.Store
         /// following contract:
         /// <ul>
         /// <li>Throws <seealso cref="FileNotFoundException"/> or <seealso cref="NoSuchFileException"/>
-        /// if the file does not exist.
-        /// <li>Returns a value &ge;0 if the file exists, which specifies its length.
+        /// if the file does not exist.</li>
+        /// <li>Returns a value &gt;=0 if the file exists, which specifies its length.</li>
         /// </ul>
         /// </summary>
         /// <param name="name"> the name of the file for which to return the length. </param>
@@ -321,9 +323,9 @@ namespace Lucene.Net.Store
         /// </summary>
         private sealed class SlicedIndexInput : BufferedIndexInput
         {
-            internal IndexInput @base;
-            internal long FileOffset;
-            internal long Length_Renamed;
+            private IndexInput @base;
+            private long FileOffset;
+            private long Length_Renamed;
 
             internal SlicedIndexInput(string sliceDescription, IndexInput @base, long fileOffset, long length)
                 : this(sliceDescription, @base, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
@@ -383,9 +385,6 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual bool IsOpen
-        {
-            get { return IsOpen; }
-        }
+        public virtual bool IsOpen { get { return isOpen; }}
     }
 }

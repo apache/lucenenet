@@ -17,13 +17,14 @@ using System.Text;
  * limitations under the License.
  */
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 
 namespace org.apache.lucene.analysis.miscellaneous
 {
 
 	using WhitespaceTokenizer = WhitespaceTokenizer;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer;
+	using StandardTokenizer = StandardTokenizer;
 	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;

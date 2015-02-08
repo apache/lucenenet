@@ -141,25 +141,23 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestNoDir()
         {
-            //Directory tempDir = CreateTempDir("doesnotexist");
+            // LUCENENET TODO mysterious failure - FSDirectory recreates the folder by design, not sure why this passes for Java Lucene
 
-            string tempDir = Path.GetTempPath();
-            if (tempDir == null)
-                throw new IOException("java.io.tmpdir undefined, cannot run test");
-            DirectoryInfo TempDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
-
-            System.IO.Directory.Delete(TempDir.FullName, true);
-            Directory dir = new NRTCachingDirectory(NewFSDirectory(TempDir), 2.0, 25.0);
-            try
+            var tempDir = CreateTempDir("doesnotexist").FullName;
+            System.IO.Directory.Delete(tempDir, true);
+            using (Directory dir = new NRTCachingDirectory(NewFSDirectory(new DirectoryInfo(tempDir)), 2.0, 25.0))
             {
-                DirectoryReader.Open(dir);
-                Assert.Fail("did not hit expected exception");
+                try
+                {
+                    Assert.False(System.IO.Directory.Exists(tempDir));
+                    DirectoryReader.Open(dir);
+                    Assert.Fail("did not hit expected exception");
+                }
+                catch (NoSuchDirectoryException)
+                {
+                    // expected
+                }
             }
-            catch (NoSuchDirectoryException nsde)
-            {
-                // expected
-            }
-            dir.Dispose();
         }
 
         // LUCENE-3382 test that we can add a file, and then when we call list() we get it back
@@ -212,7 +210,7 @@ namespace Lucene.Net.Store
             IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
             for (int i = 0; i < size; i++)
             {
-                os.WriteByte(start);
+                os.WriteByte((byte)start);
                 start++;
             }
             os.Dispose();

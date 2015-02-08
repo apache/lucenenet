@@ -137,19 +137,27 @@ namespace Lucene.Net.Util
                 {
                     // we currently assume that the assembly's directory is root/bin/[Section]/[Build]
                     // where [Section] is either core, demo, or contrib, and [Build] is either Debug or Release.
-                    string assemblyLocation = AssemblyDirectory;
-                    int index = -1;
-                    if (assemblyLocation.IndexOf("build", StringComparison.InvariantCultureIgnoreCase) > -1)
-                        index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "build" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase);
-                    else
-                        index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase);
+                    var assemblyLocation = AssemblyDirectory;
 
-                    int difference = assemblyLocation.Substring(index).Count(o => o == Path.DirectorySeparatorChar);
+                    var index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "build" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase);
+                    if (index == -1)
+                    {
+                        index = assemblyLocation.IndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.InvariantCultureIgnoreCase);
+                    }
+
+                    if (index < 0)
+                    {
+                        throw new ArgumentOutOfRangeException("Could not locate project root directory in " + assemblyLocation);
+                    }
+
+                    var difference = assemblyLocation.Substring(index).Count(o => o == Path.DirectorySeparatorChar);
 
                     var list = new List<string>();
 
                     for (int i = 0; i < difference; i++)
+                    {
                         list.Add("..");
+                    }
 
                     var parameters = list.ToArray();
 

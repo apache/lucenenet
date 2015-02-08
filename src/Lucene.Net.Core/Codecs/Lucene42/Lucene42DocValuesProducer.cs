@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.Lucene42
         private readonly IDictionary<int, NumericDocValues> NumericInstances = new Dictionary<int, NumericDocValues>();
 
         private readonly IDictionary<int, BinaryDocValues> BinaryInstances = new Dictionary<int, BinaryDocValues>();
-        private readonly IDictionary<int, FST<long>> FstInstances = new Dictionary<int, FST<long>>();
+        private readonly IDictionary<int, FST<long?>> FstInstances = new Dictionary<int, FST<long?>>();
 
         private readonly int MaxDoc;
         private readonly AtomicLong RamBytesUsed_Renamed;
@@ -167,9 +167,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 int fieldType = meta.ReadByte();
                 if (fieldType == NUMBER)
                 {
-                    NumericEntry entry = new NumericEntry();
-                    entry.Offset = meta.ReadLong();
-                    entry.Format = meta.ReadSByte();
+                    var entry = new NumericEntry {Offset = meta.ReadLong(), Format = (sbyte)meta.ReadByte()};
                     switch (entry.Format)
                     {
                         case DELTA_COMPRESSED:
@@ -256,7 +254,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     {
                         throw new CorruptIndexException("TABLE_COMPRESSED cannot have more than 256 distinct values, input=" + Data);
                     }
-                    long[] decode = new long[size];
+                    var decode = new long[size];
                     for (int i = 0; i < decode.Length; i++)
                     {
                         decode[i] = Data.ReadLong();
@@ -265,11 +263,11 @@ namespace Lucene.Net.Codecs.Lucene42
                     int bitsPerValue = Data.ReadVInt();
                     PackedInts.Reader ordsReader = PackedInts.GetReaderNoHeader(Data, PackedInts.Format.ById(formatID), entry.PackedIntsVersion, MaxDoc, bitsPerValue);
                     RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(decode) + ordsReader.RamBytesUsed());
-                    return new NumericDocValuesAnonymousInnerClassHelper(this, decode, ordsReader);
+                    return new NumericDocValuesAnonymousInnerClassHelper(decode, ordsReader);
 
                 case DELTA_COMPRESSED:
                     int blockSize = Data.ReadVInt();
-                    BlockPackedReader reader = new BlockPackedReader(Data, entry.PackedIntsVersion, blockSize, MaxDoc, false);
+                    var reader = new BlockPackedReader(Data, entry.PackedIntsVersion, blockSize, MaxDoc, false);
                     RamBytesUsed_Renamed.AddAndGet(reader.RamBytesUsed());
                     return reader;
 
@@ -285,7 +283,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     int quotientBlockSize = Data.ReadVInt();
                     BlockPackedReader quotientReader = new BlockPackedReader(Data, entry.PackedIntsVersion, quotientBlockSize, MaxDoc, false);
                     RamBytesUsed_Renamed.AddAndGet(quotientReader.RamBytesUsed());
-                    return new NumericDocValuesAnonymousInnerClassHelper3(this, min, mult, quotientReader);
+                    return new NumericDocValuesAnonymousInnerClassHelper3(min, mult, quotientReader);
 
                 default:
                     throw new InvalidOperationException();
@@ -294,14 +292,11 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
         {
-            private readonly Lucene42DocValuesProducer OuterInstance;
+            private readonly long[] Decode;
+            private readonly PackedInts.Reader OrdsReader;
 
-            private long[] Decode;
-            private PackedInts.Reader OrdsReader;
-
-            public NumericDocValuesAnonymousInnerClassHelper(Lucene42DocValuesProducer outerInstance, long[] decode, PackedInts.Reader ordsReader)
+            public NumericDocValuesAnonymousInnerClassHelper(long[] decode, PackedInts.Reader ordsReader)
             {
-                this.OuterInstance = outerInstance;
                 this.Decode = decode;
                 this.OrdsReader = ordsReader;
             }
@@ -314,33 +309,27 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
         {
-            private readonly Lucene42DocValuesProducer OuterInstance;
-
-            private byte[] Bytes;
+            private readonly byte[] Bytes;
 
             public NumericDocValuesAnonymousInnerClassHelper2(Lucene42DocValuesProducer outerInstance, byte[] bytes)
             {
-                this.OuterInstance = outerInstance;
                 this.Bytes = bytes;
             }
 
             public override long Get(int docID)
             {
-                return Bytes[docID];
+                return (sbyte)Bytes[docID];
             }
         }
 
         private class NumericDocValuesAnonymousInnerClassHelper3 : NumericDocValues
         {
-            private readonly Lucene42DocValuesProducer OuterInstance;
+            private readonly long Min;
+            private readonly long Mult;
+            private readonly BlockPackedReader QuotientReader;
 
-            private long Min;
-            private long Mult;
-            private BlockPackedReader QuotientReader;
-
-            public NumericDocValuesAnonymousInnerClassHelper3(Lucene42DocValuesProducer outerInstance, long min, long mult, BlockPackedReader quotientReader)
+            public NumericDocValuesAnonymousInnerClassHelper3(long min, long mult, BlockPackedReader quotientReader)
             {
-                this.OuterInstance = outerInstance;
                 this.Min = min;
                 this.Mult = mult;
                 this.QuotientReader = quotientReader;
@@ -356,8 +345,8 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             lock (this)
             {
-                BinaryDocValues instance = BinaryInstances[field.Number];
-                if (instance == null)
+                BinaryDocValues instance;
+                if (!BinaryInstances.TryGetValue(field.Number, out instance))
                 {
                     instance = LoadBinary(field);
                     BinaryInstances[field.Number] = instance;
@@ -377,26 +366,23 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 int fixedLength = entry.MinLength;
                 RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed());
-                return new BinaryDocValuesAnonymousInnerClassHelper(this, bytesReader, fixedLength);
+                return new BinaryDocValuesAnonymousInnerClassHelper(bytesReader, fixedLength);
             }
             else
             {
                 MonotonicBlockPackedReader addresses = new MonotonicBlockPackedReader(Data, entry.PackedIntsVersion, entry.BlockSize, MaxDoc, false);
                 RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed() + addresses.RamBytesUsed());
-                return new BinaryDocValuesAnonymousInnerClassHelper2(this, bytesReader, addresses);
+                return new BinaryDocValuesAnonymousInnerClassHelper2(bytesReader, addresses);
             }
         }
 
         private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
         {
-            private readonly Lucene42DocValuesProducer OuterInstance;
+            private readonly PagedBytes.Reader BytesReader;
+            private readonly int FixedLength;
 
-            private PagedBytes.Reader BytesReader;
-            private int FixedLength;
-
-            public BinaryDocValuesAnonymousInnerClassHelper(Lucene42DocValuesProducer outerInstance, PagedBytes.Reader bytesReader, int fixedLength)
+            public BinaryDocValuesAnonymousInnerClassHelper(PagedBytes.Reader bytesReader, int fixedLength)
             {
-                this.OuterInstance = outerInstance;
                 this.BytesReader = bytesReader;
                 this.FixedLength = fixedLength;
             }
@@ -409,14 +395,11 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private class BinaryDocValuesAnonymousInnerClassHelper2 : BinaryDocValues
         {
-            private readonly Lucene42DocValuesProducer OuterInstance;
+            private readonly PagedBytes.Reader BytesReader;
+            private readonly MonotonicBlockPackedReader Addresses;
 
-            private PagedBytes.Reader BytesReader;
-            private MonotonicBlockPackedReader Addresses;
-
-            public BinaryDocValuesAnonymousInnerClassHelper2(Lucene42DocValuesProducer outerInstance, PagedBytes.Reader bytesReader, MonotonicBlockPackedReader addresses)
+            public BinaryDocValuesAnonymousInnerClassHelper2(PagedBytes.Reader bytesReader, MonotonicBlockPackedReader addresses)
             {
-                this.OuterInstance = outerInstance;
                 this.BytesReader = bytesReader;
                 this.Addresses = addresses;
             }
@@ -432,47 +415,43 @@ namespace Lucene.Net.Codecs.Lucene42
         public override SortedDocValues GetSorted(FieldInfo field)
         {
             FSTEntry entry = Fsts[field.Number];
-            FST<long> instance;
+            FST<long?> instance;
             lock (this)
             {
-                instance = FstInstances[field.Number];
-                if (instance == null)
+                if (!FstInstances.TryGetValue(field.Number, out instance))
                 {
                     Data.Seek(entry.Offset);
-                    instance = new FST<long>(Data, PositiveIntOutputs.Singleton);
+                    instance = new FST<long?>(Data, PositiveIntOutputs.Singleton);
                     RamBytesUsed_Renamed.AddAndGet(instance.SizeInBytes());
                     FstInstances[field.Number] = instance;
                 }
             }
-            NumericDocValues docToOrd = GetNumeric(field);
-            FST<long> fst = instance;
+            var docToOrd = GetNumeric(field);
+            var fst = instance;
 
             // per-thread resources
-            FST<long>.BytesReader @in = fst.BytesReader;
-            FST<long>.Arc<long> firstArc = new FST<long>.Arc<long>();
-            FST<long>.Arc<long> scratchArc = new FST<long>.Arc<long>();
-            IntsRef scratchInts = new IntsRef();
-            BytesRefFSTEnum<long> fstEnum = new BytesRefFSTEnum<long>(fst);
+            var @in = fst.BytesReader;
+            var firstArc = new FST<long?>.Arc<long?>();
+            var scratchArc = new FST<long?>.Arc<long?>();
+            var scratchInts = new IntsRef();
+            var fstEnum = new BytesRefFSTEnum<long?>(fst);
 
-            return new SortedDocValuesAnonymousInnerClassHelper(this, entry, docToOrd, fst, @in, firstArc, scratchArc, scratchInts, fstEnum);
+            return new SortedDocValuesAnonymousInnerClassHelper(entry, docToOrd, fst, @in, firstArc, scratchArc, scratchInts, fstEnum);
         }
 
         private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
         {
-            private readonly Lucene42DocValuesProducer OuterInstance;
+            private readonly FSTEntry Entry;
+            private readonly NumericDocValues DocToOrd;
+            private readonly FST<long?> Fst;
+            private readonly FST<long?>.BytesReader @in;
+            private readonly FST<long?>.Arc<long?> FirstArc;
+            private readonly FST<long?>.Arc<long?> ScratchArc;
+            private readonly IntsRef ScratchInts;
+            private readonly BytesRefFSTEnum<long?> FstEnum;
 
-            private FSTEntry Entry;
-            private NumericDocValues DocToOrd;
-            private FST<long> Fst;
-            private FST<long>.BytesReader @in;
-            private FST<long>.Arc<long> FirstArc;
-            private FST<long>.Arc<long> ScratchArc;
-            private IntsRef ScratchInts;
-            private BytesRefFSTEnum<long> FstEnum;
-
-            public SortedDocValuesAnonymousInnerClassHelper(Lucene42DocValuesProducer outerInstance, FSTEntry entry, NumericDocValues docToOrd, FST<long> fst, FST<long>.BytesReader @in, FST<long>.Arc<long> firstArc, FST<long>.Arc<long> scratchArc, IntsRef scratchInts, BytesRefFSTEnum<long> fstEnum)
+            public SortedDocValuesAnonymousInnerClassHelper(FSTEntry entry, NumericDocValues docToOrd, FST<long?> fst, FST<long?>.BytesReader @in, FST<long?>.Arc<long?> firstArc, FST<long?>.Arc<long?> scratchArc, IntsRef scratchInts, BytesRefFSTEnum<long?> fstEnum)
             {
-                this.OuterInstance = outerInstance;
                 this.Entry = entry;
                 this.DocToOrd = docToOrd;
                 this.Fst = fst;
@@ -510,7 +489,7 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 try
                 {
-                    BytesRefFSTEnum<long>.InputOutput<long> o = FstEnum.SeekCeil(key);
+                    BytesRefFSTEnum<long?>.InputOutput<long?> o = FstEnum.SeekCeil(key);
                     if (o == null)
                     {
                         return -ValueCount - 1;
@@ -551,50 +530,46 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 return DocValues.EMPTY_SORTED_SET; // empty FST!
             }
-            FST<long> instance;
+            FST<long?> instance;
             lock (this)
             {
-                instance = FstInstances[field.Number];
-                if (instance == null)
+                if (!FstInstances.TryGetValue(field.Number, out instance))
                 {
                     Data.Seek(entry.Offset);
-                    instance = new FST<long>((DataInput)Data, Lucene.Net.Util.Fst.PositiveIntOutputs.Singleton);
+                    instance = new FST<long?>((DataInput)Data, Lucene.Net.Util.Fst.PositiveIntOutputs.Singleton);
                     RamBytesUsed_Renamed.AddAndGet(instance.SizeInBytes());
                     FstInstances[field.Number] = instance;
                 }
             }
             BinaryDocValues docToOrds = GetBinary(field);
-            FST<long> fst = instance;
+            FST<long?> fst = instance;
 
             // per-thread resources
-            FST<long>.BytesReader @in = fst.BytesReader;
-            FST<long>.Arc<long> firstArc = new FST<long>.Arc<long>();
-            FST<long>.Arc<long> scratchArc = new FST<long>.Arc<long>();
-            IntsRef scratchInts = new IntsRef();
-            BytesRefFSTEnum<long> fstEnum = new BytesRefFSTEnum<long>(fst);
-            BytesRef @ref = new BytesRef();
-            ByteArrayDataInput input = new ByteArrayDataInput();
-            return new SortedSetDocValuesAnonymousInnerClassHelper(this, entry, docToOrds, fst, @in, firstArc, scratchArc, scratchInts, fstEnum, @ref, input);
+            var @in = fst.BytesReader;
+            var firstArc = new FST<long?>.Arc<long?>();
+            var scratchArc = new FST<long?>.Arc<long?>();
+            var scratchInts = new IntsRef();
+            var fstEnum = new BytesRefFSTEnum<long?>(fst);
+            var @ref = new BytesRef();
+            var input = new ByteArrayDataInput();
+            return new SortedSetDocValuesAnonymousInnerClassHelper(entry, docToOrds, fst, @in, firstArc, scratchArc, scratchInts, fstEnum, @ref, input);
         }
 
         private class SortedSetDocValuesAnonymousInnerClassHelper : SortedSetDocValues
         {
-            private readonly Lucene42DocValuesProducer OuterInstance;
+            private readonly FSTEntry Entry;
+            private readonly BinaryDocValues DocToOrds;
+            private readonly FST<long?> Fst;
+            private readonly FST<long?>.BytesReader @in;
+            private readonly FST<long?>.Arc<long?> FirstArc;
+            private readonly FST<long?>.Arc<long?> ScratchArc;
+            private readonly IntsRef ScratchInts;
+            private readonly BytesRefFSTEnum<long?> FstEnum;
+            private readonly BytesRef @ref;
+            private readonly ByteArrayDataInput Input;
 
-            private FSTEntry Entry;
-            private BinaryDocValues DocToOrds;
-            private FST<long> Fst;
-            private FST<long>.BytesReader @in;
-            private FST<long>.Arc<long> FirstArc;
-            private FST<long>.Arc<long> ScratchArc;
-            private IntsRef ScratchInts;
-            private BytesRefFSTEnum<long> FstEnum;
-            private BytesRef @ref;
-            private ByteArrayDataInput Input;
-
-            public SortedSetDocValuesAnonymousInnerClassHelper(Lucene42DocValuesProducer outerInstance, FSTEntry entry, BinaryDocValues docToOrds, FST<long> fst, FST<long>.BytesReader @in, FST<long>.Arc<long> firstArc, FST<long>.Arc<long> scratchArc, IntsRef scratchInts, BytesRefFSTEnum<long> fstEnum, BytesRef @ref, ByteArrayDataInput input)
+            public SortedSetDocValuesAnonymousInnerClassHelper(FSTEntry entry, BinaryDocValues docToOrds, FST<long?> fst, FST<long?>.BytesReader @in, FST<long?>.Arc<long?> firstArc, FST<long?>.Arc<long?> scratchArc, IntsRef scratchInts, BytesRefFSTEnum<long?> fstEnum, BytesRef @ref, ByteArrayDataInput input)
             {
-                this.OuterInstance = outerInstance;
                 this.Entry = entry;
                 this.DocToOrds = docToOrds;
                 this.Fst = fst;
@@ -607,7 +582,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 this.Input = input;
             }
 
-            internal long currentOrd;
+            private long currentOrd;
 
             public override long NextOrd()
             {
@@ -627,7 +602,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 set
                 {
                     DocToOrds.Get(value, @ref);
-                    Input.Reset((byte[])(Array)@ref.Bytes, @ref.Offset, @ref.Length);
+                    Input.Reset(@ref.Bytes, @ref.Offset, @ref.Length);
                     currentOrd = 0;
                 }
             }
@@ -654,18 +629,18 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 try
                 {
-                    Lucene.Net.Util.Fst.BytesRefFSTEnum<long>.InputOutput<long> o = FstEnum.SeekCeil(key);
+                    var o = FstEnum.SeekCeil(key);
                     if (o == null)
                     {
                         return -ValueCount - 1;
                     }
                     else if (o.Input.Equals(key))
                     {
-                        return (int)o.Output;
+                        return (int)o.Output.Value;
                     }
                     else
                     {
-                        return -o.Output - 1;
+                        return -o.Output.Value - 1;
                     }
                 }
                 catch (System.IO.IOException bogus)
@@ -734,28 +709,28 @@ namespace Lucene.Net.Codecs.Lucene42
         // exposes FSTEnum directly as a TermsEnum: avoids binary-search next()
         internal class FSTTermsEnum : TermsEnum
         {
-            internal readonly BytesRefFSTEnum<long> @in;
+            internal readonly BytesRefFSTEnum<long?> @in;
 
             // this is all for the complicated seek(ord)...
             // maybe we should add a FSTEnum that supports this operation?
-            internal readonly FST<long> Fst;
+            internal readonly FST<long?> Fst;
 
-            internal readonly FST<long>.BytesReader BytesReader;
-            internal readonly FST<long>.Arc<long> FirstArc = new FST<long>.Arc<long>();
-            internal readonly FST<long>.Arc<long> ScratchArc = new FST<long>.Arc<long>();
+            internal readonly FST<long?>.BytesReader BytesReader;
+            internal readonly FST<long?>.Arc<long?> FirstArc = new FST<long?>.Arc<long?>();
+            internal readonly FST<long?>.Arc<long?> ScratchArc = new FST<long?>.Arc<long?>();
             internal readonly IntsRef ScratchInts = new IntsRef();
             internal readonly BytesRef ScratchBytes = new BytesRef();
 
-            internal FSTTermsEnum(FST<long> fst)
+            internal FSTTermsEnum(FST<long?> fst)
             {
                 this.Fst = fst;
-                @in = new BytesRefFSTEnum<long>(fst);
+                @in = new BytesRefFSTEnum<long?>(fst);
                 BytesReader = fst.BytesReader;
             }
 
             public override BytesRef Next()
             {
-                Lucene.Net.Util.Fst.BytesRefFSTEnum<long>.InputOutput<long> io = @in.Next();
+                var io = @in.Next();
                 if (io == null)
                 {
                     return null;
@@ -826,7 +801,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override long Ord()
             {
-                return @in.Current().Output;
+                return @in.Current().Output.Value;
             }
 
             public override int DocFreq()

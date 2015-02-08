@@ -1,6 +1,4 @@
-package codecs.intblock;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,182 +15,60 @@ package codecs.intblock;
  * limitations under the License.
  */
 
-/** Naive int block API that writes vInts.  This is
- *  expected to give poor performance; it's really only for
- *  testing the pluggability.  One should typically use pfor instead. */
+namespace Lucene.Net.Codecs.Intblock
+{
+    using Sep;
+    using IntIndexInput = Sep.IntIndexInput;
+    using IndexInput = Store.IndexInput;
 
-import java.io.IOException;
+    /// <summary>
+    /// Naive int block API that writes vInts.  This is
+    /// expected to give poor performance; it's really only for
+    /// testing the pluggability.  One should typically use pfor instead. 
+    /// </summary>
 
-import codecs.sep.IntIndexInput;
-import store.DataInput;
-import store.IndexInput;
+    // TODO: much of this can be shared code w/ the fixed case
 
-// TODO: much of this can be shared code w/ the fixed case
+    /// <summary>
+    /// Abstract base class that reads variable-size blocks of ints
+    /// from an IndexInput.  While this is a simple approach, a
+    /// more performant approach would directly create an impl
+    /// of IntIndexInput inside Directory.  Wrapping a generic
+    /// IndexInput will likely cost performance.
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    public abstract class VariableIntBlockIndexInput : IntIndexInput
+    {
+        private readonly IndexInput _input;
+        protected internal readonly int MAX_BLOCK_SIZE;
 
-/** Abstract base class that reads variable-size blocks of ints
- *  from an IndexInput.  While this is a simple approach, a
- *  more performant approach would directly create an impl
- *  of IntIndexInput inside Directory.  Wrapping a generic
- *  IndexInput will likely cost performance.
- *
- * @lucene.experimental
- */
-public abstract class VariableIntBlockIndexInput extends IntIndexInput {
-
-  protected final IndexInput in;
-  protected final int maxBlockSize;
-
-  protected VariableIntBlockIndexInput(final IndexInput in)  {
-    this.in = in;
-    maxBlockSize = in.readInt();
-  }
-
-  @Override
-  public IntIndexInput.Reader reader()  {
-    final int[] buffer = new int[maxBlockSize];
-    final IndexInput clone = in.clone();
-    // TODO: can this be simplified?
-    return new Reader(clone, buffer, this.getBlockReader(clone, buffer));
-  }
-
-  @Override
-  public void close()  {
-    in.close();
-  }
-
-  @Override
-  public IntIndexInput.Index index() {
-    return new Index();
-  }
-
-  protected abstract BlockReader getBlockReader(IndexInput in, int[] buffer) ;
-
-  /**
-   * Interface for variable-size block decoders.
-   * <p>
-   * Implementations should decode into the buffer in {@link #readBlock}.
-   */
-  public interface BlockReader {
-    public int readBlock() ;
-    public void seek(long pos) ;
-  }
-
-  private static class Reader extends IntIndexInput.Reader {
-    private final IndexInput in;
-
-    public final int[] pending;
-    int upto;
-
-    private bool seekPending;
-    private long pendingFP;
-    private int pendingUpto;
-    private long lastBlockFP;
-    private int blockSize;
-    private final BlockReader blockReader;
-
-    public Reader(final IndexInput in, final int[] pending, final BlockReader blockReader) {
-      this.in = in;
-      this.pending = pending;
-      this.blockReader = blockReader;
-    }
-
-    void seek(final long fp, final int upto) {
-      // TODO: should we do this in real-time, not lazy?
-      pendingFP = fp;
-      pendingUpto = upto;
-      Debug.Assert( pendingUpto >= 0: "pendingUpto=" + pendingUpto;
-      seekPending = true;
-    }
-
-    private final void maybeSeek()  {
-      if (seekPending) {
-        if (pendingFP != lastBlockFP) {
-          // need new block
-          in.seek(pendingFP);
-          blockReader.seek(pendingFP);
-          lastBlockFP = pendingFP;
-          blockSize = blockReader.readBlock();
+        protected internal VariableIntBlockIndexInput(IndexInput input)
+        {
+            _input = input;
+            MAX_BLOCK_SIZE = input.ReadInt();
         }
-        upto = pendingUpto;
 
-        // TODO: if we were more clever when writing the
-        // index, such that a seek point wouldn't be written
-        // until the int encoder "committed", we could avoid
-        // this (likely minor) inefficiency:
-
-        // This is necessary for int encoders that are
-        // non-causal, ie must see future int values to
-        // encode the current ones.
-        while(upto >= blockSize) {
-          upto -= blockSize;
-          lastBlockFP = in.getFilePointer();
-          blockSize = blockReader.readBlock();
+        public override IntIndexInputReader Reader()
+        {
+            var buffer = new int[MAX_BLOCK_SIZE];
+            var clone = (IndexInput)_input.Clone();
+            // TODO: can this be simplified?
+            return new IntBlockIndexReader(clone, buffer, GetBlockReader(clone, buffer));
         }
-        seekPending = false;
-      }
-    }
 
-    @Override
-    public int next()  {
-      this.maybeSeek();
-      if (upto == blockSize) {
-        lastBlockFP = in.getFilePointer();
-        blockSize = blockReader.readBlock();
-        upto = 0;
-      }
-
-      return pending[upto++];
-    }
-  }
-
-  private class Index extends IntIndexInput.Index {
-    private long fp;
-    private int upto;
-
-    @Override
-    public void read(final DataInput indexIn, final bool absolute)  {
-      if (absolute) {
-        upto = indexIn.readVInt();
-        fp = indexIn.readVLong();
-      } else {
-        final int uptoDelta = indexIn.readVInt();
-        if ((uptoDelta & 1) == 1) {
-          // same block
-          upto += uptoDelta >>> 1;
-        } else {
-          // new block
-          upto = uptoDelta >>> 1;
-          fp += indexIn.readVLong();
+        public override void Dispose()
+        {
+            _input.Dispose();
         }
-      }
-      // TODO: we can't do this Debug.Assert( because non-causal
-      // int encoders can have upto over the buffer size
-      //Debug.Assert( upto < maxBlockSize: "upto=" + upto + " max=" + maxBlockSize;
+
+        public override IntIndexInputIndex Index()
+        {
+            return new IntBlockIndexInput(this);
+        }
+
+        protected internal abstract IBlockReader GetBlockReader(IndexInput @in, int[] buffer);
+
     }
 
-    @Override
-    public String toString() {
-      return "VarIntBlock.Index fp=" + fp + " upto=" + upto + " maxBlock=" + maxBlockSize;
-    }
-
-    @Override
-    public void seek(final IntIndexInput.Reader other)  {
-      ((Reader) other).seek(fp, upto);
-    }
-
-    @Override
-    public void copyFrom(final IntIndexInput.Index other) {
-      final Index idx = (Index) other;
-      fp = idx.fp;
-      upto = idx.upto;
-    }
-
-    @Override
-    public Index clone() {
-      Index other = new Index();
-      other.fp = fp;
-      other.upto = upto;
-      return other;
-    }
-  }
 }

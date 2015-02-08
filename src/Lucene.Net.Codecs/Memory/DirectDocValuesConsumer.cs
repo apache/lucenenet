@@ -20,13 +20,15 @@ namespace Lucene.Net.Codecs.Memory
     using System;
     using System.Diagnostics;
     using System.Collections.Generic;
-   
+
     using FieldInfo = Index.FieldInfo;
     using IndexFileNames = Index.IndexFileNames;
     using SegmentWriteState = Index.SegmentWriteState;
     using IndexOutput = Store.IndexOutput;
     using BytesRef = Util.BytesRef;
     using IOUtils = Util.IOUtils;
+    using System.Collections;
+
 
     /// <summary>
     /// Writer for <seealso cref="DirectDocValuesFormat"/>
@@ -62,14 +64,14 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
+        public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             meta.WriteVInt(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.NUMBER);
             AddNumericFieldValues(field, values);
         }
 
-        private void AddNumericFieldValues(FieldInfo field, IEnumerable<long> values)
+        private void AddNumericFieldValues(FieldInfo field, IEnumerable<long?> values)
         {
             meta.WriteLong(data.FilePointer);
             long minValue = long.MaxValue;
@@ -81,7 +83,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (nv != null)
                 {
-                    var v = nv;
+                    var v = nv.Value;
                     minValue = Math.Min(minValue, v);
                     maxValue = Math.Max(maxValue, v);
                 }
@@ -92,7 +94,7 @@ namespace Lucene.Net.Codecs.Memory
                 count++;
                 if (count >= DirectDocValuesFormat.MAX_SORTED_SET_ORDS)
                 {
-                    throw new ArgumentException("DocValuesField \"" + field.name + "\" is too large, must be <= " +
+                    throw new ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " +
                                                        DirectDocValuesFormat.MAX_SORTED_SET_ORDS + " values/total ords");
                 }
             }
@@ -110,7 +112,7 @@ namespace Lucene.Net.Codecs.Memory
                 meta.WriteLong(-1L);
             }
 
-            sbyte byteWidth;
+            byte byteWidth;
             if (minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
             {
                 byteWidth = 1;
@@ -144,7 +146,7 @@ namespace Lucene.Net.Codecs.Memory
                 switch (byteWidth)
                 {
                     case 1:
-                        data.WriteByte((sbyte) v);
+                        data.WriteByte((byte)(sbyte) v);
                         break;
                     case 2:
                         data.WriteShort((short) v);
@@ -278,10 +280,10 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
             meta.WriteVInt(field.Number);
-            meta.WriteByte(SORTED);
+            meta.WriteByte((byte)DirectDocValuesProducer.SORTED);
 
             // write the ordinals as numerics
             AddNumericFieldValues(field, docToOrd);
@@ -292,10 +294,10 @@ namespace Lucene.Net.Codecs.Memory
 
         // note: this might not be the most efficient... but its fairly simple
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values,
-            IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+            IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             meta.WriteVInt(field.Number);
-            meta.WriteByte(SORTED_SET);
+            meta.WriteByte((byte)DirectDocValuesProducer.SORTED_SET);
 
             // First write docToOrdCounts, except we "aggregate" the
             // counts so they turn into addresses, and add a final
@@ -310,13 +312,13 @@ namespace Lucene.Net.Codecs.Memory
             AddBinaryFieldValues(field, values);
         }
 
-        private class IterableAnonymousInnerClassHelper : IEnumerable<long>
+        private class IterableAnonymousInnerClassHelper : IEnumerable<long?>
         {
             private readonly DirectDocValuesConsumer _outerInstance;
-            private readonly IEnumerable<long> _docToOrdCount;
+            private readonly IEnumerable<long?> _docToOrdCount;
 
             public IterableAnonymousInnerClassHelper(DirectDocValuesConsumer outerInstance,
-                IEnumerable<long> docToOrdCount)
+                IEnumerable<long?> docToOrdCount)
             {
                 _outerInstance = outerInstance;
                 _docToOrdCount = docToOrdCount;
@@ -325,58 +327,113 @@ namespace Lucene.Net.Codecs.Memory
             // Just aggregates the count values so they become
             // "addresses", and adds one more value in the end
             // (the final sum):
-            public virtual IEnumerator<long> GetEnumerator()
+            public virtual IEnumerator<long?> GetEnumerator()
             {
                 var iter = _docToOrdCount.GetEnumerator();
                 return new IteratorAnonymousInnerClassHelper(this, iter);
             }
 
-            private class IteratorAnonymousInnerClassHelper : IEnumerator<long>
+            IEnumerator IEnumerable.GetEnumerator()
             {
-                private readonly IEnumerator<long> _iter;
+                return GetEnumerator();
+            }
+
+            private class IteratorAnonymousInnerClassHelper : IEnumerator<long?>
+            {
+                private readonly IEnumerator<long?> _iter;
 
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance,
-                    IEnumerator<long> iter)
+                    IEnumerator<long?> iter)
                 {
                     _iter = iter;
                 }
 
 
-                internal long sum;
-                internal bool ended;
+                private long sum;
+                private bool ended;
 
-                public virtual bool HasNext()
+                public long? Current
                 {
-                    return _iter.HasNext() || !ended;
+                    get
+                    {
+                        return _iter.Current;
+                    }
                 }
 
-                public virtual long Next()
+                object IEnumerator.Current
                 {
-                    long toReturn = sum;
-                    if (_iter.hasNext())
+                    get
                     {
-                        long n = _iter.next();
-                        if (n != null)
-                        {
-                            sum += n;
-                        }
+                        return Current;
                     }
-                    else if (!ended)
-                    {
-                        ended = true;
-                    }
-                    else
-                    {
-                        Debug.Assert(false);
-                    }
-
-                    return toReturn;
                 }
 
                 public virtual void Remove()
                 {
                     throw new NotSupportedException();
                 }
+
+                public bool MoveNext()
+                {
+                    long toReturn = sum;
+                    if (_iter.MoveNext())
+                    {
+                        long? n = _iter.Current;
+                        if (n.HasValue)
+                        {
+                            sum += n.Value;
+                        }
+
+                        return true;
+                    }
+                    else 
+                    {
+                        ended = true;
+                        return false;
+                    }
+
+                    //return toReturn;
+                }
+
+                public void Reset()
+                {
+                    throw new NotImplementedException();
+                }
+
+                #region IDisposable Support
+                private bool disposedValue = false; // To detect redundant calls
+
+                protected virtual void Dispose(bool disposing)
+                {
+                    if (!disposedValue)
+                    {
+                        if (disposing)
+                        {
+                            // TODO: dispose managed state (managed objects).          
+                        }
+
+                        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                        // TODO: set large fields to null.
+
+                        disposedValue = true;
+                    }
+                }
+
+                // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources. 
+                // ~IteratorAnonymousInnerClassHelper() {
+                //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+                //   Dispose(false);
+                // }
+
+                // This code added to correctly implement the disposable pattern.
+                public void Dispose()
+                {
+                    // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+                    Dispose(true);
+                    // TODO: uncomment the following line if the finalizer is overridden above.
+                    // GC.SuppressFinalize(this);
+                }
+                #endregion
             }
         }
     }

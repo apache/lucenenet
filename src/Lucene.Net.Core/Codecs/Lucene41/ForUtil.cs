@@ -145,9 +145,9 @@ namespace Lucene.Net.Codecs.Lucene41
 
             for (int bpv = 1; bpv <= 32; ++bpv)
             {
-                int code = @in.ReadVInt();
-                int formatId = (int)((uint)code >> 5);
-                int bitsPerValue = (code & 31) + 1;
+                var code = @in.ReadVInt();
+                var formatId = (int)((uint)code >> 5);
+                var bitsPerValue = (code & 31) + 1;
 
                 PackedInts.Format format = PackedInts.Format.ById(formatId);
                 Debug.Assert(format.IsSupported(bitsPerValue));
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             if (IsAllEqual(data))
             {
-                @out.WriteByte((sbyte)ALL_VALUES_EQUAL);
+                @out.WriteByte((byte)(sbyte)ALL_VALUES_EQUAL);
                 @out.WriteVInt(data[0]);
                 return;
             }

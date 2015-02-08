@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Lucene.Net.Codecs;
+using Lucene.Net.Store;
 
 namespace Lucene.Net.Index
 {
@@ -139,18 +141,14 @@ namespace Lucene.Net.Index
         /// Used to name new segments. </summary>
         public int Counter;
 
-        /// <summary>
-        /// Counts how often the index has been changed. </summary>
-        public long Version_Renamed;
-
-        private long Generation_Renamed; // generation of the "segments_N" for the next commit
-        private long LastGeneration_Renamed; // generation of the "segments_N" file we last successfully read
+        private long _generation; // generation of the "segments_N" for the next commit
+        private long _lastGeneration; // generation of the "segments_N" file we last successfully read
         // or wrote; this is normally the same as generation except if
         // there was an IOException that had interrupted a commit
 
         /// <summary>
         /// Opaque Map&lt;String, String&gt; that user can specify during IndexWriter.commit </summary>
-        public IDictionary<string, string> UserData_Renamed = CollectionsHelper.EmptyMap<string, string>();
+        private IDictionary<string, string> _userData = CollectionsHelper.EmptyMap<string, string>();
 
         private List<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
 
@@ -191,7 +189,7 @@ namespace Lucene.Net.Index
                 return -1;
             }
             long max = -1;
-            foreach (string file in files)
+            foreach (var file in files)
             {
                 if (file.StartsWith(IndexFileNames.SEGMENTS) && !file.Equals(IndexFileNames.SEGMENTS_GEN))
                 {
@@ -216,7 +214,7 @@ namespace Lucene.Net.Index
             {
                 return GetLastCommitGeneration(directory.ListAll());
             }
-            catch (NoSuchDirectoryException nsde)
+            catch (NoSuchDirectoryException)
             {
                 return -1;
             }
@@ -250,7 +248,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", LastGeneration_Renamed);
+                return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", _lastGeneration);
             }
         }
 
@@ -300,10 +298,10 @@ namespace Lucene.Net.Index
                 finally
                 {
                     genOutput.Dispose();
-                    dir.Sync(/*CollectionsHelper.Singleton(*/ new[] { IndexFileNames.SEGMENTS_GEN }/*)*/);
+                    dir.Sync(Collections.Singleton(IndexFileNames.SEGMENTS_GEN));
                 }
             }
-            catch (Exception t)
+            catch (Exception)
             {
                 // It's OK if we fail to write this file since it's
                 // used only as one of the retry fallbacks.
@@ -311,7 +309,7 @@ namespace Lucene.Net.Index
                 {
                     dir.DeleteFile(IndexFileNames.SEGMENTS_GEN);
                 }
-                catch (Exception t2)
+                catch (Exception)
                 {
                     // Ignore; this file is only used in a retry
                     // fallback on init.
@@ -328,13 +326,13 @@ namespace Lucene.Net.Index
             {
                 long nextGeneration;
 
-                if (Generation_Renamed == -1)
+                if (_generation == -1)
                 {
                     nextGeneration = 1;
                 }
                 else
                 {
-                    nextGeneration = Generation_Renamed + 1;
+                    nextGeneration = _generation + 1;
                 }
                 return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", nextGeneration);
             }
@@ -350,16 +348,16 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public void Read(Directory directory, string segmentFileName)
         {
-            bool success = false;
+            var success = false;
 
             // Clear any previous segments:
             this.Clear();
 
-            Generation_Renamed = GenerationFromSegmentsFileName(segmentFileName);
+            _generation = GenerationFromSegmentsFileName(segmentFileName);
 
-            LastGeneration_Renamed = Generation_Renamed;
+            _lastGeneration = _generation;
 
-            ChecksumIndexInput input = directory.OpenChecksumInput(segmentFileName, IOContext.READ);
+            var input = directory.OpenChecksumInput(segmentFileName, IOContext.READ);
             try
             {
                 int format = input.ReadInt();
@@ -368,19 +366,19 @@ namespace Lucene.Net.Index
                 {
                     // 4.0+
                     actualFormat = CodecUtil.CheckHeaderNoMagic(input, "segments", VERSION_40, VERSION_48);
-                    Version_Renamed = input.ReadLong();
+                    Version = input.ReadLong();
                     Counter = input.ReadInt();
                     int numSegments = input.ReadInt();
                     if (numSegments < 0)
                     {
                         throw new CorruptIndexException("invalid segment count: " + numSegments + " (resource: " + input + ")");
                     }
-                    for (int seg = 0; seg < numSegments; seg++)
+                    for (var seg = 0; seg < numSegments; seg++)
                     {
-                        string segName = input.ReadString();
-                        Codec codec = Codec.ForName(input.ReadString());
+                        var segName = input.ReadString();
+                        var codec = Codec.ForName(input.ReadString());
                         //System.out.println("SIS.read seg=" + seg + " codec=" + codec);
-                        SegmentInfo info = codec.SegmentInfoFormat().SegmentInfoReader.Read(directory, segName, IOContext.READ);
+                        var info = codec.SegmentInfoFormat().SegmentInfoReader.Read(directory, segName, IOContext.READ);
                         info.Codec = codec;
                         long delGen = input.ReadLong();
                         int delCount = input.ReadInt();
@@ -393,7 +391,7 @@ namespace Lucene.Net.Index
                         {
                             fieldInfosGen = input.ReadLong();
                         }
-                        SegmentCommitInfo siPerCommit = new SegmentCommitInfo(info, delCount, delGen, fieldInfosGen);
+                        var siPerCommit = new SegmentCommitInfo(info, delCount, delGen, fieldInfosGen);
                         if (actualFormat >= VERSION_46)
                         {
                             int numGensUpdatesFiles = input.ReadInt();
@@ -414,7 +412,7 @@ namespace Lucene.Net.Index
                         }
                         Add(siPerCommit);
                     }
-                    UserData_Renamed = input.ReadStringStringMap();
+                    _userData = input.ReadStringStringMap();
                 }
                 else
                 {
@@ -466,7 +464,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Read(Directory directory)
         {
-            Generation_Renamed = LastGeneration_Renamed = -1;
+            _generation = _lastGeneration = -1;
 
             new FindSegmentsFileAnonymousInnerClassHelper(this, directory).Run();
         }
@@ -475,7 +473,7 @@ namespace Lucene.Net.Index
         {
             private readonly SegmentInfos OuterInstance;
 
-            private new Directory Directory;
+            private new readonly Directory Directory;
 
             public FindSegmentsFileAnonymousInnerClassHelper(SegmentInfos outerInstance, Directory directory)
                 : base(directory)
@@ -503,25 +501,25 @@ namespace Lucene.Net.Index
             string segmentsFileName = NextSegmentFileName;
 
             // Always advance the generation on write:
-            if (Generation_Renamed == -1)
+            if (_generation == -1)
             {
-                Generation_Renamed = 1;
+                _generation = 1;
             }
             else
             {
-                Generation_Renamed++;
+                _generation++;
             }
 
             IndexOutput segnOutput = null;
             bool success = false;
 
-            HashSet<string> upgradedSIFiles = new HashSet<string>();
+            var upgradedSIFiles = new HashSet<string>();
 
             try
             {
                 segnOutput = directory.CreateOutput(segmentsFileName, IOContext.DEFAULT);
                 CodecUtil.WriteHeader(segnOutput, "segments", VERSION_48);
-                segnOutput.WriteLong(Version_Renamed);
+                segnOutput.WriteLong(Version);
                 segnOutput.WriteInt(Counter); // write counter
                 segnOutput.WriteInt(Size()); // write infos
                 foreach (SegmentCommitInfo siPerCommit in segments)
@@ -575,11 +573,11 @@ namespace Lucene.Net.Index
                                 @out.Dispose();
                             }
                             upgradedSIFiles.Add(markerFileName);
-                            directory.Sync(/*Collections.singletonList(*/new[] { markerFileName }/*)*/);
+                            directory.Sync(/*Collections.SingletonList(*/new[] { markerFileName }/*)*/);
                         }
                     }
                 }
-                segnOutput.WriteStringStringMap(UserData_Renamed);
+                segnOutput.WriteStringStringMap(_userData);
                 PendingSegnOutput = segnOutput;
                 success = true;
             }
@@ -597,7 +595,7 @@ namespace Lucene.Net.Index
                         {
                             directory.DeleteFile(fileName);
                         }
-                        catch (Exception t)
+                        catch (Exception)
                         {
                             // Suppress so we keep throwing the original exception
                         }
@@ -609,7 +607,7 @@ namespace Lucene.Net.Index
                         // the index:
                         directory.DeleteFile(segmentsFileName);
                     }
-                    catch (Exception t)
+                    catch (Exception)
                     {
                         // Suppress so we keep throwing the original exception
                     }
@@ -630,7 +628,7 @@ namespace Lucene.Net.Index
                     return true;
                 }
             }
-            catch (IOException ioe)
+            catch (IOException)
             {
                 // Ignore: if something is wrong w/ the marker file,
                 // we will just upgrade again
@@ -671,7 +669,7 @@ namespace Lucene.Net.Index
 
                 output.WriteStringStringMap(si.Attributes());
 
-                output.WriteByte((sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
+                output.WriteByte((byte)(sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
                 output.WriteStringStringMap(si.Diagnostics);
                 output.WriteStringSet(si.Files);
 
@@ -705,7 +703,7 @@ namespace Lucene.Net.Index
 
         public object Clone()
         {
-            SegmentInfos sis = (SegmentInfos)base.MemberwiseClone();
+            var sis = (SegmentInfos)base.MemberwiseClone();
             // deep clone, first recreate all collections:
             sis.segments = new List<SegmentCommitInfo>(Size());
             foreach (SegmentCommitInfo info in segments)
@@ -714,7 +712,7 @@ namespace Lucene.Net.Index
                 // dont directly access segments, use add method!!!
                 sis.Add((SegmentCommitInfo)(info.Clone()));
             }
-            sis.UserData_Renamed = new Dictionary<string, string>(UserData_Renamed);
+            sis._userData = new Dictionary<string, string>(_userData);
             return sis;
         }
 
@@ -723,16 +721,11 @@ namespace Lucene.Net.Index
             get { return segments; }
         }
 
+
         /// <summary>
-        /// version number when this SegmentInfos was generated.
+        /// Counts how often the index has been changed.
         /// </summary>
-        public long Version
-        {
-            get
-            {
-                return Version_Renamed;
-            }
-        }
+        public long Version { get; set; }
 
         /// <summary>
         /// Returns current generation. </summary>
@@ -740,7 +733,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return Generation_Renamed;
+                return _generation;
             }
         }
 
@@ -750,7 +743,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return LastGeneration_Renamed;
+                return _lastGeneration;
             }
         }
 
@@ -831,7 +824,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Sole constructor. </summary>
-            public FindSegmentsFile(Directory directory)
+            protected FindSegmentsFile(Directory directory)
             {
                 this.Directory = directory;
             }
@@ -1116,8 +1109,8 @@ namespace Lucene.Net.Index
         // Carry over generation numbers from another SegmentInfos
         internal void UpdateGeneration(SegmentInfos other)
         {
-            LastGeneration_Renamed = other.LastGeneration_Renamed;
-            Generation_Renamed = other.Generation_Renamed;
+            _lastGeneration = other._lastGeneration;
+            _generation = other._generation;
         }
 
         internal void RollbackCommit(Directory dir)
@@ -1131,7 +1124,7 @@ namespace Lucene.Net.Index
 
                 // Must carefully compute fileName from "generation"
                 // since lastGeneration isn't incremented:
-                string segmentFileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", Generation_Renamed);
+                string segmentFileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", _generation);
                 // Suppress so we keep throwing the original exception
                 // in our caller
                 IOUtils.DeleteFilesIgnoringExceptions(dir, segmentFileName);
@@ -1168,7 +1161,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public ICollection<string> Files(Directory dir, bool includeSegmentsFile)
         {
-            HashSet<string> files = new HashSet<string>();
+            var files = new HashSet<string>();
             if (includeSegmentsFile)
             {
                 string segmentFileName = SegmentsFileName;
@@ -1177,10 +1170,10 @@ namespace Lucene.Net.Index
                     files.Add(segmentFileName);
                 }
             }
-            int size = Size();
+            var size = Size();
             for (int i = 0; i < size; i++)
             {
-                SegmentCommitInfo info = Info(i);
+                var info = Info(i);
                 Debug.Assert(info.Info.Dir == dir);
                 if (info.Info.Dir == dir)
                 {
@@ -1243,11 +1236,11 @@ namespace Lucene.Net.Index
             // logic in SegmentInfos to kick in and load the last
             // good (previous) segments_N-1 file.
 
-            string fileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", Generation_Renamed);
+            var fileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", _generation);
             success = false;
             try
             {
-                dir.Sync(/*Collections.singleton(*/new[] { fileName }/*)*/);
+                dir.Sync(Collections.Singleton(fileName));
                 success = true;
             }
             finally
@@ -1258,15 +1251,15 @@ namespace Lucene.Net.Index
                     {
                         dir.DeleteFile(fileName);
                     }
-                    catch (Exception t)
+                    catch (Exception)
                     {
                         // Suppress so we keep throwing the original exception
                     }
                 }
             }
 
-            LastGeneration_Renamed = Generation_Renamed;
-            WriteSegmentsGen(dir, Generation_Renamed);
+            _lastGeneration = _generation;
+            WriteSegmentsGen(dir, _generation);
         }
 
         /// <summary>
@@ -1288,7 +1281,7 @@ namespace Lucene.Net.Index
         /// Returns readable description of this segment. </summary>
         public string ToString(Directory directory)
         {
-            StringBuilder buffer = new StringBuilder();
+            var buffer = new StringBuilder();
             buffer.Append(SegmentsFileName).Append(": ");
             int count = Size();
             for (int i = 0; i < count; i++)
@@ -1311,17 +1304,17 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return UserData_Renamed;
+                return _userData;
             }
             set
             {
                 if (value == null)
                 {
-                    UserData_Renamed = CollectionsHelper.EmptyMap<string, string>();
+                    _userData = CollectionsHelper.EmptyMap<string, string>();
                 }
                 else
                 {
-                    UserData_Renamed = value;
+                    _userData = value;
                 }
             }
         }
@@ -1334,7 +1327,7 @@ namespace Lucene.Net.Index
         internal void Replace(SegmentInfos other)
         {
             RollbackSegmentInfos(other.AsList());
-            LastGeneration_Renamed = other.LastGeneration_Renamed;
+            _lastGeneration = other._lastGeneration;
         }
 
         /// <summary>
@@ -1352,14 +1345,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Changed()
         {
-            Version_Renamed++;
+            Version++;
         }
 
         /// <summary>
         /// applies all changes caused by committing a merge to this SegmentInfos </summary>
         internal void ApplyMergeChanges(MergePolicy.OneMerge merge, bool dropSegment)
         {
-            HashSet<SegmentCommitInfo> mergedAway = new HashSet<SegmentCommitInfo>(merge.Segments);
+            var mergedAway = new HashSet<SegmentCommitInfo>(merge.Segments);
             bool inserted = false;
             int newSegIdx = 0;
             for (int segIdx = 0, cnt = segments.Count; segIdx < cnt; segIdx++)
@@ -1370,7 +1363,7 @@ namespace Lucene.Net.Index
                 {
                     if (!inserted && !dropSegment)
                     {
-                        segments[segIdx] = merge.Info_Renamed;
+                        segments[segIdx] = merge.info;
                         inserted = true;
                         newSegIdx++;
                     }
@@ -1392,14 +1385,14 @@ namespace Lucene.Net.Index
             // we insert it at the beginning if it should not be dropped:
             if (!inserted && !dropSegment)
             {
-                segments.Insert(0, merge.Info_Renamed);
+                segments.Insert(0, merge.info);
             }
         }
 
         internal IList<SegmentCommitInfo> CreateBackupSegmentInfos()
         {
-            IList<SegmentCommitInfo> list = new List<SegmentCommitInfo>(Size());
-            foreach (SegmentCommitInfo info in segments)
+            var list = new List<SegmentCommitInfo>(Size());
+            foreach (var info in segments)
             {
                 Debug.Assert(info.Info.Codec != null);
                 list.Add((SegmentCommitInfo)(info.Clone()));
@@ -1415,9 +1408,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns all contained segments as an <b>unmodifiable</b> <seealso cref="List"/> view. </summary>
-        public List<SegmentCommitInfo> AsList()
+        public IList<SegmentCommitInfo> AsList()
         {
-            return /*Collections.unmodifiableList*/(segments);
+            return Collections.UnmodifiableList<SegmentCommitInfo>(segments);
         }
 
         /// <summary>
@@ -1438,7 +1431,7 @@ namespace Lucene.Net.Index
         /// Appends the provided <seealso cref="SegmentCommitInfo"/>s. </summary>
         public void AddAll(IEnumerable<SegmentCommitInfo> sis)
         {
-            foreach (SegmentCommitInfo si in sis)
+            foreach (var si in sis)
             {
                 this.Add(si);
             }

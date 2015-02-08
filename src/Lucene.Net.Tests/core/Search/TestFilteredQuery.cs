@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -526,7 +527,7 @@ namespace Lucene.Net.Search
                 int d;
                 while ((d = termDocsEnum.NextDoc()) != DocsEnum.NO_MORE_DOCS)
                 {
-                    bitSet.Set(d, true);
+                    bitSet.SafeSet(d, true);
                 }
                 return new DocIdSetAnonymousInnerClassHelper(this, nullBitset, reader, bitSet);
             }

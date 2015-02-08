@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
 
             TestReopen test = new TestReopenAnonymousInnerClassHelper3(this, dir, n);
 
-            IList<ReaderCouple> readers = new ConcurrentList<ReaderCouple>(new List<ReaderCouple>());
+            IList<ReaderCouple> readers = new SynchronizedCollection<ReaderCouple>();
             DirectoryReader firstReader = DirectoryReader.Open(dir);
             DirectoryReader reader = firstReader;
 

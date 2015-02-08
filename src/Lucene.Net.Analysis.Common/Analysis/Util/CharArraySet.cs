@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// <param name="ignoreCase">
 	  ///          <code>false</code> if and only if the set should be case sensitive
 	  ///          otherwise <code>true</code>. </param>
-	  public CharArraySet(Version matchVersion, int startSize, bool ignoreCase) : this(new CharArrayMap<>(matchVersion, startSize, ignoreCase))
+	  public CharArraySet(Lucene.Net.Util.Version matchVersion, int startSize, bool ignoreCase) : this(new CharArrayMap<>(matchVersion, startSize, ignoreCase))
 	  {
 	  }
 
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// Clears all entries in this set. This method is supported for reusing, but not <seealso cref="Set#remove"/>. </summary>
 	  public void Clear()
 	  {
-		map.clear();
+		map.Clear();
 	  }
 
 	  /// <summary>
@@ -111,19 +111,19 @@ namespace Lucene.Net.Analysis.Util
 	  /// </summary>
 	  public virtual bool Contains(char[] text, int off, int len)
 	  {
-		return map.containsKey(text, off, len);
+		return map.ContainsKey(text, off, len);
 	  }
 
 	  /// <summary>
 	  /// true if the <code>CharSequence</code> is in the set </summary>
 	  public virtual bool Contains(string cs)
 	  {
-		return map.containsKey(cs);
+		return map.ContainsKey(cs);
 	  }
 
 	  public bool Contains(object o)
 	  {
-		return map.containsKey(o);
+		return map.ContainsKey(o);
 	  }
 
 	  public bool Add(object o)
@@ -148,12 +148,17 @@ namespace Lucene.Net.Analysis.Util
 		return map.put(text, PLACEHOLDER) == null;
 	  }
 
-	  public override int Size()
-	  {
-		return map.size();
-	  }
+        public override int Size
+        {
+            get
+            {
+                {
+                    return map.size();
+                }
+            }
+        }
 
-	  /// <summary>
+        /// <summary>
 	  /// Returns an unmodifiable <seealso cref="CharArraySet"/>. This allows to provide
 	  /// unmodifiable views of internal sets for "read-only" use.
 	  /// </summary>

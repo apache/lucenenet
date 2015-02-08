@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using Lucene.Net.Documents;
 
@@ -669,7 +670,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<long> GetLongEnumerable(SegmentReader reader, string field, NumericDocValuesFieldUpdates fieldUpdates)
+        private IEnumerable<long?> GetLongEnumerable(SegmentReader reader, string field, NumericDocValuesFieldUpdates fieldUpdates)
         {
             int maxDoc = reader.MaxDoc;
             Bits DocsWithField = reader.GetDocsWithField(field);
@@ -681,9 +682,9 @@ namespace Lucene.Net.Index
             {
                 if (curDoc == updateDoc) //document has an updated value
                 {
-                    long? value = (long?)(iter.Value()); // either null or updated
+                    long? value = (long?)iter.Value(); // either null or updated
                     updateDoc = iter.NextDoc(); //prepare for next round
-                    yield return value ?? default(long);
+                    yield return value;
                 }
                 else
                 {   // no update for this document
@@ -694,7 +695,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        yield return default(long);
+                        yield return null;
                     }
                 }
             }

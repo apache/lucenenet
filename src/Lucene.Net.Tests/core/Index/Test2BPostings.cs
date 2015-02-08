@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
@@ -41,8 +43,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class Test2BPostings : LuceneTestCase
     {
-        //ORIGINAL LINE: @Nightly public void test() throws Exception
-        [Test]
+        [Test, LongRunningTest, Timeout(int.MaxValue)]
         public virtual void Test()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostings"));
@@ -85,8 +86,13 @@ namespace Lucene.Net.Index
 
         public sealed class MyTokenStream : TokenStream
         {
-            internal readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
+            internal readonly ICharTermAttribute TermAtt;
             internal int Index;
+
+            public MyTokenStream()
+            {
+                TermAtt = AddAttribute<ICharTermAttribute>();
+            }
 
             public override bool IncrementToken()
             {

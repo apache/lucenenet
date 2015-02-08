@@ -1,4 +1,4 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
+﻿namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -24,11 +24,9 @@
 	public sealed class EmptyTokenStream : TokenStream
 	{
 
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		return false;
 	  }
-
 	}
-
 }

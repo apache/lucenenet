@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
             }
             Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
             Assert.AreEqual(uniqueValues.Count, frozenSet.Count);
-            Assert.AreEqual(uniqueValues, frozenSet);
+            Assert.True(uniqueValues.SetEquals(frozenSet));
         }
 
         private class UpdateThread : ThreadClass

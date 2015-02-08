@@ -52,7 +52,7 @@ namespace Lucene.Net.Documents
         /// Creates a new DocValues field with the specified 64-bit long value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 64-bit long value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field name is null </exception>
         public NumericDocValuesField(string name, long value)
             : base(name, TYPE)
         {

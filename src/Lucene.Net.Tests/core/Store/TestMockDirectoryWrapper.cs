@@ -65,13 +65,13 @@ namespace Lucene.Net.Store
             dir.Dispose();
         }
 
-        [Test]
+        [Test, Repeat(100)]
         public virtual void TestDiskFull()
         {
             // test writeBytes
-            MockDirectoryWrapper dir = NewMockDirectory();
+            var dir = NewMockDirectory();
             dir.MaxSizeInBytes = 3;
-            sbyte[] bytes = new sbyte[] { 1, 2 };
+            var bytes = new byte[] { 1, 2 };
             IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT);
             @out.WriteBytes(bytes, bytes.Length); // first write should succeed
             // flush() to ensure the written bytes are not buffered and counted

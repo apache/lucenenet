@@ -162,7 +162,7 @@ namespace Lucene.Net.Search
         {
             query.SetRewriteMethod(new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(50));
             BooleanQuery bq = (BooleanQuery)searcher.Rewrite(query);
-            ISet<string> allowedTerms = (ISet<string>)AsSet(terms);
+            var allowedTerms = AsSet(terms);
             Assert.AreEqual(allowedTerms.Count, bq.Clauses.Length);
             foreach (BooleanClause c in bq.Clauses)
             {

@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestRandomWithPrefix()
         {
             Directory dir = NewDirectory();
@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
                     terms.Add(new BytesRef(s));
                 }
             }
-            BytesRef[] termsArray = terms.ToArray(/*new BytesRef[terms.Size()]*/);
+            BytesRef[] termsArray = terms.ToArray();
             Array.Sort(termsArray);
 
             int NUM_DOCS = AtLeast(100);

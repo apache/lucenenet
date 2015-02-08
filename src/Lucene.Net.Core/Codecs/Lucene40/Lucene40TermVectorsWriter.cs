@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 bits |= Lucene40TermVectorsReader.STORE_PAYLOAD_WITH_TERMVECTOR;
             }
-            Tvf.WriteByte(bits);
+            Tvf.WriteByte((byte)bits);
         }
 
         public override void FinishDocument()

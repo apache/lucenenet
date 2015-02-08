@@ -18,67 +18,67 @@
 namespace Lucene.Net.Codecs.SimpleText
 {
 
-	/// <summary>
-	/// plain text index format.
-	/// <para>
-	/// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-	/// @lucene.experimental
-	/// </para>
-	/// </summary>
-	public sealed class SimpleTextCodec : Codec
-	{
-	  private readonly PostingsFormat _postings = new SimpleTextPostingsFormat();
-	  private readonly StoredFieldsFormat _storedFields = new SimpleTextStoredFieldsFormat();
-	  private readonly SegmentInfoFormat _segmentInfos = new SimpleTextSegmentInfoFormat();
-	  private readonly FieldInfosFormat _fieldInfosFormatRenamed = new SimpleTextFieldInfosFormat();
-	  private readonly TermVectorsFormat _vectorsFormat = new SimpleTextTermVectorsFormat();
-	  private readonly NormsFormat _normsFormatRenamed = new SimpleTextNormsFormat();
-	  private readonly LiveDocsFormat _liveDocs = new SimpleTextLiveDocsFormat();
-	  private readonly DocValuesFormat _dvFormat = new SimpleTextDocValuesFormat();
+    /// <summary>
+    /// plain text index format.
+    /// <para>
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
+    /// @lucene.experimental
+    /// </para>
+    /// </summary>
+    public sealed class SimpleTextCodec : Codec
+    {
+        private readonly PostingsFormat _postings = new SimpleTextPostingsFormat();
+        private readonly StoredFieldsFormat _storedFields = new SimpleTextStoredFieldsFormat();
+        private readonly SegmentInfoFormat _segmentInfos = new SimpleTextSegmentInfoFormat();
+        private readonly FieldInfosFormat _fieldInfosFormatRenamed = new SimpleTextFieldInfosFormat();
+        private readonly TermVectorsFormat _vectorsFormat = new SimpleTextTermVectorsFormat();
+        private readonly NormsFormat _normsFormatRenamed = new SimpleTextNormsFormat();
+        private readonly LiveDocsFormat _liveDocs = new SimpleTextLiveDocsFormat();
+        private readonly DocValuesFormat _dvFormat = new SimpleTextDocValuesFormat();
 
-	  public SimpleTextCodec() : base("SimpleText")
-	  {
-	  }
+        public SimpleTextCodec() : base("SimpleText")
+        {
+        }
 
-	  public override PostingsFormat PostingsFormat()
-	  {
-		return _postings;
-	  }
+        public override PostingsFormat PostingsFormat()
+        {
+            return _postings;
+        }
 
-	  public override StoredFieldsFormat StoredFieldsFormat()
-	  {
-		return _storedFields;
-	  }
+        public override StoredFieldsFormat StoredFieldsFormat()
+        {
+            return _storedFields;
+        }
 
-	  public override TermVectorsFormat TermVectorsFormat()
-	  {
-		return _vectorsFormat;
-	  }
+        public override TermVectorsFormat TermVectorsFormat()
+        {
+            return _vectorsFormat;
+        }
 
-	  public override FieldInfosFormat FieldInfosFormat()
-	  {
-		return _fieldInfosFormatRenamed;
-	  }
+        public override FieldInfosFormat FieldInfosFormat()
+        {
+            return _fieldInfosFormatRenamed;
+        }
 
-	  public override SegmentInfoFormat SegmentInfoFormat()
-	  {
-		return _segmentInfos;
-	  }
+        public override SegmentInfoFormat SegmentInfoFormat()
+        {
+            return _segmentInfos;
+        }
 
-	  public override NormsFormat NormsFormat()
-	  {
-		return _normsFormatRenamed;
-	  }
+        public override NormsFormat NormsFormat()
+        {
+            return _normsFormatRenamed;
+        }
 
-	  public override LiveDocsFormat LiveDocsFormat()
-	  {
-		return _liveDocs;
-	  }
+        public override LiveDocsFormat LiveDocsFormat()
+        {
+            return _liveDocs;
+        }
 
-	  public override DocValuesFormat DocValuesFormat()
-	  {
-		return _dvFormat;
-	  }
-	}
+        public override DocValuesFormat DocValuesFormat()
+        {
+            return _dvFormat;
+        }
+    }
 
 }

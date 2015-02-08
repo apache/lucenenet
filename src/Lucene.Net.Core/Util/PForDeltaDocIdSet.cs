@@ -240,15 +240,15 @@ namespace Lucene.Net.Util
                 if (NumExceptions > 0)
                 {
                     Debug.Assert(BitsPerException > 0);
-                    Data.WriteByte((sbyte)NumExceptions);
-                    Data.WriteByte((sbyte)BitsPerException);
+                    Data.WriteByte((byte)(sbyte)NumExceptions);
+                    Data.WriteByte((byte)(sbyte)BitsPerException);
                     PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerException);
                     int numIterations = (NumExceptions + encoder.ByteValueCount() - 1) / encoder.ByteValueCount();
                     encoder.Encode(Exceptions, 0, Data.Bytes, Data.Length, numIterations);
                     Data.Length += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, NumExceptions, BitsPerException);
                     for (int i = 0; i < NumExceptions; ++i)
                     {
-                        Data.WriteByte((sbyte)ExceptionIndices[i]);
+                        Data.WriteByte((byte)(sbyte)ExceptionIndices[i]);
                     }
                 }
             }
@@ -261,7 +261,7 @@ namespace Lucene.Net.Util
                     doc += 1 + Buffer[i];
                     while (doc >= 8)
                     {
-                        Data.WriteByte((sbyte)current);
+                        Data.WriteByte((byte)(sbyte)current);
                         current = 0;
                         doc -= 8;
                     }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Util
                 }
                 if (current != 0)
                 {
-                    Data.WriteByte((sbyte)current);
+                    Data.WriteByte((byte)(sbyte)current);
                 }
             }
 
@@ -291,7 +291,7 @@ namespace Lucene.Net.Util
                     {
                         token |= HAS_EXCEPTIONS;
                     }
-                    Data.WriteByte((sbyte)token);
+                    Data.WriteByte((byte)(sbyte)token);
                     PforEncode();
                 }
                 else
@@ -299,13 +299,13 @@ namespace Lucene.Net.Util
                     // use unary
                     blockSize = unaryBlockSize;
                     int token = UNARY | (BufferSize < BLOCK_SIZE ? LAST_BLOCK : 0);
-                    Data.WriteByte((sbyte)token);
+                    Data.WriteByte((byte)(sbyte)token);
                     UnaryEncode();
                 }
 
                 if (BufferSize < BLOCK_SIZE)
                 {
-                    Data.WriteByte((sbyte)BufferSize);
+                    Data.WriteByte((byte)(sbyte)BufferSize);
                 }
 
                 ++NumBlocks;

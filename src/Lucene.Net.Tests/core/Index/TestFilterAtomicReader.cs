@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Lucene.Net.Documents;
 
@@ -185,7 +186,6 @@ namespace Lucene.Net.Index
             target.Dispose();
         }
 
-        //LUCENE TODO: What is synthetic checking? is that what breaks the MethodInfo subM line?
         private static void CheckOverrideMethods(Type clazz)
         {
             Type superClazz = clazz.BaseType;
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
                 // methods to override to have a working impl minimal and prevents from some
                 // traps: for example, think about having getCoreCacheKey delegate to the
                 // filtered impl by default
-                MethodInfo subM = clazz.GetMethod(m.Name/*, m.PropertyTypes*/);
+                MethodInfo subM = clazz.GetMethod(m.Name, m.GetParameters().Select(p => p.ParameterType).ToArray());
                 if (subM.DeclaringType == clazz && m.DeclaringType != typeof(object) && m.DeclaringType != subM.DeclaringType)
                 {
                     Assert.Fail(clazz + " overrides " + m + " although it has a default impl");

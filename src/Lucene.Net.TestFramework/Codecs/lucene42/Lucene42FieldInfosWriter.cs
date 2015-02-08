@@ -88,14 +88,14 @@ namespace Lucene.Net.Codecs.Lucene42
                     }
                     output.WriteString(fi.Name);
                     output.WriteVInt(fi.Number);
-                    output.WriteByte(bits);
+                    output.WriteByte((byte)bits);
 
                     // pack the DV types in one byte
-                    sbyte dv = DocValuesByte(fi.DocValuesType);
-                    sbyte nrm = DocValuesByte(fi.NormType);
+                    var dv = DocValuesByte(fi.DocValuesType);
+                    var nrm = DocValuesByte(fi.NormType);
                     Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
-                    sbyte val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));
-                    output.WriteByte(val);
+                    var val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));
+                    output.WriteByte((byte)val);
                     output.WriteStringStringMap(fi.Attributes());
                 }
                 success = true;

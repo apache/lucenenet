@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 using org.apache.lucene.analysis.util;
+using Version = System.Version;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -45,18 +49,16 @@ namespace Lucene.Net.Analysis.Util
 	  /// <summary>
 	  /// the luceneVersion arg </summary>
 	  protected internal readonly Lucene.Net.Util.Version luceneMatchVersion;
-	  /// <summary>
-	  /// whether the luceneMatchVersion arg is explicitly specified in the serialized schema </summary>
-	  private bool isExplicitLuceneMatchVersion = false;
 
-	  /// <summary>
+        /// <summary>
 	  /// Initialize this factory via a set of key-value pairs.
 	  /// </summary>
 	  protected internal AbstractAnalysisFactory(IDictionary<string, string> args)
 	  {
-		originalArgs = Collections.UnmodifiableMap(new Dictionary<>(args));
+	      ExplicitLuceneMatchVersion = false;
+	      originalArgs = Collections.UnmodifiableMap(args);
 		string version = get(args, LUCENE_MATCH_VERSION_PARAM);
-		luceneMatchVersion = version == null ? null : Version.ParseLeniently(version);
+		luceneMatchVersion = version == null ? null : Lucene.Net.Util.Version.ParseLeniently(version);
 		args.Remove(CLASS_NAME); // consume the class arg
 	  }
 
@@ -77,7 +79,6 @@ namespace Lucene.Net.Analysis.Util
 	  {
 		if (luceneMatchVersion == null)
 		{
-//JAVA TO C# CONVERTER WARNING: The .NET Type.FullName property will not always yield results identical to the Java Class.getName method:
 		  throw new System.ArgumentException("Configuration Error: Factory '" + this.GetType().FullName + "' needs a 'luceneMatchVersion' parameter");
 		}
 	  }
@@ -280,8 +281,6 @@ namespace Lucene.Net.Analysis.Util
 	  /// Returns as <seealso cref="CharArraySet"/> from wordFiles, which
 	  /// can be a comma-separated list of filenames
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected final CharArraySet getWordSet(ResourceLoader loader, String wordFiles, boolean ignoreCase) throws java.io.IOException
 	  protected internal CharArraySet GetWordSet(ResourceLoader loader, string wordFiles, bool ignoreCase)
 	  {
 		assureMatchVersion();
@@ -294,8 +293,8 @@ namespace Lucene.Net.Analysis.Util
 		  words = new CharArraySet(luceneMatchVersion, files.Count * 10, ignoreCase);
 		  foreach (string file in files)
 		  {
-			IList<string> wlist = getLines(loader, file.Trim());
-			words.addAll(StopFilter.makeStopSet(luceneMatchVersion, wlist, ignoreCase));
+			var wlist = getLines(loader, file.Trim());
+			words.AddAll(StopFilter.makeStopSet(luceneMatchVersion, wlist, ignoreCase));
 		  }
 		}
 		return words;
@@ -304,8 +303,6 @@ namespace Lucene.Net.Analysis.Util
 	  /// <summary>
 	  /// Returns the resource's lines (with content treated as UTF-8)
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected final java.util.List<String> getLines(ResourceLoader loader, String resource) throws java.io.IOException
 	  protected internal IList<string> getLines(ResourceLoader loader, string resource)
 	  {
 		return WordlistLoader.getLines(loader.openResource(resource), StandardCharsets.UTF_8);
@@ -315,8 +312,6 @@ namespace Lucene.Net.Analysis.Util
 	  /// same as <seealso cref="#getWordSet(ResourceLoader, String, boolean)"/>,
 	  /// except the input is in snowball format. 
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected final CharArraySet getSnowballWordSet(ResourceLoader loader, String wordFiles, boolean ignoreCase) throws java.io.IOException
 	  protected internal CharArraySet getSnowballWordSet(ResourceLoader loader, string wordFiles, bool ignoreCase)
 	  {
 		assureMatchVersion();
@@ -330,7 +325,7 @@ namespace Lucene.Net.Analysis.Util
 		  foreach (string file in files)
 		  {
 			InputStream stream = null;
-			Reader reader = null;
+			TextReader reader = null;
 			try
 			{
 			  stream = loader.openResource(file.Trim());
@@ -389,18 +384,6 @@ namespace Lucene.Net.Analysis.Util
 		  }
 	  }
 
-	  public virtual bool ExplicitLuceneMatchVersion
-	  {
-		  get
-		  {
-			return isExplicitLuceneMatchVersion;
-		  }
-		  set
-		  {
-			this.isExplicitLuceneMatchVersion = value;
-		  }
-	  }
-
+        public virtual bool ExplicitLuceneMatchVersion { get; set; }
 	}
-
 }

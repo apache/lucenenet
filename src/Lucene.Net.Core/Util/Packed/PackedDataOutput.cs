@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (RemainingBits == 0)
                 {
-                    @out.WriteByte((sbyte)Current);
+                    @out.WriteByte((byte)(sbyte)Current);
                     Current = 0L;
                     RemainingBits = 8;
                 }
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (RemainingBits < 8)
             {
-                @out.WriteByte((sbyte)Current);
+                @out.WriteByte((byte)(sbyte)Current);
             }
             RemainingBits = 8;
             Current = 0L;

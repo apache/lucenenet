@@ -1,3 +1,4 @@
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 
@@ -130,9 +131,14 @@ namespace Lucene.Net.Index
 
         public sealed class MyTokenStream : TokenStream
         {
-            internal readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
+            internal readonly ICharTermAttribute TermAtt;
             internal int Index;
             internal int n;
+
+            public MyTokenStream()
+            {
+                TermAtt = AddAttribute<ICharTermAttribute>();
+            }
 
             public override bool IncrementToken()
             {

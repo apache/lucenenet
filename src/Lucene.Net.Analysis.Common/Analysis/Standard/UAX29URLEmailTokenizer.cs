@@ -1,4 +1,6 @@
-﻿namespace org.apache.lucene.analysis.standard
+﻿using Lucene.Net.Analysis.Standard;
+
+namespace org.apache.lucene.analysis.standard
 {
 
 	/*

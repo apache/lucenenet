@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4D77E491-F50F-4A0C-9BD9-F9AB655720AD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Tests.Facet</RootNamespace>
+    <AssemblyName>Lucene.Net.Tests.Facet</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Apache.NMS">
+      <HintPath>..\..\packages\Apache.NMS.1.6.0.3083\lib\net40\Apache.NMS.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssertingSubDocsAtOnceCollector.cs" />
+    <Compile Include="FacetTestCase.cs" />
+    <Compile Include="Range\TestRangeFacetCounts.cs" />
+    <Compile Include="SlowRAMDirectory.cs" />
+    <Compile Include="SortedSet\TestSortedSetDocValuesFacets.cs" />
+    <Compile Include="Taxonomy\Directory\TestAddTaxonomy.cs" />
+    <Compile Include="Taxonomy\Directory\TestConcurrentFacetedIndexing.cs" />
+    <Compile Include="Taxonomy\Directory\TestDirectoryTaxonomyReader.cs" />
+    <Compile Include="Taxonomy\Directory\TestDirectoryTaxonomyWriter.cs" />
+    <Compile Include="Taxonomy\TestCachedOrdinalsReader.cs" />
+    <Compile Include="Taxonomy\TestFacetLabel.cs" />
+    <Compile Include="Taxonomy\TestLRUHashMap.cs" />
+    <Compile Include="Taxonomy\TestSearcherTaxonomyManager.cs" />
+    <Compile Include="Taxonomy\TestTaxonomyCombined.cs" />
+    <Compile Include="Taxonomy\TestTaxonomyFacetAssociations.cs" />
+    <Compile Include="Taxonomy\TestTaxonomyFacetCounts.cs" />
+    <Compile Include="Taxonomy\TestTaxonomyFacetCounts2.cs" />
+    <Compile Include="Taxonomy\TestTaxonomyFacetSumValueSource.cs" />
+    <Compile Include="Taxonomy\WriterCache\TestCharBlockArray.cs" />
+    <Compile Include="Taxonomy\WriterCache\TestCompactLabelToOrdinal.cs" />
+    <Compile Include="TestDrillDownQuery.cs" />
+    <Compile Include="TestDrillSideways.cs" />
+    <Compile Include="TestFacetsConfig.cs" />
+    <Compile Include="TestMultipleIndexFields.cs" />
+    <Compile Include="TestRandomSamplingFacetsCollector.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+      <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
+      <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
+      <Project>{48f7884a-9454-4e88-8413-9d35992cb440}</Project>
+      <Name>Lucene.Net.Facet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
+      <Name>Lucene.Net.Queries</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
+      <Name>Lucene.Net.TestFramework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

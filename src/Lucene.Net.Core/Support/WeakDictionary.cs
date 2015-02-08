@@ -26,7 +26,7 @@ using System.Linq;
 
 namespace Lucene.Net.Support
 {
-    public sealed class WeakDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+    public sealed class WeakDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKey : class 
     {
         private HashMap<WeakKey<TKey>, TValue> _hm;
         private int _gcCollections = 0;
@@ -249,10 +249,10 @@ namespace Lucene.Net.Support
         /// is added to the hashtable, the key is wrapped using a WeakKey. WeakKey saves the
         /// value of the original object hashcode for fast comparison.
         /// </summary>
-        private class WeakKey<T>
+        private class WeakKey<T> where T : class
         {
-            private WeakReference reference;
-            private int hashCode;
+            private readonly WeakReference reference;
+            private readonly int hashCode;
 
             public WeakKey(T key)
             {

@@ -2,7 +2,6 @@
 using System.IO;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -55,9 +54,9 @@ namespace Lucene.Net.Analysis.Core
         public virtual AbstractAnalysisFactory MultiTermComponent
         {
             get
-		  {
-			return new LowerCaseFilterFactory(new Dictionary<>(OriginalArgs));
-		  }
+            {
+                return new LowerCaseFilterFactory(new Dictionary<string, string>(OriginalArgs));
+            }
         }
     }
 }

@@ -158,7 +158,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            FieldsStream.WriteByte((sbyte)bits);
+            FieldsStream.WriteByte((byte)(sbyte)bits);
 
             if (bytes != null)
             {

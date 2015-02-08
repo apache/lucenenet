@@ -348,8 +348,8 @@ namespace Lucene.Net.Codecs.Memory
 	  {
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fileName = index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
-		string fileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
+//ORIGINAL LINE: final String fileName = index.IndexFileNames.SegmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
+		string fileName = IndexFileNames.SegmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final store.IndexOutput out = state.directory.createOutput(fileName, state.context);
 		IndexOutput @out = state.directory.createOutput(fileName, state.context);
@@ -1102,8 +1102,8 @@ namespace Lucene.Net.Codecs.Memory
 	  public override FieldsProducer fieldsProducer(SegmentReadState state)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fileName = index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
-		string fileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
+//ORIGINAL LINE: final String fileName = index.IndexFileNames.SegmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
+		string fileName = IndexFileNames.SegmentFileName(state.segmentInfo.name, state.segmentSuffix, EXTENSION);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final store.ChecksumIndexInput in = state.directory.openChecksumInput(fileName, store.IOContext.READONCE);
 		ChecksumIndexInput @in = state.directory.openChecksumInput(fileName, IOContext.READONCE);
@@ -1114,7 +1114,7 @@ namespace Lucene.Net.Codecs.Memory
 
 		try
 		{
-		  CodecUtil.checkHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
+		  CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
 		  while (true)
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -1130,7 +1130,7 @@ namespace Lucene.Net.Codecs.Memory
 			// System.out.println("load field=" + termsReader.field.name);
 			fields.put(termsReader.field.name, termsReader);
 		  }
-		  CodecUtil.checkFooter(@in);
+		  CodecUtil.CheckFooter(@in);
 		}
 		finally
 		{

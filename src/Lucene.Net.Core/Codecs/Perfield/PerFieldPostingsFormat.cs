@@ -121,8 +121,7 @@ namespace Lucene.Net.Codecs.Perfield
                     // First time we are seeing this format; create a new instance
 
                     // bump the suffix
-                    Suffixes.TryGetValue(formatName, out suffix);
-                    if (suffix == null)
+                    if (!Suffixes.TryGetValue(formatName, out suffix))
                     {
                         suffix = 0;
                     }

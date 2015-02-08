@@ -1,8 +1,10 @@
-﻿using Lucene.Net.Analysis.Core;
+﻿using System.IO;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
-using StopwordAnalyzerBase = Lucene.Net.Analysis.Util.StopwordAnalyzerBase;
+using Lucene.Net.Util;
+using org.apache.lucene.analysis.standard;
 
-namespace org.apache.lucene.analysis.standard
+namespace Lucene.Net.Analysis.Standard
 {
 
 	/*
@@ -21,18 +23,7 @@ namespace org.apache.lucene.analysis.standard
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using org.apache.lucene.analysis;
-	using LowerCaseFilter = LowerCaseFilter;
-	using StopAnalyzer = StopAnalyzer;
-	using StopFilter = StopFilter;
-	using CharArraySet = CharArraySet;
-	using StopwordAnalyzerBase = StopwordAnalyzerBase;
-	using WordlistLoader = WordlistLoader;
-	using Version = org.apache.lucene.util.Version;
-
-
-	/// <summary>
+    /// <summary>
 	/// Filters <seealso cref="StandardTokenizer"/> with <seealso cref="StandardFilter"/>, {@link
 	/// LowerCaseFilter} and <seealso cref="StopFilter"/>, using a list of
 	/// English stop words.
@@ -94,9 +85,7 @@ namespace org.apache.lucene.analysis.standard
 	  /// <param name="matchVersion"> Lucene version to match See {@link
 	  /// <a href="#version">above</a>} </param>
 	  /// <param name="stopwords"> Reader to read stop words from  </param>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public StandardAnalyzer(org.apache.lucene.util.Version matchVersion, java.io.Reader stopwords) throws java.io.IOException
-	  public StandardAnalyzer(Version matchVersion, Reader stopwords) : this(matchVersion, loadStopwordSet(stopwords, matchVersion))
+	  public StandardAnalyzer(Version matchVersion, TextReader stopwords) : this(matchVersion, loadStopwordSet(stopwords, matchVersion))
 	  {
 	  }
 
@@ -119,13 +108,9 @@ namespace org.apache.lucene.analysis.standard
 	  }
 
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: @Override protected TokenStreamComponents createComponents(final String fieldName, final java.io.Reader reader)
 	  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StandardTokenizer src = new StandardTokenizer(matchVersion, reader);
-		StandardTokenizer src = new StandardTokenizer(matchVersion, reader);
+		var src = new StandardTokenizer(matchVersion, reader);
 		src.MaxTokenLength = maxTokenLength;
 		TokenStream tok = new StandardFilter(matchVersion, src);
 		tok = new LowerCaseFilter(matchVersion, tok);
@@ -137,19 +122,16 @@ namespace org.apache.lucene.analysis.standard
 	  {
 		  private readonly StandardAnalyzer outerInstance;
 
-		  private Reader reader;
-		  private org.apache.lucene.analysis.standard.StandardTokenizer src;
+		  private TextReader reader;
+		  private readonly StandardTokenizer src;
 
-		  public TokenStreamComponentsAnonymousInnerClassHelper(StandardAnalyzer outerInstance, org.apache.lucene.analysis.standard.StandardTokenizer src, TokenStream tok, Reader reader) : base(src, tok)
+		  public TokenStreamComponentsAnonymousInnerClassHelper(StandardAnalyzer outerInstance, StandardTokenizer src, TokenStream tok, Reader reader) : base(src, tok)
 		  {
 			  this.outerInstance = outerInstance;
 			  this.reader = reader;
 			  this.src = src;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override protected void setReader(final java.io.Reader reader) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 		  protected internal override Reader Reader
 		  {
 			  set

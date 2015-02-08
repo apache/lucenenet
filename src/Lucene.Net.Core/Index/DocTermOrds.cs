@@ -192,13 +192,7 @@ namespace Lucene.Net.Index
             }
             if (Tnums != null)
             {
-                foreach (sbyte[] arr in Tnums)
-                {
-                    if (arr != null)
-                    {
-                        sz += arr.Length;
-                    }
-                }
+                sz = Tnums.Where(arr => arr != null).Aggregate(sz, (current, arr) => current + arr.Length);
             }
             Memsz = sz;
             return sz;
@@ -343,7 +337,7 @@ namespace Lucene.Net.Index
             int maxDoc = reader.MaxDoc;
             int[] index = new int[maxDoc]; // immediate term numbers, or the index into the byte[] representing the last number
             int[] lastTerm = new int[maxDoc]; // last term we saw for this document
-            sbyte[][] bytes = new sbyte[maxDoc][]; // list of term numbers for the doc (delta encoded vInts)
+            var bytes = new sbyte[maxDoc][]; // list of term numbers for the doc (delta encoded vInts)
 
             Fields fields = reader.Fields;
             if (fields == null)
@@ -376,7 +370,7 @@ namespace Lucene.Net.Index
 
             // we need a minimum of 9 bytes, but round up to 12 since the space would
             // be wasted with most allocators anyway.
-            sbyte[] tempArr = new sbyte[12];
+            var tempArr = new sbyte[12];
 
             //
             // enumerate all terms, and build an intermediate form of the un-inverted field.
@@ -472,7 +466,7 @@ namespace Lucene.Net.Index
                             // the doc-specific byte[] when building)
                             int pos = (int)((uint)val >> 8);
                             int ilen = VIntSize(delta);
-                            sbyte[] arr = bytes[doc];
+                            var arr = bytes[doc];
                             int newend = pos + ilen;
                             if (newend > arr.Length)
                             {
@@ -483,7 +477,7 @@ namespace Lucene.Net.Index
                                 // (how much space does a byte[] take up?  Is data preceded by a 32 bit length only?
                                 // It should be safe to round up to the nearest 32 bits in any case.
                                 int newLen = (newend + 3) & unchecked((int)0xfffffffc); // 4 byte alignment
-                                sbyte[] newarr = new sbyte[newLen];
+                                var newarr = new sbyte[newLen];
                                 Array.Copy(arr, 0, newarr, 0, pos);
                                 arr = newarr;
                                 bytes[doc] = newarr;
@@ -578,8 +572,8 @@ namespace Lucene.Net.Index
 
                 for (int pass = 0; pass < 256; pass++)
                 {
-                    sbyte[] target = Tnums[pass];
-                    int pos = 0; // end in target;
+                    var target = Tnums[pass];
+                    var pos = 0; // end in target;
                     if (target != null)
                     {
                         pos = target.Length;
@@ -609,7 +603,7 @@ namespace Lucene.Net.Index
                                     // we only have 24 bits for the array index
                                     throw new InvalidOperationException("Too many values for UnInvertedField faceting on field " + Field);
                                 }
-                                sbyte[] arr = bytes[doc];
+                                var arr = bytes[doc];
                                 /*
                                 for(byte b : arr) {
                                   //System.out.println("      b=" + Integer.toHexString((int) b));
@@ -637,7 +631,7 @@ namespace Lucene.Net.Index
                                     {
                                         newlen <<= 1;
                                     }
-                                    sbyte[] newtarget = new sbyte[newlen];
+                                    var newtarget = new sbyte[newlen];
                                     Array.Copy(target, 0, newtarget, 0, pos);
                                     target = newtarget;
                                 }
@@ -650,7 +644,7 @@ namespace Lucene.Net.Index
                     // shrink array
                     if (pos < target.Length)
                     {
-                        sbyte[] newtarget = new sbyte[pos];
+                        var newtarget = new sbyte[pos];
                         Array.Copy(target, 0, newtarget, 0, pos);
                         target = newtarget;
                     }
@@ -701,8 +695,7 @@ namespace Lucene.Net.Index
         // a single switch on the size
         private static int WriteInt(int x, sbyte[] arr, int pos)
         {
-            int a;
-            a = ((int)((uint)x >> (7 * 4)));
+            var a = ((int)((uint)x >> (7 * 4)));
             if (a != 0)
             {
                 arr[pos++] = unchecked((sbyte)(a | 0x80));
@@ -956,18 +949,18 @@ namespace Lucene.Net.Index
         {
             private readonly DocTermOrds OuterInstance;
 
-            internal readonly AtomicReader Reader;
-            internal readonly TermsEnum Te; // used internally for lookupOrd() and lookupTerm()
+            private readonly AtomicReader Reader;
+            private readonly TermsEnum Te; // used internally for lookupOrd() and lookupTerm()
 
             // currently we read 5 at a time (using the logic of the old iterator)
-            internal readonly int[] Buffer = new int[5];
+            private readonly int[] Buffer = new int[5];
 
-            internal int BufferUpto;
-            internal int BufferLength;
+            private int BufferUpto;
+            private int BufferLength;
 
-            internal int Tnum;
-            internal int Upto;
-            internal sbyte[] Arr;
+            private int Tnum;
+            private int Upto;
+            private sbyte[] Arr;
 
             internal Iterator(DocTermOrds outerInstance, AtomicReader reader)
             {

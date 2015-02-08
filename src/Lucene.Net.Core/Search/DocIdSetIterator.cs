@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
         /// is greater than the highest document number in the set.
         /// <p>
         /// The behavior of this method is <b>undefined</b> when called with
-        /// <code> target &le; current</code>, or after the iterator has exhausted.
+        /// <code> target &lt;= current</code>, or after the iterator has exhausted.
         /// Both cases may result in unpredicted behavior.
         /// <p>
         /// When <code> target &gt; current</code> it behaves as if written:

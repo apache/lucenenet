@@ -216,13 +216,13 @@ namespace Lucene.Net.Search
                 }
 
                 // Compute expected results:
-                ((List<BytesRef>)f.MatchValues).Sort(new ComparatorAnonymousInnerClassHelper(this, sortMissingLast));
-
+                var expected = f.MatchValues.ToList();
+                expected.Sort(new ComparatorAnonymousInnerClassHelper(this, sortMissingLast));
                 if (reverse)
                 {
-                    f.MatchValues.Reverse();
+                    expected.Reverse();
                 }
-                IList<BytesRef> expected = f.MatchValues;
+
                 if (VERBOSE)
                 {
                     Console.WriteLine("  expected:");
@@ -330,10 +330,10 @@ namespace Lucene.Net.Search
 
         private class RandomFilter : Filter
         {
-            internal readonly Random Random;
-            internal float Density;
-            internal readonly IList<BytesRef> DocValues;
-            public readonly IList<BytesRef> MatchValues = new ConcurrentList<BytesRef>(new List<BytesRef>());
+            private readonly Random Random;
+            private readonly float Density;
+            private readonly IList<BytesRef> DocValues;
+            public readonly IList<BytesRef> MatchValues = new SynchronizedCollection<BytesRef>();
 
             // density should be 0.0 ... 1.0
             public RandomFilter(Random random, float density, IList<BytesRef> docValues)

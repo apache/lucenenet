@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -36,7 +37,7 @@ namespace Lucene.Net.Util
         // Writes random byte/s to "normal" file in dir, then
         // copies into PagedBytes and verifies with
         // PagedBytes.Reader:
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestDataInputOutput()
         {
             Random random = Random();
@@ -113,7 +114,7 @@ namespace Lucene.Net.Util
         // Writes random byte/s into PagedBytes via
         // .getDataOutput(), then verifies with
         // PagedBytes.getDataInput():
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestDataInputOutput2()
         {
             Random random = Random();
@@ -178,6 +179,7 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        [LongRunningTest]
         public virtual void TestOverflow() // memory hole
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
@@ -187,14 +189,14 @@ namespace Lucene.Net.Util
             }
             int blockBits = TestUtil.NextInt(Random(), 14, 28);
             int blockSize = 1 << blockBits;
-            sbyte[] arr = new sbyte[TestUtil.NextInt(Random(), blockSize / 2, blockSize * 2)];
+            var arr = new byte[TestUtil.NextInt(Random(), blockSize / 2, blockSize * 2)];
             for (int i = 0; i < arr.Length; ++i)
             {
-                arr[i] = (sbyte)i;
+                arr[i] = (byte)(sbyte)i;
             }
             long numBytes = (1L << 31) + TestUtil.NextInt(Random(), 1, blockSize * 3);
-            PagedBytes p = new PagedBytes(blockBits);
-            IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT);
+            var p = new PagedBytes(blockBits);
+            var @out = dir.CreateOutput("foo", IOContext.DEFAULT);
             for (long i = 0; i < numBytes; )
             {
                 Assert.AreEqual(i, @out.FilePointer);

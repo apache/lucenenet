@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.SimpleText
     using IntsRef = Util.IntsRef;
     using StringHelper = Util.StringHelper;
     using UnicodeUtil = Util.UnicodeUtil;
-    using BytesRefFSTEnum = Util.Fst.BytesRefFSTEnum<Util.Fst.PairOutputs<long,long>.Pair<long, Util.Fst.PairOutputs<long,long>.Pair<long, long>>>;
+    using BytesRefFSTEnum = Util.Fst.BytesRefFSTEnum<Util.Fst.PairOutputs<long,long>.Pair>;
     using FST = Util.Fst.FST;
     using PairOutputs = Util.Fst.PairOutputs<long,long>;
     using PositiveIntOutputs = Util.Fst.PositiveIntOutputs;
@@ -115,14 +115,14 @@ namespace Lucene.Net.Codecs.SimpleText
             private long _totalTermFreq;
             private long _docsStart;
             
-            private readonly BytesRefFSTEnum<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>> _fstEnum;
+            private readonly BytesRefFSTEnum<PairOutputs<long, PairOutputs.Pair>.Pair> _fstEnum;
 
             public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance,
-                FST<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>> fst, IndexOptions indexOptions)
+                FST<PairOutputs<long, PairOutputs.Pair>.Pair> fst, IndexOptions indexOptions)
             {
                 _outerInstance = outerInstance;
                 _indexOptions = indexOptions;
-                _fstEnum = new BytesRefFSTEnum<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>>(fst);
+                _fstEnum = new BytesRefFSTEnum<PairOutputs<long, PairOutputs.Pair>.Pair>(fst);
             }
 
             public override bool SeekExact(BytesRef text)
@@ -583,7 +583,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private long _sumTotalTermFreq;
             private long _sumDocFreq;
             private int _docCount;
-            private FST<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>> _fst;
+            private FST<PairOutputs<long, PairOutputs.Pair>.Pair> _fst;
             private int _termCount;
             private readonly BytesRef _scratch = new BytesRef(10);
             private readonly CharsRef _scratchUtf16 = new CharsRef(10);
@@ -601,10 +601,11 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 var posIntOutputs = PositiveIntOutputs.Singleton;
                 var outputsInner = new PairOutputs<long, long>(posIntOutputs, posIntOutputs);
-                var outputs = new PairOutputs<long, PairOutputs.Pair<long, long>>(posIntOutputs, outputsInner);
+                //var outputs = new PairOutputs<long, PairOutputs.Pair<long, long>>(posIntOutputs, outputsInner);
+                var outputs = new PairOutputs<long, PairOutputs.Pair>(posIntOutputs, outputsInner);
 
                 // honestly, wtf kind of generic mess is this.
-                var b = new Builder<PairOutputs<long, PairOutputs.Pair<long, long>>.Pair<long, PairOutputs.Pair<long, long>>>(FST.INPUT_TYPE.BYTE1, outputs);
+                var b = new Builder<PairOutputs<long, PairOutputs.Pair>.Pair>(FST.INPUT_TYPE.BYTE1, outputs);
                 var input = (IndexInput) _outerInstance._input.Clone();
                 input.Seek(_termsStart);
 

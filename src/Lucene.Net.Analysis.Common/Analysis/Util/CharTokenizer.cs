@@ -3,7 +3,6 @@ using System.IO;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -74,10 +73,13 @@ namespace Lucene.Net.Analysis.Util
         ///          Lucene version to match </param>
         /// <param name="input">
         ///          the input to split up into tokens </param>
-        public CharTokenizer(Version matchVersion, TextReader input)
+        protected CharTokenizer(Version matchVersion, TextReader input)
             : base(input)
         {
-            charUtils = CharacterUtils.getInstance(matchVersion);
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+
+            charUtils = CharacterUtils.GetInstance(matchVersion);
         }
 
         /// <summary>
@@ -93,18 +95,18 @@ namespace Lucene.Net.Analysis.Util
             : base(factory, input)
         {
             _input = input;
-            charUtils = CharacterUtils.getInstance(matchVersion);
+            charUtils = CharacterUtils.GetInstance(matchVersion);
         }
 
         private int offset = 0, bufferIndex = 0, dataLen = 0, finalOffset = 0;
         private const int MAX_WORD_LEN = 255;
         private const int IO_BUFFER_SIZE = 4096;
 
-        private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-        private readonly OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
+        private readonly ICharTermAttribute termAtt;
+        private readonly IOffsetAttribute offsetAtt;
 
         private readonly CharacterUtils charUtils;
-        private readonly CharacterUtils.CharacterBuffer ioBuffer = CharacterUtils.newCharacterBuffer(IO_BUFFER_SIZE);
+        private readonly CharacterUtils.CharacterBuffer ioBuffer = CharacterUtils.NewCharacterBuffer(IO_BUFFER_SIZE);
 
         /// <summary>
         /// Returns true iff a codepoint should be included in a token. This tokenizer
@@ -112,7 +114,7 @@ namespace Lucene.Net.Analysis.Util
         /// predicate. Codepoints for which this is false are used to define token
         /// boundaries and are not included in tokens.
         /// </summary>
-        protected internal abstract bool IsTokenChar(char c);
+        protected abstract bool IsTokenChar(char c);
 
         /// <summary>
         /// Called on each token character to normalize it before it is added to the
@@ -136,7 +138,7 @@ namespace Lucene.Net.Analysis.Util
                 if (bufferIndex >= dataLen)
                 {
                     offset += dataLen;
-                    charUtils.fill(ioBuffer, input); // read supplementary char aware with CharacterUtils
+                    charUtils.Fill(ioBuffer, input); // read supplementary char aware with CharacterUtils
                     if (ioBuffer.Length == 0)
                     {
                         dataLen = 0; // so next offset += dataLen won't decrement offset
@@ -154,11 +156,11 @@ namespace Lucene.Net.Analysis.Util
                     bufferIndex = 0;
                 }
                 // use CharacterUtils here to support < 3.1 UTF-16 code unit behavior if the char based methods are gone
-                int c = charUtils.codePointAt(ioBuffer.Buffer, bufferIndex, ioBuffer.Length);
+                int c = charUtils.CodePointAt(ioBuffer.Buffer, bufferIndex, ioBuffer.Length);
                 int charCount = Character.CharCount(c);
                 bufferIndex += charCount;
 
-                if (isTokenChar(c)) // if it's a token char
+                if (IsTokenChar(c)) // if it's a token char
                 {
                     if (length == 0) // start of token
                     {

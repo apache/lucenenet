@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -83,7 +84,7 @@ namespace Lucene.Net.Store
 
         // use this for tracking files for crash.
         // additionally: provides debugging information in case you leave one open
-        private IDictionary<IDisposable, Exception> OpenFileHandles = new ConcurrentHashMap<IDisposable, Exception>();
+        private readonly ConcurrentDictionary<IDisposable, Exception> OpenFileHandles = new ConcurrentDictionary<IDisposable, Exception>();
 
         // NOTE: we cannot initialize the Map here due to the
         // order in which our constructor actually does this
@@ -293,8 +294,8 @@ namespace Lucene.Net.Store
                 UnSyncedFiles = new HashSet<string>();
                 // first force-close all files, so we can corrupt on windows etc.
                 // clone the file map, as these guys want to remove themselves on close.
-                IDictionary<IDisposable, Exception> m = new HashMap<IDisposable, Exception>(OpenFileHandles);
-                foreach (IDisposable f in m.Keys)
+                var m = OpenFileHandles.Keys.ToArray();
+                foreach (IDisposable f in m)
                 {
                     try
                     {
@@ -321,12 +322,12 @@ namespace Lucene.Net.Store
                         action = "zeroed";
                         // Zero out file entirely
                         long length = FileLength(name);
-                        sbyte[] zeroes = new sbyte[256];
+                        var zeroes = new byte[256]; // LUCENENET TODO: Don't we want to fill the array before writing from it?
                         long upto = 0;
                         IndexOutput @out = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
                         while (upto < length)
                         {
-                            int limit = (int)Math.Min(length - upto, zeroes.Length);
+                            var limit = (int)Math.Min(length - upto, zeroes.Length);
                             @out.WriteBytes(zeroes, 0, limit);
                             upto += limit;
                         }
@@ -535,27 +536,32 @@ namespace Lucene.Net.Store
             }
         }
 
-        // sets the cause of the incoming ioe to be the stack
-        // trace when the offending file name was opened
-        private Exception FillOpenTrace(Exception t, string name, bool input)
+        // if there are any exceptions in OpenFileHandles
+        // capture those as inner exceptions
+        private Exception WithAdditionalErrorInformation(Exception t, string name, bool input)
         {
             lock (this)
             {
-                foreach (KeyValuePair<IDisposable, Exception> ent in OpenFileHandles)
+                foreach (var ent in OpenFileHandles)
                 {
                     if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).Name.Equals(name))
                     {
-                        t = new Exception(ent.Value.Message, ent.Value);
+                        t = CreateException(t, ent.Value);
                         break;
                     }
                     else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).Name.Equals(name))
                     {
-                        t = new Exception(ent.Value.Message, ent.Value);
+                        t = CreateException(t, ent.Value);
                         break;
                     }
                 }
                 return t;
             }
+        }
+
+        private Exception CreateException(Exception exception, Exception innerException)
+        {
+            return (Exception)Activator.CreateInstance(exception.GetType(), exception.Message, innerException);
         }
 
         private void MaybeYield()
@@ -591,11 +597,11 @@ namespace Lucene.Net.Store
 
                         if (!assertNoDeleteOpenFile)
                         {
-                            throw FillOpenTrace(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                            throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                         }
                         else
                         {
-                            throw FillOpenTrace(new AssertionException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                            throw WithAdditionalErrorInformation(new AssertionException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                         }
                     }
                     else
@@ -775,7 +781,7 @@ namespace Lucene.Net.Store
                 // output, except for segments.gen and segments_N
                 if (!AllowReadingFilesStillOpenForWrite_Renamed && OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
                 {
-                    throw FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
+                    throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
                 }
 
                 IndexInput delegateInput = @in.OpenInput(name, LuceneTestCase.NewIOContext(RandomState, context));
@@ -909,11 +915,13 @@ namespace Lucene.Net.Store
 
                     // RuntimeException instead ofSystem.IO.IOException because
                     // super() does not throwSystem.IO.IOException currently:
-                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: " + OpenFiles, cause);
+                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
+                        + String.Join(" ,", OpenFiles.ToArray().Select(x => x.Key)), cause);
                 }
                 if (OpenLocks.Count > 0)
                 {
-                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: " + OpenLocks);
+                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
+                        + String.Join(" ,", OpenLocks.ToArray()));
                 }
 
                 IsOpen = false;
@@ -1080,7 +1088,8 @@ namespace Lucene.Net.Store
                     if (v == 1)
                     {
                         OpenFiles.Remove(name);
-                        OpenFileHandles.Remove(c);
+                        Exception _;
+                        OpenFileHandles.TryRemove(c, out _);
                     }
                     else
                     {
@@ -1300,7 +1309,7 @@ namespace Lucene.Net.Store
 
             if (OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
             {
-                throw (System.IO.IOException)FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
+                throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
             }
 
             IndexInputSlicer delegateHandle = @in.CreateSlicer(name, context);

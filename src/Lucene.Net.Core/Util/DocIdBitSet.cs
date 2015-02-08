@@ -79,8 +79,8 @@ namespace Lucene.Net.Util
 
         private class DocIdBitSetIterator : DocIdSetIterator
         {
-            internal int DocId;
-            internal BitArray bitSet;
+            private int DocId;
+            private readonly BitArray bitSet;
 
             internal DocIdBitSetIterator(BitArray bitSet)
             {
@@ -96,7 +96,7 @@ namespace Lucene.Net.Util
             public override int NextDoc()
             {
                 // (docId + 1) on next line requires -1 initial value for docNr:
-                int d = BitSetSupport.NextSetBit(bitSet, DocId + 1);
+                var d = bitSet.NextSetBit(DocId + 1);
                 // -1 returned by BitSet.nextSetBit() when exhausted
                 DocId = d == -1 ? NO_MORE_DOCS : d;
                 return DocId;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
 
             public override int Advance(int target)
             {
-                int d = BitSetSupport.NextSetBit(bitSet, target);
+                int d = bitSet.NextSetBit(target);
                 // -1 returned by BitSet.nextSetBit() when exhausted
                 DocId = d == -1 ? NO_MORE_DOCS : d;
                 return DocId;

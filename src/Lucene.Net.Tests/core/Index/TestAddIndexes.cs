@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Lucene.Net.Documents;
 
@@ -833,7 +834,8 @@ namespace Lucene.Net.Index
             c.JoinThreads();
 
             int expectedNumDocs = 100 + NUM_COPY * (4 * NUM_ITER / 5) * RunAddIndexesThreads.NUM_THREADS * RunAddIndexesThreads.NUM_INIT_DOCS;
-            Assert.AreEqual(expectedNumDocs, c.Writer2.NumDocs(), "expected num docs don't match - failures: " + c.Failures);
+            Assert.AreEqual(expectedNumDocs, c.Writer2.NumDocs(), "expected num docs don't match - failures: " + Environment.NewLine
+                + string.Join(Environment.NewLine, c.Failures.Select(x => x.ToString())));
 
             c.Close(true);
 
@@ -1226,7 +1228,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            // LUCENE TODO: Pulsing41Codec is not in core
+            // LUCENENET TODO: Pulsing41Codec is not in core
             /*{
                 Directory dir = NewDirectory();
                 IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));

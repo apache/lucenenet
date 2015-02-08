@@ -29,9 +29,9 @@ namespace Lucene.Net.Store
     [TestFixture]
     public class TestCopyBytes : LuceneTestCase
     {
-        private sbyte Value(int idx)
+        private byte Value(int idx)
         {
-            return unchecked((sbyte)((idx % 256) * (1 + (idx / 256))));
+            return unchecked((byte)((idx % 256) * (1 + (idx / 256))));
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace Lucene.Net.Store
 
                 // make random file
                 IndexOutput @out = dir.CreateOutput("test", NewIOContext(Random()));
-                sbyte[] bytes = new sbyte[TestUtil.NextInt(Random(), 1, 77777)];
+                var bytes = new byte[TestUtil.NextInt(Random(), 1, 77777)];
                 int size = TestUtil.NextInt(Random(), 1, 1777777);
                 int upto = 0;
                 int byteUpto = 0;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
                 {
                     if (Random().NextBoolean())
                     {
-                        sbyte v = in2.ReadSByte();
+                        var v = in2.ReadByte();
                         Assert.AreEqual(Value(upto), v);
                         upto++;
                     }

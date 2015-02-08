@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
@@ -172,7 +173,7 @@ namespace Lucene.Net.Index
 
             if (isTop)
             {
-                Assert.IsTrue(allTerms.Equals(seenTerms));
+                Assert.IsTrue(allTerms.SetEquals(seenTerms));
             }
 
             // Test seeking:
@@ -185,7 +186,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-510
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestRandomUnicodeStrings()
         {
             char[] buffer = new char[20];
@@ -248,7 +249,7 @@ namespace Lucene.Net.Index
                 UnicodeUtil.UTF16toUTF8(chars, 0, len, utf8);
 
                 string s1 = new string(chars, 0, len);
-                string s2 = Encoding.UTF8.GetString((byte[])(Array)utf8.Bytes);
+                string s2 = Encoding.UTF8.GetString(utf8.Bytes, utf8.Offset, utf8.Length);
                 Assert.AreEqual(s1, s2, "codepoint " + ch);
 
                 UnicodeUtil.UTF8toUTF16(utf8.Bytes, 0, utf8.Length, utf16);

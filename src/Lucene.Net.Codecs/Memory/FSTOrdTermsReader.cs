@@ -2,7 +2,13 @@
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Automaton;
+using Lucene.Net.Util.Fst;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -22,38 +28,7 @@ namespace Lucene.Net.Codecs.Memory
 	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
-	 */
-
-
-	using TermsReader = Lucene.Net.Codecs.Memory.FSTTermsReader.TermsReader;
-	using CorruptIndexException = index.CorruptIndexException;
-	using DocsAndPositionsEnum = index.DocsAndPositionsEnum;
-	using DocsEnum = index.DocsEnum;
-	using IndexOptions = index.FieldInfo.IndexOptions;
-	using FieldInfo = index.FieldInfo;
-	using FieldInfos = index.FieldInfos;
-	using IndexFileNames = index.IndexFileNames;
-	using SegmentInfo = index.SegmentInfo;
-	using SegmentReadState = index.SegmentReadState;
-	using TermState = index.TermState;
-	using Terms = index.Terms;
-	using TermsEnum = index.TermsEnum;
-	using ByteArrayDataInput = store.ByteArrayDataInput;
-	using ChecksumIndexInput = store.ChecksumIndexInput;
-	using IndexInput = store.IndexInput;
-	using ArrayUtil = util.ArrayUtil;
-	using Bits = util.Bits;
-	using BytesRef = util.BytesRef;
-	using IOUtils = util.IOUtils;
-	using RamUsageEstimator = util.RamUsageEstimator;
-	using ByteRunAutomaton = util.automaton.ByteRunAutomaton;
-	using CompiledAutomaton = util.automaton.CompiledAutomaton;
-	using InputOutput = util.fst.BytesRefFSTEnum.InputOutput;
-	using BytesRefFSTEnum = util.fst.BytesRefFSTEnum;
-	using FST = util.fst.FST;
-	using Outputs = util.fst.Outputs;
-	using PositiveIntOutputs = util.fst.PositiveIntOutputs;
-	using Util = util.fst.Util;
+	 */	
 
 	/// <summary>
 	/// FST-based terms dictionary reader.
@@ -72,16 +47,10 @@ namespace Lucene.Net.Codecs.Memory
 	  internal int version;
 	  //static final boolean TEST = false;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public FSTOrdTermsReader(index.SegmentReadState state, codecs.PostingsReaderBase postingsReader) throws java.io.IOException
 	  public FSTOrdTermsReader(SegmentReadState state, PostingsReaderBase postingsReader)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String termsIndexFileName = index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTOrdTermsWriter.TERMS_INDEX_EXTENSION);
-		string termsIndexFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTOrdTermsWriter.TERMS_INDEX_EXTENSION);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String termsBlockFileName = index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTOrdTermsWriter.TERMS_BLOCK_EXTENSION);
-		string termsBlockFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTOrdTermsWriter.TERMS_BLOCK_EXTENSION);
+		string termsIndexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, FSTOrdTermsWriter.TERMS_INDEX_EXTENSION);
+		string termsBlockFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, FSTOrdTermsWriter.TERMS_BLOCK_EXTENSION);
 
 		this.postingsReader = postingsReader;
 		ChecksumIndexInput indexIn = null;
@@ -89,46 +58,42 @@ namespace Lucene.Net.Codecs.Memory
 		bool success = false;
 		try
 		{
-		  indexIn = state.directory.openChecksumInput(termsIndexFileName, state.context);
-		  blockIn = state.directory.openInput(termsBlockFileName, state.context);
-		  version = readHeader(indexIn);
-		  readHeader(blockIn);
+		  indexIn = state.Directory.OpenChecksumInput(termsIndexFileName, state.Context);
+		  blockIn = state.Directory.OpenInput(termsBlockFileName, state.Context);
+		  version = ReadHeader(indexIn);
+		  ReadHeader(blockIn);
 		  if (version >= FSTOrdTermsWriter.TERMS_VERSION_CHECKSUM)
 		  {
-			CodecUtil.checksumEntireFile(blockIn);
+			CodecUtil.ChecksumEntireFile(blockIn);
 		  }
 
-		  this.postingsReader.init(blockIn);
-		  seekDir(blockIn);
+		  this.postingsReader.Init(blockIn);
+		  SeekDir(blockIn);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final index.FieldInfos fieldInfos = state.fieldInfos;
-		  FieldInfos fieldInfos = state.fieldInfos;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numFields = blockIn.readVInt();
-		  int numFields = blockIn.readVInt();
+		  FieldInfos fieldInfos = state.FieldInfos;
+		  int numFields = blockIn.ReadVInt();
 		  for (int i = 0; i < numFields; i++)
 		  {
-			FieldInfo fieldInfo = fieldInfos.fieldInfo(blockIn.readVInt());
-			bool hasFreq = fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY;
-			long numTerms = blockIn.readVLong();
-			long sumTotalTermFreq = hasFreq ? blockIn.readVLong() : -1;
-			long sumDocFreq = blockIn.readVLong();
-			int docCount = blockIn.readVInt();
-			int longsSize = blockIn.readVInt();
-			FST<long?> index = new FST<long?>(indexIn, PositiveIntOutputs.Singleton);
-
-			TermsReader current = new TermsReader(fieldInfo, blockIn, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize, index);
-			TermsReader previous = fields[fieldInfo.name] = current;
-			checkFieldSummary(state.segmentInfo, indexIn, blockIn, current, previous);
+			FieldInfo fieldInfo = fieldInfos.FieldInfo(blockIn.ReadVInt());
+			bool hasFreq = fieldInfo.IndexOptions != FieldInfo.IndexOptions.DOCS_ONLY;
+			long numTerms = blockIn.ReadVLong();
+			long sumTotalTermFreq = hasFreq ? blockIn.ReadVLong() : -1;
+			long sumDocFreq = blockIn.ReadVLong();
+			int docCount = blockIn.ReadVInt();
+			int longsSize = blockIn.ReadVInt();
+			var index = new FST<long>(indexIn, PositiveIntOutputs.Singleton);
+              
+              var current = new TermsReader(fieldInfo, blockIn, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize, index);
+			var previous = fields[fieldInfo.Name] = current;
+			CheckFieldSummary(state.SegmentInfo, indexIn, blockIn, current, previous);
 		  }
 		  if (version >= FSTOrdTermsWriter.TERMS_VERSION_CHECKSUM)
 		  {
-			CodecUtil.checkFooter(indexIn);
+			CodecUtil.CheckFooter(indexIn);
 		  }
 		  else
 		  {
-			CodecUtil.checkEOF(indexIn);
+			CodecUtil.CheckEOF(indexIn);
 		  }
 		  success = true;
 		}
@@ -136,24 +101,21 @@ namespace Lucene.Net.Codecs.Memory
 		{
 		  if (success)
 		  {
-			IOUtils.close(indexIn, blockIn);
+			IOUtils.Close(indexIn, blockIn);
 		  }
 		  else
 		  {
-			IOUtils.closeWhileHandlingException(indexIn, blockIn);
+			IOUtils.CloseWhileHandlingException(indexIn, blockIn);
 		  }
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private int readHeader(store.IndexInput in) throws java.io.IOException
-	  private int readHeader(IndexInput @in)
+	  private int ReadHeader(IndexInput @in)
 	  {
-		return CodecUtil.checkHeader(@in, FSTOrdTermsWriter.TERMS_CODEC_NAME, FSTOrdTermsWriter.TERMS_VERSION_START, FSTOrdTermsWriter.TERMS_VERSION_CURRENT);
+		return CodecUtil.CheckHeader(@in, FSTOrdTermsWriter.TERMS_CODEC_NAME, FSTOrdTermsWriter.TERMS_VERSION_START, FSTOrdTermsWriter.TERMS_VERSION_CURRENT);
 	  }
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void seekDir(store.IndexInput in) throws java.io.IOException
-	  private void seekDir(IndexInput @in)
+
+        private void SeekDir(IndexInput @in)
 	  {
 		if (version >= FSTOrdTermsWriter.TERMS_VERSION_CHECKSUM)
 		{
@@ -165,9 +127,8 @@ namespace Lucene.Net.Codecs.Memory
 		}
 		@in.seek(@in.readLong());
 	  }
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void checkFieldSummary(index.SegmentInfo info, store.IndexInput indexIn, store.IndexInput blockIn, Lucene.Net.Codecs.Memory.FSTTermsReader.TermsReader field, Lucene.Net.Codecs.Memory.FSTTermsReader.TermsReader previous) throws java.io.IOException
-	  private void checkFieldSummary(SegmentInfo info, IndexInput indexIn, IndexInput blockIn, TermsReader field, TermsReader previous)
+
+        private static void CheckFieldSummary(SegmentInfo info, IndexInput indexIn, IndexInput blockIn, TermsReader field, TermsReader previous)
 	  {
 		// #docs with field must be <= #docs
 		if (field.docCount < 0 || field.docCount > info.DocCount)
@@ -190,31 +151,32 @@ namespace Lucene.Net.Codecs.Memory
 		}
 	  }
 
-	  public override IEnumerator<string> iterator()
-	  {
-		return Collections.unmodifiableSet(fields.Keys).GetEnumerator();
-	  }
+	    public override IEnumerator<string> GetEnumerator()
+	    {
+            return Collections.UnmodifiableSet(fields.Keys).GetEnumerator();
+	    }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public index.Terms terms(String field) throws java.io.IOException
-	  public override Terms terms(string field)
+	  public override Terms Terms(string field)
 	  {
 		Debug.Assert(field != null);
 		return fields[field];
 	  }
 
-	  public override int size()
-	  {
-		return fields.Count;
-	  }
+	    public override int Size
+	    {
+	        get
+	        {
+	            {
+	                return fields.Count;
+	            }
+	        }
+	    }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void close() throws java.io.IOException
-	  public override void close()
+	  public override void Dispose()
 	  {
 		try
 		{
-		  IOUtils.close(postingsReader);
+		  IOUtils.Close(postingsReader);
 		}
 		finally
 		{
@@ -232,7 +194,7 @@ namespace Lucene.Net.Codecs.Memory
 		internal readonly long sumDocFreq;
 		internal readonly int docCount;
 		internal readonly int longsSize;
-		internal readonly FST<long?> index;
+		internal readonly FST<long> index;
 
 		internal readonly int numSkipInfo;
 		internal readonly long[] skipInfo;
@@ -240,9 +202,7 @@ namespace Lucene.Net.Codecs.Memory
 		internal readonly sbyte[] metaLongsBlock;
 		internal readonly sbyte[] metaBytesBlock;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: Lucene.Net.Codecs.Memory.FSTTermsReader.TermsReader(index.FieldInfo fieldInfo, store.IndexInput blockIn, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize, util.fst.FST<Long> index) throws java.io.IOException
-		internal TermsReader(FSTOrdTermsReader outerInstance, FieldInfo fieldInfo, IndexInput blockIn, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize, FST<long?> index)
+		internal TermsReader(FSTOrdTermsReader outerInstance, FieldInfo fieldInfo, IndexInput blockIn, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize, FST<long> index)
 		{
 			this.outerInstance = outerInstance;
 		  this.fieldInfo = fieldInfo;
@@ -253,15 +213,13 @@ namespace Lucene.Net.Codecs.Memory
 		  this.longsSize = longsSize;
 		  this.index = index;
 
-		  assert(numTerms & (~0xffffffffL)) == 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numBlocks = (int)(numTerms + INTERVAL - 1) / INTERVAL;
+		  Debug.Assert((numTerms & (~0xffffffffL)) == 0);
 		  int numBlocks = (int)(numTerms + INTERVAL - 1) / INTERVAL;
 		  this.numSkipInfo = longsSize + 3;
 		  this.skipInfo = new long[numBlocks * numSkipInfo];
-		  this.statsBlock = new sbyte[(int)blockIn.readVLong()];
-		  this.metaLongsBlock = new sbyte[(int)blockIn.readVLong()];
-		  this.metaBytesBlock = new sbyte[(int)blockIn.readVLong()];
+		  this.statsBlock = new sbyte[(int)blockIn.ReadVLong()];
+		  this.metaLongsBlock = new sbyte[(int)blockIn.ReadVLong()];
+		  this.metaBytesBlock = new sbyte[(int)blockIn.ReadVLong()];
 
 		  int last = 0, next = 0;
 		  for (int i = 1; i < numBlocks; i++)
@@ -269,13 +227,13 @@ namespace Lucene.Net.Codecs.Memory
 			next = numSkipInfo * i;
 			for (int j = 0; j < numSkipInfo; j++)
 			{
-			  skipInfo[next + j] = skipInfo[last + j] + blockIn.readVLong();
+			  skipInfo[next + j] = skipInfo[last + j] + blockIn.ReadVLong();
 			}
 			last = next;
 		  }
-		  blockIn.readBytes(statsBlock, 0, statsBlock.Length);
-		  blockIn.readBytes(metaLongsBlock, 0, metaLongsBlock.Length);
-		  blockIn.readBytes(metaBytesBlock, 0, metaBytesBlock.Length);
+		  blockIn.ReadBytes(statsBlock, 0, statsBlock.Length);
+		  blockIn.ReadBytes(metaLongsBlock, 0, metaLongsBlock.Length);
+		  blockIn.ReadBytes(metaBytesBlock, 0, metaBytesBlock.Length);
 		}
 
 		public override IComparer<BytesRef> Comparator
@@ -286,27 +244,27 @@ namespace Lucene.Net.Codecs.Memory
 			}
 		}
 
-		public override bool hasFreqs()
+		public override bool HasFreqs()
 		{
-		  return fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+		  return fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0;
 		}
 
-		public override bool hasOffsets()
+		public override bool HasOffsets()
 		{
-		  return fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  return fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		}
 
-		public override bool hasPositions()
+		public override bool HasPositions()
 		{
-		  return fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		  return fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 		}
 
-		public override bool hasPayloads()
+		public override bool HasPayloads()
 		{
-		  return fieldInfo.hasPayloads();
+		  return fieldInfo.HasPayloads();
 		}
 
-		public override long size()
+		public override long Size()
 		{
 		  return numTerms;
 		}
@@ -319,8 +277,6 @@ namespace Lucene.Net.Codecs.Memory
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public long getSumDocFreq() throws java.io.IOException
 		public override long SumDocFreq
 		{
 			get
@@ -329,8 +285,6 @@ namespace Lucene.Net.Codecs.Memory
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int getDocCount() throws java.io.IOException
 		public override int DocCount
 		{
 			get
@@ -339,16 +293,12 @@ namespace Lucene.Net.Codecs.Memory
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public index.TermsEnum iterator(index.TermsEnum reuse) throws java.io.IOException
-		public override TermsEnum iterator(TermsEnum reuse)
+		public override TermsEnum Iterator(TermsEnum reuse)
 		{
 		  return new SegmentTermsEnum(this);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public index.TermsEnum intersect(util.automaton.CompiledAutomaton compiled, util.BytesRef startTerm) throws java.io.IOException
-		public override TermsEnum intersect(CompiledAutomaton compiled, BytesRef startTerm)
+		public override TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
 		{
 		  return new IntersectTermsEnum(this, compiled, startTerm);
 		}
@@ -359,10 +309,10 @@ namespace Lucene.Net.Codecs.Memory
 			private readonly FSTOrdTermsReader.TermsReader outerInstance;
 
 		  /* Current term, null when enum ends or unpositioned */
-		  internal BytesRef term_Renamed;
+		  internal BytesRef term;
 
 		  /* Current term's ord, starts from 0 */
-		  internal long ord_Renamed;
+		  internal long ord;
 
 		  /* Current term stats + decoded metadata (customized by PBF) */
 		  internal readonly BlockTermState state;
@@ -385,19 +335,15 @@ namespace Lucene.Net.Codecs.Memory
 		  internal int[] docFreq_Renamed;
 		  internal long[] totalTermFreq_Renamed;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: BaseTermsEnum() throws java.io.IOException
-		  internal BaseTermsEnum(FSTOrdTermsReader.TermsReader outerInstance)
+		  internal BaseTermsEnum(TermsReader outerInstance)
 		  {
 			  this.outerInstance = outerInstance;
-			this.state = outerInstance.outerInstance.postingsReader.newTermState();
-			this.term_Renamed = null;
-			this.statsReader.reset(outerInstance.statsBlock);
-			this.metaLongsReader.reset(outerInstance.metaLongsBlock);
-			this.metaBytesReader.reset(outerInstance.metaBytesBlock);
+			this.state = outerInstance.outerInstance.postingsReader.NewTermState();
+			this.term = null;
+			this.statsReader.Reset(outerInstance.statsBlock);
+			this.metaLongsReader.Reset(outerInstance.metaLongsBlock);
+			this.metaBytesReader.Reset(outerInstance.metaBytesBlock);
 
-//JAVA TO C# CONVERTER NOTE: The following call to the 'RectangularArrays' helper class reproduces the rectangular array initialization that is automatic in Java:
-//ORIGINAL LINE: this.longs = new long[INTERVAL][outerInstance.longsSize];
 			this.longs = RectangularArrays.ReturnRectangularLongArray(INTERVAL, outerInstance.longsSize);
 			this.bytesStart = new int[INTERVAL];
 			this.bytesLength = new int[INTERVAL];
@@ -405,9 +351,9 @@ namespace Lucene.Net.Codecs.Memory
 			this.totalTermFreq_Renamed = new long[INTERVAL];
 			this.statsBlockOrd = -1;
 			this.metaBlockOrd = -1;
-			if (!outerInstance.hasFreqs())
+			if (!outerInstance.HasFreqs())
 			{
-			  Arrays.fill(totalTermFreq_Renamed, -1);
+			  Arrays.Fill(totalTermFreq_Renamed, -1);
 			}
 		  }
 
@@ -421,63 +367,45 @@ namespace Lucene.Net.Codecs.Memory
 
 		  /// <summary>
 		  /// Decodes stats data into term state </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: void decodeStats() throws java.io.IOException
-		  internal virtual void decodeStats()
+		  internal virtual void DecodeStats()
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int upto = (int)ord % INTERVAL;
-			int upto = (int)ord_Renamed % INTERVAL;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int oldBlockOrd = statsBlockOrd;
+			int upto = (int)ord % INTERVAL;
 			int oldBlockOrd = statsBlockOrd;
-			statsBlockOrd = (int)ord_Renamed / INTERVAL;
+			statsBlockOrd = (int)ord / INTERVAL;
 			if (oldBlockOrd != statsBlockOrd)
 			{
-			  refillStats();
+			  RefillStats();
 			}
-			state.docFreq = docFreq_Renamed[upto];
-			state.totalTermFreq = totalTermFreq_Renamed[upto];
+			state.DocFreq = docFreq_Renamed[upto];
+			state.TotalTermFreq = totalTermFreq_Renamed[upto];
 		  }
 
 		  /// <summary>
 		  /// Let PBF decode metadata </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: void decodeMetaData() throws java.io.IOException
-		  internal virtual void decodeMetaData()
+		  internal virtual void DecodeMetaData()
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int upto = (int)ord % INTERVAL;
-			int upto = (int)ord_Renamed % INTERVAL;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int oldBlockOrd = metaBlockOrd;
+			int upto = (int)ord % INTERVAL;
 			int oldBlockOrd = metaBlockOrd;
-			metaBlockOrd = (int)ord_Renamed / INTERVAL;
+			metaBlockOrd = (int)ord / INTERVAL;
 			if (metaBlockOrd != oldBlockOrd)
 			{
-			  refillMetadata();
+			  RefillMetadata();
 			}
 			metaBytesReader.Position = bytesStart[upto];
-			outerInstance.outerInstance.postingsReader.decodeTerm(longs[upto], metaBytesReader, outerInstance.fieldInfo, state, true);
+			outerInstance.outerInstance.postingsReader.DecodeTerm(longs[upto], metaBytesReader, outerInstance.fieldInfo, state, true);
 		  }
 
 		  /// <summary>
 		  /// Load current stats shard </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: final void refillStats() throws java.io.IOException
-		  internal void refillStats()
+		  internal void RefillStats()
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offset = statsBlockOrd * numSkipInfo;
-			int offset = statsBlockOrd * outerInstance.numSkipInfo;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int statsFP = (int)skipInfo[offset];
-			int statsFP = (int)outerInstance.skipInfo[offset];
+			var offset = statsBlockOrd * outerInstance.numSkipInfo;
+			var statsFP = (int)outerInstance.skipInfo[offset];
 			statsReader.Position = statsFP;
-			for (int i = 0; i < INTERVAL && !statsReader.eof(); i++)
+			for (int i = 0; i < INTERVAL && !statsReader.Eof(); i++)
 			{
-			  int code = statsReader.readVInt();
-			  if (outerInstance.hasFreqs())
+			  int code = statsReader.ReadVInt();
+			  if (outerInstance.HasFreqs())
 			  {
 				docFreq_Renamed[i] = ((int)((uint)code >> 1));
 				if ((code & 1) == 1)
@@ -486,7 +414,7 @@ namespace Lucene.Net.Codecs.Memory
 				}
 				else
 				{
-				  totalTermFreq_Renamed[i] = docFreq_Renamed[i] + statsReader.readVLong();
+				  totalTermFreq_Renamed[i] = docFreq_Renamed[i] + statsReader.ReadVLong();
 				}
 			  }
 			  else
@@ -498,94 +426,74 @@ namespace Lucene.Net.Codecs.Memory
 
 		  /// <summary>
 		  /// Load current metadata shard </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: final void refillMetadata() throws java.io.IOException
-		  internal void refillMetadata()
+		  internal void RefillMetadata()
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offset = metaBlockOrd * numSkipInfo;
-			int offset = metaBlockOrd * outerInstance.numSkipInfo;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int metaLongsFP = (int)skipInfo[offset + 1];
-			int metaLongsFP = (int)outerInstance.skipInfo[offset + 1];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int metaBytesFP = (int)skipInfo[offset + 2];
-			int metaBytesFP = (int)outerInstance.skipInfo[offset + 2];
+			var offset = metaBlockOrd * outerInstance.numSkipInfo;
+			var metaLongsFP = (int)outerInstance.skipInfo[offset + 1];
+			var metaBytesFP = (int)outerInstance.skipInfo[offset + 2];
 			metaLongsReader.Position = metaLongsFP;
 			for (int j = 0; j < outerInstance.longsSize; j++)
 			{
-			  longs[0][j] = outerInstance.skipInfo[offset + 3 + j] + metaLongsReader.readVLong();
+			  longs[0][j] = outerInstance.skipInfo[offset + 3 + j] + metaLongsReader.ReadVLong();
 			}
 			bytesStart[0] = metaBytesFP;
-			bytesLength[0] = (int)metaLongsReader.readVLong();
-			for (int i = 1; i < INTERVAL && !metaLongsReader.eof(); i++)
+			bytesLength[0] = (int)metaLongsReader.ReadVLong();
+			for (int i = 1; i < INTERVAL && !metaLongsReader.Eof(); i++)
 			{
 			  for (int j = 0; j < outerInstance.longsSize; j++)
 			  {
-				longs[i][j] = longs[i - 1][j] + metaLongsReader.readVLong();
+				longs[i][j] = longs[i - 1][j] + metaLongsReader.ReadVLong();
 			  }
 			  bytesStart[i] = bytesStart[i - 1] + bytesLength[i - 1];
-			  bytesLength[i] = (int)metaLongsReader.readVLong();
+			  bytesLength[i] = (int)metaLongsReader.ReadVLong();
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public index.TermState termState() throws java.io.IOException
-		  public override TermState termState()
+		  public override TermState TermState()
 		  {
-			decodeMetaData();
-			return state.clone();
+			DecodeMetaData();
+			return (TermState)state.Clone();
 		  }
 
-		  public override BytesRef term()
+		  public override BytesRef Term()
 		  {
-			return term_Renamed;
+			return term;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int docFreq() throws java.io.IOException
-		  public override int docFreq()
+		  public override int DocFreq()
 		  {
-			return state.docFreq;
+			return state.DocFreq;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public long totalTermFreq() throws java.io.IOException
-		  public override long totalTermFreq()
+		  public override long TotalTermFreq()
 		  {
-			return state.totalTermFreq;
+			return state.TotalTermFreq;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public index.DocsEnum docs(util.Bits liveDocs, index.DocsEnum reuse, int flags) throws java.io.IOException
-		  public override DocsEnum docs(Bits liveDocs, DocsEnum reuse, int flags)
+		  public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
 		  {
-			decodeMetaData();
-			return outerInstance.outerInstance.postingsReader.docs(outerInstance.fieldInfo, state, liveDocs, reuse, flags);
+			DecodeMetaData();
+			return outerInstance.outerInstance.postingsReader.Docs(outerInstance.fieldInfo, state, liveDocs, reuse, flags);
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public index.DocsAndPositionsEnum docsAndPositions(util.Bits liveDocs, index.DocsAndPositionsEnum reuse, int flags) throws java.io.IOException
-		  public override DocsAndPositionsEnum docsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+		  public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 		  {
-			if (!outerInstance.hasPositions())
+			if (!outerInstance.HasPositions())
 			{
 			  return null;
 			}
-			decodeMetaData();
-			return outerInstance.outerInstance.postingsReader.docsAndPositions(outerInstance.fieldInfo, state, liveDocs, reuse, flags);
+			DecodeMetaData();
+			return outerInstance.outerInstance.postingsReader.DocsAndPositions(outerInstance.fieldInfo, state, liveDocs, reuse, flags);
 		  }
 
 		  // TODO: this can be achieved by making use of Util.getByOutput()
 		  //           and should have related tests
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void seekExact(long ord) throws java.io.IOException
-		  public override void seekExact(long ord)
+		  public override void SeekExact(long ord)
 		  {
 			throw new System.NotSupportedException();
 		  }
 
-		  public override long ord()
+		  public override long Ord()
 		  {
 			throw new System.NotSupportedException();
 		  }
@@ -596,98 +504,85 @@ namespace Lucene.Net.Codecs.Memory
 		{
 			private readonly FSTOrdTermsReader.TermsReader outerInstance;
 
-		  internal readonly BytesRefFSTEnum<long?> fstEnum;
+		    private readonly BytesRefFSTEnum<long> fstEnum;
 
 		  /* True when current term's metadata is decoded */
-		  internal bool decoded;
+		    private bool decoded;
 
 		  /* True when current enum is 'positioned' by seekExact(TermState) */
-		  internal bool seekPending;
+		    private bool seekPending;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: SegmentTermsEnum() throws java.io.IOException
 		  internal SegmentTermsEnum(FSTOrdTermsReader.TermsReader outerInstance) : base(outerInstance)
 		  {
 			  this.outerInstance = outerInstance;
-			this.fstEnum = new BytesRefFSTEnum<>(outerInstance.index);
+			this.fstEnum = new BytesRefFSTEnum<long>(outerInstance.index);
 			this.decoded = false;
 			this.seekPending = false;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override void decodeMetaData() throws java.io.IOException
-		  internal override void decodeMetaData()
+		  internal override void DecodeMetaData()
 		  {
 			if (!decoded && !seekPending)
 			{
-			  base.decodeMetaData();
+			  base.DecodeMetaData();
 			  decoded = true;
 			}
 		  }
 
 		  // Update current enum according to FSTEnum
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: void updateEnum(final util.fst.BytesRefFSTEnum.InputOutput<Long> pair) throws java.io.IOException
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-		  internal void updateEnum(InputOutput<long?> pair)
+		    private void UpdateEnum(InputOutput<long?> pair)
 		  {
 			if (pair == null)
 			{
-			  term_Renamed = null;
+			  term = null;
 			}
 			else
 			{
-			  term_Renamed = pair.input;
-			  ord_Renamed = pair.output;
-			  decodeStats();
+			  term = pair.input;
+			  ord = pair.output;
+			  DecodeStats();
 			}
 			decoded = false;
 			seekPending = false;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public util.BytesRef next() throws java.io.IOException
-		  public override BytesRef next()
+		  public override BytesRef Next()
 		  {
 			if (seekPending) // previously positioned, but termOutputs not fetched
 			{
 			  seekPending = false;
-			  SeekStatus status = seekCeil(term_Renamed);
+			  var status = SeekCeil(term);
 			  Debug.Assert(status == SeekStatus.FOUND); // must positioned on valid term
 			}
-			updateEnum(fstEnum.next());
-			return term_Renamed;
+			UpdateEnum(fstEnum.Next());
+			return term;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean seekExact(util.BytesRef target) throws java.io.IOException
-		  public override bool seekExact(BytesRef target)
+		  public override bool SeekExact(BytesRef target)
 		  {
-			updateEnum(fstEnum.seekExact(target));
-			return term_Renamed != null;
+			UpdateEnum(fstEnum.SeekExact(target));
+			return term != null;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public SeekStatus seekCeil(util.BytesRef target) throws java.io.IOException
-		  public override SeekStatus seekCeil(BytesRef target)
+		  public override SeekStatus SeekCeil(BytesRef target)
 		  {
-			updateEnum(fstEnum.seekCeil(target));
-			if (term_Renamed == null)
+			UpdateEnum(fstEnum.SeekCeil(target));
+			if (term == null)
 			{
 			  return SeekStatus.END;
 			}
 			else
 			{
-			  return term_Renamed.Equals(target) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+			  return term.Equals(target) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
 			}
 		  }
 
-		  public override void seekExact(BytesRef target, TermState otherState)
+		  public override void SeekExact(BytesRef target, TermState otherState)
 		  {
-			if (!target.Equals(term_Renamed))
+			if (!target.Equals(term))
 			{
-			  state.copyFrom(otherState);
-			  term_Renamed = BytesRef.deepCopyOf(target);
+			  state.CopyFrom(otherState);
+			  term = BytesRef.DeepCopyOf(target);
 			  seekPending = true;
 			}
 		  }
@@ -699,40 +594,37 @@ namespace Lucene.Net.Codecs.Memory
 			private readonly FSTOrdTermsReader.TermsReader outerInstance;
 
 		  /* True when current term's metadata is decoded */
-		  internal bool decoded;
+		    private bool decoded;
 
 		  /* True when there is pending term when calling next() */
-		  internal bool pending;
+		    private bool pending;
 
 		  /* stack to record how current term is constructed, 
 		   * used to accumulate metadata or rewind term:
 		   *   level == term.length + 1,
 		   *         == 0 when term is null */
-		  internal Frame[] stack;
-		  internal int level;
+		    private Frame[] stack;
+		    private int level;
 
 		  /* term dict fst */
-		  internal readonly FST<long?> fst;
-		  internal readonly FST.BytesReader fstReader;
-		  internal readonly Outputs<long?> fstOutputs;
+		    private readonly FST<long> fst;
+		    private readonly FST.BytesReader fstReader;
+		    private readonly Outputs<long> fstOutputs;
 
 		  /* query automaton to intersect with */
-		  internal readonly ByteRunAutomaton fsa;
+		    private readonly ByteRunAutomaton fsa;
 
-		  private sealed class Frame
+		    private sealed class Frame
 		  {
-			  private readonly FSTOrdTermsReader.TermsReader.IntersectTermsEnum outerInstance;
-
-			/* fst stats */
-			internal FST.Arc<long?> arc;
+		        /* fst stats */
+			internal FST.Arc<long> arc;
 
 			/* automaton stats */
 			internal int state;
 
-			internal Frame(FSTOrdTermsReader.TermsReader.IntersectTermsEnum outerInstance)
+			internal Frame()
 			{
-				this.outerInstance = outerInstance;
-			  this.arc = new FST.Arc<>();
+			    this.arc = new FST.Arc<long?>();
 			  this.state = -1;
 			}
 
@@ -742,159 +634,145 @@ namespace Lucene.Net.Codecs.Memory
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: IntersectTermsEnum(util.automaton.CompiledAutomaton compiled, util.BytesRef startTerm) throws java.io.IOException
-		  internal IntersectTermsEnum(FSTOrdTermsReader.TermsReader outerInstance, CompiledAutomaton compiled, BytesRef startTerm) : base(outerInstance)
+		  internal IntersectTermsEnum(TermsReader outerInstance, CompiledAutomaton compiled, BytesRef startTerm) : base(outerInstance)
 		  {
 			//if (TEST) System.out.println("Enum init, startTerm=" + startTerm);
 			  this.outerInstance = outerInstance;
 			this.fst = outerInstance.index;
 			this.fstReader = fst.BytesReader;
-			this.fstOutputs = outerInstance.index.outputs;
-			this.fsa = compiled.runAutomaton;
+			this.fstOutputs = outerInstance.index.Outputs;
+			this.fsa = compiled.RunAutomaton;
 			this.level = -1;
 			this.stack = new Frame[16];
 			for (int i = 0 ; i < stack.Length; i++)
 			{
-			  this.stack[i] = new Frame(this);
+			  this.stack[i] = new Frame();
 			}
 
 			Frame frame;
-			frame = loadVirtualFrame(newFrame());
+			frame = LoadVirtualFrame(NewFrame());
 			this.level++;
-			frame = loadFirstFrame(newFrame());
-			pushFrame(frame);
+			frame = LoadFirstFrame(NewFrame());
+			PushFrame(frame);
 
 			this.decoded = false;
 			this.pending = false;
 
 			if (startTerm == null)
 			{
-			  pending = isAccept(topFrame());
+			  pending = IsAccept(TopFrame());
 			}
 			else
 			{
-			  doSeekCeil(startTerm);
-			  pending = !startTerm.Equals(term_Renamed) && isValid(topFrame()) && isAccept(topFrame());
+			  DoSeekCeil(startTerm);
+			  pending = !startTerm.Equals(term) && IsValid(TopFrame()) && IsAccept(TopFrame());
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override void decodeMetaData() throws java.io.IOException
-		  internal override void decodeMetaData()
+		  internal override void DecodeMetaData()
 		  {
 			if (!decoded)
 			{
-			  base.decodeMetaData();
+			  base.DecodeMetaData();
 			  decoded = true;
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override void decodeStats() throws java.io.IOException
-		  internal override void decodeStats()
+		  internal override void DecodeStats()
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.Arc<Long> arc = topFrame().arc;
-			FST.Arc<long?> arc = topFrame().arc;
-			Debug.Assert(arc.nextFinalOutput == fstOutputs.NoOutput);
-			ord_Renamed = arc.output;
-			base.decodeStats();
+			var arc = TopFrame().arc;
+			Debug.Assert(arc.NextFinalOutput == fstOutputs.NoOutput);
+			ord = arc.Output;
+			base.DecodeStats();
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public SeekStatus seekCeil(util.BytesRef target) throws java.io.IOException
-		  public override SeekStatus seekCeil(BytesRef target)
+		  public override SeekStatus SeekCeil(BytesRef target)
 		  {
 			throw new System.NotSupportedException();
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public util.BytesRef next() throws java.io.IOException
-		  public override BytesRef next()
+		  public override BytesRef Next()
 		  {
 			//if (TEST) System.out.println("Enum next()");
 			if (pending)
 			{
 			  pending = false;
-			  decodeStats();
-			  return term_Renamed;
+			  DecodeStats();
+			  return term;
 			}
 			decoded = false;
 			while (level > 0)
 			{
-			  Frame frame = newFrame();
-			  if (loadExpandFrame(topFrame(), frame) != null) // has valid target
+			  Frame frame = NewFrame();
+			  if (LoadExpandFrame(TopFrame(), frame) != null) // has valid target
 			  {
-				pushFrame(frame);
-				if (isAccept(frame)) // gotcha
+				PushFrame(frame);
+				if (IsAccept(frame)) // gotcha
 				{
 				  break;
 				}
 				continue; // check next target
 			  }
-			  frame = popFrame();
+			  frame = PopFrame();
 			  while (level > 0)
 			  {
-				if (loadNextFrame(topFrame(), frame) != null) // has valid sibling
+				if (LoadNextFrame(TopFrame(), frame) != null) // has valid sibling
 				{
-				  pushFrame(frame);
-				  if (isAccept(frame)) // gotcha
+				  PushFrame(frame);
+				  if (IsAccept(frame)) // gotcha
 				  {
 					goto DFSBreak;
 				  }
 				  goto DFSContinue; // check next target
 				}
-				frame = popFrame();
+				frame = PopFrame();
 			  }
 			  return null;
 			  DFSContinue:;
 			}
 		  DFSBreak:
-			decodeStats();
-			return term_Renamed;
+			DecodeStats();
+			return term;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: util.BytesRef doSeekCeil(util.BytesRef target) throws java.io.IOException
-		  internal BytesRef doSeekCeil(BytesRef target)
+		    private BytesRef DoSeekCeil(BytesRef target)
 		  {
 			//if (TEST) System.out.println("Enum doSeekCeil()");
 			Frame frame = null;
-			int label , upto = 0, limit = target.length;
+			int label , upto = 0, limit = target.Length;
 			while (upto < limit) // to target prefix, or ceil label (rewind prefix)
 			{
-			  frame = newFrame();
-			  label = target.bytes[upto] & 0xff;
-			  frame = loadCeilFrame(label, topFrame(), frame);
-			  if (frame == null || frame.arc.label != label)
+			  frame = NewFrame();
+			  label = target.Bytes[upto] & 0xff;
+			  frame = LoadCeilFrame(label, TopFrame(), frame);
+			  if (frame == null || frame.arc.Label != label)
 			  {
 				break;
 			  }
-			  Debug.Assert(isValid(frame)); // target must be fetched from automaton
-			  pushFrame(frame);
+			  Debug.Assert(IsValid(frame)); // target must be fetched from automaton
+			  PushFrame(frame);
 			  upto++;
 			}
 			if (upto == limit) // got target
 			{
-			  return term_Renamed;
+			  return term;
 			}
 			if (frame != null) // got larger term('s prefix)
 			{
-			  pushFrame(frame);
-			  return isAccept(frame) ? term_Renamed : next();
+			  PushFrame(frame);
+			  return IsAccept(frame) ? term : Next();
 			}
 			while (level > 0) // got target's prefix, advance to larger term
 			{
-			  frame = popFrame();
-			  while (level > 0 && !canRewind(frame))
+			  frame = PopFrame();
+			  while (level > 0 && !CanRewind(frame))
 			  {
-				frame = popFrame();
+				frame = PopFrame();
 			  }
-			  if (loadNextFrame(topFrame(), frame) != null)
+			  if (LoadNextFrame(TopFrame(), frame) != null)
 			  {
-				pushFrame(frame);
-				return isAccept(frame) ? term_Renamed : next();
+				PushFrame(frame);
+				return IsAccept(frame) ? term : Next();
 			  }
 			}
 			return null;
@@ -902,61 +780,53 @@ namespace Lucene.Net.Codecs.Memory
 
 		  /// <summary>
 		  /// Virtual frame, never pop </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: Frame loadVirtualFrame(Frame frame) throws java.io.IOException
-		  internal Frame loadVirtualFrame(Frame frame)
+		  private Frame LoadVirtualFrame(Frame frame)
 		  {
-			frame.arc.output = fstOutputs.NoOutput;
-			frame.arc.nextFinalOutput = fstOutputs.NoOutput;
+			frame.arc.Output = fstOutputs.NoOutput;
+			frame.arc.NextFinalOutput = fstOutputs.NoOutput;
 			frame.state = -1;
 			return frame;
 		  }
 
 		  /// <summary>
 		  /// Load frame for start arc(node) on fst </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: Frame loadFirstFrame(Frame frame) throws java.io.IOException
-		  internal Frame loadFirstFrame(Frame frame)
+		  private Frame LoadFirstFrame(Frame frame)
 		  {
-			frame.arc = fst.getFirstArc(frame.arc);
+			frame.arc = fst.GetFirstArc(frame.arc);
 			frame.state = fsa.InitialState;
 			return frame;
 		  }
 
 		  /// <summary>
 		  /// Load frame for target arc(node) on fst </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: Frame loadExpandFrame(Frame top, Frame frame) throws java.io.IOException
-		  internal Frame loadExpandFrame(Frame top, Frame frame)
+		  private Frame LoadExpandFrame(Frame top, Frame frame)
 		  {
-			if (!canGrow(top))
+			if (!CanGrow(top))
 			{
 			  return null;
 			}
-			frame.arc = fst.readFirstRealTargetArc(top.arc.target, frame.arc, fstReader);
-			frame.state = fsa.step(top.state, frame.arc.label);
+			frame.arc = fst.ReadFirstRealTargetArc(top.arc.Target, frame.arc, fstReader);
+			frame.state = fsa.Step(top.state, frame.arc.Label);
 			//if (TEST) System.out.println(" loadExpand frame="+frame);
 			if (frame.state == -1)
 			{
-			  return loadNextFrame(top, frame);
+			  return LoadNextFrame(top, frame);
 			}
 			return frame;
 		  }
 
 		  /// <summary>
 		  /// Load frame for sibling arc(node) on fst </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: Frame loadNextFrame(Frame top, Frame frame) throws java.io.IOException
-		  internal Frame loadNextFrame(Frame top, Frame frame)
+		  private Frame LoadNextFrame(Frame top, Frame frame)
 		  {
-			if (!canRewind(frame))
+			if (!CanRewind(frame))
 			{
 			  return null;
 			}
 			while (!frame.arc.Last)
 			{
-			  frame.arc = fst.readNextRealArc(frame.arc, fstReader);
-			  frame.state = fsa.step(top.state, frame.arc.label);
+			  frame.arc = fst.ReadNextRealArc(frame.arc, fstReader);
+			  frame.state = fsa.Step(top.state, frame.arc.Label);
 			  if (frame.state != -1)
 			  {
 				break;
@@ -974,182 +844,162 @@ namespace Lucene.Net.Codecs.Memory
 		  /// Load frame for target arc(node) on fst, so that 
 		  ///  arc.label >= label and !fsa.reject(arc.label) 
 		  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: Frame loadCeilFrame(int label, Frame top, Frame frame) throws java.io.IOException
-		  internal Frame loadCeilFrame(int label, Frame top, Frame frame)
+		  private Frame LoadCeilFrame(int label, Frame top, Frame frame)
 		  {
-			FST.Arc<long?> arc = frame.arc;
-			arc = Util.readCeilArc(label, fst, top.arc, arc, fstReader);
+			var arc = frame.arc;
+			arc = Util.ReadCeilArc(label, fst, top.arc, arc, fstReader);
 			if (arc == null)
 			{
 			  return null;
 			}
-			frame.state = fsa.step(top.state, arc.label);
+			frame.state = fsa.Step(top.state, arc.Label);
 			//if (TEST) System.out.println(" loadCeil frame="+frame);
 			if (frame.state == -1)
 			{
-			  return loadNextFrame(top, frame);
+			  return LoadNextFrame(top, frame);
 			}
 			return frame;
 		  }
 
-		  internal bool isAccept(Frame frame) // reach a term both fst&fsa accepts
+		    private bool IsAccept(Frame frame) // reach a term both fst&fsa accepts
 		  {
-			return fsa.isAccept(frame.state) && frame.arc.Final;
+			return fsa.IsAccept(frame.state) && frame.arc.Final;
 		  }
-		  internal bool isValid(Frame frame) // reach a prefix both fst&fsa won't reject
+
+		    private bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject
 		  {
 			return frame.state != -1; //frame != null &&
 		  }
-		  internal bool canGrow(Frame frame) // can walk forward on both fst&fsa
+
+		    private bool CanGrow(Frame frame) // can walk forward on both fst&fsa
 		  {
-			return frame.state != -1 && FST.targetHasArcs(frame.arc);
+			return frame.state != -1 && FST.TargetHasArcs(frame.arc);
 		  }
-		  internal bool canRewind(Frame frame) // can jump to sibling
+
+		    private bool CanRewind(Frame frame) // can jump to sibling
 		  {
 			return !frame.arc.Last;
 		  }
 
-		  internal void pushFrame(Frame frame)
+		    private void PushFrame(Frame frame)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.Arc<Long> arc = frame.arc;
-			FST.Arc<long?> arc = frame.arc;
-			arc.output = fstOutputs.add(topFrame().arc.output, arc.output);
-			term_Renamed = grow(arc.label);
+			var arc = frame.arc;
+			arc.Output = fstOutputs.Add(TopFrame().arc.Output, arc.Output);
+			term = Grow(arc.Label);
 			level++;
 			Debug.Assert(frame == stack[level]);
 		  }
 
-		  internal Frame popFrame()
+		    private Frame PopFrame()
 		  {
-			term_Renamed = shrink();
+			term = Shrink();
 			return stack[level--];
 		  }
 
-		  internal Frame newFrame()
+		    private Frame NewFrame()
 		  {
 			if (level + 1 == stack.Length)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Frame[] temp = new Frame[util.ArrayUtil.oversize(level+2, util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-			  Frame[] temp = new Frame[ArrayUtil.oversize(level + 2, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+			  var temp = new Frame[ArrayUtil.Oversize(level + 2, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			  Array.Copy(stack, 0, temp, 0, stack.Length);
 			  for (int i = stack.Length; i < temp.Length; i++)
 			  {
-				temp[i] = new Frame(this);
+				temp[i] = new Frame();
 			  }
 			  stack = temp;
 			}
 			return stack[level + 1];
 		  }
 
-		  internal Frame topFrame()
+		    private Frame TopFrame()
 		  {
 			return stack[level];
 		  }
 
-		  internal BytesRef grow(int label)
+		    private BytesRef Grow(int label)
 		  {
-			if (term_Renamed == null)
+			if (term == null)
 			{
-			  term_Renamed = new BytesRef(new sbyte[16], 0, 0);
+			  term = new BytesRef(new byte[16], 0, 0);
 			}
 			else
 			{
-			  if (term_Renamed.length == term_Renamed.bytes.length)
+			  if (term.Length == term.Bytes.Length)
 			  {
-				term_Renamed.grow(term_Renamed.length + 1);
+				term.Grow(term.Length + 1);
 			  }
-			  term_Renamed.bytes[term_Renamed.length++] = (sbyte)label;
+			  term.Bytes[term.Length++] = (byte)label;
 			}
-			return term_Renamed;
+			return term;
 		  }
 
-		  internal BytesRef shrink()
+		    private BytesRef Shrink()
 		  {
-			if (term_Renamed.length == 0)
+			if (term.Length == 0)
 			{
-			  term_Renamed = null;
+			  term = null;
 			}
 			else
 			{
-			  term_Renamed.length--;
+			  term.Length--;
 			}
-			return term_Renamed;
+			return term;
 		  }
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: static<T> void walk(util.fst.FST<T> fst) throws java.io.IOException
-	  internal static void walk<T>(FST<T> fst)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.ArrayList<util.fst.FST.Arc<T>> queue = new java.util.ArrayList<>();
-		List<FST.Arc<T>> queue = new List<FST.Arc<T>>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.BitSet seen = new java.util.BitSet();
-		BitArray seen = new BitArray();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.BytesReader reader = fst.getBytesReader();
-		FST.BytesReader reader = fst.BytesReader;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.Arc<T> startArc = fst.getFirstArc(new util.fst.FST.Arc<T>());
-		FST.Arc<T> startArc = fst.getFirstArc(new FST.Arc<T>());
+	  internal static void Walk<T>(FST<T> fst)
+	  {		
+          var queue = new List<FST.Arc<T>>();
+		var seen = new BitArray();
+		var reader = fst.BytesReader;
+		var startArc = fst.GetFirstArc(new FST.Arc<T>());
 		queue.Add(startArc);
 		while (queue.Count > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final util.fst.FST.Arc<T> arc = queue.remove(0);
 		  FST.Arc<T> arc = queue.Remove(0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long node = arc.target;
-		  long node = arc.target;
+		  long node = arc.Target;
 		  //System.out.println(arc);
-		  if (FST.targetHasArcs(arc) && !seen.Get((int) node))
+		  if (FST.TargetHasArcs(arc) && !seen.Get((int) node))
 		  {
 			seen.Set((int) node, true);
-			fst.readFirstRealTargetArc(node, arc, reader);
+			fst.ReadFirstRealTargetArc(node, arc, reader);
 			while (true)
 			{
-			  queue.Add((new FST.Arc<T>()).copyFrom(arc));
+			  queue.Add((new FST.Arc<T>()).CopyFrom(arc));
 			  if (arc.Last)
 			  {
 				break;
 			  }
 			  else
 			  {
-				fst.readNextRealArc(arc, reader);
+				fst.ReadNextRealArc(arc, reader);
 			  }
 			}
 		  }
 		}
 	  }
 
-	  public override long ramBytesUsed()
+	  public override long RamBytesUsed()
 	  {
 		long ramBytesUsed = 0;
 		foreach (TermsReader r in fields.Values)
 		{
 		  if (r.index != null)
 		  {
-			ramBytesUsed += r.index.sizeInBytes();
-			ramBytesUsed += RamUsageEstimator.sizeOf(r.metaBytesBlock);
-			ramBytesUsed += RamUsageEstimator.sizeOf(r.metaLongsBlock);
-			ramBytesUsed += RamUsageEstimator.sizeOf(r.skipInfo);
-			ramBytesUsed += RamUsageEstimator.sizeOf(r.statsBlock);
+			ramBytesUsed += r.index.SizeInBytes();
+			ramBytesUsed += RamUsageEstimator.SizeOf(r.metaBytesBlock);
+			ramBytesUsed += RamUsageEstimator.SizeOf(r.metaLongsBlock);
+			ramBytesUsed += RamUsageEstimator.SizeOf(r.skipInfo);
+			ramBytesUsed += RamUsageEstimator.SizeOf(r.statsBlock);
 		  }
 		}
 		return ramBytesUsed;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void checkIntegrity() throws java.io.IOException
-	  public override void checkIntegrity()
+	  public override void CheckIntegrity()
 	  {
-		postingsReader.checkIntegrity();
+		postingsReader.CheckIntegrity();
 	  }
 	}
-
 }

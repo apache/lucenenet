@@ -213,7 +213,7 @@ namespace Lucene.Net.Util
         ///          objects to call <tt>close()</tt> on </param>
         public static void CloseWhileHandlingException(params IDisposable[] objects)
         {
-            foreach (IDisposable o in objects)
+            foreach (var o in objects)
             {
                 try
                 {
@@ -443,40 +443,57 @@ namespace Lucene.Net.Util
         ///  because not all file systems and operating systems allow to fsync on a directory) </param>
         public static void Fsync(string fileToSync, bool isDir)
         {
+            // Fsync does not appear to function properly for Windows and Linux platforms. In Lucene version
+            // they catch this in IOException branch and return if the call is for the directory. 
+            // In Lucene.Net the exception is UnauthorizedAccessException and is not handled by
+            // IOException block. No need to even attempt to fsync, just return if the call is for directory
+            if (isDir)
+            {
+                return;
+            }
+
             var retryCount = 1;
             while (true)
             {
                 FileStream file = null;
-                using (file)
+                bool success = false;
+                try
                 {
-                    try
+                    // If the file is a directory we have to open read-only, for regular files we must open r/w for the fsync to have an effect.
+                    // See http://blog.httrack.com/blog/2013/11/15/everything-you-always-wanted-to-know-about-fsync/
+                    file = new FileStream(fileToSync,
+                        FileMode.Open, // We shouldn't create a file when syncing.
+                        // Java version uses FileChannel which doesn't create the file if it doesn't already exist, 
+                        // so there should be no reason for attempting to create it in Lucene.Net.
+                        FileAccess.Write,
+                        FileShare.ReadWrite);
+                    //FileSupport.Sync(file);
+                    file.Flush(true);
+                    success = true;
+                }
+                catch (IOException e)
+                {
+                    if (retryCount == 5)
                     {
-                        // If the file is a directory we have to open read-only, for regular files we must open r/w for the fsync to have an effect.
-                        // See http://blog.httrack.com/blog/2013/11/15/everything-you-always-wanted-to-know-about-fsync/
-                        file = new FileStream(fileToSync, FileMode.OpenOrCreate,
-                            isDir ? FileAccess.Read : FileAccess.Write,
-                            isDir ? FileShare.Read : FileShare.ReadWrite);
-                        //FileSupport.Sync(file);
-                        file.Flush(true);
-                        return;
+                        throw;
                     }
-                    catch (IOException e)
+
+                    // Pause 5 msec
+                    Thread.Sleep(5);
+                }
+                finally
+                {
+                    if (file != null)
                     {
-                        if (isDir)
-                        {
-                            Debug.Assert((Constants.LINUX || Constants.MAC_OS_X) == false,
-                                "On Linux and MacOSX fsyncing a directory should not throw IOException, " +
-                                "we just don't want to rely on that in production (undocumented). Got: " + e); // Ignore exception if it is a directory
-                            return;
-                        }
-
-                        if (retryCount == 5)
-                            throw;
-
-                        // Pause 5 msec
-                        Thread.Sleep(5);
+                        file.Dispose();
                     }
                 }
+
+                if (success)
+                {
+                    return;
+                }
+
                 retryCount++;
             }
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -32,9 +33,11 @@ namespace Lucene.Net.Search
         private readonly Query @in;
 
         /// <summary>
-        /// Sole constructor. </summary>
+        /// Sole constructor.
+        /// </summary>
         public AssertingQuery(Random random, Query @in)
         {
+            Debug.Assert(@in != null);
             this.Random = random;
             this.@in = @in;
         }
@@ -43,7 +46,8 @@ namespace Lucene.Net.Search
         /// Wrap a query if necessary. </summary>
         public static Query Wrap(Random random, Query query)
         {
-            return query is AssertingQuery ? query : new AssertingQuery(random, query);
+            var aq = query as AssertingQuery;
+            return aq ?? new AssertingQuery(random, query);
         }
 
         public override Weight CreateWeight(IndexSearcher searcher)
@@ -63,11 +67,11 @@ namespace Lucene.Net.Search
 
         public override bool Equals(object obj)
         {
-            if (obj == null || !(obj is AssertingQuery))
+            var that = obj as AssertingQuery;
+            if (that == null)
             {
                 return false;
             }
-            AssertingQuery that = (AssertingQuery)obj;
             return this.@in.Equals(that.@in);
         }
 
@@ -102,7 +106,8 @@ namespace Lucene.Net.Search
             }
             set
             {
-                @in.Boost = value;
+                if (@in != null)
+                    @in.Boost = value;
             }
         }
     }

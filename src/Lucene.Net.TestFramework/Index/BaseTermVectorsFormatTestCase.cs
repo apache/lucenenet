@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 
@@ -124,10 +125,7 @@ namespace Lucene.Net.Index
 
             public static IEnumerable<Options> GetAsEnumer()
             {
-                foreach (Options opt in Enum.GetValues(typeof(Options)))
-                {
-                    yield return opt;
-                }
+                return Enum.GetValues(typeof(Options)).Cast<Options>();
             }
 
             public static IEnumerable<Options> GetAsEnumer(Options startInc, Options endInc)
@@ -157,11 +155,13 @@ namespace Lucene.Net.Index
 
         protected internal virtual FieldType FieldType(Options options)
         {
-            FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-            ft.StoreTermVectors = true;
-            ft.StoreTermVectorPositions = (new OptionsWrapper(options)).positions;
-            ft.StoreTermVectorOffsets = (new OptionsWrapper(options)).offsets;
-            ft.StoreTermVectorPayloads = (new OptionsWrapper(options)).payloads;
+            var ft = new FieldType(TextField.TYPE_NOT_STORED)
+            {
+                StoreTermVectors = true,
+                StoreTermVectorPositions = (new OptionsWrapper(options)).positions,
+                StoreTermVectorOffsets = (new OptionsWrapper(options)).offsets,
+                StoreTermVectorPayloads = (new OptionsWrapper(options)).payloads
+            };
             ft.Freeze();
             return ft;
         }
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
             {
                 fields2.Add(field);
             }
-            Assert.AreEqual(fields1, fields2);
+            Assert.IsTrue(fields1.SetEquals(fields2));
 
             for (int i = 0; i < doc.FieldNames.Length; ++i)
             {
@@ -734,10 +734,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        [Test, LongRunningTest, Timeout(int.MaxValue)]
         public virtual void TestLotsOfFields()
         {
-            RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5000, 10);
+            RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 500, 10);
             foreach (Options options in ValidOptions())
             {
                 Directory dir = NewDirectory();
@@ -752,34 +752,37 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         // different options for the same field
         public virtual void TestMixedOptions()
         {
             int numFields = TestUtil.NextInt(Random(), 1, 3);
-            RandomDocumentFactory docFactory = new RandomDocumentFactory(this, numFields, 10);
-            foreach (Options options1 in ValidOptions())
+            var docFactory = new RandomDocumentFactory(this, numFields, 10);
+            foreach (var options1 in ValidOptions())
             {
-                foreach (Options options2 in ValidOptions())
+                foreach (var options2 in ValidOptions())
                 {
                     if (options1 == options2)
                     {
                         continue;
                     }
-                    Directory dir = NewDirectory();
-                    RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
-                    RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
-                    RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
-                    writer.AddDocument(AddId(doc1.ToDocument(), "1"));
-                    writer.AddDocument(AddId(doc2.ToDocument(), "2"));
-                    IndexReader reader = writer.Reader;
-                    int doc1ID = DocID(reader, "1");
-                    AssertEquals(doc1, reader.GetTermVectors(doc1ID));
-                    int doc2ID = DocID(reader, "2");
-                    AssertEquals(doc2, reader.GetTermVectors(doc2ID));
-                    reader.Dispose();
-                    writer.Dispose();
-                    dir.Dispose();
+                    using (Directory dir = NewDirectory())
+                    {
+                        using (var writer = new RandomIndexWriter(Random(), dir))
+                        {
+                            RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
+                            RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
+                            writer.AddDocument(AddId(doc1.ToDocument(), "1"));
+                            writer.AddDocument(AddId(doc2.ToDocument(), "2"));
+                            using (IndexReader reader = writer.Reader)
+                            {
+                                int doc1ID = DocID(reader, "1");
+                                AssertEquals(doc1, reader.GetTermVectors(doc1ID));
+                                int doc2ID = DocID(reader, "2");
+                                AssertEquals(doc2, reader.GetTermVectors(doc2ID));
+                            }
+                        }
+                    }
                 }
             }
         }

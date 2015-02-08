@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
             int numSegments = infos.Size();
             int numToMerge = 0;
             SegmentCommitInfo mergeInfo = null;
-            bool? segmentIsOriginal = false;
+            bool segmentIsOriginal = false;
             for (int i = 0; i < numSegments && numToMerge <= maxNumSegments; i++)
             {
                 SegmentCommitInfo info = infos.Info(i);
@@ -232,13 +232,13 @@ namespace Lucene.Net.Index
                 segmentsToMerge.TryGetValue(info, out isOriginal);
                 if (isOriginal != null)
                 {
-                    segmentIsOriginal = isOriginal;
+                    segmentIsOriginal = isOriginal.Value;
                     numToMerge++;
                     mergeInfo = info;
                 }
             }
 
-            return numToMerge <= maxNumSegments && (numToMerge != 1 || segmentIsOriginal != false || IsMerged(infos, mergeInfo));
+            return numToMerge <= maxNumSegments && (numToMerge != 1 || !segmentIsOriginal || IsMerged(infos, mergeInfo));
         }
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
         private MergeSpecification FindForcedMergesSizeLimit(SegmentInfos infos, int maxNumSegments, int last)
         {
             MergeSpecification spec = new MergeSpecification();
-            List<SegmentCommitInfo> segments = infos.AsList();
+            IList<SegmentCommitInfo> segments = infos.AsList();
 
             int start = last - 1;
             while (start >= 0)
@@ -300,8 +300,8 @@ namespace Lucene.Net.Index
         /// </summary>
         private MergeSpecification FindForcedMergesMaxNumSegments(SegmentInfos infos, int maxNumSegments, int last)
         {
-            MergeSpecification spec = new MergeSpecification();
-            List<SegmentCommitInfo> segments = infos.AsList();
+            var spec = new MergeSpecification();
+            var segments = infos.AsList();
 
             // First, enroll all "full" merges (size
             // mergeFactor) to potentially be run concurrently:
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
             while (last > 0)
             {
                 SegmentCommitInfo info = infos.Info(--last);
-                if (segmentsToMerge[info] != null)
+                if (segmentsToMerge.ContainsKey(info))
                 {
                     last++;
                     break;
@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public override MergeSpecification FindForcedDeletesMerges(SegmentInfos segmentInfos)
         {
-            List<SegmentCommitInfo> segments = segmentInfos.AsList();
+            var segments = segmentInfos.AsList();
             int numSegments = segments.Count;
 
             if (Verbose())
@@ -462,7 +462,7 @@ namespace Lucene.Net.Index
                 Message("findForcedDeleteMerges: " + numSegments + " segments");
             }
 
-            MergeSpecification spec = new MergeSpecification();
+            var spec = new MergeSpecification();
             int firstSegmentWithDeletions = -1;
             IndexWriter w = Writer.Get();
             Debug.Assert(w != null);
@@ -520,9 +520,9 @@ namespace Lucene.Net.Index
 
         private class SegmentInfoAndLevel : IComparable<SegmentInfoAndLevel>
         {
-            internal SegmentCommitInfo Info;
-            internal float Level;
-            internal int Index;
+            internal readonly SegmentCommitInfo Info;
+            internal readonly float Level;
+            private int Index;
 
             public SegmentInfoAndLevel(SegmentCommitInfo info, float level, int index)
             {
@@ -558,7 +558,7 @@ namespace Lucene.Net.Index
             // Compute levels, which is just log (base mergeFactor)
             // of the size of each segment
             IList<SegmentInfoAndLevel> levels = new List<SegmentInfoAndLevel>();
-            float norm = (float)Math.Log(MergeFactor_Renamed);
+            var norm = (float)Math.Log(MergeFactor_Renamed);
 
             ICollection<SegmentCommitInfo> mergingSegments = Writer.Get().MergingSegments;
 

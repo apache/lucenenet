@@ -21,11 +21,11 @@ namespace Lucene.Net.Util
     /// Interface for Bitset-like structures.
     /// @lucene.experimental
     /// </summary>
-
     public interface Bits
     {
         /// <summary>
-        /// Returns the value of the bit with the specified <code>index</code>. </summary>
+        /// Returns the value of the bit with the specified <code>index</code>.
+        /// </summary>
         /// <param name="index"> index, should be non-negative and &lt; <seealso cref="#length()"/>.
         ///        The result of passing negative or out of bounds values is undefined
         ///        by this interface, <b>just don't do it!</b> </param>
@@ -35,28 +35,23 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the number of bits in this set </summary>
         int Length();
-
-        /// <summary>
-        /// Bits impl of the specified length with all bits set.
-        /// </summary>
-
-        /// <summary>
-        /// Bits impl of the specified length with no bits set.
-        /// </summary>
     }
 
-    public static class Bits_Fields
+    public static class BitsHelpers
     {
         public static readonly Bits[] EMPTY_ARRAY = new Bits[0];
     }
 
+    /// <summary>
+    /// Bits impl of the specified length with all bits set.
+    /// </summary>
     public class Bits_MatchAllBits : Bits
     {
-        internal readonly int Len;
+        private readonly int _len;
 
         public Bits_MatchAllBits(int len)
         {
-            this.Len = len;
+            _len = len;
         }
 
         public bool Get(int index)
@@ -66,17 +61,25 @@ namespace Lucene.Net.Util
 
         public int Length()
         {
-            return Len;
+            return _len;
+        }
+
+        public override int GetHashCode()
+        {
+            return ("MatchAllBits" + _len).GetHashCode();
         }
     }
 
+    /// <summary>
+    /// Bits impl of the specified length with no bits set.
+    /// </summary>
     public class Bits_MatchNoBits : Bits
     {
-        internal readonly int Len;
+        private readonly int _len;
 
         public Bits_MatchNoBits(int len)
         {
-            this.Len = len;
+            _len = len;
         }
 
         public bool Get(int index)
@@ -86,7 +89,12 @@ namespace Lucene.Net.Util
 
         public int Length()
         {
-            return Len;
+            return _len;
+        }
+
+        public override int GetHashCode()
+        {
+            return ("MatchNoBits" + _len).GetHashCode();
         }
     }
 }

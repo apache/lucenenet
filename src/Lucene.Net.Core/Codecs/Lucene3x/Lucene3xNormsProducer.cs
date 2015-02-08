@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         /// <summary>
         /// norms header placeholder </summary>
-        internal static readonly sbyte[] NORMS_HEADER = new sbyte[] { (sbyte)'N', (sbyte)'R', (sbyte)'M', -1 };
+        internal static readonly sbyte[] NORMS_HEADER = { (sbyte)'N', (sbyte)'R', (sbyte)'M', -1 };
 
         /// <summary>
         /// Extension of norms file </summary>
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal readonly int Maxdoc;
 
-        private readonly AtomicLong RamBytesUsed_Renamed;
+        private readonly AtomicLong ramBytesUsed;
 
         // note: just like segmentreader in 3.x, we open up all the files here (including separate norms) up front.
         // but we just don't do any seeks or reading yet.
@@ -143,7 +143,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     IOUtils.CloseWhileHandlingException(OpenFiles);
                 }
             }
-            RamBytesUsed_Renamed = new AtomicLong();
+            ramBytesUsed = new AtomicLong();
         }
 
         protected override void Dispose(bool disposing)
@@ -192,13 +192,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         // holds a file+offset pointing to a norms, and lazy-loads it
         // to a singleton NumericDocValues instance
-        private class NormsDocValues
+        private sealed class NormsDocValues
         {
             private readonly Lucene3xNormsProducer OuterInstance;
 
-            internal readonly IndexInput File;
-            internal readonly long Offset;
-            internal NumericDocValues Instance_Renamed;
+            private readonly IndexInput File;
+            private readonly long Offset;
+            private NumericDocValues Instance_Renamed;
 
             public NormsDocValues(Lucene3xNormsProducer outerInstance, IndexInput normInput, long normSeek)
             {
@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 this.Offset = normSeek;
             }
 
-            internal virtual NumericDocValues Instance
+            internal NumericDocValues Instance
             {
                 get
                 {
@@ -215,7 +215,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         if (Instance_Renamed == null)
                         {
-                            sbyte[] bytes = new sbyte[OuterInstance.Maxdoc];
+                            var bytes = new byte[OuterInstance.Maxdoc];
                             // some norms share fds
                             lock (File)
                             {
@@ -228,7 +228,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                 OuterInstance.OpenFiles.Remove(File);
                                 File.Dispose();
                             }
-                            OuterInstance.RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
+                            OuterInstance.ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
                             Instance_Renamed = new NumericDocValuesAnonymousInnerClassHelper(this, bytes);
                         }
                         return Instance_Renamed;
@@ -238,13 +238,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
             {
-                private readonly NormsDocValues OuterInstance;
+                private readonly byte[] Bytes;
 
-                private sbyte[] Bytes;
-
-                public NumericDocValuesAnonymousInnerClassHelper(NormsDocValues outerInstance, sbyte[] bytes)
+                public NumericDocValuesAnonymousInnerClassHelper(NormsDocValues outerInstance, byte[] bytes)
                 {
-                    this.OuterInstance = outerInstance;
                     this.Bytes = bytes;
                 }
 
@@ -257,7 +254,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
-            NormsDocValues dv = Norms[field.Name];
+            var dv = Norms[field.Name];
             Debug.Assert(dv != null);
             return dv.Instance;
         }
@@ -284,7 +281,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override long RamBytesUsed()
         {
-            return RamBytesUsed_Renamed.Get();
+            return ramBytesUsed.Get();
         }
 
         public override void CheckIntegrity()

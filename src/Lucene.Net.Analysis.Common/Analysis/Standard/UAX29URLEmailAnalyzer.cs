@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 using StopwordAnalyzerBase = Lucene.Net.Analysis.Util.StopwordAnalyzerBase;
 

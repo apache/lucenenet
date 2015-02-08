@@ -127,27 +127,28 @@ namespace Lucene.Net.Index
             HashSet<string> allSetters = new HashSet<string>();
             foreach (MethodInfo m in typeof(IndexWriterConfig).GetMethods())
             {
-                if (m.Name.StartsWith("set") && !m.IsStatic)
+                if (m.Name.StartsWith("Set") && !m.IsStatic)
                 {
                     allSetters.Add(m.Name);
                     // setters overridden from LiveIndexWriterConfig are returned twice, once with
                     // IndexWriterConfig return type and second with LiveIndexWriterConfig. The ones
                     // from LiveIndexWriterConfig are marked 'synthetic', so just collect them and
                     // assert in the end that we also received them from IWC.
-                    /*if (m.Synthetic)
+                    // In C# we do not have them marked synthetic so we look at the declaring type instead.
+                    if (m.DeclaringType.Name == "LiveIndexWriterConfig")
                     {
                         liveSetters.Add(m.Name);
                     }
                     else
-                    {*/
-                    Assert.AreEqual(typeof(IndexWriterConfig), m.ReturnType, "method " + m.Name + " does not return IndexWriterConfig");
-                    //}
+                    {
+                        Assert.AreEqual(typeof(IndexWriterConfig), m.ReturnType, "method " + m.Name + " does not return IndexWriterConfig");
+                    }
                 }
             }
-            /*foreach (string setter in liveSetters)
+            foreach (string setter in liveSetters)
             {
                 Assert.IsTrue(allSetters.Contains(setter), "setter method not overridden by IndexWriterConfig: " + setter);
-            }*/
+            }
         }
 
         [Test]

@@ -352,14 +352,16 @@ namespace Lucene.Net.Store
              */
 
             if (input.memoryMappedFile == null)
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 100 : length, MemoryMappedFileAccess.ReadWrite, null, HandleInheritability.None, false);
+            {
+                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 100 : length, MemoryMappedFileAccess.Read, null, HandleInheritability.Inheritable, false);
+            }
 
             long bufferStart = 0L;
             for (int bufNr = 0; bufNr < nrBuffers; bufNr++)
             {
                 int bufSize = (int)((length > (bufferStart + chunkSize)) ? chunkSize : (length - bufferStart));
                 //LUCENE TO-DO
-                buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor(offset + bufferStart, bufSize), -1, 0, bufSize, bufSize);
+                buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor(offset + bufferStart, bufSize, MemoryMappedFileAccess.Read), -1, 0, bufSize, bufSize);
                 //buffers[bufNr] = fc.Map(FileStream.MapMode.READ_ONLY, offset + bufferStart, bufSize);
                 bufferStart += bufSize;
             }

@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis
         where T : LookaheadTokenFilter.Position
     {
         protected const bool DEBUG = 
-#if DEBUG
+#if VERBOSE_TEST_LOGGING
             true
 #else
             false

@@ -33,8 +33,8 @@ namespace Lucene.Net.Analysis.Core
 
         private bool done = false;
         private int finalOffset;
-        private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-        private OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
+        private readonly ICharTermAttribute termAtt;
+        private readonly IOffsetAttribute offsetAtt;
 
         public KeywordTokenizer(TextReader input)
             : this(input, DEFAULT_BUFFER_SIZE)
@@ -44,6 +44,9 @@ namespace Lucene.Net.Analysis.Core
         public KeywordTokenizer(TextReader input, int bufferSize)
             : base(input)
         {
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+
             if (bufferSize <= 0)
             {
                 throw new System.ArgumentException("bufferSize must be > 0");

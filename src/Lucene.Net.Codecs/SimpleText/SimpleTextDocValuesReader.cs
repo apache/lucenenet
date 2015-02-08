@@ -42,7 +42,6 @@ namespace Lucene.Net.Codecs.SimpleText
 
     public class SimpleTextDocValuesReader : DocValuesProducer
     {
-
         internal class OneField
         {
             public long DataStartFilePointer { get; set; }
@@ -151,164 +150,14 @@ namespace Lucene.Net.Codecs.SimpleText
             return new NumericDocValuesAnonymousInnerClassHelper(this, field, @in, scratch);
         }
 
-        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
-        {
-            private readonly SimpleTextDocValuesReader _outerInstance;
-
-            private readonly OneField _field;
-            private readonly IndexInput _input;
-            private readonly BytesRef _scratch;
-
-            public NumericDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
-                OneField field, IndexInput @in, BytesRef scratch)
-            {
-                _outerInstance = outerInstance;
-                _field = field;
-                _input = @in;
-                _scratch = scratch;
-            }
-
-            public override long Get(int docId)
-            {
-                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
-                                                       "; got " + docId);
-
-                _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2)*docId);
-                SimpleTextUtil.ReadLine(_input, _scratch);
-
-                long bd;
-                try
-                {
-                    bd = long.Parse(_scratch.Utf8ToString());
-                }
-                catch (FormatException ex)
-                {
-                    throw new CorruptIndexException("failed to parse long value (resource=" + _input + ")", ex);
-                }
-
-                SimpleTextUtil.ReadLine(_input, _scratch); // read the line telling us if its real or not
-                return _field.MinValue + bd;
-            }
-        }
-
-        private Bits GetNumericDocsWithField(FieldInfo fieldInfo)
-        {
-            var field = FIELDS[fieldInfo.Name];
-            var input = (IndexInput)DATA.Clone();
-            var scratch = new BytesRef();
-            return new BitsAnonymousInnerClassHelper(this, field, input, scratch);
-        }
-
         public override BinaryDocValues GetBinary(FieldInfo fieldInfo)
         {
             var field = FIELDS[fieldInfo.Name];
             Debug.Assert(field != null);
             var input = (IndexInput)DATA.Clone();
             var scratch = new BytesRef();
-            
+
             return new BinaryDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
-        }
-
-        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
-        {
-            private readonly SimpleTextDocValuesReader _outerInstance;
-
-            private readonly OneField _field;
-            private readonly IndexInput _input;
-            private readonly BytesRef _scratch;
-
-            public BinaryDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, OneField field,
-                IndexInput input, BytesRef scratch)
-            {
-                _outerInstance = outerInstance;
-                _field = field;
-                _input = input;
-                _scratch = scratch;
-            }
-
-            public override void Get(int docId, BytesRef result)
-            {
-                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
-                                                       "; got " + docId);
-         
-                _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2)*docId);
-                SimpleTextUtil.ReadLine(_input, _scratch);
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
-                int len;
-                try
-                {
-                    len = int.Parse(_scratch.Bytes.SubList(
-                                _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
-                }
-                catch (FormatException ex)
-                {
-                   throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
-                }
-
-                result.Bytes = new sbyte[len];
-                result.Offset = 0;
-                result.Length = len;
-                _input.ReadBytes(result.Bytes, 0, len);
-            }
-        }
-
-        private Bits GetBinaryDocsWithField(FieldInfo fieldInfo)
-        {
-            var field = FIELDS[fieldInfo.Name];
-            var input = (IndexInput)DATA.Clone();
-            var scratch = new BytesRef();
-            
-            return new BitsAnonymousInnerClassHelper2(this, field, input, scratch);
-        }
-
-        private class BitsAnonymousInnerClassHelper2 : Bits
-        {
-            private readonly SimpleTextDocValuesReader _outerInstance;
-
-            private readonly OneField _field;
-            private readonly IndexInput _input;
-            private readonly BytesRef _scratch;
-
-            public BitsAnonymousInnerClassHelper2(SimpleTextDocValuesReader outerInstance, OneField field, 
-                IndexInput input, BytesRef scratch)
-            {
-                _outerInstance = outerInstance;
-                _field = field;
-                _input = input;
-                _scratch = scratch;
-            }
-
-            public bool Get(int index)
-            {
-                _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2)*index);
-                SimpleTextUtil.ReadLine(_input, _scratch);
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
-                int len;
-                try
-                {
-                    len = int.Parse(_scratch.Bytes.SubList( _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
-                }
-                catch (FormatException ex)
-                {
-                    throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
-                }
-
-                // skip past bytes
-                var bytes = new sbyte[len];
-                _input.ReadBytes(bytes, 0, len);
-                SimpleTextUtil.ReadLine(_input, _scratch); // newline
-                SimpleTextUtil.ReadLine(_input, _scratch); // 'T' or 'F'
-                return _scratch.Bytes[_scratch.Offset] == (sbyte) 'T';
-            }
-
-            public int Length()
-            {
-                return _outerInstance.MAX_DOC;
-            }
         }
 
         public override SortedDocValues GetSorted(FieldInfo fieldInfo)
@@ -317,207 +166,24 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // SegmentCoreReaders already verifies this field is valid:
             Debug.Assert(field != null);
-            IndexInput @in = (IndexInput)DATA.Clone();
-            BytesRef scratch = new BytesRef();
-            
-            DecimalFormat decoder = new DecimalFormat(field.Pattern, new DecimalFormatSymbols(Locale.ROOT));
-            DecimalFormat ordDecoder = new DecimalFormat(field.OrdPattern, new DecimalFormatSymbols(Locale.ROOT));
+            var input = (IndexInput)DATA.Clone();
+            var scratch = new BytesRef();
 
-            return new SortedDocValuesAnonymousInnerClassHelper(this, field, @in, scratch, decoder, ordDecoder);
-        }
-
-        private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
-        {
-            private readonly SimpleTextDocValuesReader outerInstance;
-
-            private Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field;
-            private IndexInput @in;
-            private BytesRef scratch;
-            private DecimalFormat decoder;
-            private DecimalFormat ordDecoder;
-
-            public SortedDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
-                Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field, IndexInput @in, BytesRef scratch,
-                DecimalFormat decoder, DecimalFormat ordDecoder)
-            {
-                this.outerInstance = outerInstance;
-                this.field = field;
-                this.@in = @in;
-                this.scratch = scratch;
-                this.decoder = decoder;
-                this.ordDecoder = ordDecoder;
-            }
-
-            public override int GetOrd(int docID)
-            {
-                if (docID < 0 || docID >= outerInstance.MAX_DOC)
-                {
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (outerInstance.MAX_DOC - 1) + "; got " +
-                                                       docID);
-                }
-
-                @in.Seek(field.DataStartFilePointer + field.NumValues*(9 + field.Pattern.Length + field.MaxLength) +
-                         docID*(1 + field.OrdPattern.Length));
-                SimpleTextUtil.ReadLine(@in, scratch);
-                try
-                {
-                    return (long) (int) ordDecoder.Parse(scratch.Utf8ToString()) - 1;
-                }
-                catch (ParseException pe)
-                {
-                    CorruptIndexException e = new CorruptIndexException("failed to parse ord (resource=" + @in + ")");
-                    e.initCause(pe);
-                    throw e;
-                }
-            }
-
-            public override void LookupOrd(int ord, BytesRef result)
-            {
-                if (ord < 0 || ord >= field.NumValues)
-                {
-                    throw new System.IndexOutOfRangeException("ord must be 0 .. " + (field.NumValues - 1) + "; got " +
-                                                              ord);
-                }
-                @in.Seek(field.DataStartFilePointer + ord*(9 + field.Pattern.Length + field.MaxLength));
-                SimpleTextUtil.ReadLine(@in, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextDocValuesWriter.LENGTH),
-                    "got " + scratch.Utf8ToString() + " in=" + @in);
-                int len;
-                try
-                {
-                    len =
-                        (int)
-                            decoder.parse(scratch.Bytes.SubList(
-                                scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
-                }
-                catch (ParseException pe)
-                {
-                    CorruptIndexException e =
-                        new CorruptIndexException("failed to parse int length (resource=" + @in + ")");
-                    e.initCause(pe);
-                    throw e;
-                }
-                result.Bytes = new sbyte[len];
-                result.Offset = 0;
-                result.Length = len;
-                @in.ReadBytes(result.Bytes, 0, len);
-            }
-
-            public override int ValueCount
-            {
-                get { return (int) field.NumValues; }
-            }
+            return new SortedDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
         }
 
         public override SortedSetDocValues GetSortedSet(FieldInfo fieldInfo)
         {
-            OneField field = FIELDS[fieldInfo.Name];
+            var field = FIELDS[fieldInfo.Name];
 
             // SegmentCoreReaders already verifies this field is
             // valid:
             Debug.Assert(field != null);
 
-            IndexInput @in = (IndexInput) DATA.Clone();
-            BytesRef scratch = new BytesRef();
-            DecimalFormat decoder = new DecimalFormat(field.Pattern, new DecimalFormatSymbols(Locale.ROOT));
-
-            return new SortedSetDocValuesAnonymousInnerClassHelper(this, field, @in, scratch, decoder);
-        }
-
-        private class SortedSetDocValuesAnonymousInnerClassHelper : SortedSetDocValues
-        {
-            private readonly SimpleTextDocValuesReader outerInstance;
-
-            private Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field;
-            private IndexInput @in;
-            private BytesRef scratch;
-            private DecimalFormat decoder;
-
-            public SortedSetDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
-                Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesReader.OneField field, IndexInput @in, BytesRef scratch,
-                DecimalFormat decoder)
-            {
-                this.outerInstance = outerInstance;
-                this.field = field;
-                this.@in = @in;
-                this.scratch = scratch;
-                this.decoder = decoder;
-                currentOrds = new string[0];
-                currentIndex = 0;
-            }
-
-            internal string[] currentOrds;
-            internal int currentIndex;
-
-            public override long NextOrd()
-            {
-                return currentIndex == currentOrds.Length ? NO_MORE_ORDS : Convert.ToInt64(currentOrds[currentIndex++]);
-            }
-
-            public override int Document
-            {
-                set
-                {
-                    if (value < 0 || value >= outerInstance.MAX_DOC)
-                        throw new IndexOutOfRangeException("docID must be 0 .. " + (outerInstance.MAX_DOC - 1) + "; got " +
-                                                           value);
-
-
-                    @in.Seek(field.DataStartFilePointer + field.NumValues*(9 + field.Pattern.Length + field.MaxLength) +
-                             value*(1 + field.OrdPattern.Length));
-                    SimpleTextUtil.ReadLine(@in, scratch);
-                    string ordList = scratch.Utf8ToString().Trim();
-                    if (ordList.Length == 0)
-                    {
-                        currentOrds = new string[0];
-                    }
-                    else
-                    {
-                        currentOrds = ordList.Split(",", true);
-                    }
-                    currentIndex = 0;
-                }
-            }
-
-            public override void LookupOrd(long ord, BytesRef result)
-            {
-                if (ord < 0 || ord >= field.NumValues)
-                {
-                    throw new IndexOutOfRangeException("ord must be 0 .. " + (field.NumValues - 1) + "; got " + ord);
-                }
-
-                @in.Seek(field.DataStartFilePointer + ord*(9 + field.Pattern.Length + field.MaxLength));
-                SimpleTextUtil.ReadLine(@in, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextDocValuesWriter.LENGTH),
-                    "got " + scratch.Utf8ToString() + " in=" + @in);
-                int len;
-                try
-                {
-                    len =
-                        (int)
-                            decoder.parse(scratch.Bytes.SubList(
-                                scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                                scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
-                }
-                catch (ParseException pe)
-                {
-                    CorruptIndexException e =
-                        new CorruptIndexException("failed to parse int length (resource=" + @in + ")");
-                    e.initCause(pe);
-                    throw e;
-                }
-                result.Bytes = new sbyte[len];
-                result.Offset = 0;
-                result.Length = len;
-                @in.ReadBytes(result.Bytes, 0, len);
-
-            }
-
-            public override long ValueCount
-            {
-                get { return field.NumValues; }
-            }
+            var input = (IndexInput) DATA.Clone();
+            var scratch = new BytesRef();
+            
+            return new SortedSetDocValuesAnonymousInnerClassHelper(this, field, input, scratch);
         }
 
         public override Bits GetDocsWithField(FieldInfo field)
@@ -542,6 +208,23 @@ namespace Lucene.Net.Codecs.SimpleText
             if (disposing) return;
 
             DATA.Dispose();
+        }
+
+        private Bits GetNumericDocsWithField(FieldInfo fieldInfo)
+        {
+            var field = FIELDS[fieldInfo.Name];
+            var input = (IndexInput)DATA.Clone();
+            var scratch = new BytesRef();
+            return new BitsAnonymousInnerClassHelper(this, field, input, scratch);
+        }
+
+        private Bits GetBinaryDocsWithField(FieldInfo fieldInfo)
+        {
+            var field = FIELDS[fieldInfo.Name];
+            var input = (IndexInput)DATA.Clone();
+            var scratch = new BytesRef();
+
+            return new BitsAnonymousInnerClassHelper2(this, field, input, scratch);
         }
 
         /// <summary> Used only in ctor: </summary>
@@ -583,6 +266,8 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
+
+
         private class BitsAnonymousInnerClassHelper : Bits
         {
             private readonly SimpleTextDocValuesReader _outerInstance;
@@ -611,6 +296,305 @@ namespace Lucene.Net.Codecs.SimpleText
             public int Length()
             {
                 return _outerInstance.MAX_DOC;
+            }
+        }
+
+        private class BitsAnonymousInnerClassHelper2 : Bits
+        {
+            private readonly SimpleTextDocValuesReader _outerInstance;
+
+            private readonly OneField _field;
+            private readonly IndexInput _input;
+            private readonly BytesRef _scratch;
+
+            public BitsAnonymousInnerClassHelper2(SimpleTextDocValuesReader outerInstance, OneField field,
+                IndexInput input, BytesRef scratch)
+            {
+                _outerInstance = outerInstance;
+                _field = field;
+                _input = input;
+                _scratch = scratch;
+            }
+
+            public bool Get(int index)
+            {
+                _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * index);
+                SimpleTextUtil.ReadLine(_input, _scratch);
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
+                int len;
+                try
+                {
+                    len = int.Parse(_scratch.Bytes.SubList(_scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
+                }
+                catch (FormatException ex)
+                {
+                    throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
+                }
+
+                // skip past bytes
+                var bytes = new byte[len];
+                _input.ReadBytes(bytes, 0, len);
+                SimpleTextUtil.ReadLine(_input, _scratch); // newline
+                SimpleTextUtil.ReadLine(_input, _scratch); // 'T' or 'F'
+                return _scratch.Bytes[_scratch.Offset] == (sbyte)'T';
+            }
+
+            public int Length()
+            {
+                return _outerInstance.MAX_DOC;
+            }
+        }
+
+        private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
+        {
+            private readonly SimpleTextDocValuesReader _outerInstance;
+
+            private readonly OneField _field;
+            private readonly IndexInput _input;
+            private readonly BytesRef _scratch;
+            private readonly string _decoderFormat;
+            private readonly string _ordDecoderFormat;
+
+            public SortedDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
+                OneField field, IndexInput input, BytesRef scratch)
+            {
+                _outerInstance = outerInstance;
+                _field = field;
+                _input = input;
+                _scratch = scratch;
+                _decoderFormat = field.Pattern;
+                _ordDecoderFormat = field.OrdPattern;
+            }
+
+            public override int GetOrd(int docId)
+            {
+                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
+                {
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) + "; got " +
+                                                       docId);
+                }
+
+                _input.Seek(_field.DataStartFilePointer + _field.NumValues * (9 + _field.Pattern.Length + _field.MaxLength) +
+                         docId * (1 + _field.OrdPattern.Length));
+                SimpleTextUtil.ReadLine(_input, _scratch);
+                try
+                {
+                    return _scratch.Utf8ToString().ToString(_ordDecoderFormat) - 1;
+                }
+                catch (Exception pe)
+                {
+                    var e = new CorruptIndexException("failed to parse ord (resource=" + _input + ")", pe);
+                    throw e;
+                }
+            }
+
+            public override void LookupOrd(int ord, BytesRef result)
+            {
+                if (ord < 0 || ord >= _field.NumValues)
+                {
+                    throw new IndexOutOfRangeException("ord must be 0 .. " + (_field.NumValues - 1) + "; got " +
+                                                              ord);
+                }
+                _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
+                SimpleTextUtil.ReadLine(_input, _scratch);
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH),
+                    "got " + _scratch.Utf8ToString() + " in=" + _input);
+                int len;
+                try
+                {
+                    len =
+                        (int)
+                            Decimal.Parse(_scratch.Bytes.SubList(
+                                _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString()).ToString(_decoderFormat);
+                }
+                catch (Exception pe)
+                {
+                    var e = new CorruptIndexException("failed to parse int length (resource=" + _input + ")", pe);
+                    throw e;
+                }
+
+                result.Bytes = new byte[len];
+                result.Offset = 0;
+                result.Length = len;
+                _input.ReadBytes(result.Bytes, 0, len);
+            }
+
+            public override int ValueCount
+            {
+                get { return (int)_field.NumValues; }
+            }
+        }
+
+        private class SortedSetDocValuesAnonymousInnerClassHelper : SortedSetDocValues
+        {
+            private readonly SimpleTextDocValuesReader _outerInstance;
+
+            private readonly OneField _field;
+            private readonly IndexInput _input;
+            private readonly BytesRef _scratch;
+            private readonly string _decoderFormat;
+
+            public SortedSetDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
+                OneField field, IndexInput input, BytesRef scratch)
+            {
+                _outerInstance = outerInstance;
+                _field = field;
+                _input = input;
+                _scratch = scratch;
+                _decoderFormat = field.Pattern;
+                _currentOrds = new string[0];
+                _currentIndex = 0;
+            }
+
+            private string[] _currentOrds;
+            private int _currentIndex;
+
+            public override long NextOrd()
+            {
+                return _currentIndex == _currentOrds.Length ? NO_MORE_ORDS : Convert.ToInt64(_currentOrds[_currentIndex++]);
+            }
+
+            public override int Document
+            {
+                set
+                {
+                    if (value < 0 || value >= _outerInstance.MAX_DOC)
+                        throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) + "; got " +
+                                                           value);
+
+
+                    _input.Seek(_field.DataStartFilePointer + _field.NumValues * (9 + _field.Pattern.Length + _field.MaxLength) +
+                             value * (1 + _field.OrdPattern.Length));
+                    SimpleTextUtil.ReadLine(_input, _scratch);
+                    var ordList = _scratch.Utf8ToString().Trim();
+                    _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(",", true);
+                    _currentIndex = 0;
+                }
+            }
+
+            public override void LookupOrd(long ord, BytesRef result)
+            {
+                if (ord < 0 || ord >= _field.NumValues)
+                {
+                    throw new IndexOutOfRangeException("ord must be 0 .. " + (_field.NumValues - 1) + "; got " + ord);
+                }
+
+                _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
+                SimpleTextUtil.ReadLine(_input, _scratch);
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH),
+                    "got " + _scratch.Utf8ToString() + " in=" + _input);
+                int len;
+                try
+                {
+                    len =
+                        (int)
+                            _decoderFormat.parse(_scratch.Bytes.SubList(
+                                _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
+                }
+                catch (Exception pe)
+                {
+                    var e = new CorruptIndexException("failed to parse int length (resource=" + _input + ")", pe);
+                    throw e;
+                }
+
+                result.Bytes = new byte[len];
+                result.Offset = 0;
+                result.Length = len;
+                _input.ReadBytes(result.Bytes, 0, len);
+            }
+
+            public override long ValueCount
+            {
+                get { return _field.NumValues; }
+            }
+        }
+
+        private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+        {
+            private readonly SimpleTextDocValuesReader _outerInstance;
+
+            private readonly OneField _field;
+            private readonly IndexInput _input;
+            private readonly BytesRef _scratch;
+
+            public NumericDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
+                OneField field, IndexInput input, BytesRef scratch)
+            {
+                _outerInstance = outerInstance;
+                _field = field;
+                _input = input;
+                _scratch = scratch;
+            }
+
+            public override long Get(int docId)
+            {
+                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
+                                                       "; got " + docId);
+
+                _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * docId);
+                SimpleTextUtil.ReadLine(_input, _scratch);
+
+                long bd;
+                try
+                {
+                    bd = long.Parse(_scratch.Utf8ToString());
+                }
+                catch (FormatException ex)
+                {
+                    throw new CorruptIndexException("failed to parse long value (resource=" + _input + ")", ex);
+                }
+
+                SimpleTextUtil.ReadLine(_input, _scratch); // read the line telling us if its real or not
+                return _field.MinValue + bd;
+            }
+        }
+
+        private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+        {
+            private readonly SimpleTextDocValuesReader _outerInstance;
+
+            private readonly OneField _field;
+            private readonly IndexInput _input;
+            private readonly BytesRef _scratch;
+
+            public BinaryDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance, OneField field,
+                IndexInput input, BytesRef scratch)
+            {
+                _outerInstance = outerInstance;
+                _field = field;
+                _input = input;
+                _scratch = scratch;
+            }
+
+            public override void Get(int docId, BytesRef result)
+            {
+                if (docId < 0 || docId >= _outerInstance.MAX_DOC)
+                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.MAX_DOC - 1) +
+                                                       "; got " + docId);
+
+                _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * docId);
+                SimpleTextUtil.ReadLine(_input, _scratch);
+                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
+                int len;
+                try
+                {
+                    len = int.Parse(_scratch.Bytes.SubList(
+                                _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                                _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length).ToString());
+                }
+                catch (FormatException ex)
+                {
+                    throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
+                }
+
+                result.Bytes = new byte[len];
+                result.Offset = 0;
+                result.Length = len;
+                _input.ReadBytes(result.Bytes, 0, len);
             }
         }
 

@@ -42,10 +42,10 @@ namespace Lucene.Net.Util.Packed
             int k = 0;
             while ((i & ~0x7FL) != 0L && k++ < 8)
             {
-                @out.WriteByte(unchecked((sbyte)((i & 0x7FL) | 0x80L)));
+                @out.WriteByte(unchecked((byte)(sbyte)((i & 0x7FL) | 0x80L)));
                 i = (long)((ulong)i >> 7);
             }
-            @out.WriteByte((sbyte)i);
+            @out.WriteByte((byte)(sbyte)i);
         }
 
         protected internal DataOutput @out;

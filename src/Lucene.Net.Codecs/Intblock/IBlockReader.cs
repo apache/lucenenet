@@ -18,12 +18,14 @@
 namespace Lucene.Net.Codecs.Intblock
 {
     /// <summary>
-    /// Interface for fixed-size block decoders
-    /// 
-    /// Implementations should decode into the buffer in {@link #ReadBlock}
+    /// Interface for variable-size block decoders.
+    /// <para>
+    /// Implementations should decode into the buffer in <seealso cref="#readBlock"/>.
+    /// </para>
     /// </summary>
     public interface IBlockReader
     {
-         void ReadBlock();
+        int ReadBlock();
+        void Seek(long pos);
     }
 }

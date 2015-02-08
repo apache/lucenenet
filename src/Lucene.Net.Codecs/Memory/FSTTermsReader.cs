@@ -73,8 +73,8 @@ namespace Lucene.Net.Codecs.Memory
 	  public FSTTermsReader(SegmentReadState state, PostingsReaderBase postingsReader)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String termsFileName = index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTTermsWriter.TERMS_EXTENSION);
-		string termsFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTTermsWriter.TERMS_EXTENSION);
+//ORIGINAL LINE: final String termsFileName = index.IndexFileNames.SegmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTTermsWriter.TERMS_EXTENSION);
+		string termsFileName = IndexFileNames.SegmentFileName(state.segmentInfo.name, state.segmentSuffix, FSTTermsWriter.TERMS_EXTENSION);
 
 		this.postingsReader = postingsReader;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Memory
 		  version = readHeader(@in);
 		  if (version >= FSTTermsWriter.TERMS_VERSION_CHECKSUM)
 		  {
-			CodecUtil.checksumEntireFile(@in);
+			CodecUtil.ChecksumEntireFile(@in);
 		  }
 		  this.postingsReader.init(@in);
 		  seekDir(@in);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Memory
 //ORIGINAL LINE: private int readHeader(store.IndexInput in) throws java.io.IOException
 	  private int readHeader(IndexInput @in)
 	  {
-		return CodecUtil.checkHeader(@in, FSTTermsWriter.TERMS_CODEC_NAME, FSTTermsWriter.TERMS_VERSION_START, FSTTermsWriter.TERMS_VERSION_CURRENT);
+		return CodecUtil.CheckHeader(@in, FSTTermsWriter.TERMS_CODEC_NAME, FSTTermsWriter.TERMS_VERSION_START, FSTTermsWriter.TERMS_VERSION_CURRENT);
 	  }
 //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
 //ORIGINAL LINE: private void seekDir(store.IndexInput in) throws java.io.IOException

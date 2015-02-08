@@ -196,7 +196,7 @@ namespace Lucene.Net.Util.Fst
             Bytes = new BytesStore(bytesPageBits);
             // pad: ensure no node gets address 0 which is reserved to mean
             // the stop state w/ no arcs
-            Bytes.WriteByte((sbyte)0);
+            Bytes.WriteByte(0);
             NO_OUTPUT = outputs.NoOutput;
             if (willPackFST)
             {
@@ -271,7 +271,7 @@ namespace Lucene.Net.Util.Fst
             {
                 emptyOutput = default(T);
             }
-            sbyte t = @in.ReadSByte();
+            var t = @in.ReadByte();
             switch (t)
             {
                 case 0:
@@ -490,21 +490,21 @@ namespace Lucene.Net.Util.Fst
             CodecUtil.WriteHeader(@out, FILE_FORMAT_NAME, VERSION_CURRENT);
             if (Packed)
             {
-                @out.WriteByte((sbyte)1);
+                @out.WriteByte(1);
             }
             else
             {
-                @out.WriteByte((sbyte)0);
+                @out.WriteByte(0);
             }
             // TODO: really we should encode this as an arc, arriving
             // to the root node, instead of special casing here:
             if (emptyOutput != null)
             {
                 // Accepts empty string
-                @out.WriteByte((sbyte)1);
+                @out.WriteByte(1);
 
                 // Serialize empty-string output:
-                RAMOutputStream ros = new RAMOutputStream();
+                var ros = new RAMOutputStream();
                 Outputs.WriteFinalOutput(emptyOutput, ros);
 
                 var emptyOutputBytes = new byte[(int)ros.FilePointer];
@@ -528,7 +528,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                @out.WriteByte((sbyte)0);
+                @out.WriteByte(0);
             }
             sbyte t;
             if (inputType == INPUT_TYPE.BYTE1)
@@ -543,7 +543,7 @@ namespace Lucene.Net.Util.Fst
             {
                 t = 2;
             }
-            @out.WriteByte(t);
+            @out.WriteByte((byte)t);
             if (Packed)
             {
                 ((PackedInts.Mutable)NodeRefToAddress).Save(@out);
@@ -614,7 +614,7 @@ namespace Lucene.Net.Util.Fst
             if (inputType == INPUT_TYPE.BYTE1)
             {
                 Debug.Assert(v <= 255, "v=" + v);
-                @out.WriteByte((sbyte)v);
+                @out.WriteByte((byte)(sbyte)v);
             }
             else if (inputType == INPUT_TYPE.BYTE2)
             {
@@ -715,14 +715,14 @@ namespace Lucene.Net.Util.Fst
                 if (arc.IsFinal)
                 {
                     flags += BIT_FINAL_ARC;
-                    if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                    if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
                     {
                         flags += BIT_ARC_HAS_FINAL_OUTPUT;
                     }
                 }
                 else
                 {
-                    Debug.Assert((object)arc.NextFinalOutput == (object)NO_OUTPUT);
+                    Debug.Assert(arc.NextFinalOutput.Equals(NO_OUTPUT));
                 }
 
                 bool targetHasArcs = target.Node > 0;
@@ -736,24 +736,24 @@ namespace Lucene.Net.Util.Fst
                     InCounts.Set((int)target.Node, InCounts.Get((int)target.Node) + 1);
                 }
 
-                if ((object)arc.Output != (object)NO_OUTPUT)
+                if (!arc.Output.Equals(NO_OUTPUT))
                 {
                     flags += BIT_ARC_HAS_OUTPUT;
                 }
 
-                Bytes.WriteByte((sbyte)flags);
+                Bytes.WriteByte((byte)(sbyte)flags);
                 WriteLabel(Bytes, arc.Label);
 
                 // System.out.println("  write arc: label=" + (char) arc.Label + " flags=" + flags + " target=" + target.Node + " pos=" + bytes.getPosition() + " output=" + outputs.outputToString(arc.Output));
 
-                if ((object)arc.Output != (object)NO_OUTPUT)
+                if (!arc.Output.Equals(NO_OUTPUT))
                 {
                     Outputs.Write(arc.Output, Bytes);
                     //System.out.println("    write output");
                     arcWithOutputCount++;
                 }
 
-                if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
                 {
                     //System.out.println("    write final output");
                     Outputs.WriteFinalOutput(arc.NextFinalOutput, Bytes);
@@ -809,9 +809,9 @@ namespace Lucene.Net.Util.Fst
                 // create the header
                 // TODO: clean this up: or just rewind+reuse and deal with it
                 byte[] header = new byte[MAX_HEADER_SIZE];
-                ByteArrayDataOutput bad = new ByteArrayDataOutput(header);
+                var bad = new ByteArrayDataOutput(header);
                 // write a "false" first arc:
-                bad.WriteByte(ARCS_AS_FIXED_ARRAY);
+                bad.WriteByte((byte)ARCS_AS_FIXED_ARRAY);
                 bad.WriteVInt(nodeIn.NumArcs);
                 bad.WriteVInt(maxBytesPerArc);
                 int headerLen = bad.Position;
@@ -888,7 +888,7 @@ namespace Lucene.Net.Util.Fst
             {
                 arc.Flags = (sbyte)(BIT_FINAL_ARC | BIT_LAST_ARC);
                 arc.NextFinalOutput = emptyOutput;
-                if ((object)emptyOutput != (object)NO_OUTPUT)
+                if (!emptyOutput.Equals(NO_OUTPUT))
                 {
                     arc.Flags |= (sbyte)BIT_ARC_HAS_FINAL_OUTPUT;
                 }
@@ -930,7 +930,7 @@ namespace Lucene.Net.Util.Fst
             {
                 @in.Position = GetNodeAddress(follow.Target);
                 arc.Node = follow.Target;
-                sbyte b = @in.ReadSByte();
+                var b = (sbyte)@in.ReadByte();
                 if (b == ARCS_AS_FIXED_ARRAY)
                 {
                     // array: jump straight to end
@@ -979,7 +979,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             ReadUnpackedNodeTarget(@in);
                         }
-                        arc.Flags = @in.ReadSByte();
+                        arc.Flags = (sbyte)@in.ReadByte();
                     }
                     // Undo the byte flags we read:
                     @in.SkipBytes(-1);
@@ -1130,7 +1130,7 @@ namespace Lucene.Net.Util.Fst
                 long pos = GetNodeAddress(arc.NextArc);
                 @in.Position = pos;
 
-                sbyte b = @in.ReadSByte();
+                var b = (sbyte)@in.ReadByte();
                 if (b == ARCS_AS_FIXED_ARRAY)
                 {
                     //System.out.println("    nextArc fixed array");
@@ -1195,7 +1195,7 @@ namespace Lucene.Net.Util.Fst
                 // arcs are packed
                 @in.Position = arc.NextArc;
             }
-            arc.Flags = @in.ReadSByte();
+            arc.Flags = (sbyte)@in.ReadByte();
             arc.Label = ReadLabel(@in);
 
             if (arc.Flag(BIT_ARC_HAS_OUTPUT))
@@ -1786,7 +1786,7 @@ namespace Lucene.Net.Util.Fst
                 BytesStore writer = fst.Bytes;
 
                 // Skip 0 byte since 0 is reserved target:
-                writer.WriteByte((sbyte)0);
+                writer.WriteByte(0);
 
                 fst.arcWithOutputCount = 0;
                 fst.nodeCount = 0;
@@ -1841,7 +1841,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 bytesPerArc = arc.BytesPerArc;
                             }
-                            writer.WriteByte(ARCS_AS_FIXED_ARRAY);
+                            writer.WriteByte((byte)ARCS_AS_FIXED_ARRAY);
                             writer.WriteVInt(arc.NumArcs);
                             writer.WriteVInt(bytesPerArc);
                             //System.out.println("node " + node + ": " + arc.numArcs + " arcs");
@@ -1878,21 +1878,21 @@ namespace Lucene.Net.Util.Fst
                             if (arc.Final)
                             {
                                 flags += (sbyte)BIT_FINAL_ARC;
-                                if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                                if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
                                 {
                                     flags += (sbyte)BIT_ARC_HAS_FINAL_OUTPUT;
                                 }
                             }
                             else
                             {
-                                Debug.Assert((object)arc.NextFinalOutput == (object)NO_OUTPUT);
+                                Debug.Assert(arc.NextFinalOutput.Equals(NO_OUTPUT));
                             }
                             if (!TargetHasArcs(arc))
                             {
                                 flags += (sbyte)BIT_STOP_NODE;
                             }
 
-                            if ((object)arc.Output != (object)NO_OUTPUT)
+                            if (!arc.Output.Equals(NO_OUTPUT))
                             {
                                 flags += (sbyte)BIT_ARC_HAS_OUTPUT;
                             }
@@ -1901,8 +1901,8 @@ namespace Lucene.Net.Util.Fst
                             bool doWriteTarget = TargetHasArcs(arc) && (flags & BIT_TARGET_NEXT) == 0;
                             if (doWriteTarget)
                             {
-                                int ptr = topNodeMap[(int)arc.Target];
-                                if (ptr != null)
+                                int ptr;
+                                if (topNodeMap.TryGetValue((int)arc.Target, out ptr))
                                 {
                                     absPtr = ptr;
                                 }
@@ -1921,7 +1921,7 @@ namespace Lucene.Net.Util.Fst
 
                                 if (delta < absPtr)
                                 {
-                                    flags |= (sbyte)BIT_TARGET_DELTA;
+                                    flags |= BIT_TARGET_DELTA;
                                 }
                             }
                             else
@@ -1930,11 +1930,11 @@ namespace Lucene.Net.Util.Fst
                             }
 
                             Debug.Assert(flags != ARCS_AS_FIXED_ARRAY);
-                            writer.WriteByte(flags);
+                            writer.WriteByte((byte)(sbyte)flags);
 
                             fst.WriteLabel(writer, arc.Label);
 
-                            if ((object)arc.Output != (object)NO_OUTPUT)
+                            if (!arc.Output.Equals(NO_OUTPUT))
                             {
                                 Outputs.Write(arc.Output, writer);
                                 if (!retry)
@@ -1942,7 +1942,7 @@ namespace Lucene.Net.Util.Fst
                                     fst.arcWithOutputCount++;
                                 }
                             }
-                            if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
+                            if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
                             {
                                 Outputs.WriteFinalOutput(arc.NextFinalOutput, writer);
                             }
@@ -2166,17 +2166,17 @@ namespace Lucene.Net.Util.Fst
         internal const sbyte ARCS_AS_FIXED_ARRAY = BIT_ARC_HAS_FINAL_OUTPUT;
 
         /// <summary>
-        /// <see cref="UnCompiledNode"/>
+        /// <see cref="Builder{T}.UnCompiledNode{S}"/>
         /// </summary>
         public const int FIXED_ARRAY_SHALLOW_DISTANCE = 3;
 
         /// <summary>
-        /// <see cref="UnCompiledNode"/>
+        /// <see cref="Builder{T}.UnCompiledNode{S}"/>
         /// </summary>
         public const int FIXED_ARRAY_NUM_ARCS_SHALLOW = 5;
 
         /// <summary>
-        /// <see cref="UnCompiledNode"/>
+        /// <see cref="Builder{T}.UnCompiledNode{S}"/>
         /// </summary>
         public const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;
 

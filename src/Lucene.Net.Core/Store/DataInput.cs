@@ -45,18 +45,12 @@ namespace Lucene.Net.Store
          * threads, then another thread might update the buffer while the checksum is
          * being computed, making it invalid. See LUCENE-5583 for more information.
          */
-        private sbyte[] SkipBuffer;
+        private byte[] SkipBuffer;
 
         /// <summary>
         /// Reads and returns a single byte. </summary>
         /// <seealso cref= DataOutput#writeByte(byte) </seealso>
         public abstract byte ReadByte();
-
-        public sbyte ReadSByte()
-        {
-            // helper method to account for java's byte being signed
-            return (sbyte)ReadByte();
-        }
 
         /// <summary>
         /// Reads a specified number of bytes into an array at the specified offset. </summary>
@@ -82,36 +76,6 @@ namespace Lucene.Net.Store
         {
             // Default to ignoring useBuffer entirely
             ReadBytes(b, offset, len);
-        }
-
-        /// <summary>
-        /// Reads a specified number of bytes into an array at the specified offset. </summary>
-        /// <param name="b"> the array to read bytes into </param>
-        /// <param name="offset"> the offset in the array to start storing bytes </param>
-        /// <param name="len"> the number of bytes to read </param>
-        /// <seealso cref= DataOutput#writeBytes(byte[],int) </seealso>
-        public void ReadBytes(sbyte[] b, int offset, int len)
-        {
-            // helper method to account for java's byte being signed
-            ReadBytes(b, offset, len, false);
-        }
-
-        /// <summary>
-        /// Reads a specified number of bytes into an array at the
-        /// specified offset with control over whether the read
-        /// should be buffered (callers who have their own buffer
-        /// should pass in "false" for useBuffer).  Currently only
-        /// <seealso cref="BufferedIndexInput"/> respects this parameter. </summary>
-        /// <param name="b"> the array to read bytes into </param>
-        /// <param name="offset"> the offset in the array to start storing bytes </param>
-        /// <param name="len"> the number of bytes to read </param>
-        /// <param name="useBuffer"> set to false if the caller will handle
-        /// buffering. </param>
-        /// <seealso cref= DataOutput#writeBytes(byte[],int) </seealso>
-        public void ReadBytes(sbyte[] b, int offset, int len, bool useBuffer)
-        {
-            // helper method to account for java's byte being signed
-            ReadBytes((byte[])(Array)b, offset, len, useBuffer);
         }
 
         /// <summary>
@@ -277,8 +241,8 @@ namespace Lucene.Net.Store
         /// <seealso cref= DataOutput#writeString(String) </seealso>
         public virtual string ReadString()
         {
-            int length = ReadVInt();
-            byte[] bytes = new byte[length];
+            var length = ReadVInt();
+            var bytes = new byte[length];
             ReadBytes(bytes, 0, length);
 
             //return new string(bytes, 0, length, IOUtils.CHARSET_UTF_8);
@@ -348,12 +312,12 @@ namespace Lucene.Net.Store
             }
             if (SkipBuffer == null)
             {
-                SkipBuffer = new sbyte[SKIP_BUFFER_SIZE];
+                SkipBuffer = new byte[SKIP_BUFFER_SIZE];
             }
             Debug.Assert(SkipBuffer.Length == SKIP_BUFFER_SIZE);
             for (long skipped = 0; skipped < numBytes; )
             {
-                int step = (int)Math.Min(SKIP_BUFFER_SIZE, numBytes - skipped);
+                var step = (int)Math.Min(SKIP_BUFFER_SIZE, numBytes - skipped);
                 ReadBytes(SkipBuffer, 0, step, false);
                 skipped += step;
             }

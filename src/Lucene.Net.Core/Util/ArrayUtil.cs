@@ -420,7 +420,7 @@ namespace Lucene.Net.Util
             Debug.Assert(minSize >= 0, "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
-                sbyte[] newArray = new sbyte[Oversize(minSize, 1)];
+                var newArray = new sbyte[Oversize(minSize, 1)];
                 Array.Copy(array, 0, newArray, 0, array.Length);
                 return newArray;
             }

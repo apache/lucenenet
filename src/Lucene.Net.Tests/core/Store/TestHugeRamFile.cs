@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -36,8 +37,8 @@ namespace Lucene.Net.Store
         /// </summary>
         private class DenseRAMFile : RAMFile
         {
-            internal long Capacity = 0;
-            internal Dictionary<int, byte[]> SingleBuffers = new Dictionary<int, byte[]>();
+            private long Capacity = 0;
+            private readonly Dictionary<int, byte[]> SingleBuffers = new Dictionary<int, byte[]>();
 
             protected override byte[] NewBuffer(int size)
             {
@@ -62,21 +63,21 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Test huge RAMFile with more than Integer.MAX_VALUE bytes. (LUCENE-957) </summary>
-        [Test]
+        [Test, LongRunningTest, Timeout(int.MaxValue)]
         public virtual void TestHugeFile()
         {
-            DenseRAMFile f = new DenseRAMFile();
+            var f = new DenseRAMFile();
             // output part
-            RAMOutputStream @out = new RAMOutputStream(f);
-            sbyte[] b1 = new sbyte[RAMOutputStream.BUFFER_SIZE];
-            sbyte[] b2 = new sbyte[RAMOutputStream.BUFFER_SIZE / 3];
+            var @out = new RAMOutputStream(f);
+            var b1 = new byte[RAMOutputStream.BUFFER_SIZE];
+            var b2 = new byte[RAMOutputStream.BUFFER_SIZE / 3];
             for (int i = 0; i < b1.Length; i++)
             {
-                b1[i] = (sbyte)(i & 0x0007F);
+                b1[i] = (byte)(sbyte)(i & 0x0007F);
             }
             for (int i = 0; i < b2.Length; i++)
             {
-                b2[i] = (sbyte)(i & 0x0003F);
+                b2[i] = (byte)(sbyte)(i & 0x0003F);
             }
             long n = 0;
             Assert.AreEqual(n, @out.Length, "output length must match");
@@ -103,7 +104,7 @@ namespace Lucene.Net.Store
             }
             @out.Dispose();
             // input part
-            RAMInputStream @in = new RAMInputStream("testcase", f);
+            var @in = new RAMInputStream("testcase", f);
             Assert.AreEqual(n, @in.Length(), "input length must match");
             //System.out.println("input length = "+in.Length()+" % 1024 = "+in.Length()%1024);
             for (int j = 0; j < L; j++)
@@ -113,8 +114,8 @@ namespace Lucene.Net.Store
                 @in.Seek(loc);
                 for (int i = 0; i < m; i++)
                 {
-                    sbyte bt = @in.ReadSByte();
-                    sbyte expected = (sbyte)(1 + j + (i & 0x0003F));
+                    var bt = (sbyte)@in.ReadByte();
+                    var expected = (sbyte)(1 + j + (i & 0x0003F));
                     Assert.AreEqual(expected, bt, "must read same value that was written! j=" + j + " i=" + i);
                 }
             }

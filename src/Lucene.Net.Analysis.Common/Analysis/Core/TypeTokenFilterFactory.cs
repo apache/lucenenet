@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -54,7 +53,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        public virtual void inform(ResourceLoader loader)
+        public virtual void Inform(ResourceLoader loader)
         {
             IList<string> files = splitFileNames(stopTypesFiles);
             if (files.Count > 0)

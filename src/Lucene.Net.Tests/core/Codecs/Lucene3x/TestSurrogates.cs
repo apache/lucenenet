@@ -336,7 +336,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        [Test]
+        [Test, Timeout(300000)]
         public virtual void TestSurrogatesOrder()
         {
             Directory dir = NewDirectory();
@@ -348,7 +348,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             int tc = 0;
 
-            List<Term> fieldTerms = new List<Term>();
+            var fieldTerms = new List<Term>();
 
             for (int f = 0; f < numField; f++)
             {

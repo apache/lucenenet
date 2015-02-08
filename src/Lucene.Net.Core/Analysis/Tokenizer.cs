@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
         {
             if (input == null)
             {
-                throw new System.NullReferenceException("input must not be null");
+                throw new System.ArgumentNullException("input", "input must not be null");
             }
             this.InputPending = input;
         }
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis
         {
             if (input == null)
             {
-                throw new System.NullReferenceException("input must not be null");
+                throw new System.ArgumentNullException("input", "input must not be null");
             }
             this.InputPending = input;
         }
@@ -102,11 +102,11 @@ namespace Lucene.Net.Analysis
             {
                 if (value == null)
                 {
-                    throw new System.NullReferenceException("input must not be null");
+                    throw new System.ArgumentNullException("value", "input must not be null");
                 }
                 else if (this.input != ILLEGAL_STATE_READER)
                 {
-                    //throw new Exception("TokenStream contract violation: close() call missing");
+                    throw new InvalidOperationException("TokenStream contract violation: close() call missing");
                 }
                 this.InputPending = value;
                 Debug.Assert(SetReaderTestPoint());
@@ -130,13 +130,11 @@ namespace Lucene.Net.Analysis
 
         private class ReaderAnonymousInnerClassHelper : TextReader
         {
-            public ReaderAnonymousInnerClassHelper()
-            {
-            }
-
             public override int Read(char[] cbuf, int off, int len)
             {
-                throw new InvalidOperationException("TokenStream contract violation: reset()/close() call missing, " + "reset() called multiple times, or subclass does not call super.reset(). " + "Please see Javadocs of TokenStream class for more information about the correct consuming workflow.");
+                throw new InvalidOperationException("TokenStream contract violation: reset()/close() call missing, " 
+                    + "reset() called multiple times, or subclass does not call super.reset(). "
+                    + "Please see Javadocs of TokenStream class for more information about the correct consuming workflow.");
             }
 
             public override void Close()

@@ -732,23 +732,21 @@ namespace Lucene.Net.Index
         /// </summary>
         private void PruneBlockedQueue(DocumentsWriterDeleteQueue flushingQueue)
         {
-            lock (this)
+            var node = BlockedFlushes.First;
+            while (node != null)
             {
-                IEnumerator<BlockedFlush> iterator = BlockedFlushes.GetEnumerator();
-                while (iterator.MoveNext())
+                var nextNode = node.Next;
+                BlockedFlush blockedFlush = node.Value;
+                if (blockedFlush.Dwpt.DeleteQueue == flushingQueue)
                 {
-                    BlockedFlush blockedFlush = iterator.Current;
-                    if (blockedFlush.Dwpt.DeleteQueue == flushingQueue)
-                    {
-                        //LUCENE TODO: Move to try finally
-                        BlockedFlushes.Remove(blockedFlush);
-                        Debug.Assert(!FlushingWriters.ContainsKey(blockedFlush.Dwpt), "DWPT is already flushing");
-                        // Record the flushing DWPT to reduce flushBytes in doAfterFlush
-                        FlushingWriters[blockedFlush.Dwpt] = Convert.ToInt64(blockedFlush.Bytes);
-                        // don't decr pending here - its already done when DWPT is blocked
-                        FlushQueue.Enqueue(blockedFlush.Dwpt);
-                    }
+                    BlockedFlushes.Remove(node);
+                    Debug.Assert(!FlushingWriters.ContainsKey(blockedFlush.Dwpt), "DWPT is already flushing");
+                    // Record the flushing DWPT to reduce flushBytes in doAfterFlush
+                    FlushingWriters[blockedFlush.Dwpt] = Convert.ToInt64(blockedFlush.Bytes);
+                    // don't decr pending here - its already done when DWPT is blocked
+                    FlushQueue.Enqueue(blockedFlush.Dwpt);
                 }
+                node = nextNode;
             }
         }
 

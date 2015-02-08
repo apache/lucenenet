@@ -251,7 +251,7 @@ namespace Lucene.Net.Util
                     return; // ignore test points!
                 }
                 string name;
-                if (Thread.CurrentThread.Name.StartsWith("TEST-"))
+                if (Thread.CurrentThread.Name != null && Thread.CurrentThread.Name.StartsWith("TEST-"))
                 {
                     // The name of the main thread is way too
                     // long when looking at IW verbose output...

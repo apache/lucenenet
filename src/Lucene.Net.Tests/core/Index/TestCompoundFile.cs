@@ -64,8 +64,8 @@ namespace Lucene.Net.Index
             IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
             for (int i = 0; i < size; i++)
             {
-                sbyte b = unchecked((sbyte)(new Random(1).NextDouble() * 256));
-                os.WriteByte(b);
+                var b = unchecked((sbyte)(new Random(1).NextDouble() * 256));
+                os.WriteByte((byte)b);
             }
             os.Dispose();
         }
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
             IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
             for (int i = 0; i < size; i++)
             {
-                os.WriteByte(start);
+                os.WriteByte((byte)start);
                 start++;
             }
             os.Dispose();
@@ -93,8 +93,8 @@ namespace Lucene.Net.Index
             Assert.AreEqual(expected.Length(), test.Length(), msg + " length");
             Assert.AreEqual(expected.FilePointer, test.FilePointer, msg + " position");
 
-            sbyte[] expectedBuffer = new sbyte[512];
-            sbyte[] testBuffer = new sbyte[expectedBuffer.Length];
+            var expectedBuffer = new byte[512];
+            var testBuffer = new byte[expectedBuffer.Length];
 
             long remainder = expected.Length() - expected.FilePointer;
             while (remainder > 0)
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
             AssertSameStreams(msg + ", seek(end+1)", expected, actual, point);
         }
 
-        private void AssertEqualArrays(string msg, sbyte[] expected, sbyte[] test, int start, int len)
+        private void AssertEqualArrays(string msg, byte[] expected, byte[] test, int start, int len)
         {
             Assert.IsNotNull(expected, msg + " null expected");
             Assert.IsNotNull(test, msg + " null test");
@@ -308,7 +308,7 @@ namespace Lucene.Net.Index
             IndexOutput os = fsdir.CreateOutput(file, IOContext.DEFAULT);
             for (int i = 0; i < 2000; i++)
             {
-                os.WriteByte((sbyte)i);
+                os.WriteByte((byte)(sbyte)i);
             }
             os.Dispose();
 
@@ -577,10 +577,10 @@ namespace Lucene.Net.Index
         public virtual void TestReadPastEOF()
         {
             SetUp_2();
-            CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
+            var cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
             IndexInput @is = cr.OpenInput("f2", NewIOContext(Random()));
             @is.Seek(@is.Length() - 10);
-            sbyte[] b = new sbyte[100];
+            var b = new byte[100];
             @is.ReadBytes(b, 0, 10);
 
             try
@@ -619,10 +619,10 @@ namespace Lucene.Net.Index
         {
             IndexOutput os = Dir.CreateOutput("testBufferStart.txt", NewIOContext(Random()));
 
-            sbyte[] largeBuf = new sbyte[2048];
+            var largeBuf = new byte[2048];
             for (int i = 0; i < largeBuf.Length; i++)
             {
-                largeBuf[i] = unchecked((sbyte)(new Random(1).NextDouble() * 256));
+                largeBuf[i] = (byte)unchecked((sbyte)(new Random(1).NextDouble() * 256));
             }
 
             long currentPos = os.FilePointer;
@@ -813,7 +813,7 @@ namespace Lucene.Net.Index
             for (int fileIdx = 0; fileIdx < FILE_COUNT; fileIdx++)
             {
                 IndexOutput @out = d.CreateOutput("file." + fileIdx, NewIOContext(Random()));
-                @out.WriteByte((sbyte)fileIdx);
+                @out.WriteByte((byte)(sbyte)fileIdx);
                 @out.Dispose();
             }
 

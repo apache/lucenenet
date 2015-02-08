@@ -238,9 +238,14 @@ namespace Lucene.Net.Codecs.BlockTerms
             _postingsReader.CheckIntegrity();
         }
 
-        public override int Size()
+        public override int Size
         {
-            return _fields.Count;
+            get
+            {
+                {
+                    return _fields.Count;
+                }
+            }
         }
 
         /// <summary>
@@ -250,10 +255,6 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             public String Field { get; set; }
             private BytesRef Term { get; set; }
-
-            public FieldAndTerm()
-            {
-            }
 
             private FieldAndTerm(FieldAndTerm other)
             {

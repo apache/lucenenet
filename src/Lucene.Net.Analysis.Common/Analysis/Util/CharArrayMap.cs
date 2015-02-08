@@ -76,9 +76,7 @@ namespace org.apache.lucene.analysis.util
 	  /// <param name="ignoreCase">
 	  ///          <code>false</code> if and only if the set should be case sensitive
 	  ///          otherwise <code>true</code>. </param>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") public CharArrayMap(org.apache.lucene.util.Version matchVersion, int startSize, boolean ignoreCase)
-	  public CharArrayMap(Version matchVersion, int startSize, bool ignoreCase)
+	  public CharArrayMap(Lucene.Net.Util.Version matchVersion, int startSize, bool ignoreCase)
 	  {
 		this.ignoreCase = ignoreCase;
 		int size_Renamed = INIT_SIZE;
@@ -435,16 +433,19 @@ namespace org.apache.lucene.analysis.util
 		throw new System.NotSupportedException();
 	  }
 
-	  public override int size()
-	  {
-		return count;
-	  }
+	    public override int Size
+	    {
+	        get
+	        {
+	            {
+	                return count;
+	            }
+	        }
+	    }
 
-	  public override string ToString()
+	    public override string ToString()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder sb = new StringBuilder("{");
-		StringBuilder sb = new StringBuilder("{");
+		var sb = new StringBuilder("{");
 		foreach (KeyValuePair<object, V> entry in entrySet())
 		{
 		  if (sb.Length > 1)

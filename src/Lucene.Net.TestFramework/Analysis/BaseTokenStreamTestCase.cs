@@ -939,7 +939,7 @@ namespace Lucene.Net.Analysis
                         }
                         // Throw an errant exception from the Reader:
 
-                        MockReaderWrapper evilReader = new MockReaderWrapper(random, new StringReader(text));
+                        MockReaderWrapper evilReader = new MockReaderWrapper(random, text);
                         evilReader.ThrowExcAfterChar(random.Next(text.Length));
                         reader = evilReader;
 
@@ -1046,7 +1046,7 @@ namespace Lucene.Net.Analysis
                     Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: using spoon-feed reader");
                 }
 
-                reader = new MockReaderWrapper(random, reader);
+                reader = new MockReaderWrapper(random, text);
             }
 
             ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
@@ -1092,7 +1092,7 @@ namespace Lucene.Net.Analysis
                         Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: indexing using spoon-feed reader");
                     }
 
-                    reader = new MockReaderWrapper(random, reader);
+                    reader = new MockReaderWrapper(random, text);
                 }
 
                 field.ReaderValue = useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader;

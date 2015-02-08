@@ -1,6 +1,4 @@
-package codecs.intblock;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,112 +15,74 @@ package codecs.intblock;
  * limitations under the License.
  */
 
-/** Naive int block API that writes vInts.  This is
- *  expected to give poor performance; it's really only for
- *  testing the pluggability.  One should typically use pfor instead. */
+namespace Lucene.Net.Codecs.Intblock
+{
+    using Sep;
+    using IntIndexOutput = Sep.IntIndexOutput;
+    using IndexOutput = Store.IndexOutput;
 
-import java.io.IOException;
+    /// <summary>
+    /// Naive int block API that writes vInts.  This is
+    ///  expected to give poor performance; it's really only for
+    ///  testing the pluggability.  One should typically use pfor instead. 
+    /// </summary>
 
-import codecs.sep.IntIndexOutput;
-import store.DataOutput;
-import store.IndexOutput;
 
-/** Abstract base class that writes fixed-size blocks of ints
- *  to an IndexOutput.  While this is a simple approach, a
- *  more performant approach would directly create an impl
- *  of IntIndexOutput inside Directory.  Wrapping a generic
- *  IndexInput will likely cost performance.
- *
- * @lucene.experimental
- */
-public abstract class FixedIntBlockIndexOutput extends IntIndexOutput {
+    /// <summary>
+    /// Abstract base class that writes fixed-size blocks of ints
+    ///  to an IndexOutput.  While this is a simple approach, a
+    ///  more performant approach would directly create an impl
+    ///  of IntIndexOutput inside Directory.  Wrapping a generic
+    ///  IndexInput will likely cost performance.
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    public abstract class FixedIntBlockIndexOutput : IntIndexOutput
+    {
+        private readonly int _blockSize;
+        protected internal readonly int[] BUFFER;
 
-  protected final IndexOutput out;
-  private final int blockSize;
-  protected final int[] buffer;
-  private int upto;
+        protected internal FixedIntBlockIndexOutput(IndexOutput output, int fixedBlockSize)
+        {
+            _blockSize = fixedBlockSize;
+            OUTPUT = output;
+            output.WriteVInt(_blockSize);
+            BUFFER = new int[_blockSize];
+        }
 
-  protected FixedIntBlockIndexOutput(IndexOutput out, int fixedBlockSize)  {
-    blockSize = fixedBlockSize;
-    this.out = out;
-    out.writeVInt(blockSize);
-    buffer = new int[blockSize];
-  }
+        protected internal abstract void FlushBlock();
 
-  protected abstract void flushBlock() ;
+        public override IntIndexOutputIndex Index()
+        {
+            return new IntBlockIndexOuput(this);
+        }
 
-  @Override
-  public IntIndexOutput.Index index() {
-    return new Index();
-  }
+        public override void Write(int v)
+        {
+            BUFFER[_upto++] = v;
+            if (_upto == _blockSize)
+            {
+                FlushBlock();
+                _upto = 0;
+            }
+        }
 
-  private class Index extends IntIndexOutput.Index {
-    long fp;
-    int upto;
-    long lastFP;
-    int lastUpto;
-
-    @Override
-    public void mark()  {
-      fp = out.getFilePointer();
-      upto = FixedIntBlockIndexOutput.this.upto;
+        public override void Dispose()
+        {
+            try
+            {
+                if (_upto > 0)
+                {
+                    // NOTE: entries in the block after current upto are
+                    // invalid
+                    FlushBlock();
+                }
+            }
+            finally
+            {
+                OUTPUT.Dispose();
+            }
+        }
     }
 
-    @Override
-    public void copyFrom(IntIndexOutput.Index other, bool copyLast)  {
-      Index idx = (Index) other;
-      fp = idx.fp;
-      upto = idx.upto;
-      if (copyLast) {
-        lastFP = fp;
-        lastUpto = upto;
-      }
-    }
-
-    @Override
-    public void write(DataOutput indexOut, bool absolute)  {
-      if (absolute) {
-        indexOut.writeVInt(upto);
-        indexOut.writeVLong(fp);
-      } else if (fp == lastFP) {
-        // same block
-        Debug.Assert( upto >= lastUpto;
-        int uptoDelta = upto - lastUpto;
-        indexOut.writeVInt(uptoDelta << 1 | 1);
-      } else {      
-        // new block
-        indexOut.writeVInt(upto << 1);
-        indexOut.writeVLong(fp - lastFP);
-      }
-      lastUpto = upto;
-      lastFP = fp;
-    }
-
-    @Override
-    public String toString() {
-      return "fp=" + fp + " upto=" + upto;
-    }
-  }
-
-  @Override
-  public void write(int v)  {
-    buffer[upto++] = v;
-    if (upto == blockSize) {
-      flushBlock();
-      upto = 0;
-    }
-  }
-
-  @Override
-  public void close()  {
-    try {
-      if (upto > 0) {
-        // NOTE: entries in the block after current upto are
-        // invalid
-        flushBlock();
-      }
-    } finally {
-      out.close();
-    }
-  }
 }

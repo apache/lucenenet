@@ -34,6 +34,8 @@ namespace Lucene.Net.Codecs.Sep
     /// </remarks>
     public abstract class IntIndexOutput : IDisposable
     {
+        protected internal IndexOutput OUTPUT;
+        protected internal int _upto;
 
         /// <summary>
         /// Write an int to the primary file.  The value must be

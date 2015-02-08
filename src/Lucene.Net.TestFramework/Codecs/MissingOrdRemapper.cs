@@ -71,22 +71,20 @@ namespace Lucene.Net.Codecs
 
                 public bool MoveNext()
                 {
-                    if (seenEmpty || !@in.MoveNext())
-                    {
-                        return false;
-                    }
-
                     if (!seenEmpty)
                     {
                         seenEmpty = true;
                         current = new BytesRef();
-                    }
-                    else
-                    {
-                        current = @in.Current;
+                        return true;
                     }
 
-                    return true;
+                    if (@in.MoveNext())
+                    {
+                        current = @in.Current;
+                        return true;
+                    }
+
+                    return false;
                 }
 
                 public BytesRef Current
@@ -112,21 +110,21 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// remaps ord -1 to ord 0 on this iterable. </summary>
-        public static IEnumerable<long> MapMissingToOrd0(IEnumerable<long> iterable)
+        public static IEnumerable<long?> MapMissingToOrd0(IEnumerable<long?> iterable)
         {
             return new IterableAnonymousInnerClassHelper2(iterable);
         }
 
-        private class IterableAnonymousInnerClassHelper2 : IEnumerable<long>
+        private class IterableAnonymousInnerClassHelper2 : IEnumerable<long?>
         {
-            private IEnumerable<long> Iterable;
+            private IEnumerable<long?> Iterable;
 
-            public IterableAnonymousInnerClassHelper2(IEnumerable<long> iterable)
+            public IterableAnonymousInnerClassHelper2(IEnumerable<long?> iterable)
             {
                 this.Iterable = iterable;
             }
 
-            public IEnumerator<long> GetEnumerator()
+            public IEnumerator<long?> GetEnumerator()
             {
                 return new IteratorAnonymousInnerClassHelper2(this);
             }
@@ -136,7 +134,7 @@ namespace Lucene.Net.Codecs
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousInnerClassHelper2 : IEnumerator<long>
+            private class IteratorAnonymousInnerClassHelper2 : IEnumerator<long?>
             {
                 private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
 
@@ -146,7 +144,7 @@ namespace Lucene.Net.Codecs
                     @in = outerInstance.Iterable.GetEnumerator();
                 }
 
-                private IEnumerator<long> @in;
+                private IEnumerator<long?> @in;
                 private long current;
 
                 public bool MoveNext()
@@ -156,14 +154,14 @@ namespace Lucene.Net.Codecs
                         return false;
                     }
 
-                    long n = @in.Current;
+                    long n = @in.Current.Value;
 
                     current = n == -1 ? 0 : n;
 
                     return true;
                 }
 
-                public long Current
+                public long? Current
                 {
                     get { return current; }
                 }
@@ -186,21 +184,21 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// remaps every ord+1 on this iterable </summary>
-        public static IEnumerable<long> MapAllOrds(IEnumerable<long> iterable)
+        public static IEnumerable<long?> MapAllOrds(IEnumerable<long?> iterable)
         {
             return new IterableAnonymousInnerClassHelper3(iterable);
         }
 
-        private class IterableAnonymousInnerClassHelper3 : IEnumerable<long>
+        private class IterableAnonymousInnerClassHelper3 : IEnumerable<long?>
         {
-            private IEnumerable<long> Iterable;
+            private IEnumerable<long?> Iterable;
 
-            public IterableAnonymousInnerClassHelper3(IEnumerable<long> iterable)
+            public IterableAnonymousInnerClassHelper3(IEnumerable<long?> iterable)
             {
                 this.Iterable = iterable;
             }
 
-            public IEnumerator<long> GetEnumerator()
+            public IEnumerator<long?> GetEnumerator()
             {
                 return new IteratorAnonymousInnerClassHelper3(this);
             }
@@ -210,7 +208,7 @@ namespace Lucene.Net.Codecs
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousInnerClassHelper3 : IEnumerator<long>
+            private class IteratorAnonymousInnerClassHelper3 : IEnumerator<long?>
             {
                 private readonly IterableAnonymousInnerClassHelper3 OuterInstance;
 
@@ -220,7 +218,7 @@ namespace Lucene.Net.Codecs
                     @in = outerInstance.Iterable.GetEnumerator();
                 }
 
-                private IEnumerator<long> @in;
+                private IEnumerator<long?> @in;
                 private long current;
 
                 public bool MoveNext()
@@ -230,13 +228,13 @@ namespace Lucene.Net.Codecs
                         return false;
                     }
 
-                    long n = @in.Current;
+                    long n = @in.Current.Value;
                     current = n + 1;
 
                     return true;
                 }
 
-                public long Current
+                public long? Current
                 {
                     get { return current; }
                 }

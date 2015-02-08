@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public abstract class Analyzer : IDisposable
     {
-        private readonly ReuseStrategy ReuseStrategy_Renamed;
+        private readonly ReuseStrategy _reuseStrategy;
 
         // non final as it gets nulled if closed; pkg private for access by ReuseStrategy's final helper methods:
         internal IDisposableThreadLocal<object> StoredValue = new IDisposableThreadLocal<object>();
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis
         /// Create a new Analyzer, reusing the same set of components per-thread
         /// across calls to <seealso cref="#tokenStream(String, Reader)"/>.
         /// </summary>
-        public Analyzer()
+        protected Analyzer()
             : this(GLOBAL_REUSE_STRATEGY)
         {
         }
@@ -90,9 +90,9 @@ namespace Lucene.Net.Analysis
         /// <a href="{@docRoot}/../analyzers-common/Lucene.Net.Analysis/miscellaneous/PerFieldAnalyzerWrapper.html">
         /// PerFieldAnalyerWrapper</a> instead.
         /// </summary>
-        public Analyzer(ReuseStrategy reuseStrategy)
+        protected Analyzer(ReuseStrategy reuseStrategy)
         {
-            this.ReuseStrategy_Renamed = reuseStrategy;
+            this._reuseStrategy = reuseStrategy;
         }
 
         /// <summary>
@@ -129,16 +129,16 @@ namespace Lucene.Net.Analysis
         /// <seealso cref= #tokenStream(String, Reader) </seealso>
         public TokenStream TokenStream(string fieldName, TextReader reader)
         {
-            TokenStreamComponents components = ReuseStrategy_Renamed.GetReusableComponents(this, fieldName);
+            TokenStreamComponents components = _reuseStrategy.GetReusableComponents(this, fieldName);
             TextReader r = InitReader(fieldName, reader);
             if (components == null)
             {
                 components = CreateComponents(fieldName, r);
-                ReuseStrategy_Renamed.SetReusableComponents(this, fieldName, components);
+                _reuseStrategy.SetReusableComponents(this, fieldName, components);
             }
             else
             {
-                components.Reader = r;//new TextReaderWrapper(r);
+                components.Reader = r;// LUCENENET TODO new TextReaderWrapper(r);
             }
             return components.TokenStream;
         }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Analysis
         {
             get
             {
-                return ReuseStrategy_Renamed;
+                return _reuseStrategy;
             }
         }
 
@@ -308,12 +308,6 @@ namespace Lucene.Net.Analysis
         public abstract class ReuseStrategy
         {
             /// <summary>
-            /// Sole constructor. (For invocation by subclass constructors, typically implicit.) </summary>
-            public ReuseStrategy()
-            {
-            }
-
-            /// <summary>
             /// Gets the reusable TokenStreamComponents for the field with the given name.
             /// </summary>
             /// <param name="analyzer"> Analyzer from which to get the reused components. Use
@@ -379,10 +373,6 @@ namespace Lucene.Net.Analysis
         /// Sole constructor. (For invocation by subclass constructors, typically implicit.) </summary>
         /// @deprecated Don't create instances of this class, use <seealso cref="Analyzer#GLOBAL_REUSE_STRATEGY"/>
         {
-            public GlobalReuseStrategy()
-            {
-            }
-
             public override TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName)
             {
                 return (TokenStreamComponents)GetStoredValue(analyzer);
@@ -417,10 +407,10 @@ namespace Lucene.Net.Analysis
 
             public override TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName)
             {
-                IDictionary<string, TokenStreamComponents> componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
-                TokenStreamComponents ret;
+                var componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
                 if (componentsPerField != null)
                 {
+                    TokenStreamComponents ret;
                     componentsPerField.TryGetValue(fieldName, out ret);
                     return ret;
                 }
@@ -429,7 +419,7 @@ namespace Lucene.Net.Analysis
 
             public override void SetReusableComponents(Analyzer analyzer, string fieldName, TokenStreamComponents components)
             {
-                IDictionary<string, TokenStreamComponents> componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
+                var componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
                 if (componentsPerField == null)
                 {
                     componentsPerField = new Dictionary<string, TokenStreamComponents>();

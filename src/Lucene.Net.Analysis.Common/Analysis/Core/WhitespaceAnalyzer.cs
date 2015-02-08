@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.core;
 
 namespace Lucene.Net.Analysis.Core
 {

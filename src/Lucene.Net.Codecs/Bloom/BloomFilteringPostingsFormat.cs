@@ -192,9 +192,14 @@ namespace Lucene.Net.Codecs.Bloom
                 return result == null ? null : new BloomFilteredTerms(result, filter);
             }
 
-            public override int Size()
+            public override int Size
             {
-                return _delegateFieldsProducer.Size();
+                get
+                {
+                    {
+                        return _delegateFieldsProducer.Size;
+                    }
+                }
             }
 
             [Obsolete("iterate fields and add their size() instead.")]

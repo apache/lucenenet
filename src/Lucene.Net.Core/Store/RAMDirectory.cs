@@ -252,7 +252,7 @@ namespace Lucene.Net.Store
         /// Closes the store to future operations, releasing associated memory. </summary>
         public override void Dispose()
         {
-            IsOpen = false;
+            isOpen = false;
             FileMap.Clear();
         }
     }
