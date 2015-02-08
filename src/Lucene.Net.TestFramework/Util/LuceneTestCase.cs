@@ -607,9 +607,12 @@ namespace Lucene.Net.Util
         /// </summary>
         public static Random Random()
         {
-            return new Random();
+            return _random ?? (_random = new Random( /* LUCENENET TODO seed */));
             //return RandomizedContext.Current.Random;
         }
+
+        [ThreadStatic]
+        private static Random _random;
 
         /// <summary>
         /// Registers a <seealso cref="IDisposable"/> resource that should be closed after the test
