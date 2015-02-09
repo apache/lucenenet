@@ -611,6 +611,11 @@ namespace Lucene.Net.Util
             //return RandomizedContext.Current.Random;
         }
 
+        protected static Random randon()
+        {
+            return Random();
+        }
+
         [ThreadStatic]
         private static Random _random;
 
