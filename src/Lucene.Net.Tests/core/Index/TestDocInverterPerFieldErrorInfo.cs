@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                     this.OuterInstance = outerInstance;
                 }
 
-                public override bool IncrementToken()
+                public sealed override bool IncrementToken()
                 {
                     throw new BadNews("Something is icky.");
                 }
