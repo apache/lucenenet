@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
     using TextField = TextField;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using TopDocs = Lucene.Net.Search.TopDocs;
-
+    
     [TestFixture]
     public class TestIndexWriterReader : LuceneTestCase
     {
@@ -1318,7 +1318,7 @@ namespace Lucene.Net.Index
             // don't leak file handles.
             MockDirectoryWrapper dir = (MockDirectoryWrapper)GetAssertNoDeletesDirectory(NewMockDirectory());
             AtomicBoolean shouldFail = new AtomicBoolean();
-            dir.FailOn(new FailureAnonymousInnerClassHelper(this, dir, shouldFail));
+            dir.FailOn(new FailureAnonymousInnerClassHelper(shouldFail));
 
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // prevent merges from getting in the way
@@ -1357,34 +1357,31 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper : MockDirectoryWrapper.Failure
         {
-            private readonly TestIndexWriterReader OuterInstance;
+            private readonly AtomicBoolean ShouldFail;
 
-            private MockDirectoryWrapper Dir;
-            private AtomicBoolean ShouldFail;
-
-            public FailureAnonymousInnerClassHelper(TestIndexWriterReader outerInstance, MockDirectoryWrapper dir, AtomicBoolean shouldFail)
+            public FailureAnonymousInnerClassHelper(AtomicBoolean shouldFail)
             {
-                this.OuterInstance = outerInstance;
-                this.Dir = dir;
                 this.ShouldFail = shouldFail;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                //var trace = new StackTrace(new Exception());
                 var trace = new StackTrace();
-                foreach (var frame in trace.GetFrames())
+                if (ShouldFail.Get())
                 {
-                    var method = frame.GetMethod();
-                    if ("GetReadOnlyClone".Equals(method.Name))
+                    foreach (var frame in trace.GetFrames())
                     {
-                        if (VERBOSE)
+                        var method = frame.GetMethod();
+                        if ("GetReadOnlyClone".Equals(method.Name))
                         {
-                            Console.WriteLine("TEST: now fail; exc:");
-                            Console.WriteLine((new Exception()).StackTrace);
+                            if (VERBOSE)
+                            {
+                                Console.WriteLine("TEST: now fail; exc:");
+                                Console.WriteLine((new Exception()).StackTrace);
+                            }
+                            ShouldFail.Set(false);
+                            throw new FakeIOException();
                         }
-                        ShouldFail.Set(false);
-                        throw new FakeIOException();
                     }
                 }
             }

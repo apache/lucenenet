@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
                             Writer.UpdateDocument(idTerm, doc);
                         }
                     }
-                    catch (CorruptIndexException re)
+                    catch (TestPoint1Exception re)
                     {
                         if (VERBOSE)
                         {
@@ -297,8 +297,15 @@ namespace Lucene.Net.Index
                         Console.WriteLine(Thread.CurrentThread.Name + ": NOW FAIL: " + name);
                         Console.WriteLine((new Exception()).StackTrace);
                     }
-                    throw new Exception(Thread.CurrentThread.Name + ": intentionally failing at " + name);
+                    throw new TestPoint1Exception(Thread.CurrentThread.Name + ": intentionally failing at " + name);
                 }
+            }
+        }
+
+        private class TestPoint1Exception : ApplicationException
+        {
+            public TestPoint1Exception(string message) : base(message)
+            {
             }
         }
 
@@ -444,7 +451,7 @@ namespace Lucene.Net.Index
                 this.FieldName = fieldName;
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (this.FieldName.Equals("crash") && Count++ >= 4)
                 {
@@ -659,7 +666,7 @@ namespace Lucene.Net.Index
 
                 private int count;
 
-                public override bool IncrementToken()
+                public sealed override bool IncrementToken()
                 {
                     if (count++ == 5)
                     {
@@ -2129,7 +2136,7 @@ namespace Lucene.Net.Index
 
             MockDirectoryWrapper dir = NewMockDirectory();
             AtomicBoolean shouldFail = new AtomicBoolean();
-            dir.FailOn(new FailureAnonymousInnerClassHelper2(this, dir, shouldFail));
+            dir.FailOn(new FailureAnonymousInnerClassHelper2(shouldFail));
 
             RandomIndexWriter w = null;
 
@@ -2358,21 +2365,21 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper2 : MockDirectoryWrapper.Failure
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
-
-            private MockDirectoryWrapper Dir;
             private AtomicBoolean ShouldFail;
 
-            public FailureAnonymousInnerClassHelper2(TestIndexWriterExceptions outerInstance, MockDirectoryWrapper dir, AtomicBoolean shouldFail)
+            public FailureAnonymousInnerClassHelper2(AtomicBoolean shouldFail)
             {
-                this.OuterInstance = outerInstance;
-                this.Dir = dir;
                 this.ShouldFail = shouldFail;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
                 var trace = new StackTrace();
+                if (ShouldFail.Get() == false)
+                {
+                    return;
+                }
+
                 bool sawSeal = false;
                 bool sawWrite = false;
                 foreach (var frame in trace.GetFrames())
