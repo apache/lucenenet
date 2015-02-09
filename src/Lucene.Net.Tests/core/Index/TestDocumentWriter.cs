@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
                 internal bool first;
                 internal AttributeSource.State state;
 
-                public override bool IncrementToken()
+                public sealed override bool IncrementToken()
                 {
                     if (state != null)
                     {
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                public override void Reset()
+                public sealed override void Reset()
                 {
                     base.Reset();
                     first = true;
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
         {
             private readonly TestDocumentWriter OuterInstance;
 
-            public TokenStreamAnonymousInnerClassHelper(TestDocumentWriter outerInstance)
+            public TokenStreamAnonymousInnerClassHelper(TestDocumentWriter outerInstance) 
             {
                 this.OuterInstance = outerInstance;
                 tokens = new string[] { "term1", "term2", "term3", "term2" };
@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
 
             private ICharTermAttribute termAtt;
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (index == tokens.Length)
                 {

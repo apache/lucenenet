@@ -85,7 +85,7 @@ namespace Lucene.Net.Queries
 
         public override string ToString()
         {
-            return occur.ToString() + filter.ToString();
+            return BooleanClause.ToString(occur) + filter.ToString();
         }
     }
 }

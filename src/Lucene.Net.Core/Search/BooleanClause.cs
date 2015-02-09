@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 
 namespace Lucene.Net.Search
 {
@@ -27,46 +28,28 @@ namespace Lucene.Net.Search
         /// Specifies how clauses are to occur in matching documents. </summary>
         public enum Occur
         {
-            MUST, SHOULD, MUST_NOT/*
-		/// <summary>
-		/// Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
-		MUST
-        {
-            public string toString()
-            {
-                return "+";
-	        }
-	    },
+            /// <summary>
+            /// Use this operator for clauses that <i>must</i> appear in the matching documents.
+            /// </summary>
+            MUST,
 
-		/// <summary>
-		/// Use this operator for clauses that <i>should</i> appear in the
-		/// matching documents. For a BooleanQuery with no <code>MUST</code>
-		/// clauses one or more <code>SHOULD</code> clauses must match a document
-		/// for the BooleanQuery to match. </summary>
-		/// <seealso cref= BooleanQuery#setMinimumNumberShouldMatch </seealso>
-		SHOULD
-		{
-			public string ToString()
-			{
-				return "";
-			}
-		},
+            /// <summary>
+            /// Use this operator for clauses that <i>should</i> appear in the
+            /// matching documents. For a BooleanQuery with no <code>MUST</code>
+            /// clauses one or more <code>SHOULD</code> clauses must match a document
+            /// for the BooleanQuery to match. </summary>
+            /// <seealso cref= BooleanQuery#setMinimumNumberShouldMatch</seealso>
+            SHOULD,
 
-		/// <summary>
-		/// Use this operator for clauses that <i>must not</i> appear in the matching documents.
-		/// Note that it is not possible to search for queries that only consist
-		/// of a <code>MUST_NOT</code> clause.
-		/// </summary>
-		MUST_NOT
-		{
-			public string ToString()
-			{
-				return "-";
-			}
-		}*/
+            /// <summary>
+            /// Use this operator for clauses that <i>must not</i> appear in the matching documents.
+            /// Note that it is not possible to search for queries that only consist
+            /// of a <code>MUST_NOT</code> clause.
+            /// </summary>
+            MUST_NOT
         }
 
-        private string ToString(Occur occur)
+        public static string ToString(Occur occur)
         {
             switch (occur)
             {
@@ -80,7 +63,7 @@ namespace Lucene.Net.Search
                     return "-";
 
                 default:
-                    throw new Exception("Invalid Occur_e value");
+                    throw new Exception("Invalid Occur value");
             }
         }
 

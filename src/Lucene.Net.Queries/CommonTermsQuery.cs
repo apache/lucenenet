@@ -458,7 +458,7 @@ namespace Lucene.Net.Queries
                     return false;
                 }
             }
-            else if (!terms.Equals(other.terms))
+            else if (!terms.SequenceEqual(other.terms))
             {
                 return false;
             }

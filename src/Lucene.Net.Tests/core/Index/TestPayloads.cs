@@ -434,7 +434,7 @@ namespace Lucene.Net.Index
                 TermAttribute = AddAttribute<ICharTermAttribute>();
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 bool hasNext = input.IncrementToken();
                 if (!hasNext)

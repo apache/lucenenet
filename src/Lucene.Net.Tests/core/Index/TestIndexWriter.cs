@@ -1025,7 +1025,7 @@ namespace Lucene.Net.Index
             internal readonly IEnumerator<string> terms;
             internal bool first;
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (!terms.MoveNext())
                 {

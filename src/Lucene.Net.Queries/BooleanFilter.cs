@@ -177,11 +177,7 @@ namespace Lucene.Net.Queries
         /// Prints a user-readable version of this Filter. </summary>
         public override string ToString()
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final StringBuilder buffer = new StringBuilder("BooleanFilter(");
-            StringBuilder buffer = new StringBuilder("BooleanFilter(");
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final int minLen = buffer.length();
+            var buffer = new StringBuilder("BooleanFilter(");
             int minLen = buffer.Length;
             foreach (FilterClause c in clauses)
             {
