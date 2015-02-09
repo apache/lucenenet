@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
                 OffsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (TokenUpto >= OuterInstance.Tokens.Length)
                 {

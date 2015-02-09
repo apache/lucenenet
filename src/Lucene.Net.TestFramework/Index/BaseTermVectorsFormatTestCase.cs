@@ -382,7 +382,7 @@ namespace Lucene.Net.Index
                 return false;
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (i < Terms.Length)
                 {
