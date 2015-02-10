@@ -187,7 +187,8 @@ namespace Lucene.Net.Support
             while (pos > 0)
             {
                 var parentPos = (pos - 1) / 2;
-                if (_baseHeap[parentPos].CompareTo(_baseHeap[pos]) < 0)
+                // Remember it is a Min-Heap.
+                if (_baseHeap[pos].CompareTo(_baseHeap[parentPos]) < 0)
                 //if (_comparer.Compare(_baseHeap[parentPos].Key, _baseHeap[pos].Key) > 0)
                 {
                     ExchangeElements(parentPos, pos);
