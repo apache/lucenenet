@@ -29,8 +29,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
     internal class SimpleTextUtil
     {
-        public const sbyte NEWLINE = 10;
-        public const sbyte ESCAPE = 92;
+        public const byte NEWLINE = 10;
+        public const byte ESCAPE = 92;
         internal static readonly BytesRef CHECKSUM = new BytesRef("checksum ");
 
         public static void Write(DataOutput output, string s, BytesRef scratch)
@@ -62,14 +62,14 @@ namespace Lucene.Net.Codecs.SimpleText
             var upto = 0;
             while (true)
             {
-                var b = input.ReadSByte();
+                var b = input.ReadByte();
                 if (scratch.Bytes.Length == upto)
                 {
                     scratch.Grow(1 + upto);
                 }
                 if (b == ESCAPE)
                 {
-                    scratch.Bytes[upto++] = input.ReadSByte();
+                    scratch.Bytes[upto++] = input.ReadByte();
                 }
                 else
                 {

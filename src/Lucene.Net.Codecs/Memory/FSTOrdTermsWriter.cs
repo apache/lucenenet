@@ -254,7 +254,7 @@ namespace Lucene.Net.Codecs.Memory
             public long SumDocFreq { get; set; }
             public int DocCount { get; set; }
             public int LongsSize { get; set; }
-            public FST<long> Dict { get; set; }
+            public FST<long?> Dict { get; set; }
 
             // TODO: block encode each part 
 
@@ -272,7 +272,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly FSTOrdTermsWriter _outerInstance;
 
-            private readonly Builder<long> _builder;
+            private readonly Builder<long?> _builder;
             private readonly PositiveIntOutputs _outputs;
             private readonly FieldInfo _fieldInfo;
             private readonly int _longsSize;
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs.Memory
                 _fieldInfo = fieldInfo;
                 _longsSize = outerInstance.postingsWriter.SetField(fieldInfo);
                 _outputs = PositiveIntOutputs.Singleton;
-                _builder = new Builder<long>(FST.INPUT_TYPE.BYTE1, _outputs);
+                _builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, _outputs);
 
                 _lastBlockStatsFp = 0;
                 _lastBlockMetaLongsFp = 0;

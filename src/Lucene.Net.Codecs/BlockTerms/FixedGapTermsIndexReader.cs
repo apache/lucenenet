@@ -253,7 +253,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override sealed BytesRef Term { get; set; }
 
-            public override long Seek(BytesRef target)
+            public override long? Seek(BytesRef target)
             {
                 var lo = 0; // binary search
                 var hi = _fieldIndex.NumIndexTerms - 1;
@@ -302,7 +302,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 return _fieldIndex.TermsStart + _fieldIndex.TermsDictOffsets.Get(hi);
             }
 
-            public override long Next
+            public override long? Next
             {
                 get
                 {
@@ -321,7 +321,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
             }
 
-            public override long Seek(long ord)
+            public override long? Seek(long ord)
             {
                 var idx = (int)(ord / _fgtir._totalIndexInterval);
 
