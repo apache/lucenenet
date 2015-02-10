@@ -1221,7 +1221,7 @@ namespace Lucene.Net.Util
             if (bare)
             {
                 BaseDirectoryWrapper @base = new BaseDirectoryWrapper(directory);
-                //CloseAfterSuite(new IDisposableDirectory(@base, SuiteFailureMarker));
+                // LUCENENET TODO CloseAfterSuite(new IDisposableDirectory(@base, SuiteFailureMarker));
                 return @base;
             }
             else
@@ -1229,7 +1229,7 @@ namespace Lucene.Net.Util
                 MockDirectoryWrapper mock = new MockDirectoryWrapper(random, directory);
 
                 mock.Throttling = TEST_THROTTLING;
-                //CloseAfterSuite(new IDisposableDirectory(mock, SuiteFailureMarker));
+                // LUCENENET TODO CloseAfterSuite(new IDisposableDirectory(mock, SuiteFailureMarker));
                 return mock;
             }
         }
