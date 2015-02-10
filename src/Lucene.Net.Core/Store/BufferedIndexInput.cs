@@ -450,7 +450,7 @@ namespace Lucene.Net.Store
         {
             switch (context.Context)
             {
-                case IOContext.Context_e.MERGE:
+                case IOContext.UsageContext.MERGE:
                     return MERGE_BUFFER_SIZE;
 
                 default:

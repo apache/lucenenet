@@ -35,7 +35,7 @@ namespace Lucene.Net.Store
         // we need to be volatile here to make sure we see all the values that are set
         // / modified concurrently
         //private volatile RateLimiter[] ContextRateLimiters = new RateLimiter[Enum.GetValues(typeof(IOContext.Context_e)).Length];
-        private readonly IDictionary<IOContext.Context_e?, RateLimiter> _contextRateLimiters = new ConcurrentDictionary<IOContext.Context_e?, RateLimiter>();
+        private readonly IDictionary<IOContext.UsageContext?, RateLimiter> _contextRateLimiters = new ConcurrentDictionary<IOContext.UsageContext?, RateLimiter>();
 
         public RateLimitedDirectoryWrapper(Directory wrapped)
             : base(wrapped)
@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
             @in.Copy(to, src, dest, context);
         }
 
-        private RateLimiter GetRateLimiter(IOContext.Context_e? context)
+        private RateLimiter GetRateLimiter(IOContext.UsageContext? context)
         {
             Debug.Assert(context != null);
             RateLimiter ret;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Store
         ///           if context is <code>null</code> </exception>
         /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
-        public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.Context_e? context)
+        public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext? context)
         {
             EnsureOpen();
             if (context == null)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Store
         ///           if context is <code>null</code> </exception>
         /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
-        public void SetRateLimiter(RateLimiter mergeWriteRateLimiter, IOContext.Context_e context)
+        public void SetRateLimiter(RateLimiter mergeWriteRateLimiter, IOContext.UsageContext context)
         {
             EnsureOpen();
             _contextRateLimiters[context] = mergeWriteRateLimiter;
@@ -149,7 +149,7 @@ namespace Lucene.Net.Store
         ///           if context is <code>null</code> </exception>
         /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
-        public double GetMaxWriteMBPerSec(IOContext.Context_e context)
+        public double GetMaxWriteMBPerSec(IOContext.UsageContext context)
         {
             EnsureOpen();
             var limiter = GetRateLimiter(context);

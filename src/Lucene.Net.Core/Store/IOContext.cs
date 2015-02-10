@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
         /// Context is a enumerator which specifies the context in which the Directory
         /// is being used for.
         /// </summary>
-        public enum Context_e
+        public enum UsageContext
         {
             MERGE,
             READ,
@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// An object of a enumerator Context type
         /// </summary>
-        public readonly Context_e? Context;
+        public readonly UsageContext? Context;
 
         public readonly MergeInfo MergeInfo;
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Store
 
         public readonly bool ReadOnce;
 
-        public static readonly IOContext DEFAULT = new IOContext(Context_e.DEFAULT);
+        public static readonly IOContext DEFAULT = new IOContext(UsageContext.DEFAULT);
 
         public static readonly IOContext READONCE = new IOContext(true);
 
@@ -65,34 +65,34 @@ namespace Lucene.Net.Store
         public IOContext(FlushInfo flushInfo)
         {
             Debug.Assert(flushInfo != null);
-            this.Context = Context_e.FLUSH;
+            this.Context = UsageContext.FLUSH;
             this.MergeInfo = null;
             this.ReadOnce = false;
             this.FlushInfo = flushInfo;
         }
 
-        public IOContext(Context_e? context)
+        public IOContext(UsageContext? context)
             : this(context, null)
         {
         }
 
         private IOContext(bool readOnce)
         {
-            this.Context = Context_e.READ;
+            this.Context = UsageContext.READ;
             this.MergeInfo = null;
             this.ReadOnce = readOnce;
             this.FlushInfo = null;
         }
 
         public IOContext(MergeInfo mergeInfo)
-            : this(Context_e.MERGE, mergeInfo)
+            : this(UsageContext.MERGE, mergeInfo)
         {
         }
 
-        private IOContext(Context_e? context, MergeInfo mergeInfo)
+        private IOContext(UsageContext? context, MergeInfo mergeInfo)
         {
-            Debug.Assert(context != Context_e.MERGE || mergeInfo != null, "MergeInfo must not be null if context is MERGE");
-            Debug.Assert(context != Context_e.FLUSH, "Use IOContext(FlushInfo) to create a FLUSH IOContext");
+            Debug.Assert(context != UsageContext.MERGE || mergeInfo != null, "MergeInfo must not be null if context is MERGE");
+            Debug.Assert(context != UsageContext.FLUSH, "Use IOContext(FlushInfo) to create a FLUSH IOContext");
             this.Context = context;
             this.ReadOnce = false;
             this.MergeInfo = mergeInfo;
@@ -170,13 +170,13 @@ namespace Lucene.Net.Store
             return true;
         }
 
-        public static IEnumerable<Context_e> ContextValues()
+        public static IEnumerable<UsageContext> ContextValues()
         {
             // .NET port: This is to make up for enums in .NET not having a Values method.
-            yield return Context_e.DEFAULT;
-            yield return Context_e.FLUSH;
-            yield return Context_e.MERGE;
-            yield return Context_e.READ;
+            yield return UsageContext.DEFAULT;
+            yield return UsageContext.FLUSH;
+            yield return UsageContext.MERGE;
+            yield return UsageContext.READ;
         }
 
         public override string ToString()

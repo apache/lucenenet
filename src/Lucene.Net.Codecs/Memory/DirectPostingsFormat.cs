@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.Memory
         public override FieldsProducer FieldsProducer(SegmentReadState state)
         {
             var postings = ForName("Lucene41").FieldsProducer(state);
-            if (state.Context.Context != IOContext.Context_e.MERGE)
+            if (state.Context.Context != IOContext.UsageContext.MERGE)
             {
                 FieldsProducer loadedPostings;
                 try
