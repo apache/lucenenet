@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using System.Linq;
+
 namespace Lucene.Net.Codecs.Memory
 {
 
@@ -131,7 +133,7 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class DirectFields : FieldsProducer
         {
-            internal readonly IDictionary<string, DirectField> fields = new SortedDictionary<string, DirectField>();
+            private readonly IDictionary<string, DirectField> fields = new SortedDictionary<string, DirectField>();
 
             public DirectFields(SegmentReadState state, Fields fields, int minSkipCount, int lowFreqCutoff)
             {
@@ -161,12 +163,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 get
                 {
-                    long numTerms = 0;
-                    foreach (DirectField field in fields.Values)
-                    {
-                        numTerms += field.terms.Length;
-                    }
-                    return numTerms;
+                    return fields.Values.Aggregate<DirectField, long>(0, (current, field) => current + field.terms.Length);
                 }
             }
 
@@ -194,7 +191,6 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class DirectField : Terms
         {
-
             internal abstract class TermAndSkip
             {
                 public int[] skips;
@@ -277,34 +273,34 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            internal readonly byte[] termBytes;
-            internal readonly int[] termOffsets;
+            private readonly byte[] termBytes;
+            private readonly int[] termOffsets;
 
-            internal readonly int[] skips;
-            internal readonly int[] skipOffsets;
+            private readonly int[] skips;
+            private readonly int[] skipOffsets;
 
             internal readonly TermAndSkip[] terms;
-            internal readonly bool hasFreq;
-            internal readonly bool hasPos;
-            internal readonly bool hasOffsets_Renamed;
-            internal readonly bool hasPayloads_Renamed;
-            internal readonly long sumTotalTermFreq;
-            internal readonly int docCount;
-            internal readonly long sumDocFreq;
-            internal int skipCount;
+            private readonly bool hasFreq;
+            private readonly bool hasPos;
+            private readonly bool hasOffsets_Renamed;
+            private readonly bool hasPayloads_Renamed;
+            private readonly long sumTotalTermFreq;
+            private readonly int docCount;
+            private readonly long sumDocFreq;
+            private int skipCount;
 
             // TODO: maybe make a separate builder?  These are only
             // used during load:
-            internal int count;
-            internal int[] sameCounts = new int[10];
-            internal readonly int minSkipCount;
+            private readonly int count;
+            private int[] sameCounts = new int[10];
+            private readonly int minSkipCount;
 
             private sealed class IntArrayWriter
             {
-                internal int[] ints = new int[10];
-                internal int upto;
+                private int[] ints = new int[10];
+                private int upto;
 
-                public void add(int value)
+                public void Add(int value)
                 {
                     if (ints.Length == upto)
                     {
@@ -313,11 +309,9 @@ namespace Lucene.Net.Codecs.Memory
                     ints[upto++] = value;
                 }
 
-                public int[] get()
+                public int[] Get()
                 {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] arr = new int[upto];
-                    int[] arr = new int[upto];
+                    var arr = new int[upto];
                     Array.Copy(ints, 0, arr, 0, upto);
                     upto = 0;
                     return arr;
@@ -395,14 +389,7 @@ namespace Lucene.Net.Codecs.Memory
                     TermAndSkip ent;
 
                     DocsEnum docsEnum2;
-                    if (hasPos)
-                    {
-                        docsEnum2 = docsAndPositionsEnum;
-                    }
-                    else
-                    {
-                        docsEnum2 = docsEnum;
-                    }
+                    docsEnum2 = hasPos ? docsAndPositionsEnum : docsEnum;
 
                     int docID;
 
@@ -414,32 +401,32 @@ namespace Lucene.Net.Codecs.Memory
                         // Pack postings for low-freq terms into a single int[]:
                         while ((docID = docsEnum2.NextDoc()) != DocsEnum.NO_MORE_DOCS)
                         {
-                            scratch.add(docID);
+                            scratch.Add(docID);
                             if (hasFreq)
                             {
                                 int freq = docsEnum2.Freq();
-                                scratch.add(freq);
+                                scratch.Add(freq);
                                 if (hasPos)
                                 {
                                     for (int pos = 0; pos < freq; pos++)
                                     {
-                                        scratch.add(docsAndPositionsEnum.NextPosition());
+                                        scratch.Add(docsAndPositionsEnum.NextPosition());
                                         if (hasOffsets_Renamed)
                                         {
-                                            scratch.add(docsAndPositionsEnum.StartOffset());
-                                            scratch.add(docsAndPositionsEnum.EndOffset());
+                                            scratch.Add(docsAndPositionsEnum.StartOffset());
+                                            scratch.Add(docsAndPositionsEnum.EndOffset());
                                         }
                                         if (hasPayloads_Renamed)
                                         {
                                             BytesRef payload = docsAndPositionsEnum.Payload;
                                             if (payload != null)
                                             {
-                                                scratch.add(payload.Length);
+                                                scratch.Add(payload.Length);
                                                 ros.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
                                             }
                                             else
                                             {
-                                                scratch.add(0);
+                                                scratch.Add(0);
                                             }
                                         }
                                     }
@@ -460,13 +447,13 @@ namespace Lucene.Net.Codecs.Memory
                             payloads = null;
                         }
 
-                        int[] postings = scratch.get();
+                        int[] postings = scratch.Get();
 
                         ent = new LowFreqTerm(postings, payloads, docFreq, (int) totalTermFreq);
                     }
                     else
                     {
-                        int[] docs = new int[docFreq];
+                        var docs = new int[docFreq];
                         int[] freqs;
                         int[][] positions;
                         byte[][][] payloads;
@@ -613,7 +600,7 @@ namespace Lucene.Net.Codecs.Memory
             }
 
             // Compares in unicode (UTF8) order:
-            internal int Compare(int ord, BytesRef other)
+            private int Compare(int ord, BytesRef other)
             {
                 byte[] otherBytes = other.Bytes;
 
@@ -635,7 +622,7 @@ namespace Lucene.Net.Codecs.Memory
                 return termLen - other.Length;
             }
 
-            internal void SetSkips(int termOrd, sbyte[] termBytes)
+            private void SetSkips(int termOrd, sbyte[] termBytes)
             {
                 int termLength = termOffsets[termOrd + 1] - termOffsets[termOrd];
 
@@ -699,7 +686,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            internal void FinishSkips()
+            private void FinishSkips()
             {
                 Debug.Assert(count == terms.Length);
                 int lastTermOffset = termOffsets[count - 1];
@@ -826,8 +813,8 @@ namespace Lucene.Net.Codecs.Memory
             {
                 private readonly DirectPostingsFormat.DirectField outerInstance;
 
-                internal readonly BytesRef scratch = new BytesRef();
-                internal int termOrd;
+                private readonly BytesRef scratch = new BytesRef();
+                private int termOrd;
 
                 public DirectTermsEnum(DirectPostingsFormat.DirectField outerInstance)
                 {

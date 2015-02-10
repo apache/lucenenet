@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Returns the codec to run tests against </summary>
-        protected internal abstract Codec Codec { get; }
+        protected abstract Codec Codec { get; }
 
         private Codec SavedCodec;
 
