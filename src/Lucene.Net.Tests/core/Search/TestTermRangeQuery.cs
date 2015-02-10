@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
                     TermAtt = AddAttribute<ICharTermAttribute>();
                 }
 
-                public override bool IncrementToken()
+                public override sealed bool IncrementToken()
                 {
                     if (Done)
                     {

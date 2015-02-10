@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
                 internal ICharTermAttribute termAtt;
                 internal IOffsetAttribute offsetAtt;
 
-                public override bool IncrementToken()
+                public override sealed bool IncrementToken()
                 {
                     if (i == TOKENS.Length)
                     {
