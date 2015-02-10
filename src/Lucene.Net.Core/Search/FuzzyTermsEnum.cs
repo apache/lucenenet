@@ -132,9 +132,8 @@ namespace Lucene.Net.Search
 
             // convert the string into a utf32 int[] representation for fast comparisons
             string utf16 = term.Text();
-            //LUCENE TO-DO
             //this.TermText = new int[utf16.codePointCount(0, utf16.Length)];
-            this.TermText = new int[utf16.Length];
+            this.TermText = new int[Character.CodePointCount(utf16, 0, utf16.Length)];
             for (int cp, i = 0, j = 0; i < utf16.Length; i += Character.CharCount(cp))
             {
                 TermText[j++] = cp = Character.CodePointAt(utf16, i);
