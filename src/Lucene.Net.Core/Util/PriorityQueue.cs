@@ -45,33 +45,41 @@ namespace Lucene.Net.Util
         public PriorityQueue(int maxSize, bool prepopulate)
         {
             int heapSize;
-            if (0 == maxSize)
+            if (maxSize < 0)
             {
-                // We allocate 1 extra to avoid if statement in top()
-                heapSize = 2;
+                throw new System.ArgumentException("maxSize must be >= 0; got: " + maxSize);
             }
             else
             {
-                if (maxSize > ArrayUtil.MAX_ARRAY_LENGTH)
+                if (0 == maxSize)
                 {
-                    // Don't wrap heapSize to -1, in this case, which
-                    // causes a confusing NegativeArraySizeException.
-                    // Note that very likely this will simply then hit
-                    // an OOME, but at least that's more indicative to
-                    // caller that this values is too big.  We don't +1
-                    // in this case, but it's very unlikely in practice
-                    // one will actually insert this many objects into
-                    // the PQ:
-                    // Throw exception to prevent confusing OOME:
-                    throw new System.ArgumentException("maxSize must be <= " + ArrayUtil.MAX_ARRAY_LENGTH + "; got: " + maxSize);
+                    // We allocate 1 extra to avoid if statement in top()
+                    heapSize = 2;
                 }
                 else
                 {
-                    // NOTE: we add +1 because all access to heap is
-                    // 1-based not 0-based.  heap[0] is unused.
-                    heapSize = maxSize + 1;
+                    if (maxSize >= ArrayUtil.MAX_ARRAY_LENGTH)
+                    {
+                        // Don't wrap heapSize to -1, in this case, which
+                        // causes a confusing NegativeArraySizeException.
+                        // Note that very likely this will simply then hit
+                        // an OOME, but at least that's more indicative to
+                        // caller that this values is too big.  We don't +1
+                        // in this case, but it's very unlikely in practice
+                        // one will actually insert this many objects into
+                        // the PQ:
+                        // Throw exception to prevent confusing OOME:
+                        throw new System.ArgumentException("maxSize must be < " + ArrayUtil.MAX_ARRAY_LENGTH + "; got: " + maxSize);
+                    }
+                    else
+                    {
+                        // NOTE: we add +1 because all access to heap is
+                        // 1-based not 0-based.  heap[0] is unused.
+                        heapSize = maxSize + 1;
+                    }
                 }
             }
+            
             // T is unbounded type, so this unchecked cast works always:
             T[] h = new T[heapSize];
             this.Heap = h;
