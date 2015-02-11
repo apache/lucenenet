@@ -307,7 +307,7 @@ namespace Lucene.Net.Index
                             Assert.AreEqual(10, b.Length);
                             for (int idx = 0; idx < 10; idx++)
                             {
-                                Assert.AreEqual((sbyte)(idx + counter), b.Bytes[b.Offset + idx]);
+                                Assert.AreEqual((byte)(idx + counter), b.Bytes[b.Offset + idx]);
                             }
                         }
                         else
