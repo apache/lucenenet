@@ -336,47 +336,6 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        public virtual void TestPQ()
-        {
-            TestPQ(AtLeast(10000), Random());
-        }
-
-        public static void TestPQ(int count, Random gen)
-        {
-            PriorityQueue<int?> pq = new IntegerQueue(count);
-            int sum = 0, sum2 = 0;
-
-            for (int i = 0; i < count; i++)
-            {
-                int next = gen.Next();
-                sum += next;
-                pq.Add(next);
-            }
-
-            //      Date end = new Date();
-
-            //      System.out.print(((float)(end.getTime()-start.getTime()) / count) * 1000);
-            //      System.out.println(" microseconds/put");
-
-            //      start = new Date();
-
-            int last = int.MinValue;
-            for (int i = 0; i < count; i++)
-            {
-                int? next = pq.Pop();
-                Assert.IsTrue((int)next >= last);
-                last = (int)next;
-                sum2 += last;
-            }
-
-            Assert.AreEqual(sum, sum2);
-            //      end = new Date();
-
-            //      System.out.print(((float)(end.getTime()-start.getTime()) / count) * 1000);
-            //      System.out.println(" microseconds/pop");
-        }
-
-        [Test]
         public virtual void TestClear()
         {
             PriorityQueue<int?> pq = new IntegerQueue(3);
