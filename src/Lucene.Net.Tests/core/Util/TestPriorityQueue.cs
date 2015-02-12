@@ -59,6 +59,28 @@ namespace Lucene.Net.Util
             }
         }
 
+        private class MyType
+        {
+            public MyType(int field)
+            {
+                Field = field;
+            }
+            public int Field { get; set; }
+        }
+
+        private class MyQueue : PriorityQueue<MyType>
+        {
+            public MyQueue(int count)
+                : base(count)
+            {
+            }
+
+            public override bool LessThan(MyType a, MyType b)
+            {
+                return (a.Field < b.Field);
+            }
+        }
+
         [Ignore] // Increase heap size to run this test
         [Test]
         public static void TestMaxSizeBounds()
@@ -252,6 +274,35 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        public static void TestUpdateTop()
+        {
+            // Mostly to reflect the usage of UpdateTop
+            int maxSize = 10;
+            PriorityQueue<MyType> pq = new MyQueue(maxSize);
+
+            pq.Add(new MyType(1));
+            pq.Add(new MyType(20));
+            pq.Add(new MyType(1));
+            pq.Add(new MyType(15));
+            pq.Add(new MyType(4));
+            pq.Add(new MyType(12));
+            pq.Add(new MyType(1000));
+            pq.Add(new MyType(-300));
+
+            Assert.AreEqual(pq.Top().Field, -300);
+            MyType topElement = pq.Top();
+            topElement.Field = 25;  // Now this should no longer be at the top of the queue
+            pq.UpdateTop();         // Hence we need to update the top queue
+            Assert.AreEqual(pq.Top().Field, 1);
+
+            // The less eficient way to do this is the following
+            topElement = pq.Pop();
+            topElement.Field = 678;
+            pq.Add(topElement);
+            Assert.AreEqual(pq.Top().Field, 1);
+        }
+
+        [Test]
         public static void TestOverflow()
         {
             // Tests adding elements to full queues
@@ -286,53 +337,6 @@ namespace Lucene.Net.Util
             catch (IndexOutOfRangeException)
             {
             }
-        }
-
-        [Test]
-        public static void TestStress()
-        {
-            int maxSize = AtLeast(100000);
-
-            PriorityQueue<int?> pq = new IntegerQueue(maxSize);
-            int sum = 0, sum2 = 0;
-
-            DateTime start, end;
-            TimeSpan total;
-            start = DateTime.Now;
-
-            // Add a lot of elements
-            for (int i = 0; i < maxSize; i++)
-            {
-                int next = Random().Next();
-                sum += next;
-                pq.Add(next);
-            }
-
-            end = DateTime.Now;
-            total = end - start;
-            // Note that this measurement considers the random number generation
-            System.Console.WriteLine("Total adding time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
-            System.Console.WriteLine("Time per add: {0} ticks", total.Ticks / maxSize);
-
-            // Pop them and check that the elements are taken in sorted order
-            start = DateTime.Now;
-            int last = int.MinValue;
-            for (int i = 0; i < maxSize; i++)
-            {
-                int? next = pq.Pop();
-                Assert.IsTrue((int)next >= last);
-                last = (int)next;
-                sum2 += last;
-            }
-
-            end = DateTime.Now;
-            total = end - start;
-            // Note that this measurement considers the random number generation
-            System.Console.WriteLine("Total poping time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
-            System.Console.WriteLine("Time per pop: {0} ticks", total.Ticks / maxSize);
-
-            // Loose checking that we didn't lose data in the process
-            Assert.AreEqual(sum, sum2);
         }
 
         [Test]
@@ -393,6 +397,53 @@ namespace Lucene.Net.Util
             Assert.AreEqual((int?)5, pq.Top());
             pq.Pop();
             Assert.AreEqual((int?)7, pq.Top());
+        }
+
+        [Test]
+        public static void TestStress()
+        {
+            int maxSize = AtLeast(100000);
+
+            PriorityQueue<int?> pq = new IntegerQueue(maxSize);
+            int sum = 0, sum2 = 0;
+
+            DateTime start, end;
+            TimeSpan total;
+            start = DateTime.Now;
+
+            // Add a lot of elements
+            for (int i = 0; i < maxSize; i++)
+            {
+                int next = Random().Next();
+                sum += next;
+                pq.Add(next);
+            }
+
+            end = DateTime.Now;
+            total = end - start;
+            // Note that this measurement considers the random number generation
+            System.Console.WriteLine("Total adding time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
+            System.Console.WriteLine("Time per add: {0} ticks", total.Ticks / maxSize);
+
+            // Pop them and check that the elements are taken in sorted order
+            start = DateTime.Now;
+            int last = int.MinValue;
+            for (int i = 0; i < maxSize; i++)
+            {
+                int? next = pq.Pop();
+                Assert.IsTrue((int)next >= last);
+                last = (int)next;
+                sum2 += last;
+            }
+
+            end = DateTime.Now;
+            total = end - start;
+            // Note that this measurement considers the random number generation
+            System.Console.WriteLine("Total poping time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
+            System.Console.WriteLine("Time per pop: {0} ticks", total.Ticks / maxSize);
+
+            // Loose checking that we didn't lose data in the process
+            Assert.AreEqual(sum, sum2);
         }
     }
 }
