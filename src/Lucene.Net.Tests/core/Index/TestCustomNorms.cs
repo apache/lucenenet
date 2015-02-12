@@ -60,7 +60,8 @@ namespace Lucene.Net.Index
             {
                 Document doc = docs.NextDoc();
                 float nextFloat = (float)Random().NextDouble();
-                Field f = new TextField(FloatTestField, "" + nextFloat, Field.Store.YES);
+                // Cast to a double to get more precision output to the string.
+                Field f = new TextField(FloatTestField, "" + (double)nextFloat, Field.Store.YES);
                 f.Boost = nextFloat;
 
                 doc.Add(f);
