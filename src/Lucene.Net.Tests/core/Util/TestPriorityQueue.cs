@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using Lucene.Net.JavaCompatibility;
 using NUnit.Framework;
 using System;
+using NUnit.Framework.Constraints;
 
 namespace Lucene.Net.Util
 {
@@ -39,7 +42,7 @@ namespace Lucene.Net.Util
 
             public override bool LessThan(int? a, int? b)
             {
-                return (a < b);
+                return (a <= b);
             }
         }
 
@@ -80,6 +83,26 @@ namespace Lucene.Net.Util
                 return (a.Field < b.Field);
             }
         }
+
+        private class Less : IComparer<int?>
+        {
+            public int Compare(int? a, int? b)
+            {
+                Assert.IsNotNull(a);
+                Assert.IsNotNull(b);
+                return (int) (a - b);
+            }
+        }
+
+        private class Greater : IComparer<int?>
+        {
+            public int Compare(int? a, int? b)
+            {
+                Assert.IsNotNull(a);
+                Assert.IsNotNull(b);
+                return (int) (a - b);
+            }
+        } 
 
         [Ignore] // Increase heap size to run this test
         [Test]
@@ -134,6 +157,13 @@ namespace Lucene.Net.Util
             Assert.AreEqual(pq.Size(), 0);
         }
 
+        private static void AddAndTest<T>(PriorityQueue<T> pq, T element, T expectedTop, int expectedSize)
+        {
+            pq.Add(element);
+            Assert.AreEqual(pq.Top(), expectedTop);
+            Assert.AreEqual(pq.Size(), expectedSize);
+        }
+
         [Test]
         public static void TestAdd()
         {
@@ -141,57 +171,27 @@ namespace Lucene.Net.Util
             PriorityQueue<int?> pq = new IntegerQueue(maxSize);
             
             // Add mixed elements
-            pq.Add(5);
-            Assert.AreEqual(pq.Top(), 5);
-            Assert.AreEqual(pq.Size(), 1);
-            pq.Add(1);
-            Assert.AreEqual(pq.Top(), 1);
-            Assert.AreEqual(pq.Size(), 2);
-            pq.Add(3);
-            Assert.AreEqual(pq.Top(), 1);
-            Assert.AreEqual(pq.Size(), 3);
-            pq.Add(-1);
-            Assert.AreEqual(pq.Top(), -1);
-            Assert.AreEqual(pq.Size(), 4);
-            pq.Add(-111111);
-            Assert.AreEqual(pq.Top(), -111111);
-            Assert.AreEqual(pq.Size(), 5);
-
+            AddAndTest(pq, 5, 5, 1);
+            AddAndTest(pq, 1, 1, 2);
+            AddAndTest(pq, 3, 1, 3);
+            AddAndTest(pq, -1, -1, 4);
+            AddAndTest(pq, -111111, -111111, 5);
+            
             // Add a sorted list of elements
             pq = new IntegerQueue(maxSize);
-            pq.Add(-111111);
-            Assert.AreEqual(pq.Top(), -111111);
-            Assert.AreEqual(pq.Size(), 1);
-            pq.Add(-1);
-            Assert.AreEqual(pq.Top(), -111111);
-            Assert.AreEqual(pq.Size(), 2);
-            pq.Add(1);
-            Assert.AreEqual(pq.Top(), -111111);
-            Assert.AreEqual(pq.Size(), 3);
-            pq.Add(3);
-            Assert.AreEqual(pq.Top(), -111111);
-            Assert.AreEqual(pq.Size(), 4);
-            pq.Add(5);
-            Assert.AreEqual(pq.Top(), -111111);
-            Assert.AreEqual(pq.Size(), 5);
+            AddAndTest(pq, -111111, -111111, 1);
+            AddAndTest(pq, -1, -111111, 2);
+            AddAndTest(pq, 1, -111111, 3);
+            AddAndTest(pq, 3, -111111, 4);
+            AddAndTest(pq, 5, -111111, 5);
 
             // Add a reversed sorted list of elements
             pq = new IntegerQueue(maxSize);
-            pq.Add(5);
-            Assert.AreEqual(pq.Top(), 5);
-            Assert.AreEqual(pq.Size(), 1);
-            pq.Add(3);
-            Assert.AreEqual(pq.Top(), 3);
-            Assert.AreEqual(pq.Size(), 2);
-            pq.Add(1);
-            Assert.AreEqual(pq.Top(), 1);
-            Assert.AreEqual(pq.Size(), 3);
-            pq.Add(-1);
-            Assert.AreEqual(pq.Top(), -1);
-            Assert.AreEqual(pq.Size(), 4);
-            pq.Add(-111111);
-            Assert.AreEqual(pq.Top(), -111111);
-            Assert.AreEqual(pq.Size(), 5);
+            AddAndTest(pq, 5, 5, 1);
+            AddAndTest(pq, 3, 3, 2);
+            AddAndTest(pq, 1, 1, 3);
+            AddAndTest(pq, -1, -1, 4);
+            AddAndTest(pq, -111111, -111111, 5);
         }
 
         [Test]
@@ -399,51 +399,184 @@ namespace Lucene.Net.Util
             Assert.AreEqual((int?)7, pq.Top());
         }
 
-        [Test]
-        public static void TestStress()
+        private static void AddElements<T>(PriorityQueue<T> pq, T[] elements)
         {
-            int maxSize = AtLeast(100000);
+            int size = (int)elements.size();
 
-            PriorityQueue<int?> pq = new IntegerQueue(maxSize);
-            int sum = 0, sum2 = 0;
+            for (int i = 0; i < size; i++)
+            {
+                pq.Add(elements[i]);
+            }
+        }
 
+        private static void PopElements<T>(PriorityQueue<T> pq)
+        {
+            int size = pq.Size();
+
+            for (int i = 0; i < size; i++)
+            {
+                pq.Pop();
+            }
+        }
+
+        private static void PopAndTestElements<T>(PriorityQueue<T> pq, T[] elements)
+        {
+            int size = pq.Size();
+
+            for (int i = 0; i < size; i++)
+            {
+                Assert.AreEqual(pq.Pop(), elements[i]);
+            }
+        }
+
+        private static void PopAndTestElements<T>(PriorityQueue<T> pq)
+        {
+            int size = pq.Size();
+            T last = pq.Pop();
+
+            for (int i = 1; i < size; i++)
+            {
+                T next = pq.Pop();
+                Assert.IsTrue(pq.LessThan(last, next));
+                last = next;
+            }
+        }
+
+        private static void TimedAddAndPop<T>(PriorityQueue<T> pq, T[] elements)
+        {
+            int size = (int)elements.size();
             DateTime start, end;
             TimeSpan total;
+
             start = DateTime.Now;
+
+            AddElements(pq, elements);
+
+            end = DateTime.Now;
+            total = end - start;
+
+            System.Console.WriteLine("Total adding time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
+            System.Console.WriteLine("Average time per add: {0} ticks", total.Ticks / size);
+
+            start = DateTime.Now;
+
+            PopElements(pq);
+
+            end = DateTime.Now;
+            total = end - start;
+
+            System.Console.WriteLine("Total poping time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
+            System.Console.WriteLine("Average time per pop: {0} ticks", total.Ticks / size);
+        }
+
+        [Test]
+        public static void TestPersistance()
+        {
+            // Tests that a big number of elements are added and popped (in the correct order)
+            // without losing any information
+
+            int maxSize = AtLeast(100000);
+            PriorityQueue<int?> pq = new IntegerQueue(maxSize);
+
+            int?[] elements = new int?[maxSize];
+            for (int i = 0; i < maxSize; i++)
+            {
+                elements[i] = Random().Next();
+            }
+
+            AddElements(pq, elements);
+
+            ArrayUtil.IntroSort(elements, new Less());
+
+            PopAndTestElements(pq, elements);
+        }
+
+        [Test, Timeout(0)]
+        public static void TestStress()
+        {
+            int atLeast = 10000000;
+            int maxSize = AtLeast(atLeast);
+            int size;
+            PriorityQueue<int?> pq = new IntegerQueue(maxSize);
 
             // Add a lot of elements
             for (int i = 0; i < maxSize; i++)
             {
-                int next = Random().Next();
-                sum += next;
-                pq.Add(next);
+                pq.Add(Random().Next());
             }
 
-            end = DateTime.Now;
-            total = end - start;
-            // Note that this measurement considers the random number generation
-            System.Console.WriteLine("Total adding time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
-            System.Console.WriteLine("Time per add: {0} ticks", total.Ticks / maxSize);
+            // Pop some of them
+            while (pq.Size() > atLeast/2)
+            {
+                pq.Pop();
+            }
 
-            // Pop them and check that the elements are taken in sorted order
-            start = DateTime.Now;
-            int last = int.MinValue;
+            // Add some more
+            while (pq.Size() < (atLeast*3)/4)
+            {
+                pq.Add(Random().Next());
+            }
+
+            PopAndTestElements(pq);
+
+            Assert.AreEqual(pq.Size(), 0);
+
+            // We fill it again
+            for (int i = 0; 2 * i < maxSize; i++)
+            {
+                pq.Add(Random().Next());
+            }
+
+            Assert.AreEqual(pq.Size(), (maxSize + 1) / 2);
+            pq.Clear();
+            Assert.AreEqual(pq.Size(), 0);
+
+            // One last time
+            for (int i = 0; i < 2 * maxSize; i++)
+            {
+                pq.Add(Random().Next());
+            }
+
+            PopAndTestElements(pq);
+            Assert.AreEqual(pq.Size(), 0);
+        }
+
+        [Test]
+        public static void Benchmarks()
+        {
+            if (!VERBOSE)
+            {
+                // You won't see the results
+                return;
+            }
+               
+            int maxSize = AtLeast(100000);
+            PriorityQueue<int?> pq = new IntegerQueue(maxSize);
+            int?[] elements = new int?[maxSize];
+
             for (int i = 0; i < maxSize; i++)
             {
-                int? next = pq.Pop();
-                Assert.IsTrue((int)next >= last);
-                last = (int)next;
-                sum2 += last;
+                elements[i] = Random().Next();
             }
 
-            end = DateTime.Now;
-            total = end - start;
-            // Note that this measurement considers the random number generation
-            System.Console.WriteLine("Total poping time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
-            System.Console.WriteLine("Time per pop: {0} ticks", total.Ticks / maxSize);
+            System.Console.WriteLine("Random list of elements...");
 
-            // Loose checking that we didn't lose data in the process
-            Assert.AreEqual(sum, sum2);
+            TimedAddAndPop<int?>(pq, elements);
+            pq.Clear();
+
+            System.Console.WriteLine("\nSorted list of elements...");
+
+            pq = new IntegerQueue(maxSize);
+            ArrayUtil.IntroSort(elements, new Less());
+            TimedAddAndPop<int?>(pq, elements);
+            pq.Clear();
+
+            System.Console.WriteLine("\nReverse sorted list of elements...");
+
+            pq = new IntegerQueue(maxSize);
+            ArrayUtil.IntroSort(elements, new Greater());
+            TimedAddAndPop<int?>(pq, elements);
+            pq.Clear();
         }
     }
 }
