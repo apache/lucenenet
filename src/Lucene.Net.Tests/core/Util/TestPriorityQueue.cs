@@ -465,12 +465,12 @@ namespace Lucene.Net.Util
             end = DateTime.Now;
             total = end - start;
 
-            System.Console.WriteLine("Total poping time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
+            System.Console.WriteLine("Total popping time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
             System.Console.WriteLine("Average time per pop: {0} ticks", total.Ticks / size);
         }
 
         [Test]
-        public static void TestPersistance()
+        public static void TestPersistence()
         {
             // Tests that a big number of elements are added and popped (in the correct order)
             // without losing any information
