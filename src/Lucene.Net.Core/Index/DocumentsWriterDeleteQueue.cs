@@ -1,3 +1,4 @@
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System;
 using System.Threading;
@@ -294,6 +295,7 @@ namespace Lucene.Net.Index
             internal DeleteSlice(Node currentTail)
             {
                 Debug.Assert(currentTail != null);
+                Debug.Assert(currentTail.Next == null);
                 /*
                  * Initially this is a 0 length slice pointing to the 'current' tail of
                  * the queue. Once we update the slice we only need to assign the tail and
@@ -391,10 +393,8 @@ namespace Lucene.Net.Index
             {
                 // .NET port: Interlocked.CompareExchange(location, value, comparand) is backwards from
                 // AtomicReferenceFieldUpdater.compareAndSet(obj, expect, update), so swapping val and cmp.
-                // Also, it doesn't return bool if it was updated, so we need to compare to see if
-                // original == comparand to determine whether to return true or false here.
-                Node original = Next;
-                return ReferenceEquals(Interlocked.CompareExchange(ref Next, val, cmp), original);
+                // Return true if the result of the CompareExchange is the same as the comparison.
+                return ReferenceEquals(Interlocked.CompareExchange(ref Next, val, cmp), cmp);
             }
         }
 
