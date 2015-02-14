@@ -1,7 +1,7 @@
+using System.Linq;
 using Apache.NMS.Util;
 using Lucene.Net.Search;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -89,8 +89,20 @@ namespace Lucene.Net.Index
                 bytesRef.CopyBytes(t.Bytes());
                 frozenSet.Add(new Term(t.Field(), bytesRef));
             }
-            Assert.AreEqual(uniqueValues, frozenSet);
+
+            CompareEnumerableWithSort(uniqueValues, frozenSet);
             Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
+        }
+
+        // The HashSet class in C# does not guarantee order. To compare to sets, sort first and then compare.
+        private static void CompareEnumerableWithSort<T>(IEnumerable<T> a, IEnumerable<T> b)
+        {
+            T[] aArray = a.ToArray();
+            T[] bArray = b.ToArray();
+            Assert.AreEqual(aArray.Length, bArray.Length, "Array length are not the same.");
+            Array.Sort(aArray);
+            Array.Sort(bArray);
+            Assert.AreEqual(aArray, bArray);
         }
 
         private void AssertAllBetween(int start, int end, BufferedUpdates deletes, int?[] ids)
@@ -229,6 +241,7 @@ namespace Lucene.Net.Index
                 threads[i].Start();
             }
             latch.countDown();
+
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i].Join();
@@ -240,7 +253,7 @@ namespace Lucene.Net.Index
                 queue.UpdateSlice(slice);
                 BufferedUpdates deletes = updateThread.Deletes;
                 slice.Apply(deletes, BufferedUpdates.MAX_INT);
-                Assert.AreEqual(uniqueValues, deletes.Terms_Nunit().Keys);
+                CompareEnumerableWithSort(uniqueValues, deletes.Terms_Nunit().Keys);
             }
             queue.TryApplyGlobalSlice();
             HashSet<Term> frozenSet = new HashSet<Term>();
