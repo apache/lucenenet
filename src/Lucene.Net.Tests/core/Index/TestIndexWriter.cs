@@ -1,3 +1,4 @@
+using System.Security.AccessControl;
 using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Collections.Generic;
@@ -1298,9 +1299,23 @@ namespace Lucene.Net.Index
                         // Jenkins hits a fail we need to study where the
                         // interrupts struck!
                         Console.WriteLine("TEST: got interrupt");
-                        Console.WriteLine(re.StackTrace);
+                        Console.WriteLine(re);
                         Exception e = re.InnerException;
                         Assert.IsTrue(e is ThreadInterruptedException);
+                        if (Finish)
+                        {
+                            break;
+                        }
+                    }
+                        // This exception is thrown when a system class like streamWriter is interrupted.
+                    catch (System.Threading.ThreadInterruptedException re)
+                    {
+                        // NOTE: important to leave this verbosity/noise
+                        // on!!  this test doesn't repro easily so when
+                        // Jenkins hits a fail we need to study where the
+                        // interrupts struck!
+                        Console.WriteLine("TEST: got interrupt");
+                        Console.WriteLine(re);
                         if (Finish)
                         {
                             break;
@@ -1309,7 +1324,7 @@ namespace Lucene.Net.Index
                     catch (Exception t)
                     {
                         Console.WriteLine("FAILED; unexpected exception");
-                        Console.WriteLine(t.StackTrace);
+                        Console.WriteLine(t);
                         Failed = true;
                         break;
                     }
@@ -1343,7 +1358,7 @@ namespace Lucene.Net.Index
                     {
                         Failed = true;
                         Console.WriteLine("CheckIndex FAILED: unexpected exception");
-                        Console.WriteLine(e.StackTrace);
+                        Console.WriteLine(e);
                     }
                     try
                     {
@@ -1355,7 +1370,7 @@ namespace Lucene.Net.Index
                     {
                         Failed = true;
                         Console.WriteLine("DirectoryReader.open FAILED: unexpected exception");
-                        Console.WriteLine(e.StackTrace);
+                        Console.WriteLine(e);
                     }
                 }
                 try
@@ -1430,7 +1445,7 @@ namespace Lucene.Net.Index
             // up front... else we can see a false failure if 2nd
             // interrupt arrives while class loader is trying to
             // init this class (in servicing a first interrupt):
-            Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is ThreadInterruptedException);
+            Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is Exception);
 
             // issue 300 interrupts to child thread
             int numInterrupts = AtLeast(300);
