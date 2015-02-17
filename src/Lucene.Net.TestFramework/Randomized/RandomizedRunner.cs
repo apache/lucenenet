@@ -57,8 +57,7 @@ namespace Lucene.Net.Randomized
 
         private static int NextSequence()
         {
-            Interlocked.Increment(ref sequence);
-            return sequence;
+            return Interlocked.Increment(ref sequence);
         }
     }
 }
