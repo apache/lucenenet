@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                 bytesRef.CopyBytes(t.Bytes());
                 frozenSet.Add(new Term(t.Field(), bytesRef));
             }
-            Assert.AreEqual(uniqueValues, frozenSet);
+            assertEquals(uniqueValues, frozenSet);
             Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
         }
 
@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
                 queue.UpdateSlice(slice);
                 BufferedUpdates deletes = updateThread.Deletes;
                 slice.Apply(deletes, BufferedUpdates.MAX_INT);
-                Assert.AreEqual(uniqueValues, deletes.Terms_Nunit().Keys);
+                assertEquals(uniqueValues, deletes.Terms_Nunit().Keys);
             }
             queue.TryApplyGlobalSlice();
             HashSet<Term> frozenSet = new HashSet<Term>();
@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
             }
             Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
             Assert.AreEqual(uniqueValues.Count, frozenSet.Count);
-            Assert.True(uniqueValues.SetEquals(frozenSet));
+            assertEquals(uniqueValues, frozenSet);
         }
 
         private class UpdateThread : ThreadClass
