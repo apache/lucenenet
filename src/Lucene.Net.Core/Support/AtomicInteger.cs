@@ -23,9 +23,7 @@ namespace Lucene.Net.Support
 
         public int GetAndIncrement()
         {
-            int ret = value;
-            Interlocked.Increment(ref value);
-            return ret;
+            return Interlocked.Increment(ref value) - 1;
         }
 
         public int DecrementAndGet()
