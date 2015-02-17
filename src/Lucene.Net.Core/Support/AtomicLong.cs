@@ -33,8 +33,7 @@ namespace Lucene.Net.Support
 
         public long AddAndGet(long value_)
         {
-            Interlocked.Add(ref value, value_);
-            return value;
+            return Interlocked.Add(ref value, value_);
         }
 
         public long Get()
