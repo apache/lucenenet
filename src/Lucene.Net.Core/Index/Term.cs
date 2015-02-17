@@ -149,13 +149,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public int CompareTo(Term other)
         {
-            if (Field_Renamed.Equals(other.Field_Renamed))
+            int compare = string.Compare(Field_Renamed, other.Field_Renamed, StringComparison.Ordinal);
+            if (compare == 0)
             {
                 return Bytes_Renamed.CompareTo(other.Bytes_Renamed);
             }
             else
             {
-                return Field_Renamed.CompareTo(other.Field_Renamed);
+                return compare;
             }
         }
 
