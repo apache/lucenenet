@@ -33,9 +33,7 @@ namespace Lucene.Net.Support
 
         public int GetAndDecrement()
         {
-            int ret = value;
-            Interlocked.Decrement(ref value);
-            return ret;
+            return Interlocked.Decrement(ref value) + 1;
         }
 
         public void Set(int value_)
@@ -45,8 +43,7 @@ namespace Lucene.Net.Support
 
         public int AddAndGet(int value_)
         {
-            Interlocked.Add(ref value, value_);
-            return value;
+            return Interlocked.Add(ref value, value_);
         }
 
         public int Get()
