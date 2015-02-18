@@ -36,7 +36,7 @@ namespace Lucene.Net.Queries
             {
                 throw new System.ArgumentException("Term must not be null");
             }
-            else if (term.Field() == null)
+            else if (term.Field == null)
             {
                 throw new System.ArgumentException("Field must not be null");
             }
@@ -54,30 +54,27 @@ namespace Lucene.Net.Queries
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            Terms terms = context.AtomicReader.Terms(term.Field());
+            Terms terms = context.AtomicReader.Terms(term.Field);
             if (terms == null)
             {
                 return null;
             }
 
             TermsEnum termsEnum = terms.Iterator(null);
-            if (!termsEnum.SeekExact(term.Bytes()))
+            if (!termsEnum.SeekExact(term.Bytes))
             {
                 return null;
             }
-            return new DocIdSetAnonymousInnerClassHelper(this, acceptDocs, termsEnum);
+            return new DocIdSetAnonymousInnerClassHelper(acceptDocs, termsEnum);
         }
 
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
-            private readonly TermFilter outerInstance;
+            private readonly Bits acceptDocs;
+            private readonly TermsEnum termsEnum;
 
-            private Bits acceptDocs;
-            private TermsEnum termsEnum;
-
-            public DocIdSetAnonymousInnerClassHelper(TermFilter outerInstance, Bits acceptDocs, TermsEnum termsEnum)
+            public DocIdSetAnonymousInnerClassHelper(Bits acceptDocs, TermsEnum termsEnum)
             {
-                this.outerInstance = outerInstance;
                 this.acceptDocs = acceptDocs;
                 this.termsEnum = termsEnum;
             }
@@ -116,7 +113,7 @@ namespace Lucene.Net.Queries
 
         public override string ToString()
         {
-            return term.Field() + ":" + term.Text();
+            return term.Field + ":" + term.Text();
         }
     }
 }

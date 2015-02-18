@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
             NumTermDeletes.IncrementAndGet();
             if (current == null)
             {
-                BytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes_Renamed.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field().Length));
+                BytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field.Length));
             }
         }
 

@@ -90,8 +90,8 @@ namespace Lucene.Net.Index
         public static TermContext Build(IndexReaderContext context, Term term)
         {
             Debug.Assert(context != null && context.IsTopLevel);
-            string field = term.Field();
-            BytesRef bytes = term.Bytes();
+            string field = term.Field;
+            BytesRef bytes = term.Bytes;
             TermContext perReaderTermState = new TermContext(context);
             //if (DEBUG) System.out.println("prts.build term=" + term);
             foreach (AtomicReaderContext ctx in context.Leaves)

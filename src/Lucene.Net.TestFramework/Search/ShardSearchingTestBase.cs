@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
                         }
                     }
 
-                    return new TermStatistics(term.Bytes(), docFreq, totalTermFreq);
+                    return new TermStatistics(term.Bytes, docFreq, totalTermFreq);
                 }
 
                 public override CollectionStatistics CollectionStatistics(string field)

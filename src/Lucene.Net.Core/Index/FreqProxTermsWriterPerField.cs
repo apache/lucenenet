@@ -479,7 +479,7 @@ namespace Lucene.Net.Index
                 int? delDocLimit;
                 if (segDeletes != null)
                 {
-                    protoTerm.Bytes_Renamed = text;
+                    protoTerm.Bytes = text;
                     int? docIDUpto;
                     segDeletes.TryGetValue(protoTerm, out docIDUpto);
                     if (docIDUpto != null)

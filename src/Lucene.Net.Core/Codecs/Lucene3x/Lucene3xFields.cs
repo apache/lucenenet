@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             bool success = false;
             try
             {
-                TermInfosReader r = new TermInfosReader(dir, info.Name, fieldInfos, context, indexDivisor);
+                var r = new TermInfosReader(dir, info.Name, fieldInfos, context, indexDivisor);
                 if (indexDivisor == -1)
                 {
                     TisNoIndex = r;
@@ -371,7 +371,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // Cannot be null (or move to next field) because at
                 // "worst" it'd seek to the same term we are on now,
                 // unless we are being called from seek
-                if (t2 == null || t2.Field() != InternedFieldName)
+                if (t2 == null || t2.Field != InternedFieldName)
                 {
                     return false;
                 }
@@ -383,7 +383,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 // Now test if prefix is identical and we found
                 // a non-BMP char at the same position:
-                BytesRef b2 = t2.Bytes();
+                BytesRef b2 = t2.Bytes;
                 Debug.Assert(b2.Offset == 0);
 
                 bool matches;
@@ -446,7 +446,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             OuterInstance.TermsDict.SeekEnum(TermEnum, SeekTermEnum.Term(), true);
                             //newSuffixStart = downTo+4;
                             NewSuffixStart = downTo;
-                            ScratchTerm.CopyBytes(TermEnum.Term().Bytes());
+                            ScratchTerm.CopyBytes(TermEnum.Term().Bytes);
                             didSeek = true;
                             if (DEBUG_SURROGATES)
                             {
@@ -510,14 +510,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     // We could hit EOF or different field since this
                     // was a seek "forward":
-                    if (t2 != null && t2.Field() == InternedFieldName)
+                    if (t2 != null && t2.Field == InternedFieldName)
                     {
                         if (DEBUG_SURROGATES)
                         {
-                            Console.WriteLine("      got term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + t2.Bytes());
+                            Console.WriteLine("      got term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + t2.Bytes);
                         }
 
-                        BytesRef b2 = t2.Bytes();
+                        BytesRef b2 = t2.Bytes;
                         Debug.Assert(b2.Offset == 0);
 
                         // Set newSuffixStart -- we can't use
@@ -599,13 +599,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // current term.
 
                 // TODO: can we avoid this copy?
-                if (TermEnum.Term() == null || TermEnum.Term().Field() != InternedFieldName)
+                if (TermEnum.Term() == null || TermEnum.Term().Field != InternedFieldName)
                 {
                     ScratchTerm.Length = 0;
                 }
                 else
                 {
-                    ScratchTerm.CopyBytes(TermEnum.Term().Bytes());
+                    ScratchTerm.CopyBytes(TermEnum.Term().Bytes);
                 }
 
                 if (DEBUG_SURROGATES)
@@ -710,7 +710,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             }
                             else
                             {
-                                Console.WriteLine("      hit term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + (t2 == null ? null : t2.Bytes()));
+                                Console.WriteLine("      hit term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + (t2 == null ? null : t2.Bytes));
                             }
                         }
 
@@ -718,9 +718,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                         // EOF or a different field:
                         bool matches;
 
-                        if (t2 != null && t2.Field() == InternedFieldName)
+                        if (t2 != null && t2.Field == InternedFieldName)
                         {
-                            BytesRef b2 = t2.Bytes();
+                            BytesRef b2 = t2.Bytes;
                             Debug.Assert(b2.Offset == 0);
                             if (b2.Length >= upTo + 3 && IsHighBMPChar(b2.Bytes, upTo))
                             {
@@ -755,7 +755,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             // TODO: more efficient seek?
                             OuterInstance.TermsDict.SeekEnum(TermEnum, SeekTermEnum.Term(), true);
 
-                            ScratchTerm.CopyBytes(SeekTermEnum.Term().Bytes());
+                            ScratchTerm.CopyBytes(SeekTermEnum.Term().Bytes);
 
                             // +3 because we don't need to check the char
                             // at upTo: we know it's > BMP
@@ -802,7 +802,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 UnicodeSortOrder = OuterInstance.SortTermsByUnicode();
 
                 Term t = TermEnum.Term();
-                if (t != null && t.Field() == InternedFieldName)
+                if (t != null && t.Field == InternedFieldName)
                 {
                     NewSuffixStart = 0;
                     PrevTerm.Length = 0;
@@ -853,7 +853,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 Term t = TermEnum.Term();
 
-                if (t != null && t.Field() == InternedFieldName && term.BytesEquals(t.Bytes()))
+                if (t != null && t.Field == InternedFieldName && term.BytesEquals(t.Bytes))
                 {
                     // If we found an exact match, no need to do the
                     // surrogate dance
@@ -861,10 +861,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         Console.WriteLine("  seek exact match");
                     }
-                    Current = t.Bytes();
+                    Current = t.Bytes;
                     return SeekStatus.FOUND;
                 }
-                else if (t == null || t.Field() != InternedFieldName)
+                else if (t == null || t.Field != InternedFieldName)
                 {
                     // TODO: maybe we can handle this like the next()
                     // into null?  set term as prevTerm then dance?
@@ -891,7 +891,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                             if (SeekToNonBMP(SeekTermEnum, ScratchTerm, i))
                             {
-                                ScratchTerm.CopyBytes(SeekTermEnum.Term().Bytes());
+                                ScratchTerm.CopyBytes(SeekTermEnum.Term().Bytes);
                                 OuterInstance.TermsDict.SeekEnum(TermEnum, SeekTermEnum.Term(), false);
 
                                 NewSuffixStart = 1 + i;
@@ -900,7 +900,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                                 // Found a match
                                 // TODO: faster seek?
-                                Current = TermEnum.Term().Bytes();
+                                Current = TermEnum.Term().Bytes;
                                 return SeekStatus.NOT_FOUND;
                             }
                         }
@@ -926,7 +926,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         Console.WriteLine("  seek hit non-exact term=" + UnicodeUtil.ToHexString(t.Text()));
                     }
 
-                    BytesRef br = t.Bytes();
+                    BytesRef br = t.Bytes;
                     Debug.Assert(br.Offset == 0);
 
                     SetNewSuffixStart(term, br);
@@ -934,16 +934,16 @@ namespace Lucene.Net.Codecs.Lucene3x
                     SurrogateDance();
 
                     Term t2 = TermEnum.Term();
-                    if (t2 == null || t2.Field() != InternedFieldName)
+                    if (t2 == null || t2.Field != InternedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        Debug.Assert(t2 == null || !t2.Field().Equals(InternedFieldName));
+                        Debug.Assert(t2 == null || !t2.Field.Equals(InternedFieldName));
                         Current = null;
                         return SeekStatus.END;
                     }
                     else
                     {
-                        Current = t2.Bytes();
+                        Current = t2.Bytes;
                         Debug.Assert(!UnicodeSortOrder || term.CompareTo(Current) < 0, "term=" + UnicodeUtil.ToHexString(term.Utf8ToString()) + " vs current=" + UnicodeUtil.ToHexString(Current.Utf8ToString()));
                         return SeekStatus.NOT_FOUND;
                     }
@@ -995,20 +995,20 @@ namespace Lucene.Net.Codecs.Lucene3x
                         return null;
                         // PreFlex codec interns field names:
                     }
-                    else if (TermEnum.Term().Field() != InternedFieldName)
+                    else if (TermEnum.Term().Field != InternedFieldName)
                     {
                         return null;
                     }
                     else
                     {
-                        return Current = TermEnum.Term().Bytes();
+                        return Current = TermEnum.Term().Bytes;
                     }
                 }
 
                 // TODO: can we use STE's prevBuffer here?
-                PrevTerm.CopyBytes(TermEnum.Term().Bytes());
+                PrevTerm.CopyBytes(TermEnum.Term().Bytes);
 
-                if (TermEnum.Next() && TermEnum.Term().Field() == InternedFieldName)
+                if (TermEnum.Next() && TermEnum.Term().Field == InternedFieldName)
                 {
                     NewSuffixStart = TermEnum.NewSuffixStart;
                     if (DEBUG_SURROGATES)
@@ -1017,15 +1017,15 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     SurrogateDance();
                     Term t = TermEnum.Term();
-                    if (t == null || t.Field() != InternedFieldName)
+                    if (t == null || t.Field != InternedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        Debug.Assert(t == null || !t.Field().Equals(InternedFieldName));
+                        Debug.Assert(t == null || !t.Field.Equals(InternedFieldName));
                         Current = null;
                     }
                     else
                     {
-                        Current = t.Bytes();
+                        Current = t.Bytes;
                     }
                     return Current;
                 }
@@ -1042,15 +1042,15 @@ namespace Lucene.Net.Codecs.Lucene3x
                     SurrogateDance();
 
                     Term t = TermEnum.Term();
-                    if (t == null || t.Field() != InternedFieldName)
+                    if (t == null || t.Field != InternedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        Debug.Assert(t == null || !t.Field().Equals(InternedFieldName));
+                        Debug.Assert(t == null || !t.Field.Equals(InternedFieldName));
                         return null;
                     }
                     else
                     {
-                        Current = t.Bytes();
+                        Current = t.Bytes;
                         return Current;
                     }
                 }

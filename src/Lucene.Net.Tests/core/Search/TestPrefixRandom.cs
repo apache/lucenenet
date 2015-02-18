@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
             Dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
 
-            Document doc = new Document();
+            var doc = new Document();
             Field field = NewStringField("field", "", Field.Store.NO);
             doc.Add(field);
 
@@ -89,13 +89,13 @@ namespace Lucene.Net.Search
         {
             private readonly TestPrefixRandom OuterInstance;
 
-            internal readonly BytesRef Prefix;
+            private readonly BytesRef Prefix;
 
             internal DumbPrefixQuery(TestPrefixRandom outerInstance, Term term)
-                : base(term.Field())
+                : base(term.Field)
             {
                 this.OuterInstance = outerInstance;
-                Prefix = term.Bytes();
+                Prefix = term.Bytes;
             }
 
             public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)

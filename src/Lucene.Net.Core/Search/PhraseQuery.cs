@@ -120,9 +120,9 @@ namespace Lucene.Net.Search
         {
             if (Terms_Renamed.Count == 0)
             {
-                Field = term.Field();
+                Field = term.Field;
             }
-            else if (!term.Field().Equals(Field))
+            else if (!term.Field.Equals(Field))
             {
                 throw new System.ArgumentException("All phrase terms must be in the same field: " + term);
             }
@@ -365,16 +365,16 @@ namespace Lucene.Net.Search
                         Debug.Assert(TermNotInReader(reader, t), "no termstate found but term exists in reader");
                         return null;
                     }
-                    te.SeekExact(t.Bytes(), state);
+                    te.SeekExact(t.Bytes, state);
                     DocsAndPositionsEnum postingsEnum = te.DocsAndPositions(liveDocs, null, DocsEnum.FLAG_NONE);
 
                     // PhraseQuery on a field that did not index
                     // positions.
                     if (postingsEnum == null)
                     {
-                        Debug.Assert(te.SeekExact(t.Bytes()), "termstate found but no term exists in reader");
+                        Debug.Assert(te.SeekExact(t.Bytes), "termstate found but no term exists in reader");
                         // term does exist, but has no positions
-                        throw new InvalidOperationException("field \"" + t.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
+                        throw new InvalidOperationException("field \"" + t.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
                     }
                     postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq(), (int)OuterInstance.Positions_Renamed[i], t);
                 }

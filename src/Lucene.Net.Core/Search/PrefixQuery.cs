@@ -36,14 +36,14 @@ namespace Lucene.Net.Search
     /// </summary>
     public class PrefixQuery : MultiTermQuery
     {
-        private Term Prefix_Renamed;
+        private readonly Term _prefix;
 
         /// <summary>
         /// Constructs a query for terms starting with <code>prefix</code>. </summary>
         public PrefixQuery(Term prefix)
-            : base(prefix.Field())
+            : base(prefix.Field)
         {
-            this.Prefix_Renamed = prefix;
+            this._prefix = prefix;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Prefix_Renamed;
+                return _prefix;
             }
         }
 
@@ -60,12 +60,12 @@ namespace Lucene.Net.Search
         {
             TermsEnum tenum = terms.Iterator(null);
 
-            if (Prefix_Renamed.Bytes().Length == 0)
+            if (_prefix.Bytes.Length == 0)
             {
                 // no prefix -- match all terms for this field:
                 return tenum;
             }
-            return new PrefixTermsEnum(tenum, Prefix_Renamed.Bytes());
+            return new PrefixTermsEnum(tenum, _prefix.Bytes);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
                 buffer.Append(Field);
                 buffer.Append(":");
             }
-            buffer.Append(Prefix_Renamed.Text());
+            buffer.Append(_prefix.Text());
             buffer.Append('*');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((Prefix_Renamed == null) ? 0 : Prefix_Renamed.GetHashCode());
+            result = prime * result + ((_prefix == null) ? 0 : _prefix.GetHashCode());
             return result;
         }
 
@@ -107,14 +107,14 @@ namespace Lucene.Net.Search
                 return false;
             }
             PrefixQuery other = (PrefixQuery)obj;
-            if (Prefix_Renamed == null)
+            if (_prefix == null)
             {
-                if (other.Prefix_Renamed != null)
+                if (other._prefix != null)
                 {
                     return false;
                 }
             }
-            else if (!Prefix_Renamed.Equals(other.Prefix_Renamed))
+            else if (!_prefix.Equals(other._prefix))
             {
                 return false;
             }

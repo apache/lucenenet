@@ -79,8 +79,8 @@ namespace Lucene.Net.Queries
                 if (iter.MoveNext())
                 {
                     var next = iter.Current;
-                    field = next.Field();
-                    return next.Bytes();
+                    field = next.Field;
+                    return next.Bytes;
                 }
                 return null;
             }

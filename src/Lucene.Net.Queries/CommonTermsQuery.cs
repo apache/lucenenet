@@ -265,9 +265,7 @@ namespace Lucene.Net.Queries
                 {
                     Term term = queryTerms[i];
                     TermContext termContext = contextArray[i];
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final org.apache.lucene.index.Terms terms = fields.terms(term.field());
-                    Terms terms = fields.Terms(term.Field());
+                    Terms terms = fields.Terms(term.Field);
                     if (terms == null)
                     {
                         // field does not exist
@@ -280,7 +278,7 @@ namespace Lucene.Net.Queries
                     {
                         continue;
                     }
-                    if (termsEnum.SeekExact(term.Bytes()))
+                    if (termsEnum.SeekExact(term.Bytes))
                     {
                         if (termContext == null)
                         {
