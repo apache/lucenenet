@@ -323,5 +323,12 @@ namespace Lucene.Net.Util
                 return (object[])(Array)Heap;
             }
         }
+
+        public T[] ToArray()
+        {
+            var copy = new T[QueueSize];
+            Array.Copy(Heap, 1, copy, 0, QueueSize);
+            return copy;
+        }
     }
 }
