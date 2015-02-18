@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Counter = Lucene.Net.Util.Counter;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// The <seealso cref="TimeLimitingCollector"/> is used to timeout search requests that
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search
                     }
                     catch (ThreadInterruptedException ie)
                     {
-                        throw new ThreadInterruptedException(ie);
+                        throw new ThreadInterruptedException("Thread interrupted exception", ie);
                     }
                 }
             }

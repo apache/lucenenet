@@ -7,7 +7,7 @@ namespace Lucene.Net.Index
 {
     using Lucene.Net.Support;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
                     }
                     catch (ThreadInterruptedException e)
                     {
-                        throw new ThreadInterruptedException(e);
+                        throw new ThreadInterruptedException("Thread interrupted exception", e);
                     }
                 }
             }

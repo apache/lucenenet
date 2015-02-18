@@ -20,7 +20,7 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// Takes a while to open files: gives testThreadInterruptDeadlock
@@ -44,7 +44,7 @@ namespace Lucene.Net.Store
                 catch (Exception)
                 {
                 }
-                throw new ThreadInterruptedException(ie);
+                throw new ThreadInterruptedException("Thread interrupted exception", ie);
             }
         }
     }

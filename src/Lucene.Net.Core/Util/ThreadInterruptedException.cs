@@ -25,11 +25,11 @@ namespace Lucene.Net.Util
     /// exception is not checked..
     /// </summary>
 
-    public sealed class ThreadInterruptedException : Exception
-    {
-        public ThreadInterruptedException(Exception ie)
-            : base(ie.ToString(), ie)
-        {
-        }
-    }
+    //public sealed class ThreadInterruptedException : Exception
+    //{
+    //    public ThreadInterruptedException(Exception ie)
+    //        : base(ie.ToString(), ie)
+    //    {
+    //    }
+    //}
 }

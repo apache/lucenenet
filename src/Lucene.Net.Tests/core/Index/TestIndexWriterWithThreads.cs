@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
     using NumericDocValuesField = NumericDocValuesField;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// MultiThreaded IndexWriter tests
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
                             }
                             catch (ThreadInterruptedException ie)
                             {
-                                throw new ThreadInterruptedException(ie);
+                                throw new ThreadInterruptedException("Thread interrupted exception", ie);
                             }
                             if (fullCount++ >= 5)
                             {

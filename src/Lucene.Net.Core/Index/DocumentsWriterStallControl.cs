@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// Controls the health status of a <seealso cref="DocumentsWriter"/> sessions. this class
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                         }
                         catch (ThreadInterruptedException e)
                         {
-                            throw new ThreadInterruptedException(e);
+                            throw new ThreadInterruptedException("Thread interrupted exception", e);
                         }
                     }
                 }

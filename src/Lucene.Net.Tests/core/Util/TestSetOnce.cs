@@ -1,3 +1,4 @@
+using System.Threading;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;

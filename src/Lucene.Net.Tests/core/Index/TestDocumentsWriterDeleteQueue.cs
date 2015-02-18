@@ -1,3 +1,4 @@
+using System.Threading;
 using Apache.NMS.Util;
 using Lucene.Net.Search;
 using System;
@@ -30,7 +31,7 @@ namespace Lucene.Net.Index
     using DeleteSlice = Lucene.Net.Index.DocumentsWriterDeleteQueue.DeleteSlice;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// Unit test for <seealso cref="DocumentsWriterDeleteQueue"/>
@@ -282,7 +283,7 @@ namespace Lucene.Net.Index
                 }
                 catch (ThreadInterruptedException e)
                 {
-                    throw new ThreadInterruptedException(e);
+                    throw new ThreadInterruptedException("Thread interrupted exception", e);
                 }
                 int i = 0;
                 while ((i = Index.GetAndIncrement()) < Ids.Length)
