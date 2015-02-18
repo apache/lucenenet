@@ -850,7 +850,6 @@
     <Compile Include="Util\Sorter.cs" />
     <Compile Include="Util\SPIClassIterator.cs" />
     <Compile Include="Util\StringHelper.cs" />
-    <Compile Include="Util\ThreadInterruptedException.cs" />
     <Compile Include="Util\TimSorter.cs" />
     <Compile Include="Util\ToStringUtils.cs" />
     <Compile Include="Util\UnicodeUtil.cs" />

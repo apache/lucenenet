@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -43,7 +44,6 @@ namespace Lucene.Net.Index
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using TopDocs = Lucene.Net.Search.TopDocs;
     
     [TestFixture]
@@ -514,7 +514,7 @@ namespace Lucene.Net.Index
                     }
                     catch (ThreadInterruptedException ie)
                     {
-                        throw new ThreadInterruptedException(ie);
+                        throw new ThreadInterruptedException("Thread interrupted exception", ie);
                     }
                 }
             }

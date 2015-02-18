@@ -75,7 +75,6 @@ namespace Lucene.Net.Index
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     [TestFixture]
     public class TestIndexWriter : LuceneTestCase

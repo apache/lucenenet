@@ -23,7 +23,6 @@ namespace Lucene.Net.Search
          */
 
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
 
     /// <summary>
@@ -150,7 +149,7 @@ namespace Lucene.Net.Search
                 }
                 catch (ThreadInterruptedException ie)
                 {
-                    throw new ThreadInterruptedException(ie);
+                    throw new ThreadInterruptedException("Thread interrupted exception", ie);
                 }
 
                 // Max it out so any waiting search threads will return:
