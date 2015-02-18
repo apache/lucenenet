@@ -282,6 +282,13 @@ namespace Lucene.Net.Util
             QueueSize = 0;
         }
 
+        public T[] ToArray()
+        {
+            T[] copy = new T[QueueSize];
+            Array.Copy(Heap, 1, copy, 0, QueueSize);
+            return copy;
+        }
+
         private void Resize()
         {
             int newSize = Math.Min(ArrayUtil.MAX_ARRAY_LENGTH - 1, 2*MaxSize);

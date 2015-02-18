@@ -373,6 +373,35 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        public static void TestIntegrityAfterResize()
+        {
+            // Tests that after a resize, the queue keeps working fine
+            PriorityQueue<int?> pq = new IntegerQueue(4);
+            pq.Add(3);
+            pq.Add(-2);
+            pq.Add(1);
+            pq.Add(-10);
+            pq.Add(-100);  // Resize
+            Assert.AreEqual(pq.Top(), -100);
+
+            pq.Add(-1000);
+            Assert.AreEqual(pq.Top(), -1000);
+
+            pq.Pop();
+            Assert.AreEqual(pq.Top(), -100);
+
+            pq.Add(0);
+            Assert.AreEqual(pq.Top(), -100);
+
+            for(int i = 0; i < 100; i++)
+            {
+                pq.Add(5);  // Lots of resizes
+            }
+            
+            Assert.AreEqual(pq.Top(), -100);
+        }
+
+        [Test]
         public virtual void TestClear()
         {
             PriorityQueue<int?> pq = new IntegerQueue(3);
