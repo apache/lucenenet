@@ -302,6 +302,8 @@ namespace Lucene.Net.Util
             Assert.AreEqual(pq.Top().Field, 1);
         }
 
+        /*
+         * With the resizing feature, this test has no longer sense.
         [Test]
         public static void TestOverflow()
         {
@@ -337,6 +339,37 @@ namespace Lucene.Net.Util
             catch (IndexOutOfRangeException)
             {
             }
+        }
+         */
+
+        [Test]
+        public static void TestResize()
+        {
+            // Initialize a queue with maximum size 4
+            PriorityQueue<int?> pq = new IntegerQueue(4);
+            pq.Add(3);
+            pq.Add(-2);
+            pq.Add(1);
+            pq.Add(-10);
+               
+            Assert.AreEqual(pq.Size(), 4);
+
+            // Should resize the queue
+            pq.Add(7);
+
+            Assert.AreEqual(pq.Size(), 5);
+
+            pq.Add(10);
+            pq.Add(1);
+            pq.Add(5);
+
+            Assert.AreEqual(pq.Size(), 8);
+
+            // Should resize again
+            pq.Add(100);
+            pq.Add(16);
+
+            Assert.AreEqual(pq.Size(), 10);
         }
 
         [Test]
@@ -494,9 +527,8 @@ namespace Lucene.Net.Util
         [Test, Timeout(0)]
         public static void TestStress()
         {
-            int atLeast = 10000000;
+            int atLeast = 1000000;
             int maxSize = AtLeast(atLeast);
-            int size;
             PriorityQueue<int?> pq = new IntegerQueue(maxSize);
 
             // Add a lot of elements
@@ -532,7 +564,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual(pq.Size(), 0);
 
             // One last time
-            for (int i = 0; i < 2 * maxSize; i++)
+            for (int i = 0; 2 * i < maxSize; i++)
             {
                 pq.Add(Random().Next());
             }
