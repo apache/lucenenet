@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Support;
+    using Lucene.Net.Util;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
             int maxSize = Math.Min(size, MaxSize);
-            PriorityQueue<ScoreTerm> stQueue = new PriorityQueue<ScoreTerm>();
+            PriorityQueue<ScoreTerm> stQueue = new ScoreTermPQ();
             CollectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(this, maxSize, stQueue));
 
             var q = TopLevelQuery;
@@ -161,9 +161,9 @@ namespace Lucene.Net.Search
 
                 //System.out.println("TTR.collect term=" + bytes.utf8ToString() + " boost=" + boost + " ord=" + readerContext.ord);
                 // ignore uncompetitive hits
-                if (StQueue.Count == MaxSize)
+                if (StQueue.Size() == MaxSize)
                 {
-                    ScoreTerm t = StQueue.Peek();
+                    ScoreTerm t = StQueue.Top();
                     if (boost < t.Boost)
                     {
                         return true;
@@ -190,11 +190,11 @@ namespace Lucene.Net.Search
                     visitedTerms[st.Bytes] = st;
                     Debug.Assert(st.TermState.DocFreq == 0);
                     st.TermState.Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
-                    StQueue.Offer(st);
+                    StQueue.Add(st);
                     // possibly drop entries from queue
-                    if (StQueue.Count > MaxSize)
+                    if (StQueue.Size() > MaxSize)
                     {
-                        st = StQueue.Poll();
+                        st = StQueue.Pop();
                         visitedTerms.Remove(st.Bytes);
                         st.TermState.Clear(); // reset the termstate!
                     }
@@ -202,11 +202,11 @@ namespace Lucene.Net.Search
                     {
                         st = new ScoreTerm(termComp, new TermContext(TopReaderContext));
                     }
-                    Debug.Assert(StQueue.Count <= MaxSize, "the PQ size must be limited to maxSize");
+                    Debug.Assert(StQueue.Size() <= MaxSize, "the PQ size must be limited to maxSize");
                     // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
-                    if (StQueue.Count == MaxSize)
+                    if (StQueue.Size() == MaxSize)
                     {
-                        t2 = StQueue.Peek();
+                        t2 = StQueue.Top();
                         maxBoostAtt.MaxNonCompetitiveBoost = t2.Boost;
                         maxBoostAtt.CompetitiveTerm = t2.Bytes;
                     }
@@ -283,5 +283,14 @@ namespace Lucene.Net.Search
                 }
             }
         }
+
+        private class ScoreTermPQ : PriorityQueue<ScoreTerm>
+        {
+            public override bool LessThan(ScoreTerm a, ScoreTerm b)
+            {
+                return (a.CompareTo(b) < 0) ? true : false;
+            }
+        }
+
     }
 }
