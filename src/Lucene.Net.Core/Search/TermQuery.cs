@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public class TermQuery : Query
     {
-        private readonly Term Term_Renamed;
+        private readonly Term _term;
         private readonly int DocFreq;
         private readonly TermContext PerReaderTermState;
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
                 Debug.Assert(termStates != null, "TermContext must not be null");
                 this.TermStates = termStates;
                 this.Similarity = searcher.Similarity;
-                this.Stats = Similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.Term_Renamed.Field()), searcher.TermStatistics(outerInstance.Term_Renamed, termStates));
+                this.Stats = Similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance._term.Field), searcher.TermStatistics(outerInstance._term, termStates));
             }
 
             public override string ToString()
@@ -112,12 +112,12 @@ namespace Lucene.Net.Search
                 TermState state = TermStates.Get(context.Ord);
                 if (state == null) // term is not present in that reader
                 {
-                    Debug.Assert(TermNotInReader(context.AtomicReader, OuterInstance.Term_Renamed), "no termstate found but term exists in reader term=" + OuterInstance.Term_Renamed);
+                    Debug.Assert(TermNotInReader(context.AtomicReader, OuterInstance._term), "no termstate found but term exists in reader term=" + OuterInstance._term);
                     return null;
                 }
                 //System.out.println("LD=" + reader.getLiveDocs() + " set?=" + (reader.getLiveDocs() != null ? reader.getLiveDocs().get(0) : "null"));
-                TermsEnum termsEnum = context.AtomicReader.Terms(OuterInstance.Term_Renamed.Field()).Iterator(null);
-                termsEnum.SeekExact(OuterInstance.Term_Renamed.Bytes(), state);
+                TermsEnum termsEnum = context.AtomicReader.Terms(OuterInstance._term.Field).Iterator(null);
+                termsEnum.SeekExact(OuterInstance._term.Bytes, state);
                 return termsEnum;
             }
 
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public TermQuery(Term t, int docFreq)
         {
-            Term_Renamed = t;
+            _term = t;
             this.DocFreq = docFreq;
             PerReaderTermState = null;
         }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Search
         public TermQuery(Term t, TermContext states)
         {
             Debug.Assert(states != null);
-            Term_Renamed = t;
+            _term = t;
             DocFreq = states.DocFreq;
             PerReaderTermState = states;
         }
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Term_Renamed;
+                return _term;
             }
         }
 
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
             if (PerReaderTermState == null || PerReaderTermState.TopReaderContext != context)
             {
                 // make TermQuery single-pass if we don't have a PRTS or if the context differs!
-                termState = TermContext.Build(context, Term_Renamed);
+                termState = TermContext.Build(context, _term);
             }
             else
             {
@@ -227,12 +227,12 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (!Term_Renamed.Field().Equals(field))
+            if (!_term.Field.Equals(field))
             {
-                buffer.Append(Term_Renamed.Field());
+                buffer.Append(_term.Field);
                 buffer.Append(":");
             }
-            buffer.Append(Term_Renamed.Text());
+            buffer.Append(_term.Text());
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
         }
@@ -246,14 +246,14 @@ namespace Lucene.Net.Search
                 return false;
             }
             TermQuery other = (TermQuery)o;
-            return (this.Boost == other.Boost) && this.Term_Renamed.Equals(other.Term_Renamed);
+            return (this.Boost == other.Boost) && this._term.Equals(other._term);
         }
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) ^ Term_Renamed.GetHashCode();
+            return Number.FloatToIntBits(Boost) ^ _term.GetHashCode();
         }
     }
 }

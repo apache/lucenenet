@@ -114,13 +114,13 @@ namespace Lucene.Net.Index
             {
                 return 0;
             }
-            Terms terms = fields.Terms(term.Field());
+            Terms terms = fields.Terms(term.Field);
             if (terms == null)
             {
                 return 0;
             }
             TermsEnum termsEnum = terms.Iterator(null);
-            if (termsEnum.SeekExact(term.Bytes()))
+            if (termsEnum.SeekExact(term.Bytes))
             {
                 return termsEnum.DocFreq();
             }
@@ -144,13 +144,13 @@ namespace Lucene.Net.Index
             {
                 return 0;
             }
-            Terms terms = fields.Terms(term.Field());
+            Terms terms = fields.Terms(term.Field);
             if (terms == null)
             {
                 return 0;
             }
             TermsEnum termsEnum = terms.Iterator(null);
-            if (termsEnum.SeekExact(term.Bytes()))
+            if (termsEnum.SeekExact(term.Bytes))
             {
                 return termsEnum.TotalTermFreq();
             }
@@ -209,16 +209,16 @@ namespace Lucene.Net.Index
         ///  <seealso cref= TermsEnum#docs(Bits, DocsEnum)  </seealso>
         public DocsEnum TermDocsEnum(Term term)
         {
-            Debug.Assert(term.Field() != null);
-            Debug.Assert(term.Bytes() != null);
+            Debug.Assert(term.Field != null);
+            Debug.Assert(term.Bytes != null);
             Fields fields = Fields;
             if (fields != null)
             {
-                Terms terms = fields.Terms(term.Field());
+                Terms terms = fields.Terms(term.Field);
                 if (terms != null)
                 {
                     TermsEnum termsEnum = terms.Iterator(null);
-                    if (termsEnum.SeekExact(term.Bytes()))
+                    if (termsEnum.SeekExact(term.Bytes))
                     {
                         return termsEnum.Docs(LiveDocs, null);
                     }
@@ -234,16 +234,16 @@ namespace Lucene.Net.Index
         ///  <seealso cref= TermsEnum#docsAndPositions(Bits, DocsAndPositionsEnum)  </seealso>
         public DocsAndPositionsEnum TermPositionsEnum(Term term)
         {
-            Debug.Assert(term.Field() != null);
-            Debug.Assert(term.Bytes() != null);
+            Debug.Assert(term.Field != null);
+            Debug.Assert(term.Bytes != null);
             Fields fields = Fields;
             if (fields != null)
             {
-                Terms terms = fields.Terms(term.Field());
+                Terms terms = fields.Terms(term.Field);
                 if (terms != null)
                 {
                     TermsEnum termsEnum = terms.Iterator(null);
-                    if (termsEnum.SeekExact(term.Bytes()))
+                    if (termsEnum.SeekExact(term.Bytes))
                     {
                         return termsEnum.DocsAndPositions(LiveDocs, null);
                     }

@@ -73,9 +73,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             return new string(buffer, 0, end);
         }
 
-        private string ToHexString(Term t)
+        private static string ToHexString(Term t)
         {
-            return t.Field() + ":" + UnicodeUtil.ToHexString(t.Text());
+            return t.Field + ":" + UnicodeUtil.ToHexString(t.Text());
         }
 
         private string GetRandomString(Random r)
@@ -99,19 +99,19 @@ namespace Lucene.Net.Codecs.Lucene3x
             return s;
         }
 
-        private class SortTermAsUTF16Comparator : IComparer<Term>
+        private sealed class SortTermAsUTF16Comparator : IComparer<Term>
         {
-            internal static readonly IComparer<BytesRef> LegacyComparator = BytesRef.UTF8SortedAsUTF16Comparer;
+            private static readonly IComparer<BytesRef> LegacyComparator = BytesRef.UTF8SortedAsUTF16Comparer;
 
-            public virtual int Compare(Term term1, Term term2)
+            public int Compare(Term term1, Term term2)
             {
-                if (term1.Field().Equals(term2.Field()))
+                if (term1.Field.Equals(term2.Field))
                 {
-                    return LegacyComparator.Compare(term1.Bytes(), term2.Bytes());
+                    return LegacyComparator.Compare(term1.Bytes, term2.Bytes);
                 }
                 else
                 {
-                    return term1.Field().CompareTo(term2.Field());
+                    return System.String.Compare(term1.Field, term2.Field, System.StringComparison.Ordinal);
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         if (VERBOSE)
                         {
                             Console.WriteLine("  got term=" + field + ":" + UnicodeUtil.ToHexString(text.Utf8ToString()));
-                            Console.WriteLine("       exp=" + exp.Field() + ":" + UnicodeUtil.ToHexString(exp.Text().ToString()));
+                            Console.WriteLine("       exp=" + exp.Field + ":" + UnicodeUtil.ToHexString(exp.Text()));
                             Console.WriteLine();
                         }
                         if (lastText == null)
@@ -154,8 +154,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                             Assert.IsTrue(lastText.CompareTo(text) < 0);
                             lastText.CopyBytes(text);
                         }
-                        Assert.AreEqual(exp.Field(), field);
-                        Assert.AreEqual(exp.Bytes(), text);
+                        Assert.AreEqual(exp.Field, field);
+                        Assert.AreEqual(exp.Bytes, text);
                         termCount++;
                     }
                     if (VERBOSE)
@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // pick random field+term
                 int spot = r.Next(fieldTerms.Count);
                 Term term = fieldTerms[spot];
-                string field = term.Field();
+                string field = term.Field;
 
                 if (VERBOSE)
                 {
@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
 
                 // seek should find the term
-                Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.SeekCeil(term.Bytes()));
+                Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.SeekCeil(term.Bytes));
 
                 // now .next() this many times:
                 int ct = TestUtil.NextInt(r, 5, 100);
@@ -221,7 +221,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         break;
                     }
                     term = fieldTerms[1 + spot + i];
-                    if (!term.Field().Equals(field))
+                    if (!term.Field.Equals(field))
                     {
                         Assert.IsNull(te.Next());
                         break;
@@ -236,7 +236,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text().ToString()));
                         }
 
-                        Assert.AreEqual(term.Bytes(), t);
+                        Assert.AreEqual(term.Bytes, t);
                     }
                 }
             }
@@ -283,13 +283,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                         spot = -spot - 1;
 
-                        if (spot == fieldTerms.Count || !fieldTerms[spot].Field().Equals(field))
+                        if (spot == fieldTerms.Count || !fieldTerms[spot].Field.Equals(field))
                         {
-                            Assert.AreEqual(TermsEnum.SeekStatus.END, te.SeekCeil(tx.Bytes()));
+                            Assert.AreEqual(TermsEnum.SeekStatus.END, te.SeekCeil(tx.Bytes));
                         }
                         else
                         {
-                            Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(tx.Bytes()));
+                            Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(tx.Bytes));
 
                             if (VERBOSE)
                             {
@@ -297,7 +297,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                 Console.WriteLine("  exp term=" + UnicodeUtil.ToHexString(fieldTerms[spot].Text()));
                             }
 
-                            Assert.AreEqual(fieldTerms[spot].Bytes(), te.Term());
+                            Assert.AreEqual(fieldTerms[spot].Bytes, te.Term());
 
                             // now .next() this many times:
                             int ct = TestUtil.NextInt(r, 5, 100);
@@ -312,7 +312,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                     break;
                                 }
                                 Term term = fieldTerms[1 + spot + i];
-                                if (!term.Field().Equals(field))
+                                if (!term.Field.Equals(field))
                                 {
                                     Assert.IsNull(te.Next());
                                     break;
@@ -327,7 +327,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                         Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text().ToString()));
                                     }
 
-                                    Assert.AreEqual(term.Bytes(), t);
+                                    Assert.AreEqual(term.Bytes, t);
                                 }
                             }
                         }

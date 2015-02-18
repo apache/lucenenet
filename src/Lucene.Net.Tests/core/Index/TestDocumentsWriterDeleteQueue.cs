@@ -86,8 +86,8 @@ namespace Lucene.Net.Index
             foreach (Term t in queue.FreezeGlobalBuffer(null).TermsIterable())
             {
                 BytesRef bytesRef = new BytesRef();
-                bytesRef.CopyBytes(t.Bytes());
-                frozenSet.Add(new Term(t.Field(), bytesRef));
+                bytesRef.CopyBytes(t.Bytes);
+                frozenSet.Add(new Term(t.Field, bytesRef));
             }
             assertEquals(uniqueValues, frozenSet);
             Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
@@ -247,8 +247,8 @@ namespace Lucene.Net.Index
             foreach (Term t in queue.FreezeGlobalBuffer(null).TermsIterable())
             {
                 BytesRef bytesRef = new BytesRef();
-                bytesRef.CopyBytes(t.Bytes());
-                frozenSet.Add(new Term(t.Field(), bytesRef));
+                bytesRef.CopyBytes(t.Bytes);
+                frozenSet.Add(new Term(t.Field, bytesRef));
             }
             Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
             Assert.AreEqual(uniqueValues.Count, frozenSet.Count);

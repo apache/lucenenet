@@ -353,7 +353,7 @@ namespace Lucene.Net.Search
                     Debug.Assert(!clause.Prohibited);
                     Debug.Assert(!clause.Required);
                     Term term = ((TermQuery)clause.Query).Term;
-                    long ord = Dv.LookupTerm(term.Bytes());
+                    long ord = Dv.LookupTerm(term.Bytes);
                     if (ord >= 0)
                     {
                         bool success = Ords.Add(ord);

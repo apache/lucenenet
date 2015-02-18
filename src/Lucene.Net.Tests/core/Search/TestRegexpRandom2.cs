@@ -109,14 +109,11 @@ namespace Lucene.Net.Search
         /// a stupid regexp query that just blasts thru the terms </summary>
         private class DumbRegexpQuery : MultiTermQuery
         {
-            private readonly TestRegexpRandom2 OuterInstance;
+            private readonly Automaton Automaton;
 
-            internal readonly Automaton Automaton;
-
-            internal DumbRegexpQuery(TestRegexpRandom2 outerInstance, Term term, int flags)
-                : base(term.Field())
+            internal DumbRegexpQuery(Term term, int flags)
+                : base(term.Field)
             {
-                this.OuterInstance = outerInstance;
                 RegExp re = new RegExp(term.Text(), flags);
                 Automaton = re.ToAutomaton();
             }
@@ -126,11 +123,11 @@ namespace Lucene.Net.Search
                 return new SimpleAutomatonTermsEnum(this, terms.Iterator(null));
             }
 
-            private class SimpleAutomatonTermsEnum : FilteredTermsEnum
+            private sealed class SimpleAutomatonTermsEnum : FilteredTermsEnum
             {
-                internal bool InstanceFieldsInitialized = false;
+                private bool InstanceFieldsInitialized = false;
 
-                internal virtual void InitializeInstanceFields()
+                private void InitializeInstanceFields()
                 {
                     RunAutomaton = new CharacterRunAutomaton(OuterInstance.Automaton);
                 }
@@ -192,7 +189,7 @@ namespace Lucene.Net.Search
         protected internal virtual void AssertSame(string regexp)
         {
             RegexpQuery smart = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
-            DumbRegexpQuery dumb = new DumbRegexpQuery(this, new Term(FieldName, regexp), RegExp.NONE);
+            DumbRegexpQuery dumb = new DumbRegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
 
             TopDocs smartDocs = Searcher1.Search(smart, 25);
             TopDocs dumbDocs = Searcher2.Search(dumb, 25);

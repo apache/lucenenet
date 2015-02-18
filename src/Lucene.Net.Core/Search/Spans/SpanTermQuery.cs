@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                return term.Field();
+                return term.Field;
             }
         }
 
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Spans
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (term.Field().Equals(field))
+            if (term.Field.Equals(field))
             {
                 buffer.Append(term.Text());
             }
@@ -133,11 +133,11 @@ namespace Lucene.Net.Search.Spans
                 Fields fields = context.AtomicReader.Fields;
                 if (fields != null)
                 {
-                    Terms terms = fields.Terms(term.Field());
+                    Terms terms = fields.Terms(term.Field);
                     if (terms != null)
                     {
                         TermsEnum termsEnum = terms.Iterator(null);
-                        if (termsEnum.SeekExact(term.Bytes()))
+                        if (termsEnum.SeekExact(term.Bytes))
                         {
                             state = termsEnum.TermState();
                         }
@@ -166,8 +166,8 @@ namespace Lucene.Net.Search.Spans
                 return TermSpans.EMPTY_TERM_SPANS;
             }
 
-            TermsEnum termsEnum_ = context.AtomicReader.Terms(term.Field()).Iterator(null);
-            termsEnum_.SeekExact(term.Bytes(), state);
+            TermsEnum termsEnum_ = context.AtomicReader.Terms(term.Field).Iterator(null);
+            termsEnum_.SeekExact(term.Bytes, state);
 
             DocsAndPositionsEnum postings = termsEnum_.DocsAndPositions(acceptDocs, null, DocsAndPositionsEnum.FLAG_PAYLOADS);
 
@@ -178,7 +178,7 @@ namespace Lucene.Net.Search.Spans
             else
             {
                 // term does exist, but has no positions
-                throw new InvalidOperationException("field \"" + term.Field() + "\" was indexed without position data; cannot run SpanTermQuery (term=" + term.Text() + ")");
+                throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run SpanTermQuery (term=" + term.Text() + ")");
             }
         }
     }

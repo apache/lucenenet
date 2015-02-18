@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -82,9 +83,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             for (int i = 0; indexEnum.Next(); i++)
             {
                 Term term = indexEnum.Term();
-                if (currentField == null || !currentField.Equals(term.Field()))
+                if (currentField == null || !currentField.Equals(term.Field))
                 {
-                    currentField = term.Field();
+                    currentField = term.Field;
                     fieldStrs.Add(currentField);
                     fieldCounter++;
                 }
@@ -136,10 +137,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             // read the term
             int fieldId = input.ReadVInt();
             Term field = Fields[fieldId];
-            Term term = new Term(field.Field(), input.ReadString());
+            Term term = new Term(field.Field, input.ReadString());
 
             // read the terminfo
-            TermInfo termInfo = new TermInfo();
+            var termInfo = new TermInfo();
             termInfo.DocFreq = input.ReadVInt();
             if (termInfo.DocFreq >= SkipInterval)
             {
@@ -205,7 +206,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // read the term
             int fieldId = input.ReadVInt();
             Term field = Fields[fieldId];
-            return new Term(field.Field(), input.ReadString());
+            return new Term(field.Field, input.ReadString());
         }
 
         /// <summary>
@@ -254,7 +255,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 reuse.Length = input.ReadVInt();
                 reuse.Grow(reuse.Length);
                 input.ReadBytes(reuse.Bytes, 0, reuse.Length);
-                return Comparator.Compare(term.Bytes(), reuse);
+                return Comparator.Compare(term.Bytes, reuse);
             }
             return c;
         }
@@ -273,7 +274,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private int CompareField(Term term, int termIndex, PagedBytesDataInput input)
         {
             input.Position = IndexToDataOffset.Get(termIndex);
-            return term.Field().CompareTo(Fields[input.ReadVInt()].Field());
+            return System.String.Compare(term.Field, Fields[input.ReadVInt()].Field, System.StringComparison.Ordinal);
         }
 
         internal virtual long RamBytesUsed()

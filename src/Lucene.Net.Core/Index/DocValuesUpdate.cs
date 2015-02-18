@@ -61,8 +61,8 @@ namespace Lucene.Net.Index
         internal int SizeInBytes()
         {
             int sizeInBytes = RAW_SIZE_IN_BYTES;
-            sizeInBytes += Term.Field_Renamed.Length * RamUsageEstimator.NUM_BYTES_CHAR;
-            sizeInBytes += Term.Bytes_Renamed.Bytes.Length;
+            sizeInBytes += Term.Field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
+            sizeInBytes += Term.Bytes.Bytes.Length;
             sizeInBytes += Field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
             sizeInBytes += (int)ValueSizeInBytes();
             return sizeInBytes;

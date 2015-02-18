@@ -102,9 +102,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal virtual void Seek(TermInfo ti, Term term)
         {
             Count = 0;
-            FieldInfo fi = FieldInfos.FieldInfo(term.Field());
+            FieldInfo fi = FieldInfos.FieldInfo(term.Field);
             this.IndexOptions = (fi != null) ? fi.FieldIndexOptions : FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-            CurrentFieldStoresPayloads = (fi != null) ? fi.HasPayloads() : false;
+            CurrentFieldStoresPayloads = (fi != null) && fi.HasPayloads();
             if (ti == null)
             {
                 Df = 0;

@@ -211,13 +211,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private int CompareAsUTF16(Term term1, Term term2)
         {
-            if (term1.Field().Equals(term2.Field()))
+            if (term1.Field.Equals(term2.Field))
             {
-                return LegacyComparator.Compare(term1.Bytes(), term2.Bytes());
+                return LegacyComparator.Compare(term1.Bytes, term2.Bytes);
             }
             else
             {
-                return term1.Field().CompareTo(term2.Field());
+                return term1.Field.CompareTo(term2.Field);
             }
         }
 
@@ -256,7 +256,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal static Term DeepCopyOf(Term other)
         {
-            return new Term(other.Field(), BytesRef.DeepCopyOf(other.Bytes()));
+            return new Term(other.Field, BytesRef.DeepCopyOf(other.Bytes));
         }
 
         internal TermInfo SeekEnum(SegmentTermEnum enumerator, Term term, bool useCache)

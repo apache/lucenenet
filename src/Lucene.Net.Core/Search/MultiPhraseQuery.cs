@@ -111,12 +111,12 @@ namespace Lucene.Net.Search
         {
             if (termArrays.Count == 0)
             {
-                Field = terms[0].Field();
+                Field = terms[0].Field;
             }
 
-            for (int i = 0; i < terms.Length; i++)
+            for (var i = 0; i < terms.Length; i++)
             {
-                if (!terms[i].Field().Equals(Field))
+                if (!terms[i].Field.Equals(Field))
                 {
                     throw new System.ArgumentException("All phrase terms must be in the same field (" + Field + "): " + terms[i]);
                 }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                int[] result = new int[positions.Count];
+                var result = new int[positions.Count];
                 for (int i = 0; i < positions.Count; i++)
                 {
                     result[i] = (int)positions[i];
@@ -170,9 +170,9 @@ namespace Lucene.Net.Search
         {
             private readonly MultiPhraseQuery OuterInstance;
 
-            internal readonly Similarity Similarity;
-            internal readonly Similarity.SimWeight Stats;
-            internal readonly IDictionary<Term, TermContext> TermContexts = new Dictionary<Term, TermContext>();
+            private readonly Similarity Similarity;
+            private readonly Similarity.SimWeight Stats;
+            private readonly IDictionary<Term, TermContext> TermContexts = new Dictionary<Term, TermContext>();
 
             public MultiPhraseWeight(MultiPhraseQuery outerInstance, IndexSearcher searcher)
             {
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search
                 IndexReaderContext context = searcher.TopReaderContext;
 
                 // compute idf
-                List<TermStatistics> allTermStats = new List<TermStatistics>();
+                var allTermStats = new List<TermStatistics>();
                 foreach (Term[] terms in outerInstance.termArrays)
                 {
                     foreach (Term term in terms)
@@ -260,7 +260,7 @@ namespace Lucene.Net.Search
                                 // Term not in reader
                                 continue;
                             }
-                            termsEnum.SeekExact(term.Bytes(), termState);
+                            termsEnum.SeekExact(term.Bytes, termState);
                             docFreq += termsEnum.DocFreq();
                         }
 
@@ -279,14 +279,14 @@ namespace Lucene.Net.Search
                             // Term not in reader
                             return null;
                         }
-                        termsEnum.SeekExact(term.Bytes(), termState);
+                        termsEnum.SeekExact(term.Bytes, termState);
                         postingsEnum = termsEnum.DocsAndPositions(liveDocs, null, DocsEnum.FLAG_NONE);
 
                         if (postingsEnum == null)
                         {
                             // term does exist, but has no positions
                             Debug.Assert(termsEnum.Docs(liveDocs, null, DocsEnum.FLAG_NONE) != null, "termstate found but no term exists in reader");
-                            throw new InvalidOperationException("field \"" + term.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
+                            throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
                         }
 
                         docFreq = termsEnum.DocFreq();
@@ -575,9 +575,9 @@ namespace Lucene.Net.Search
                 return (_lastIndex - _index);
             }
 
-            internal void GrowArray()
+            private void GrowArray()
             {
-                int[] newArray = new int[_arraySize * 2];
+                var newArray = new int[_arraySize * 2];
                 Array.Copy(_array, 0, newArray, 0, _arraySize);
                 _array = newArray;
                 _arraySize *= 2;
@@ -586,9 +586,9 @@ namespace Lucene.Net.Search
 
         private int _doc;
         private int _freq;
-        private DocsQueue _queue;
-        private IntQueue _posList;
-        private long Cost_Renamed;
+        private readonly DocsQueue _queue;
+        private readonly IntQueue _posList;
+        private readonly long _cost;
 
         public UnionDocsAndPositionsEnum(Bits liveDocs, AtomicReaderContext context, Term[] terms, IDictionary<Term, TermContext> termContexts, TermsEnum termsEnum)
         {
@@ -602,14 +602,14 @@ namespace Lucene.Net.Search
                     // Term doesn't exist in reader
                     continue;
                 }
-                termsEnum.SeekExact(term.Bytes(), termState);
+                termsEnum.SeekExact(term.Bytes, termState);
                 DocsAndPositionsEnum postings = termsEnum.DocsAndPositions(liveDocs, null, DocsEnum.FLAG_NONE);
                 if (postings == null)
                 {
                     // term does exist, but has no positions
-                    throw new InvalidOperationException("field \"" + term.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
+                    throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
                 }
-                Cost_Renamed += postings.Cost();
+                _cost += postings.Cost();
                 docsEnums.Add(postings);
             }
 
@@ -706,7 +706,7 @@ namespace Lucene.Net.Search
 
         public override long Cost()
         {
-            return Cost_Renamed;
+            return _cost;
         }
     }
 }
