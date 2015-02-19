@@ -148,22 +148,22 @@ namespace Lucene.Net.Index
             {
                 foreach (ReaderClosedListener listener in ReaderClosedListeners)
                 {
-                    // LUCENENET TODO
-                    /*try
-                    {*/
-                    listener.OnClose(this);
-                    /*}
+                    try
+                    {
+                        listener.OnClose(this);
+                    }
                     catch (Exception t)
                     {
-                      if (th == null)
-                      {
-                        th = t;
-                      }
-                      else
-                      {
-                        th.AddSuppressed(t);
-                      }
-                    }*/
+                        if (th == null)
+                        {
+                            th = t;
+                        }
+                        else
+                        {
+                            //th.AddSuppressed(t);
+                            // No palce to put the suppressed exception.
+                        }
+                    }
                 }
                 IOUtils.ReThrowUnchecked(th);
             }
