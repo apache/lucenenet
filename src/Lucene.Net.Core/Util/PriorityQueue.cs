@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
         private readonly int MaxSize;
         private readonly T[] Heap;
 
-        public PriorityQueue(int maxSize)
+        public PriorityQueue(int maxSize = 128)
             : this(maxSize, true)
         {
         }
@@ -322,6 +322,13 @@ namespace Lucene.Net.Util
             {
                 return (object[])(Array)Heap;
             }
+        }
+
+        public T[] ToArray()
+        {
+            var copy = new T[QueueSize];
+            Array.Copy(Heap, 1, copy, 0, QueueSize);
+            return copy;
         }
     }
 }
