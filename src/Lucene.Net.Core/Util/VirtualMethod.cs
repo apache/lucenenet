@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
         private readonly Type BaseClass;
         private readonly string Method;
         private readonly Type[] Parameters;
-        private readonly WeakIdentityMap<Type, int> Cache = WeakIdentityMap<Type, int>.NewHashMap(false);
+        private readonly WeakIdentityMap<Type, int> Cache = WeakIdentityMap<Type, int>.NewConcurrentHashMap(false);
 
         /// <summary>
         /// Creates a new instance for the given {@code baseClass} and method declaration. </summary>
