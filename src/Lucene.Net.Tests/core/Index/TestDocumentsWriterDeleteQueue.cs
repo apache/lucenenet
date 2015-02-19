@@ -1,3 +1,4 @@
+using System.Linq;
 using Apache.NMS.Util;
 using Lucene.Net.Search;
 using System;
@@ -207,6 +208,17 @@ namespace Lucene.Net.Index
             }
         }
 
+        // The HashSet class in C# does not guarantee order. To compare to sets, sort first and then compare. 
+        private static void CompareEnumerableWithSort<T>(IEnumerable<T> a, IEnumerable<T> b)
+        {
+            T[] aArray = a.ToArray();
+            T[] bArray = b.ToArray();
+            Assert.AreEqual(aArray.Length, bArray.Length, "Array length are not the same.");
+            Array.Sort(aArray);
+            Array.Sort(bArray);
+            Assert.AreEqual(aArray, bArray);
+        }
+
         [Test]
         public virtual void TestStressDeleteQueue()
         {
@@ -240,7 +252,7 @@ namespace Lucene.Net.Index
                 queue.UpdateSlice(slice);
                 BufferedUpdates deletes = updateThread.Deletes;
                 slice.Apply(deletes, BufferedUpdates.MAX_INT);
-                assertEquals(uniqueValues, deletes.Terms_Nunit().Keys);
+                CompareEnumerableWithSort(uniqueValues, deletes.Terms_Nunit().Keys);
             }
             queue.TryApplyGlobalSlice();
             HashSet<Term> frozenSet = new HashSet<Term>();
@@ -252,7 +264,7 @@ namespace Lucene.Net.Index
             }
             Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
             Assert.AreEqual(uniqueValues.Count, frozenSet.Count);
-            assertEquals(uniqueValues, frozenSet);
+            CompareEnumerableWithSort(uniqueValues, frozenSet);
         }
 
         private class UpdateThread : ThreadClass
