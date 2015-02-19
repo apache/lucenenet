@@ -50,7 +50,6 @@ namespace Lucene.Net.Index
     using MergeInfo = Lucene.Net.Store.MergeInfo;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using Query = Lucene.Net.Search.Query;
-    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
     /// <summary>

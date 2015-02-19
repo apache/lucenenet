@@ -23,7 +23,6 @@ namespace Lucene.Net.Search
          */
 
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
 
     /// <summary>

@@ -44,7 +44,6 @@ namespace Lucene.Net.Index
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using TopDocs = Lucene.Net.Search.TopDocs;
     
     [TestFixture]

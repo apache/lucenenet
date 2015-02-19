@@ -7,7 +7,6 @@ namespace Lucene.Net.Index
 {
     using Lucene.Net.Support;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

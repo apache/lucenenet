@@ -21,8 +21,6 @@ namespace Lucene.Net.Store
          * limitations under the License.
          */
 
-    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-
     /// <summary>
     /// Abstract base class to rate limit IO.  Typically implementations are
     ///  shared across multiple IndexInputs or IndexOutputs (for example

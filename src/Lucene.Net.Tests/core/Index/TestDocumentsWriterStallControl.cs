@@ -27,7 +27,6 @@ namespace Lucene.Net.Index
              */
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// Tests for <seealso cref="DocumentsWriterStallControl"/>

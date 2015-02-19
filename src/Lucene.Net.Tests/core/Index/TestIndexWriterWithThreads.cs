@@ -46,7 +46,6 @@ namespace Lucene.Net.Index
     using NumericDocValuesField = NumericDocValuesField;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// MultiThreaded IndexWriter tests

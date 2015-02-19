@@ -26,7 +26,6 @@ namespace Lucene.Net.Index
          */
 
     using Directory = Lucene.Net.Store.Directory;
-    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// A <seealso cref="MergeScheduler"/> that runs each merge using a

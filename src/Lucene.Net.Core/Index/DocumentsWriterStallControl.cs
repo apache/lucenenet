@@ -23,8 +23,6 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-
     /// <summary>
     /// Controls the health status of a <seealso cref="DocumentsWriter"/> sessions. this class
     /// used to block incoming indexing threads if flushing significantly slower than
