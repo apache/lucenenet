@@ -261,50 +261,46 @@ namespace Lucene.Net.Index
         public class FilterDocsEnum : DocsEnum
         {
             /// <summary>
-            /// The underlying DocsEnum instance. </summary>
-            protected internal readonly DocsEnum @in;
+            /// The underlying DocsEnum instance.
+            /// </summary>
+            public DocsEnum DocsEnum { get; private set; }
 
             /// <summary>
             /// Create a new FilterDocsEnum </summary>
             /// <param name="in"> the underlying DocsEnum instance. </param>
             public FilterDocsEnum(DocsEnum @in)
             {
-                this.@in = @in;
-            }
-
-            public DocsEnum DocsEnumIn_Nunit()
-            {
-                return @in;
+                this.DocsEnum = @in;
             }
 
             public override AttributeSource Attributes()
             {
-                return @in.Attributes();
+                return DocsEnum.Attributes();
             }
 
             public override int DocID()
             {
-                return @in.DocID();
+                return DocsEnum.DocID();
             }
 
             public override int Freq()
             {
-                return @in.Freq();
+                return DocsEnum.Freq();
             }
 
             public override int NextDoc()
             {
-                return @in.NextDoc();
+                return DocsEnum.NextDoc();
             }
 
             public override int Advance(int target)
             {
-                return @in.Advance(target);
+                return DocsEnum.Advance(target);
             }
 
             public override long Cost()
             {
-                return @in.Cost();
+                return DocsEnum.Cost();
             }
         }
 

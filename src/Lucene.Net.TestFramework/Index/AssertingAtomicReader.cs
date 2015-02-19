@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
                 // and randomly *not* unwrap?
                 if (reuse is AssertingDocsEnum)
                 {
-                    reuse = ((AssertingDocsEnum)reuse).DocsEnumIn_Nunit();
+                    reuse = ((AssertingDocsEnum)reuse).DocsEnum;
                 }
                 DocsEnum docs = base.Docs(liveDocs, reuse, flags);
                 return docs == null ? null : new AssertingDocsEnum(docs);
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
             {
                 Debug.Assert(State != DocsEnumState.FINISHED, "nextDoc() called after NO_MORE_DOCS");
                 int nextDoc = base.NextDoc();
-                Debug.Assert(nextDoc > Doc, "backwards nextDoc from " + Doc + " to " + nextDoc + " " + @in);
+                Debug.Assert(nextDoc > Doc, "backwards nextDoc from " + Doc + " to " + nextDoc + " " + DocsEnum);
                 if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
                 {
                     State = DocsEnumState.FINISHED;
@@ -324,7 +324,7 @@ namespace Lucene.Net.Index
 
             public override int DocID()
             {
-                Debug.Assert(Doc == base.DocID(), " invalid docID() in " + @in.GetType() + " " + base.DocID() + " instead of " + Doc);
+                Debug.Assert(Doc == base.DocID(), " invalid docID() in " + DocsEnum.GetType() + " " + base.DocID() + " instead of " + Doc);
                 return Doc;
             }
 
