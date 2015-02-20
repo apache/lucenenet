@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis
                 return new LookaheadTokenFilter.Position();
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 return NextToken();
             }
