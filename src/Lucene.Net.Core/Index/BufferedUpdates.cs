@@ -156,6 +156,7 @@ namespace Lucene.Net.Index
         public BufferedUpdates()
         {
             this.BytesUsed = new AtomicLong();
+            Terms = new Dictionary<Term, int?>();
         }
 
         public override string ToString()
