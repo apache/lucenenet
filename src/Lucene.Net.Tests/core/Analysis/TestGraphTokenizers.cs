@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis
                 Upto = 0;
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (Tokens == null)
                 {

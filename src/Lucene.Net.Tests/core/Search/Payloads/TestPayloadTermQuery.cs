@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Payloads
                 PayloadAtt = AddAttribute<IPayloadAttribute>();
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 bool hasNext = input.IncrementToken();
                 if (hasNext)

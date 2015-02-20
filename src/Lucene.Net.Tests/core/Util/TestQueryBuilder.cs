@@ -158,7 +158,7 @@ namespace Lucene.Net.Util
                 PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (AddSynonym) // inject our synonym
                 {
@@ -218,7 +218,7 @@ namespace Lucene.Net.Util
                 TermAtt = AddAttribute<ICharTermAttribute>();
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 int ch = input.Read();
                 if (ch < 0)
