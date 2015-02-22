@@ -2169,7 +2169,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < numDocs; i++)
                 {
                     Document doc = new Document();
-                    doc.Add(new StringField("id", (docBase + i).toString(), Field.Store.NO));
+                    doc.Add(new StringField("id", (docBase + i).ToString(), Field.Store.NO));
                     if (DefaultCodecSupportsDocValues())
                     {
                         doc.Add(new NumericDocValuesField("f", 1L));
