@@ -286,7 +286,7 @@ namespace Lucene.Net.Util
         /// Use this constant when creating Analyzers and any other version-dependent stuff.
         /// <p><b>NOTE:</b> Change this when development starts for new Lucene version:
         /// </summary>
-        public static Version TEST_VERSION_CURRENT = Version.LUCENE_48;
+        public static LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
 
         /// <summary>
         /// True if and only if tests are run in verbose mode. If this flag is false
@@ -842,14 +842,14 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// create a new index writer config with random defaults </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(Version v, Analyzer a)
+        public static IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(Random(), v, a);
         }
 
         /// <summary>
         /// create a new index writer config with random defaults using the specified random </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(Random r, Version v, Analyzer a)
+        public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
             c.SetSimilarity(ClassEnvRule.Similarity);

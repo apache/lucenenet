@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     /// change the version at search-time, but instead also adjust
     /// your indexing code to match, and re-index.</p>
     /// </summary>
-    public enum Version
+    public enum LuceneVersion
     {
         /// <summary>
         /// Match settings and bugs in Lucene's 3.0 release. </summary>
@@ -149,59 +149,59 @@ namespace Lucene.Net.Util
         LUCENE_CURRENT
     }
 
-    public static class VersionEnumExtensionMethods
+    public static class LuceneVersionHelpers
     {
-        private static Dictionary<string, Version> stringToEnum = new Dictionary<string, Version>()
+        private static readonly Dictionary<string, LuceneVersion> stringToEnum = new Dictionary<string, LuceneVersion>()
         {
-            {"LUCENE_30", Version.LUCENE_30},
-            {"LUCENE_31", Version.LUCENE_31},
-            {"LUCENE_32", Version.LUCENE_32},
-            {"LUCENE_33", Version.LUCENE_33},
-            {"LUCENE_34", Version.LUCENE_34},
-            {"LUCENE_35", Version.LUCENE_35},
-            {"LUCENE_36", Version.LUCENE_36},
-            {"LUCENE_40", Version.LUCENE_40},
-            {"LUCENE_41", Version.LUCENE_41},
-            {"LUCENE_42", Version.LUCENE_42},
-            {"LUCENE_43", Version.LUCENE_43},
-            {"LUCENE_44", Version.LUCENE_44},
-            {"LUCENE_45", Version.LUCENE_45},
-            {"LUCENE_46", Version.LUCENE_46},
-            {"LUCENE_47", Version.LUCENE_47},
-            {"LUCENE_48", Version.LUCENE_48},
-            {"LUCENE_CURRENT", Version.LUCENE_CURRENT}
+            {"LUCENE_30", LuceneVersion.LUCENE_30},
+            {"LUCENE_31", LuceneVersion.LUCENE_31},
+            {"LUCENE_32", LuceneVersion.LUCENE_32},
+            {"LUCENE_33", LuceneVersion.LUCENE_33},
+            {"LUCENE_34", LuceneVersion.LUCENE_34},
+            {"LUCENE_35", LuceneVersion.LUCENE_35},
+            {"LUCENE_36", LuceneVersion.LUCENE_36},
+            {"LUCENE_40", LuceneVersion.LUCENE_40},
+            {"LUCENE_41", LuceneVersion.LUCENE_41},
+            {"LUCENE_42", LuceneVersion.LUCENE_42},
+            {"LUCENE_43", LuceneVersion.LUCENE_43},
+            {"LUCENE_44", LuceneVersion.LUCENE_44},
+            {"LUCENE_45", LuceneVersion.LUCENE_45},
+            {"LUCENE_46", LuceneVersion.LUCENE_46},
+            {"LUCENE_47", LuceneVersion.LUCENE_47},
+            {"LUCENE_48", LuceneVersion.LUCENE_48},
+            {"LUCENE_CURRENT", LuceneVersion.LUCENE_CURRENT}
         };
 
-        private static Dictionary<string, Version> longToEnum = new Dictionary<string, Version>()
+        private static readonly Dictionary<string, LuceneVersion> longToEnum = new Dictionary<string, LuceneVersion>()
         {
-            {"3.0", Version.LUCENE_30},
-            {"3.1", Version.LUCENE_31},
-            {"3.2", Version.LUCENE_32},
-            {"3.3", Version.LUCENE_33},
-            {"3.4", Version.LUCENE_34},
-            {"3.5", Version.LUCENE_35},
-            {"3.6", Version.LUCENE_36},
-            {"4.0", Version.LUCENE_40},
-            {"4.1", Version.LUCENE_41},
-            {"4.2", Version.LUCENE_42},
-            {"4.3", Version.LUCENE_43},
-            {"4.4", Version.LUCENE_44},
-            {"4.5", Version.LUCENE_45},
-            {"4.6", Version.LUCENE_46},
-            {"4.7", Version.LUCENE_47},
-            {"4.8", Version.LUCENE_48}
+            {"3.0", LuceneVersion.LUCENE_30},
+            {"3.1", LuceneVersion.LUCENE_31},
+            {"3.2", LuceneVersion.LUCENE_32},
+            {"3.3", LuceneVersion.LUCENE_33},
+            {"3.4", LuceneVersion.LUCENE_34},
+            {"3.5", LuceneVersion.LUCENE_35},
+            {"3.6", LuceneVersion.LUCENE_36},
+            {"4.0", LuceneVersion.LUCENE_40},
+            {"4.1", LuceneVersion.LUCENE_41},
+            {"4.2", LuceneVersion.LUCENE_42},
+            {"4.3", LuceneVersion.LUCENE_43},
+            {"4.4", LuceneVersion.LUCENE_44},
+            {"4.5", LuceneVersion.LUCENE_45},
+            {"4.6", LuceneVersion.LUCENE_46},
+            {"4.7", LuceneVersion.LUCENE_47},
+            {"4.8", LuceneVersion.LUCENE_48}
         };
 
-        public static bool OnOrAfter(this Version instance, Version other)
+        public static bool OnOrAfter(this LuceneVersion instance, LuceneVersion other)
         {
             return other <= instance;
-            //return other >= 0; //LUCENE TODO
+            //return other >= 0; //LUCENENET TODO
         }
 
-        public static Version ParseLeniently(string version)
+        public static LuceneVersion ParseLeniently(string version)
         {
             string upperVersionString = version.ToUpper();
-            Version ret;
+            LuceneVersion ret;
             if (stringToEnum.TryGetValue(upperVersionString, out ret))
             {
                 return ret;

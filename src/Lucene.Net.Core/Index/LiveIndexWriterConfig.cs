@@ -1,4 +1,5 @@
 using System.Text;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -31,7 +32,6 @@ namespace Lucene.Net.Index
     using InfoStream = Lucene.Net.Util.InfoStream;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Version = Lucene.Net.Util.Version;
 
     /// <summary>
     /// Holds all the configuration used by <seealso cref="IndexWriter"/> with few setters for
@@ -122,8 +122,8 @@ namespace Lucene.Net.Index
         protected internal volatile int PerThreadHardLimitMB;
 
         /// <summary>
-        /// <seealso cref="Version"/> that <seealso cref="IndexWriter"/> should emulate. </summary>
-        protected internal readonly Version MatchVersion;
+        /// <seealso cref="LuceneVersion"/> that <seealso cref="IndexWriter"/> should emulate. </summary>
+        protected internal readonly LuceneVersion MatchVersion;
 
         /// <summary>
         /// True if segment flushes should use compound file format </summary>
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
         protected internal volatile bool checkIntegrityAtMerge = IndexWriterConfig.DEFAULT_CHECK_INTEGRITY_AT_MERGE;
 
         // used by IndexWriterConfig
-        internal LiveIndexWriterConfig(Analyzer analyzer, Version matchVersion)
+        internal LiveIndexWriterConfig(Analyzer analyzer, LuceneVersion matchVersion)
         {
             this.analyzer = analyzer;
             this.MatchVersion = matchVersion;

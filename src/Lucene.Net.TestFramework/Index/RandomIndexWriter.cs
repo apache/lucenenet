@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -33,7 +34,6 @@ namespace Lucene.Net.Index
     using NullInfoStream = Lucene.Net.Util.NullInfoStream;
     using Query = Lucene.Net.Search.Query;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Version = Lucene.Net.Util.Version;
 
     /// <summary>
     /// Silly class that randomizes the indexing experience.  EG
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// create a RandomIndexWriter with a random config </summary>
-        public RandomIndexWriter(Random r, Directory dir, Version v, Analyzer a)
+        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a))
         {
         }
