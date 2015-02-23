@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Core
     /// </p>
     /// <para>
     /// <a name="version"/>
-    /// You must specify the required <seealso cref="Version"/> compatibility when creating
+    /// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
     /// <seealso cref="LowerCaseTokenizer"/>:
     /// <ul>
     /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Core
         /// </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
-        public LowerCaseTokenizer(Version matchVersion, TextReader @in)
+        public LowerCaseTokenizer(LuceneVersion matchVersion, TextReader @in)
             : base(matchVersion, @in)
         {
         }
@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Core
         ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
-        public LowerCaseTokenizer(Version matchVersion, AttributeFactory factory, TextReader @in)
+        public LowerCaseTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader @in)
             : base(matchVersion, factory, @in)
         {
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
+using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more

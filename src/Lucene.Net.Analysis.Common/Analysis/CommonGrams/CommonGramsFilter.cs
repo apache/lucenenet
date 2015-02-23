@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// </summary>
         /// <param name="input"> TokenStream input in filter chain </param>
         /// <param name="commonWords"> The set of common words. </param>
-        public CommonGramsFilter(Version matchVersion, TokenStream input, CharArraySet commonWords)
+        public CommonGramsFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet commonWords)
             : base(input)
         {
             termAttribute = AddAttribute<ICharTermAttribute>();

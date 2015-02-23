@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Standard
 	/// English stop words.
 	/// 
 	/// <a name="version"/>
-	/// <para>You must specify the required <seealso cref="Version"/>
+	/// <para>You must specify the required <seealso cref="LuceneVersion"/>
 	/// compatibility when creating StandardAnalyzer:
 	/// <ul>
 	///   <li> As of 3.4, Hiragana and Han characters are no longer wrongly split
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Standard
 	  /// <param name="matchVersion"> Lucene version to match See {@link
 	  /// <a href="#version">above</a>} </param>
 	  /// <param name="stopWords"> stop words  </param>
-	  public StandardAnalyzer(Version matchVersion, CharArraySet stopWords) : base(matchVersion, stopWords)
+	  public StandardAnalyzer(LuceneVersion matchVersion, CharArraySet stopWords) : base(matchVersion, stopWords)
 	  {
 	  }
 
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Standard
 	  /// #STOP_WORDS_SET}). </summary>
 	  /// <param name="matchVersion"> Lucene version to match See {@link
 	  /// <a href="#version">above</a>} </param>
-	  public StandardAnalyzer(Version matchVersion) : this(matchVersion, STOP_WORDS_SET)
+	  public StandardAnalyzer(LuceneVersion matchVersion) : this(matchVersion, STOP_WORDS_SET)
 	  {
 	  }
 
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Standard
 	  /// <param name="matchVersion"> Lucene version to match See {@link
 	  /// <a href="#version">above</a>} </param>
 	  /// <param name="stopwords"> Reader to read stop words from  </param>
-	  public StandardAnalyzer(Version matchVersion, TextReader stopwords) : this(matchVersion, loadStopwordSet(stopwords, matchVersion))
+	  public StandardAnalyzer(LuceneVersion matchVersion, TextReader stopwords) : this(matchVersion, loadStopwordSet(stopwords, matchVersion))
 	  {
 	  }
 

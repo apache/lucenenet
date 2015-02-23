@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.compound.hyphenation
+namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
 
 	/// <summary>
@@ -41,7 +40,7 @@ namespace org.apache.lucene.analysis.compound.hyphenation
 	  /// Add a hyphenation exception. An exception replaces the result obtained by
 	  /// the algorithm for cases for which this fails or the user wants to provide
 	  /// his own hyphenation. A hyphenatedword is a vector of alternating String's
-	  /// and <seealso cref="Hyphen Hyphen"/> instances
+	  /// and <seealso cref="Hyphen"/> instances
 	  /// </summary>
 	  void addException(string word, List<object> hyphenatedword);
 

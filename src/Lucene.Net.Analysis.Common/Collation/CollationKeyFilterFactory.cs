@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Collation;
 
 namespace org.apache.lucene.collation
 {
@@ -70,7 +71,7 @@ namespace org.apache.lucene.collation
 	/// <seealso cref= RuleBasedCollator
 	/// @since solr 3.1 </seealso>
 	/// @deprecated use <seealso cref="CollationKeyAnalyzer"/> instead. 
-	[Obsolete("use <seealso cref="CollationKeyAnalyzer"/> instead.")]
+	[Obsolete("use <seealso cref=\"CollationKeyAnalyzer\"/> instead.")]
 	public class CollationKeyFilterFactory : TokenFilterFactory, MultiTermAwareComponent, ResourceLoaderAware
 	{
 	  private Collator collator;

@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Core
     /// An <seealso cref="Analyzer"/> that filters <seealso cref="LetterTokenizer"/> 
     ///  with <seealso cref="LowerCaseFilter"/> 
     /// <para>
-    /// <a name="version">You must specify the required <seealso cref="Version"/> compatibility
+    /// <a name="version">You must specify the required <seealso cref="LuceneVersion"/> compatibility
     /// when creating <seealso cref="CharTokenizer"/>:
     /// <ul>
     /// <li>As of 3.1, <seealso cref="LowerCaseTokenizer"/> uses an int based API to normalize and
@@ -40,12 +40,12 @@ namespace Lucene.Net.Analysis.Core
     public sealed class SimpleAnalyzer : Analyzer
     {
 
-        private readonly Version matchVersion;
+        private readonly LuceneVersion matchVersion;
 
         /// <summary>
         /// Creates a new <seealso cref="SimpleAnalyzer"/> </summary>
         /// <param name="matchVersion"> Lucene version to match See <seealso cref="<a href="#version">above</a>"/> </param>
-        public SimpleAnalyzer(Version matchVersion)
+        public SimpleAnalyzer(LuceneVersion matchVersion)
         {
             this.matchVersion = matchVersion;
         }

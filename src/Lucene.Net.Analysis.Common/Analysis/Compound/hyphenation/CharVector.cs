@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-namespace org.apache.lucene.analysis.compound.hyphenation
+namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
 
 	/// <summary>

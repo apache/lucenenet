@@ -6,8 +6,6 @@ using System.Text.RegularExpressions;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.synonym;
-using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -113,8 +111,8 @@ namespace Lucene.Net.Analysis.Synonym
 
             public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(Version.LUCENE_CURRENT, reader) : factory.Create(reader);
-                TokenStream stream = outerInstance.ignoreCase ? new LowerCaseFilter(Version.LUCENE_CURRENT, tokenizer) : tokenizer;
+                Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader) : factory.Create(reader);
+                TokenStream stream = outerInstance.ignoreCase ? new LowerCaseFilter(LuceneVersion.LUCENE_CURRENT, tokenizer) : tokenizer;
                 return new Analyzer.TokenStreamComponents(tokenizer, stream);
             }
         }
@@ -140,7 +138,7 @@ namespace Lucene.Net.Analysis.Synonym
             if (File.Exists(synonyms))
             {
                 decoder.Reset();
-                parser.parse(new InputStreamReader(loader.openResource(synonyms), decoder));
+                parser.Parse(new InputStreamReader(loader.openResource(synonyms), decoder));
             }
             else
             {
@@ -148,10 +146,10 @@ namespace Lucene.Net.Analysis.Synonym
                 foreach (string file in files)
                 {
                     decoder.reset();
-                    parser.parse(new InputStreamReader(loader.openResource(file), decoder));
+                    parser.Parse(new InputStreamReader(loader.openResource(file), decoder));
                 }
             }
-            return parser.build();
+            return parser.Build();
         }
 
         // (there are no tests for this functionality)

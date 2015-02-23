@@ -5,7 +5,7 @@ using Lucene.Net.Support;
 using org.apache.lucene.analysis.charfilter;
 using org.apache.lucene.analysis.util;
 
-namespace Lucene.Net.Analysis.CharFilter
+namespace Lucene.Net.Analysis.CharFilters
 {
 
 	/*

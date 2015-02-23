@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Compound
 	/// <para>
 	/// 
 	/// <a name="version"></a>
-	/// You must specify the required <seealso cref="Version"/> compatibility when creating
+	/// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
 	/// CompoundWordTokenFilterBase:
 	/// <ul>
 	/// <li>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Compound
 	  /// </summary>
 	  public const int DEFAULT_MAX_SUBWORD_SIZE = 15;
 
-	  protected internal readonly Version matchVersion;
+	  protected internal readonly LuceneVersion matchVersion;
 	  protected internal readonly CharArraySet dictionary;
 	  protected internal readonly LinkedList<CompoundToken> tokens;
 	  protected internal readonly int minWordSize;
@@ -69,15 +69,15 @@ namespace Lucene.Net.Analysis.Compound
 
 	  private AttributeSource.State current;
 
-	  protected internal CompoundWordTokenFilterBase(Version matchVersion, TokenStream input, CharArraySet dictionary, bool onlyLongestMatch) : this(matchVersion, input,dictionary,DEFAULT_MIN_WORD_SIZE,DEFAULT_MIN_SUBWORD_SIZE,DEFAULT_MAX_SUBWORD_SIZE, onlyLongestMatch)
+	  protected internal CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary, bool onlyLongestMatch) : this(matchVersion, input,dictionary,DEFAULT_MIN_WORD_SIZE,DEFAULT_MIN_SUBWORD_SIZE,DEFAULT_MAX_SUBWORD_SIZE, onlyLongestMatch)
 	  {
 	  }
 
-	  protected internal CompoundWordTokenFilterBase(Version matchVersion, TokenStream input, CharArraySet dictionary) : this(matchVersion, input,dictionary,DEFAULT_MIN_WORD_SIZE,DEFAULT_MIN_SUBWORD_SIZE,DEFAULT_MAX_SUBWORD_SIZE, false)
+	  protected internal CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary) : this(matchVersion, input,dictionary,DEFAULT_MIN_WORD_SIZE,DEFAULT_MIN_SUBWORD_SIZE,DEFAULT_MAX_SUBWORD_SIZE, false)
 	  {
 	  }
 
-	  protected internal CompoundWordTokenFilterBase(Version matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch) : base(input)
+	  protected internal CompoundWordTokenFilterBase(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch) : base(input)
 	  {
 		this.matchVersion = matchVersion;
 		this.tokens = new LinkedList<CompoundToken>();
@@ -171,7 +171,7 @@ namespace Lucene.Net.Analysis.Compound
 		  int startOff = outerInstance.offsetAtt.startOffset();
 		  int endOff = outerInstance.offsetAtt.endOffset();
 
-		  if (outerInstance.matchVersion.onOrAfter(Version.LUCENE_44) || endOff - startOff != outerInstance.termAtt.length())
+		  if (outerInstance.matchVersion.onOrAfter(LuceneVersion.LUCENE_44) || endOff - startOff != outerInstance.termAtt.length())
 		  {
 			// if length by start + end offsets doesn't match the term text then assume
 			// this is a synonym and don't adjust the offsets.

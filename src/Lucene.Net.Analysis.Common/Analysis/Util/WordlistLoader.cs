@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Util;
 using org.apache.lucene.analysis.util;
-using Version = System.Version;
+using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -238,8 +239,6 @@ namespace Lucene.Net.Analysis.Util
 	  /// </summary>
 	  /// <returns> a list of non-blank non-comment lines with whitespace trimmed </returns>
 	  /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public static java.util.List<String> getLines(java.io.InputStream stream, java.nio.charset.Charset charset) throws java.io.IOException
 	  public static IList<string> getLines(InputStream stream, Charset charset)
 	  {
 		BufferedReader input = null;

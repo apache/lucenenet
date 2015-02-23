@@ -2,7 +2,6 @@
 using System.IO;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.ngram;
 
 namespace Lucene.Net.Analysis.Ngram
 {
@@ -53,7 +52,7 @@ namespace Lucene.Net.Analysis.Ngram
 
 	  public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
 	  {
-		if (luceneMatchVersion.OnOrAfter(Version.LUCENE_44))
+		if (luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
 		{
 		  if (!EdgeNGramTokenFilter.Side.FRONT.Label.Equals(side))
 		  {

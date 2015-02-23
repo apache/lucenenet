@@ -51,13 +51,24 @@ namespace Lucene.Net.Analysis.Synonym
             }
         }
 
-        public virtual bool IncludeOrig()
+        public virtual bool IncludeOrig
         {
-            return (flags & INCLUDE_ORIG) != 0;
+            get
+            {
+                {
+                    return (flags & INCLUDE_ORIG) != 0;
+                }
+            }
         }
-        public virtual bool IgnoreCase()
+
+        public virtual bool IgnoreCase
         {
-            return (flags & IGNORE_CASE) != 0;
+            get
+            {
+                {
+                    return (flags & IGNORE_CASE) != 0;
+                }
+            }
         }
 
         /// <param name="singleMatch">  List<String>, the sequence of strings to match </param>
@@ -73,7 +84,7 @@ namespace Lucene.Net.Analysis.Synonym
                 {
                     // for now hardcode at 4.0, as its what the old code did.
                     // would be nice to fix, but shouldn't store a version in each submap!!!
-                    currMap.submap = new CharArrayMap<SlowSynonymMap>(Lucene.Net.Util.Version.LUCENE_CURRENT, 1, IgnoreCase());
+                    currMap.submap = new CharArrayMap<SlowSynonymMap>(Lucene.Net.Util.Version.LUCENE_CURRENT, 1, IgnoreCase);
                 }
 
                 var map = currMap.submap.Get(str);
@@ -102,7 +113,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder("<");
+            var sb = new StringBuilder("<");
             if (synonyms != null)
             {
                 sb.Append("[");

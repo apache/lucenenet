@@ -1,6 +1,8 @@
 ﻿using System;
+using Lucene.Net.Util;
+using Reader = System.IO.TextReader;
 
-namespace org.apache.lucene.analysis.synonym
+namespace Lucene.Net.Analysis.Synonym
 {
 
 	/*
@@ -19,11 +21,7 @@ namespace org.apache.lucene.analysis.synonym
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using CharsRef = org.apache.lucene.util.CharsRef;
-
-	/// <summary>
+    /// <summary>
 	/// Parser for wordnet prolog format
 	/// <para>
 	/// See http://wordnet.princeton.edu/man/prologdb.5WN.html for a description of the format.
@@ -40,9 +38,7 @@ namespace org.apache.lucene.analysis.synonym
 		this.expand = expand;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void parse(java.io.Reader in) throws java.io.IOException, java.text.ParseException
-	  public override void parse(Reader @in)
+	  public override void Parse(Reader @in)
 	  {
 		LineNumberReader br = new LineNumberReader(@in);
 		try
@@ -102,7 +98,7 @@ namespace org.apache.lucene.analysis.synonym
 		int end = line.LastIndexOf('\'');
 
 		string text = line.Substring(start, end - start).Replace("''", "'");
-		return analyze(text, reuse);
+		return Analyze(text, reuse);
 	  }
 
 	  private void addInternal(CharsRef[] synset, int size)
@@ -118,7 +114,7 @@ namespace org.apache.lucene.analysis.synonym
 		  {
 			for (int j = 0; j < size; j++)
 			{
-			  add(synset[i], synset[j], false);
+			  Add(synset[i], synset[j], false);
 			}
 		  }
 		}
@@ -126,7 +122,7 @@ namespace org.apache.lucene.analysis.synonym
 		{
 		  for (int i = 0; i < size; i++)
 		  {
-			add(synset[i], synset[0], false);
+			Add(synset[i], synset[0], false);
 		  }
 		}
 	  }

@@ -20,7 +20,7 @@ using System.IO;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 
-namespace Lucene.Net.Analysis.CharFilter
+namespace Lucene.Net.Analysis.CharFilters
 {
     /// <summary>
     /// Base utility class for implementing a <seealso cref="CharFilter"/>.

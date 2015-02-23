@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
-using org.apache.lucene.analysis.miscellaneous;
+using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
