@@ -18,7 +18,7 @@
 using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
-using Version = Lucene.Net.Util.Version;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly PositionIncrementAttribute posIncAttribute = addAttribute(typeof(PositionIncrementAttribute));
 
         // use a fixed version, as we don't care about case sensitivity.
-        private readonly CharArraySet previous = new CharArraySet(Version.LUCENE_31, 8, false);
+        private readonly CharArraySet previous = new CharArraySet(LuceneVersion.LUCENE_31, 8, false);
 
         /// <summary>
         /// Creates a new RemoveDuplicatesTokenFilter

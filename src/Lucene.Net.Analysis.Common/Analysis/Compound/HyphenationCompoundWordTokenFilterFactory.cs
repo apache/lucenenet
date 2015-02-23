@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
-using org.apache.lucene.analysis.compound;
+using Lucene.Net.Util;
 using org.apache.lucene.analysis.compound.hyphenation;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Compound
 {
@@ -101,11 +100,11 @@ namespace Lucene.Net.Analysis.Compound
 		}
 		finally
 		{
-		  IOUtils.closeWhileHandlingException(stream);
+		  IOUtils.CloseWhileHandlingException(stream);
 		}
 	  }
 
-	  public override HyphenationCompoundWordTokenFilter create(TokenStream input)
+	  public override TokenStream Create(TokenStream input)
 	  {
 		return new HyphenationCompoundWordTokenFilter(luceneMatchVersion, input, hyphenator, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch);
 	  }

@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Core
     /// <summary>
     /// An Analyzer that uses <seealso cref="WhitespaceTokenizer"/>.
     /// <para>
-    /// <a name="version">You must specify the required <seealso cref="Version"/> compatibility
+    /// <a name="version">You must specify the required <seealso cref="LuceneVersion"/> compatibility
     /// when creating <seealso cref="CharTokenizer"/>:
     /// <ul>
     /// <li>As of 3.1, <seealso cref="WhitespaceTokenizer"/> uses an int based API to normalize and
@@ -39,12 +39,12 @@ namespace Lucene.Net.Analysis.Core
     public sealed class WhitespaceAnalyzer : Analyzer
     {
 
-        private readonly Version matchVersion;
+        private readonly LuceneVersion matchVersion;
 
         /// <summary>
         /// Creates a new <seealso cref="WhitespaceAnalyzer"/> </summary>
         /// <param name="matchVersion"> Lucene version to match See <seealso cref="<a href="#version">above</a>"/> </param>
-        public WhitespaceAnalyzer(Version matchVersion)
+        public WhitespaceAnalyzer(LuceneVersion matchVersion)
         {
             this.matchVersion = matchVersion;
         }

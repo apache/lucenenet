@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Util
     /// <summary>
     /// An abstract base class for simple, character-oriented tokenizers. 
     /// <para>
-    /// <a name="version">You must specify the required <seealso cref="Version"/> compatibility
+    /// <a name="version">You must specify the required <seealso cref="LuceneVersion"/> compatibility
     /// when creating <seealso cref="CharTokenizer"/>:
     /// <ul>
     /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
@@ -45,18 +45,18 @@ namespace Lucene.Net.Analysis.Util
     /// </para>
     /// <para>
     /// As of Lucene 3.1 each <seealso cref="CharTokenizer"/> - constructor expects a
-    /// <seealso cref="Version"/> argument. Based on the given <seealso cref="Version"/> either the new
+    /// <seealso cref="LuceneVersion"/> argument. Based on the given <seealso cref="LuceneVersion"/> either the new
     /// API or a backwards compatibility layer is used at runtime. For
-    /// <seealso cref="Version"/> < 3.1 the backwards compatibility layer ensures correct
+    /// <seealso cref="LuceneVersion"/> < 3.1 the backwards compatibility layer ensures correct
     /// behavior even for indexes build with previous versions of Lucene. If a
-    /// <seealso cref="Version"/> >= 3.1 is used <seealso cref="CharTokenizer"/> requires the new API to
+    /// <seealso cref="LuceneVersion"/> >= 3.1 is used <seealso cref="CharTokenizer"/> requires the new API to
     /// be implemented by the instantiated class. Yet, the old <i>char</i> based API
     /// is not required anymore even if backwards compatibility must be preserved.
     /// <seealso cref="CharTokenizer"/> subclasses implementing the new API are fully backwards
-    /// compatible if instantiated with <seealso cref="Version"/> < 3.1.
+    /// compatible if instantiated with <seealso cref="LuceneVersion"/> < 3.1.
     /// </para>
     /// <para>
-    /// <strong>Note:</strong> If you use a subclass of <seealso cref="CharTokenizer"/> with <seealso cref="Version"/> >=
+    /// <strong>Note:</strong> If you use a subclass of <seealso cref="CharTokenizer"/> with <seealso cref="LuceneVersion"/> >=
     /// 3.1 on an index build with a version < 3.1, created tokens might not be
     /// compatible with the terms in your index.
     /// </para>
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Util
         ///          Lucene version to match </param>
         /// <param name="input">
         ///          the input to split up into tokens </param>
-        protected CharTokenizer(Version matchVersion, TextReader input)
+        protected CharTokenizer(LuceneVersion matchVersion, TextReader input)
             : base(input)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Util
         ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
         /// <param name="input">
         ///          the input to split up into tokens </param>
-        public CharTokenizer(Version matchVersion, AttributeFactory factory, TextReader input)
+        public CharTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)
         {
             _input = input;

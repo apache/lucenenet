@@ -3,7 +3,7 @@ using System.IO;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
-using Version = Lucene.Net.Util.Version;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -67,13 +67,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <code>"\\s+"</code>; Divides text at whitespaces (Character.isWhitespace(c)) </summary>
         public static readonly Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
-        private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS = CharArraySet.unmodifiableSet(new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList("a", "about", "above", "across", "adj", "after", "afterwards", "again", "against", "albeit", "all", "almost", "alone", "along", "already", "also", "although", "always", "among", "amongst", "an", "and", "another", "any", "anyhow", "anyone", "anything", "anywhere", "are", "around", "as", "at", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "behind", "being", "below", "beside", "besides", "between", "beyond", "both", "but", "by", "can", "cannot", "co", "could", "down", "during", "each", "eg", "either", "else", "elsewhere", "enough", "etc", "even", "ever", "every", "everyone", "everything", "everywhere", "except", "few", "first", "for", "former", "formerly", "from", "further", "had", "has", "have", "he", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "him", "himself", "his", "how", "however", "i", "ie", "if", "in", "inc", "indeed", "into", "is", "it", "its", "itself", "last", "latter", "latterly", "least", "less", "ltd", "many", "may", "me", "meanwhile", "might", "more", "moreover", "most", "mostly", "much", "must", "my", "myself", "namely", "neither", "never", "nevertheless", "next", "no", "nobody", "none", "noone", "nor", "not", "nothing", "now", "nowhere", "of", "off", "often", "on", "once one", "only", "onto", "or", "other", "others", "otherwise", "our", "ours", "ourselves", "out", "over", "own", "per", "perhaps", "rather", "s", "same", "seem", "seemed", "seeming", "seems", "several", "she", "should", "since", "so", "some", "somehow", "someone", "something", "sometime", "sometimes", "somewhere", "still", "such", "t", "than", "that", "the", "their", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "therefor", "therein", "thereupon", "these", "they", "this", "those", "though", "through", "throughout", "thru", "thus", "to", "together", "too", "toward", "towards", "under", "until", "up", "upon", "us", "very", "via", "was", "we", "well", "were", "what", "whatever", "whatsoever", "when", "whence", "whenever", "whensoever", "where", "whereafter", "whereas", "whereat", "whereby", "wherefrom", "wherein", "whereinto", "whereof", "whereon", "whereto", "whereunto", "whereupon", "wherever", "wherewith", "whether", "which", "whichever", "whichsoever", "while", "whilst", "whither", "who", "whoever", "whole", "whom", "whomever", "whomsoever", "whose", "whosoever", "why", "will", "with", "within", "without", "would", "xsubj", "xcal", "xauthor", "xother ", "xnote", "yet", "you", "your", "yours", "yourself", "yourselves"), true));
+        private static readonly CharArraySet EXTENDED_ENGLISH_STOP_WORDS = CharArraySet.unmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.asList("a", "about", "above", "across", "adj", "after", "afterwards", "again", "against", "albeit", "all", "almost", "alone", "along", "already", "also", "although", "always", "among", "amongst", "an", "and", "another", "any", "anyhow", "anyone", "anything", "anywhere", "are", "around", "as", "at", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "behind", "being", "below", "beside", "besides", "between", "beyond", "both", "but", "by", "can", "cannot", "co", "could", "down", "during", "each", "eg", "either", "else", "elsewhere", "enough", "etc", "even", "ever", "every", "everyone", "everything", "everywhere", "except", "few", "first", "for", "former", "formerly", "from", "further", "had", "has", "have", "he", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself", "him", "himself", "his", "how", "however", "i", "ie", "if", "in", "inc", "indeed", "into", "is", "it", "its", "itself", "last", "latter", "latterly", "least", "less", "ltd", "many", "may", "me", "meanwhile", "might", "more", "moreover", "most", "mostly", "much", "must", "my", "myself", "namely", "neither", "never", "nevertheless", "next", "no", "nobody", "none", "noone", "nor", "not", "nothing", "now", "nowhere", "of", "off", "often", "on", "once one", "only", "onto", "or", "other", "others", "otherwise", "our", "ours", "ourselves", "out", "over", "own", "per", "perhaps", "rather", "s", "same", "seem", "seemed", "seeming", "seems", "several", "she", "should", "since", "so", "some", "somehow", "someone", "something", "sometime", "sometimes", "somewhere", "still", "such", "t", "than", "that", "the", "their", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "therefor", "therein", "thereupon", "these", "they", "this", "those", "though", "through", "throughout", "thru", "thus", "to", "together", "too", "toward", "towards", "under", "until", "up", "upon", "us", "very", "via", "was", "we", "well", "were", "what", "whatever", "whatsoever", "when", "whence", "whenever", "whensoever", "where", "whereafter", "whereas", "whereat", "whereby", "wherefrom", "wherein", "whereinto", "whereof", "whereon", "whereto", "whereunto", "whereupon", "wherever", "wherewith", "whether", "which", "whichever", "whichsoever", "while", "whilst", "whither", "who", "whoever", "whole", "whom", "whomever", "whomsoever", "whose", "whosoever", "why", "will", "with", "within", "without", "would", "xsubj", "xcal", "xauthor", "xother ", "xnote", "yet", "you", "your", "yours", "yourself", "yourselves"), true));
 
         /// <summary>
         /// A lower-casing word analyzer with English stop words (can be shared
         /// freely across threads without harm); global per class loader.
         /// </summary>
-        public static readonly PatternAnalyzer DEFAULT_ANALYZER = new PatternAnalyzer(Version.LUCENE_CURRENT, NON_WORD_PATTERN, true, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+        public static readonly PatternAnalyzer DEFAULT_ANALYZER = new PatternAnalyzer(LuceneVersion.LUCENE_CURRENT, NON_WORD_PATTERN, true, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
         /// <summary>
         /// A lower-casing word analyzer with <b>extended </b> English stop words
@@ -82,13 +82,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// http://thomas.loc.gov/home/stopwords.html, see
         /// http://thomas.loc.gov/home/all.about.inquery.html
         /// </summary>
-        public static readonly PatternAnalyzer EXTENDED_ANALYZER = new PatternAnalyzer(Version.LUCENE_CURRENT, NON_WORD_PATTERN, true, EXTENDED_ENGLISH_STOP_WORDS);
+        public static readonly PatternAnalyzer EXTENDED_ANALYZER = new PatternAnalyzer(LuceneVersion.LUCENE_CURRENT, NON_WORD_PATTERN, true, EXTENDED_ENGLISH_STOP_WORDS);
 
         private readonly Pattern pattern;
         private readonly bool toLowerCase;
         private readonly CharArraySet stopWords;
 
-        private readonly Version matchVersion;
+        private readonly LuceneVersion matchVersion;
 
         /// <summary>
         /// Constructs a new instance with the given parameters.
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///            <code>WordlistLoader.getWordSet(new File("samples/fulltext/stopwords.txt")</code>
         ///            or <a href="http://www.unine.ch/info/clef/">other stop words
         ///            lists </a>. </param>
-        public PatternAnalyzer(Version matchVersion, Pattern pattern, bool toLowerCase, CharArraySet stopWords)
+        public PatternAnalyzer(LuceneVersion matchVersion, Pattern pattern, bool toLowerCase, CharArraySet stopWords)
         {
             if (pattern == null)
             {

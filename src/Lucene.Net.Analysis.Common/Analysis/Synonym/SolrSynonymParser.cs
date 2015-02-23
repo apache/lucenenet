@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Reader = System.IO.TextReader;
 
-namespace org.apache.lucene.analysis.synonym
+namespace Lucene.Net.Analysis.Synonym
 {
 
 	/*
@@ -21,11 +22,7 @@ namespace org.apache.lucene.analysis.synonym
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using CharsRef = org.apache.lucene.util.CharsRef;
-
-	/// <summary>
+    /// <summary>
 	/// Parser for the Solr synonyms format.
 	/// <ol>
 	///   <li> Blank lines and lines starting with '#' are comments.
@@ -61,9 +58,7 @@ namespace org.apache.lucene.analysis.synonym
 		this.expand = expand;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void parse(java.io.Reader in) throws java.io.IOException, java.text.ParseException
-	  public override void parse(Reader @in)
+	  public override void Parse(Reader @in)
 	  {
 		LineNumberReader br = new LineNumberReader(@in);
 		try
@@ -109,14 +104,14 @@ namespace org.apache.lucene.analysis.synonym
 			inputs = new CharsRef[inputStrings.Length];
 			for (int i = 0; i < inputs.Length; i++)
 			{
-			  inputs[i] = analyze(unescape(inputStrings[i]).Trim(), new CharsRef());
+			  inputs[i] = Analyze(unescape(inputStrings[i]).Trim(), new CharsRef());
 			}
 
 			string[] outputStrings = Split(sides[1], ",");
 			outputs = new CharsRef[outputStrings.Length];
 			for (int i = 0; i < outputs.Length; i++)
 			{
-			  outputs[i] = analyze(unescape(outputStrings[i]).Trim(), new CharsRef());
+			  outputs[i] = Analyze(unescape(outputStrings[i]).Trim(), new CharsRef());
 			}
 		  }
 		  else
@@ -125,7 +120,7 @@ namespace org.apache.lucene.analysis.synonym
 			inputs = new CharsRef[inputStrings.Length];
 			for (int i = 0; i < inputs.Length; i++)
 			{
-			  inputs[i] = analyze(unescape(inputStrings[i]).Trim(), new CharsRef());
+			  inputs[i] = Analyze(unescape(inputStrings[i]).Trim(), new CharsRef());
 			}
 			if (expand)
 			{
@@ -146,7 +141,7 @@ namespace org.apache.lucene.analysis.synonym
 		  {
 			for (int j = 0; j < outputs.Length; j++)
 			{
-			  add(inputs[i], outputs[j], false);
+			  Add(inputs[i], outputs[j], false);
 			}
 		  }
 		}

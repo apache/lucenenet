@@ -1,5 +1,7 @@
 ﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
+using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -134,10 +136,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 return null;
             }
-            token.copyBuffer(p_termAtt.buffer(), 0, p_termAtt.length());
+            token.CopyBuffer(p_termAtt.buffer(), 0, p_termAtt.length());
             token.PositionIncrement = p_posIncrAtt.PositionIncrement;
             token.Flags = p_flagsAtt.Flags;
-            token.setOffset(p_offsetAtt.startOffset(), p_offsetAtt.endOffset());
+            token.SetOffset(p_offsetAtt.startOffset(), p_offsetAtt.endOffset());
             token.Type = p_typeAtt.type();
             token.Payload = p_payloadAtt.Payload;
             return token;

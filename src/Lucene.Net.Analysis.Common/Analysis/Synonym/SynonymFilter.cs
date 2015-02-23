@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Fst;
 
-namespace org.apache.lucene.analysis.synonym
+namespace Lucene.Net.Analysis.Synonym
 {
 
 	/*
@@ -20,20 +25,6 @@ namespace org.apache.lucene.analysis.synonym
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using PositionLengthAttribute = org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using ByteArrayDataInput = org.apache.lucene.store.ByteArrayDataInput;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using AttributeSource = org.apache.lucene.util.AttributeSource;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using CharsRef = org.apache.lucene.util.CharsRef;
-	using RamUsageEstimator = org.apache.lucene.util.RamUsageEstimator;
-	using UnicodeUtil = org.apache.lucene.util.UnicodeUtil;
-	using FST = org.apache.lucene.util.fst.FST;
 
 	/// <summary>
 	/// Matches single or multi word synonyms in a token stream.
@@ -117,11 +108,12 @@ namespace org.apache.lucene.analysis.synonym
 
 	  // TODO: we should set PositionLengthAttr too...
 
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly PositionIncrementAttribute posIncrAtt = addAttribute(typeof(PositionIncrementAttribute));
-	  private readonly PositionLengthAttribute posLenAtt = addAttribute(typeof(PositionLengthAttribute));
-	  private readonly TypeAttribute typeAtt = addAttribute(typeof(TypeAttribute));
-	  private readonly OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
+	    private readonly ICharTermAttribute termAtt;
+	    private readonly IPositionIncrementAttribute posIncrAtt;
+	    private readonly IPositionLengthAttribute posLenAtt;
+	    private readonly ITypeAttribute typeAtt;
+	    private readonly IOffsetAttribute offsetAtt;
+
 
 	  // How many future input tokens have already been matched
 	  // to a synonym; because the matching is "greedy" we don't
@@ -144,7 +136,7 @@ namespace org.apache.lucene.analysis.synonym
 		internal int startOffset;
 		internal int endOffset;
 
-		public virtual void reset()
+		public void Reset()
 		{
 		  state = null;
 		  consumed = true;
@@ -287,6 +279,12 @@ namespace org.apache.lucene.analysis.synonym
 	  ///                   the input entries when you create the <seealso cref="SynonymMap"/> </param>
 	  public SynonymFilter(TokenStream input, SynonymMap synonyms, bool ignoreCase) : base(input)
 	  {
+          termAtt = AddAttribute<ICharTermAttribute>();
+	  posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+	  posLenAtt = AddAttribute<IPositionLengthAttribute>();
+	  typeAtt = AddAttribute<ITypeAttribute>();
+	  offsetAtt = AddAttribute<IOffsetAttribute>();
+
 		this.synonyms = synonyms;
 		this.ignoreCase = ignoreCase;
 		this.fst = synonyms.fst;
@@ -318,13 +316,11 @@ namespace org.apache.lucene.analysis.synonym
 	  {
 		captureCount++;
 		//System.out.println("  capture slot=" + nextWrite);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PendingInput input = futureInputs[nextWrite];
 		PendingInput input = futureInputs[nextWrite];
 
-		input.state = captureState();
+		input.state = CaptureState();
 		input.consumed = false;
-		input.term.copyChars(termAtt.buffer(), 0, termAtt.length());
+		input.term.CopyChars(termAtt.Buffer(), 0, termAtt.Length);
 
 		nextWrite = rollIncr(nextWrite);
 
@@ -344,9 +340,7 @@ namespace org.apache.lucene.analysis.synonym
 	  private int lastStartOffset;
 	  private int lastEndOffset;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void parse() throws java.io.IOException
-	  private void parse()
+	  private void Parse()
 	  {
 		//System.out.println("\nS: parse");
 
@@ -359,10 +353,10 @@ namespace org.apache.lucene.analysis.synonym
 		int matchInputLength = 0;
 		int matchEndOffset = -1;
 
-		BytesRef pendingOutput = fst.outputs.NoOutput;
-		fst.getFirstArc(scratchArc);
+		BytesRef pendingOutput = fst.Outputs.NoOutput;
+		fst.GetFirstArc(scratchArc);
 
-		Debug.Assert(scratchArc.output == fst.outputs.NoOutput);
+		Debug.Assert(scratchArc.Output == fst.Outputs.NoOutput);
 
 		int tokenCount = 0;
 
@@ -370,11 +364,7 @@ namespace org.apache.lucene.analysis.synonym
 		{
 
 		  // Pull next token's chars:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] buffer;
 		  char[] buffer;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bufferLen;
 		  int bufferLen;
 		  //System.out.println("  cycle nextRead=" + curNextRead + " nextWrite=" + nextWrite);
 
@@ -398,15 +388,13 @@ namespace org.apache.lucene.analysis.synonym
 			  // than its input can set future inputs keepOrig
 			  // to true:
 			  //assert !futureInputs[nextWrite].keepOrig;
-			  if (input.incrementToken())
+			  if (input.IncrementToken())
 			  {
-				buffer = termAtt.buffer();
-				bufferLen = termAtt.length();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PendingInput input = futureInputs[nextWrite];
+				buffer = termAtt.Buffer();
+				bufferLen = termAtt.Length;
 				PendingInput input = futureInputs[nextWrite];
-				lastStartOffset = input.startOffset = offsetAtt.startOffset();
-				lastEndOffset = input.endOffset = offsetAtt.endOffset();
+				lastStartOffset = input.startOffset = offsetAtt.StartOffset();
+				lastEndOffset = input.endOffset = offsetAtt.EndOffset();
 				inputEndOffset = input.endOffset;
 				//System.out.println("  new token=" + new String(buffer, 0, bufferLen));
 				if (nextRead != nextWrite)
@@ -431,8 +419,8 @@ namespace org.apache.lucene.analysis.synonym
 		  else
 		  {
 			// Still in our lookahead
-			buffer = futureInputs[curNextRead].term.chars;
-			bufferLen = futureInputs[curNextRead].term.length;
+			buffer = futureInputs[curNextRead].term.Chars;
+			bufferLen = futureInputs[curNextRead].term.Length;
 			inputEndOffset = futureInputs[curNextRead].endOffset;
 			//System.out.println("  old token=" + new String(buffer, 0, bufferLen));
 		  }
@@ -443,26 +431,24 @@ namespace org.apache.lucene.analysis.synonym
 		  int bufUpto = 0;
 		  while (bufUpto < bufferLen)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int codePoint = Character.codePointAt(buffer, bufUpto, bufferLen);
-			int codePoint = char.codePointAt(buffer, bufUpto, bufferLen);
-			if (fst.findTargetArc(ignoreCase ? char.ToLower(codePoint) : codePoint, scratchArc, scratchArc, fstReader) == null)
+			int codePoint = Character.CodePointAt(buffer, bufUpto, bufferLen);
+			if (fst.FindTargetArc(ignoreCase ? char.ToLower(codePoint) : codePoint, scratchArc, scratchArc, fstReader) == null)
 			{
 			  //System.out.println("    stop");
 			  goto byTokenBreak;
 			}
 
 			// Accum the output
-			pendingOutput = fst.outputs.add(pendingOutput, scratchArc.output);
+			pendingOutput = fst.Outputs.Add(pendingOutput, scratchArc.Output);
 			//System.out.println("    char=" + buffer[bufUpto] + " output=" + pendingOutput + " arc.output=" + scratchArc.output);
-			bufUpto += char.charCount(codePoint);
+			bufUpto += Character.CharCount(codePoint);
 		  }
 
 		  // OK, entire token matched; now see if this is a final
 		  // state:
 		  if (scratchArc.Final)
 		  {
-			matchOutput = fst.outputs.add(pendingOutput, scratchArc.nextFinalOutput);
+			matchOutput = fst.Outputs.Add(pendingOutput, scratchArc.NextFinalOutput);
 			matchInputLength = tokenCount;
 			matchEndOffset = inputEndOffset;
 			//System.out.println("  found matchLength=" + matchInputLength + " output=" + matchOutput);
@@ -470,7 +456,7 @@ namespace org.apache.lucene.analysis.synonym
 
 		  // See if the FST wants to continue matching (ie, needs to
 		  // see the next input token):
-		  if (fst.findTargetArc(SynonymMap.WORD_SEPARATOR, scratchArc, scratchArc, fstReader) == null)
+		  if (fst.FindTargetArc(SynonymMap.WORD_SEPARATOR, scratchArc, scratchArc, fstReader) == null)
 		  {
 			// No further rules can match here; we're done
 			// searching for matching rules starting at the
@@ -503,7 +489,7 @@ namespace org.apache.lucene.analysis.synonym
 		{
 		  //System.out.println("  add matchLength=" + matchInputLength + " output=" + matchOutput);
 		  inputSkipCount = matchInputLength;
-		  addOutput(matchOutput, matchInputLength, matchEndOffset);
+		  AddOutput(matchOutput, matchInputLength, matchEndOffset);
 		}
 		else if (nextRead != nextWrite)
 		{
@@ -521,47 +507,33 @@ namespace org.apache.lucene.analysis.synonym
 	  }
 
 	  // Interleaves all output tokens onto the futureOutputs:
-	  private void addOutput(BytesRef bytes, int matchInputLength, int matchEndOffset)
+	  private void AddOutput(BytesRef bytes, int matchInputLength, int matchEndOffset)
 	  {
-		bytesReader.reset(bytes.bytes, bytes.offset, bytes.length);
+		bytesReader.Reset(bytes.Bytes, bytes.Offset, bytes.Length);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int code = bytesReader.readVInt();
-		int code = bytesReader.readVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean keepOrig = (code & 0x1) == 0;
+		int code = bytesReader.ReadVInt();
 		bool keepOrig = (code & 0x1) == 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count = code >>> 1;
 		int count = (int)((uint)code >> 1);
 		//System.out.println("  addOutput count=" + count + " keepOrig=" + keepOrig);
 		for (int outputIDX = 0;outputIDX < count;outputIDX++)
 		{
-		  synonyms.words.get(bytesReader.readVInt(), scratchBytes);
+		  synonyms.words.Get(bytesReader.ReadVInt(), scratchBytes);
 		  //System.out.println("    outIDX=" + outputIDX + " bytes=" + scratchBytes.length);
 		  UnicodeUtil.UTF8toUTF16(scratchBytes, scratchChars);
-		  int lastStart = scratchChars.offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int chEnd = lastStart + scratchChars.length;
-		  int chEnd = lastStart + scratchChars.length;
+		  int lastStart = scratchChars.Offset;
+		  int chEnd = lastStart + scratchChars.Length;
 		  int outputUpto = nextRead;
 		  for (int chIDX = lastStart;chIDX <= chEnd;chIDX++)
 		  {
 			if (chIDX == chEnd || scratchChars.chars[chIDX] == SynonymMap.WORD_SEPARATOR)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int outputLen = chIDX - lastStart;
 			  int outputLen = chIDX - lastStart;
 			  // Caller is not allowed to have empty string in
 			  // the output:
 			  Debug.Assert(outputLen > 0, "output contains empty string: " + scratchChars);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int endOffset;
 			  int endOffset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int posLen;
 			  int posLen;
-			  if (chIDX == chEnd && lastStart == scratchChars.offset)
+			  if (chIDX == chEnd && lastStart == scratchChars.Offset)
 			  {
 				// This rule had a single output token, so, we set
 				// this output's endOffset to the current
@@ -664,7 +636,7 @@ namespace org.apache.lucene.analysis.synonym
 				// but didn't capture:
 				Debug.Assert(inputSkipCount == 1, "inputSkipCount=" + inputSkipCount + " nextRead=" + nextRead);
 			  }
-			  input.reset();
+			  input.Reset();
 			  if (outputs.count > 0)
 			  {
 				outputs.posIncr = 0;
@@ -681,7 +653,7 @@ namespace org.apache.lucene.analysis.synonym
 			{
 			  // Still have pending outputs to replay at this
 			  // position
-			  input.reset();
+			  input.Reset();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int posIncr = outputs.posIncr;
 			  int posIncr = outputs.posIncr;
@@ -713,7 +685,7 @@ namespace org.apache.lucene.analysis.synonym
 			{
 			  // Done with the buffered input and all outputs at
 			  // this position
-			  input.reset();
+			  input.Reset();
 			  nextRead = rollIncr(nextRead);
 			  inputSkipCount--;
 			}
@@ -734,7 +706,7 @@ namespace org.apache.lucene.analysis.synonym
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final org.apache.lucene.util.CharsRef output = outputs.pullNext();
 			  CharsRef output = outputs.pullNext();
-			  futureInputs[nextRead].reset();
+			  futureInputs[nextRead].Reset();
 			  if (outputs.count == 0)
 			  {
 				nextWrite = nextRead = rollIncr(nextRead);
@@ -756,7 +728,7 @@ namespace org.apache.lucene.analysis.synonym
 		  }
 
 		  // Find new synonym matches:
-		  parse();
+		  Parse();
 		}
 	  }
 
@@ -777,7 +749,7 @@ namespace org.apache.lucene.analysis.synonym
 		// here:
 		foreach (PendingInput input in futureInputs)
 		{
-		  input.reset();
+		  input.Reset();
 		}
 		foreach (PendingOutputs output in futureOutputs)
 		{

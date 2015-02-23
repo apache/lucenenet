@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
-using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Analysis.Util
 {
 
 	/*
@@ -53,9 +52,7 @@ namespace org.apache.lucene.analysis.util
 	public class CharArrayMap<V> : IDictionary<object, V>
 	{
 	  // private only because missing generics
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private static final CharArrayMap<?> EMPTY_MAP = new EmptyCharArrayMap<>();
-	  private static readonly CharArrayMap<?> EMPTY_MAP = new EmptyCharArrayMap<?>();
+	  private static readonly CharArrayMap<char[]> EMPTY_MAP = new EmptyCharArrayMap<char[]>();
 
 	  private const int INIT_SIZE = 8;
 	  private readonly CharacterUtils charUtils;
@@ -76,7 +73,7 @@ namespace org.apache.lucene.analysis.util
 	  /// <param name="ignoreCase">
 	  ///          <code>false</code> if and only if the set should be case sensitive
 	  ///          otherwise <code>true</code>. </param>
-	  public CharArrayMap(Lucene.Net.Util.Version matchVersion, int startSize, bool ignoreCase)
+	  public CharArrayMap(Lucene.Net.Util.LuceneVersion matchVersion, int startSize, bool ignoreCase)
 	  {
 		this.ignoreCase = ignoreCase;
 		int size_Renamed = INIT_SIZE;
@@ -86,7 +83,7 @@ namespace org.apache.lucene.analysis.util
 		}
 		keys = new char[size_Renamed][];
 		values = (V[]) new object[size_Renamed];
-		this.charUtils = CharacterUtils.getInstance(matchVersion);
+		this.charUtils = CharacterUtils.GetInstance(matchVersion);
 		this.matchVersion = matchVersion;
 	  }
 
@@ -401,14 +398,14 @@ namespace org.apache.lucene.analysis.util
 		return code;
 	  }
 
-	  private int getHashCode(CharSequence text)
+	  private int getHashCode(ICharSequence text)
 	  {
 		if (text == null)
 		{
 		  throw new System.NullReferenceException();
 		}
 		int code = 0;
-		int len = text.length();
+		int len = text.Length();
 		if (ignoreCase)
 		{
 		  for (int i = 0; i < len;)
@@ -764,7 +761,7 @@ namespace org.apache.lucene.analysis.util
 	  ///         is a <seealso cref="CharArrayMap"/> the ignoreCase property as well as the
 	  ///         matchVersion will be of the given map will be preserved. </returns>
 //JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
-	  SuppressWarnings("unchecked") public static <V> CharArrayMap<V> copy(final org.apache.lucene.util.Version matchVersion, final java.util.Map<?,? extends V> map)
+	  SuppressWarnings("unchecked") public static <V> CharArrayMap<V> copy(final org.org.apache.lucene.util.Version matchVersion, final java.util.Map<?,? extends V> map)
 	  {
 		if (map == EMPTY_MAP)
 		{

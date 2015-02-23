@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Synonym
 	/// </para>
 	/// </summary>
 	/// @deprecated (3.4) use <seealso cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0 
-	[Obsolete("(3.4) use <seealso cref="SynonymFilterFactory"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
+	[Obsolete("(3.4) use <seealso cref=\"SynonymFilterFactory\"/> instead. only for precise index backwards compatibility. this factory will be removed in Lucene 5.0")]
 	internal sealed class SlowSynonymFilter : TokenFilter
 	{
 
@@ -45,15 +45,15 @@ namespace Lucene.Net.Analysis.Synonym
 	  {
 		if (map == null)
 		{
-		  throw new System.ArgumentException("map is required");
+		  throw new System.ArgumentException("map is required", "map");
 		}
 
 		this.map = map;
 		// just ensuring these attributes exist...
-		AddAttribute(typeof(CharTermAttribute));
-		AddAttribute(typeof(PositionIncrementAttribute));
-		AddAttribute(typeof(OffsetAttribute));
-		AddAttribute(typeof(TypeAttribute));
+	      AddAttribute<ICharTermAttribute>();
+          AddAttribute < IPositionIncrementAttribute>();
+          AddAttribute < IOffsetAttribute>();
+          AddAttribute < TypeAttribute>();
 	  }
 
 
@@ -74,19 +74,15 @@ namespace Lucene.Net.Analysis.Synonym
 	   *    merging token streams to preserve token positions.
 	   *  - preserve original positionIncrement of first matched token
 	   */
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		while (true)
 		{
 		  // if there are any generated tokens, return them... don't try any
 		  // matches against them, as we specifically don't want recursion.
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  if (replacement != null && replacement.hasNext())
+		  if (replacement != null && replacement.MoveNext())
 		  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			copy(this, replacement.next());
+			copy(this, replacement.Current);
 			return true;
 		  }
 
@@ -96,8 +92,8 @@ namespace Lucene.Net.Analysis.Synonym
 		  {
 			  return false;
 		  }
-		  CharTermAttribute termAtt = firstTok.addAttribute(typeof(CharTermAttribute));
-		  SlowSynonymMap result = map.submap != null ? map.submap.get(termAtt.buffer(), 0, termAtt.length()) : null;
+		  var termAtt = firstTok.AddAttribute<ICharTermAttribute>();
+		  SlowSynonymMap result = map.submap != null ? map.submap.Get(termAtt.Buffer(), 0, termAtt.Length) : null;
 		  if (result == null)
 		  {
 			copy(this, firstTok);
@@ -107,7 +103,7 @@ namespace Lucene.Net.Analysis.Synonym
 		  // fast-path failed, clone ourselves if needed
 		  if (firstTok == this)
 		  {
-			firstTok = cloneAttributes();
+			firstTok = CloneAttributes();
 		  }
 		  // OK, we matched a token, so find the longest match.
 
@@ -130,7 +126,7 @@ namespace Lucene.Net.Analysis.Synonym
 		  // in the matched tokens (position increments need adjusting)
 		  //
 		  AttributeSource lastTok = matched.Count == 0 ? firstTok : matched.Last.Value;
-		  bool includeOrig = result.includeOrig();
+		  bool includeOrig = result.IncludeOrig;
 
 		  AttributeSource origTok = includeOrig ? firstTok : null;
 		  PositionIncrementAttribute firstPosIncAtt = firstTok.addAttribute(typeof(PositionIncrementAttribute));
@@ -243,8 +239,6 @@ namespace Lucene.Net.Analysis.Synonym
 		buffer.AddFirst(t);
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private SlowSynonymMap match(SlowSynonymMap map) throws java.io.IOException
 	  private SlowSynonymMap match(SlowSynonymMap map)
 	  {
 		SlowSynonymMap result = null;
@@ -257,11 +251,11 @@ namespace Lucene.Net.Analysis.Synonym
 			// clone ourselves.
 			if (tok == this)
 			{
-			  tok = cloneAttributes();
+			  tok = CloneAttributes();
 			}
 			// check for positionIncrement!=1?  if>1, should not match, if==0, check multiple at this level?
-			CharTermAttribute termAtt = tok.getAttribute(typeof(CharTermAttribute));
-			SlowSynonymMap subMap = map.submap.get(termAtt.buffer(), 0, termAtt.length());
+            var termAtt = tok.GetAttribute < ICharTermAttribute>();
+			SlowSynonymMap subMap = map.submap.Get(termAtt.buffer(), 0, termAtt.length());
 
 			if (subMap != null)
 			{

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,19 +14,17 @@ using System.Text;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 
-namespace org.apache.lucene.analysis.compound.hyphenation
+namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
 
 	// SAX
-	using XMLReader = org.xml.sax.XMLReader;
-	using InputSource = org.xml.sax.InputSource;
-	using SAXException = org.xml.sax.SAXException;
-	using SAXParseException = org.xml.sax.SAXParseException;
-	using DefaultHandler = org.xml.sax.helpers.DefaultHandler;
-	using Attributes = org.xml.sax.Attributes;
-
-	// Java
+    
+    // Java
 
 	/// <summary>
 	/// A SAX document handler to read and parse hyphenation patterns from a XML

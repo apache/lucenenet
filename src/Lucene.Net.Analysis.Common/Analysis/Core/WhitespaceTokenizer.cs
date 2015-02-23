@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis.Core
     /// Adjacent sequences of non-Whitespace characters form tokens. <a
     /// name="version"/>
     /// <para>
-    /// You must specify the required <seealso cref="Version"/> compatibility when creating
+    /// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
     /// <seealso cref="WhitespaceTokenizer"/>:
     /// <ul>
     /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Core
         /// </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
-        public WhitespaceTokenizer(Version matchVersion, TextReader @in)
+        public WhitespaceTokenizer(LuceneVersion matchVersion, TextReader @in)
             : base(matchVersion, @in)
         {
         }
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Core
         ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
-        public WhitespaceTokenizer(Version matchVersion, AttributeFactory factory, TextReader @in)
+        public WhitespaceTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader @in)
             : base(matchVersion, factory, @in)
         {
         }

@@ -1,6 +1,9 @@
 ﻿using System;
+using Lucene.Net.Analysis.Tokenattributes;
+using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.LuceneVersion;
 
-namespace org.apache.lucene.analysis.ngram
+namespace Lucene.Net.Analysis.Ngram
 {
 
 	/*
@@ -19,15 +22,7 @@ namespace org.apache.lucene.analysis.ngram
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Old version of <seealso cref="EdgeNGramTokenizer"/> which doesn't handle correctly
 	/// supplementary characters.
 	/// </summary>

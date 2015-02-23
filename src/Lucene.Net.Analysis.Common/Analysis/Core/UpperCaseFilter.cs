@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Core
     /// <summary>
 	/// Normalizes token text to UPPER CASE.
 	/// <a name="version"/>
-	/// <para>You must specify the required <seealso cref="Version"/>
+	/// <para>You must specify the required <seealso cref="LuceneVersion"/>
 	/// compatibility when creating UpperCaseFilter
 	/// 
 	/// </para>
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Core
 	  /// </summary>
 	  /// <param name="matchVersion"> See <a href="#version">above</a> </param>
 	  /// <param name="in"> TokenStream to filter </param>
-	  public UpperCaseFilter(Version matchVersion, TokenStream @in) : base(@in)
+	  public UpperCaseFilter(LuceneVersion matchVersion, TokenStream @in) : base(@in)
 	  {
 	      termAtt = AddAttribute<ICharTermAttribute>();
 	      termAtt = AddAttribute<ICharTermAttribute>();

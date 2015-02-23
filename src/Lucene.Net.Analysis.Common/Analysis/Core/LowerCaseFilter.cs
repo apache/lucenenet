@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Core
     /// <summary>
     /// Normalizes token text to lower case.
     /// <a name="version"/>
-    /// <para>You must specify the required <seealso cref="Version"/>
+    /// <para>You must specify the required <seealso cref="LuceneVersion"/>
     /// compatibility when creating LowerCaseFilter:
     /// <ul>
     ///   <li> As of 3.1, supplementary characters are properly lowercased.
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Core
         /// </summary>
         /// <param name="matchVersion"> See <a href="#version">above</a> </param>
         /// <param name="in"> TokenStream to filter </param>
-        public LowerCaseFilter(Version matchVersion, TokenStream @in)
+        public LowerCaseFilter(LuceneVersion matchVersion, TokenStream @in)
             : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();

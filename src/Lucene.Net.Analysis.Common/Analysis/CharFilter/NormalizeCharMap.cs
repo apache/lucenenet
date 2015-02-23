@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,25 +14,20 @@ using System.Collections.Generic;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Lucene.Net.Analysis.CharFilter;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Fst;
 
-namespace org.apache.lucene.analysis.charfilter
+namespace Lucene.Net.Analysis.CharFilters
 {
-
-
-	using CharsRef = org.apache.lucene.util.CharsRef;
-	using IntsRef = org.apache.lucene.util.IntsRef;
-	using Builder = org.apache.lucene.util.fst.Builder;
-	using CharSequenceOutputs = org.apache.lucene.util.fst.CharSequenceOutputs;
-	using FST = org.apache.lucene.util.fst.FST;
-	using Outputs = org.apache.lucene.util.fst.Outputs;
-	using Util = org.apache.lucene.util.fst.Util;
-
-	// TODO: save/load?
+    // TODO: save/load?
 
 	/// <summary>
 	/// Holds a map of String input to String output, to be used
-	/// with <seealso cref="MappingCharFilter"/>.  Use the <seealso cref="Builder"/>
+	/// with <seealso cref="Builder"/>.  Use the <seealso cref="MappingCharFilter"/>
 	/// to create this.
 	/// </summary>
 	public class NormalizeCharMap
@@ -53,25 +45,21 @@ namespace org.apache.lucene.analysis.charfilter
 		  try
 		  {
 			// Pre-cache root arcs:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<org.apache.lucene.util.CharsRef> scratchArc = new org.apache.lucene.util.fst.FST.Arc<>();
-			FST.Arc<CharsRef> scratchArc = new FST.Arc<CharsRef>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST.BytesReader fstReader = map.getBytesReader();
+			var scratchArc = new FST.Arc<CharsRef>();
 			FST.BytesReader fstReader = map.BytesReader;
-			map.getFirstArc(scratchArc);
-			if (FST.targetHasArcs(scratchArc))
+			map.GetFirstArc(scratchArc);
+			if (FST<CharsRef>.TargetHasArcs(scratchArc))
 			{
-			  map.readFirstRealTargetArc(scratchArc.target, scratchArc, fstReader);
+			  map.ReadFirstRealTargetArc(scratchArc.Target, scratchArc, fstReader);
 			  while (true)
 			  {
-				Debug.Assert(scratchArc.label != FST.END_LABEL);
-				cachedRootArcs[Convert.ToChar((char) scratchArc.label)] = (new FST.Arc<CharsRef>()).copyFrom(scratchArc);
+				Debug.Assert(scratchArc.Label != FST<CharsRef>.END_LABEL); // LUCENENET TODO END_LABEL shouldn't be under generic?
+				cachedRootArcs[Convert.ToChar((char) scratchArc.Label)] = (new FST.Arc<CharsRef>()).CopyFrom(scratchArc);
 				if (scratchArc.Last)
 				{
 				  break;
 				}
-				map.readNextRealArc(scratchArc, fstReader);
+				map.ReadNextRealArc(scratchArc, fstReader);
 			  }
 			}
 			//System.out.println("cached " + cachedRootArcs.size() + " root arcs");
@@ -127,25 +115,17 @@ namespace org.apache.lucene.analysis.charfilter
 		public virtual NormalizeCharMap build()
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.FST<org.apache.lucene.util.CharsRef> map;
 		  FST<CharsRef> map;
 		  try
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.Outputs<org.apache.lucene.util.CharsRef> outputs = org.apache.lucene.util.fst.CharSequenceOutputs.getSingleton();
 			Outputs<CharsRef> outputs = CharSequenceOutputs.Singleton;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.fst.Builder<org.apache.lucene.util.CharsRef> builder = new org.apache.lucene.util.fst.Builder<>(org.apache.lucene.util.fst.FST.INPUT_TYPE.BYTE2, outputs);
 			Builder<CharsRef> builder = new Builder<CharsRef>(FST.INPUT_TYPE.BYTE2, outputs);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.IntsRef scratch = new org.apache.lucene.util.IntsRef();
 			IntsRef scratch = new IntsRef();
 			foreach (KeyValuePair<string, string> ent in pendingPairs.SetOfKeyValuePairs())
 			{
-			  builder.add(Util.toUTF16(ent.Key, scratch), new CharsRef(ent.Value));
+			  builder.Add(Util.ToUTF16(ent.Key, scratch), new CharsRef(ent.Value));
 			}
-			map = builder.finish();
+			map = builder.Finish();
 			pendingPairs.Clear();
 		  }
 		  catch (IOException ioe)

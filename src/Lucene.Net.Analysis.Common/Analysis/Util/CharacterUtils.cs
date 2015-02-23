@@ -2,7 +2,7 @@
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.Version;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Util
     /// <summary>
 	/// <seealso cref="CharacterUtils"/> provides a unified interface to Character-related
 	/// operations to implement backwards compatible character operations based on a
-	/// <seealso cref="Version"/> instance.
+	/// <seealso cref="LuceneVersion"/> instance.
 	/// 
 	/// @lucene.internal
 	/// </summary>
@@ -37,15 +37,15 @@ namespace Lucene.Net.Analysis.Util
 
 	  /// <summary>
 	  /// Returns a <seealso cref="CharacterUtils"/> implementation according to the given
-	  /// <seealso cref="Version"/> instance.
+	  /// <seealso cref="LuceneVersion"/> instance.
 	  /// </summary>
 	  /// <param name="matchVersion">
 	  ///          a version instance </param>
 	  /// <returns> a <seealso cref="CharacterUtils"/> implementation according to the given
-	  ///         <seealso cref="Version"/> instance. </returns>
-	  public static CharacterUtils GetInstance(Version matchVersion)
+	  ///         <seealso cref="LuceneVersion"/> instance. </returns>
+	  public static CharacterUtils GetInstance(LuceneVersion matchVersion)
 	  {
-		return matchVersion.OnOrAfter(Version.LUCENE_31) ? JAVA_5 : JAVA_4;
+		return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? JAVA_5 : JAVA_4;
 	  }
 
 	  /// <summary>
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Util
 
 	  /// <summary>
 	  /// Returns the code point at the given index of the <seealso cref="CharSequence"/>.
-	  /// Depending on the <seealso cref="Version"/> passed to
+	  /// Depending on the <seealso cref="LuceneVersion"/> passed to
 	  /// <seealso cref="CharacterUtils#getInstance(Version)"/> this method mimics the behavior
 	  /// of <seealso cref="Character#codePointAt(char[], int)"/> as it would have been
 	  /// available on a Java 1.4 JVM or on a later virtual machine version.
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// <summary>
 	  /// Returns the code point at the given index of the char array where only elements
 	  /// with index less than the limit are used.
-	  /// Depending on the <seealso cref="Version"/> passed to
+	  /// Depending on the <seealso cref="LuceneVersion"/> passed to
 	  /// <seealso cref="CharacterUtils#getInstance(Version)"/> this method mimics the behavior
 	  /// of <seealso cref="Character#codePointAt(char[], int)"/> as it would have been
 	  /// available on a Java 1.4 JVM or on a later virtual machine version.
@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Util
 		Debug.Assert(offset <= 0 && offset <= buffer.Length);
 		for (int i = offset; i < limit;)
 		{
-		  i += char.ToChars(char.ToLower(CodePointAt(buffer, i, limit)), buffer, i);
+		  i += Character.ToChars(char.ToLower(CodePointAt(buffer, i, limit)), buffer, i);
 		}
 	  }
 
@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Util
 		Debug.Assert(offset <= 0 && offset <= buffer.Length);
 		for (int i = offset; i < limit;)
 		{
-		  i += char.toChars(char.ToUpper(codePointAt(buffer, i, limit)), buffer, i);
+		  i += Character.ToChars(char.ToUpper(CodePointAt(buffer, i, limit)), buffer, i);
 		}
 	  }
 
@@ -166,12 +166,8 @@ namespace Lucene.Net.Analysis.Util
 		int codePointCount_Renamed = 0;
 		for (int i = 0; i < srcLen;)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cp = codePointAt(src, srcOff + i, srcOff + srcLen);
-		  int cp = codePointAt(src, srcOff + i, srcOff + srcLen);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int charCount = Character.charCount(cp);
-		  int charCount = char.charCount(cp);
+		  int cp = CodePointAt(src, srcOff + i, srcOff + srcLen);
+		  int charCount = Character.CharCount(cp);
 		  dest[destOff + codePointCount_Renamed++] = cp;
 		  i += charCount;
 		}
@@ -190,7 +186,7 @@ namespace Lucene.Net.Analysis.Util
 		int written = 0;
 		for (int i = 0; i < srcLen; ++i)
 		{
-		  written += char.toChars(src[srcOff + i], dest, destOff + written);
+		  written += Character.ToChars(src[srcOff + i], dest, destOff + written);
 		}
 		return written;
 	  }
@@ -205,10 +201,10 @@ namespace Lucene.Net.Analysis.Util
 	  /// the middle of a surrogate pair, even if there are remaining characters in
 	  /// the <seealso cref="Reader"/>.
 	  /// <para>
-	  /// Depending on the <seealso cref="Version"/> passed to
+	  /// Depending on the <seealso cref="LuceneVersion"/> passed to
 	  /// <seealso cref="CharacterUtils#getInstance(Version)"/> this method implements
 	  /// supplementary character awareness when filling the given buffer. For all
-	  /// <seealso cref="Version"/> &gt; 3.0 <seealso cref="#fill(CharacterBuffer, Reader, int)"/> guarantees
+	  /// <seealso cref="LuceneVersion"/> &gt; 3.0 <seealso cref="#fill(CharacterBuffer, Reader, int)"/> guarantees
 	  /// that the given <seealso cref="CharacterBuffer"/> will never contain a high surrogate
 	  /// character as the last element in the buffer unless it is the last available
 	  /// character in the reader. In other words, high and low surrogate pairs will
@@ -267,12 +263,12 @@ namespace Lucene.Net.Analysis.Util
 
 		public override int CodePointAt(string seq, int offset)
 		{
-		  return char.CodePointAt(seq, offset);
+		  return Character.CodePointAt(seq, offset);
 		}
 
 		public override int CodePointAt(char[] chars, int offset, int limit)
 		{
-		 return char.CodePointAt(chars, offset, limit);
+		 return Character.CodePointAt(chars, offset, limit);
 		}
 
 		public override bool Fill(CharacterBuffer buffer, Reader reader, int numChars)
@@ -301,8 +297,6 @@ namespace Lucene.Net.Analysis.Util
 		  int read = ReadFully(reader, charBuffer, offset, numChars - offset);
 
 		  buffer.length = offset + read;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean result = buffer.length == numChars;
 		  bool result = buffer.length == numChars;
 		  if (buffer.length < numChars)
 		  {
@@ -320,12 +314,12 @@ namespace Lucene.Net.Analysis.Util
 
 		public override int CodePointCount(string seq)
 		{
-		  return char.CodePointCount(seq, 0, seq.Length);
+		  return Character.CodePointCount(seq, 0, seq.Length);
 		}
 
 		public override int OffsetByCodePoints(char[] buf, int start, int count, int index, int offset)
 		{
-		  return char.OffsetByCodePoints(buf, start, count, index, offset);
+		  return Character.OffsetByCodePoints(buf, start, count, index, offset);
 		}
 	  }
 

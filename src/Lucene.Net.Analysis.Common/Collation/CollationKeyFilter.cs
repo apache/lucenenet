@@ -1,6 +1,9 @@
 ﻿using System;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.collation
+namespace Lucene.Net.Collation
 {
 
 	/*
@@ -19,16 +22,7 @@ namespace org.apache.lucene.collation
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using TokenFilter = org.apache.lucene.analysis.TokenFilter;
-	using TokenStream = org.apache.lucene.analysis.TokenStream;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using IndexableBinaryStringTools = org.apache.lucene.util.IndexableBinaryStringTools;
-
-
-
-	/// <summary>
+    /// <summary>
 	/// <para>
 	///   Converts each token into its <seealso cref="java.text.CollationKey"/>, and then
 	///   encodes the CollationKey with <seealso cref="IndexableBinaryStringTools"/>, to allow 
@@ -74,7 +68,7 @@ namespace org.apache.lucene.collation
 	/// </para> </summary>
 	/// @deprecated Use <seealso cref="CollationAttributeFactory"/> instead, which encodes
 	///  terms directly as bytes. This filter will be removed in Lucene 5.0 
-	[Obsolete("Use <seealso cref="CollationAttributeFactory"/> instead, which encodes")]
+	[Obsolete("Use <seealso cref=\"CollationAttributeFactory\"/> instead, which encodes")]
 	public sealed class CollationKeyFilter : TokenFilter
 	{
 	  private readonly Collator collator;
@@ -89,13 +83,11 @@ namespace org.apache.lucene.collation
 		this.collator = (Collator) collator.clone();
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
-		if (input.incrementToken())
+		if (input.IncrementToken())
 		{
-		  sbyte[] collationKey = collator.getCollationKey(termAtt.ToString()).toByteArray();
+		  var collationKey = collator.GetCollationKey(termAtt.ToString()).toByteArray();
 		  int encodedLength = IndexableBinaryStringTools.getEncodedLength(collationKey, 0, collationKey.Length);
 		  termAtt.resizeBuffer(encodedLength);
 		  termAtt.Length = encodedLength;

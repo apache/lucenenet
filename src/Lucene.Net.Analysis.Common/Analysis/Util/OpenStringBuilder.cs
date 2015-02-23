@@ -1,4 +1,5 @@
 ﻿using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -23,7 +24,7 @@ namespace Lucene.Net.Analysis.Util
 	/// <summary>
 	/// A StringBuilder that allows one to access the array.
 	/// </summary>
-	public class OpenStringBuilder : Appendable, CharSequence
+	public class OpenStringBuilder : IAppendable, ICharSequence
 	{
 	  protected internal char[] buf;
 	  protected internal int len;
@@ -34,7 +35,7 @@ namespace Lucene.Net.Analysis.Util
 
 	  public OpenStringBuilder(int size)
 	  {
-		buf = new char[size_Renamed];
+		buf = new char[size];
 	  }
 
 	  public OpenStringBuilder(char[] arr, int len)
@@ -48,6 +49,7 @@ namespace Lucene.Net.Analysis.Util
 		  {
 			  this.len = value;
 		  }
+          get { return len; }
 	  }
 
 	  public virtual void set(char[] arr, int end)
@@ -63,15 +65,12 @@ namespace Lucene.Net.Analysis.Util
 			  return buf;
 		  }
 	  }
-	  public virtual int size()
+	  public virtual int Size()
 	  {
 		  return len;
 	  }
-	  public override int length()
-	  {
-		  return len;
-	  }
-	  public virtual int capacity()
+
+	  public virtual int Capacity()
 	  {
 		  return buf.Length;
 	  }
@@ -97,12 +96,12 @@ namespace Lucene.Net.Analysis.Util
 		return this;
 	  }
 
-	  public override char charAt(int index)
+	  public override char CharAt(int index)
 	  {
 		return buf[index];
 	  }
 
-	  public virtual void setCharAt(int index, char ch)
+	  public virtual void SetCharAt(int index, char ch)
 	  {
 		buf[index] = ch;
 	  }
@@ -131,7 +130,7 @@ namespace Lucene.Net.Analysis.Util
 	  protected internal virtual void resize(int len)
 	  {
 		char[] newbuf = new char[Math.Max(buf.Length << 1, len)];
-		Array.Copy(buf, 0, newbuf, 0, size());
+		Array.Copy(buf, 0, newbuf, 0, Size());
 		buf = newbuf;
 	  }
 
@@ -191,14 +190,14 @@ namespace Lucene.Net.Analysis.Util
 
 	  public virtual char[] ToCharArray()
 	  {
-		char[] newbuf = new char[size()];
-		Array.Copy(buf, 0, newbuf, 0, size());
+		char[] newbuf = new char[Size()];
+		Array.Copy(buf, 0, newbuf, 0, Size());
 		return newbuf;
 	  }
 
 	  public override string ToString()
 	  {
-		return new string(buf, 0, size());
+		return new string(buf, 0, Size());
 	  }
 	}
 

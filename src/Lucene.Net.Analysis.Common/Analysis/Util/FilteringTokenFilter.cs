@@ -1,7 +1,6 @@
 ﻿using System;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
-using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -35,15 +34,15 @@ namespace Lucene.Net.Analysis.Util
     public abstract class FilteringTokenFilter : TokenFilter
     {
 
-        private static void CheckPositionIncrement(Version version, bool enablePositionIncrements)
+        private static void CheckPositionIncrement(LuceneVersion version, bool enablePositionIncrements)
         {
-            if (!enablePositionIncrements && version.OnOrAfter(Version.LUCENE_44))
+            if (!enablePositionIncrements && version.OnOrAfter(LuceneVersion.LUCENE_44))
             {
                 throw new System.ArgumentException("enablePositionIncrements=false is not supported anymore as of Lucene 4.4 as it can create broken token streams");
             }
         }
 
-        protected internal readonly Version version;
+        protected internal readonly LuceneVersion version;
         private readonly IPositionIncrementAttribute posIncrAtt;
         private bool enablePositionIncrements; // no init needed, as ctor enforces setting value!
         private bool first = true;
@@ -56,7 +55,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="input">                    the input to consume </param>
         /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4 
         [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4")]
-        public FilteringTokenFilter(Lucene.Net.Util.Version version, bool enablePositionIncrements, TokenStream input)
+        public FilteringTokenFilter(Lucene.Net.Util.LuceneVersion version, bool enablePositionIncrements, TokenStream input)
             : this(version, input)
         {
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
@@ -68,7 +67,7 @@ namespace Lucene.Net.Analysis.Util
         /// Create a new <seealso cref="FilteringTokenFilter"/>. </summary>
         /// <param name="version"> the Lucene match version </param>
         /// <param name="in">      the <seealso cref="TokenStream"/> to consume </param>
-        public FilteringTokenFilter(Version version, TokenStream @in)
+        public FilteringTokenFilter(LuceneVersion version, TokenStream @in)
             : base(@in)
         {
             this.version = version;

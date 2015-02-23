@@ -5,7 +5,8 @@ using Lucene.Net.Analysis.Core;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using org.apache.lucene.analysis.util;
-using Version = System.Version;
+using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -48,7 +49,7 @@ namespace Lucene.Net.Analysis.Util
 
 	  /// <summary>
 	  /// the luceneVersion arg </summary>
-	  protected internal readonly Lucene.Net.Util.Version luceneMatchVersion;
+	  protected internal readonly Lucene.Net.Util.LuceneVersion luceneMatchVersion;
 
         /// <summary>
 	  /// Initialize this factory via a set of key-value pairs.
@@ -58,7 +59,7 @@ namespace Lucene.Net.Analysis.Util
 	      ExplicitLuceneMatchVersion = false;
 	      originalArgs = Collections.UnmodifiableMap(args);
 		string version = get(args, LUCENE_MATCH_VERSION_PARAM);
-		luceneMatchVersion = version == null ? null : Lucene.Net.Util.Version.ParseLeniently(version);
+		luceneMatchVersion = version == null ? null : Lucene.Net.Util.LuceneVersion.ParseLeniently(version);
 		args.Remove(CLASS_NAME); // consume the class arg
 	  }
 

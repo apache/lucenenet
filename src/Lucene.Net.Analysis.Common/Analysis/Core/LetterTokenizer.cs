@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Core
     /// </para>
     /// <para>
     /// <a name="version"/>
-    /// You must specify the required <seealso cref="Version"/> compatibility when creating
+    /// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
     /// <seealso cref="LetterTokenizer"/>:
     /// <ul>
     /// <li>As of 3.1, <seealso cref="CharTokenizer"/> uses an int based API to normalize and
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Core
         ///          Lucene version to match See <seealso cref="<a href="#version">above</a>"/> </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
-        public LetterTokenizer(Version matchVersion, TextReader @in)
+        public LetterTokenizer(LuceneVersion matchVersion, TextReader @in)
             : base(matchVersion, @in)
         {
         }
@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Core
         ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
-        public LetterTokenizer(Version matchVersion, AttributeSource.AttributeFactory factory, TextReader @in)
+        public LetterTokenizer(LuceneVersion matchVersion, AttributeSource.AttributeFactory factory, TextReader @in)
             : base(matchVersion, factory, @in)
         {
         }
