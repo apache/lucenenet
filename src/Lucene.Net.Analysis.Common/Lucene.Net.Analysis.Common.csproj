@@ -186,9 +186,6 @@
     <Compile Include="Analysis\Standard\UAX29URLEmailTokenizer.cs" />
     <Compile Include="Analysis\Standard\UAX29URLEmailTokenizerFactory.cs" />
     <Compile Include="Analysis\Synonym\FSTSynonymFilterFactory.cs" />
-    <Compile Include="Analysis\Synonym\SlowSynonymFilter.cs" />
-    <Compile Include="Analysis\Synonym\SlowSynonymFilterFactory.cs" />
-    <Compile Include="Analysis\Synonym\SlowSynonymMap.cs" />
     <Compile Include="Analysis\Synonym\SolrSynonymParser.cs" />
     <Compile Include="Analysis\Synonym\SynonymFilter.cs" />
     <Compile Include="Analysis\Synonym\SynonymFilterFactory.cs" />
