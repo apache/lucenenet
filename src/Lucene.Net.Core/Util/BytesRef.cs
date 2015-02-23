@@ -41,16 +41,19 @@ namespace Lucene.Net.Util
         public static readonly byte[] EMPTY_BYTES = new byte[0];
 
         /// <summary>
-        /// The contents of the BytesRef. Should never be {@code null}. </summary>
-        public byte[] Bytes;
+        /// The contents of the BytesRef. Should never be {@code null}.
+        /// </summary>
+        public byte[] Bytes { get; set; }
 
         /// <summary>
-        /// Offset of first valid byte. </summary>
-        public int Offset;
+        /// Offset of first valid byte.
+        /// </summary>
+        public int Offset { get; set; }
 
         /// <summary>
-        /// Length of used bytes. </summary>
-        public int Length;
+        /// Length of used bytes.
+        /// </summary>
+        public int Length { get; set; }
 
         /// <summary>
         /// Create a BytesRef with <seealso cref="#EMPTY_BYTES"/> </summary>
