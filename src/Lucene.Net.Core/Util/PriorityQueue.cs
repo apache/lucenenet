@@ -39,10 +39,12 @@ namespace Lucene.Net.Util
         private int QueueSize = 0;
         private int MaxSize;
         private T[] Heap;
+        private bool resizable;
 
         public PriorityQueue()
-            : this(0, false)
+            : this(8, false)
         {
+            resizable = true;
         } 
 
         public PriorityQueue(int maxSize)
@@ -52,7 +54,8 @@ namespace Lucene.Net.Util
  
         public PriorityQueue(int maxSize, bool prepopulate)
         {
-            int heapSize;
+            resizable = false;
+
             if (maxSize < 0)
             {
                 throw new System.ArgumentException("maxSize must be >= 0; got: " + maxSize);
@@ -84,7 +87,7 @@ namespace Lucene.Net.Util
 
             // NOTE: we add +1 because all access to heap is
             // 1-based not 0-based.  heap[0] is unused.
-            heapSize = maxSize + 1;
+            int heapSize = maxSize + 1;
             
             // T is unbounded type, so this unchecked cast works always:
             T[] h = new T[heapSize];
@@ -169,7 +172,7 @@ namespace Lucene.Net.Util
         public T Add(T element)
         {
             QueueSize++;
-            if (QueueSize > MaxSize)
+            if (resizable && QueueSize > MaxSize)
             {
                 Resize();
             }

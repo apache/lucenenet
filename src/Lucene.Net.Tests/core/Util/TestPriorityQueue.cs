@@ -30,6 +30,11 @@ namespace Lucene.Net.Util
 
         private class IntegerQueue : PriorityQueue<int?>
         {
+            public IntegerQueue()
+                : base()   
+            {
+            }
+
             public IntegerQueue(int count)
                 : base(count)
             {
@@ -302,8 +307,6 @@ namespace Lucene.Net.Util
             Assert.AreEqual(pq.Top().Field, 1);
         }
 
-        /*
-         * With the resizing feature, this test has no longer sense.
         [Test]
         public static void TestOverflow()
         {
@@ -340,65 +343,74 @@ namespace Lucene.Net.Util
             {
             }
         }
-         */
 
         [Test]
         public static void TestResize()
         {
-            // Initialize a queue with maximum size 4
-            PriorityQueue<int?> pq = new IntegerQueue(4);
+            // Initialize a resizable queue
+            PriorityQueue<int?> pq = new IntegerQueue();
             pq.Add(3);
             pq.Add(-2);
             pq.Add(1);
             pq.Add(-10);
-               
             Assert.AreEqual(pq.Size(), 4);
 
-            // Should resize the queue
             pq.Add(7);
-
-            Assert.AreEqual(pq.Size(), 5);
+            pq.Add(5);
+            pq.Add(10);
+            pq.Add(1);
+            Assert.AreEqual(pq.Size(), 8);
 
             pq.Add(10);
             pq.Add(1);
             pq.Add(5);
+            Assert.AreEqual(pq.Size(), 11);
 
-            Assert.AreEqual(pq.Size(), 8);
-
-            // Should resize again
-            pq.Add(100);
+            pq.Add(12);
+            pq.Add(13);
+            pq.Add(14);
+            pq.Add(15);
             pq.Add(16);
+            Assert.AreEqual(pq.Size(), 16);
 
-            Assert.AreEqual(pq.Size(), 10);
+            pq.Add(-17);
+            pq.Add(-18);
+            Assert.AreEqual(pq.Size(), 18);
         }
 
         [Test]
         public static void TestIntegrityAfterResize()
         {
             // Tests that after a resize, the queue keeps working fine
-            PriorityQueue<int?> pq = new IntegerQueue(4);
+            PriorityQueue<int?> pq = new IntegerQueue();
             pq.Add(3);
             pq.Add(-2);
             pq.Add(1);
+            pq.Add(7);
+            pq.Add(5);
+            pq.Add(10);
+            pq.Add(1);
             pq.Add(-10);
-            pq.Add(-100);  // Resize
+            pq.Add(-100);
             Assert.AreEqual(pq.Top(), -100);
 
             pq.Add(-1000);
             Assert.AreEqual(pq.Top(), -1000);
 
             pq.Pop();
-            Assert.AreEqual(pq.Top(), -100);
+            pq.Pop();
+            pq.Pop();
+            Assert.AreEqual(pq.Top(), -2);
 
             pq.Add(0);
-            Assert.AreEqual(pq.Top(), -100);
+            Assert.AreEqual(pq.Top(), -2);
 
             for(int i = 0; i < 100; i++)
             {
-                pq.Add(5);  // Lots of resizes
+                pq.Add(5);
             }
             
-            Assert.AreEqual(pq.Top(), -100);
+            Assert.AreEqual(pq.Top(), -2);
         }
 
         [Test]
@@ -607,8 +619,7 @@ namespace Lucene.Net.Util
         {
             if (!VERBOSE)
             {
-                // You won't see the results
-                return;
+                Assert.Fail("Turn VERBOSE on or otherwise you won't see the results.");
             }
                
             int maxSize = AtLeast(100000);
