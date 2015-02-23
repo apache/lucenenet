@@ -54,7 +54,7 @@ namespace Lucene.Net.Util.Fst
 
             int pos1 = output1.Offset;
             int pos2 = output2.Offset;
-            int stopAt1 = pos1 + Math.Min(output1.length, output2.length);
+            int stopAt1 = pos1 + Math.Min(output1.Length, output2.Length);
             while (pos1 < stopAt1)
             {
                 if (output1.Chars[pos1] != output2.Chars[pos2])
@@ -70,12 +70,12 @@ namespace Lucene.Net.Util.Fst
                 // no common prefix
                 return NO_OUTPUT;
             }
-            else if (pos1 == output1.Offset + output1.length)
+            else if (pos1 == output1.Offset + output1.Length)
             {
                 // output1 is a prefix of output2
                 return output1;
             }
-            else if (pos2 == output2.Offset + output2.length)
+            else if (pos2 == output2.Offset + output2.Length)
             {
                 // output2 is a prefix of output1
                 return output2;
@@ -95,16 +95,16 @@ namespace Lucene.Net.Util.Fst
                 // no prefix removed
                 return output;
             }
-            else if (inc.length == output.length)
+            else if (inc.Length == output.Length)
             {
                 // entire output removed
                 return NO_OUTPUT;
             }
             else
             {
-                Debug.Assert(inc.length < output.length, "inc.length=" + inc.length + " vs output.length=" + output.length);
-                Debug.Assert(inc.length > 0);
-                return new CharsRef(output.Chars, output.Offset + inc.length, output.length - inc.length);
+                Debug.Assert(inc.Length < output.Length, "inc.Length=" + inc.Length + " vs output.Length=" + output.Length);
+                Debug.Assert(inc.Length > 0);
+                return new CharsRef(output.Chars, output.Offset + inc.Length, output.Length - inc.Length);
             }
         }
 
@@ -122,12 +122,12 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                Debug.Assert(prefix.length > 0);
-                Debug.Assert(output.length > 0);
-                var result = new CharsRef(prefix.length + output.length);
-                Array.Copy(prefix.Chars, prefix.Offset, result.Chars, 0, prefix.length);
-                Array.Copy(output.Chars, output.Offset, result.Chars, prefix.length, output.length);
-                result.length = prefix.length + output.length;
+                Debug.Assert(prefix.Length > 0);
+                Debug.Assert(output.Length > 0);
+                var result = new CharsRef(prefix.Length + output.Length);
+                Array.Copy(prefix.Chars, prefix.Offset, result.Chars, 0, prefix.Length);
+                Array.Copy(output.Chars, output.Offset, result.Chars, prefix.Length, output.Length);
+                result.Length = prefix.Length + output.Length;
                 return result;
             }
         }
@@ -135,9 +135,9 @@ namespace Lucene.Net.Util.Fst
         public override void Write(CharsRef prefix, DataOutput @out)
         {
             Debug.Assert(prefix != null);
-            @out.WriteVInt(prefix.length);
+            @out.WriteVInt(prefix.Length);
             // TODO: maybe UTF8?
-            for (int idx = 0; idx < prefix.length; idx++)
+            for (int idx = 0; idx < prefix.Length; idx++)
             {
                 @out.WriteVInt(prefix.Chars[prefix.Offset + idx]);
             }
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     output.Chars[idx] = (char)@in.ReadVInt();
                 }
-                output.length = len;
+                output.Length = len;
                 return output;
             }
         }
