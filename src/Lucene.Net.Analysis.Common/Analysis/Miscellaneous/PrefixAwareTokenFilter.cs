@@ -59,18 +59,18 @@ namespace Lucene.Net.Analysis.Miscellaneous
             prefixExhausted = false;
 
             termAtt = AddAttribute<ICharTermAttribute>();
-            posIncrAtt = AddAttribute(typeof(PositionIncrementAttribute));
-            payloadAtt = AddAttribute(typeof(PayloadAttribute));
-            offsetAtt = AddAttribute(typeof(OffsetAttribute));
-            typeAtt = AddAttribute(typeof(TypeAttribute));
-            flagsAtt = AddAttribute(typeof(FlagsAttribute));
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            payloadAtt = AddAttribute<IPayloadAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            typeAtt = AddAttribute<ITypeAttribute>();
+            flagsAtt = AddAttribute<IFlagsAttribute>();
 
-            p_termAtt = prefix.AddAttribute(typeof(CharTermAttribute));
-            p_posIncrAtt = prefix.AddAttribute(typeof(PositionIncrementAttribute));
-            p_payloadAtt = prefix.AddAttribute(typeof(PayloadAttribute));
-            p_offsetAtt = prefix.AddAttribute(typeof(OffsetAttribute));
-            p_typeAtt = prefix.AddAttribute(typeof(TypeAttribute));
-            p_flagsAtt = prefix.AddAttribute(typeof(FlagsAttribute));
+            p_termAtt = prefix.AddAttribute<ICharTermAttribute>();
+            p_posIncrAtt = prefix.AddAttribute<IPositionIncrementAttribute>();
+            p_payloadAtt = prefix.AddAttribute<IPayloadAttribute>();
+            p_offsetAtt = prefix.AddAttribute<IOffsetAttribute>();
+            p_typeAtt = prefix.AddAttribute<ITypeAttribute>();
+            p_flagsAtt = prefix.AddAttribute<IFlagsAttribute>();
         }
 
         private readonly Token previousPrefixToken = new Token();
@@ -80,9 +80,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public override bool IncrementToken()
         {
+            Token nextToken = null;
             if (!prefixExhausted)
             {
-                Token nextToken = getNextPrefixInputToken(reusableToken);
+                nextToken = GetNextPrefixInputToken(reusableToken);
                 if (nextToken == null)
                 {
                     prefixExhausted = true;
@@ -94,20 +95,20 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     BytesRef p = previousPrefixToken.Payload;
                     if (p != null)
                     {
-                        previousPrefixToken.Payload = p.Clone();
+                        previousPrefixToken.Payload = (BytesRef)p.Clone();
                     }
                     CurrentToken = nextToken;
                     return true;
                 }
             }
 
-            Token nextToken = getNextSuffixInputToken(reusableToken);
+            nextToken = GetNextSuffixInputToken(reusableToken);
             if (nextToken == null)
             {
                 return false;
             }
 
-            nextToken = updateSuffixToken(nextToken, previousPrefixToken);
+            nextToken = UpdateSuffixToken(nextToken, previousPrefixToken);
             CurrentToken = nextToken;
             return true;
         }
@@ -121,37 +122,37 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     return;
                 }
                 ClearAttributes();
-                termAtt.CopyBuffer(value.buffer(), 0, value.length());
+                termAtt.CopyBuffer(value.Buffer(), 0, value.Length);
                 posIncrAtt.PositionIncrement = value.PositionIncrement;
                 flagsAtt.Flags = value.Flags;
-                offsetAtt.setOffset(value.startOffset(), value.endOffset());
-                typeAtt.Type = value.type();
+                offsetAtt.SetOffset(value.StartOffset(), value.EndOffset());
+                typeAtt.Type = value.Type;
                 payloadAtt.Payload = value.Payload;
             }
         }
 
-        private Token getNextPrefixInputToken(Token token)
+        private Token GetNextPrefixInputToken(Token token)
         {
             if (!prefix.IncrementToken())
             {
                 return null;
             }
-            token.CopyBuffer(p_termAtt.buffer(), 0, p_termAtt.length());
+            token.CopyBuffer(p_termAtt.Buffer(), 0, p_termAtt.Length);
             token.PositionIncrement = p_posIncrAtt.PositionIncrement;
             token.Flags = p_flagsAtt.Flags;
-            token.SetOffset(p_offsetAtt.startOffset(), p_offsetAtt.endOffset());
-            token.Type = p_typeAtt.type();
+            token.SetOffset(p_offsetAtt.StartOffset(), p_offsetAtt.EndOffset());
+            token.Type = p_typeAtt.Type;
             token.Payload = p_payloadAtt.Payload;
             return token;
         }
 
-        private Token getNextSuffixInputToken(Token token)
+        private Token GetNextSuffixInputToken(Token token)
         {
             if (!suffix.IncrementToken())
             {
                 return null;
             }
-            token.CopyBuffer(termAtt.buffer(), 0, termAtt.length());
+            token.CopyBuffer(termAtt.Buffer(), 0, termAtt.Length);
             token.PositionIncrement = posIncrAtt.PositionIncrement;
             token.Flags = flagsAtt.Flags;
             token.SetOffset(offsetAtt.StartOffset(), offsetAtt.EndOffset());
@@ -166,9 +167,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="suffixToken"> a token from the suffix stream </param>
         /// <param name="lastPrefixToken"> the last token from the prefix stream </param>
         /// <returns> consumer token </returns>
-        public virtual Token updateSuffixToken(Token suffixToken, Token lastPrefixToken)
+        public virtual Token UpdateSuffixToken(Token suffixToken, Token lastPrefixToken)
         {
-            suffixToken.setOffset(lastPrefixToken.endOffset() + suffixToken.startOffset(), lastPrefixToken.endOffset() + suffixToken.endOffset());
+            suffixToken.SetOffset(lastPrefixToken.EndOffset() + suffixToken.StartOffset(), lastPrefixToken.EndOffset() + suffixToken.EndOffset());
             return suffixToken;
         }
 

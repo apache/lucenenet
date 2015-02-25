@@ -17,7 +17,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using org.apache.lucene.analysis.compound.hyphenation;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {

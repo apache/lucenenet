@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Util
 
 	  /// <summary>
 	  /// the luceneVersion arg </summary>
-	  protected internal readonly Lucene.Net.Util.LuceneVersion luceneMatchVersion;
+	  protected internal readonly LuceneVersion? luceneMatchVersion;
 
         /// <summary>
 	  /// Initialize this factory via a set of key-value pairs.
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Util
 	      ExplicitLuceneMatchVersion = false;
 	      originalArgs = Collections.UnmodifiableMap(args);
 		string version = get(args, LUCENE_MATCH_VERSION_PARAM);
-		luceneMatchVersion = version == null ? null : Lucene.Net.Util.LuceneVersion.ParseLeniently(version);
+		luceneMatchVersion = version == null ? (LuceneVersion?) null : LuceneVersionHelpers.ParseLeniently(version);
 		args.Remove(CLASS_NAME); // consume the class arg
 	  }
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Util
 		}
 	  }
 
-	  public Version LuceneMatchVersion
+	  public LuceneVersion? LuceneMatchVersion
 	  {
 		  get
 		  {

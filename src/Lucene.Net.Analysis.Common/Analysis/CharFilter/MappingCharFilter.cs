@@ -23,7 +23,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using org.apache.lucene.analysis.charfilter;
 
-namespace Lucene.Net.Analysis.CharFilter
+namespace Lucene.Net.Analysis.CharFilters
 {
     /// <summary>
 	/// Simplistic <seealso cref="CharFilter"/> that applies the mappings
