@@ -26,7 +26,6 @@ namespace Lucene.Net.Index
          */
 
     using Directory = Lucene.Net.Store.Directory;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// A <seealso cref="MergeScheduler"/> that runs each merge using a
@@ -449,7 +448,7 @@ namespace Lucene.Net.Index
                         }
                         catch (ThreadInterruptedException ie)
                         {
-                            throw new ThreadInterruptedException(ie);
+                            throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                         }
                     }
 
@@ -714,7 +713,7 @@ namespace Lucene.Net.Index
             }
             catch (ThreadInterruptedException ie)
             {
-                throw new ThreadInterruptedException(ie);
+                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
             }
             throw new MergePolicy.MergeException(exc, Dir);
         }

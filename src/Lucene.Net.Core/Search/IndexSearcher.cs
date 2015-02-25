@@ -924,7 +924,7 @@ namespace Lucene.Net.Search
               }
               catch (ThreadInterruptedException e)
               {
-                throw new ThreadInterruptedException(e);
+                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
               }
               catch (ExecutionException e)
               {

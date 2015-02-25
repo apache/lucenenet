@@ -21,8 +21,6 @@ namespace Lucene.Net.Store
          * limitations under the License.
          */
 
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-
     /// <summary>
     /// Abstract base class to rate limit IO.  Typically implementations are
     ///  shared across multiple IndexInputs or IndexOutputs (for example
@@ -126,7 +124,7 @@ namespace Lucene.Net.Store
                         }
                         catch (ThreadInterruptedException ie)
                         {
-                            throw new ThreadInterruptedException(ie);
+                            throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                         }
                         curNS = DateTime.UtcNow.Ticks * 100;
                         continue;

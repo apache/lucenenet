@@ -27,7 +27,6 @@ namespace Lucene.Net.Facet
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// Test utility - slow directory
@@ -87,7 +86,7 @@ namespace Lucene.Net.Facet
             }
             catch (ThreadInterruptedException e)
             {
-                throw new ThreadInterruptedException(e);
+                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
             }
         }
 

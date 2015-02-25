@@ -150,7 +150,7 @@ namespace Lucene.Net.Util
             }
             catch (ThreadInterruptedException e)
             {
-                throw new ThreadInterruptedException(e);
+                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
             }
         }
 

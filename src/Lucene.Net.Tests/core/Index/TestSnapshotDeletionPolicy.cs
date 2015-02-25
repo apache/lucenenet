@@ -32,7 +32,6 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TextField = TextField;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     //
     // this was developed for Lucene In Action,
@@ -225,7 +224,7 @@ namespace Lucene.Net.Index
                     }
                     catch (ThreadInterruptedException ie)
                     {
-                        throw new ThreadInterruptedException(ie);
+                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                     }
                 } while (DateTime.Now.Millisecond < StopTime);
             }
