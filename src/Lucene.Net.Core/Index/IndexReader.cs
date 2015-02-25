@@ -148,22 +148,23 @@ namespace Lucene.Net.Index
             {
                 foreach (ReaderClosedListener listener in ReaderClosedListeners)
                 {
-                    // LUCENENET TODO
-                    /*try
-                    {*/
-                    listener.OnClose(this);
-                    /*}
+                    try
+                    {
+                        listener.OnClose(this);
+                    }
                     catch (Exception t)
                     {
-                      if (th == null)
-                      {
-                        th = t;
-                      }
-                      else
-                      {
-                        th.AddSuppressed(t);
-                      }
-                    }*/
+                        if (th == null)
+                        {
+                            th = t;
+                        }
+                        else
+                        {
+                            //th.AddSuppressed(t);
+                            // Drop the exception instead of wrapping in AggregateException.
+                            // Wrapping will change the exception type and change flow control.
+                        }
+                    }
                 }
                 IOUtils.ReThrowUnchecked(th);
             }
