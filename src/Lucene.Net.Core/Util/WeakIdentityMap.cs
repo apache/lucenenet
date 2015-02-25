@@ -135,7 +135,16 @@ namespace Lucene.Net.Util
             {
                 Reap();
             }
-            return BackingStore[new IdentityWeakReference(key)];
+            
+            V val;
+            if (BackingStore.TryGetValue(new IdentityWeakReference(key), out val))
+            {
+                return val;
+            }
+            else
+            {
+                return default(V);
+            }
         }
 
         /// <summary>
@@ -329,20 +338,16 @@ namespace Lucene.Net.Util
         /// <seealso cref= <a href="#reapInfo">Information about the <code>reapOnRead</code> setting</a> </seealso>
         public void Reap()
         {
-            lock (BackingStore)
+            List<IdentityWeakReference> keysToRemove = new List<IdentityWeakReference>();
+            foreach (IdentityWeakReference zombie in BackingStore.Keys)
             {
-                List<IdentityWeakReference> keysToRemove = new List<IdentityWeakReference>();
+                if (!zombie.IsAlive)
+                    keysToRemove.Add(zombie);
+            }
 
-                foreach (IdentityWeakReference zombie in BackingStore.Keys)
-                {
-                    if (!zombie.IsAlive)
-                        keysToRemove.Add(zombie);
-                }
-
-                foreach (var key in keysToRemove)
-                {
-                    BackingStore.Remove(key);
-                }
+            foreach (var key in keysToRemove)
+            {
+                BackingStore.Remove(key);
             }
             /*while ((zombie = queue.poll()) != null)
             {
