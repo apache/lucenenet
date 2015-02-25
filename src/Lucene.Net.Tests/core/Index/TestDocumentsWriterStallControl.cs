@@ -27,7 +27,6 @@ namespace Lucene.Net.Index
              */
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// Tests for <seealso cref="DocumentsWriterStallControl"/>
@@ -275,7 +274,7 @@ namespace Lucene.Net.Index
                             catch (ThreadInterruptedException e)
                             {
                                 Console.WriteLine("[Waiter] got interrupted - wait count: " + Sync.Waiter.Remaining);
-                                throw new ThreadInterruptedException(e);
+                                throw new ThreadInterruptedException("Thread interrupted exception", e);
                             }
                         }
                     }
@@ -330,7 +329,7 @@ namespace Lucene.Net.Index
                             catch (ThreadInterruptedException e)
                             {
                                 Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.Remaining);
-                                throw new ThreadInterruptedException(e);
+                                throw new ThreadInterruptedException("Thread interrupted exception", e);
                             }
                             Sync.LeftCheckpoint.countDown();
                         }
