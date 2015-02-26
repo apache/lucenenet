@@ -71,16 +71,15 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal IList<IndexCommit> Snapshots = new List<IndexCommit>();
-
-        protected internal virtual void PrepareIndexAndSnapshots(SnapshotDeletionPolicy sdp, IndexWriter writer, int numSnapshots)
+        protected internal virtual void PrepareIndexAndSnapshots(SnapshotDeletionPolicy sdp, IndexWriter writer, int numSnapshots, out IList<IndexCommit> snapshots)
         {
+            snapshots = new List<IndexCommit>();
             for (int i = 0; i < numSnapshots; i++)
             {
                 // create dummy document to trigger commit.
                 writer.AddDocument(new Document());
                 writer.Commit();
-                Snapshots.Add(sdp.Snapshot());
+                snapshots.Add(sdp.Snapshot());
             }
         }
 
@@ -92,7 +91,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual void AssertSnapshotExists(Directory dir, SnapshotDeletionPolicy sdp, int numSnapshots, bool checkIndexCommitSame)
+        protected internal virtual void AssertSnapshotExists(Directory dir, SnapshotDeletionPolicy sdp, int numSnapshots, bool checkIndexCommitSame, IList<IndexCommit> Snapshots)
         {
             for (int i = 0; i < numSnapshots; i++)
             {
@@ -316,12 +315,13 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
-            PrepareIndexAndSnapshots(sdp, writer, numSnapshots);
+            IList<IndexCommit> Snapshots;
+            PrepareIndexAndSnapshots(sdp, writer, numSnapshots, out Snapshots);
             writer.Dispose();
 
             Assert.AreEqual(numSnapshots, sdp.Snapshots.Count);
             Assert.AreEqual(numSnapshots, sdp.SnapshotCount);
-            AssertSnapshotExists(dir, sdp, numSnapshots, true);
+            AssertSnapshotExists(dir, sdp, numSnapshots, true, Snapshots);
 
             // open a reader on a snapshot - should succeed.
             DirectoryReader.Open(Snapshots[0]).Dispose();
@@ -416,7 +416,8 @@ namespace Lucene.Net.Index
 
             SnapshotDeletionPolicy sdp = DeletionPolicy;
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), sdp));
-            PrepareIndexAndSnapshots(sdp, writer, numSnapshots);
+            IList<IndexCommit> Snapshots;
+            PrepareIndexAndSnapshots(sdp, writer, numSnapshots, out Snapshots);
             writer.Dispose();
 
             // now open the writer on "snapshot0" - make sure it succeeds
@@ -424,7 +425,7 @@ namespace Lucene.Net.Index
             // this does the actual rollback
             writer.Commit();
             writer.DeleteUnusedFiles();
-            AssertSnapshotExists(dir, sdp, numSnapshots - 1, false);
+            AssertSnapshotExists(dir, sdp, numSnapshots - 1, false, Snapshots);
             writer.Dispose();
 
             // but 'snapshot1' files will still exist (need to release snapshot before they can be deleted).
@@ -440,7 +441,8 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
-            PrepareIndexAndSnapshots(sdp, writer, 1);
+            IList<IndexCommit> Snapshots;
+            PrepareIndexAndSnapshots(sdp, writer, 1, out Snapshots);
 
             // Create another commit - we must do that, because otherwise the "snapshot"
             // files will still remain in the index, since it's the last commit.
