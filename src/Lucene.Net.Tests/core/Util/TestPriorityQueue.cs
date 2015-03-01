@@ -614,7 +614,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual(pq.Size(), 0);
         }
 
-        [Test]
+        [Test, Explicit]
         public static void Benchmarks()
         {
             if (!VERBOSE)
