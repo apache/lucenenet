@@ -118,18 +118,14 @@ namespace Lucene.Net.Store
         protected internal readonly ISet<string> StaleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
         private int ChunkSize = DEFAULT_READ_CHUNK_SIZE;
 
+        // LUCENENET TODO: Lucene uses "GetCanonicalPath" call
+        // and there is a possibility we don't need it in .NET version.
+        // Please refer to the discussions here for more info:
+        // https://github.com/apache/lucenenet/pull/70
+        //
         // returns the canonical version of the directory, creating it if it doesn't exist.
         private static DirectoryInfo GetCanonicalPath(DirectoryInfo file)
         {
-            try
-            {
-                file.Create();
-            }
-            catch (IOException)
-            {
-                //File already exists
-            }
-
             return file;
         }
 
