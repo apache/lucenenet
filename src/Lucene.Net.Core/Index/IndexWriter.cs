@@ -904,7 +904,7 @@ namespace Lucene.Net.Index
                         // points.
                         if (commit.Directory != directory)
                         {
-                            throw new System.ArgumentException("IndexCommit's directory doesn't match my directory");
+                            throw new ArgumentException(string.Format("IndexCommit's directory doesn't match my directory (mine: {0}, commit's: {1})", directory, commit.Directory));
                         }
                         SegmentInfos oldInfos = new SegmentInfos();
                         oldInfos.Read(directory, commit.SegmentsFileName);
@@ -2861,7 +2861,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Called internally if any index state has changed. </summary>
-        internal virtual void Changed()
+        internal void Changed()
         {
             lock (this)
             {
