@@ -469,6 +469,7 @@
     <Compile Include="JavaCompatibility\LuceneTestCase.cs" />
     <Compile Include="JavaCompatibility\LuceneTypesHelpers.cs" />
     <Compile Include="JavaCompatibility\SystemTypesHelpers.cs" />
+    <Compile Include="Util\VirtualMethod.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
