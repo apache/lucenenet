@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -33,8 +34,8 @@ namespace Lucene.Net.Index
     public class TestSegmentReader : LuceneTestCase
     {
         private Directory Dir;
-        private Document TestDoc = new Document();
-        private SegmentReader Reader = null;
+        private Document TestDoc;
+        private SegmentReader Reader;
 
         //TODO: Setup the reader w/ multiple documents
         [SetUp]
@@ -42,6 +43,7 @@ namespace Lucene.Net.Index
         {
             base.SetUp();
             Dir = NewDirectory();
+            TestDoc = new Document();
             DocHelper.SetupDoc(TestDoc);
             SegmentCommitInfo info = DocHelper.WriteDoc(Random(), Dir, TestDoc);
             Reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, IOContext.READ);
