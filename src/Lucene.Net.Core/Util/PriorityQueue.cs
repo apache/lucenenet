@@ -28,7 +28,8 @@ namespace Lucene.Net.Util
     /// <p><b>NOTE</b>: this class will pre-allocate a full array of
     /// length <code>maxSize+1</code> if instantiated via the
     /// <seealso cref="#PriorityQueue(int,boolean)"/> constructor with
-    /// <code>prepopulate</code> set to <code>true</code>.
+    /// <code>prepopulate</code> set to <code>true</code>. That maximum
+    /// size can grow as we insert elements over the time.
     ///
     /// @lucene.internal
     /// </summary>
@@ -36,8 +37,15 @@ namespace Lucene.Net.Util
     public abstract class PriorityQueue<T>
     {
         private int QueueSize = 0;
-        private readonly int MaxSize;
-        private readonly T[] Heap;
+        private int MaxSize;
+        private T[] Heap;
+        private bool resizable;
+
+        public PriorityQueue()
+            : this(8, false)
+        {
+            resizable = true;
+        } 
 
         public PriorityQueue(int maxSize = 128)
             : this(maxSize, true)
@@ -46,7 +54,8 @@ namespace Lucene.Net.Util
  
         public PriorityQueue(int maxSize, bool prepopulate)
         {
-            int heapSize;
+            resizable = false;
+
             if (maxSize < 0)
             {
                 throw new System.ArgumentException("maxSize must be >= 0; got: " + maxSize);
@@ -56,7 +65,7 @@ namespace Lucene.Net.Util
                 if (0 == maxSize)
                 {
                     // We allocate 1 extra to avoid if statement in top()
-                    heapSize = 2;
+                    maxSize++;
                 }
                 else
                 {
@@ -73,14 +82,12 @@ namespace Lucene.Net.Util
                         // Throw exception to prevent confusing OOME:
                         throw new System.ArgumentException("maxSize must be < " + ArrayUtil.MAX_ARRAY_LENGTH + "; got: " + maxSize);
                     }
-                    else
-                    {
-                        // NOTE: we add +1 because all access to heap is
-                        // 1-based not 0-based.  heap[0] is unused.
-                        heapSize = maxSize + 1;
-                    }
                 }
             }
+
+            // NOTE: we add +1 because all access to heap is
+            // 1-based not 0-based.  heap[0] is unused.
+            int heapSize = maxSize + 1;
             
             // T is unbounded type, so this unchecked cast works always:
             T[] h = new T[heapSize];
@@ -158,13 +165,17 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Adds an Object to a PriorityQueue in log(size) time. If one tries to add
-        /// more objects than maxSize from initialize an
-        /// <seealso cref="IndexOutOfRangeException"/> is thrown.
+        /// more objects than maxSize from initialize and it is not possible to resize
+        /// the heap, an <seealso cref="IndexOutOfRangeException"/> is thrown.
         /// </summary>
         /// <returns> the new 'top' element in the queue. </returns>
         public T Add(T element)
         {
             QueueSize++;
+            if (resizable && QueueSize > MaxSize)
+            {
+                Resize();
+            }
             Heap[QueueSize] = element;
             UpHeap();
             return Heap[1];
@@ -274,6 +285,22 @@ namespace Lucene.Net.Util
             QueueSize = 0;
         }
 
+        public T[] ToArray()
+        {
+            T[] copy = new T[QueueSize];
+            Array.Copy(Heap, 1, copy, 0, QueueSize);
+            return copy;
+        }
+
+        private void Resize()
+        {
+            int newSize = Math.Min(ArrayUtil.MAX_ARRAY_LENGTH - 1, 2*MaxSize);
+            T[] newHeap = new T[newSize + 1];
+            Array.Copy(Heap, newHeap, MaxSize + 1);
+            MaxSize = newSize;
+            Heap = newHeap;
+        }
+
         private void UpHeap()
         {
             int i = QueueSize;
@@ -322,13 +349,6 @@ namespace Lucene.Net.Util
             {
                 return (object[])(Array)Heap;
             }
-        }
-
-        public T[] ToArray()
-        {
-            var copy = new T[QueueSize];
-            Array.Copy(Heap, 1, copy, 0, QueueSize);
-            return copy;
         }
     }
 }
