@@ -135,7 +135,16 @@ namespace Lucene.Net.Util
             {
                 Reap();
             }
-            return BackingStore[new IdentityWeakReference(key)];
+
+            V val;
+            if (BackingStore.TryGetValue(new IdentityWeakReference(key), out val))
+            {
+                return val;
+            }
+            else
+            {
+                return default(V);
+            }
         }
 
         /// <summary>
@@ -329,25 +338,19 @@ namespace Lucene.Net.Util
         /// <seealso cref= <a href="#reapInfo">Information about the <code>reapOnRead</code> setting</a> </seealso>
         public void Reap()
         {
-            lock (BackingStore)
+            List<IdentityWeakReference> keysToRemove = new List<IdentityWeakReference>();
+            foreach (IdentityWeakReference zombie in BackingStore.Keys)
             {
-                List<IdentityWeakReference> keysToRemove = new List<IdentityWeakReference>();
-
-                foreach (IdentityWeakReference zombie in BackingStore.Keys)
+                if (!zombie.IsAlive)
                 {
-                    if (!zombie.IsAlive)
-                        keysToRemove.Add(zombie);
-                }
-
-                foreach (var key in keysToRemove)
-                {
-                    BackingStore.Remove(key);
+                    keysToRemove.Add(zombie);
                 }
             }
-            /*while ((zombie = queue.poll()) != null)
+
+            foreach (var key in keysToRemove)
             {
-              BackingStore.Remove(zombie);
-            }*/
+                BackingStore.Remove(key);
+            }
         }
 
         // we keep a hard reference to our NULL key, so map supports null keys that never get GCed:
