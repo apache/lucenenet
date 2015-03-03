@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -194,7 +195,7 @@ namespace Lucene.Net.Index
           FSDirectory.
         */
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestAtomicUpdates()
         {
             Directory directory;

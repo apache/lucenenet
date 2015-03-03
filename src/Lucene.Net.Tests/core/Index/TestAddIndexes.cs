@@ -1207,8 +1207,8 @@ namespace Lucene.Net.Index
         /*
          * simple test that ensures we getting expected exceptions
          */
-
         [Test]
+        [Ignore("We don't have all the codecs in place to run this.")]
         public virtual void TestAddIndexMissingCodec()
         {
             BaseDirectoryWrapper toAdd = NewDirectory();
