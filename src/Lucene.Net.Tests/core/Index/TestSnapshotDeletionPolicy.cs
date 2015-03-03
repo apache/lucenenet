@@ -110,6 +110,7 @@ namespace Lucene.Net.Index
 
         protected internal IList<IndexCommit> Snapshots;
 
+        [SetUp]
         public override void SetUp()
         {
             base.SetUp();
