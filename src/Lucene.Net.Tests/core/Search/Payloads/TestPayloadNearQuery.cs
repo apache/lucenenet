@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using Lucene.Net.Documents;
@@ -48,6 +49,7 @@ namespace Lucene.Net.Search.Payloads
         private static BoostingSimilarity Similarity = new BoostingSimilarity();
         private static byte[] Payload2 = { 2 };
         private static byte[] Payload4 = { 4 };
+        private static readonly Regex _whiteSpaceRegex = new Regex("[\\s]+", RegexOptions.Compiled);
 
         private class PayloadAnalyzer : Analyzer
         {
@@ -71,7 +73,7 @@ namespace Lucene.Net.Search.Payloads
                 PayAtt = AddAttribute<IPayloadAttribute>();
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 bool result = false;
                 if (input.IncrementToken())
@@ -99,9 +101,9 @@ namespace Lucene.Net.Search.Payloads
 
         private PayloadNearQuery NewPhraseQuery(string fieldName, string phrase, bool inOrder, PayloadFunction function)
         {
-            string[] words = phrase.Split("[\\s]+".ToCharArray());
-            SpanQuery[] clauses = new SpanQuery[words.Length];
-            for (int i = 0; i < clauses.Length; i++)
+            var words = _whiteSpaceRegex.Split(phrase);
+            var clauses = new SpanQuery[words.Length];
+            for (var i = 0; i < clauses.Length; i++)
             {
                 clauses[i] = new SpanTermQuery(new Term(fieldName, words[i]));
             }
@@ -290,9 +292,9 @@ namespace Lucene.Net.Search.Payloads
 
         private SpanNearQuery SpanNearQuery(string fieldName, string words)
         {
-            string[] wordList = words.Split("[\\s]+".ToCharArray());
-            SpanQuery[] clauses = new SpanQuery[wordList.Length];
-            for (int i = 0; i < clauses.Length; i++)
+            var wordList = _whiteSpaceRegex.Split(words);
+            var clauses = new SpanQuery[wordList.Length];
+            for (var i = 0; i < clauses.Length; i++)
             {
                 clauses[i] = new PayloadTermQuery(new Term(fieldName, wordList[i]), new AveragePayloadFunction());
             }
