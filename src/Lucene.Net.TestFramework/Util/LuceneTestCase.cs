@@ -564,7 +564,7 @@ namespace Lucene.Net.Util
         [SetUp]
         public virtual void SetUp()
         {
-            ///* LUCENE TO-DO: Not sure how to convert these
+            // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
         }
@@ -575,7 +575,7 @@ namespace Lucene.Net.Util
         [TearDown]
         public virtual void TearDown()
         {
-            /* LUCENE TO-DO: Not sure how to convert these
+            /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
             CleanupTemporaryFiles();
@@ -2656,15 +2656,14 @@ namespace Lucene.Net.Util
                         else if (System.IO.File.Exists(f))
                             File.Delete(f);
                     }
-                    catch (IOException)
+                    catch (IOException e)
                     {
                         //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
                         //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
                         //                    {
-                        //                        Console.Error.WriteLine("WARNING: Leftover undeleted temporary files (bugUrl: " + suiteClass.GetAnnotation(typeof(SuppressTempFileChecks)).bugUrl() + "): " + e.Message);
-                        //                        return;
+                        Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
+                        return;
                         //                    }
-                        throw;
                     }
                 }
             }
