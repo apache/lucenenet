@@ -293,7 +293,20 @@ namespace Lucene.Net.Util.Packed
         [Test]
         public virtual void TestMonotoneSequences()
         {
-            //for (int s = 2; s < 1222; s++) {
+            for (int s = 2; s < 1222; s++)
+            {
+                long[] values = new long[s];
+                for (int i = 0; i < s; i++)
+                {
+                    values[i] = (i / 2); // upperbound smaller than number of values, only upper bits encoded
+                }
+                TstEFS2(values);
+            }
+        }
+
+        [Test, LongRunningTest]
+        public virtual void TestMonotoneSequencesLonger()
+        {
             for (int s = 2; s < 4422; s++)
             {
                 long[] values = new long[s];
@@ -320,8 +333,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test]
-        [LongRunningTest]
+        [Test, LongRunningTest]
         public virtual void TestStrictMonotoneSequencesLonger()
         {
             for (int s = 2; s < 4422; s++)

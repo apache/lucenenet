@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -235,7 +236,7 @@ namespace Lucene.Net.Util.Automaton
             Assert.IsTrue(bra.Run(bytes, 0, bytes.Length));
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public void TestRandomRegexes()
         {
             int num = AtLeast(250);

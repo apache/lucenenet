@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
@@ -165,7 +166,7 @@ namespace Lucene.Net.Index
             return ret;
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestTermDocPerf()
         {
             // performance test for 10% of documents containing a term

@@ -1,6 +1,7 @@
 using Apache.NMS.Util;
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -1577,7 +1578,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestTonsOfUpdates()
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -843,7 +844,7 @@ namespace Lucene.Net.Index
         }
 
         // Stress test reopen during addIndexes
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestDuringAddIndexes()
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
@@ -967,7 +968,7 @@ namespace Lucene.Net.Index
         }
 
         // Stress test reopen during add/delete
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestDuringAddDelete()
         {
             Directory dir1 = NewDirectory();
