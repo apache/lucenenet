@@ -691,11 +691,11 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_CHAR:
-                    b.Append("\\").Append(c);
+                    b.Append("\\").Append(Character.ToChars(c));
                     break;
 
                 case Kind.REGEXP_CHAR_RANGE:
-                    b.Append("[\\").Append(From).Append("-\\").Append(To).Append("]");
+                    b.Append("[\\").Append(Character.ToChars(From)).Append("-\\").Append(Character.ToChars(To)).Append("]");
                     break;
 
                 case Kind.REGEXP_ANYCHAR:
@@ -828,7 +828,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                b.Append(exp1.c);
+                b.Append(Character.ToChars(exp1.c));
             }
             if (exp2.kind == Kind.REGEXP_STRING)
             {
@@ -836,7 +836,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                b.Append(exp2.c);
+                b.Append(Character.ToChars(exp2.c));
             }
             return MakeString(b.ToString());
         }
