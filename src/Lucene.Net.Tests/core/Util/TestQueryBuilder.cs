@@ -305,7 +305,7 @@ namespace Lucene.Net.Util
                 PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (AddSynonym) // inject our synonym
                 {
