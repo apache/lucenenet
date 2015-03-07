@@ -46,11 +46,7 @@ namespace Lucene.Net.Search
         {
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
-
-            //DecimalFormat format = new DecimalFormat("00000000000", new DecimalFormatSymbols(Locale.ROOT));
-            NumberFormatInfo f = new NumberFormatInfo();
-            f.NumberDecimalSeparator = ".";
-            f.NumberDecimalDigits = 0;
+            const string format = "D11";
 
             int num = AtLeast(500);
             for (int l = 0; l < num; l++)
@@ -59,7 +55,7 @@ namespace Lucene.Net.Search
                 for (int m = 0, c = Random().Next(10); m <= c; m++)
                 {
                     int value = Random().Next(int.MaxValue);
-                    doc.Add(NewStringField("asc", value.ToString(f), Field.Store.NO));
+                    doc.Add(NewStringField("asc", value.ToString(format), Field.Store.NO));
                     doc.Add(new IntField("trie", value, Field.Store.NO));
                 }
                 writer.AddDocument(doc);
@@ -79,7 +75,7 @@ namespace Lucene.Net.Search
                     lower = upper;
                     upper = a;
                 }
-                TermRangeQuery cq = TermRangeQuery.NewStringRange("asc", lower.ToString(f), upper.ToString(f), true, true);
+                TermRangeQuery cq = TermRangeQuery.NewStringRange("asc", lower.ToString(format), upper.ToString(format), true, true);
                 NumericRangeQuery<int> tq = NumericRangeQuery.NewIntRange("trie", lower, upper, true, true);
                 TopDocs trTopDocs = searcher.Search(cq, 1);
                 TopDocs nrTopDocs = searcher.Search(tq, 1);
