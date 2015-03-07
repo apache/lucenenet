@@ -58,13 +58,9 @@ namespace Lucene.Net.Search
             Field field = NewStringField("field", "", Field.Store.NO);
             doc.Add(field);
 
-            NumberFormatInfo df = new NumberFormatInfo();
-            df.NumberDecimalDigits = 0;
-
-            //NumberFormat df = new DecimalFormat("000", new DecimalFormatSymbols(Locale.ROOT));
             for (int i = 0; i < 1000; i++)
             {
-                field.StringValue = i.ToString(df);
+                field.StringValue = i.ToString("D3");
                 writer.AddDocument(doc);
             }
 
