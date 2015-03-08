@@ -1060,7 +1060,7 @@ namespace Lucene.Net.Util
         /// returns the number of 64 bit words it would take to hold numBits </summary>
         public static int Bits2words(long numBits)
         {
-            return (int)(((int)((uint)(numBits - 1) >> 6)) + 1);
+            return (int)(((numBits - 1) >> 6) + 1);
         }
 
         /// <summary>
