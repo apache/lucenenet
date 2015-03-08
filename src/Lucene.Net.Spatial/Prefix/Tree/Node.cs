@@ -143,7 +143,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             if (point != null)
             {
 #if !NET35
-                return new ReadOnlyCollectionBuilder<Node>(new[] {GetSubCell(point)}).ToReadOnlyCollection();
+                return new ReadOnlyCollectionBuilder<Node>(new[] { GetSubCell(point) }).ToReadOnlyCollection();
 #else
                 return new List<Node>(new[]{GetSubCell(point)}).AsReadOnly();
 #endif
@@ -206,7 +206,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public override bool Equals(object obj)
         {
-            return !(obj == null || !(obj is Node)) && GetTokenString().Equals(((Node) obj).GetTokenString());
+            return !(obj == null || !(obj is Node)) && GetTokenString().Equals(((Node)obj).GetTokenString());
         }
 
         public override int GetHashCode()
@@ -216,7 +216,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public override string ToString()
         {
-            return GetTokenString() + (IsLeaf() ? new string(new[] {(char) LEAF_BYTE}) : string.Empty);
+            return GetTokenString() + (IsLeaf() ? new string(new[] { (char)LEAF_BYTE }) : string.Empty);
         }
     }
 }

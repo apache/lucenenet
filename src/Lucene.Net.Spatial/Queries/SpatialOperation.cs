@@ -1,4 +1,4 @@
-/* See the NOTICE file distributed with
+﻿/* See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * Esri Inc. licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
@@ -33,7 +33,7 @@ namespace Lucene.Net.Spatial.Queries
         /// Bounding box of the *indexed* shape.
         /// </summary>
         public static readonly SpatialOperation BBoxIntersects = new SpatialOperation("BBoxIntersects", true, false, false);
-        
+
         /// <summary>
         /// Bounding box of the *indexed* shape.
         /// </summary>
@@ -102,9 +102,9 @@ namespace Lucene.Net.Spatial.Queries
             return targetNeedsArea;
         }
 
-        public String GetName()
+        public String Name
         {
-            return name;
+            get { return name; }
         }
 
         public override String ToString()

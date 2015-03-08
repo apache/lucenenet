@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,10 @@
  */
 
 using System;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -44,18 +46,18 @@ namespace Lucene.Net.Spatial.Util
             this.max = max;
         }
 
-        public override DocIdSet GetDocIdSet(Index.IndexReader reader)
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            var values = source.GetValues(reader);
-            return new ValueSourceFilteredDocIdSet(startingFilter.GetDocIdSet(reader), values, this);
+            var values = source.GetValues(null, context);
+            return new ValueSourceFilteredDocIdSet(startingFilter.GetDocIdSet(context, acceptDocs), values, this);
         }
 
         public class ValueSourceFilteredDocIdSet : FilteredDocIdSet
         {
             private readonly ValueSourceFilter enclosingFilter;
-            private readonly DocValues values;
+            private readonly FunctionValues values;
 
-            public ValueSourceFilteredDocIdSet(DocIdSet innerSet, DocValues values, ValueSourceFilter caller)
+            public ValueSourceFilteredDocIdSet(DocIdSet innerSet, FunctionValues values, ValueSourceFilter caller)
                 : base(innerSet)
             {
                 this.enclosingFilter = caller;
@@ -68,5 +70,6 @@ namespace Lucene.Net.Spatial.Util
                 return val >= enclosingFilter.min && val <= enclosingFilter.max;
             }
         }
+
     }
 }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
-using Lucene.Net.Spatial.Util;
+using Lucene.Net.Util;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
-using Spatial4n.Core.Shapes.Impl;
 
 namespace Lucene.Net.Spatial.Vector
 {
@@ -31,8 +31,8 @@ namespace Lucene.Net.Spatial.Vector
     /// </summary>
     public class DistanceValueSource : ValueSource
     {
-        private readonly PointVectorStrategy strategy;
         private readonly Point from;
+        private readonly PointVectorStrategy strategy;
 
         public DistanceValueSource(PointVectorStrategy strategy, Point from)
         {
@@ -40,61 +40,14 @@ namespace Lucene.Net.Spatial.Vector
             this.from = from;
         }
 
-        public class DistanceDocValues : DocValues
+        public override string Description
         {
-            private readonly DistanceValueSource enclosingInstance;
-
-            private readonly double[] ptX, ptY;
-            private readonly IBits validX, validY;
-
-            private readonly Point from;
-            private readonly DistanceCalculator calculator;
-            private readonly double nullValue;
-
-            public DistanceDocValues(DistanceValueSource enclosingInstance, IndexReader reader)
-            {
-                this.enclosingInstance = enclosingInstance;
-
-                ptX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameX()/*, true*/);
-                ptY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.GetFieldNameY()/*, true*/);
-                validX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameX());
-                validY = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.GetFieldNameY());
-
-                from = enclosingInstance.from;
-                calculator = enclosingInstance.strategy.GetSpatialContext().GetDistCalc();
-                nullValue = (enclosingInstance.strategy.GetSpatialContext().IsGeo() ? 180 : double.MaxValue);
-            }
-
-            public override float FloatVal(int doc)
-            {
-                return (float)DoubleVal(doc);
-            }
-
-            public override double DoubleVal(int doc)
-            {
-                // make sure it has minX and area
-                if (validX.Get(doc))
-                {
-                    Debug.Assert(validY.Get(doc));
-                    return calculator.Distance(from, ptX[doc], ptY[doc]);
-                }
-                return nullValue;
-            }
-
-            public override string ToString(int doc)
-            {
-                return enclosingInstance.Description() + "=" + FloatVal(doc);
-            }
+            get { return "DistanceValueSource(" + strategy + ", " + from + ")"; }
         }
 
-        public override DocValues GetValues(IndexReader reader)
+        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
         {
-            return new DistanceDocValues(this, reader);
-        }
-
-        public override string Description()
-        {
-            return "DistanceValueSource(" + strategy + ", " + from + ")";
+            return new DistanceFunctionValue(this, readerContext.AtomicReader);
         }
 
         public override bool Equals(object o)
@@ -114,5 +67,55 @@ namespace Lucene.Net.Spatial.Vector
         {
             return from.GetHashCode();
         }
+
+        #region Nested type: DistanceFunctionValues
+
+        public class DistanceFunctionValue : FunctionValues
+        {
+            private readonly DistanceCalculator calculator;
+            private readonly DistanceValueSource enclosingInstance;
+            private readonly Point from;
+            private readonly double nullValue;
+
+            private readonly FieldCache.Doubles ptX, ptY;
+            private readonly IBits validX, validY;
+
+            public DistanceFunctionValue(DistanceValueSource enclosingInstance, AtomicReader reader)
+            {
+                this.enclosingInstance = enclosingInstance;
+
+                ptX = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.FieldNameX, true);
+                ptY = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.FieldNameY, true);
+                validX = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.FieldNameX);
+                validY = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.FieldNameY);
+
+                from = enclosingInstance.from;
+                calculator = enclosingInstance.strategy.SpatialContext.GetDistCalc();
+                nullValue = (enclosingInstance.strategy.SpatialContext.IsGeo() ? 180 : double.MaxValue);
+            }
+
+            public override float FloatVal(int doc)
+            {
+                return (float)DoubleVal(doc);
+            }
+
+            public override double DoubleVal(int doc)
+            {
+                // make sure it has minX and area
+                if (validX[doc])
+                {
+                    Debug.Assert(validY[doc]);
+                    return calculator.Distance(from, ptX.Get(doc), ptY.Get(doc));
+                }
+                return nullValue;
+            }
+
+            public override string ToString(int doc)
+            {
+                return enclosingInstance.Description + "=" + FloatVal(doc);
+            }
+        }
+
+        #endregion
     }
 }

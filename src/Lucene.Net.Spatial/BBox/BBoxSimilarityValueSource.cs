@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
+using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Function;
-using Lucene.Net.Spatial.Util;
+using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
-using Spatial4n.Core.Shapes.Impl;
 
 namespace Lucene.Net.Spatial.BBox
 {
     public class BBoxSimilarityValueSource : ValueSource
     {
-        private readonly BBoxStrategy strategy;
         private readonly BBoxSimilarity similarity;
+        private readonly BBoxStrategy strategy;
 
         public BBoxSimilarityValueSource(BBoxStrategy strategy, BBoxSimilarity similarity)
         {
@@ -35,76 +35,14 @@ namespace Lucene.Net.Spatial.BBox
             this.similarity = similarity;
         }
 
-        private class BBoxSimilarityValueSourceDocValues : DocValues
+        public override string Description
         {
-            private readonly BBoxSimilarityValueSource _enclosingInstance;
-            private readonly Rectangle rect;
-            private readonly double[] minX;
-            private readonly double[] minY;
-            private readonly double[] maxX;
-            private readonly double[] maxY;
-
-            private readonly IBits validMinX, validMaxX;
-
-            public BBoxSimilarityValueSourceDocValues(IndexReader reader, BBoxSimilarityValueSource enclosingInstance)
-            {
-                _enclosingInstance = enclosingInstance;
-                rect = _enclosingInstance.strategy.GetSpatialContext().MakeRectangle(0, 0, 0, 0); //reused
-
-                minX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minX/*, true*/);
-                minY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minY/*, true*/);
-                maxX = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxX/*, true*/);
-                maxY = FieldCache_Fields.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxY/*, true*/);
-
-                validMinX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.field_minX);
-                validMaxX = FieldCache_Fields.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.field_maxX);
-            }
-
-            public override float FloatVal(int doc)
-            {
-                // make sure it has minX and area
-                if (validMinX.Get(doc) && validMaxX.Get(doc))
-                {
-                    rect.Reset(
-                        minX[doc], maxX[doc],
-                        minY[doc], maxY[doc]);
-                    return (float) _enclosingInstance.similarity.Score(rect, null);
-                }
-                else
-                {
-                    return (float) _enclosingInstance.similarity.Score(null, null);
-                }
-            }
-
-            public override Explanation Explain(int doc)
-            {
-                // make sure it has minX and area
-                if (validMinX.Get(doc) && validMaxX.Get(doc))
-                {
-                    rect.Reset(
-                        minX[doc], maxX[doc],
-                        minY[doc], maxY[doc]);
-                    var exp = new Explanation();
-                    _enclosingInstance.similarity.Score(rect, exp);
-                    return exp;
-                }
-                return new Explanation(0, "No BBox");
-            }
-
-            public override string ToString(int doc)
-            {
-                return _enclosingInstance.Description() + "=" + FloatVal(doc);
-            }
+            get { return "BBoxSimilarityValueSource(" + similarity + ")"; }
         }
 
-        public override DocValues GetValues(IndexReader reader)
+        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
         {
-            return new BBoxSimilarityValueSourceDocValues(reader, this);
-        }
-
-        public override string Description()
-        {
-            return "BBoxSimilarityValueSource(" + similarity + ")";
+            return new BBoxSimilarityValueSourceFunctionValue(readerContext.AtomicReader, this);
         }
 
         public override bool Equals(object o)
@@ -118,5 +56,71 @@ namespace Lucene.Net.Spatial.BBox
         {
             return typeof(BBoxSimilarityValueSource).GetHashCode() + similarity.GetHashCode();
         }
+
+        #region Nested type: BBoxSimilarityValueSourceFunctionValue
+
+        private class BBoxSimilarityValueSourceFunctionValue : FunctionValues
+        {
+            private readonly BBoxSimilarityValueSource _enclosingInstance;
+            private readonly FieldCache.Doubles maxX, maxY;
+            private readonly FieldCache.Doubles minX, minY;
+            private readonly Rectangle rect;
+
+            private readonly IBits validMaxX;
+            private readonly IBits validMinX;
+
+            public BBoxSimilarityValueSourceFunctionValue(AtomicReader reader,
+                                                          BBoxSimilarityValueSource enclosingInstance)
+            {
+                _enclosingInstance = enclosingInstance;
+                rect = _enclosingInstance.strategy.SpatialContext.MakeRectangle(0, 0, 0, 0); //reused
+
+                minX = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minX, true);
+                minY = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_minY, true);
+                maxX = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxX, true);
+                maxY = FieldCache.DEFAULT.GetDoubles(reader, enclosingInstance.strategy.field_maxY, true);
+
+                validMinX = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.field_minX);
+                validMaxX = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.field_maxX);
+            }
+
+            public override float FloatVal(int doc)
+            {
+                // make sure it has minX and area
+                if (validMinX[doc] && validMaxX[doc])
+                {
+                    rect.Reset(
+                        minX.Get(doc), maxX.Get(doc),
+                        minY.Get(doc), maxY.Get(doc));
+                    return (float)_enclosingInstance.similarity.Score(rect, null);
+                }
+                else
+                {
+                    return (float)_enclosingInstance.similarity.Score(null, null);
+                }
+            }
+
+            public override Explanation Explain(int doc)
+            {
+                // make sure it has minX and area
+                if (validMinX[doc] && validMaxX[doc])
+                {
+                    rect.Reset(
+                        minX.Get(doc), maxX.Get(doc),
+                        minY.Get(doc), maxY.Get(doc));
+                    var exp = new Explanation();
+                    _enclosingInstance.similarity.Score(rect, exp);
+                    return exp;
+                }
+                return new Explanation(0, "No BBox");
+            }
+
+            public override string ToString(int doc)
+            {
+                return _enclosingInstance.Description + "=" + FloatVal(doc);
+            }
+        }
+
+        #endregion
     }
 }

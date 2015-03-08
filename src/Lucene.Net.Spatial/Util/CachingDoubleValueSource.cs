@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,8 +23,8 @@ namespace Lucene.Net.Spatial.Util
 {
     public class CachingDoubleValueSource : ValueSource
     {
-        protected readonly ValueSource source;
         protected readonly Dictionary<int, double> cache;
+        protected readonly ValueSource source;
 
         public CachingDoubleValueSource(ValueSource source)
         {
@@ -32,22 +32,53 @@ namespace Lucene.Net.Spatial.Util
             cache = new Dictionary<int, double>();
         }
 
-        public class CachingDoubleDocValue : DocValues
+        public override string Description
         {
-            private readonly int docBase;
-            private readonly DocValues values;
-            private readonly Dictionary<int, double> cache;
+            get { return "Cached[" + source.Description + "]"; }
+        }
 
-            public CachingDoubleDocValue(int docBase, DocValues vals, Dictionary<int, double> cache)
+        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
+        {
+            int @base = readerContext.docBase;
+            FunctionValues vals = source.GetValues(context, readerContext);
+            return new CachingDoubleFunctionValue(@base, vals, cache);
+        }
+
+        public override bool Equals(object o)
+        {
+            if (this == o) return true;
+
+            var that = o as CachingDoubleValueSource;
+
+            if (that == null) return false;
+            if (source != null ? !source.Equals(that.source) : that.source != null) return false;
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return source != null ? source.GetHashCode() : 0;
+        }
+
+        #region Nested type: CachingDoubleFunctionValue
+
+        public class CachingDoubleFunctionValue : FunctionValues
+        {
+            private readonly Dictionary<int, double> cache;
+            private readonly int docBase;
+            private readonly FunctionValues values;
+
+            public CachingDoubleFunctionValue(int docBase, FunctionValues vals, Dictionary<int, double> cache)
             {
                 this.docBase = docBase;
-                this.values = vals;
+                values = vals;
                 this.cache = cache;
             }
 
             public override double DoubleVal(int doc)
             {
-                var key = docBase + doc;
+                int key = docBase + doc;
                 double v;
                 if (!cache.TryGetValue(key, out v))
                 {
@@ -68,34 +99,6 @@ namespace Lucene.Net.Spatial.Util
             }
         }
 
-        public override DocValues GetValues(IndexReader reader)
-        {
-            var @base = 0; //reader.DocBase;
-            var vals = source.GetValues(reader);
-            return new CachingDoubleDocValue(@base, vals, cache);
-
-        }
-
-        public override string Description()
-        {
-            return "Cached[" + source.Description() + "]";
-        }
-
-        public override bool Equals(object o)
-        {
-            if (this == o) return true;
-
-            var that = o as CachingDoubleValueSource;
-
-            if (that == null) return false;
-            if (source != null ? !source.Equals(that.source) : that.source != null) return false;
-
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            return source != null ? source.GetHashCode() : 0;
-        }
+        #endregion
     }
 }

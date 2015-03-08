@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -37,11 +37,11 @@ namespace Lucene.Net.Spatial.Queries
         public static String WriteSpatialArgs(SpatialArgs args)
         {
             var str = new StringBuilder();
-            str.Append(args.Operation.GetName());
+            str.Append(args.Operation.Name);
             str.Append('(');
             str.Append(args.Shape);
             if (args.DistErrPct != null)
-                str.Append(" distErrPct=").Append(String.Format("{0:0.00}%", args.DistErrPct*100d));
+                str.Append(" distErrPct=").Append(String.Format("{0:0.00}%", args.DistErrPct * 100d));
             if (args.DistErr != null)
                 str.Append(" distErr=").Append(args.DistErr);
             str.Append(')');
@@ -117,7 +117,7 @@ namespace Lucene.Net.Spatial.Queries
         {
             var map = new Dictionary<String, String>();
             int tokenPos = 0;
-            var st = body.Split(new[] {' ', '\n', '\t'}, StringSplitOptions.RemoveEmptyEntries);
+            var st = body.Split(new[] { ' ', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
             while (tokenPos < st.Length)
             {
                 String a = st[tokenPos++];

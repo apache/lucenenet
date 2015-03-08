@@ -1,23 +1,24 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 using System;
 using System.Runtime.CompilerServices;
 using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
 #if NET35
 using Lucene.Net.Support;
@@ -26,41 +27,47 @@ using Lucene.Net.Support;
 namespace Lucene.Net.Spatial.Util
 {
     /// <summary>
-    /// Provides access to a {@link ShapeFieldCache} for a given {@link AtomicReader}.
-    /// 
+    /// Provides access to a
+    /// <see cref="ShapeFieldCache{T}">ShapeFieldCache&lt;T&gt;</see>
+    /// for a given
+    /// <see cref="Lucene.Net.Index.AtomicReader">Lucene.Net.Index.AtomicReader
+    /// 	</see>
+    /// .
     /// If a Cache does not exist for the Reader, then it is built by iterating over
     /// the all terms for a given field, reconstructing the Shape from them, and adding
     /// them to the Cache.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class ShapeFieldCacheProvider<T> where T : Shape
+    /// <lucene.internal></lucene.internal>
+    public abstract class ShapeFieldCacheProvider<T>
+        where T : Shape
     {
-        //private Logger log = Logger.getLogger(getClass().getName());
+        //private Logger log = Logger.GetLogger(GetType().FullName);
 
-        // it may be a List<T> or T
 #if !NET35
         private readonly ConditionalWeakTable<IndexReader, ShapeFieldCache<T>> sidx =
             new ConditionalWeakTable<IndexReader, ShapeFieldCache<T>>(); // WeakHashMap
 #else
-        private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
-            new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
+	    private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
+	        new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
 #endif
 
+        protected internal readonly int defaultSize;
 
-        protected readonly int defaultSize;
-        protected readonly String shapeField;
+        protected internal readonly string shapeField;
 
-        protected ShapeFieldCacheProvider(String shapeField, int defaultSize)
+        public ShapeFieldCacheProvider(string shapeField, int defaultSize)
         {
+            // it may be a List<T> or T
             this.shapeField = shapeField;
             this.defaultSize = defaultSize;
         }
 
-        protected abstract T ReadShape(/*BytesRef*/ Term term);
+        protected internal abstract T ReadShape(BytesRef term);
 
         private readonly object locker = new object();
 
-        public ShapeFieldCache<T> GetCache(IndexReader reader)
+        /// <exception cref="System.IO.IOException"></exception>
+        public virtual ShapeFieldCache<T> GetCache(AtomicReader reader)
         {
             lock (locker)
             {
@@ -69,35 +76,37 @@ namespace Lucene.Net.Spatial.Util
                 {
                     return idx;
                 }
-
-                //long startTime = System.CurrentTimeMillis();
-                //log.fine("Building Cache [" + reader.MaxDoc() + "]");
-
+                /*long startTime = Runtime.CurrentTimeMillis();
+				log.Fine("Building Cache [" + reader.MaxDoc() + "]");*/
                 idx = new ShapeFieldCache<T>(reader.MaxDoc, defaultSize);
-                var count = 0;
-                var tec = new TermsEnumCompatibility(reader, shapeField);
-
-                var term = tec.Next();
-                while (term != null)
+                int count = 0;
+                DocsEnum docs = null;
+                Terms terms = reader.Terms(shapeField);
+                TermsEnum te = null;
+                if (terms != null)
                 {
-                    var shape = ReadShape(term);
-                    if (shape != null)
+                    te = terms.Iterator(te);
+                    BytesRef term = te.Next();
+                    while (term != null)
                     {
-                        var docs = reader.TermDocs(new Term(shapeField, tec.Term().Text));
-                        while (docs.Next())
+                        T shape = ReadShape(term);
+                        if (shape != null)
                         {
-                            idx.Add(docs.Doc, shape);
-                            count++;
+                            docs = te.Docs(null, docs, DocsEnum.FLAG_NONE);
+                            int docid = docs.NextDoc();
+                            while (docid != DocIdSetIterator.NO_MORE_DOCS)
+                            {
+                                idx.Add(docid, shape);
+                                docid = docs.NextDoc();
+                                count++;
+                            }
                         }
+                        term = te.Next();
                     }
-                    term = tec.Next();
                 }
-
                 sidx.Add(reader, idx);
-                tec.Close();
-
-                //long elapsed = System.CurrentTimeMillis() - startTime;
-                //log.fine("Cached: [" + count + " in " + elapsed + "ms] " + idx);
+                /*long elapsed = Runtime.CurrentTimeMillis() - startTime;
+                log.Fine("Cached: [" + count + " in " + elapsed + "ms] " + idx);*/
                 return idx;
             }
         }
