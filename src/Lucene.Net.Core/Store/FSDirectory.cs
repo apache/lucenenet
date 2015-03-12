@@ -118,19 +118,13 @@ namespace Lucene.Net.Store
         protected internal readonly ISet<string> StaleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
         private int ChunkSize = DEFAULT_READ_CHUNK_SIZE;
 
-        // returns the canonical version of the directory, creating it if it doesn't exist.
+        // returns the canonical version of the directory.
+        // It does not create it if it doesn't exist, to match the Java version
+        // (despite Lucene's method has a comment saying that it does, the File class
+        // does not create any file in the FS).
         private static DirectoryInfo GetCanonicalPath(DirectoryInfo file)
         {
-            try
-            {
-                file.Create();
-            }
-            catch (IOException)
-            {
-                //File already exists
-            }
-
-            return file;
+            return new DirectoryInfo(file.FullName);
         }
 
         protected FSDirectory(DirectoryInfo dir)

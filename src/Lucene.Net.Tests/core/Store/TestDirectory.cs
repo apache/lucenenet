@@ -258,7 +258,8 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestDontCreate()
         {
-            var path = new DirectoryInfo(Path.Combine(AppSettings.Get("tmpDir", ""), "doesnotexist"));
+            DirectoryInfo path = new DirectoryInfo(Path.Combine(AppSettings.Get("tmpDir", ""), "doesnotexist"));
+
             try
             {
                 Assert.IsTrue(!path.Exists);
@@ -268,8 +269,12 @@ namespace Lucene.Net.Store
             }
             finally
             {
-                System.IO.Directory.Delete(path.FullName, true);
+                if (path.Exists)
+                {
+                    System.IO.Directory.Delete(path.FullName, true);
+                }
             }
+                
         }
 
         // LUCENE-1468
