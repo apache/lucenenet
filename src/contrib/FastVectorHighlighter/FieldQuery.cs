@@ -17,9 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
-using Lucene.Net.Search;
 using Lucene.Net.Index;
 using Lucene.Net.Support.Compatibility;
 using TermInfo = Lucene.Net.Search.Vectorhighlight.FieldTermStack.TermInfo;
@@ -78,7 +75,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             else if (sourceQuery is PrefixQuery)
             {
                 if (!flatQueries.ContainsKey(sourceQuery))
-                    flatQueries.Add(sourceQuery, sourceQuery);
+                    flatQueries[sourceQuery] = sourceQuery;
             }
             else if (sourceQuery is DisjunctionMaxQuery)
             {
@@ -91,7 +88,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             else if (sourceQuery is TermQuery)
             {
                 if (!flatQueries.ContainsKey(sourceQuery))
-                    flatQueries.Add(sourceQuery, sourceQuery);
+                    flatQueries[sourceQuery] = sourceQuery;
             }
             else if (sourceQuery is PhraseQuery)
             {
@@ -103,7 +100,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                     else if (pq.GetTerms().Length == 1)
                     {
                         Query q = new TermQuery(pq.GetTerms()[0]);
-                        flatQueries.Add(q, q);
+                        flatQueries[q] = q;
                     }
                 }
             }
@@ -144,7 +141,7 @@ namespace Lucene.Net.Search.Vectorhighlight
             {
                 //Query query = i.next();
                 flatQueries.Remove(query);
-                expandQueries.Add(query, query);
+                expandQueries[query] = query;
                 if (!(query is PhraseQuery)) continue;
                 foreach (Query qj in flatQueries.Keys)
                 {
@@ -213,7 +210,7 @@ namespace Lucene.Net.Search.Vectorhighlight
                     pq.Slop = slop;
                     pq.Boost = boost;
                     if (!expandQueries.ContainsKey(pq))
-                        expandQueries.Add(pq, pq);
+                        expandQueries[pq] = pq;
                 }
             }
         }
