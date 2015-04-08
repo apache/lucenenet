@@ -85,11 +85,9 @@ namespace Lucene.Net.Util.Fst
                 Builder<T>.Arc<T> arc = node.Arcs[arcIdx];
                 h = PRIME * h + arc.Label;
                 long n = ((Builder<T>.CompiledNode)arc.Target).Node;
-                h = PRIME * h + (int)((n ^ (n >> 32)) >> 32);
-                var arcOutputHashCode = arc.Output.GetHashCode();
-                h = PRIME * h + arcOutputHashCode;
-                var arcFinalOutputHashCode = arc.NextFinalOutput.GetHashCode();
-                h = PRIME * h + arcFinalOutputHashCode;
+                h = PRIME * h + (int)(n ^ (n >> 32));
+                h = PRIME * h + arc.Output.GetHashCode();
+                h = PRIME * h + arc.NextFinalOutput.GetHashCode();
                 if (arc.IsFinal)
                 {
                     h += 17;
@@ -110,12 +108,9 @@ namespace Lucene.Net.Util.Fst
             {
                 //System.out.println("  label=" + scratchArc.label + " target=" + scratchArc.target + " h=" + h + " output=" + fst.outputs.outputToString(scratchArc.output) + " next?=" + scratchArc.flag(4) + " final?=" + scratchArc.isFinal() + " pos=" + in.getPosition());
                 h = PRIME * h + ScratchArc.Label;
-                //Force truncation by shifting at the end
-                h = PRIME * h + (int)((ScratchArc.Target ^ (ScratchArc.Target >> 32)) >> 32);
-                var sractchArcHashCode = ScratchArc.Output.GetHashCode();
-                h = PRIME * h + sractchArcHashCode;
-                var scratchArcFinalOutputHashCode = ScratchArc.NextFinalOutput.GetHashCode();
-                h = PRIME * h + scratchArcFinalOutputHashCode;
+                h = PRIME * h + (int)(ScratchArc.Target ^ (ScratchArc.Target >> 32));
+                h = PRIME * h + ScratchArc.Output.GetHashCode();
+                h = PRIME * h + ScratchArc.NextFinalOutput.GetHashCode();
                 if (ScratchArc.Final)
                 {
                     h += 17;
