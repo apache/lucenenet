@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
     {
         private class ShardSearcher : IndexSearcher
         {
-            internal readonly IList<AtomicReaderContext> Ctx;
+            private readonly IList<AtomicReaderContext> Ctx;
 
             public ShardSearcher(AtomicReaderContext ctx, IndexReaderContext parent)
                 : base(parent)
