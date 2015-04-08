@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -118,7 +119,7 @@ namespace Lucene.Net.Store
                 DirectoryReader.Open(dir);
                 Assert.Fail("did not hit expected exception");
             }
-            catch (NoSuchDirectoryException nsde)
+            catch (IndexNotFoundException nsde)
             {
                 // expected
             }
