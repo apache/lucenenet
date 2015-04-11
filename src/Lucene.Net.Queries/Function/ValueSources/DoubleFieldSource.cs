@@ -52,21 +52,18 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             var arr = cache.GetDoubles(readerContext.AtomicReader, field, parser, true);
             var valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
-            return new DoubleDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
+            return new DoubleDocValuesAnonymousInnerClassHelper(this, arr, valid);
 
         }
 
         private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
         {
-            private readonly DoubleFieldSource outerInstance;
-
             private readonly FieldCache.Doubles arr;
             private readonly Bits valid;
 
-            public DoubleDocValuesAnonymousInnerClassHelper(DoubleFieldSource outerInstance, DoubleFieldSource @this, FieldCache.Doubles arr, Bits valid)
+            public DoubleDocValuesAnonymousInnerClassHelper(DoubleFieldSource @this, FieldCache.Doubles arr, Bits valid)
                 : base(@this)
             {
-                this.outerInstance = outerInstance;
                 this.arr = arr;
                 this.valid = valid;
             }
