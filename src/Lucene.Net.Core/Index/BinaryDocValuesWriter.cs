@@ -128,27 +128,7 @@ namespace Lucene.Net.Index
             int maxDoc = state.SegmentInfo.DocCount;
             Bytes.Freeze(false);
             dvConsumer.AddBinaryField(FieldInfo, GetBytesIterator(maxDoc));
-            //dvConsumer.AddBinaryField(FieldInfo, new IterableAnonymousInnerClassHelper(this, maxDoc));
         }
-
-        /*
-	  private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
-	  {
-		  private readonly BinaryDocValuesWriter OuterInstance;
-
-		  private int MaxDoc;
-
-		  public IterableAnonymousInnerClassHelper(BinaryDocValuesWriter outerInstance, int maxDoc)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.MaxDoc = maxDoc;
-		  }
-
-		  public virtual IEnumerator<BytesRef> GetEnumerator()
-		  {
-			 return new BytesIterator(OuterInstance, MaxDoc);
-		  }
-	  }*/
 
         internal override void Abort()
         {
@@ -158,7 +138,6 @@ namespace Lucene.Net.Index
         {
             // Use yield return instead of ucsom IEnumerable
 
-            BytesRef value = new BytesRef();
             AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = Lengths.GetIterator();
             int size = (int)Lengths.Size();
             DataInput bytesIterator = Bytes.DataInput;
@@ -167,10 +146,11 @@ namespace Lucene.Net.Index
 
             while (upto < maxDoc)
             {
-                BytesRef v;
+                BytesRef v = null;
                 if (upto < size)
                 {
                     int length = (int)lengthsIterator.Next();
+                    var value = new BytesRef();
                     value.Grow(length);
                     value.Length = length;
                     bytesIterator.ReadBytes(value.Bytes, value.Offset, value.Length);
@@ -179,102 +159,11 @@ namespace Lucene.Net.Index
                     {
                         v = value;
                     }
-                    else
-                    {
-                        v = null;
-                    }
-                }
-                else
-                {
-                    v = null;
                 }
 
                 upto++;
                 yield return v;
             }
         }
-
-        /*
-	  // iterates over the values we have in ram
-	  private class BytesIterator : IEnumerator<BytesRef>
-	  {
-		  internal bool InstanceFieldsInitialized = false;
-
-		  internal virtual void InitializeInstanceFields()
-		  {
-			  LengthsIterator = OuterInstance.Lengths.Iterator();
-              BytesIterator_Renamed = OuterInstance.Bytes.DataInput;
-              Size = (int)OuterInstance.Lengths.Size();
-		  }
-
-		  private readonly BinaryDocValuesWriter OuterInstance;
-
-		internal readonly BytesRef Value = new BytesRef();
-		internal AppendingDeltaPackedLongBuffer.Iterator LengthsIterator;
-		internal DataInput BytesIterator_Renamed;
-		internal int Size;
-		internal readonly int MaxDoc;
-		internal int Upto;
-
-		internal BytesIterator(BinaryDocValuesWriter outerInstance, int maxDoc)
-		{
-			this.OuterInstance = outerInstance;
-
-			if (!InstanceFieldsInitialized)
-			{
-				InitializeInstanceFields();
-				InstanceFieldsInitialized = true;
-			}
-		  this.MaxDoc = maxDoc;
-		}
-
-		public override bool HasNext()
-		{
-		  return Upto < MaxDoc;
-		}
-
-		public override BytesRef Next()
-		{
-		  if (!HasNext())
-		  {
-			throw new NoSuchElementException();
-		  }
-		  BytesRef v;
-		  if (Upto < Size)
-		  {
-			int length = (int) LengthsIterator.Next();
-			Value.Grow(length);
-			Value.Length = length;
-			try
-			{
-			  BytesIterator_Renamed.ReadBytes(Value.Bytes, Value.Offset, Value.Length);
-			}
-			catch (System.IO.IOException ioe)
-			{
-			  // Should never happen!
-			  throw new Exception(ioe.ToString(), ioe);
-			}
-            if (OuterInstance.DocsWithField.Get(Upto))
-			{
-			  v = Value;
-			}
-			else
-			{
-			  v = null;
-			}
-		  }
-		  else
-		  {
-			v = null;
-		  }
-		  Upto++;
-		  return v;
-		}
-
-		public override void Remove()
-		{
-		  throw new System.NotSupportedException();
-		}
-	  }*/
     }
 }
