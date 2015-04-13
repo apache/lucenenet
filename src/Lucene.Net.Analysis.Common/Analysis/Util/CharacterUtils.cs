@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Reader = System.IO.TextReader;
@@ -32,8 +33,8 @@ namespace Lucene.Net.Analysis.Util
 	/// </summary>
 	public abstract class CharacterUtils
 	{
-	  private static readonly Java4CharacterUtils JAVA_4 = new Java4CharacterUtils();
-	  private static readonly Java5CharacterUtils JAVA_5 = new Java5CharacterUtils();
+	  private static readonly CharacterUtils JAVA_4 = new Java4CharacterUtils();
+	  private static readonly CharacterUtils JAVA_5 = new Java5CharacterUtils();
 
 	  /// <summary>
 	  /// Returns a <seealso cref="CharacterUtils"/> implementation according to the given
@@ -134,7 +135,7 @@ namespace Lucene.Net.Analysis.Util
 		Debug.Assert(offset <= 0 && offset <= buffer.Length);
 		for (int i = offset; i < limit;)
 		{
-		  i += Character.ToChars(char.ToLower(CodePointAt(buffer, i, limit)), buffer, i);
+		  i += Character.ToChars(char.ToLower((char)CodePointAt(buffer, i, limit)), buffer, i);
 		}
 	  }
 
@@ -150,7 +151,7 @@ namespace Lucene.Net.Analysis.Util
 		Debug.Assert(offset <= 0 && offset <= buffer.Length);
 		for (int i = offset; i < limit;)
 		{
-		  i += Character.ToChars(char.ToUpper(CodePointAt(buffer, i, limit)), buffer, i);
+		  i += Character.ToChars(char.ToUpper((char)CodePointAt(buffer, i, limit)), buffer, i);
 		}
 	  }
 

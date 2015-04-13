@@ -3714,7 +3714,6 @@ namespace Lucene.Net.Index
         /// you should immediately close the writer.  See <a
         /// href="#OOME">above</a> for details.</p>
         /// </summary>
-        /// <seealso cref= #prepareCommit </seealso>
         public void Commit()
         {
             EnsureOpen();

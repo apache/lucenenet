@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class CharTokenizer : Tokenizer
     {
-        private readonly TextReader _input;
+        protected readonly TextReader _input;
 
         /// <summary>
         /// Creates a new <seealso cref="CharTokenizer"/> instance
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Util
         ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
         /// <param name="input">
         ///          the input to split up into tokens </param>
-        public CharTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
+        protected CharTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)
         {
             _input = input;

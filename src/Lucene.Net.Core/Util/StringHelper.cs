@@ -189,7 +189,7 @@ namespace Lucene.Net.Util
                 if (good_fast_hash_seed == 0)
                 {
                     //LUCENE TO-DO No idea if this works
-                    string prop = AppSettings.Get("tests.seed", "");
+                    var prop = AppSettings.Get("tests.seed", null);
                     if (prop != null)
                     {
                         // So if there is a test failure that relied on hash
