@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,20 +14,14 @@ using System.Text;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.Collections.Generic;
+using System.Text;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.analysis.wikipedia
+namespace Lucene.Net.Analysis.Wikipedia
 {
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using FlagsAttribute = org.apache.lucene.analysis.tokenattributes.FlagsAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using AttributeSource = org.apache.lucene.util.AttributeSource;
-
-
-
-	/// <summary>
+    /// <summary>
 	/// Extension of StandardTokenizer that is aware of Wikipedia syntax.  It is based off of the
 	/// Wikipedia tutorial available at http://en.wikipedia.org/wiki/Wikipedia:Tutorial, but it may not be complete.
 	/// <p/>

@@ -66,18 +66,18 @@ namespace Lucene.Net.Util
             }
         }
 
-        private static IComparer<string> versionComparator = new ComparatorAnonymousInnerClassHelper();
+        private static readonly IComparer<string> versionComparator = new ComparatorAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<string>
+        private sealed class ComparatorAnonymousInnerClassHelper : IComparer<string>
         {
             public ComparatorAnonymousInnerClassHelper()
             {
             }
 
-            public virtual int Compare(string a, string b)
+            public int Compare(string a, string b)
             {
-                StringTokenizer aTokens = new StringTokenizer(a, ".");
-                StringTokenizer bTokens = new StringTokenizer(b, ".");
+                var aTokens = new StringTokenizer(a, ".");
+                var bTokens = new StringTokenizer(b, ".");
 
                 while (aTokens.HasMoreTokens())
                 {
