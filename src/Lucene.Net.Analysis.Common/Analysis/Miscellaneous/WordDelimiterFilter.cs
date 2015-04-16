@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,28 +14,19 @@ using System.Text;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+using System.Text;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using org.apache.lucene.analysis.miscellaneous;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
-
-	using WhitespaceTokenizer = WhitespaceTokenizer;
-	using StandardTokenizer = StandardTokenizer;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using CharArraySet = CharArraySet;
-	using ArrayUtil = org.apache.lucene.util.ArrayUtil;
-	using AttributeSource = org.apache.lucene.util.AttributeSource;
-	using InPlaceMergeSorter = org.apache.lucene.util.InPlaceMergeSorter;
-	using RamUsageEstimator = org.apache.lucene.util.RamUsageEstimator;
-	using Version = org.apache.lucene.util.Version;
-
-
-	/// <summary>
+    /// <summary>
 	/// Splits words into subwords and performs optional transformations on subword
 	/// groups. Words are split into subwords with the following rules:
 	/// <ul>
@@ -176,10 +165,10 @@ namespace org.apache.lucene.analysis.miscellaneous
 
 	  private readonly int flags;
 
-	  private readonly CharTermAttribute termAttribute = addAttribute(typeof(CharTermAttribute));
-	  private readonly OffsetAttribute offsetAttribute = addAttribute(typeof(OffsetAttribute));
-	  private readonly PositionIncrementAttribute posIncAttribute = addAttribute(typeof(PositionIncrementAttribute));
-	  private readonly TypeAttribute typeAttribute = addAttribute(typeof(TypeAttribute));
+	  private readonly ICharTermAttribute termAttribute = addAttribute(typeof(CharTermAttribute));
+	  private readonly IOffsetAttribute offsetAttribute = addAttribute(typeof(OffsetAttribute));
+	  private readonly IPositionIncrementAttribute posIncAttribute = addAttribute(typeof(PositionIncrementAttribute));
+	  private readonly ITypeAttribute typeAttribute = addAttribute(typeof(TypeAttribute));
 
 	  // used for iterating word delimiter breaks
 	  private readonly WordDelimiterIterator iterator;
@@ -249,22 +238,20 @@ namespace org.apache.lucene.analysis.miscellaneous
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		while (true)
 		{
 		  if (!hasSavedState)
 		  {
 			// process a new input word
-			if (!input.incrementToken())
+			if (!input.IncrementToken())
 			{
 			  return false;
 			}
 
-			int termLength = termAttribute.length();
-			char[] termBuffer = termAttribute.buffer();
+			int termLength = termAttribute.Length;
+			char[] termBuffer = termAttribute.Buffer();
 
 			accumPosInc += posIncAttribute.PositionIncrement;
 
@@ -272,7 +259,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 			iterator.next();
 
 			// word of no delimiters, or protected word: just return it
-			if ((iterator.current == 0 && iterator.end == termLength) || (protWords != null && protWords.contains(termBuffer, 0, termLength)))
+			if ((iterator.current == 0 && iterator.end == termLength) || (protWords != null && protWords.Contains(termBuffer, 0, termLength)))
 			{
 			  posIncAttribute.PositionIncrement = accumPosInc;
 			  accumPosInc = 0;
@@ -335,10 +322,10 @@ namespace org.apache.lucene.analysis.miscellaneous
 			{
 			  if (bufferedPos == 0)
 			  {
-				sorter.sort(0, bufferedLen);
+				sorter.Sort(0, bufferedLen);
 			  }
-			  clearAttributes();
-			  restoreState(buffered[bufferedPos++]);
+			  ClearAttributes();
+			  RestoreState(buffered[bufferedPos++]);
 			  if (first && posIncAttribute.PositionIncrement == 0)
 			  {
 				// can easily happen with strange combinations (e.g. not outputting numbers, but concat-all)
@@ -404,11 +391,9 @@ namespace org.apache.lucene.analysis.miscellaneous
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		hasSavedState = false;
 		concat.clear();
 		concatAll.clear();
@@ -435,7 +420,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 			  this.outerInstance = outerInstance;
 		  }
 
-		protected internal override int compare(int i, int j)
+		protected override int Compare(int i, int j)
 		{
 		  int cmp = int.compare(outerInstance.startOff[i], outerInstance.startOff[j]);
 		  if (cmp == 0)
@@ -467,14 +452,14 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  {
 		if (bufferedLen == buffered.Length)
 		{
-		  int newSize = ArrayUtil.oversize(bufferedLen + 1, 8);
-		  buffered = Arrays.copyOf(buffered, newSize);
-		  startOff = Arrays.copyOf(startOff, newSize);
-		  posInc = Arrays.copyOf(posInc, newSize);
+		  int newSize = ArrayUtil.Oversize(bufferedLen + 1, 8);
+		  buffered = Arrays.CopyOf(buffered, newSize);
+		  startOff = Arrays.CopyOf(startOff, newSize);
+		  posInc = Arrays.CopyOf(posInc, newSize);
 		}
-		startOff[bufferedLen] = offsetAttribute.startOffset();
+		startOff[bufferedLen] = offsetAttribute.StartOffset();
 		posInc[bufferedLen] = posIncAttribute.PositionIncrement;
-		buffered[bufferedLen] = captureState();
+		buffered[bufferedLen] = CaptureState();
 		bufferedLen++;
 	  }
 
@@ -484,8 +469,8 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  private void saveState()
 	  {
 		// otherwise, we have delimiters, save state
-		savedStartOffset = offsetAttribute.startOffset();
-		savedEndOffset = offsetAttribute.endOffset();
+		savedStartOffset = offsetAttribute.StartOffset();
+		savedEndOffset = offsetAttribute.EndOffset();
 		// if length by start + end offsets doesn't match the term text then assume this is a synonym and don't adjust the offsets.
 		hasIllegalOffsets = (savedEndOffset - savedStartOffset != termAttribute.length());
 		savedType = typeAttribute.type();
@@ -558,8 +543,8 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  /// <param name="isSingleWord"> {@code true} if the generation is occurring from a single word, {@code false} otherwise </param>
 	  private void generatePart(bool isSingleWord)
 	  {
-		clearAttributes();
-		termAttribute.copyBuffer(savedBuffer, iterator.current, iterator.end - iterator.current);
+		ClearAttributes();
+		termAttribute.CopyBuffer(savedBuffer, iterator.current, iterator.end - iterator.current);
 
 		int startOffset = savedStartOffset + iterator.current;
 		int endOffset = savedStartOffset + iterator.end;
@@ -570,16 +555,16 @@ namespace org.apache.lucene.analysis.miscellaneous
 		  // but we must do a sanity check:
 		  if (isSingleWord && startOffset <= savedEndOffset)
 		  {
-			offsetAttribute.setOffset(startOffset, savedEndOffset);
+			offsetAttribute.SetOffset(startOffset, savedEndOffset);
 		  }
 		  else
 		  {
-			offsetAttribute.setOffset(savedStartOffset, savedEndOffset);
+			offsetAttribute.SetOffset(savedStartOffset, savedEndOffset);
 		  }
 		}
 		else
 		{
-		  offsetAttribute.setOffset(startOffset, endOffset);
+		  offsetAttribute.SetOffset(startOffset, endOffset);
 		}
 		posIncAttribute.PositionIncrement = position(false);
 		typeAttribute.Type = savedType;
@@ -700,7 +685,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 		/// </summary>
 		internal void write()
 		{
-		  clearAttributes();
+		  ClearAttributes();
 		  if (outerInstance.termAttribute.length() < buffer.Length)
 		  {
 			outerInstance.termAttribute.resizeBuffer(buffer.Length);

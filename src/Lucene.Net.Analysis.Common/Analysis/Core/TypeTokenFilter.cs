@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -29,7 +30,7 @@ namespace Lucene.Net.Analysis.Core
     {
 
         private readonly HashSet<string> stopTypes;
-        private readonly TypeAttribute typeAttribute = addAttribute(typeof(TypeAttribute));
+        private readonly ITypeAttribute typeAttribute;
         private readonly bool useWhiteList;
 
         /// @deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4. 
@@ -37,6 +38,7 @@ namespace Lucene.Net.Analysis.Core
         public TypeTokenFilter(Version version, bool enablePositionIncrements, TokenStream input, HashSet<string> stopTypes, bool useWhiteList)
             : base(version, enablePositionIncrements, input)
         {
+            typeAttribute = AddAttribute<ITypeAttribute>();
             this.stopTypes = stopTypes;
             this.useWhiteList = useWhiteList;
         }
