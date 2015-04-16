@@ -992,7 +992,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             var bytes = new byte[32766];
             BytesRef b = new BytesRef(bytes);
-            Random().NextBytes((byte[])(Array)bytes);
+            Random().NextBytes(bytes);
             doc.Add(new BinaryDocValuesField("dv", b));
             iwriter.AddDocument(doc);
             iwriter.Dispose();

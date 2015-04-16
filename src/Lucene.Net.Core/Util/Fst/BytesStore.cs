@@ -520,12 +520,12 @@ namespace Lucene.Net.Util.Fst
             public ReverseBytesReaderAnonymousInner(BytesStore outerInstance)
             {
                 this.OuterInstance = outerInstance;
-                outerInstance.Current = outerInstance.Blocks.Count == 0 ? null : outerInstance.Blocks[0];
+                Current = outerInstance.Blocks.Count == 0 ? null : outerInstance.Blocks[0];
                 nextBuffer = -1;
                 nextRead = 0;
             }
 
-            private sbyte[] Current;
+            private byte[] Current;
             private int nextBuffer;
             private int nextRead;
 
@@ -533,10 +533,10 @@ namespace Lucene.Net.Util.Fst
             {
                 if (nextRead == -1)
                 {
-                    OuterInstance.Current = OuterInstance.Blocks[nextBuffer--];
+                    Current = OuterInstance.Blocks[nextBuffer--];
                     nextRead = OuterInstance.BlockSize - 1;
                 }
-                return OuterInstance.Current[nextRead--];
+                return Current[nextRead--];
             }
 
             public override void SkipBytes(int count)
@@ -566,7 +566,7 @@ namespace Lucene.Net.Util.Fst
                     // EOF)...?
                     int bufferIndex = (int)(value >> OuterInstance.blockBits);
                     nextBuffer = bufferIndex - 1;
-                    OuterInstance.Current = OuterInstance.Blocks[bufferIndex];
+                    Current = OuterInstance.Blocks[bufferIndex];
                     nextRead = (int)(value & OuterInstance.BlockMask);
                     Debug.Assert(this.Position == value, "value=" + value + " this.Position=" + this.Position);
                 }

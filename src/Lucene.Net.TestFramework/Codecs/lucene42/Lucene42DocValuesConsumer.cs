@@ -296,7 +296,8 @@ namespace Lucene.Net.Codecs.Lucene42
                 builder.Add(Util.ToIntsRef(v, scratch), ord);
                 ord++;
             }
-            Lucene.Net.Util.Fst.FST<long?> fst = builder.Finish();
+
+            var fst = builder.Finish();
             if (fst != null)
             {
                 fst.Save(Data);
