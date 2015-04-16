@@ -281,11 +281,11 @@ namespace Lucene.Net.Codecs
 
         private IEnumerable<BytesRef> GetMergeSortValuesEnumerable(OrdinalMap map, SortedDocValues[] dvs)
         {
-            var scratch = new BytesRef();
             int currentOrd = 0;
 
             while (currentOrd < map.ValueCount)
             {
+                var scratch = new BytesRef();
                 int segmentNumber = map.GetFirstSegmentNumber(currentOrd);
                 var segmentOrd = (int)map.GetFirstSegmentOrd(currentOrd);
                 dvs[segmentNumber].LookupOrd(segmentOrd, scratch);
@@ -542,13 +542,13 @@ namespace Lucene.Net.Codecs
 
         private IEnumerable<BytesRef> GetMergeSortedSetValuesEnumerable(OrdinalMap map, SortedSetDocValues[] dvs)
         {
-            var scratch = new BytesRef();
             long currentOrd = 0;
 
             while (currentOrd < map.ValueCount)
             {
                 int segmentNumber = map.GetFirstSegmentNumber(currentOrd);
                 long segmentOrd = map.GetFirstSegmentOrd(currentOrd);
+                var scratch = new BytesRef();
                 dvs[segmentNumber].LookupOrd(segmentOrd, scratch);
                 currentOrd++;
                 yield return scratch;
