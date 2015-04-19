@@ -424,6 +424,11 @@ namespace Lucene.Net.Support
 
         public static int FloatToIntBits(float value)
         {
+            if (float.IsNaN(value))
+            {
+                return 0x7fc00000;
+            }
+
             // TODO it is claimed that this could be faster
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
@@ -435,6 +440,16 @@ namespace Lucene.Net.Support
 
         public static long DoubleToRawLongBits(double value)
         {
+            return BitConverter.DoubleToInt64Bits(value);
+        }
+
+        public static long DoubleToLongBits(double value)
+        {
+            if (double.IsNaN(value))
+            {
+                return 0x7ff8000000000000L;
+            }
+
             return BitConverter.DoubleToInt64Bits(value);
         }
 

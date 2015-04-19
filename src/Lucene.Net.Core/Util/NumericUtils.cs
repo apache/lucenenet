@@ -278,7 +278,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= #sortableLongToDouble </seealso>
         public static long DoubleToSortableLong(double val)
         {
-            long f = BitConverter.DoubleToInt64Bits(val);
+            long f = Number.DoubleToLongBits(val);
             if (f < 0)
             {
                 f ^= 0x7fffffffffffffffL;
