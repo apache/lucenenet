@@ -165,7 +165,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestDoubles()
         {
-            double[] vals = new double[] { double.NaN, double.NegativeInfinity, -2.3E25, -1.0E15, -1.0, -1.0E-1, -1.0E-2, -0.0, +0.0, 1.0E-2, 1.0E-1, 1.0, 1.0E15, 2.3E25, double.PositiveInfinity };
+            double[] vals = new double[] { double.NegativeInfinity, -2.3E25, -1.0E15, -1.0, -1.0E-1, -1.0E-2, -0.0, +0.0, 1.0E-2, 1.0E-1, 1.0, 1.0E15, 2.3E25, double.PositiveInfinity, double.NaN };
             long[] longVals = new long[vals.Length];
 
             // check forward and back conversion
@@ -199,7 +199,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestFloats()
         {
-            float[] vals = new float[] { float.NaN, float.NegativeInfinity, -2.3E25f, -1.0E15f, -1.0f, -1.0E-1f, -1.0E-2f, -0.0f, +0.0f, 1.0E-2f, 1.0E-1f, 1.0f, 1.0E15f, 2.3E25f, float.PositiveInfinity };
+            float[] vals = new float[] { float.NegativeInfinity, -2.3E25f, -1.0E15f, -1.0f, -1.0E-1f, -1.0E-2f, -0.0f, +0.0f, 1.0E-2f, 1.0E-1f, 1.0f, 1.0E15f, 2.3E25f, float.PositiveInfinity, float.NaN };
             int[] intVals = new int[vals.Length];
 
             // check forward and back conversion
