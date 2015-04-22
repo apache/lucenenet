@@ -438,6 +438,7 @@
     <Compile Include="Search\FuzzyTermsEnum.cs" />
     <Compile Include="Search\HitQueue.cs" />
     <Compile Include="Search\IndexSearcher.cs" />
+    <Compile Include="Search\ITopTermsRewrite.cs" />
     <Compile Include="Search\LiveFieldValues.cs" />
     <Compile Include="Search\MatchAllDocsQuery.cs" />
     <Compile Include="Search\IMaxNonCompetitiveBoostAttribute.cs" />

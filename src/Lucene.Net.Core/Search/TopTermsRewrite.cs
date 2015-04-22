@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
     /// via a priority queue.
     /// @lucene.internal Only public to be accessible by spans package.
     /// </summary>
-    public abstract class TopTermsRewrite<Q> : TermCollectingRewrite<Q>
+    public abstract class TopTermsRewrite<Q> : TermCollectingRewrite<Q>, ITopTermsRewrite
         where Q : Query
     {
         private readonly int size;

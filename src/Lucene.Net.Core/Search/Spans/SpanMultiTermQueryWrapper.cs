@@ -64,9 +64,9 @@ namespace Lucene.Net.Search.Spans
             this.query = query_;
 
             MultiTermQuery.RewriteMethod method = query.GetRewriteMethod();
-            if (method is TopTermsRewrite<Q>)
+            if (method is ITopTermsRewrite)
             {
-                int pqsize = ((TopTermsRewrite<Q>)method).Size;
+                int pqsize = ((ITopTermsRewrite)method).Size;
                 RewriteMethod = new TopTermsSpanBooleanQueryRewrite(pqsize);
             }
             else
