@@ -1709,15 +1709,12 @@ namespace Lucene.Net.QueryParsers
 
         private bool Jj_2_1(int xla)
         {
+            bool lookaheadSuccess = false;
             jj_la = xla;
             jj_lastpos = jj_scanpos = token;
             try
             {
-                return !Jj_3_1();
-            }
-            catch (LookaheadSuccess)
-            {
-                return true;
+                return !Jj_3_1(out lookaheadSuccess);
             }
             finally
             {
@@ -1725,29 +1722,31 @@ namespace Lucene.Net.QueryParsers
             }
         }
 
-        private bool Jj_3R_2()
+        private bool Jj_3R_2(out bool lookaheadSuccess)
         {
-            if (jj_scan_token(TermToken)) return true;
-            if (jj_scan_token(ColonToken)) return true;
+            if (jj_scan_token(TermToken, out lookaheadSuccess)) return true;
+            if (lookaheadSuccess) return false;
+            if (jj_scan_token(ColonToken, out lookaheadSuccess)) return true;
             return false;
         }
 
-        private bool Jj_3_1()
+        private bool Jj_3_1(out bool lookaheadSuccess)
         {
             Token xsp;
             xsp = jj_scanpos;
-            if (Jj_3R_2())
+            if (Jj_3R_2(out lookaheadSuccess))
             {
                 jj_scanpos = xsp;
-                if (Jj_3R_3()) return true;
+                if (Jj_3R_3(out lookaheadSuccess)) return true;
             }
             return false;
         }
 
-        private bool Jj_3R_3()
+        private bool Jj_3R_3(out bool lookaheadSuccess)
         {
-            if (jj_scan_token(StarToken)) return true;
-            if (jj_scan_token(ColonToken)) return true;
+            if (jj_scan_token(StarToken, out lookaheadSuccess)) return true;
+            if (lookaheadSuccess) return false;
+            if (jj_scan_token(ColonToken, out lookaheadSuccess)) return true;
             return false;
         }
 
@@ -1861,14 +1860,9 @@ namespace Lucene.Net.QueryParsers
             throw GenerateParseException();
         }
 
-        [Serializable]
-        private sealed class LookaheadSuccess : System.Exception
+        private bool jj_scan_token(int kind, out bool lookaheadSuccess)
         {
-        }
-
-        private LookaheadSuccess jj_ls = new LookaheadSuccess();
-        private bool jj_scan_token(int kind)
-        {
+            lookaheadSuccess = false;
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
@@ -1897,7 +1891,7 @@ namespace Lucene.Net.QueryParsers
                 if (tok != null) Jj_add_error_token(kind, i);
             }
             if (jj_scanpos.kind != kind) return true;
-            if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
+            if (jj_la == 0 && jj_scanpos == jj_lastpos) lookaheadSuccess = true;
             return false;
         }
 
@@ -2030,31 +2024,33 @@ namespace Lucene.Net.QueryParsers
 
         private void Jj_rescan_token()
         {
+            bool lookaheadSuccess = false;
             jj_rescan = true;
             for (int i = 0; i < 1; i++)
             {
-                try
+                JJCalls p = jj_2_rtns[i];
+                do
                 {
-                    JJCalls p = jj_2_rtns[i];
-                    do
+                    if (p.gen > jj_gen)
                     {
-                        if (p.gen > jj_gen)
+                        jj_la = p.arg;
+                        jj_lastpos = jj_scanpos = p.first;
+                        switch (i)
                         {
-                            jj_la = p.arg;
-                            jj_lastpos = jj_scanpos = p.first;
-                            switch (i)
-                            {
-                                case 0:
-                                    Jj_3_1();
-                                    break;
-                            }
+                            case 0:
+                                Jj_3_1(out lookaheadSuccess);
+                                if (lookaheadSuccess)
+                                {
+                                    goto Jj_rescan_token_after_while_label;
+                                }
+                                break;
                         }
-                        p = p.next;
-                    } while (p != null);
-                }
-                catch (LookaheadSuccess)
-                {
-                }
+                    }
+                    p = p.next;
+                } while (p != null);
+
+            Jj_rescan_token_after_while_label:
+                lookaheadSuccess = false;
             }
             jj_rescan = false;
         }

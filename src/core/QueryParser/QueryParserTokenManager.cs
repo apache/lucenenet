@@ -1341,9 +1341,16 @@ namespace Lucene.Net.QueryParsers
 			
 			for (; ; )
 			{
+				bool? systemIoException = false;
 				try
 				{
-					curChar = input_stream.BeginToken();
+					curChar = input_stream.BeginToken(ref systemIoException);
+					if (systemIoException != null && systemIoException.HasValue && systemIoException.Value == true)
+					{
+						jjmatchedKind = 0;
+						matchedToken = JjFillToken();
+						return matchedToken;
+					}
 				}
 				catch (System.IO.IOException)
 				{

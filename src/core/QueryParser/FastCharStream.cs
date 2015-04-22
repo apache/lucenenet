@@ -48,12 +48,35 @@ namespace Lucene.Net.QueryParsers
 		
 		public char ReadChar()
 		{
+			bool? systemIoException = null;
 			if (bufferPosition >= bufferLength)
-				Refill();
+			{
+				Refill(ref systemIoException);
+			}
 			return buffer[bufferPosition++];
 		}
 		
-		private void  Refill()
+		public char ReadChar(ref bool? systemIoException)
+		{
+			if (bufferPosition >= bufferLength)
+			{
+				Refill(ref systemIoException);
+				// If using this Nullable as System.IO.IOException signal and is signaled.
+				if (systemIoException.HasValue && systemIoException.Value == true)
+				{
+					return '\0';
+				}
+			}
+			return buffer[bufferPosition++];
+		}
+		
+		// You may ask to be signaled of a System.IO.IOException through the systemIoException parameter.
+		// Set it to false if you are interested, it will be set to true to signal a System.IO.IOException.
+		// Set it to null if you are not interested.
+		// This is used to avoid having a lot of System.IO.IOExceptions thrown while running the code under a debugger.
+		// Having a lot of exceptions thrown under a debugger causes the code to execute a lot more slowly.
+		// So use this if you are experimenting a lot of slow parsing at runtime under a debugger.
+		private void Refill(ref bool? systemIoException)
 		{
 			int newPosition = bufferLength - tokenStart;
 			
@@ -86,7 +109,18 @@ namespace Lucene.Net.QueryParsers
 			
 			int charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
 			if (charsRead <= 0)
-				throw new System.IO.IOException("read past eof");
+			{
+				// If interested in using this Nullable to signal a System.IO.IOException
+				if (systemIoException.HasValue)
+				{
+					systemIoException = true;
+					return;
+				}
+				else
+				{
+					throw new System.IO.IOException("read past eof");
+				}
+			}
 			else
 				bufferLength += charsRead;
 		}
@@ -96,18 +130,24 @@ namespace Lucene.Net.QueryParsers
 			tokenStart = bufferPosition;
 			return ReadChar();
 		}
+
+		public char BeginToken(ref bool? systemIoException)
+		{
+			tokenStart = bufferPosition;
+			return ReadChar(ref systemIoException);
+		}
 		
 		public void  Backup(int amount)
 		{
 			bufferPosition -= amount;
 		}
 
-	    public string Image
-	    {
-	        get { return new System.String(buffer, tokenStart, bufferPosition - tokenStart); }
-	    }
+		public string Image
+		{
+			get { return new System.String(buffer, tokenStart, bufferPosition - tokenStart); }
+		}
 
-	    public char[] GetSuffix(int len)
+		public char[] GetSuffix(int len)
 		{
 			char[] value_Renamed = new char[len];
 			Array.Copy(buffer, bufferPosition - len, value_Renamed, 0, len);
@@ -126,34 +166,34 @@ namespace Lucene.Net.QueryParsers
 			}
 		}
 
-	    public int Column
-	    {
-	        get { return bufferStart + bufferPosition; }
-	    }
+		public int Column
+		{
+			get { return bufferStart + bufferPosition; }
+		}
 
-	    public int Line
-	    {
-	        get { return 1; }
-	    }
+		public int Line
+		{
+			get { return 1; }
+		}
 
-	    public int EndColumn
-	    {
-	        get { return bufferStart + bufferPosition; }
-	    }
+		public int EndColumn
+		{
+			get { return bufferStart + bufferPosition; }
+		}
 
-	    public int EndLine
-	    {
-	        get { return 1; }
-	    }
+		public int EndLine
+		{
+			get { return 1; }
+		}
 
-	    public int BeginColumn
-	    {
-	        get { return bufferStart + tokenStart; }
-	    }
+		public int BeginColumn
+		{
+			get { return bufferStart + tokenStart; }
+		}
 
-	    public int BeginLine
-	    {
-	        get { return 1; }
-	    }
+		public int BeginLine
+		{
+			get { return 1; }
+		}
 	}
 }
