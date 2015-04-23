@@ -1,6 +1,6 @@
 namespace Lucene.Net.Search
 {
-    public interface ITopTermsRewrite
+    internal interface ITopTermsRewrite
     {
         int Size { get; }
     }
