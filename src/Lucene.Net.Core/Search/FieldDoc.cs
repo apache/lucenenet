@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
         /// FieldComparator used to sort this field. </summary>
         /// <seealso cref= Sort </seealso>
         /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
-        public IComparable[] Fields;
+        public Object[] Fields;
 
         /// <summary>
         /// Expert: Creates one of these objects with empty sort information. </summary>
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Creates one of these objects with the given sort information. </summary>
-        public FieldDoc(int doc, float score, IComparable[] fields)
+        public FieldDoc(int doc, float score, Object[] fields)
             : base(doc, score)
         {
             this.Fields = fields;
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Creates one of these objects with the given sort information. </summary>
-        public FieldDoc(int doc, float score, IComparable[] fields, int shardIndex)
+        public FieldDoc(int doc, float score, Object[] fields, int shardIndex)
             : base(doc, score, shardIndex)
         {
             this.Fields = fields;

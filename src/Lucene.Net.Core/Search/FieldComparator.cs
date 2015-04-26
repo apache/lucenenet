@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -199,8 +200,13 @@ namespace Lucene.Net.Search
             }
             else
             {
-                return ((IComparable<T>)first).CompareTo(second);
+                return Comparer<T>.Default.Compare(first, second);
             }
+        }
+
+        public override int CompareValues(object first, object second)
+        {
+            return CompareValues((T)first, (T)second);
         }
     }
 
@@ -208,6 +214,8 @@ namespace Lucene.Net.Search
     // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
     public abstract class FieldComparator
     {
+        public abstract int CompareValues(object first, object second);
+
         //Set up abstract methods
         /// <summary>
         /// Compare hit at slot1 with hit at slot2.
@@ -312,11 +320,6 @@ namespace Lucene.Net.Search
         /// <param name="slot"> the value </param>
         /// <returns> value in this slot </returns>
         public abstract IComparable Value(int slot);
-
-        public int CompareValues(IComparable first, IComparable second)
-        {
-            return (first).CompareTo(second);
-        }
 
         /// <summary>
         /// Base FieldComparator class for numeric types
