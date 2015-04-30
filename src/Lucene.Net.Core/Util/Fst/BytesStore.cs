@@ -541,7 +541,7 @@ namespace Lucene.Net.Util.Fst
 
             public override void SkipBytes(int count)
             {
-                Position = OuterInstance.Position - count;
+                Position = Position - count;
             }
 
             public override void ReadBytes(byte[] b, int offset, int len)
