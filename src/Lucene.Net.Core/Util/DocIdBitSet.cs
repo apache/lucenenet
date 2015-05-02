@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
 
         public bool Get(int index)
         {
-            return bitSet.Get(index);
+            return bitSet.SafeGet(index);
         }
 
         public int Length()
