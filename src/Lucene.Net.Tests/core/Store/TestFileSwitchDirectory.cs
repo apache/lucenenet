@@ -113,17 +113,18 @@ namespace Lucene.Net.Store
             DirectoryInfo secondDir = CreateTempDir("bar");
             System.IO.Directory.Delete(primDir.FullName, true);
             System.IO.Directory.Delete(secondDir.FullName, true);
-            Directory dir = NewFSSwitchDirectory(primDir, secondDir, new HashSet<string>());
-            try
+            using (Directory dir = NewFSSwitchDirectory(primDir, secondDir, new HashSet<string>()))
             {
-                DirectoryReader.Open(dir);
-                Assert.Fail("did not hit expected exception");
+                try
+                {
+                    DirectoryReader.Open(dir);
+                    Assert.Fail("did not hit expected exception");
+                }
+                catch (NoSuchDirectoryException)
+                {
+                    // expected
+                }
             }
-            catch (IndexNotFoundException nsde)
-            {
-                // expected
-            }
-            dir.Dispose();
         }
 
         // LUCENE-3380 test that we can add a file, and then when we call list() we get it back

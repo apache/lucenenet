@@ -112,7 +112,7 @@ namespace Lucene.Net.Store
                     files.Add(f);
                 }
             }
-            catch (NoSuchDirectoryException e)
+            catch (NoSuchDirectoryException)
             {
                 // we got NoSuchDirectoryException from both dirs
                 // rethrow the first.
