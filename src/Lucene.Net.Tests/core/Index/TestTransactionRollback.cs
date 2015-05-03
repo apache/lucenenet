@@ -107,8 +107,8 @@ namespace Lucene.Net.Index
                     if (sval != null)
                     {
                         int val = Convert.ToInt32(sval);
-                        Assert.IsTrue(expecteds.Get(val), "Did not expect document #" + val);
-                        expecteds.Set(val, false);
+                        Assert.IsTrue(expecteds.SafeGet(val), "Did not expect document #" + val);
+                        expecteds.SafeSet(val, false);
                     }
                 }
             }

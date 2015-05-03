@@ -31,9 +31,9 @@ namespace Lucene.Net.Util
             long max = b.Length();
             for (int i = 0; i < max; i++)
             {
-                if (a.Get(i) != b.Get(i))
+                if (a.SafeGet(i) != b.Get(i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
             }
         }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Util
                         b.Clear(idx);
 
                         idx = Random().Next(sz);
-                        a.SafeSet(idx, !a.Get(idx));
+                        a.SafeSet(idx, !a.SafeGet(idx));
                         b.Flip(idx, idx + 1);
 
                         idx = Random().Next(sz);

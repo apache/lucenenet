@@ -96,16 +96,16 @@ namespace Lucene.Net.Util.Automaton
         // large automata could exceed java's stack
         private static bool IsFinite(State s, BitArray path, BitArray visited)
         {
-            path.Set(s.number, true);
+            path.SafeSet(s.number, true);
             foreach (Transition t in s.Transitions)
             {
-                if (path.Get(t.To.number) || (!visited.Get(t.To.number) && !IsFinite(t.To, path, visited)))
+                if (path.SafeGet(t.To.number) || (!visited.SafeGet(t.To.number) && !IsFinite(t.To, path, visited)))
                 {
                     return false;
                 }
             }
-            path.Set(s.number, false);
-            visited.Set(s.number, true);
+            path.SafeSet(s.number, false);
+            visited.SafeSet(s.number, true);
             return true;
         }
 

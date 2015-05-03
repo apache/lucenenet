@@ -66,7 +66,7 @@ namespace Lucene.Net.Util
             {
                 for (int doc = set.NextSetBit(0); doc != -1; doc = set.NextSetBit(doc + 1))
                 {
-                    expected.Set(doc, true);
+                    expected.SafeSet(doc, true);
                 }
             }
             AssertEquals(numBits, expected, union);

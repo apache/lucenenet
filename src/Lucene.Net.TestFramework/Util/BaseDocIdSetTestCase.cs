@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
             Random random = Random();
             if (numBitsSet == numBits)
             {
-                set.Set(0, numBits != 0); //convert int to boolean
+                set.SafeSet(0, numBits != 0); //convert int to boolean
             }
             else
             {
@@ -56,9 +56,9 @@ namespace Lucene.Net.Util
                     while (true)
                     {
                         int o = random.Next(numBits);
-                        if (!set.Get(o))
+                        if (!set.SafeGet(o))
                         {
-                            set.Set(o, true);
+                            set.SafeSet(o, true);
                             break;
                         }
                     }
@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
             BitArray bs = new BitArray(1);
             if (Random().NextBoolean())
             {
-                bs.Set(0, true);
+                bs.SafeSet(0, true);
             }
             T copy = CopyOf(bs, 1);
             AssertEquals(1, bs, copy);
@@ -109,11 +109,11 @@ namespace Lucene.Net.Util
             BitArray bs = new BitArray(2);
             if (Random().NextBoolean())
             {
-                bs.Set(0, true);
+                bs.SafeSet(0, true);
             }
             if (Random().NextBoolean())
             {
-                bs.Set(1, true);
+                bs.SafeSet(1, true);
             }
             T copy = CopyOf(bs, 2);
             AssertEquals(2, bs, copy);
@@ -136,11 +136,11 @@ namespace Lucene.Net.Util
             }
             // test one doc
             BitArray set_ = new BitArray(numBits);
-            set_.Set(0, true); // 0 first
+            set_.SafeSet(0, true); // 0 first
             T copy_ = CopyOf(set_, numBits);
             AssertEquals(numBits, set_, copy_);
-            set_.Set(0, false);
-            set_.Set(Random().Next(numBits), true);
+            set_.SafeSet(0, false);
+            set_.SafeSet(Random().Next(numBits), true);
             copy_ = CopyOf(set_, numBits); // then random index
             AssertEquals(numBits, set_, copy_);
             // test regular increments
@@ -149,7 +149,7 @@ namespace Lucene.Net.Util
                 set_ = new BitArray(numBits);
                 for (int d = Random().Next(10); d < numBits; d += inc)
                 {
-                    set_.Set(d, true);
+                    set_.SafeSet(d, true);
                 }
                 copy_ = CopyOf(set_, numBits);
                 AssertEquals(numBits, set_, copy_);

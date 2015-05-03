@@ -135,7 +135,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 int j = (active[0, x].Size <= active[1, x].Size) ? 0 : 1;
                 pending.AddLast(new IntPair(j, x));
-                pending2.Set(x * statesLen + j, true);
+                pending2.SafeSet(x * statesLen + j, true);
             }
             // process pending until fixed point
             int k = 2;
@@ -145,7 +145,7 @@ namespace Lucene.Net.Util.Automaton
                 pending.RemoveFirst();
                 int p = ip.N1;
                 int x = ip.N2;
-                pending2.Set(x * statesLen + p, false);
+                pending2.SafeSet(x * statesLen + p, false);
                 // find states that need to be split off their blocks
                 for (StateListNode m = active[p, x].First; m != null; m = m.Next)
                 {
@@ -155,15 +155,15 @@ namespace Lucene.Net.Util.Automaton
                         foreach (State s in r)
                         {
                             int i = s.number;
-                            if (!split.Get(i))
+                            if (!split.SafeGet(i))
                             {
-                                split.Set(i, true);
+                                split.SafeSet(i, true);
                                 int j = block[i];
                                 splitblock[j].Add(s);
-                                if (!refine2.Get(j))
+                                if (!refine2.SafeGet(j))
                                 {
-                                    refine2.Set(j, true);
-                                    refine.Set(j, true);
+                                    refine2.SafeSet(j, true);
+                                    refine.SafeSet(j, true);
                                 }
                             }
                         }
@@ -196,23 +196,23 @@ namespace Lucene.Net.Util.Automaton
                         for (int c = 0; c < sigmaLen; c++)
                         {
                             int aj = active[j, c].Size, ak = active[k, c].Size, ofs = c * statesLen;
-                            if (!pending2.Get(ofs + j) && 0 < aj && aj <= ak)
+                            if (!pending2.SafeGet(ofs + j) && 0 < aj && aj <= ak)
                             {
-                                pending2.Set(ofs + j, true);
+                                pending2.SafeSet(ofs + j, true);
                                 pending.AddLast(new IntPair(j, c));
                             }
                             else
                             {
-                                pending2.Set(ofs + k, true);
+                                pending2.SafeSet(ofs + k, true);
                                 pending.AddLast(new IntPair(k, c));
                             }
                         }
                         k++;
                     }
-                    refine2.Set(j, false);
+                    refine2.SafeSet(j, false);
                     foreach (State s in sb)
                     {
-                        split.Set(s.number, false);
+                        split.SafeSet(s.number, false);
                     }
                     sb.Clear();
                 }

@@ -44,13 +44,13 @@ namespace Lucene.Net.Util
             int max = a.Count;
             for (int i = 0; i < max; i++)
             {
-                if (a.Get(i) != b.Get(i))
+                if (a.SafeGet(i) != b.Get(i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
-                if (a.Get(i) != b.Get((long)i))
+                if (a.SafeGet(i) != b.Get((long)i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
             }
         }
@@ -59,13 +59,13 @@ namespace Lucene.Net.Util
         {
             for (int i = 0; i < max; i++)
             {
-                if (a.Get(i) != b.FastGet(i))
+                if (a.SafeGet(i) != b.FastGet(i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
-                if (a.Get(i) != b.FastGet((long)i))
+                if (a.SafeGet(i) != b.FastGet((long)i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
             }
         }

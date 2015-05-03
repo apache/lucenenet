@@ -165,7 +165,7 @@ namespace Lucene.Net.Support
         /// <param name="index">The position to set to true.</param>
         public static void Set(this BitArray bits, int index)
         {
-            bits.Set(index, true);
+            bits.SafeSet(index, true);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace Lucene.Net.Support
         {
             for (int i = fromIndex; i < toIndex; ++i)
             {
-                bits.Set(i, value);
+                bits.SafeSet(i, value);
             }
         }
 
@@ -190,7 +190,7 @@ namespace Lucene.Net.Support
         /// <param name="index">The position to set to false.</param>
         public static void Clear(this BitArray bits, int index)
         {
-            bits.Set(index, false);
+            bits.SafeSet(index, false);
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace Lucene.Net.Support
 
             for (int i = 0; i < bitArrayCardinality; i++)
             {
-                if (a.Get(i) != b.Get(i))
+                if (a.SafeGet(i) != b.Get(i))
                     return false;
             }
 
