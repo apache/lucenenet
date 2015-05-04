@@ -743,7 +743,7 @@ namespace Lucene.Net.Index
                 DirectoryReader.Open(dir);
                 Assert.Fail("did not hit expected exception");
             }
-            catch (IndexNotFoundException nsde)
+            catch (NoSuchDirectoryException nsde)
             {
                 // expected
             }
