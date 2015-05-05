@@ -475,7 +475,7 @@ namespace Lucene.Net.Index
             AtomicReference<Exception> ex = new AtomicReference<Exception>();
             for (int i = 0; i < concurrentReads; ++i)
             {
-                readThreads.Add(new ThreadAnonymousInnerClassHelper(this, numDocs, rd, searcher, readsPerThread, ex, i));
+                readThreads.Add(new ThreadAnonymousInnerClassHelper(numDocs, rd, searcher, readsPerThread, ex, i));
             }
             foreach (ThreadClass thread in readThreads)
             {
@@ -497,8 +497,6 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly BaseStoredFieldsFormatTestCase OuterInstance;
-
             private int NumDocs;
             private readonly DirectoryReader Rd;
             private readonly IndexSearcher Searcher;
@@ -507,9 +505,8 @@ namespace Lucene.Net.Index
             private int i;
             private readonly int[] queries;
 
-            public ThreadAnonymousInnerClassHelper(BaseStoredFieldsFormatTestCase outerInstance, int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicReference<Exception> ex, int i)
+            public ThreadAnonymousInnerClassHelper(int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicReference<Exception> ex, int i)
             {
-                this.OuterInstance = outerInstance;
                 this.NumDocs = numDocs;
                 this.Rd = rd;
                 this.Searcher = searcher;
@@ -520,7 +517,7 @@ namespace Lucene.Net.Index
                 queries = new int[ReadsPerThread];
                 for (int j = 0; j < queries.Length; ++j)
                 {
-                    queries[j] = Random().NextIntBetween(0, NumDocs);
+                    queries[j] = Random().Next(NumDocs);
                 }
             }
 
@@ -534,6 +531,7 @@ namespace Lucene.Net.Index
                         TopDocs topDocs = Searcher.Search(query, 1);
                         if (topDocs.TotalHits != 1)
                         {
+                            Console.WriteLine(query);
                             throw new InvalidOperationException("Expected 1 hit, got " + topDocs.TotalHits);
                         }
                         Document sdoc = Rd.Document(topDocs.ScoreDocs[0].Doc);
