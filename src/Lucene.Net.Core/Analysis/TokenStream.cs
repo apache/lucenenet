@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         protected TokenStream()
         {
-            Debug.Assert(AssertFinal());
+            AssertFinal();
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis
         protected TokenStream(AttributeSource input)
             : base(input)
         {
-            Debug.Assert(AssertFinal());
+            AssertFinal();
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis
         protected TokenStream(AttributeFactory factory)
             : base(factory)
         {
-            Debug.Assert(AssertFinal());
+            AssertFinal();
         }
 
         private bool AssertFinal()
