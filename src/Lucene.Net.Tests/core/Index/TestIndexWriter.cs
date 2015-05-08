@@ -81,6 +81,7 @@ namespace Lucene.Net.Index
     {
         private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
+        [Test]
         public virtual void TestDocCount()
         {
             Directory dir = NewDirectory();
