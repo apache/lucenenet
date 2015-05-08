@@ -2576,7 +2576,8 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "rollback: infos=" + SegString(segmentInfos.Segments));
                     }
 
-                    Debug.Assert(TestPoint("rollback before checkpoint"));
+                    var result = TestPoint("rollback before checkpoint");
+                    Debug.Assert(result);
 
                     // Ask deleter to locate unreferenced files & remove
                     // them:
