@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                         // don't loop here, higher level logic will re-stall!
                         try
                         {
-                            // make sure not to run IncWaiters / DecrWaiters id Debug.Assert as that gets 
+                            // make sure not to run IncWaiters / DecrWaiters in Debug.Assert as that gets 
                             // removed at compile time if built in Release mode
                             var result = IncWaiters();
                             Debug.Assert(result);
