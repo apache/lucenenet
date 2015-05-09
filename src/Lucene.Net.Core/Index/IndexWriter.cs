@@ -2576,7 +2576,8 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "rollback: infos=" + SegString(segmentInfos.Segments));
                     }
 
-                    Debug.Assert(TestPoint("rollback before checkpoint"));
+                    var tpResult = TestPoint("rollback before checkpoint");
+                    Debug.Assert(tpResult);
 
                     // Ask deleter to locate unreferenced files & remove
                     // them:
@@ -3556,7 +3557,8 @@ namespace Lucene.Net.Index
                 }
 
                 DoBeforeFlush();
-                Debug.Assert(TestPoint("startDoFlush"));
+                var tpResult = TestPoint("startDoFlush");
+                Debug.Assert(tpResult);
                 SegmentInfos toCommit = null;
                 bool anySegmentsFlushed = false;
 
@@ -3862,7 +3864,8 @@ namespace Lucene.Net.Index
             }
 
             DoBeforeFlush();
-            Debug.Assert(TestPoint("startDoFlush"));
+            var tpResult = TestPoint("startDoFlush");
+            Debug.Assert(tpResult);
             bool success = false;
             try
             {
@@ -4102,7 +4105,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debug.Assert(TestPoint("startCommitMergeDeletes"));
+                var tpResult = TestPoint("startCommitMergeDeletes");
+                Debug.Assert(tpResult);
 
                 IList<SegmentCommitInfo> sourceSegments = merge.Segments;
 
@@ -4338,7 +4342,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debug.Assert(TestPoint("startCommitMerge"));
+                var tpResult = TestPoint("startCommitMerge");
+                Debug.Assert(tpResult);
 
                 if (HitOOM)
                 {
@@ -4757,7 +4762,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debug.Assert(TestPoint("startMergeInit"));
+                var testPointResult = TestPoint("startMergeInit");
+                Debug.Assert(testPointResult);
 
                 Debug.Assert(merge.RegisterDone);
                 Debug.Assert(merge.MaxNumSegments == -1 || merge.MaxNumSegments > 0);
@@ -5439,7 +5445,8 @@ namespace Lucene.Net.Index
         /// </summary>
         private void StartCommit(SegmentInfos toSync)
         {
-            Debug.Assert(TestPoint("startStartCommit"));
+            var tpResult = TestPoint("startStartCommit");
+            Debug.Assert(tpResult);
             Debug.Assert(PendingCommit == null);
 
             if (HitOOM)
@@ -5477,13 +5484,15 @@ namespace Lucene.Net.Index
                     Debug.Assert(FilesExist(toSync));
                 }
 
-                Debug.Assert(TestPoint("midStartCommit"));
+                tpResult = TestPoint("midStartCommit");
+                Debug.Assert(tpResult);
 
                 bool pendingCommitSet = false;
 
                 try
                 {
-                    Debug.Assert(TestPoint("midStartCommit2"));
+                    tpResult = TestPoint("midStartCommit2");
+                    Debug.Assert(tpResult);
 
                     lock (this)
                     {
@@ -5526,7 +5535,8 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "done all syncs: " + filesToSync);
                     }
 
-                    Debug.Assert(TestPoint("midStartCommitSuccess"));
+                    tpResult = TestPoint("midStartCommitSuccess");
+                    Debug.Assert(tpResult);
                 }
                 finally
                 {
@@ -5556,7 +5566,8 @@ namespace Lucene.Net.Index
             {
                 HandleOOM(oom, "startCommit");
             }
-            Debug.Assert(TestPoint("finishStartCommit"));
+            tpResult = TestPoint("finishStartCommit");
+            Debug.Assert(tpResult);
         }
 
         /// <summary>
