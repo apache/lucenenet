@@ -624,7 +624,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 returned = false;
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (returned)
                 {

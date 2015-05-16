@@ -1893,7 +1893,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 ClearAttributes();
                 if (Upto < Tokens.Length)
