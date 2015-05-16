@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             this.TermAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        public override bool IncrementToken()
+        public sealed override bool IncrementToken()
         {
             Num--;
             if (Num >= 0)
