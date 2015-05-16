@@ -33,30 +33,28 @@ namespace Lucene.Net.Index
     public class TestNRTReaderWithThreads : LuceneTestCase
     {
         internal AtomicInteger Seq = new AtomicInteger(1);
-
-        [Ignore]
         [Test]
         public virtual void TestIndexing()
         {
             Directory mainDir = NewDirectory();
-            MockDirectoryWrapper wrapper = mainDir as MockDirectoryWrapper;
+            var wrapper = mainDir as MockDirectoryWrapper;
             if (wrapper != null)
             {
                 wrapper.AssertNoDeleteOpenFile = true;
             }
-            IndexWriter writer = new IndexWriter(mainDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false, 2)));
+            var writer = new IndexWriter(mainDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false, 2)));
             IndexReader reader = writer.Reader; // start pooling readers
             reader.Dispose();
-            RunThread[] indexThreads = new RunThread[4];
+            var indexThreads = new RunThread[4];
             for (int x = 0; x < indexThreads.Length; x++)
             {
                 indexThreads[x] = new RunThread(this, x % 2, writer);
                 indexThreads[x].Name = "Thread " + x;
                 indexThreads[x].Start();
             }
-            long startTime = DateTime.Now.Millisecond;
+            long startTime = Environment.TickCount;
             long duration = 1000;
-            while ((DateTime.Now.Millisecond - startTime) < duration)
+            while ((Environment.TickCount - startTime) < duration)
             {
                 Thread.Sleep(100);
             }

@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                long t0 = DateTime.Now.Millisecond;
+                long t0 = Environment.TickCount;
 
                 if (infos.Count == 0)
                 {
@@ -373,7 +373,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(CheckDeleteStats());
                 if (InfoStream.IsEnabled("BD"))
                 {
-                    InfoStream.Message("BD", "applyDeletes took " + (DateTime.Now.Millisecond - t0) + " msec");
+                    InfoStream.Message("BD", "applyDeletes took " + (Environment.TickCount - t0) + " msec");
                 }
                 // assert infos != segmentInfos || !any() : "infos=" + infos + " segmentInfos=" + segmentInfos + " any=" + any;
 

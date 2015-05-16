@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
                 throw new InvalidOperationException("Type mismatch: " + Field + " was indexed as " + info.DocValuesType);
             }
             //System.out.println("DTO uninvert field=" + field + " prefix=" + termPrefix);
-            long startTime = DateTime.Now.Millisecond;
+            long startTime = Environment.TickCount;
             Prefix = termPrefix == null ? null : BytesRef.DeepCopyOf(termPrefix);
 
             int maxDoc = reader.MaxDoc;
@@ -552,7 +552,7 @@ namespace Lucene.Net.Index
 
             NumTermsInField = termNum;
 
-            long midPoint = DateTime.Now.Millisecond;
+            long midPoint = Environment.TickCount;
 
             if (TermInstances == 0)
             {
@@ -662,7 +662,7 @@ namespace Lucene.Net.Index
                 IndexedTermsArray = indexedTerms.ToArray();
             }
 
-            long endTime = DateTime.Now.Millisecond;
+            long endTime = Environment.TickCount;
 
             Total_time = (int)(endTime - startTime);
             Phase1_time = (int)(midPoint - startTime);

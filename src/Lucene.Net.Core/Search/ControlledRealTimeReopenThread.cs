@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
                         ReopenLock.Unlock();
                     }
 
-                    long startMS = DateTime.Now.Millisecond;//System.nanoTime() / 1000000;
+                    long startMS = Environment.TickCount;//System.nanoTime() / 1000000;
 
                     while (targetGen > SearchingGen)
                     {
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            long msLeft = (startMS + maxMS) - DateTime.Now.Millisecond;//(System.nanoTime()) / 1000000;
+                            long msLeft = (startMS + maxMS) - Environment.TickCount;//(System.nanoTime()) / 1000000;
                             if (msLeft <= 0)
                             {
                                 return false;

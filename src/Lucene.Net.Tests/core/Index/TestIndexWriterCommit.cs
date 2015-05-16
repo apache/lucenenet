@@ -355,23 +355,22 @@ namespace Lucene.Net.Index
         // LUCENE-2095: make sure with multiple threads commit
         // doesn't return until all changes are in fact in the
         // index
-        [Ignore]
         [Test]
         public virtual void TestCommitThreadSafety()
         {
             const int NUM_THREADS = 5;
             const double RUN_SEC = 0.5;
-            Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            var dir = NewDirectory();
+            var w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
             TestUtil.ReduceOpenFiles(w.w);
             w.Commit();
-            AtomicBoolean failed = new AtomicBoolean();
-            ThreadClass[] threads = new ThreadClass[NUM_THREADS];
-            long endTime = DateTime.Now.Millisecond + ((long)(RUN_SEC * 1000));
+            var failed = new AtomicBoolean();
+            var threads = new ThreadClass[NUM_THREADS];
+            long endTime = Environment.TickCount + ((long)(RUN_SEC * 1000));
             for (int i = 0; i < NUM_THREADS; i++)
             {
                 int finalI = i;
-                threads[i] = new ThreadAnonymousInnerClassHelper(this, dir, w, failed, endTime, finalI);
+                threads[i] = new ThreadAnonymousInnerClassHelper(dir, w, failed, endTime, finalI);
                 threads[i].Start();
             }
             for (int i = 0; i < NUM_THREADS; i++)
@@ -385,17 +384,14 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly TestIndexWriterCommit OuterInstance;
-
             private Directory Dir;
             private RandomIndexWriter w;
             private AtomicBoolean Failed;
             private long EndTime;
             private int FinalI;
 
-            public ThreadAnonymousInnerClassHelper(TestIndexWriterCommit outerInstance, Directory dir, RandomIndexWriter w, AtomicBoolean failed, long endTime, int finalI)
+            public ThreadAnonymousInnerClassHelper(Directory dir, RandomIndexWriter w, AtomicBoolean failed, long endTime, int finalI)
             {
-                this.OuterInstance = outerInstance;
                 this.Dir = dir;
                 this.w = w;
                 this.Failed = failed;
@@ -431,7 +427,7 @@ namespace Lucene.Net.Index
                             r = r2;
                             Assert.AreEqual(1, r.DocFreq(new Term("f", s)), "term=f:" + s + "; r=" + r);
                         }
-                    } while (DateTime.Now.Millisecond < EndTime);
+                    } while (Environment.TickCount < EndTime);
                     r.Dispose();
                 }
                 catch (Exception t)

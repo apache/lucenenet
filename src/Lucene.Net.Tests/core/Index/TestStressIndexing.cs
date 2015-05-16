@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-                long stopTime = DateTime.Now.Millisecond + RUN_TIME_MSEC;
+                long stopTime = Environment.TickCount + RUN_TIME_MSEC;
 
                 Count = 0;
 
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
                         }
                         DoWork();
                         Count++;
-                    } while (DateTime.Now.Millisecond < stopTime);
+                    } while (Environment.TickCount < stopTime);
                 }
                 catch (Exception e)
                 {
@@ -89,15 +89,12 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
-            private readonly TestStressIndexing OuterInstance;
-
             internal IndexWriter Writer;
             internal int NextID;
 
-            public IndexerThread(TestStressIndexing outerInstance, IndexWriter writer, TimedThread[] threads)
+            public IndexerThread(IndexWriter writer, TimedThread[] threads)
                 : base(threads)
             {
-                this.OuterInstance = outerInstance;
                 this.Writer = writer;
             }
 
@@ -160,11 +157,11 @@ namespace Lucene.Net.Index
 
             // One modifier that writes 10 docs then removes 5, over
             // and over:
-            IndexerThread indexerThread = new IndexerThread(this, modifier, threads);
+            IndexerThread indexerThread = new IndexerThread(modifier, threads);
             threads[numThread++] = indexerThread;
             indexerThread.Start();
 
-            IndexerThread indexerThread2 = new IndexerThread(this, modifier, threads);
+            IndexerThread indexerThread2 = new IndexerThread(modifier, threads);
             threads[numThread++] = indexerThread2;
             indexerThread2.Start();
 
@@ -201,7 +198,6 @@ namespace Lucene.Net.Index
         */
 
         [Test]
-        [LongRunningTest]
         public virtual void TestStressIndexAndSearching()
         {
             Directory directory = NewDirectory();

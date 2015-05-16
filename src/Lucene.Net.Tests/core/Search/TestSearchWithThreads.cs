@@ -48,14 +48,13 @@ namespace Lucene.Net.Search
             RUN_TIME_MSEC = AtLeast(1000);
         }
 
-        [Ignore]
         [Test]
         public virtual void Test()
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 
-            long startTime = DateTime.Now.Millisecond;
+            long startTime = Environment.TickCount;
 
             // TODO: replace w/ the @nightly test data; make this
             // into an optional @nightly stress test
@@ -78,7 +77,7 @@ namespace Lucene.Net.Search
             IndexReader r = w.Reader;
             w.Dispose();
 
-            long endTime = DateTime.Now.Millisecond;
+            long endTime = Environment.TickCount;
             if (VERBOSE)
             {
                 Console.WriteLine("BUILD took " + (endTime - startTime));
@@ -140,8 +139,8 @@ namespace Lucene.Net.Search
                 {
                     long totHits = 0;
                     long totSearch = 0;
-                    long stopAt = DateTime.Now.Millisecond + OuterInstance.RUN_TIME_MSEC;
-                    while (DateTime.Now.Millisecond < stopAt && !Failed.Get())
+                    long stopAt = Environment.TickCount + OuterInstance.RUN_TIME_MSEC;
+                    while (Environment.TickCount < stopAt && !Failed.Get())
                     {
                         s.Search(new TermQuery(new Term("body", "aaa")), col);
                         totHits += col.TotalHits;

@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-                long stopTime = DateTime.Now.Millisecond + (long)(RUN_TIME_MSEC);
+                long stopTime = Environment.TickCount + (long)(RUN_TIME_MSEC);
 
                 try
                 {
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                         DoWork();
-                    } while (DateTime.Now.Millisecond < stopTime);
+                    } while (Environment.TickCount < stopTime);
                 }
                 catch (Exception e)
                 {
@@ -268,6 +268,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTransactions_Mem()
         {
+            Console.WriteLine("Start test");
             // we cant use non-ramdir on windows, because this test needs to double-write.
             MockDirectoryWrapper dir1 = new MockDirectoryWrapper(Random(), new RAMDirectory());
             MockDirectoryWrapper dir2 = new MockDirectoryWrapper(Random(), new RAMDirectory());
@@ -312,6 +313,8 @@ namespace Lucene.Net.Index
             }
             dir1.Dispose();
             dir2.Dispose();
+
+            Console.WriteLine("End test");
         }
     }
 }

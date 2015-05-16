@@ -368,7 +368,7 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
 
-            long tStart = DateTime.Now.Millisecond;
+            long tStart = Environment.TickCount;
 
             if (infoStream.IsEnabled("IW"))
             {
@@ -444,7 +444,7 @@ namespace Lucene.Net.Index
                 }
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", "getReader took " + (DateTime.Now.Millisecond - tStart) + " msec");
+                    infoStream.Message("IW", "getReader took " + (Environment.TickCount - tStart) + " msec");
                 }
                 success2 = true;
             }
@@ -4542,7 +4542,7 @@ namespace Lucene.Net.Index
         {
             bool success = false;
 
-            long t0 = DateTime.Now.Millisecond;
+            long t0 = Environment.TickCount;
 
             try
             {
@@ -4605,7 +4605,7 @@ namespace Lucene.Net.Index
             {
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", "merge time " + (DateTime.Now.Millisecond - t0) + " msec for " + merge.info.Info.DocCount + " docs");
+                    infoStream.Message("IW", "merge time " + (Environment.TickCount - t0) + " msec for " + merge.info.Info.DocCount + " docs");
                 }
             }
         }

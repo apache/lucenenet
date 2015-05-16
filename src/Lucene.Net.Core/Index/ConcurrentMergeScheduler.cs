@@ -437,7 +437,7 @@ namespace Lucene.Net.Index
                         // updateMergeThreads).  We stall this producer
                         // thread to prevent creation of new segments,
                         // until merging has caught up:
-                        startStallTime = DateTime.Now.Millisecond;
+                        startStallTime = Environment.TickCount;
                         if (Verbose())
                         {
                             Message("    too many merges; stalling...");
@@ -456,7 +456,7 @@ namespace Lucene.Net.Index
                     {
                         if (startStallTime != 0)
                         {
-                            Message("  stalled for " + (DateTime.Now.Millisecond - startStallTime) + " msec");
+                            Message("  stalled for " + (Environment.TickCount - startStallTime) + " msec");
                         }
                     }
 

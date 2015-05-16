@@ -217,9 +217,9 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < numDocs; i++)
                 {
-                    long t0 = DateTime.Now.Millisecond;
+                    long t0 = Environment.TickCount;
                     w.AddDocument(doc);
-                    Console.WriteLine(i + " of " + numDocs + " " + (DateTime.Now.Millisecond - t0) + " msec");
+                    Console.WriteLine(i + " of " + numDocs + " " + (Environment.TickCount - t0) + " msec");
                 }
                 savedTerms = ts.SavedTerms;
 
@@ -282,14 +282,14 @@ namespace Lucene.Net.Index
             {
                 BytesRef term = terms[Random().Next(terms.Count)];
                 Console.WriteLine("TEST: search " + term);
-                long t0 = DateTime.Now.Millisecond;
+                long t0 = Environment.TickCount;
                 int count = s.Search(new TermQuery(new Term("field", term)), 1).TotalHits;
                 if (count <= 0)
                 {
                     Console.WriteLine("  FAILED: count=" + count);
                     failed = true;
                 }
-                long t1 = DateTime.Now.Millisecond;
+                long t1 = Environment.TickCount;
                 Console.WriteLine("  took " + (t1 - t0) + " millis");
 
                 TermsEnum.SeekStatus result = termsEnum.SeekCeil(term);
