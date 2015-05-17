@@ -1,4 +1,5 @@
 ﻿using System;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Support
 {
@@ -75,6 +76,7 @@ namespace Lucene.Net.Support
         public abstract byte Get();
 
         public abstract ByteBuffer Put(byte b);
+        public abstract ByteBuffer PutArray(byte[] bytes, int offset, int length);
 
         public abstract byte Get(int index);
 
@@ -108,9 +110,7 @@ namespace Lucene.Net.Support
 
         public virtual ByteBuffer Put(byte[] src, int offset, int length)
         {
-            for (int i = offset; i < offset + length; i++)
-                Put(src[i]);
-
+            PutArray(src, offset, length);
             return this;
         }
 
@@ -235,6 +235,13 @@ namespace Lucene.Net.Support
             public override ByteBuffer Put(byte b)
             {
                 _data[Position++] = b;
+                return this;
+            }
+
+            public override ByteBuffer PutArray(byte[] bytes, int offset, int length)
+            {
+                System.Array.Copy(bytes, offset, _data, Position, length);
+                Position += length;
                 return this;
             }
 
