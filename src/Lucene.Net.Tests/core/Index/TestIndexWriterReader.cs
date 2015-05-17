@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -43,7 +45,6 @@ namespace Lucene.Net.Index
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using TopDocs = Lucene.Net.Search.TopDocs;
     
     [TestFixture]
@@ -54,7 +55,7 @@ namespace Lucene.Net.Index
         public static int Count(Term t, IndexReader r)
         {
             int count = 0;
-            DocsEnum td = TestUtil.Docs(Random(), r, t.Field(), new BytesRef(t.Text()), MultiFields.GetLiveDocs(r), null, 0);
+            DocsEnum td = TestUtil.Docs(Random(), r, t.Field, new BytesRef(t.Text()), MultiFields.GetLiveDocs(r), null, 0);
 
             if (td != null)
             {
@@ -514,7 +515,7 @@ namespace Lucene.Net.Index
                     }
                     catch (ThreadInterruptedException ie)
                     {
-                        throw new ThreadInterruptedException(ie);
+                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                     }
                 }
             }
@@ -863,7 +864,7 @@ namespace Lucene.Net.Index
 
             const float SECONDS = 0.5f;
 
-            long endTime = (long)(DateTime.Now.Millisecond + 1000.0 * SECONDS);
+            long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
             IList<Exception> excs = new SynchronizedCollection<Exception>();
 
             // Only one thread can addIndexes at a time, because
@@ -871,13 +872,13 @@ namespace Lucene.Net.Index
             var threads = new ThreadClass[1];
             for (int i = 0; i < threads.Length; i++)
             {
-                threads[i] = new ThreadAnonymousInnerClassHelper(this, writer, dirs, endTime, excs);
+                threads[i] = new ThreadAnonymousInnerClassHelper(writer, dirs, endTime, excs);
                 threads[i].SetDaemon(true);
                 threads[i].Start();
             }
 
             int lastCount = 0;
-            while (DateTime.Now.Millisecond < endTime)
+            while (Environment.TickCount < endTime)
             {
                 DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
                 if (r2 != null)
@@ -923,16 +924,13 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly TestIndexWriterReader OuterInstance;
-
             private IndexWriter Writer;
             private Directory[] Dirs;
             private long EndTime;
             private IList<Exception> Excs;
 
-            public ThreadAnonymousInnerClassHelper(TestIndexWriterReader outerInstance, IndexWriter writer, Directory[] dirs, long endTime, IList<Exception> excs)
+            public ThreadAnonymousInnerClassHelper(IndexWriter writer, Directory[] dirs, long endTime, IList<Exception> excs)
             {
-                this.OuterInstance = outerInstance;
                 this.Writer = writer;
                 this.Dirs = dirs;
                 this.EndTime = endTime;
@@ -953,7 +951,7 @@ namespace Lucene.Net.Index
                         Excs.Add(t);
                         throw new Exception(t.Message, t);
                     }
-                } while (DateTime.Now.Millisecond < EndTime);
+                } while (Environment.TickCount < EndTime);
             }
         }
 
@@ -981,19 +979,19 @@ namespace Lucene.Net.Index
 
             const float SECONDS = 0.5f;
 
-            long endTime = (long)(DateTime.Now.Millisecond + 1000.0 * SECONDS);
+            long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
             IList<Exception> excs = new SynchronizedCollection<Exception>();
 
             var threads = new ThreadClass[NumThreads];
             for (int i = 0; i < NumThreads; i++)
             {
-                threads[i] = new ThreadAnonymousInnerClassHelper2(this, writer, r, endTime, excs);
+                threads[i] = new ThreadAnonymousInnerClassHelper2(writer, r, endTime, excs);
                 threads[i].SetDaemon(true);
                 threads[i].Start();
             }
 
             int sum = 0;
-            while (DateTime.Now.Millisecond < endTime)
+            while (Environment.TickCount < endTime)
             {
                 DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
                 if (r2 != null)
@@ -1031,16 +1029,13 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadClass
         {
-            private readonly TestIndexWriterReader OuterInstance;
-
             private IndexWriter Writer;
             private DirectoryReader r;
             private long EndTime;
             private IList<Exception> Excs;
 
-            public ThreadAnonymousInnerClassHelper2(TestIndexWriterReader outerInstance, IndexWriter writer, DirectoryReader r, long endTime, IList<Exception> excs)
+            public ThreadAnonymousInnerClassHelper2(IndexWriter writer, DirectoryReader r, long endTime, IList<Exception> excs)
             {
-                this.OuterInstance = outerInstance;
                 this.Writer = writer;
                 this.r = r;
                 this.EndTime = endTime;
@@ -1074,7 +1069,7 @@ namespace Lucene.Net.Index
                         Excs.Add(t);
                         throw new Exception(t.Message, t);
                     }
-                } while (DateTime.Now.Millisecond < EndTime);
+                } while (Environment.TickCount < EndTime);
             }
         }
 

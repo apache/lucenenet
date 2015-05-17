@@ -32,9 +32,6 @@ namespace Lucene.Net.Index
 
     public sealed class Term : IComparable<Term>, IEquatable<Term>
     {
-        internal string Field_Renamed;
-        internal BytesRef Bytes_Renamed;
-
         /// <summary>
         /// Constructs a Term with the given field and bytes.
         /// <p>Note that a null field or null bytes value results in undefined
@@ -47,8 +44,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public Term(string fld, BytesRef bytes)
         {
-            Field_Renamed = fld;
-            this.Bytes_Renamed = bytes;
+            Field = fld;
+            Bytes = bytes;
         }
 
         /// <summary>
@@ -76,10 +73,7 @@ namespace Lucene.Net.Index
         /// Returns the field of this term.   The field indicates
         ///  the part of a document which this term came from.
         /// </summary>
-        public string Field()
-        {
-            return Field_Renamed;
-        }
+        public string Field { get; internal set; }
 
         /// <summary>
         /// Returns the text of this term.  In the case of words, this is simply the
@@ -88,7 +82,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public string Text()
         {
-            return ToString(Bytes_Renamed);
+            return ToString(Bytes);
         }
 
         /// <summary>
@@ -97,6 +91,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static string ToString(BytesRef termText)
         {
+            // LUCENENET TODO
             /*// the term might not be text, but usually is. so we make a best effort
             CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
             try
@@ -119,11 +114,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the bytes of this term. </summary>
-        public BytesRef Bytes()
-        {
-            return Bytes_Renamed;
-        }
+        /// Returns the bytes of this term.
+        /// </summary>
+        public BytesRef Bytes { get; internal set; }
 
         public override bool Equals(object obj)
         {
@@ -135,8 +128,8 @@ namespace Lucene.Net.Index
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + ((Field_Renamed == null) ? 0 : Field_Renamed.GetHashCode());
-            result = prime * result + ((Bytes_Renamed == null) ? 0 : Bytes_Renamed.GetHashCode());
+            result = prime * result + ((Field == null) ? 0 : Field.GetHashCode());
+            result = prime * result + ((Bytes == null) ? 0 : Bytes.GetHashCode());
             return result;
         }
 
@@ -149,13 +142,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public int CompareTo(Term other)
         {
-            if (Field_Renamed.Equals(other.Field_Renamed))
+            int compare = string.Compare(Field, other.Field, StringComparison.Ordinal);
+            if (compare == 0)
             {
-                return Bytes_Renamed.CompareTo(other.Bytes_Renamed);
+                return Bytes.CompareTo(other.Bytes);
             }
             else
             {
-                return Field_Renamed.CompareTo(other.Field_Renamed);
+                return compare;
             }
         }
 
@@ -168,8 +162,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Set(string fld, BytesRef bytes)
         {
-            Field_Renamed = fld;
-            this.Bytes_Renamed = bytes;
+            Field = fld;
+            this.Bytes = bytes;
         }
 
         public bool Equals(Term other)
@@ -188,19 +182,19 @@ namespace Lucene.Net.Index
                 return false;
             }
 
-            if (string.Compare(this.Field_Renamed, other.Field_Renamed, StringComparison.Ordinal) != 0)
+            if (string.Compare(this.Field, other.Field, StringComparison.Ordinal) != 0)
             {
                 return false;
             }
 
-            if (Bytes_Renamed == null)
+            if (Bytes == null)
             {
-                if (other.Bytes_Renamed != null)
+                if (other.Bytes != null)
                 {
                     return false;
                 }
             }
-            else if (!Bytes_Renamed.Equals(other.Bytes_Renamed))
+            else if (!Bytes.Equals(other.Bytes))
             {
                 return false;
             }
@@ -210,7 +204,7 @@ namespace Lucene.Net.Index
 
         public override string ToString()
         {
-            return Field_Renamed + ":" + Text();
+            return Field + ":" + Text();
         }
     }
 }

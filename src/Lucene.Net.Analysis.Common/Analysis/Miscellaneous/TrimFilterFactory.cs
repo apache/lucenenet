@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Lucene.Net.Analysis.Miscellaneous;
 using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
 
 namespace org.apache.lucene.analysis.miscellaneous

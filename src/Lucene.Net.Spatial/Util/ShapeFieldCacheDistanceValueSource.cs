@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Function;
 using Spatial4n.Core.Context;
@@ -40,7 +41,7 @@ namespace Lucene.Net.Spatial.Util
             this.provider = provider;
         }
 
-        public class CachedDistanceDocValues : DocValues
+        public class CachedDistanceFunctionValue : FunctionValues
         {
             private readonly ShapeFieldCacheDistanceValueSource enclosingInstance;
             private readonly ShapeFieldCache<Point> cache;
@@ -48,11 +49,11 @@ namespace Lucene.Net.Spatial.Util
             private readonly DistanceCalculator calculator;
             private readonly double nullValue;
 
-            public CachedDistanceDocValues(IndexReader reader, ShapeFieldCacheDistanceValueSource enclosingInstance)
+            public CachedDistanceFunctionValue(AtomicReader reader, ShapeFieldCacheDistanceValueSource enclosingInstance)
             {
                 cache = enclosingInstance.provider.GetCache(reader);
                 this.enclosingInstance = enclosingInstance;
-                
+
                 from = enclosingInstance.from;
                 calculator = enclosingInstance.ctx.GetDistCalc();
                 nullValue = (enclosingInstance.ctx.IsGeo() ? 180 : double.MaxValue);
@@ -80,18 +81,21 @@ namespace Lucene.Net.Spatial.Util
 
             public override string ToString(int doc)
             {
-                return enclosingInstance.Description() + "=" + FloatVal(doc);
+                return enclosingInstance.Description + "=" + FloatVal(doc);
             }
         }
 
-        public override DocValues GetValues(IndexReader reader)
+        public override string Description
         {
-            return new CachedDistanceDocValues(reader, this);
+            get
+            {
+                return GetType().Name + "(" + provider + ", " + from + ")";
+            }
         }
 
-        public override string Description()
+        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
         {
-            return GetType().Name + "(" + provider + ", " + from + ")";
+            return new CachedDistanceFunctionValue(readerContext.AtomicReader, this);
         }
 
         public override bool Equals(object o)

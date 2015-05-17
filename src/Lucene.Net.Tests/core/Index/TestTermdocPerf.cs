@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
@@ -54,7 +55,7 @@ namespace Lucene.Net.Index
             this.TermAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        public override bool IncrementToken()
+        public sealed override bool IncrementToken()
         {
             Num--;
             if (Num >= 0)
@@ -85,7 +86,7 @@ namespace Lucene.Net.Index
     {
         internal virtual void AddDocs(Random random, Directory dir, int ndocs, string field, string val, int maxTF, float percentDocs)
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, random, val, maxTF, percentDocs);
+            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(random, val, maxTF, percentDocs);
 
             Document doc = new Document();
 
@@ -103,16 +104,13 @@ namespace Lucene.Net.Index
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
         {
-            private readonly TestTermdocPerf OuterInstance;
-
             private Random Random;
             private string Val;
             private int MaxTF;
             private float PercentDocs;
 
-            public AnalyzerAnonymousInnerClassHelper(TestTermdocPerf outerInstance, Random random, string val, int maxTF, float percentDocs)
+            public AnalyzerAnonymousInnerClassHelper(Random random, string val, int maxTF, float percentDocs)
             {
-                this.OuterInstance = outerInstance;
                 this.Random = random;
                 this.Val = val;
                 this.MaxTF = maxTF;
@@ -129,9 +127,9 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            long start = DateTime.Now.Millisecond;
+            long start = Environment.TickCount;
             AddDocs(Random(), dir, ndocs, "foo", "val", maxTF, percentDocs);
-            long end = DateTime.Now.Millisecond;
+            long end = Environment.TickCount;
             if (VERBOSE)
             {
                 Console.WriteLine("milliseconds for creation of " + ndocs + " docs = " + (end - start));
@@ -141,7 +139,7 @@ namespace Lucene.Net.Index
 
             TermsEnum tenum = MultiFields.GetTerms(reader, "foo").Iterator(null);
 
-            start = DateTime.Now.Millisecond;
+            start = Environment.TickCount;
 
             int ret = 0;
             DocsEnum tdocs = null;
@@ -156,7 +154,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            end = DateTime.Now.Millisecond;
+            end = Environment.TickCount;
             if (VERBOSE)
             {
                 Console.WriteLine("milliseconds for " + iter + " TermDocs iteration: " + (end - start));
@@ -165,7 +163,7 @@ namespace Lucene.Net.Index
             return ret;
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestTermDocPerf()
         {
             // performance test for 10% of documents containing a term

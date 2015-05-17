@@ -295,7 +295,7 @@ namespace Lucene.Net.Util
             }
             docState.TitleTokenized.StringValue = title;
             docState.Date.StringValue = line.Substring(1 + spot, spot2 - (1 + spot));
-            docState.Id.StringValue = Convert.ToString(Id.IncrementAndGet());
+            docState.Id.StringValue = Convert.ToString(Id.GetAndIncrement());
             return docState.Doc;
         }
     }

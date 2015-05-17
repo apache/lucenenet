@@ -156,21 +156,21 @@ namespace Lucene.Net.Index
 
                 try
                 {
-                    int prefix = SharedPrefix(LastTerm.Bytes_Renamed, term.Bytes_Renamed);
-                    int suffix = term.Bytes_Renamed.Length - prefix;
-                    if (term.Field_Renamed.Equals(LastTerm.Field_Renamed))
+                    int prefix = SharedPrefix(LastTerm.Bytes, term.Bytes);
+                    int suffix = term.Bytes.Length - prefix;
+                    if (term.Field.Equals(LastTerm.Field))
                     {
                         Output.WriteVInt(prefix << 1);
                     }
                     else
                     {
                         Output.WriteVInt(prefix << 1 | 1);
-                        Output.WriteString(term.Field_Renamed);
+                        Output.WriteString(term.Field);
                     }
                     Output.WriteVInt(suffix);
-                    Output.WriteBytes(term.Bytes_Renamed.Bytes, term.Bytes_Renamed.Offset + prefix, suffix);
-                    LastTerm.Bytes_Renamed.CopyBytes(term.Bytes_Renamed);
-                    LastTerm.Field_Renamed = term.Field_Renamed;
+                    Output.WriteBytes(term.Bytes.Bytes, term.Bytes.Offset + prefix, suffix);
+                    LastTerm.Bytes.CopyBytes(term.Bytes);
+                    LastTerm.Field = term.Field;
                 }
                 catch (IOException e)
                 {

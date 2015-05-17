@@ -1,20 +1,19 @@
-/*
+/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 using System;
 using System.Collections.Generic;
 using Spatial4n.Core.Context;
@@ -23,80 +22,112 @@ using Spatial4n.Core.Distance;
 namespace Lucene.Net.Spatial.Prefix.Tree
 {
     /// <summary>
-    /// Abstract Factory for creating {@link SpatialPrefixTree} instances with useful
+    /// Abstract Factory for creating
+    /// <see cref="SpatialPrefixTree">SpatialPrefixTree</see>
+    /// instances with useful
     /// defaults and passed on configurations defined in a Map.
     /// </summary>
+    /// <lucene.experimental></lucene.experimental>
     public abstract class SpatialPrefixTreeFactory
     {
-        private const double DEFAULT_GEO_MAX_DETAIL_KM = 0.001; //1m
-        public static readonly String PREFIX_TREE = "prefixTree";
-        public static readonly String MAX_LEVELS = "maxLevels";
-        public static readonly String MAX_DIST_ERR = "maxDistErr";
+        private const double DefaultGeoMaxDetailKm = 0.001;
 
-        protected Dictionary<String, String> args;
-        protected SpatialContext ctx;
-        protected int? maxLevels;
+        public const string PrefixTree = "prefixTree";
 
-        /// <summary>
+        public const string MaxLevels = "maxLevels";
+
+        public const string MaxDistErr = "maxDistErr";
+
+        protected internal IDictionary<string, string> args;
+
+        protected internal SpatialContext ctx;
+
+        protected internal int? maxLevels;
+
+        //1m
+        /// <summary>The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
+        /// 	</summary>
+        /// <remarks>
         /// The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
         /// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="ctx"></param>
-        /// <returns></returns>
-        public static SpatialPrefixTree MakeSPT(Dictionary<String, String> args, SpatialContext ctx)
+        /// </remarks>
+        public static SpatialPrefixTree MakeSPT(IDictionary<string, string> args, SpatialContext ctx)
         {
             SpatialPrefixTreeFactory instance;
-            String cname;
-            if (!args.TryGetValue(PREFIX_TREE, out cname) || cname == null)
+            string cname = args[PrefixTree];
+            if (cname == null)
+            {
                 cname = ctx.IsGeo() ? "geohash" : "quad";
-            if ("geohash".Equals(cname, StringComparison.InvariantCultureIgnoreCase))
+            }
+            if ("geohash".Equals(cname, StringComparison.OrdinalIgnoreCase))
+            {
                 instance = new GeohashPrefixTree.Factory();
-            else if ("quad".Equals(cname, StringComparison.InvariantCultureIgnoreCase))
-                instance = new QuadPrefixTree.Factory();
+            }
             else
             {
-                Type t = Type.GetType(cname);
-                instance = (SpatialPrefixTreeFactory)Activator.CreateInstance(t);
+                if ("quad".Equals(cname, StringComparison.OrdinalIgnoreCase))
+                {
+                    instance = new QuadPrefixTree.Factory();
+                }
+                else
+                {
+                    try
+                    {
+                        Type c = Type.GetType(cname);
+                        instance = (SpatialPrefixTreeFactory)System.Activator.CreateInstance(c);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception(string.Empty, e);
+                    }
+                }
             }
             instance.Init(args, ctx);
             return instance.NewSPT();
         }
 
-        protected void Init(Dictionary<String, String> args, SpatialContext ctx)
+        protected internal virtual void Init(IDictionary<string, string> args, SpatialContext
+             ctx)
         {
             this.args = args;
             this.ctx = ctx;
             InitMaxLevels();
         }
 
-        protected void InitMaxLevels()
+        protected internal virtual void InitMaxLevels()
         {
-            String mlStr;
-            if (args.TryGetValue(MAX_LEVELS, out mlStr) && mlStr != null)
+            string mlStr = args[MaxLevels];
+            if (mlStr != null)
             {
                 maxLevels = int.Parse(mlStr);
                 return;
             }
-
             double degrees;
-            if (!args.TryGetValue(MAX_DIST_ERR, out mlStr) || mlStr == null)
+            string maxDetailDistStr = args[MaxDistErr];
+            if (maxDetailDistStr == null)
             {
                 if (!ctx.IsGeo())
-                    return; //let default to max
-                degrees = DistanceUtils.Dist2Degrees(DEFAULT_GEO_MAX_DETAIL_KM, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+                {
+                    return;
+                }
+                //let default to max
+                degrees = DistanceUtils.Dist2Degrees(DefaultGeoMaxDetailKm, DistanceUtils.EARTH_MEAN_RADIUS_KM);
             }
             else
             {
-                degrees = Double.Parse(mlStr);
+                degrees = double.Parse(maxDetailDistStr);
             }
             maxLevels = GetLevelForDistance(degrees);
         }
 
-        /* Calls {@link SpatialPrefixTree#getLevelForDistance(double)}. */
-        protected abstract int GetLevelForDistance(double degrees);
+        /// <summary>
+        /// Calls
+        /// <see cref="SpatialPrefixTree.GetLevelForDistance(double)">SpatialPrefixTree.GetLevelForDistance(double)
+        /// 	</see>
+        /// .
+        /// </summary>
+        protected internal abstract int GetLevelForDistance(double degrees);
 
-        protected abstract SpatialPrefixTree NewSPT();
-
+        protected internal abstract SpatialPrefixTree NewSPT();
     }
 }

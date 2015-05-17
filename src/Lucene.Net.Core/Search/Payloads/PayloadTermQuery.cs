@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Lucene.Net.Search.Payloads
 {
     using Lucene.Net.Index;
@@ -130,11 +132,11 @@ namespace Lucene.Net.Search.Payloads
                         Payload = postings.Payload;
                         if (Payload != null)
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field(), Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, DocScorer.ComputePayloadFactor(Doc, Spans.Start(), Spans.End(), Payload));
+                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field, Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, DocScorer.ComputePayloadFactor(Doc, Spans.Start(), Spans.End(), Payload));
                         }
                         else
                         {
-                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field(), Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, 1F);
+                            PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field, Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, 1F);
                         }
                         PayloadsSeen++;
                     }
@@ -178,7 +180,7 @@ namespace Lucene.Net.Search.Payloads
                 {
                     get
                     {
-                        return OuterInstance.OuterInstance.Function.DocScore(Doc, OuterInstance.OuterInstance.Term.Field(), PayloadsSeen, PayloadScore_Renamed);
+                        return OuterInstance.OuterInstance.Function.DocScore(Doc, OuterInstance.OuterInstance.Term.Field, PayloadsSeen, PayloadScore_Renamed);
                     }
                 }
             }

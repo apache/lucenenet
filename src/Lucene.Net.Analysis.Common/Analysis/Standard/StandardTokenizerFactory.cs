@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Standard;
-using TokenizerFactory = Lucene.Net.Analysis.Util.TokenizerFactory;
+using System.IO;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.analysis.standard
+namespace Lucene.Net.Analysis.Standard
 {
 
 	/*
@@ -21,12 +22,7 @@ namespace org.apache.lucene.analysis.standard
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using TokenizerFactory = TokenizerFactory;
-	using AttributeFactory = org.apache.lucene.util.AttributeSource.AttributeFactory;
-
-
-	/// <summary>
+    /// <summary>
 	/// Factory for <seealso cref="StandardTokenizer"/>. 
 	/// <pre class="prettyprint">
 	/// &lt;fieldType name="text_stndrd" class="solr.TextField" positionIncrementGap="100"&gt;
@@ -51,9 +47,9 @@ namespace org.apache.lucene.analysis.standard
 		}
 	  }
 
-	  public override StandardTokenizer create(AttributeFactory factory, Reader input)
+	  public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
 	  {
-		StandardTokenizer tokenizer = new StandardTokenizer(luceneMatchVersion, factory, input);
+		var tokenizer = new StandardTokenizer(luceneMatchVersion, factory, input);
 		tokenizer.MaxTokenLength = maxTokenLength;
 		return tokenizer;
 	  }

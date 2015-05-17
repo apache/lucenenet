@@ -26,7 +26,6 @@ namespace Lucene.Net.Index
          */
 
     using Directory = Lucene.Net.Store.Directory;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// A <seealso cref="MergeScheduler"/> that runs each merge using a
@@ -438,7 +437,7 @@ namespace Lucene.Net.Index
                         // updateMergeThreads).  We stall this producer
                         // thread to prevent creation of new segments,
                         // until merging has caught up:
-                        startStallTime = DateTime.Now.Millisecond;
+                        startStallTime = Environment.TickCount;
                         if (Verbose())
                         {
                             Message("    too many merges; stalling...");
@@ -449,7 +448,7 @@ namespace Lucene.Net.Index
                         }
                         catch (ThreadInterruptedException ie)
                         {
-                            throw new ThreadInterruptedException(ie);
+                            throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                         }
                     }
 
@@ -457,7 +456,7 @@ namespace Lucene.Net.Index
                     {
                         if (startStallTime != 0)
                         {
-                            Message("  stalled for " + (DateTime.Now.Millisecond - startStallTime) + " msec");
+                            Message("  stalled for " + (Environment.TickCount - startStallTime) + " msec");
                         }
                     }
 
@@ -714,7 +713,7 @@ namespace Lucene.Net.Index
             }
             catch (ThreadInterruptedException ie)
             {
-                throw new ThreadInterruptedException(ie);
+                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
             }
             throw new MergePolicy.MergeException(exc, Dir);
         }

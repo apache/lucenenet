@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis
             private ICharTermAttribute termAtt;
             private IOffsetAttribute offsetAtt;
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (index == OuterInstance.Tokens.Length)
                 {

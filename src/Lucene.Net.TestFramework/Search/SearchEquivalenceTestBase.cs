@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
             // check in the subset, that every bit was set by the super
             for (int i = 0; i < td1.ScoreDocs.Length; i++)
             {
-                Assert.IsTrue(bitset.Get(td1.ScoreDocs[i].Doc));
+                Assert.IsTrue(bitset.SafeGet(td1.ScoreDocs[i].Doc));
             }
         }
     }

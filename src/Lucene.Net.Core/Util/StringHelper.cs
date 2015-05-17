@@ -66,18 +66,18 @@ namespace Lucene.Net.Util
             }
         }
 
-        private static IComparer<string> versionComparator = new ComparatorAnonymousInnerClassHelper();
+        private static readonly IComparer<string> versionComparator = new ComparatorAnonymousInnerClassHelper();
 
-        private class ComparatorAnonymousInnerClassHelper : IComparer<string>
+        private sealed class ComparatorAnonymousInnerClassHelper : IComparer<string>
         {
             public ComparatorAnonymousInnerClassHelper()
             {
             }
 
-            public virtual int Compare(string a, string b)
+            public int Compare(string a, string b)
             {
-                StringTokenizer aTokens = new StringTokenizer(a, ".");
-                StringTokenizer bTokens = new StringTokenizer(b, ".");
+                var aTokens = new StringTokenizer(a, ".");
+                var bTokens = new StringTokenizer(b, ".");
 
                 while (aTokens.HasMoreTokens())
                 {
@@ -189,7 +189,7 @@ namespace Lucene.Net.Util
                 if (good_fast_hash_seed == 0)
                 {
                     //LUCENE TO-DO No idea if this works
-                    string prop = AppSettings.Get("tests.seed", "");
+                    var prop = AppSettings.Get("tests.seed", null);
                     if (prop != null)
                     {
                         // So if there is a test failure that relied on hash

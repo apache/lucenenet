@@ -26,8 +26,6 @@ namespace Lucene.Net.Codecs.Compressing
     [TestFixture]
     public abstract class AbstractTestLZ4CompressionMode : AbstractTestCompressionMode
     {
-        private LZ4 lz4;
-
         public override byte[] Test(byte[] decompressed)
         {
             var compressed = base.Test(decompressed);
@@ -39,7 +37,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int literalLen = (int)((uint)token >> 4);
                 if (literalLen == 0x0F)
                 {
-                    while (compressed[off] == unchecked((sbyte)0xFF))
+                    while (compressed[off] == 0xFF)
                     {
                         literalLen += 0xFF;
                         ++off;

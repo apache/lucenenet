@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis
         private readonly bool LowerCase;
         private readonly CharacterRunAutomaton Filter;
         private int PositionIncrementGap_Renamed;
-        private int OffsetGap_Renamed;
+        private int? OffsetGap_Renamed;
         private readonly Random Random;
         private IDictionary<string, int?> PreviousMappings = new Dictionary<string, int?>();
         private bool EnableChecks_Renamed = true;
@@ -181,7 +181,7 @@ namespace Lucene.Net.Analysis
         /// <param name="fieldName"> Currently not used, the same offset gap is returned for each field. </param>
         public override int GetOffsetGap(string fieldName)
         {
-            return OffsetGap_Renamed == null ? base.GetOffsetGap(fieldName) : OffsetGap_Renamed;
+            return OffsetGap_Renamed == null ? base.GetOffsetGap(fieldName) : OffsetGap_Renamed.Value;
         }
 
         /// <summary>

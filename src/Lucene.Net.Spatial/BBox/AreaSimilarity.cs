@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -49,9 +49,9 @@ namespace Lucene.Net.Spatial.BBox
     /// </summary>
     public class AreaSimilarity : BBoxSimilarity
     {
-       /*
-        * Properties associated with the query envelope
-        */
+        /*
+         * Properties associated with the query envelope
+         */
         private readonly Rectangle queryExtent;
         private readonly double queryArea;
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Spatial.BBox
                     //        sb.append("\n  queryFactor=").append(queryFactor).append(" targetFactor=").append(targetFactor);
                     //        sb.append(" (queryPower=").append(queryPower).append(" targetPower=").append(targetPower).append(")");
 
-                    exp.Value = (float) score;
+                    exp.Value = (float)score;
                     exp.Description = GetType().Name;
 
                     Explanation e = null;
@@ -226,6 +226,6 @@ namespace Lucene.Net.Spatial.BBox
         public override int GetHashCode()
         {
             return GetDelimiterQueryParameters().GetHashCode();
-        } 
+        }
     }
 }

@@ -4,7 +4,6 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using org.apache.lucene.analysis.miscellaneous;
-using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -123,15 +122,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
 		}
 	  }
 
-	  public override TokenFilter Create(TokenStream input)
+	  public override TokenStream Create(TokenStream input)
 	  {
-		if (luceneMatchVersion.OnOrAfter(Version.LUCENE_48))
+		if (luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
 		{
 		  return new WordDelimiterFilter(luceneMatchVersion, input, typeTable == null ? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE : typeTable, flags, protectedWords);
 		}
 		else
 		{
-		  return new Lucene47WordDelimiterFilter(input, typeTable == null ? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE : typeTable, flags, protectedWords);
+		  return new Lucene47WordDelimiterFilter(input, typeTable ?? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, protectedWords);
 		}
 	  }
 

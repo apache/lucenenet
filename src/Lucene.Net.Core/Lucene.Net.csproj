@@ -30,7 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
@@ -438,6 +438,7 @@
     <Compile Include="Search\FuzzyTermsEnum.cs" />
     <Compile Include="Search\HitQueue.cs" />
     <Compile Include="Search\IndexSearcher.cs" />
+    <Compile Include="Search\ITopTermsRewrite.cs" />
     <Compile Include="Search\LiveFieldValues.cs" />
     <Compile Include="Search\MatchAllDocsQuery.cs" />
     <Compile Include="Search\IMaxNonCompetitiveBoostAttribute.cs" />
@@ -850,12 +851,10 @@
     <Compile Include="Util\Sorter.cs" />
     <Compile Include="Util\SPIClassIterator.cs" />
     <Compile Include="Util\StringHelper.cs" />
-    <Compile Include="Util\ThreadInterruptedException.cs" />
     <Compile Include="Util\TimSorter.cs" />
     <Compile Include="Util\ToStringUtils.cs" />
     <Compile Include="Util\UnicodeUtil.cs" />
-    <Compile Include="Util\Version.cs" />
-    <Compile Include="Util\VirtualMethod.cs" />
+    <Compile Include="Util\LuceneVersion.cs" />
     <Compile Include="Util\WAH8DocIdSet.cs" />
     <Compile Include="Util\WeakIdentityMap.cs" />
   </ItemGroup>

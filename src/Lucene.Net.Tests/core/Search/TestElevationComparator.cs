@@ -170,6 +170,11 @@ namespace Lucene.Net.Search
             private readonly BytesRef tempBR;
             internal int bottomVal;
 
+            public override int CompareValues(object first, object second)
+            {
+                return ((IComparable) first).CompareTo(second);
+            }
+
             public override int Compare(int slot1, int slot2)
             {
                 return values[slot2] - values[slot1]; // values will be small enough that there is no overflow concern

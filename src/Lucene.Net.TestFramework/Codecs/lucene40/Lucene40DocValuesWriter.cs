@@ -172,24 +172,26 @@ namespace Lucene.Net.Codecs.Lucene40
             HashSet<BytesRef> uniqueValues = new HashSet<BytesRef>();
             int minLength = int.MaxValue;
             int maxLength = int.MinValue;
-            BytesRef brefDummy;
-            foreach (BytesRef b in values)
+
+            var vals = values.ToArray();
+
+            for (int i = 0; i < vals.Length; i++)
             {
-                brefDummy = b;
+                var b = vals[i];
 
                 if (b == null)
                 {
-                    brefDummy = new BytesRef(); // 4.0 doesnt distinguish
+                    b = vals[i] = new BytesRef(); // 4.0 doesnt distinguish
                 }
                 if (b.Length > Lucene40DocValuesFormat.MAX_BINARY_FIELD_LENGTH)
                 {
                     throw new System.ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " + Lucene40DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
                 }
-                minLength = Math.Min(minLength, brefDummy.Length);
-                maxLength = Math.Max(maxLength, brefDummy.Length);
+                minLength = Math.Min(minLength, b.Length);
+                maxLength = Math.Max(maxLength, b.Length);
                 if (uniqueValues != null)
                 {
-                    if (uniqueValues.Add(BytesRef.DeepCopyOf(brefDummy)))
+                    if (uniqueValues.Add(BytesRef.DeepCopyOf(b)))
                     {
                         if (uniqueValues.Count > 256)
                         {

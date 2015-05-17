@@ -24,11 +24,6 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    // for javadocs
-    // for javadocs
-    // for javadocs
-    // for javadocs
-
     /// <summary>
     /// <b>Expert:</b> this class provides a <seealso cref="TokenStream"/>
     /// for indexing numeric values that can be used by {@link

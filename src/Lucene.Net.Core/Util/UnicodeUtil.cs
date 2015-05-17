@@ -687,7 +687,7 @@ namespace Lucene.Net.Util
                     }
                 }
             }
-            chars.length = out_offset - chars.Offset;
+            chars.Length = out_offset - chars.Offset;
         }
 
         /// <summary>

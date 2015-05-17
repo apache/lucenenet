@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Path
             this.skip = skip;
             resultToken = new StringBuilder(bufferSize);
             resultTokenBuffer = new char[bufferSize];
-            delimiterPositions = new List<int?>(bufferSize / 10);
+            delimiterPositions = new List<int>(bufferSize / 10);
         }
 
         private const int DEFAULT_BUFFER_SIZE = 1024;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.Path
         private int skipped = 0;
         private readonly StringBuilder resultToken;
 
-        private readonly IList<int?> delimiterPositions;
+        private readonly IList<int> delimiterPositions;
         private int delimitersCount = -1;
         private char[] resultTokenBuffer;
 
@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.Path
                 {
                     resultTokenBuffer = new char[resultToken.Length];
                 }
-                resultToken.GetChars(0, resultToken.Length, resultTokenBuffer, 0);
+                resultToken.CopyTo(0, resultTokenBuffer, 0, resultToken.Length);
                 resultToken.Length = 0;
                 int idx = delimitersCount - 1 - skip;
                 if (idx >= 0)
@@ -186,7 +186,7 @@ namespace Lucene.Net.Analysis.Path
 
             while (skipped < delimitersCount - skip - 1)
             {
-                var start = delimiterPositions[skipped] ?? 0;
+                var start = delimiterPositions[skipped];
                 termAtt.CopyBuffer(resultTokenBuffer, start, endPosition - start);
                 offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(endPosition));
                 skipped++;

@@ -61,6 +61,8 @@ namespace Lucene.Net.Util
     public sealed class WeakIdentityMap<K, V>
         where K : class
     {
+        // LUCENENET TODO Make this class internal as it isn't required anywhere; need to have it exposed to tests though
+
         //private readonly ReferenceQueue<object> queue = new ReferenceQueue<object>();
         private readonly IDictionary<IdentityWeakReference, V> BackingStore;
 
@@ -135,7 +137,16 @@ namespace Lucene.Net.Util
             {
                 Reap();
             }
-            return BackingStore[new IdentityWeakReference(key)];
+
+            V val;
+            if (BackingStore.TryGetValue(new IdentityWeakReference(key), out val))
+            {
+                return val;
+            }
+            else
+            {
+                return default(V);
+            }
         }
 
         /// <summary>
@@ -329,25 +340,19 @@ namespace Lucene.Net.Util
         /// <seealso cref= <a href="#reapInfo">Information about the <code>reapOnRead</code> setting</a> </seealso>
         public void Reap()
         {
-            lock (BackingStore)
+            List<IdentityWeakReference> keysToRemove = new List<IdentityWeakReference>();
+            foreach (IdentityWeakReference zombie in BackingStore.Keys)
             {
-                List<IdentityWeakReference> keysToRemove = new List<IdentityWeakReference>();
-
-                foreach (IdentityWeakReference zombie in BackingStore.Keys)
+                if (!zombie.IsAlive)
                 {
-                    if (!zombie.IsAlive)
-                        keysToRemove.Add(zombie);
-                }
-
-                foreach (var key in keysToRemove)
-                {
-                    BackingStore.Remove(key);
+                    keysToRemove.Add(zombie);
                 }
             }
-            /*while ((zombie = queue.poll()) != null)
+
+            foreach (var key in keysToRemove)
             {
-              BackingStore.Remove(zombie);
-            }*/
+                BackingStore.Remove(key);
+            }
         }
 
         // we keep a hard reference to our NULL key, so map supports null keys that never get GCed:

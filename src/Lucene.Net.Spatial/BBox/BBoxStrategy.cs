@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,9 +36,9 @@ namespace Lucene.Net.Spatial.BBox
         public static String SUFFIX_XDL = "__xdl";
 
         /*
-         * The Bounding Box gets stored as four fields for x/y min/max and a flag
-         * that says if the box crosses the dateline (xdl).
-         */
+		 * The Bounding Box gets stored as four fields for x/y min/max and a flag
+		 * that says if the box crosses the dateline (xdl).
+		 */
         public readonly String field_bbox;
         public readonly String field_minX;
         public readonly String field_minY;
@@ -72,7 +72,7 @@ namespace Lucene.Net.Spatial.BBox
         // Indexing
         //---------------------------------
 
-        public override AbstractField[] CreateIndexableFields(Shape shape)
+        public override Field[] CreateIndexableFields(Shape shape)
         {
             var rect = shape as Rectangle;
             if (rect != null)
@@ -80,29 +80,28 @@ namespace Lucene.Net.Spatial.BBox
             throw new InvalidOperationException("Can only index Rectangle, not " + shape);
         }
 
-        public AbstractField[] CreateIndexableFields(Rectangle bbox)
+        public Field[] CreateIndexableFields(Rectangle bbox)
         {
-            var fields = new AbstractField[5];
+            var fields = new Field[5];
             fields[0] = DoubleField(field_minX, bbox.GetMinX());
             fields[1] = DoubleField(field_maxX, bbox.GetMaxX());
             fields[2] = DoubleField(field_minY, bbox.GetMinY());
             fields[3] = DoubleField(field_maxY, bbox.GetMaxY());
-            fields[4] = new Field(field_xdl, bbox.GetCrossesDateLine() ? "T" : "F", Field.Store.NO,
-                                  Field.Index.NOT_ANALYZED_NO_NORMS) {OmitNorms = true, OmitTermFreqAndPositions = true};
+            fields[4] = new StringField(field_xdl, bbox.GetCrossesDateLine() ? "T" : "F", Field.Store.NO);
             return fields;
         }
 
-        private AbstractField DoubleField(string field, double value)
+        private Field DoubleField(string field, double value)
         {
-            var f = new NumericField(field, precisionStep, Field.Store.NO, true)
-                        {OmitNorms = true, OmitTermFreqAndPositions = true};
-            f.SetDoubleValue(value);
-            return f;
+            return new DoubleField(field, value, new FieldType(Documents.DoubleField.TYPE_NOT_STORED)
+                                                     {
+                                                         NumericPrecisionStep = precisionStep
+                                                     });
         }
 
         public override ValueSource MakeDistanceValueSource(Point queryPoint)
         {
-            return new BBoxSimilarityValueSource(this, new DistanceSimilarity(this.GetSpatialContext(), queryPoint));
+            return new BBoxSimilarityValueSource(this, new DistanceSimilarity(this.SpatialContext, queryPoint));
         }
 
         public ValueSource MakeBBoxAreaSimilarityValueSource(Rectangle queryBox)
@@ -315,14 +314,14 @@ namespace Lucene.Net.Spatial.BBox
             Query qMinY = NumericRangeQuery.NewDoubleRange(field_minY, precisionStep, bbox.GetMinY(), bbox.GetMinY(), true, true);
             Query qMaxX = NumericRangeQuery.NewDoubleRange(field_maxX, precisionStep, bbox.GetMaxX(), bbox.GetMaxX(), true, true);
             Query qMaxY = NumericRangeQuery.NewDoubleRange(field_maxY, precisionStep, bbox.GetMaxY(), bbox.GetMaxY(), true, true);
-            
+
             var bq = new BooleanQuery
-                         {
-                             {qMinX, Occur.MUST},
-                             {qMinY, Occur.MUST},
-                             {qMaxX, Occur.MUST},
-                             {qMaxY, Occur.MUST}
-                         };
+			         	{
+			         		{qMinX, Occur.MUST},
+			         		{qMinY, Occur.MUST},
+			         		{qMaxX, Occur.MUST},
+			         		{qMaxY, Occur.MUST}
+			         	};
             return bq;
         }
 
@@ -345,7 +344,7 @@ namespace Lucene.Net.Spatial.BBox
             Query qIsNonXDL = this.MakeXDL(false);
             Query qIsXDL = this.MakeXDL(true);
             Query qHasEnv = this.MakeQuery(new Query[] { qIsNonXDL, qIsXDL }, Occur.SHOULD);
-            var qNotDisjoint = new BooleanQuery {{qHasEnv, Occur.MUST}, {qDisjoint, Occur.MUST_NOT}};
+            var qNotDisjoint = new BooleanQuery { { qHasEnv, Occur.MUST }, { qDisjoint, Occur.MUST_NOT } };
 
             //Query qDisjoint = makeDisjoint();
             //BooleanQuery qNotDisjoint = new BooleanQuery();
@@ -477,8 +476,7 @@ namespace Lucene.Net.Spatial.BBox
          */
         public Query MakeXDL(bool crossedDateLine, Query query)
         {
-            var bq = new BooleanQuery
-                         {{this.MakeXDL(crossedDateLine), Occur.MUST}, {query, Occur.MUST}};
+            var bq = new BooleanQuery { { this.MakeXDL(crossedDateLine), Occur.MUST }, { query, Occur.MUST } };
             return bq;
         }
     }

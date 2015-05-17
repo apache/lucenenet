@@ -37,7 +37,6 @@ namespace Lucene.Net.Index
     // Make sure if you use NoDeletionPolicy that no file
     // referenced by a commit point is ever deleted
 
-    [Ignore]
     [TestFixture]
     public class TestNeverDelete : LuceneTestCase
     {
@@ -59,10 +58,10 @@ namespace Lucene.Net.Index
 
             w.Commit();
             ThreadClass[] indexThreads = new ThreadClass[Random().Next(4)];
-            long stopTime = DateTime.Now.Millisecond + AtLeast(1000);
+            long stopTime = Environment.TickCount + AtLeast(1000);
             for (int x = 0; x < indexThreads.Length; x++)
             {
-                indexThreads[x] = new ThreadAnonymousInnerClassHelper(this, w, stopTime);
+                indexThreads[x] = new ThreadAnonymousInnerClassHelper(w, stopTime);
                 indexThreads[x].Name = "Thread " + x;
                 indexThreads[x].Start();
             }
@@ -70,7 +69,7 @@ namespace Lucene.Net.Index
             HashSet<string> allFiles = new HashSet<string>();
 
             DirectoryReader r = DirectoryReader.Open(d);
-            while (DateTime.Now.Millisecond < stopTime)
+            while (Environment.TickCount < stopTime)
             {
                 IndexCommit ic = r.IndexCommit;
                 if (VERBOSE)
@@ -105,14 +104,11 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly TestNeverDelete OuterInstance;
-
             private RandomIndexWriter w;
             private long StopTime;
 
-            public ThreadAnonymousInnerClassHelper(TestNeverDelete outerInstance, RandomIndexWriter w, long stopTime)
+            public ThreadAnonymousInnerClassHelper(RandomIndexWriter w, long stopTime)
             {
-                this.OuterInstance = outerInstance;
                 this.w = w;
                 this.StopTime = stopTime;
             }
@@ -122,7 +118,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     int docCount = 0;
-                    while (DateTime.Now.Millisecond < StopTime)
+                    while (Environment.TickCount < StopTime)
                     {
                         Document doc = new Document();
                         doc.Add(NewStringField("dc", "" + docCount, Field.Store.YES));

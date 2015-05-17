@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace org.apache.lucene.analysis.compound.hyphenation
+namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
 
 	/// <summary>
@@ -26,10 +26,10 @@ namespace org.apache.lucene.analysis.compound.hyphenation
 	public class Hyphenation
 	{
 
-	  private int[] hyphenPoints;
+	  private readonly int[] hyphenPoints;
 
 	  /// <summary>
-	  /// rawWord as made of alternating strings and <seealso cref="Hyphen Hyphen"/> instances
+	  /// rawWord as made of alternating strings and <seealso cref="Hyphen"/> instances
 	  /// </summary>
 	  internal Hyphenation(int[] points)
 	  {

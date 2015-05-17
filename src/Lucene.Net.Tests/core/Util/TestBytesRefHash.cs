@@ -164,12 +164,12 @@ namespace Lucene.Net.Util
                     int key = Hash.Add(@ref);
                     if (key < 0)
                     {
-                        Assert.IsTrue(bits.Get((-key) - 1));
+                        Assert.IsTrue(bits.SafeGet((-key) - 1));
                     }
                     else
                     {
-                        Assert.IsFalse(bits.Get(key));
-                        bits.Set(key, true);
+                        Assert.IsFalse(bits.SafeGet(key));
+                        bits.SafeSet(key, true);
                         numEntries++;
                     }
                 }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Util
                 Assert.IsTrue(numEntries < compact.Length);
                 for (int i = 0; i < numEntries; i++)
                 {
-                    bits.Set(compact[i], false);
+                    bits.SafeSet(compact[i], false);
                 }
                 Assert.AreEqual(0, bits.Cardinality());
                 Hash.Clear();

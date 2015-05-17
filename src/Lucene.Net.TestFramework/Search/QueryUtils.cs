@@ -470,7 +470,7 @@ namespace Lucene.Net.Search
                 float score = scorer.Score();
                 try
                 {
-                    long startMS = DateTime.Now.Millisecond;
+                    long startMS = Environment.TickCount;
                     for (int i = LastDoc[0] + 1; i <= doc; i++)
                     {
                         Weight w = s.CreateNormalizedWeight(q);
@@ -483,7 +483,7 @@ namespace Lucene.Net.Search
 
                         // Hurry things along if they are going slow (eg
                         // if you got SimpleText codec this will kick in):
-                        if (i < doc && DateTime.Now.Millisecond - startMS > 5)
+                        if (i < doc && Environment.TickCount - startMS > 5)
                         {
                             i = doc - 1;
                         }

@@ -46,7 +46,6 @@ namespace Lucene.Net.Index
     using NumericDocValuesField = NumericDocValuesField;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// MultiThreaded IndexWriter tests
@@ -57,8 +56,6 @@ namespace Lucene.Net.Index
         // Used by test cases below
         private class IndexerThread : ThreadClass
         {
-            private readonly TestIndexWriterWithThreads OuterInstance;
-
             internal bool DiskFull;
             internal Exception Error;
             internal AlreadyClosedException Ace;
@@ -66,9 +63,8 @@ namespace Lucene.Net.Index
             internal bool NoErrors;
             internal volatile int AddCount;
 
-            public IndexerThread(TestIndexWriterWithThreads outerInstance, IndexWriter writer, bool noErrors)
+            public IndexerThread(IndexWriter writer, bool noErrors)
             {
-                this.OuterInstance = outerInstance;
                 this.Writer = writer;
                 this.NoErrors = noErrors;
             }
@@ -86,7 +82,7 @@ namespace Lucene.Net.Index
 
                 int idUpto = 0;
                 int fullCount = 0;
-                long stopTime = DateTime.Now.Millisecond + 200;
+                long stopTime = Environment.TickCount + 200;
 
                 do
                 {
@@ -113,7 +109,7 @@ namespace Lucene.Net.Index
                             }
                             catch (ThreadInterruptedException ie)
                             {
-                                throw new ThreadInterruptedException(ie);
+                                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                             }
                             if (fullCount++ >= 5)
                             {
@@ -142,7 +138,7 @@ namespace Lucene.Net.Index
                         }
                         break;
                     }
-                } while (DateTime.Now.Millisecond < stopTime);
+                } while (Environment.TickCount < stopTime);
             }
         }
 
@@ -169,7 +165,7 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new IndexerThread(this, writer, true);
+                    threads[i] = new IndexerThread(writer, true);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -217,7 +213,7 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new IndexerThread(this, writer, false);
+                    threads[i] = new IndexerThread(writer, false);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -298,7 +294,7 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new IndexerThread(this, writer, true);
+                    threads[i] = new IndexerThread(writer, true);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)

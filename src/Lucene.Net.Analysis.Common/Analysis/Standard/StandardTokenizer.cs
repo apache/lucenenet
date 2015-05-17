@@ -16,7 +16,10 @@
  */
 using System;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 using org.apache.lucene.analysis.standard;
+using Version = Lucene.Net.Util.LuceneVersion;
+using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -144,15 +147,15 @@ namespace Lucene.Net.Analysis.Standard
             {
                 this.scanner = new StandardTokenizerImpl(input);
             }
-            else if (matchVersion.onOrAfter(Version.LUCENE_40))
+            else if (matchVersion.OnOrAfter(Version.LUCENE_40))
             {
                 this.scanner = new StandardTokenizerImpl40(input);
             }
-            else if (matchVersion.onOrAfter(Version.LUCENE_34))
+            else if (matchVersion.OnOrAfter(Version.LUCENE_34))
             {
                 this.scanner = new StandardTokenizerImpl34(input);
             }
-            else if (matchVersion.onOrAfter(Version.LUCENE_31))
+            else if (matchVersion.OnOrAfter(Version.LUCENE_31))
             {
                 this.scanner = new StandardTokenizerImpl31(input);
             }
@@ -229,9 +232,9 @@ namespace Lucene.Net.Analysis.Standard
             posIncrAtt.PositionIncrement = posIncrAtt.PositionIncrement + skippedPositions;
         }
 
-        public override void Close()
+        public override void Dispose()
         {
-            base.Close();
+            base.Dispose();
             scanner.yyreset(input);
         }
 

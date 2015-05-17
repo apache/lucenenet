@@ -27,7 +27,6 @@ namespace Lucene.Net.Index
              */
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     /// <summary>
     /// Tests for <seealso cref="DocumentsWriterStallControl"/>
@@ -69,15 +68,15 @@ namespace Lucene.Net.Index
             for (int i = 0; i < stallThreads.Length; i++)
             {
                 int stallProbability = 1 + Random().Next(10);
-                stallThreads[i] = new ThreadAnonymousInnerClassHelper(this, ctrl, stallProbability);
+                stallThreads[i] = new ThreadAnonymousInnerClassHelper(ctrl, stallProbability);
             }
             Start(stallThreads);
-            long time = DateTime.Now.Millisecond;
+            long time = Environment.TickCount;
             /*
              * use a 100 sec timeout to make sure we not hang forever. join will fail in
              * that case
              */
-            while ((DateTime.Now.Millisecond - time) < 100 * 1000 && !Terminated(stallThreads))
+            while ((Environment.TickCount - time) < 100 * 1000 && !Terminated(stallThreads))
             {
                 ctrl.UpdateStalled(false);
                 if (Random().NextBoolean())
@@ -94,14 +93,11 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly TestDocumentsWriterStallControl OuterInstance;
-
             private DocumentsWriterStallControl Ctrl;
             private int StallProbability;
 
-            public ThreadAnonymousInnerClassHelper(TestDocumentsWriterStallControl outerInstance, DocumentsWriterStallControl ctrl, int stallProbability)
+            public ThreadAnonymousInnerClassHelper(DocumentsWriterStallControl ctrl, int stallProbability)
             {
-                this.OuterInstance = outerInstance;
                 this.Ctrl = ctrl;
                 this.StallProbability = stallProbability;
             }
@@ -275,7 +271,7 @@ namespace Lucene.Net.Index
                             catch (ThreadInterruptedException e)
                             {
                                 Console.WriteLine("[Waiter] got interrupted - wait count: " + Sync.Waiter.Remaining);
-                                throw new ThreadInterruptedException(e);
+                                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                             }
                         }
                     }
@@ -330,7 +326,7 @@ namespace Lucene.Net.Index
                             catch (ThreadInterruptedException e)
                             {
                                 Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.Remaining);
-                                throw new ThreadInterruptedException(e);
+                                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                             }
                             Sync.LeftCheckpoint.countDown();
                         }

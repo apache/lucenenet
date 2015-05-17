@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -27,7 +28,6 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using FSDirectory = Lucene.Net.Store.FSDirectory;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    using Version = Lucene.Net.Util.Version;
 
     /// <summary>
     /// this is an easy-to-use tool that upgrades all segments of an index from previous Lucene versions
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
             {
                 dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(path));
             }
-            return new IndexUpgrader(dir, Version.LUCENE_CURRENT, @out, deletePriorCommits);
+            return new IndexUpgrader(dir, LuceneVersion.LUCENE_CURRENT, @out, deletePriorCommits);
         }
 
         private readonly Directory Dir;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
         /// Creates index upgrader on the given directory, using an <seealso cref="IndexWriter"/> using the given
         /// {@code matchVersion}. The tool refuses to upgrade indexes with multiple commit points.
         /// </summary>
-        public IndexUpgrader(Directory dir, Version matchVersion)
+        public IndexUpgrader(Directory dir, LuceneVersion matchVersion)
             : this(dir, new IndexWriterConfig(matchVersion, null), false)
         {
         }
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
         /// {@code matchVersion}. You have the possibility to upgrade indexes with multiple commit points by removing
         /// all older ones. If {@code infoStream} is not {@code null}, all logging output will be sent to this stream.
         /// </summary>
-        public IndexUpgrader(Directory dir, Version matchVersion, TextWriter infoStream, bool deletePriorCommits)
+        public IndexUpgrader(Directory dir, LuceneVersion matchVersion, TextWriter infoStream, bool deletePriorCommits)
             : this(dir, new IndexWriterConfig(matchVersion, null), deletePriorCommits)
         {
             if (null != infoStream)

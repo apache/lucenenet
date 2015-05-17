@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                long t0 = DateTime.Now.Millisecond;
+                long t0 = Environment.TickCount;
 
                 if (infos.Count == 0)
                 {
@@ -373,7 +373,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(CheckDeleteStats());
                 if (InfoStream.IsEnabled("BD"))
                 {
-                    InfoStream.Message("BD", "applyDeletes took " + (DateTime.Now.Millisecond - t0) + " msec");
+                    InfoStream.Message("BD", "applyDeletes took " + (Environment.TickCount - t0) + " msec");
                 }
                 // assert infos != segmentInfos || !any() : "infos=" + infos + " segmentInfos=" + segmentInfos + " any=" + any;
 
@@ -481,10 +481,10 @@ namespace Lucene.Net.Index
                     // Since we visit terms sorted, we gain performance
                     // by re-using the same TermsEnum and seeking only
                     // forwards
-                    if (!term.Field().Equals(currentField))
+                    if (!string.Equals(term.Field, currentField, StringComparison.Ordinal))
                     {
-                        Debug.Assert(currentField == null || currentField.CompareTo(term.Field()) < 0);
-                        currentField = term.Field();
+                        Debug.Assert(currentField == null || currentField.CompareTo(term.Field) < 0);
+                        currentField = term.Field;
                         Terms terms = fields.Terms(currentField);
                         if (terms != null)
                         {
@@ -504,7 +504,7 @@ namespace Lucene.Net.Index
 
                     // System.out.println("  term=" + term);
 
-                    if (termsEnum.SeekExact(term.Bytes()))
+                    if (termsEnum.SeekExact(term.Bytes))
                     {
                         // we don't need term frequencies for this
                         DocsEnum docsEnum = termsEnum.Docs(rld.LiveDocs, docs, DocsEnum.FLAG_NONE);
@@ -585,11 +585,11 @@ namespace Lucene.Net.Index
                     // which will get same docIDUpto, yet will still need to respect the order
                     // those updates arrived.
 
-                    if (!term.Field().Equals(currentField))
+                    if (!string.Equals(term.Field, currentField, StringComparison.Ordinal))
                     {
                         // if we change the code to process updates in terms order, enable this assert
                         //        assert currentField == null || currentField.compareTo(term.field()) < 0;
-                        currentField = term.Field();
+                        currentField = term.Field;
                         Terms terms = fields.Terms(currentField);
                         if (terms != null)
                         {
@@ -608,7 +608,7 @@ namespace Lucene.Net.Index
                     }
                     // System.out.println("  term=" + term);
 
-                    if (termsEnum.SeekExact(term.Bytes()))
+                    if (termsEnum.SeekExact(term.Bytes))
                     {
                         // we don't need term frequencies for this
                         DocsEnum docsEnum = termsEnum.Docs(rld.LiveDocs, docs, DocsEnum.FLAG_NONE);
@@ -697,7 +697,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(LastDeleteTerm == null || term.CompareTo(LastDeleteTerm) > 0, "lastTerm=" + LastDeleteTerm + " vs term=" + term);
             }
             // TODO: we re-use term now in our merged iterable, but we shouldn't clone, instead copy for this assert
-            LastDeleteTerm = term == null ? null : new Term(term.Field(), BytesRef.DeepCopyOf(term.Bytes_Renamed));
+            LastDeleteTerm = term == null ? null : new Term(term.Field, BytesRef.DeepCopyOf(term.Bytes));
             return true;
         }
 

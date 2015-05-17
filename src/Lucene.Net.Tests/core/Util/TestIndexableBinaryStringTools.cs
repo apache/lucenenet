@@ -82,7 +82,9 @@ namespace Lucene.Net.Util
                     original2[byteNum] = (sbyte)randomInt;
                     originalString2[byteNum] = (char)randomInt;
                 }
-                int originalComparison = (new string(originalString1, 0, numBytes1)).CompareTo(new string(originalString2, 0, numBytes2));
+                int originalComparison = String.CompareOrdinal(new string(originalString1, 0, numBytes1),
+                                                               new string(originalString2, 0, numBytes2));
+
                 originalComparison = originalComparison < 0 ? -1 : originalComparison > 0 ? 1 : 0;
 
                 int encodedLen1 = IndexableBinaryStringTools.GetEncodedLength(originalArray1, 0, numBytes1);
@@ -99,7 +101,9 @@ namespace Lucene.Net.Util
                 }
                 IndexableBinaryStringTools.Encode(original2, 0, numBytes2, encoded2, 0, encodedLen2);
 
-                int encodedComparison = (new string(encoded1, 0, encodedLen1)).CompareTo(new string(encoded2, 0, encodedLen2));
+                int encodedComparison = String.CompareOrdinal(new string(encoded1, 0, encodedLen1),
+                                                              new string(encoded2, 0, encodedLen2));
+
                 encodedComparison = encodedComparison < 0 ? -1 : encodedComparison > 0 ? 1 : 0;
 
                 Assert.AreEqual(originalComparison, encodedComparison, "Test #" + (testNum + 1) + ": Original bytes and encoded chars compare differently:" + " \nbinary 1: " + BinaryDump(originalArray1, numBytes1) + " \nbinary 2: " + BinaryDump(original2, numBytes2) + "\nencoded 1: " + CharArrayDump(encoded1, encodedLen1) + "\nencoded 2: " + CharArrayDump(encoded2, encodedLen2));

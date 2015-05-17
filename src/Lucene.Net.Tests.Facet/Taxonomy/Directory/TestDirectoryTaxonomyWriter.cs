@@ -54,11 +54,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private class TaxonomyWriterCacheAnonymousInnerClassHelper : TaxonomyWriterCache
         {
-            public TaxonomyWriterCacheAnonymousInnerClassHelper()
-            {
-            }
-
-
             public virtual void Close()
             {
             }

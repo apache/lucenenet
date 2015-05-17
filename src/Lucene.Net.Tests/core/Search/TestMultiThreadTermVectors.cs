@@ -203,16 +203,16 @@ namespace Lucene.Net.Search
             long start = 0L;
             for (int docId = 0; docId < numDocs; docId++)
             {
-                start = DateTime.Now.Millisecond;
+                start = Environment.TickCount;
                 Fields vectors = Reader.GetTermVectors(docId);
-                TimeElapsed += DateTime.Now.Millisecond - start;
+                TimeElapsed += Environment.TickCount - start;
 
                 // verify vectors result
                 VerifyVectors(vectors, docId);
 
-                start = DateTime.Now.Millisecond;
+                start = Environment.TickCount;
                 Terms vector = Reader.GetTermVectors(docId).Terms("field");
-                TimeElapsed += DateTime.Now.Millisecond - start;
+                TimeElapsed += Environment.TickCount - start;
 
                 VerifyVector(vector.Iterator(null), docId);
             }

@@ -101,8 +101,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 Reset();
                 return;
             }
-            Bytes.CopyBytes(term.Bytes());
-            Field = String.Intern(term.Field());
+            Bytes.CopyBytes(term.Bytes);
+            Field = String.Intern(term.Field);
             CurrentFieldNumber = -1;
             this.Term = term;
         }

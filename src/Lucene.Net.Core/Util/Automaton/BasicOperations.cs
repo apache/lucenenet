@@ -1097,9 +1097,9 @@ namespace Lucene.Net.Util.Automaton
                             {
                                 accept = true;
                             }
-                            if (!bb_other.Get(q.number))
+                            if (!bb_other.SafeGet(q.number))
                             {
-                                bb_other.Set(q.number, true);
+                                bb_other.SafeSet(q.number, true);
                                 pp_other.AddLast(q);
                             }
                         }

@@ -48,7 +48,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 			  this.outerInstance = outerInstance;
 		  }
 
-		  public override Token updateSuffixToken(Token suffixToken, Token lastInputToken)
+		  public override Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
 		  {
 			return outerInstance.updateInputToken(suffixToken, lastInputToken);
 		  }
@@ -63,7 +63,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 			  this.outerInstance = outerInstance;
 		  }
 
-		  public override Token updateSuffixToken(Token suffixToken, Token lastInputToken)
+		  public override Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
 		  {
 			return outerInstance.updateSuffixToken(suffixToken, lastInputToken);
 		  }

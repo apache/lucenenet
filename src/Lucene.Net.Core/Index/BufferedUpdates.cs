@@ -120,10 +120,12 @@ namespace Lucene.Net.Index
 
         internal readonly AtomicInteger NumTermDeletes = new AtomicInteger();
         internal readonly AtomicInteger NumNumericUpdates = new AtomicInteger();
-        internal readonly AtomicInteger NumBinaryUpdates = new AtomicInteger();
-        internal readonly IDictionary<Term, int?> Terms = new Dictionary<Term, int?>();
+        internal readonly AtomicInteger NumBinaryUpdates = new AtomicInteger();        
         internal readonly IDictionary<Query, int?> Queries = new Dictionary<Query, int?>();
         internal readonly IList<int?> DocIDs = new List<int?>();
+
+        // TODO LUCENENET make get access internal and make accessible from Tests
+        public IDictionary<Term, int?> Terms { get; private set; }
 
         // Map<dvField,Map<updateTerm,NumericUpdate>>
         // For each field we keep an ordered list of NumericUpdates, key'd by the
@@ -154,12 +156,7 @@ namespace Lucene.Net.Index
         public BufferedUpdates()
         {
             this.BytesUsed = new AtomicLong();
-        }
-
-        // Do not use outside of Nunit
-        public IDictionary<Term, int?> Terms_Nunit()
-        {
-            return Terms;
+            Terms = new Dictionary<Term, int?>();
         }
 
         public override string ToString()
@@ -241,7 +238,7 @@ namespace Lucene.Net.Index
             NumTermDeletes.IncrementAndGet();
             if (current == null)
             {
-                BytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes_Renamed.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field().Length));
+                BytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field.Length));
             }
         }
 

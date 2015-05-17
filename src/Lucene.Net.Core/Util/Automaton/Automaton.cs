@@ -560,7 +560,7 @@ namespace Lucene.Net.Util.Automaton
             BitArray liveSet = new BitArray(states.Length);
             foreach (State s in live)
             {
-                liveSet.Set(s.number, true);
+                liveSet.SafeSet(s.number, true);
             }
 
             foreach (State s in states)
@@ -570,7 +570,7 @@ namespace Lucene.Net.Util.Automaton
                 for (int i = 0; i < s.numTransitions; i++)
                 {
                     Transition t = s.TransitionsArray[i];
-                    if (liveSet.Get(t.To.Number))
+                    if (liveSet.SafeGet(t.To.Number))
                     {
                         s.TransitionsArray[upto++] = s.TransitionsArray[i];
                     }

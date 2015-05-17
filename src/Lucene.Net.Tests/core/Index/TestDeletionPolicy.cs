@@ -259,7 +259,6 @@ namespace Lucene.Net.Index
          * Test "by time expiration" deletion policy:
          */
 
-        [Ignore]
         [Test]
         public virtual void TestExpirationTimeDeletionPolicy()
         {
@@ -272,7 +271,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, conf);
             ExpirationTimeDeletionPolicy policy = (ExpirationTimeDeletionPolicy)writer.Config.DelPolicy;
             IDictionary<string, string> commitData = new Dictionary<string, string>();
-            commitData["commitTime"] = Convert.ToString(DateTime.Now.Millisecond);
+            commitData["commitTime"] = Convert.ToString(Environment.TickCount);
             writer.CommitData = commitData;
             writer.Commit();
             writer.Dispose();
@@ -283,7 +282,7 @@ namespace Lucene.Net.Index
             {
                 // Record last time when writer performed deletes of
                 // past commits
-                lastDeleteTime = DateTime.Now.Millisecond;
+                lastDeleteTime = Environment.TickCount;
                 conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetIndexDeletionPolicy(policy);
                 mp = conf.MergePolicy;
                 mp.NoCFSRatio = 1.0;
@@ -294,7 +293,7 @@ namespace Lucene.Net.Index
                     AddDoc(writer);
                 }
                 commitData = new Dictionary<string, string>();
-                commitData["commitTime"] = Convert.ToString(DateTime.Now.Millisecond);
+                commitData["commitTime"] = Convert.ToString(Environment.TickCount);
                 writer.CommitData = commitData;
                 writer.Commit();
                 writer.Dispose();

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -21,57 +22,73 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// A PriorityQueue maintains a partial ordering of its elements such that the
-    /// least element can always be found in constant time.  Put()'s and pop()'s
-    /// require log(size) time.
+    /// element with least priority can always be found in constant time. It is represented as a
+    /// Min-Heap so that Add()'s and Pop()'s require log(size) time.
     ///
     /// <p><b>NOTE</b>: this class will pre-allocate a full array of
     /// length <code>maxSize+1</code> if instantiated via the
     /// <seealso cref="#PriorityQueue(int,boolean)"/> constructor with
-    /// <code>prepopulate</code> set to <code>true</code>.
+    /// <code>prepopulate</code> set to <code>true</code>. That maximum
+    /// size can grow as we insert elements over the time.
     ///
     /// @lucene.internal
     /// </summary>
+   
     public abstract class PriorityQueue<T>
     {
-        private int Size_Renamed = 0;
-        private readonly int MaxSize;
-        private readonly T[] Heap;
+        private int QueueSize = 0;
+        private int MaxSize;
+        private T[] Heap;
+        private bool resizable;
 
-        public PriorityQueue(int maxSize)
+        public PriorityQueue()
+            : this(8, false)
+        {
+            resizable = true;
+        } 
+
+        public PriorityQueue(int maxSize = 128)
             : this(maxSize, true)
         {
         }
-
+ 
         public PriorityQueue(int maxSize, bool prepopulate)
         {
-            int heapSize;
-            if (0 == maxSize)
+            resizable = false;
+
+            if (maxSize < 0)
             {
-                // We allocate 1 extra to avoid if statement in top()
-                heapSize = 2;
+                throw new System.ArgumentException("maxSize must be >= 0; got: " + maxSize);
             }
             else
             {
-                if (maxSize > ArrayUtil.MAX_ARRAY_LENGTH)
+                if (0 == maxSize)
                 {
-                    // Don't wrap heapSize to -1, in this case, which
-                    // causes a confusing NegativeArraySizeException.
-                    // Note that very likely this will simply then hit
-                    // an OOME, but at least that's more indicative to
-                    // caller that this values is too big.  We don't +1
-                    // in this case, but it's very unlikely in practice
-                    // one will actually insert this many objects into
-                    // the PQ:
-                    // Throw exception to prevent confusing OOME:
-                    throw new System.ArgumentException("maxSize must be <= " + ArrayUtil.MAX_ARRAY_LENGTH + "; got: " + maxSize);
+                    // We allocate 1 extra to avoid if statement in top()
+                    maxSize++;
                 }
                 else
                 {
-                    // NOTE: we add +1 because all access to heap is
-                    // 1-based not 0-based.  heap[0] is unused.
-                    heapSize = maxSize + 1;
+                    if (maxSize >= ArrayUtil.MAX_ARRAY_LENGTH)
+                    {
+                        // Don't wrap heapSize to -1, in this case, which
+                        // causes a confusing NegativeArraySizeException.
+                        // Note that very likely this will simply then hit
+                        // an OOME, but at least that's more indicative to
+                        // caller that this values is too big.  We don't +1
+                        // in this case, but it's very unlikely in practice
+                        // one will actually insert this many objects into
+                        // the PQ:
+                        // Throw exception to prevent confusing OOME:
+                        throw new System.ArgumentException("maxSize must be < " + ArrayUtil.MAX_ARRAY_LENGTH + "; got: " + maxSize);
+                    }
                 }
             }
+
+            // NOTE: we add +1 because all access to heap is
+            // 1-based not 0-based.  heap[0] is unused.
+            int heapSize = maxSize + 1;
+            
             // T is unbounded type, so this unchecked cast works always:
             T[] h = new T[heapSize];
             this.Heap = h;
@@ -88,7 +105,7 @@ namespace Lucene.Net.Util
                     {
                         Heap[i] = SentinelObject;
                     }
-                    Size_Renamed = maxSize;
+                    QueueSize = maxSize;
                 }
             }
         }
@@ -148,14 +165,18 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Adds an Object to a PriorityQueue in log(size) time. If one tries to add
-        /// more objects than maxSize from initialize an
-        /// <seealso cref="ArrayIndexOutOfBoundsException"/> is thrown.
+        /// more objects than maxSize from initialize and it is not possible to resize
+        /// the heap, an <seealso cref="IndexOutOfRangeException"/> is thrown.
         /// </summary>
         /// <returns> the new 'top' element in the queue. </returns>
         public T Add(T element)
         {
-            Size_Renamed++;
-            Heap[Size_Renamed] = element;
+            QueueSize++;
+            if (resizable && QueueSize > MaxSize)
+            {
+                Resize();
+            }
+            Heap[QueueSize] = element;
             UpHeap();
             return Heap[1];
         }
@@ -172,16 +193,16 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual T InsertWithOverflow(T element)
         {
-            if (Size_Renamed < MaxSize)
+            if (QueueSize < MaxSize)
             {
                 Add(element);
                 return default(T);
             }
-            else if (Size_Renamed > 0 && !LessThan(element, Heap[1]))
+            else if (QueueSize > 0 && !LessThan(element, Heap[1]))
             {
                 T ret = Heap[1];
                 Heap[1] = element;
-                UpdateTop();
+                DownHeap();
                 return ret;
             }
             else
@@ -191,7 +212,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the least element of the PriorityQueue in constant time. </summary>
+        /// Returns the least element of the PriorityQueue in constant time.
+        /// Returns null if the queue is empty. </summary>
         public T Top()
         {
             // We don't need to check size here: if maxSize is 0,
@@ -206,12 +228,12 @@ namespace Lucene.Net.Util
         /// </summary>
         public T Pop()
         {
-            if (Size_Renamed > 0)
+            if (QueueSize > 0)
             {
                 T result = Heap[1]; // save first value
-                Heap[1] = Heap[Size_Renamed]; // move last to first
-                Heap[Size_Renamed] = default(T); // permit GC of objects
-                Size_Renamed--;
+                Heap[1] = Heap[QueueSize]; // move last to first
+                Heap[QueueSize] = default(T); // permit GC of objects
+                QueueSize--;
                 DownHeap(); // adjust heap
                 return result;
             }
@@ -249,23 +271,39 @@ namespace Lucene.Net.Util
         /// Returns the number of elements currently stored in the PriorityQueue. </summary>
         public int Size()
         {
-            return Size_Renamed;
+            return QueueSize;
         }
 
         /// <summary>
         /// Removes all entries from the PriorityQueue. </summary>
         public void Clear()
         {
-            for (int i = 0; i <= Size_Renamed; i++)
+            for (int i = 0; i <= QueueSize; i++)
             {
                 Heap[i] = default(T);
             }
-            Size_Renamed = 0;
+            QueueSize = 0;
+        }
+
+        public T[] ToArray()
+        {
+            T[] copy = new T[QueueSize];
+            Array.Copy(Heap, 1, copy, 0, QueueSize);
+            return copy;
+        }
+
+        private void Resize()
+        {
+            int newSize = Math.Min(ArrayUtil.MAX_ARRAY_LENGTH - 1, 2*MaxSize);
+            T[] newHeap = new T[newSize + 1];
+            Array.Copy(Heap, newHeap, MaxSize + 1);
+            MaxSize = newSize;
+            Heap = newHeap;
         }
 
         private void UpHeap()
         {
-            int i = Size_Renamed;
+            int i = QueueSize;
             T node = Heap[i]; // save bottom node
             int j = (int)((uint)i >> 1);
             while (j > 0 && LessThan(node, Heap[j]))
@@ -283,17 +321,17 @@ namespace Lucene.Net.Util
             T node = Heap[i]; // save top node
             int j = i << 1; // find smaller child
             int k = j + 1;
-            if (k <= Size_Renamed && LessThan(Heap[k], Heap[j]))
+            if (k <= QueueSize && LessThan(Heap[k], Heap[j]))
             {
                 j = k;
             }
-            while (j <= Size_Renamed && LessThan(Heap[j], node))
+            while (j <= QueueSize && LessThan(Heap[j], node))
             {
                 Heap[i] = Heap[j]; // shift up child
                 i = j;
                 j = i << 1;
                 k = j + 1;
-                if (k <= Size_Renamed && LessThan(Heap[k], Heap[j]))
+                if (k <= QueueSize && LessThan(Heap[k], Heap[j]))
                 {
                     j = k;
                 }

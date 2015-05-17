@@ -32,7 +32,6 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TextField = TextField;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     //
     // this was developed for Lucene In Action,
@@ -72,8 +71,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal IList<IndexCommit> Snapshots = new List<IndexCommit>();
-
         protected internal virtual void PrepareIndexAndSnapshots(SnapshotDeletionPolicy sdp, IndexWriter writer, int numSnapshots)
         {
             for (int i = 0; i < numSnapshots; i++)
@@ -111,6 +108,16 @@ namespace Lucene.Net.Index
             }
         }
 
+        protected internal IList<IndexCommit> Snapshots;
+
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
+
+            this.Snapshots = new List<IndexCommit>();
+        }
+
         [Ignore]
         [Test]
         public virtual void TestSnapshotDeletionPolicy_Mem()
@@ -123,7 +130,7 @@ namespace Lucene.Net.Index
         private void RunTest(Random random, Directory dir)
         {
             // Run for ~1 seconds
-            long stopTime = DateTime.Now.Millisecond + 1000;
+            long stopTime = Environment.TickCount + 1000;
 
             SnapshotDeletionPolicy dp = DeletionPolicy;
             IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetIndexDeletionPolicy(dp).SetMaxBufferedDocs(2));
@@ -141,7 +148,7 @@ namespace Lucene.Net.Index
             dp = (SnapshotDeletionPolicy)writer.Config.DelPolicy;
             writer.Commit();
 
-            ThreadClass t = new ThreadAnonymousInnerClassHelper(this, stopTime, writer);
+            ThreadClass t = new ThreadAnonymousInnerClassHelper(stopTime, writer);
 
             t.Start();
 
@@ -174,14 +181,11 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly TestSnapshotDeletionPolicy OuterInstance;
-
             private long StopTime;
             private IndexWriter Writer;
 
-            public ThreadAnonymousInnerClassHelper(TestSnapshotDeletionPolicy outerInstance, long stopTime, IndexWriter writer)
+            public ThreadAnonymousInnerClassHelper(long stopTime, IndexWriter writer)
             {
-                this.OuterInstance = outerInstance;
                 this.StopTime = stopTime;
                 this.Writer = writer;
             }
@@ -225,9 +229,9 @@ namespace Lucene.Net.Index
                     }
                     catch (ThreadInterruptedException ie)
                     {
-                        throw new ThreadInterruptedException(ie);
+                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                     }
-                } while (DateTime.Now.Millisecond < StopTime);
+                } while (Environment.TickCount < StopTime);
             }
         }
 

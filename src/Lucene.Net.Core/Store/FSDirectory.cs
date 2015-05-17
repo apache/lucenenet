@@ -118,21 +118,6 @@ namespace Lucene.Net.Store
         protected internal readonly ISet<string> StaleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
         private int ChunkSize = DEFAULT_READ_CHUNK_SIZE;
 
-        // returns the canonical version of the directory, creating it if it doesn't exist.
-        private static DirectoryInfo GetCanonicalPath(DirectoryInfo file)
-        {
-            try
-            {
-                file.Create();
-            }
-            catch (IOException)
-            {
-                //File already exists
-            }
-
-            return file;
-        }
-
         protected FSDirectory(DirectoryInfo dir)
             : this(dir, null)
         {
@@ -151,7 +136,7 @@ namespace Lucene.Net.Store
             {
                 lockFactory = new NativeFSLockFactory();
             }
-            directory = GetCanonicalPath(path);
+            directory = path; // Lucene.NET doesn't need to call GetCanonicalPath since we already have DirectoryInfo handy
 
             if (File.Exists(path.FullName))
             {
@@ -492,7 +477,7 @@ namespace Lucene.Net.Store
             {
                 this.Parent = parent;
                 this.Name = name;
-                File = new FileStream(Path.Combine(parent.directory.FullName, name), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
+                File = new FileStream(Path.Combine(parent.directory.FullName, name), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
                 IsOpen = true;
             }
 

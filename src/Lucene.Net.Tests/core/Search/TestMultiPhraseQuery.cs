@@ -175,6 +175,7 @@ namespace Lucene.Net.Search
 
         //ORIGINAL LINE: @Ignore public void testMultiSloppyWithRepeats() throws java.io.IOException
         [Test]
+        [Ignore("This appears to be a known issue")]
         public virtual void TestMultiSloppyWithRepeats() //LUCENE-3821 fixes sloppy phrase scoring, except for this known problem
         {
             Directory indexStore = NewDirectory();

@@ -1,6 +1,4 @@
-﻿using System;
-
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+using Lucene.Net.Analysis.Tokenattributes;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Trims leading and trailing whitespace from Tokens in the stream.
 	/// <para>As of Lucene 4.4, this filter does not support updateOffsets=true anymore
 	/// as it can lead to broken token streams.
@@ -34,8 +29,8 @@ namespace org.apache.lucene.analysis.miscellaneous
 	{
 
 	  internal readonly bool updateOffsets;
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
+	  private readonly ICharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+	  private readonly IOffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
 
 	  /// <summary>
 	  /// Create a new <seealso cref="TrimFilter"/>. </summary>

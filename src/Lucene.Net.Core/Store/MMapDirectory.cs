@@ -198,23 +198,17 @@ namespace Lucene.Net.Store
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
-            FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
+            var file = new FileInfo(Path.Combine(Directory.FullName, name));
 
-            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
 
-            return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file.ToString() + "\")", c);
+            return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file + "\")", c);
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
-            EnsureOpen();
-            FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
+            var full = (MMapIndexInput)OpenInput(name, context);
 
-            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-            var full = new MMapIndexInput(this, "MMapIndexInputSlicer(path=\"" + file.ToString() + "\")", c);
-
-            //MMapIndexInput full = (MMapIndexInput)OpenInput(name, context);
             return new IndexInputSlicerAnonymousInnerClassHelper(this, full);
         }
 
@@ -222,9 +216,9 @@ namespace Lucene.Net.Store
         {
             private readonly MMapDirectory OuterInstance;
 
-            private Lucene.Net.Store.MMapDirectory.MMapIndexInput Full;
+            private MMapIndexInput Full;
 
-            public IndexInputSlicerAnonymousInnerClassHelper(MMapDirectory outerInstance, Lucene.Net.Store.MMapDirectory.MMapIndexInput full)
+            public IndexInputSlicerAnonymousInnerClassHelper(MMapDirectory outerInstance, MMapIndexInput full)
                 : base(outerInstance)
             {
                 this.OuterInstance = outerInstance;

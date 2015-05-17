@@ -239,13 +239,13 @@ namespace Lucene.Net.Index
 
             AtomicReader sr = GetOnlySegmentReader(r);
 
-            long END_TIME = DateTime.Now.Millisecond + (TEST_NIGHTLY ? 30 : 1);
+            long END_TIME = Environment.TickCount + (TEST_NIGHTLY ? 30 : 1);
 
             int NUM_THREADS = TestUtil.NextInt(Random(), 1, 10);
             ThreadClass[] threads = new ThreadClass[NUM_THREADS];
             for (int thread = 0; thread < NUM_THREADS; thread++)
             {
-                threads[thread] = new ThreadAnonymousInnerClassHelper2(this, random, docValues, sr, END_TIME);
+                threads[thread] = new ThreadAnonymousInnerClassHelper2(random, docValues, sr, END_TIME);
                 threads[thread].Start();
             }
 
@@ -260,16 +260,13 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadClass
         {
-            private readonly TestDocValuesWithThreads OuterInstance;
-
             private Random Random;
             private IList<BytesRef> DocValues;
             private AtomicReader Sr;
             private long END_TIME;
 
-            public ThreadAnonymousInnerClassHelper2(TestDocValuesWithThreads outerInstance, Random random, IList<BytesRef> docValues, AtomicReader sr, long END_TIME)
+            public ThreadAnonymousInnerClassHelper2(Random random, IList<BytesRef> docValues, AtomicReader sr, long END_TIME)
             {
-                this.OuterInstance = outerInstance;
                 this.Random = random;
                 this.DocValues = docValues;
                 this.Sr = sr;
@@ -291,7 +288,7 @@ namespace Lucene.Net.Index
                 {
                     throw new Exception(ioe.Message, ioe);
                 }
-                while (DateTime.Now.Millisecond < END_TIME)
+                while (Environment.TickCount < END_TIME)
                 {
                     SortedDocValues source;
                     source = stringDVDirect;

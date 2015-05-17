@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 
         public override void Warm(AtomicReader reader)
         {
-            long startTime = DateTime.Now.Millisecond;
+            long startTime = Environment.TickCount;
             int indexedCount = 0;
             int docValuesCount = 0;
             int normsCount = 0;
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
 
             if (InfoStream.IsEnabled("SMSW"))
             {
-                InfoStream.Message("SMSW", "Finished warming segment: " + reader + ", indexed=" + indexedCount + ", docValues=" + docValuesCount + ", norms=" + normsCount + ", time=" + (DateTime.Now.Millisecond - startTime));
+                InfoStream.Message("SMSW", "Finished warming segment: " + reader + ", indexed=" + indexedCount + ", docValues=" + docValuesCount + ", norms=" + normsCount + ", time=" + (Environment.TickCount - startTime));
             }
         }
     }

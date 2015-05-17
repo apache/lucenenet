@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -48,7 +49,7 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-                long stopTime = DateTime.Now.Millisecond + (long)RUN_TIME_MSEC;
+                long stopTime = Environment.TickCount + (long)RUN_TIME_MSEC;
 
                 Count = 0;
 
@@ -62,7 +63,7 @@ namespace Lucene.Net.Index
                         }
                         DoWork();
                         Count++;
-                    } while (DateTime.Now.Millisecond < stopTime);
+                    } while (Environment.TickCount < stopTime);
                 }
                 catch (Exception e)
                 {

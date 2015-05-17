@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -32,7 +31,7 @@ namespace Lucene.Net.Analysis.Util
 	/// to a String first.
 	/// 
 	/// <a name="version"></a>
-	/// <para>You must specify the required <seealso cref="Version"/>
+	/// <para>You must specify the required <seealso cref="LuceneVersion"/>
 	/// compatibility when creating <seealso cref="CharArraySet"/>:
 	/// <ul>
 	///   <li> As of 3.1, supplementary characters are
@@ -42,7 +41,7 @@ namespace Lucene.Net.Analysis.Util
 	/// lowercased correctly due to the lack of Unicode 4
 	/// support in JDK 1.4. To use instances of
 	/// <seealso cref="CharArraySet"/> with the behavior before Lucene
-	/// 3.1 pass a <seealso cref="Version"/> < 3.1 to the constructors.
+	/// 3.1 pass a <seealso cref="LuceneVersion"/> < 3.1 to the constructors.
 	/// <P>
 	/// <em>Please note:</em> This class implements <seealso cref="java.util.Set Set"/> but
 	/// does not behave like it should in all cases. The generic type is
@@ -71,7 +70,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// <param name="ignoreCase">
 	  ///          <code>false</code> if and only if the set should be case sensitive
 	  ///          otherwise <code>true</code>. </param>
-	  public CharArraySet(Lucene.Net.Util.Version matchVersion, int startSize, bool ignoreCase) : this(new CharArrayMap<>(matchVersion, startSize, ignoreCase))
+	  public CharArraySet(Lucene.Net.Util.LuceneVersion matchVersion, int startSize, bool ignoreCase) : this(new CharArrayMap<>(matchVersion, startSize, ignoreCase))
 	  {
 	  }
 
@@ -86,7 +85,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// <param name="ignoreCase">
 	  ///          <code>false</code> if and only if the set should be case sensitive
 	  ///          otherwise <code>true</code>. </param>
-	  public CharArraySet<T1>(Version matchVersion, ICollection<T1> c, bool ignoreCase) : this(matchVersion, c.Count, ignoreCase)
+	  public CharArraySet<T1>(LuceneVersion matchVersion, ICollection<T1> c, bool ignoreCase) : this(matchVersion, c.Count, ignoreCase)
 	  {
 		AddAll(c);
 	  }
@@ -189,9 +188,9 @@ namespace Lucene.Net.Analysis.Util
 	  /// is a <seealso cref="CharArraySet"/> the ignoreCase property will be preserved.
 	  /// <para>
 	  /// <b>Note:</b> If you intend to create a copy of another <seealso cref="CharArraySet"/> where
-	  /// the <seealso cref="Version"/> of the source set differs from its copy
+	  /// the <seealso cref="LuceneVersion"/> of the source set differs from its copy
 	  /// <seealso cref="#CharArraySet(Version, Collection, boolean)"/> should be used instead.
-	  /// The <seealso cref="#copy(Version, Set)"/> will preserve the <seealso cref="Version"/> of the
+	  /// The <seealso cref="#copy(Version, Set)"/> will preserve the <seealso cref="LuceneVersion"/> of the
 	  /// source set it is an instance of <seealso cref="CharArraySet"/>.
 	  /// </para>
 	  /// </summary>
@@ -204,7 +203,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// <returns> a copy of the given set as a <seealso cref="CharArraySet"/>. If the given set
 	  ///         is a <seealso cref="CharArraySet"/> the ignoreCase property as well as the
 	  ///         matchVersion will be of the given set will be preserved. </returns>
-	  public static CharArraySet Copy<T1>(Version matchVersion, HashSet<T1> set)
+	  public static CharArraySet Copy<T1>(LuceneVersion matchVersion, HashSet<T1> set)
 	  {
 		if (set == EMPTY_SET)
 		{

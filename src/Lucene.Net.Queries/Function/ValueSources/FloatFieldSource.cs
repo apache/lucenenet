@@ -52,20 +52,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             var arr = cache.GetFloats(readerContext.AtomicReader, field, parser, true);
             var valid = cache.GetDocsWithField(readerContext.AtomicReader, field);
-            return new FloatDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
+            return new FloatDocValuesAnonymousInnerClassHelper(this, arr, valid);
         }
 
         private class FloatDocValuesAnonymousInnerClassHelper : FloatDocValues
         {
-            private readonly FloatFieldSource outerInstance;
-
             private readonly FieldCache.Floats arr;
             private readonly Bits valid;
 
-            public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource outerInstance, FloatFieldSource @this, FieldCache.Floats arr, Bits valid)
+            public FloatDocValuesAnonymousInnerClassHelper(FloatFieldSource @this, FieldCache.Floats arr, Bits valid)
                 : base(@this)
             {
-                this.outerInstance = outerInstance;
                 this.arr = arr;
                 this.valid = valid;
             }

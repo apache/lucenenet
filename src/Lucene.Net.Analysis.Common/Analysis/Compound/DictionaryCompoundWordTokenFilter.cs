@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Compound
     ///  It uses a brute-force algorithm to achieve this.
     /// </para>
     /// <para>
-    /// You must specify the required <seealso cref="Version"/> compatibility when creating
+    /// You must specify the required <seealso cref="LuceneVersion"/> compatibility when creating
     /// CompoundWordTokenFilterBase:
     /// <ul>
     /// <li>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Compound
         ///          the <seealso cref="TokenStream"/> to process </param>
         /// <param name="dictionary">
         ///          the word dictionary to match against. </param>
-        public DictionaryCompoundWordTokenFilter(Version matchVersion, TokenStream input, CharArraySet dictionary)
+        public DictionaryCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary)
             : base(matchVersion, input, dictionary)
         {
             if (dictionary == null)
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Compound
         ///          only subwords shorter than this get to the output stream </param>
         /// <param name="onlyLongestMatch">
         ///          Add only the longest matching subword to the stream </param>
-        public DictionaryCompoundWordTokenFilter(Version matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch)
+        public DictionaryCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch)
             : base(matchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch)
         {
             if (dictionary == null)

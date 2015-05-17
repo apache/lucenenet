@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -53,24 +53,27 @@ namespace Lucene.Net.Spatial.Vector
             this.fieldNameY = fieldNamePrefix + SUFFIX_Y;
         }
 
-        public void SetPrecisionStep(int p)
+        public int PrecisionStep
         {
-            precisionStep = p;
-            if (precisionStep <= 0 || precisionStep >= 64)
-                precisionStep = int.MaxValue;
+            set
+            {
+                precisionStep = value;
+                if (precisionStep <= 0 || precisionStep >= 64)
+                    precisionStep = int.MaxValue;
+            }
         }
 
-        public string GetFieldNameX()
+        public string FieldNameX
         {
-            return fieldNameX;
+            get { return fieldNameX; }
         }
 
-        public string GetFieldNameY()
+        public string FieldNameY
         {
-            return fieldNameY;
+            get { return fieldNameY; }
         }
 
-        public override AbstractField[] CreateIndexableFields(Shape shape)
+        public override Field[] CreateIndexableFields(Shape shape)
         {
             var point = shape as Point;
             if (point != null)
@@ -79,21 +82,18 @@ namespace Lucene.Net.Spatial.Vector
             throw new InvalidOperationException("Can only index Point, not " + shape);
         }
 
-        public AbstractField[] CreateIndexableFields(Point point)
+        public Field[] CreateIndexableFields(Point point)
         {
-                var f = new AbstractField[2];
-
-                var f0 = new NumericField(fieldNameX, precisionStep, Field.Store.NO, true)
-                             {OmitNorms = true, OmitTermFreqAndPositions = true};
-                f0.SetDoubleValue(point.GetX());
-                f[0] = f0;
-
-                var f1 = new NumericField(fieldNameY, precisionStep, Field.Store.NO, true)
-                             {OmitNorms = true, OmitTermFreqAndPositions = true};
-                f1.SetDoubleValue(point.GetY());
-                f[1] = f1;
-
-                return f;
+            FieldType doubleFieldType = new FieldType(DoubleField.TYPE_NOT_STORED)
+                                            {
+                                                NumericPrecisionStep = precisionStep
+                                            };
+            var f = new Field[]
+                        {
+                            new DoubleField(fieldNameX, point.GetX(), doubleFieldType),
+                            new DoubleField(fieldNameY, point.GetY(), doubleFieldType)
+                        };
+            return f;
         }
 
         public override ValueSource MakeDistanceValueSource(Point queryPoint)
@@ -124,7 +124,7 @@ namespace Lucene.Net.Spatial.Vector
                     circle.GetRadius());
                 return new ConstantScoreQuery(vsf);
             }
-            
+
             throw new InvalidOperationException("Only Rectangles and Circles are currently supported, " +
                                             "found [" + shape.GetType().Name + "]"); //TODO
         }
@@ -253,7 +253,7 @@ namespace Lucene.Net.Spatial.Vector
                 throw new InvalidOperationException("MakeDisjoint doesn't handle dateline cross");
             Query qX = RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX());
             Query qY = RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY());
-            var bq = new BooleanQuery {{qX, Occur.MUST_NOT}, {qY, Occur.MUST_NOT}};
+            var bq = new BooleanQuery { { qX, Occur.MUST_NOT }, { qY, Occur.MUST_NOT } };
             return bq;
         }
     }

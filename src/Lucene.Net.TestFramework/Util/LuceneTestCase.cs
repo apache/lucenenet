@@ -286,7 +286,7 @@ namespace Lucene.Net.Util
         /// Use this constant when creating Analyzers and any other version-dependent stuff.
         /// <p><b>NOTE:</b> Change this when development starts for new Lucene version:
         /// </summary>
-        public static Version TEST_VERSION_CURRENT = Version.LUCENE_48;
+        public static LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
 
         /// <summary>
         /// True if and only if tests are run in verbose mode. If this flag is false
@@ -564,7 +564,7 @@ namespace Lucene.Net.Util
         [SetUp]
         public virtual void SetUp()
         {
-            ///* LUCENE TO-DO: Not sure how to convert these
+            // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
         }
@@ -575,7 +575,7 @@ namespace Lucene.Net.Util
         [TearDown]
         public virtual void TearDown()
         {
-            /* LUCENE TO-DO: Not sure how to convert these
+            /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
             CleanupTemporaryFiles();
@@ -842,14 +842,14 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// create a new index writer config with random defaults </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(Version v, Analyzer a)
+        public static IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(Random(), v, a);
         }
 
         /// <summary>
         /// create a new index writer config with random defaults using the specified random </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(Random r, Version v, Analyzer a)
+        public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
             c.SetSimilarity(ClassEnvRule.Similarity);
@@ -2656,15 +2656,14 @@ namespace Lucene.Net.Util
                         else if (System.IO.File.Exists(f))
                             File.Delete(f);
                     }
-                    catch (IOException)
+                    catch (IOException e)
                     {
                         //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
                         //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
                         //                    {
-                        //                        Console.Error.WriteLine("WARNING: Leftover undeleted temporary files (bugUrl: " + suiteClass.GetAnnotation(typeof(SuppressTempFileChecks)).bugUrl() + "): " + e.Message);
-                        //                        return;
+                        Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
+                        return;
                         //                    }
-                        throw;
                     }
                 }
             }

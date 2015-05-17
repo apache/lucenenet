@@ -45,9 +45,9 @@ namespace Lucene.Net.Util
             int max = b.Length();
             for (int i = 0; i < max; i++)
             {
-                if (a.Get(i) != b.Get(i))
+                if (a.SafeGet(i) != b.Get(i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
             {
                 // aa = a.PrevSetBit(aa-1);
                 aa--;
-                while ((aa >= 0) && (aa >= a.Length || !a.Get(aa)))
+                while ((aa >= 0) && (aa >= a.Length || !a.SafeGet(aa)))
                 {
                     aa--;
                 }
@@ -152,19 +152,19 @@ namespace Lucene.Net.Util
                         int idx;
 
                         idx = Random().Next(sz);
-                        a.Set(idx, true);
+                        a.SafeSet(idx, true);
                         b.Set(idx);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, false);
+                        a.SafeSet(idx, false);
                         b.Clear(idx);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, !a.Get(idx));
+                        a.SafeSet(idx, !a.SafeGet(idx));
                         b.Flip(idx, idx + 1);
 
                         idx = Random().Next(sz);
-                        a.Set(idx, !a.Get(idx));
+                        a.SafeSet(idx, !a.SafeGet(idx));
                         b.Flip(idx, idx + 1);
 
                         bool val2 = b.Get(idx);
@@ -442,7 +442,7 @@ namespace Lucene.Net.Util
                     bs.CopyTo(copy, bs.Length - 1);
                     bs = MakeBitSet(copy);
                 }*/
-                bs.Set(e, true);
+                bs.SafeSet(e, true);
             }
             return bs;
         }

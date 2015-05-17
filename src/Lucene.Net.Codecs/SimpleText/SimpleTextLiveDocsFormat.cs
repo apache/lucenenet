@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     Debug.Assert(StringHelper.StartsWith(scratch, DOC));
                     var docid = ParseIntAt(scratch, DOC.Length, scratchUtf16);
-                    bits.Set(docid, true);
+                    bits.SafeSet(docid, true);
                     SimpleTextUtil.ReadLine(input, scratch);
                 }
 
@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.SimpleText
         private static int ParseIntAt(BytesRef bytes, int offset, CharsRef scratch)
         {
             UnicodeUtil.UTF8toUTF16(bytes.Bytes, bytes.Offset + offset, bytes.Length - offset, scratch);
-            return ArrayUtil.ParseInt(scratch.Chars, 0, scratch.length);
+            return ArrayUtil.ParseInt(scratch.Chars, 0, scratch.Length);
         }
 
         public override void WriteLiveDocs(MutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount,
@@ -183,7 +183,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public bool Get(int index)
             {
-                return BITS.Get(index);
+                return BITS.SafeGet(index);
             }
 
             public int Length()
@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public void Clear(int bit)
             {
-                BITS.Set(bit, false);
+                BITS.SafeSet(bit, false);
             }
         }
     }

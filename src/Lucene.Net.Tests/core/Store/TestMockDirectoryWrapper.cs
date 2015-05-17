@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
         }
 
         [Test, Repeat(100)]
-        public virtual void TestDiskFull()
+        public void TestDiskFull()
         {
             // test writeBytes
             var dir = NewMockDirectory();

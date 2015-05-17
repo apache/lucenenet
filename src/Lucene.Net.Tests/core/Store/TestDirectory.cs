@@ -1,6 +1,7 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -258,7 +259,8 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestDontCreate()
         {
-            var path = new DirectoryInfo(Path.Combine(AppSettings.Get("tmpDir", ""), "doesnotexist"));
+            var parentFolder = CreateTempDir(this.GetType().Name.ToLowerInvariant());
+            var path = new DirectoryInfo(Path.Combine(parentFolder.FullName, "doesnotexist"));
             try
             {
                 Assert.IsTrue(!path.Exists);
@@ -268,7 +270,7 @@ namespace Lucene.Net.Store
             }
             finally
             {
-                System.IO.Directory.Delete(path.FullName, true);
+                if (path.Exists) System.IO.Directory.Delete(path.FullName, true);
             }
         }
 

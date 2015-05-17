@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
         /// <param name="automaton"> Automaton to run, terms that are accepted are considered a
         ///        match. </param>
         public AutomatonQuery(Term term, Automaton automaton)
-            : base(term.Field())
+            : base(term.Field)
         {
             this.Term = term;
             this.Automaton_Renamed = automaton;
@@ -123,9 +123,9 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (!Term.Field().Equals(field))
+            if (!Term.Field.Equals(field))
             {
-                buffer.Append(Term.Field());
+                buffer.Append(Term.Field);
                 buffer.Append(":");
             }
             buffer.Append(this.GetType().Name);

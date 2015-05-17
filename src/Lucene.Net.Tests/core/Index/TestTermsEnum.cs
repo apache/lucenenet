@@ -431,41 +431,28 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private Directory d;
-        private IndexReader r;
-
         private readonly string FIELD = "field";
 
-        private IndexReader MakeIndex(params string[] terms)
+        private IndexReader MakeIndex(Directory d, params string[] terms)
         {
-            d = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            var iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 
             /*
             iwc.SetCodec(new StandardCodec(minTermsInBlock, maxTermsInBlock));
             */
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, iwc);
-            foreach (string term in terms)
+            using (var w = new RandomIndexWriter(Random(), d, iwc))
             {
-                Document doc = new Document();
-                Field f = NewStringField(FIELD, term, Field.Store.NO);
-                doc.Add(f);
-                w.AddDocument(doc);
-            }
-            if (r != null)
-            {
-                Close();
-            }
-            r = w.Reader;
-            w.Dispose();
-            return r;
-        }
+                foreach (string term in terms)
+                {
+                    var doc = new Document();
+                    var f = NewStringField(FIELD, term, Field.Store.NO);
+                    doc.Add(f);
+                    w.AddDocument(doc);
+                }
 
-        private void Close()
-        {
-            r.Dispose();
-            d.Dispose();
+                return w.Reader;
+            }
         }
 
         private int DocFreq(IndexReader r, string term)
@@ -477,59 +464,59 @@ namespace Lucene.Net.Index
         public virtual void TestEasy()
         {
             // No floor arcs:
-            r = MakeIndex("aa0", "aa1", "aa2", "aa3", "bb0", "bb1", "bb2", "bb3", "aa");
+            using (var d = NewDirectory())
+            using (var r = MakeIndex(d, "aa0", "aa1", "aa2", "aa3", "bb0", "bb1", "bb2", "bb3", "aa"))
+            {
+                // First term in block:
+                Assert.AreEqual(1, DocFreq(r, "aa0"));
 
-            // First term in block:
-            Assert.AreEqual(1, DocFreq(r, "aa0"));
+                // Scan forward to another term in same block
+                Assert.AreEqual(1, DocFreq(r, "aa2"));
 
-            // Scan forward to another term in same block
-            Assert.AreEqual(1, DocFreq(r, "aa2"));
+                Assert.AreEqual(1, DocFreq(r, "aa"));
 
-            Assert.AreEqual(1, DocFreq(r, "aa"));
+                // Reset same block then scan forwards
+                Assert.AreEqual(1, DocFreq(r, "aa1"));
 
-            // Reset same block then scan forwards
-            Assert.AreEqual(1, DocFreq(r, "aa1"));
+                // Not found, in same block
+                Assert.AreEqual(0, DocFreq(r, "aa5"));
 
-            // Not found, in same block
-            Assert.AreEqual(0, DocFreq(r, "aa5"));
+                // Found, in same block
+                Assert.AreEqual(1, DocFreq(r, "aa2"));
 
-            // Found, in same block
-            Assert.AreEqual(1, DocFreq(r, "aa2"));
+                // Not found in index:
+                Assert.AreEqual(0, DocFreq(r, "b0"));
 
-            // Not found in index:
-            Assert.AreEqual(0, DocFreq(r, "b0"));
+                // Found:
+                Assert.AreEqual(1, DocFreq(r, "aa2"));
 
-            // Found:
-            Assert.AreEqual(1, DocFreq(r, "aa2"));
+                // Found, rewind:
+                Assert.AreEqual(1, DocFreq(r, "aa0"));
 
-            // Found, rewind:
-            Assert.AreEqual(1, DocFreq(r, "aa0"));
+                // First term in block:
+                Assert.AreEqual(1, DocFreq(r, "bb0"));
 
-            // First term in block:
-            Assert.AreEqual(1, DocFreq(r, "bb0"));
+                // Scan forward to another term in same block
+                Assert.AreEqual(1, DocFreq(r, "bb2"));
 
-            // Scan forward to another term in same block
-            Assert.AreEqual(1, DocFreq(r, "bb2"));
+                // Reset same block then scan forwards
+                Assert.AreEqual(1, DocFreq(r, "bb1"));
 
-            // Reset same block then scan forwards
-            Assert.AreEqual(1, DocFreq(r, "bb1"));
+                // Not found, in same block
+                Assert.AreEqual(0, DocFreq(r, "bb5"));
 
-            // Not found, in same block
-            Assert.AreEqual(0, DocFreq(r, "bb5"));
+                // Found, in same block
+                Assert.AreEqual(1, DocFreq(r, "bb2"));
 
-            // Found, in same block
-            Assert.AreEqual(1, DocFreq(r, "bb2"));
+                // Not found in index:
+                Assert.AreEqual(0, DocFreq(r, "b0"));
 
-            // Not found in index:
-            Assert.AreEqual(0, DocFreq(r, "b0"));
+                // Found:
+                Assert.AreEqual(1, DocFreq(r, "bb2"));
 
-            // Found:
-            Assert.AreEqual(1, DocFreq(r, "bb2"));
-
-            // Found, rewind:
-            Assert.AreEqual(1, DocFreq(r, "bb0"));
-
-            Close();
+                // Found, rewind:
+                Assert.AreEqual(1, DocFreq(r, "bb0"));
+            }
         }
 
         // tests:
@@ -539,62 +526,63 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFloorBlocks()
         {
-            string[] terms = new string[] { "aa0", "aa1", "aa2", "aa3", "aa4", "aa5", "aa6", "aa7", "aa8", "aa9", "aa", "xx" };
-            r = MakeIndex(terms);
-            //r = MakeIndex("aa0", "aa1", "aa2", "aa3", "aa4", "aa5", "aa6", "aa7", "aa8", "aa9");
+            var terms = new[] { "aa0", "aa1", "aa2", "aa3", "aa4", "aa5", "aa6", "aa7", "aa8", "aa9", "aa", "xx" };
 
-            // First term in first block:
-            Assert.AreEqual(1, DocFreq(r, "aa0"));
-            Assert.AreEqual(1, DocFreq(r, "aa4"));
-
-            // No block
-            Assert.AreEqual(0, DocFreq(r, "bb0"));
-
-            // Second block
-            Assert.AreEqual(1, DocFreq(r, "aa4"));
-
-            // Backwards to prior floor block:
-            Assert.AreEqual(1, DocFreq(r, "aa0"));
-
-            // Forwards to last floor block:
-            Assert.AreEqual(1, DocFreq(r, "aa9"));
-
-            Assert.AreEqual(0, DocFreq(r, "a"));
-            Assert.AreEqual(1, DocFreq(r, "aa"));
-            Assert.AreEqual(0, DocFreq(r, "a"));
-            Assert.AreEqual(1, DocFreq(r, "aa"));
-
-            // Forwards to last floor block:
-            Assert.AreEqual(1, DocFreq(r, "xx"));
-            Assert.AreEqual(1, DocFreq(r, "aa1"));
-            Assert.AreEqual(0, DocFreq(r, "yy"));
-
-            Assert.AreEqual(1, DocFreq(r, "xx"));
-            Assert.AreEqual(1, DocFreq(r, "aa9"));
-
-            Assert.AreEqual(1, DocFreq(r, "xx"));
-            Assert.AreEqual(1, DocFreq(r, "aa4"));
-
-            TermsEnum te = MultiFields.GetTerms(r, FIELD).Iterator(null);
-            while (te.Next() != null)
+            using (var d = NewDirectory())
+            using (var r = MakeIndex(d, terms))
             {
-                //System.out.println("TEST: next term=" + te.Term().Utf8ToString());
+                // First term in first block:
+                Assert.AreEqual(1, DocFreq(r, "aa0"));
+                Assert.AreEqual(1, DocFreq(r, "aa4"));
+
+                // No block
+                Assert.AreEqual(0, DocFreq(r, "bb0"));
+
+                // Second block
+                Assert.AreEqual(1, DocFreq(r, "aa4"));
+
+                // Backwards to prior floor block:
+                Assert.AreEqual(1, DocFreq(r, "aa0"));
+
+                // Forwards to last floor block:
+                Assert.AreEqual(1, DocFreq(r, "aa9"));
+
+                Assert.AreEqual(0, DocFreq(r, "a"));
+                Assert.AreEqual(1, DocFreq(r, "aa"));
+                Assert.AreEqual(0, DocFreq(r, "a"));
+                Assert.AreEqual(1, DocFreq(r, "aa"));
+
+                // Forwards to last floor block:
+                Assert.AreEqual(1, DocFreq(r, "xx"));
+                Assert.AreEqual(1, DocFreq(r, "aa1"));
+                Assert.AreEqual(0, DocFreq(r, "yy"));
+
+                Assert.AreEqual(1, DocFreq(r, "xx"));
+                Assert.AreEqual(1, DocFreq(r, "aa9"));
+
+                Assert.AreEqual(1, DocFreq(r, "xx"));
+                Assert.AreEqual(1, DocFreq(r, "aa4"));
+
+                TermsEnum te = MultiFields.GetTerms(r, FIELD).Iterator(null);
+                while (te.Next() != null)
+                {
+                    //System.out.println("TEST: next term=" + te.Term().Utf8ToString());
+                }
+
+                Assert.IsTrue(SeekExact(te, "aa1"));
+                Assert.AreEqual("aa2", Next(te));
+                Assert.IsTrue(SeekExact(te, "aa8"));
+                Assert.AreEqual("aa9", Next(te));
+                Assert.AreEqual("xx", Next(te));
+
+                TestRandomSeeks(r, terms);
             }
-
-            Assert.IsTrue(SeekExact(te, "aa1"));
-            Assert.AreEqual("aa2", Next(te));
-            Assert.IsTrue(SeekExact(te, "aa8"));
-            Assert.AreEqual("aa9", Next(te));
-            Assert.AreEqual("xx", Next(te));
-
-            TestRandomSeeks(r, terms);
-            Close();
         }
 
         [Test]
         public virtual void TestZeroTerms()
         {
-            d = NewDirectory();
+            var d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), d);
             Document doc = new Document();
             doc.Add(NewTextField("field", "one two three", Field.Store.NO));
@@ -629,10 +617,10 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRandomTerms()
         {
-            string[] terms = new string[TestUtil.NextInt(Random(), 1, AtLeast(1000))];
-            HashSet<string> seen = new HashSet<string>();
+            var terms = new string[TestUtil.NextInt(Random(), 1, AtLeast(1000))];
+            var seen = new HashSet<string>();
 
-            bool allowEmptyString = Random().NextBoolean();
+            var allowEmptyString = Random().NextBoolean();
 
             if (Random().Next(10) == 7 && terms.Length > 2)
             {
@@ -674,9 +662,12 @@ namespace Lucene.Net.Index
                     seen.Add(t);
                 }
             }
-            r = MakeIndex(terms);
-            TestRandomSeeks(r, terms);
-            Close();
+
+            using (var d = NewDirectory())
+            using (var r = MakeIndex(d, terms))
+            {
+                TestRandomSeeks(r, terms);
+            }
         }
 
         // sugar
@@ -939,6 +930,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             iwc.SetMergePolicy(new LogDocMergePolicy());
+
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, iwc);
             Document doc = new Document();
             doc.Add(NewStringField("field", "abc", Field.Store.NO));

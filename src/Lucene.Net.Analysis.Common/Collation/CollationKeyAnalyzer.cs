@@ -2,7 +2,6 @@
 using System.IO;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
-using org.apache.lucene.collation;
 
 namespace Lucene.Net.Collation
 {
@@ -35,7 +34,7 @@ namespace Lucene.Net.Collation
 	/// <para>
 	///   Converts the token into its <seealso cref="java.text.CollationKey"/>, and then
 	///   encodes the CollationKey either directly or with 
-	///   <seealso cref="IndexableBinaryStringTools"/> (see <a href="#version">below</a>), to allow 
+	///   <seealso cref="Util.IndexableBinaryStringTools"/> (see <a href="#version">below</a>), to allow 
 	///   it to be stored as an index term.
 	/// </para>
 	/// <para>

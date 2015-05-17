@@ -43,19 +43,21 @@ namespace Lucene.Net.Index
         //First segment to be merged
         private Directory Merge1Dir;
 
-        private Document Doc1 = new Document();
-        private SegmentReader Reader1 = null;
+        private Document Doc1;
+        private SegmentReader Reader1;
 
         //Second Segment to be merged
         private Directory Merge2Dir;
 
-        private Document Doc2 = new Document();
-        private SegmentReader Reader2 = null;
+        private Document Doc2;
+        private SegmentReader Reader2;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
+            this.Doc1 = new Document();
+            this.Doc2 = new Document();
             MergedDir = NewDirectory();
             Merge1Dir = NewDirectory();
             Merge2Dir = NewDirectory();

@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using Lucene.Net.Analysis.Tokenattributes;
 using org.apache.lucene.analysis.util;
+using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -118,7 +120,7 @@ namespace Lucene.Net.Analysis.Util
 	  {
 		for (int i = length - 1; i >= 0; i--)
 		{
-		  if (isSafeEnd(buffer[i]))
+		  if (IsSafeEnd(buffer[i]))
 		  {
 			return i + 1;
 		  }
@@ -153,7 +155,7 @@ namespace Lucene.Net.Analysis.Util
 	        int leftover = length - usableLength;
 	        Array.Copy(buffer, usableLength, buffer, 0, leftover);
 	        int requested = buffer.Length - leftover;
-	        int returned = read(input, buffer, leftover, requested);
+	        int returned = Read(input, buffer, leftover, requested);
 	        length = returned < 0 ? leftover : returned + leftover;
 	        if (returned < requested) // reader has been emptied, process the rest
 	        {

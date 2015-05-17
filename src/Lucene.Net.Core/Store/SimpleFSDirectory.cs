@@ -59,7 +59,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             var path = new FileInfo(Path.Combine(Directory.FullName, name));
-            var raf = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var raf = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path.FullName + "\")", raf, context);
         }
 
@@ -67,7 +67,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             var file = new FileInfo(Path.Combine(Directory.FullName, name));
-            var descriptor = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var descriptor = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             return new IndexInputSlicerAnonymousInnerClassHelper(this, context, file, descriptor);
         }
 

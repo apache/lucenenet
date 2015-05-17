@@ -16,6 +16,7 @@
  */
 
 using System;
+using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -43,13 +44,13 @@ namespace Lucene.Net.Util
             int max = a.Count;
             for (int i = 0; i < max; i++)
             {
-                if (a.Get(i) != b.Get(i))
+                if (a.SafeGet(i) != b.Get(i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
-                if (a.Get(i) != b.Get((long)i))
+                if (a.SafeGet(i) != b.Get((long)i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
             }
         }
@@ -58,13 +59,13 @@ namespace Lucene.Net.Util
         {
             for (int i = 0; i < max; i++)
             {
-                if (a.Get(i) != b.FastGet(i))
+                if (a.SafeGet(i) != b.FastGet(i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
-                if (a.Get(i) != b.FastGet((long)i))
+                if (a.SafeGet(i) != b.FastGet((long)i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
                 }
             }
         }
@@ -337,7 +338,7 @@ namespace Lucene.Net.Util
 
         // large enough to flush obvious bugs, small enough to run in <.5 sec as part of a
         // larger testsuite.
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestSmall()
         {
             DoRandomSets(AtLeast(1200), AtLeast(1000), 1);

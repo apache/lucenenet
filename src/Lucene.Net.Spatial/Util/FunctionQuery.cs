@@ -209,7 +209,7 @@ namespace Lucene.Net.Spatial.Util
 
         public override int GetHashCode()
         {
-            return (int) (func.GetHashCode() * 31 + BitConverter.DoubleToInt64Bits(Boost));
+            return (int)(func.GetHashCode() * 31 + BitConverter.DoubleToInt64Bits(Boost));
         }
     }
 }

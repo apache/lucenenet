@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Util
 {

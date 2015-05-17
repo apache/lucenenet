@@ -75,13 +75,13 @@ namespace Lucene.Net.Index
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
     [TestFixture]
     public class TestIndexWriter : LuceneTestCase
     {
         private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
+        [Test]
         public virtual void TestDocCount()
         {
             Directory dir = NewDirectory();
@@ -1430,7 +1430,8 @@ namespace Lucene.Net.Index
             // up front... else we can see a false failure if 2nd
             // interrupt arrives while class loader is trying to
             // init this class (in servicing a first interrupt):
-            Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is ThreadInterruptedException);
+            // C# does not have the late load problem.
+            //Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is ThreadInterruptedException);
 
             // issue 300 interrupts to child thread
             int numInterrupts = AtLeast(300);
@@ -1892,7 +1893,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 ClearAttributes();
                 if (Upto < Tokens.Length)

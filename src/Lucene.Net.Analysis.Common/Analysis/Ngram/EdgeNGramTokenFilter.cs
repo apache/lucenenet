@@ -4,7 +4,6 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using org.apache.lucene.analysis.reverse;
 using org.apache.lucene.analysis.util;
-using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Ngram
 {
@@ -72,7 +71,7 @@ namespace Lucene.Net.Analysis.Ngram
 		  return null;
 		}
 
-	  private readonly Version version;
+	  private readonly LuceneVersion version;
 	  private readonly CharacterUtils charUtils;
 	  private readonly int minGram;
 	  private readonly int maxGram;
@@ -101,7 +100,7 @@ namespace Lucene.Net.Analysis.Ngram
 	  /// <param name="minGram"> the smallest n-gram to generate </param>
 	  /// <param name="maxGram"> the largest n-gram to generate </param>
 	  [Obsolete]
-	  public EdgeNGramTokenFilter(Version version, TokenStream input, Side side, int minGram, int maxGram) : base(input)
+	  public EdgeNGramTokenFilter(LuceneVersion version, TokenStream input, Side side, int minGram, int maxGram) : base(input)
 	  {
 
 		if (version == null)
@@ -109,7 +108,7 @@ namespace Lucene.Net.Analysis.Ngram
 		  throw new System.ArgumentException("version must not be null");
 		}
 
-		if (version.OnOrAfter(Version.LUCENE_44) && side == Side.BACK)
+		if (version.OnOrAfter(LuceneVersion.LUCENE_44) && side == Side.BACK)
 		{
 		  throw new System.ArgumentException("Side.BACK is not supported anymore as of Lucene 4.4, use ReverseStringFilter up-front and afterward");
 		}
@@ -130,7 +129,7 @@ namespace Lucene.Net.Analysis.Ngram
 		}
 
 		this.version = version;
-		this.charUtils = version.onOrAfter(Version.LUCENE_44) ? CharacterUtils.getInstance(version) : CharacterUtils.Java4Instance;
+		this.charUtils = version.onOrAfter(LuceneVersion.LUCENE_44) ? CharacterUtils.getInstance(version) : CharacterUtils.Java4Instance;
 		this.minGram = minGram;
 		this.maxGram = maxGram;
 		this.side = side;
@@ -145,7 +144,7 @@ namespace Lucene.Net.Analysis.Ngram
 	  /// <param name="minGram"> the smallest n-gram to generate </param>
 	  /// <param name="maxGram"> the largest n-gram to generate </param>
 	  [Obsolete]
-	  public EdgeNGramTokenFilter(Version version, TokenStream input, string sideLabel, int minGram, int maxGram) : this(version, input, Side.getSide(sideLabel), minGram, maxGram)
+	  public EdgeNGramTokenFilter(LuceneVersion version, TokenStream input, string sideLabel, int minGram, int maxGram) : this(version, input, Side.getSide(sideLabel), minGram, maxGram)
 	  {
 	  }
 
@@ -156,7 +155,7 @@ namespace Lucene.Net.Analysis.Ngram
 	  /// <param name="input"> <seealso cref="TokenStream"/> holding the input to be tokenized </param>
 	  /// <param name="minGram"> the smallest n-gram to generate </param>
 	  /// <param name="maxGram"> the largest n-gram to generate </param>
-	  public EdgeNGramTokenFilter(Version version, TokenStream input, int minGram, int maxGram) : this(version, input, Side.FRONT, minGram, maxGram)
+	  public EdgeNGramTokenFilter(LuceneVersion version, TokenStream input, int minGram, int maxGram) : this(version, input, Side.FRONT, minGram, maxGram)
 	  {
 	  }
 
@@ -178,7 +177,7 @@ namespace Lucene.Net.Analysis.Ngram
 			  curGramSize = minGram;
 			  tokStart = offsetAtt.StartOffset();
 			  tokEnd = offsetAtt.EndOffset();
-			  if (version.OnOrAfter(Version.LUCENE_44))
+			  if (version.OnOrAfter(LuceneVersion.LUCENE_44))
 			  {
 				// Never update offsets
 				updateOffsets = false;

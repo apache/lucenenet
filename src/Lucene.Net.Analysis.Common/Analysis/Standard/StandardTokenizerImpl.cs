@@ -22,8 +22,6 @@ namespace org.apache.lucene.analysis.standard
 	 * limitations under the License.
 	 */
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-
 	/// <summary>
 	/// This class implements Word Break rules from the Unicode Text Segmentation 
 	/// algorithm, as specified in 

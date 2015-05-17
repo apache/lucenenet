@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
         private readonly int MaxExpansions;
         private readonly bool Transpositions_Renamed;
         private readonly int PrefixLength_Renamed;
-        private readonly Term Term_Renamed;
+        private readonly Term _term;
 
         /// <summary>
         /// Create a new FuzzyQuery that will match terms with an edit distance
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
         ///        edit operation. If this is false, comparisons will implement the classic
         ///        Levenshtein algorithm. </param>
         public FuzzyQuery(Term term, int maxEdits, int prefixLength, int maxExpansions, bool transpositions)
-            : base(term.Field())
+            : base(term.Field)
         {
             if (maxEdits < 0 || maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
                 throw new System.ArgumentException("maxExpansions cannot be negative.");
             }
 
-            this.Term_Renamed = term;
+            this._term = term;
             this.MaxEdits_Renamed = maxEdits;
             this.PrefixLength_Renamed = prefixLength;
             this.Transpositions_Renamed = transpositions;
@@ -167,9 +167,9 @@ namespace Lucene.Net.Search
 
         public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
-            if (MaxEdits_Renamed == 0 || PrefixLength_Renamed >= Term_Renamed.Text().Length) // can only match if it's exact
+            if (MaxEdits_Renamed == 0 || PrefixLength_Renamed >= _term.Text().Length) // can only match if it's exact
             {
-                return new SingleTermsEnum(terms.Iterator(null), Term_Renamed.Bytes());
+                return new SingleTermsEnum(terms.Iterator(null), _term.Bytes);
             }
             return new FuzzyTermsEnum(terms, atts, Term, MaxEdits_Renamed, PrefixLength_Renamed, Transpositions_Renamed);
         }
@@ -181,19 +181,19 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return Term_Renamed;
+                return _term;
             }
         }
 
         public override string ToString(string field)
         {
-            StringBuilder buffer = new StringBuilder();
-            if (!Term_Renamed.Field().Equals(field))
+            var buffer = new StringBuilder();
+            if (!_term.Field.Equals(field))
             {
-                buffer.Append(Term_Renamed.Field());
+                buffer.Append(_term.Field);
                 buffer.Append(":");
             }
-            buffer.Append(Term_Renamed.Text());
+            buffer.Append(_term.Text());
             buffer.Append('~');
             buffer.Append(Convert.ToString(MaxEdits_Renamed));
             buffer.Append(ToStringUtils.Boost(Boost));
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search
             result = prime * result + PrefixLength_Renamed;
             result = prime * result + MaxExpansions;
             result = prime * result + (Transpositions_Renamed ? 0 : 1);
-            result = prime * result + ((Term_Renamed == null) ? 0 : Term_Renamed.GetHashCode());
+            result = prime * result + ((_term == null) ? 0 : _term.GetHashCode());
             return result;
         }
 
@@ -243,14 +243,14 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (Term_Renamed == null)
+            if (_term == null)
             {
-                if (other.Term_Renamed != null)
+                if (other._term != null)
                 {
                     return false;
                 }
             }
-            else if (!Term_Renamed.Equals(other.Term_Renamed))
+            else if (!_term.Equals(other._term))
             {
                 return false;
             }

@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Core;
+using System.IO;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using TokenizerFactory = Lucene.Net.Analysis.Util.TokenizerFactory;
-using Reader = System.IO.TextReader;
 
-namespace org.apache.lucene.analysis.core
+namespace Lucene.Net.Analysis.Core
 {
 
     /*
@@ -24,9 +22,6 @@ namespace org.apache.lucene.analysis.core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using TokenizerFactory = TokenizerFactory;
-
     /// <summary>
     /// Factory for <seealso cref="WhitespaceTokenizer"/>. 
     /// <pre class="prettyprint">
@@ -51,7 +46,7 @@ namespace org.apache.lucene.analysis.core
             }
         }
 
-        public override Tokenizer Create(AttributeSource.AttributeFactory factory, Reader input)
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
             return new WhitespaceTokenizer(luceneMatchVersion, factory, input);
         }

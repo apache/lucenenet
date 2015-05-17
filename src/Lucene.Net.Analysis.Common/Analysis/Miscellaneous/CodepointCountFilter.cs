@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="in">      the <seealso cref="TokenStream"/> to consume </param>
         /// <param name="min">     the minimum length </param>
         /// <param name="max">     the maximum length </param>
-        public CodepointCountFilter(Version version, TokenStream @in, int min, int max)
+        public CodepointCountFilter(LuceneVersion version, TokenStream @in, int min, int max)
             : base(version, @in)
         {
             this.min = min;

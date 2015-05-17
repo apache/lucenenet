@@ -23,8 +23,6 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-
     /// <summary>
     /// Controls the health status of a <seealso cref="DocumentsWriter"/> sessions. this class
     /// used to block incoming indexing threads if flushing significantly slower than
@@ -83,13 +81,17 @@ namespace Lucene.Net.Index
                         // don't loop here, higher level logic will re-stall!
                         try
                         {
-                            Debug.Assert(IncWaiters());
+                            // make sure not to run IncWaiters / DecrWaiters in Debug.Assert as that gets 
+                            // removed at compile time if built in Release mode
+                            var result = IncWaiters();
+                            Debug.Assert(result);
                             Monitor.Wait(this);
-                            Debug.Assert(DecrWaiters());
+                            result = DecrWaiters();
+                            Debug.Assert(result);
                         }
                         catch (ThreadInterruptedException e)
                         {
-                            throw new ThreadInterruptedException(e);
+                            throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                         }
                     }
                 }

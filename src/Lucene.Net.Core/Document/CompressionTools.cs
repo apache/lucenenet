@@ -170,7 +170,7 @@ namespace Lucene.Net.Documents
             byte[] bytes = Decompress(value, offset, length);
             CharsRef result = new CharsRef(bytes.Length);
             UnicodeUtil.UTF8toUTF16(bytes, 0, bytes.Length, result);
-            return new string(result.Chars, 0, result.length);
+            return new string(result.Chars, 0, result.Length);
         }
 
         /// <summary>

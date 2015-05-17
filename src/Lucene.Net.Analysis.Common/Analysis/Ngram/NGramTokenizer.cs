@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Reader = System.IO.TextReader;
+using Version = Lucene.Net.Util.LuceneVersion;
 
-namespace org.apache.lucene.analysis.ngram
+namespace Lucene.Net.Analysis.Ngram
 {
 
 	/*
@@ -21,16 +27,7 @@ namespace org.apache.lucene.analysis.ngram
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using PositionLengthAttribute = org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
-	using CharacterUtils = CharacterUtils;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
+    /// <summary>
 	/// Tokenizes the input into n-grams of the given size(s).
 	/// <para>On the contrary to <seealso cref="NGramTokenFilter"/>, this class sets offsets so
 	/// that characters between startOffset and endOffset in the original stream are
@@ -85,7 +82,7 @@ namespace org.apache.lucene.analysis.ngram
 	  private readonly PositionLengthAttribute posLenAtt = addAttribute(typeof(PositionLengthAttribute));
 	  private readonly OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
 
-	  internal NGramTokenizer(Version version, Reader input, int minGram, int maxGram, bool edgesOnly) : base(input)
+	  internal NGramTokenizer(LuceneVersion version, TextReader input, int minGram, int maxGram, bool edgesOnly) : base(input)
 	  {
 		init(version, minGram, maxGram, edgesOnly);
 	  }
@@ -93,14 +90,14 @@ namespace org.apache.lucene.analysis.ngram
 	  /// <summary>
 	  /// Creates NGramTokenizer with given min and max n-grams. </summary>
 	  /// <param name="version"> the lucene compatibility <a href="#version">version</a> </param>
-	  /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
+	  /// <param name="input"> <seealso cref="TextReader"/> holding the input to be tokenized </param>
 	  /// <param name="minGram"> the smallest n-gram to generate </param>
 	  /// <param name="maxGram"> the largest n-gram to generate </param>
-	  public NGramTokenizer(Version version, Reader input, int minGram, int maxGram) : this(version, input, minGram, maxGram, false)
+	  public NGramTokenizer(LuceneVersion version, TextReader input, int minGram, int maxGram) : this(version, input, minGram, maxGram, false)
 	  {
 	  }
 
-	  internal NGramTokenizer(Version version, AttributeFactory factory, Reader input, int minGram, int maxGram, bool edgesOnly) : base(factory, input)
+	  internal NGramTokenizer(LuceneVersion version, AttributeFactory factory, TextReader input, int minGram, int maxGram, bool edgesOnly) : base(factory, input)
 	  {
 		init(version, minGram, maxGram, edgesOnly);
 	  }
@@ -112,25 +109,25 @@ namespace org.apache.lucene.analysis.ngram
 	  /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
 	  /// <param name="minGram"> the smallest n-gram to generate </param>
 	  /// <param name="maxGram"> the largest n-gram to generate </param>
-	  public NGramTokenizer(Version version, AttributeFactory factory, Reader input, int minGram, int maxGram) : this(version, factory, input, minGram, maxGram, false)
+	  public NGramTokenizer(LuceneVersion version, AttributeFactory factory, TextReader input, int minGram, int maxGram) : this(version, factory, input, minGram, maxGram, false)
 	  {
 	  }
 
 	  /// <summary>
 	  /// Creates NGramTokenizer with default min and max n-grams. </summary>
 	  /// <param name="version"> the lucene compatibility <a href="#version">version</a> </param>
-	  /// <param name="input"> <seealso cref="Reader"/> holding the input to be tokenized </param>
-	  public NGramTokenizer(Version version, Reader input) : this(version, input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)
+	  /// <param name="input"> <seealso cref="TextReader"/> holding the input to be tokenized </param>
+	  public NGramTokenizer(LuceneVersion version, TextReader input) : this(version, input, DEFAULT_MIN_NGRAM_SIZE, DEFAULT_MAX_NGRAM_SIZE)
 	  {
 	  }
 
-	  private void init(Version version, int minGram, int maxGram, bool edgesOnly)
+	  private void init(LuceneVersion version, int minGram, int maxGram, bool edgesOnly)
 	  {
-		if (!version.onOrAfter(Version.LUCENE_44))
+		if (!version.OnOrAfter(LuceneVersion.LUCENE_44))
 		{
 		  throw new System.ArgumentException("This class only works with Lucene 4.4+. To emulate the old (broken) behavior of NGramTokenizer, use Lucene43NGramTokenizer/Lucene43EdgeNGramTokenizer");
 		}
-		charUtils = version.onOrAfter(Version.LUCENE_44) ? CharacterUtils.getInstance(version) : CharacterUtils.Java4Instance;
+		charUtils = version.OnOrAfter(LuceneVersion.LUCENE_44) ? CharacterUtils.GetInstance(version) : CharacterUtils.Java4Instance;
 		if (minGram < 1)
 		{
 		  throw new System.ArgumentException("minGram must be greater than zero");
@@ -142,17 +139,15 @@ namespace org.apache.lucene.analysis.ngram
 		this.minGram = minGram;
 		this.maxGram = maxGram;
 		this.edgesOnly = edgesOnly;
-		charBuffer = CharacterUtils.newCharacterBuffer(2 * maxGram + 1024); // 2 * maxGram in case all code points require 2 chars and + 1024 for buffering to not keep polling the Reader
+		charBuffer = CharacterUtils.NewCharacterBuffer(2 * maxGram + 1024); // 2 * maxGram in case all code points require 2 chars and + 1024 for buffering to not keep polling the Reader
 		buffer = new int[charBuffer.Buffer.Length];
 		// Make the term att large enough
-		termAtt.resizeBuffer(2 * maxGram);
+		termAtt.ResizeBuffer(2 * maxGram);
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
-		clearAttributes();
+		ClearAttributes();
 
 		// termination of this loop is guaranteed by the fact that every iteration
 		// either advances the buffer (calls consumes()) or increases gramSize
@@ -168,7 +163,7 @@ namespace org.apache.lucene.analysis.ngram
 			bufferStart = 0;
 
 			// fill in remaining space
-			exhausted = !charUtils.fill(charBuffer, input, buffer.Length - bufferEnd);
+			exhausted = !charUtils.Fill(charBuffer, input, buffer.Length - bufferEnd);
 			// convert to code points
 			bufferEnd += charUtils.toCodePoints(charBuffer.Buffer, 0, charBuffer.Length, buffer, bufferEnd);
 		  }
@@ -188,11 +183,7 @@ namespace org.apache.lucene.analysis.ngram
 		  updateLastNonTokenChar();
 
 		  // retry if the token to be emitted was going to not only contain token chars
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean termContainsNonTokenChar = lastNonTokenChar >= bufferStart && lastNonTokenChar < (bufferStart + gramSize);
 		  bool termContainsNonTokenChar = lastNonTokenChar >= bufferStart && lastNonTokenChar < (bufferStart + gramSize);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isEdgeAndPreviousCharIsTokenChar = edgesOnly && lastNonTokenChar != bufferStart - 1;
 		  bool isEdgeAndPreviousCharIsTokenChar = edgesOnly && lastNonTokenChar != bufferStart - 1;
 		  if (termContainsNonTokenChar || isEdgeAndPreviousCharIsTokenChar)
 		  {
@@ -201,13 +192,11 @@ namespace org.apache.lucene.analysis.ngram
 			continue;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = charUtils.toChars(buffer, bufferStart, gramSize, termAtt.buffer(), 0);
-		  int length = charUtils.toChars(buffer, bufferStart, gramSize, termAtt.buffer(), 0);
+		  int length = charUtils.toChars(buffer, bufferStart, gramSize, termAtt.Buffer(), 0);
 		  termAtt.Length = length;
 		  posIncAtt.PositionIncrement = 1;
 		  posLenAtt.PositionLength = 1;
-		  offsetAtt.setOffset(correctOffset(offset), correctOffset(offset + length));
+		  offsetAtt.SetOffset(CorrectOffset(offset), CorrectOffset(offset + length));
 		  ++gramSize;
 		  return true;
 		}
@@ -215,14 +204,12 @@ namespace org.apache.lucene.analysis.ngram
 
 	  private void updateLastNonTokenChar()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termEnd = bufferStart + gramSize - 1;
 		int termEnd = bufferStart + gramSize - 1;
 		if (termEnd > lastCheckedChar)
 		{
 		  for (int i = termEnd; i > lastCheckedChar; --i)
 		  {
-			if (!isTokenChar(buffer[i]))
+			if (!IsTokenChar(buffer[i]))
 			{
 			  lastNonTokenChar = i;
 			  break;
@@ -236,37 +223,33 @@ namespace org.apache.lucene.analysis.ngram
 	  /// Consume one code point. </summary>
 	  private void consume()
 	  {
-		offset += char.charCount(buffer[bufferStart++]);
+		offset += Character.CharCount(buffer[bufferStart++]);
 	  }
 
 	  /// <summary>
 	  /// Only collect characters which satisfy this condition. </summary>
-	  protected internal virtual bool isTokenChar(int chr)
+	  protected internal virtual bool IsTokenChar(int chr)
 	  {
 		return true;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final void end() throws java.io.IOException
-	  public override void end()
+	  public override void End()
 	  {
-		base.end();
+		base.End();
 		Debug.Assert(bufferStart <= bufferEnd);
 		int endOffset = offset;
 		for (int i = bufferStart; i < bufferEnd; ++i)
 		{
-		  endOffset += char.charCount(buffer[i]);
+		  endOffset += Character.CharCount(buffer[i]);
 		}
-		endOffset = correctOffset(endOffset);
+		endOffset = CorrectOffset(endOffset);
 		// set final offset
-		offsetAtt.setOffset(endOffset, endOffset);
+		offsetAtt.SetOffset(endOffset, endOffset);
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		bufferStart = bufferEnd = buffer.Length;
 		lastNonTokenChar = lastCheckedChar = bufferStart - 1;
 		offset = 0;

@@ -924,7 +924,7 @@ namespace Lucene.Net.Search
               }
               catch (ThreadInterruptedException e)
               {
-                throw new ThreadInterruptedException(e);
+                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
               }
               catch (ExecutionException e)
               {
@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual TermStatistics TermStatistics(Term term, TermContext context)
         {
-            return new TermStatistics(term.Bytes(), context.DocFreq, context.TotalTermFreq());
+            return new TermStatistics(term.Bytes, context.DocFreq, context.TotalTermFreq());
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -52,7 +52,7 @@ namespace Lucene.Net.Spatial.BBox
             }
             if (exp != null)
             {
-                exp.Value = (float) score;
+                exp.Value = (float)score;
                 exp.Description = GetType().Name;
                 exp.AddDetail(new Explanation(-1f, "" + queryPoint));
                 exp.AddDetail(new Explanation(-1f, "" + indexRect));

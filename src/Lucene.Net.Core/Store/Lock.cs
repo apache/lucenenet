@@ -20,8 +20,6 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-
     /// <summary>
     /// An interprocess mutex lock.
     /// <p>Typical use might look like:<pre class="prettyprint">
@@ -106,7 +104,7 @@ namespace Lucene.Net.Store
                 }
                 catch (ThreadInterruptedException ie)
                 {
-                    throw new ThreadInterruptedException(ie);
+                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                 }
                 locked = Obtain();
             }

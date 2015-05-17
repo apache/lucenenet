@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using org.apache.lucene.analysis.util;
-
 namespace Lucene.Net.Analysis.Util
 {
 

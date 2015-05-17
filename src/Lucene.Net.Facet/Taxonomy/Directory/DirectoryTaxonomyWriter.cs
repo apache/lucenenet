@@ -7,6 +7,7 @@ using System.IO;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -43,7 +44,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using NativeFSLockFactory = Lucene.Net.Store.NativeFSLockFactory;
     using SimpleFSLockFactory = Lucene.Net.Store.SimpleFSLockFactory;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using Version = Lucene.Net.Util.Version;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -301,7 +301,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // :Post-Release-Update-Version.LUCENE_XY:
             // Make sure we use a MergePolicy which always merges adjacent segments and thus
             // keeps the doc IDs ordered as well (this is crucial for the taxonomy index).
-            return (new IndexWriterConfig(Version.LUCENE_48, null)).SetOpenMode(openMode).SetMergePolicy(new LogByteSizeMergePolicy());
+            return (new IndexWriterConfig(LuceneVersion.LUCENE_48, null)).SetOpenMode(openMode).SetMergePolicy(new LogByteSizeMergePolicy());
         }
 
         /// <summary>
@@ -624,7 +624,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 returned = false;
             }
 
-            public override bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
                 if (returned)
                 {

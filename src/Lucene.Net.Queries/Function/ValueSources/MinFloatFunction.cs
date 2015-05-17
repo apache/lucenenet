@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using System;
+using System.Linq;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -39,12 +40,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return 0.0f;
             }
-            float val = float.PositiveInfinity;
-            foreach (FunctionValues vals in valsArr)
-            {
-                val = Math.Min(vals.FloatVal(doc), val);
-            }
-            return val;
+            return valsArr.Select(vals => vals.FloatVal(doc)).Concat(new[] {float.PositiveInfinity}).Min();
         }
     }
 }

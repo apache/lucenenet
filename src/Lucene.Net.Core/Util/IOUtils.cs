@@ -428,11 +428,7 @@ namespace Lucene.Net.Util
         {
             if (th != null)
             {
-                if (th is IOException || th is InvalidOperationException)
-                {
-                    throw th;
-                }
-                throw new Exception(th.ToString(), th);
+                throw th;
             }
         }
 

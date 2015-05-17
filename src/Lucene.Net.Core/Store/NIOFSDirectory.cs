@@ -80,7 +80,7 @@ namespace Lucene.Net.Store
             //File path = new File(Directory, name);
             FileInfo path = new FileInfo(Path.Combine(Directory.FullName, name));
             //path.Create();
-            FileStream fc = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);//FileChannel.open(path.toPath(), StandardOpenOption.READ);
+            FileStream fc = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);//FileChannel.open(path.toPath(), StandardOpenOption.READ);
             return new NIOFSIndexInput("NIOFSIndexInput(path=\"" + path + "\")", fc, context);
             //return new NIOFSIndexInput(new FileInfo(Path.Combine(Directory.FullName, name)), context, ReadChunkSize);
         }
@@ -91,7 +91,7 @@ namespace Lucene.Net.Store
             //File path = new File(Directory, name);
             //FileStream descriptor = FileChannel.open(path.toPath(), StandardOpenOption.READ);
             FileInfo path = new FileInfo(Path.Combine(Directory.FullName, name));
-            FileStream fc = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            FileStream fc = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
             return new IndexInputSlicerAnonymousInnerClassHelper(this, context, path, fc);
         }
 

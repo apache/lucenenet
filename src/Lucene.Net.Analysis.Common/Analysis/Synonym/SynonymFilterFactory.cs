@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.synonym;
 using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.Synonym
@@ -65,7 +64,7 @@ namespace Lucene.Net.Analysis.Synonym
             : base(args)
 	  {
 		assureMatchVersion();
-		if (luceneMatchVersion.OnOrAfter(Lucene.Net.Util.Version.LUCENE_34))
+		if (luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_34))
 		{
 		  delegator = new FSTSynonymFilterFactory(new Dictionary<string, string>(OriginalArgs));
 		}

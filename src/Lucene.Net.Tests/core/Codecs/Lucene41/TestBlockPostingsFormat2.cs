@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Lucene41
         internal RandomIndexWriter Iw;
         internal IndexWriterConfig Iwc;
 
-        [TestFixtureSetUp]
+        [SetUp]
         public override void SetUp()
         {
             base.SetUp();
@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene41
             Iw.RandomForceMerge = false; // we will ourselves
         }
 
-        [TestFixtureTearDown]
+        [TearDown]
         public override void TearDown()
         {
             Iw.Dispose();

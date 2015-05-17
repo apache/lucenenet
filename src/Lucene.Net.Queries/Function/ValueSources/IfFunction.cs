@@ -45,20 +45,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
             FunctionValues trueVals = trueSource.GetValues(context, readerContext);
             FunctionValues falseVals = falseSource.GetValues(context, readerContext);
 
-            return new FunctionValuesAnonymousInnerClassHelper(this, ifVals, trueVals, falseVals);
+            return new FunctionValuesAnonymousInnerClassHelper(ifVals, trueVals, falseVals);
         }
 
         private class FunctionValuesAnonymousInnerClassHelper : FunctionValues
         {
-            private readonly IfFunction outerInstance;
-
             private readonly FunctionValues ifVals;
             private readonly FunctionValues trueVals;
             private readonly FunctionValues falseVals;
 
-            public FunctionValuesAnonymousInnerClassHelper(IfFunction outerInstance, FunctionValues ifVals, FunctionValues trueVals, FunctionValues falseVals)
+            public FunctionValuesAnonymousInnerClassHelper(FunctionValues ifVals, FunctionValues trueVals, FunctionValues falseVals)
             {
-                this.outerInstance = outerInstance;
                 this.ifVals = ifVals;
                 this.trueVals = trueVals;
                 this.falseVals = falseVals;

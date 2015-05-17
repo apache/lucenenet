@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
@@ -188,7 +189,7 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestQueries()
         {
             // because the first page has a null 'after', we get a normal collector.

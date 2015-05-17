@@ -23,7 +23,6 @@ namespace Lucene.Net.Search
          */
 
     using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
 
     /// <summary>
@@ -150,7 +149,7 @@ namespace Lucene.Net.Search
                 }
                 catch (ThreadInterruptedException ie)
                 {
-                    throw new ThreadInterruptedException(ie);
+                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
                 }
 
                 // Max it out so any waiting search threads will return:
@@ -220,7 +219,7 @@ namespace Lucene.Net.Search
                         ReopenLock.Unlock();
                     }
 
-                    long startMS = DateTime.Now.Millisecond;//System.nanoTime() / 1000000;
+                    long startMS = Environment.TickCount;//System.nanoTime() / 1000000;
 
                     while (targetGen > SearchingGen)
                     {
@@ -230,7 +229,7 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            long msLeft = (startMS + maxMS) - DateTime.Now.Millisecond;//(System.nanoTime()) / 1000000;
+                            long msLeft = (startMS + maxMS) - Environment.TickCount;//(System.nanoTime()) / 1000000;
                             if (msLeft <= 0)
                             {
                                 return false;

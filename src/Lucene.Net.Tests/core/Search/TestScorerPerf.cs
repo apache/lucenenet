@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
             BitArray set = new BitArray(sz);
             for (int i = 0; i < numBitsToSet; i++)
             {
-                set.Set(Random().Next(sz), true);
+                set.SafeSet(Random().Next(sz), true);
             }
             return set;
         }
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
                     int tnum;
                     // don't pick same clause twice
                     tnum = Random().Next(termsInIndex);
-                    if (termflag.Get(tnum))
+                    if (termflag.SafeGet(tnum))
                     {
                         tnum = termflag.NextClearBit(tnum);
                     }
@@ -309,7 +309,7 @@ namespace Lucene.Net.Search
                     {
                         tnum = termflag.NextClearBit(0);
                     }
-                    termflag.Set(tnum, true);
+                    termflag.SafeSet(tnum, true);
                     Query tq = new TermQuery(Terms[tnum]);
                     bq.Add(tq, BooleanClause.Occur.MUST);
                 }
@@ -345,7 +345,7 @@ namespace Lucene.Net.Search
                         int tnum;
                         // don't pick same clause twice
                         tnum = Random().Next(termsInIndex);
-                        if (termflag.Get(tnum))
+                        if (termflag.SafeGet(tnum))
                         {
                             tnum = termflag.NextClearBit(tnum);
                         }
@@ -353,7 +353,7 @@ namespace Lucene.Net.Search
                         {
                             tnum = termflag.NextClearBit(0);
                         }
-                        termflag.Set(tnum, true);
+                        termflag.SafeSet(tnum, true);
                         Query tq = new TermQuery(Terms[tnum]);
                         bq.Add(tq, BooleanClause.Occur.MUST);
                     } // inner

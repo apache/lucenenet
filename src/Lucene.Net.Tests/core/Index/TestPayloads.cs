@@ -190,10 +190,10 @@ namespace Lucene.Net.Index
 
             var verifyPayloadData = new byte[payloadDataLength];
             offset = 0;
-            DocsAndPositionsEnum[] tps = new DocsAndPositionsEnum[numTerms];
+            var tps = new DocsAndPositionsEnum[numTerms];
             for (int i = 0; i < numTerms; i++)
             {
-                tps[i] = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), terms[i].Field(), new BytesRef(terms[i].Text()));
+                tps[i] = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), terms[i].Field, new BytesRef(terms[i].Text()));
             }
 
             while (tps[0].NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
             /*
              *  test lazy skipping
              */
-            DocsAndPositionsEnum tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), terms[0].Field(), new BytesRef(terms[0].Text()));
+            DocsAndPositionsEnum tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), terms[0].Field, new BytesRef(terms[0].Text()));
             tp.NextDoc();
             tp.NextPosition();
             // NOTE: prior rev of this test was failing to first
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
             /*
              * Test different lengths at skip points
              */
-            tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), terms[1].Field(), new BytesRef(terms[1].Text()));
+            tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), terms[1].Field, new BytesRef(terms[1].Text()));
             tp.NextDoc();
             tp.NextPosition();
             Assert.AreEqual(1, tp.Payload.Length, "Wrong payload length.");

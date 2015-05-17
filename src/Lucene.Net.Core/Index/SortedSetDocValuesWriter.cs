@@ -189,9 +189,9 @@ namespace Lucene.Net.Index
 
         private IEnumerable<BytesRef> GetBytesRefEnumberable(int valueCount, int[] sortedValues)
         {
-            BytesRef scratch = new BytesRef();
             for (int i = 0; i < valueCount; ++i)
             {
+                var scratch = new BytesRef();
                 yield return Hash.Get(sortedValues[i], scratch);
             }
         }
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
         {
             AppendingDeltaPackedLongBuffer.Iterator iter = PendingCounts.GetIterator();
 
-            Debug.Assert(maxDoc == Pending.Size(), "MaxDoc: " + maxDoc + ", pending.Size(): " + Pending.Size());
+            Debug.Assert(maxDoc == PendingCounts.Size(), "MaxDoc: " + maxDoc + ", pending.Size(): " + Pending.Size());
 
             for (int i = 0; i < maxDoc; ++i)
             {

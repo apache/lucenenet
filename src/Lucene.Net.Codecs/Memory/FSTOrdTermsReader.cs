@@ -967,9 +967,9 @@ namespace Lucene.Net.Codecs.Memory
 
                 long node = arc.Target;
                 //System.out.println(arc);
-                if (FST<T>.TargetHasArcs(arc) && !seen.Get((int)node))
+                if (FST<T>.TargetHasArcs(arc) && !seen.SafeGet((int)node))
                 {
-                    seen.Set((int)node, true);
+                    seen.SafeSet((int)node, true);
                     fst.ReadFirstRealTargetArc(node, arc, reader);
                     while (true)
                     {

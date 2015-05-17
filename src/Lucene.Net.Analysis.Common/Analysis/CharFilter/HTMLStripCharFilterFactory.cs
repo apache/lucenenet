@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using org.apache.lucene.analysis.util;
 
-namespace org.apache.lucene.analysis.charfilter
+namespace Lucene.Net.Analysis.CharFilters
 {
 
 	/*
@@ -19,11 +20,7 @@ namespace org.apache.lucene.analysis.charfilter
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using CharFilterFactory = org.apache.lucene.analysis.util.CharFilterFactory;
-
-
-	/// <summary>
+    /// <summary>
 	/// Factory for <seealso cref="HTMLStripCharFilter"/>. 
 	/// <pre class="prettyprint">
 	/// &lt;fieldType name="text_html" class="solr.TextField" positionIncrementGap="100"&gt;
