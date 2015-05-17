@@ -50,11 +50,11 @@ namespace Lucene.Net.Search
 
             IndexWriter w = new IndexWriter(dir, iwc);
 
-            SearcherManager mgr = new SearcherManager(w, true, new SearcherFactoryAnonymousInnerClassHelper(this));
+            SearcherManager mgr = new SearcherManager(w, true, new SearcherFactoryAnonymousInnerClassHelper());
 
             const int missing = -1;
 
-            LiveFieldValues<IndexSearcher, int> rt = new LiveFieldValuesAnonymousInnerClassHelper(this, mgr, missing);
+            LiveFieldValues<IndexSearcher, int?> rt = new LiveFieldValuesAnonymousInnerClassHelper(mgr, missing);
 
             int numThreads = TestUtil.NextInt(Random(), 2, 5);
             if (VERBOSE)
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
             {
                 int threadID = t;
                 Random threadRandom = new Random(Random().Next());
-                ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
+                ThreadClass thread = new ThreadAnonymousInnerClassHelper(w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
                 threads.Add(thread);
                 thread.Start();
             }
@@ -98,37 +98,27 @@ namespace Lucene.Net.Search
 
         private class SearcherFactoryAnonymousInnerClassHelper : SearcherFactory
         {
-            private readonly TestLiveFieldValues OuterInstance;
-
-            public SearcherFactoryAnonymousInnerClassHelper(TestLiveFieldValues outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
             public override IndexSearcher NewSearcher(IndexReader r)
             {
                 return new IndexSearcher(r);
             }
         }
 
-        private class LiveFieldValuesAnonymousInnerClassHelper : LiveFieldValues<IndexSearcher, int>
+        private class LiveFieldValuesAnonymousInnerClassHelper : LiveFieldValues<IndexSearcher, int?>
         {
-            private readonly TestLiveFieldValues OuterInstance;
-
-            public LiveFieldValuesAnonymousInnerClassHelper(TestLiveFieldValues outerInstance, SearcherManager mgr, int missing)
+            public LiveFieldValuesAnonymousInnerClassHelper(SearcherManager mgr, int missing)
                 : base(mgr, missing)
             {
-                this.OuterInstance = outerInstance;
             }
 
-            protected override int LookupFromSearcher(IndexSearcher s, string id)
+            protected override int? LookupFromSearcher(IndexSearcher s, string id)
             {
                 TermQuery tq = new TermQuery(new Term("id", id));
                 TopDocs hits = s.Search(tq, 1);
                 Assert.IsTrue(hits.TotalHits <= 1);
                 if (hits.TotalHits == 0)
                 {
-                    return default(int);
+                    return null;
                 }
                 else
                 {
@@ -140,12 +130,10 @@ namespace Lucene.Net.Search
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly TestLiveFieldValues OuterInstance;
-
             private IndexWriter w;
             private SearcherManager Mgr;
             private int? Missing;
-            private LiveFieldValues<IndexSearcher, int> Rt;
+            private LiveFieldValues<IndexSearcher, int?> Rt;
             private CountDownLatch StartingGun;
             private int Iters;
             private int IdCount;
@@ -156,9 +144,8 @@ namespace Lucene.Net.Search
             private int ThreadID;
             private Random ThreadRandom;
 
-            public ThreadAnonymousInnerClassHelper(TestLiveFieldValues outerInstance, IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int> rt, CountDownLatch startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
+            public ThreadAnonymousInnerClassHelper(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountDownLatch startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
             {
-                this.OuterInstance = outerInstance;
                 this.w = w;
                 this.Mgr = mgr;
                 this.Missing = missing;
@@ -190,7 +177,7 @@ namespace Lucene.Net.Search
                         // same time:
                         if (ThreadRandom.NextDouble() <= AddChance)
                         {
-                            string id = string.Format(CultureInfo.InvariantCulture, "%d_%04x", ThreadID, ThreadRandom.Next(IdCount));
+                            string id = string.Format(CultureInfo.InvariantCulture, "{0}_{1:X4}", ThreadID, ThreadRandom.Next(IdCount));
                             int field = ThreadRandom.Next(int.MaxValue);
                             doc.Add(new StringField("id", id, Field.Store.YES));
                             doc.Add(new IntField("field", (int)field, Field.Store.YES));
