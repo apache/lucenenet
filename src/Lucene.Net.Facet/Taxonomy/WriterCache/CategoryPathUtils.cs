@@ -85,7 +85,7 @@
                     return false;
                 }
 
-                if (!cp.Components[i].Equals(charBlockArray.SubSequence(offset, offset + len)))
+                if (string.Equals(cp.Components[i],(charBlockArray.SubSequence(offset, offset + len)).ToString()) == false)
                 {
                     return false;
                 }

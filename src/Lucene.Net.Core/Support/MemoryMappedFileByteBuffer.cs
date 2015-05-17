@@ -49,6 +49,13 @@ namespace Lucene.Net.Support
             return this;
         }
 
+        public override ByteBuffer PutArray(byte[] bytes, int offset, int length)
+        {
+            _accessor.WriteArray(Position,bytes,offset,length);
+            Position += length;
+            return this;
+        }
+
         public override byte Get(int index)
         {
             return _accessor.ReadByte(index);

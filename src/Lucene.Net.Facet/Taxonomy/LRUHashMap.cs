@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,93 +63,118 @@ namespace Lucene.Net.Facet.Taxonomy
     {
 
         public int MaxSize { get; set; }
-        private int CleanSize;
-        private TimeSpan MaxDuration;
 
 
-        private readonly ConcurrentDictionary<TV, CacheDataObject<TU>> _cache = new ConcurrentDictionary<TV, CacheDataObject<TU>>();
-
-        public LRUHashMap(int maxSize = 50000, int cleanPercentage = 30, TimeSpan maxDuration = default(TimeSpan))
+        private readonly LeastRecentlyUsedCache<TV, TU> _lru;
+        public LRUHashMap(int maxSize = 16)
         {
+            _lru = new LeastRecentlyUsedCache<TV, TU>(maxSize);
             MaxSize = maxSize;
-            CleanSize = (int)Math.Max(MaxSize * (1.0 * cleanPercentage / 100), 1);
-            if (maxDuration == default(TimeSpan))
-            {
-                MaxDuration = TimeSpan.FromDays(1);
-            }
-            else
-            {
-                MaxDuration = maxDuration;
-            }
         }
 
         
         public bool Put(TV cacheKey, TU value)
         {
-            return AddToCache(cacheKey, value);
-        }
-
-        public bool AddToCache(TV cacheKey, TU value)
-        {
-            var cachedResult = new CacheDataObject<TU>
-            {
-                Usage = 1, //value == null ? 1 : value.Usage + 1,
-                Value = value,
-                Timestamp = DateTime.UtcNow
-            };
-
-            _cache.AddOrUpdate(cacheKey, cachedResult, (_, __) => cachedResult);
-            if (_cache.Count > MaxSize)
-            {
-                foreach (var source in _cache
-                    .OrderByDescending(x => x.Value.Usage)
-                    .ThenBy(x => x.Value.Timestamp)
-                    .Skip(MaxSize - CleanSize))
-                {
-                    if (EqualityComparer<TV>.Default.Equals(source.Key, cacheKey))
-                        continue; // we don't want to remove the one we just added
-                    CacheDataObject<TU> ignored;
-                    _cache.TryRemove(source.Key, out ignored);
-                }
-            }
+            _lru.Set(cacheKey, value);
             return true;
         }
 
-        public TU Get(TV cacheKey, bool increment = false)
+        public TU Get(TV cacheKey)
         {
-            CacheDataObject<TU> value;
-            if (_cache.TryGetValue(cacheKey, out value) && (DateTime.UtcNow - value.Timestamp) <= MaxDuration)
-            {
-                if (increment)
-                {
-                    Interlocked.Increment(ref value.Usage);
-                }
-                return value.Value;
-            }
-            return null;
+            TU result;
+            if (_lru.TryGetValue(cacheKey,out result))
+                return result;
+
+            return default(TU);
+         
         }
 
-        public bool IsExistInCache(TV cacheKey)
-        {
-            return (_cache.ContainsKey(cacheKey));
-        }
 
         public int Size()
         {
-            return _cache.Count;
+            return _lru.Count;
         }
-
-        #region Nested type: CacheDataObject
-
-        private class CacheDataObject<T> where T : class
-        {
-            public DateTime Timestamp;
-            public int Usage;
-            public T Value;
-        }
-
-        #endregion
 
     }
 
+    public class LeastRecentlyUsedCache<TKey, TValue>
+    {
+        private readonly Dictionary<TKey, Node> entries;
+        private readonly int capacity;
+        private Node head;
+        private Node tail;
+
+        private class Node
+        {
+            public Node Next { get; set; }
+            public Node Previous { get; set; }
+            public TKey Key { get; set; }
+            public TValue Value { get; set; }
+        }
+
+        public LeastRecentlyUsedCache(int capacity = 16)
+        {
+            if (capacity <= 0)
+                throw new ArgumentOutOfRangeException(
+                    "capacity",
+                    "Capacity should be greater than zero");
+            this.capacity = capacity;
+            entries = new Dictionary<TKey, Node>();
+            head = null;
+        }
+
+        public int Count
+        {
+            get { return entries.Count; }
+        }
+
+        public void Set(TKey key, TValue value)
+        {
+            Node entry;
+            if (!entries.TryGetValue(key, out entry))
+            {
+                entry = new Node { Key = key, Value = value };
+                if (entries.Count == capacity)
+                {
+                    entries.Remove(tail.Key);
+                    tail = tail.Previous;
+                    if (tail != null) tail.Next = null;
+                }
+                entries.Add(key, entry);
+            }
+
+            entry.Value = value;
+            MoveToHead(entry);
+            if (tail == null) tail = head;
+        }
+
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            value = default(TValue);
+            Node entry;
+            if (!entries.TryGetValue(key, out entry)) return false;
+            MoveToHead(entry);
+            value = entry.Value;
+            return true;
+        }
+
+        private void MoveToHead(Node entry)
+        {
+            if (entry == head || entry == null) return;
+
+            var next = entry.Next;
+            var previous = entry.Previous;
+
+            if (next != null) next.Previous = entry.Previous;
+            if (previous != null) previous.Next = entry.Next;
+
+            entry.Previous = null;
+            entry.Next = head;
+
+            if (head != null) head.Previous = entry;
+            head = entry;
+
+            if (tail == entry) tail = previous;
+        }
+    }
 }
