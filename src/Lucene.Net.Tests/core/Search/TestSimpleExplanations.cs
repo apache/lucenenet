@@ -274,6 +274,7 @@ namespace Lucene.Net.Search
         }
 
         [Test]
+        [Category("Focus")]
         public virtual void TestDMQ8()
         {
             DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.5f);

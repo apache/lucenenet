@@ -240,6 +240,7 @@ namespace Lucene.Net.Search
         /// is not implemented correctly, there will be problems!
         /// </summary>
         [Test]
+        [Category("Focus")]
         public virtual void TestTieBreaker()
         {
             Directory directory = NewDirectory();

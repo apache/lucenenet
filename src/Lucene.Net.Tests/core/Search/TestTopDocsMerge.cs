@@ -70,12 +70,14 @@ namespace Lucene.Net.Search
         }
 
         [Test]
+        [Category("Focus")]
         public virtual void TestSort_1()
         {
             TestSort(false);
         }
 
         [Test]
+        [Category("Focus")]
         public virtual void TestSort_2()
         {
             TestSort(true);
