@@ -321,7 +321,7 @@ namespace Lucene.Net.Search
                     }
 
                     shardHits[shardIDX] = subHits;
-                    if (VERBOSE)
+                    //if (VERBOSE)
                     {
                         //Console.WriteLine("  shard=" + shardIDX + " " + subHits.TotalHits + " totalHits hits=" + (subHits.ScoreDocs == null ? "null" : subHits.ScoreDocs.Length.ToString()));
                         outputCollector.AppendLine("  shard=" + shardIDX + " " + subHits.TotalHits + " totalHits hits=" + (subHits.ScoreDocs == null ? "null" : subHits.ScoreDocs.Length.ToString()));
