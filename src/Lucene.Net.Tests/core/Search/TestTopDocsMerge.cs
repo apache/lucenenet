@@ -85,13 +85,12 @@ namespace Lucene.Net.Search
 
         internal virtual void TestSort(bool useFrom)
         {
-            IndexReader reader = null;
-            Directory dir = null;
+            IndexReader reader;
+            Directory dir;
 
             int numDocs = AtLeast(1000);
-            //final int numDocs = AtLeast(50);
-
-            string[] tokens = new string[] { "a", "b", "c", "d", "e" };
+            
+            var tokens = new[] { "a", "b", "c", "d", "e" };
 
             if (VERBOSE)
             {
@@ -101,10 +100,7 @@ namespace Lucene.Net.Search
             {
                 dir = NewDirectory();
                 RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
-                // w.setDoRandomForceMerge(false);
-
-                // w.w.getConfig().SetMaxBufferedDocs(AtLeast(100));
-
+                
                 string[] content = new string[AtLeast(20)];
 
                 for (int contentIDX = 0; contentIDX < content.Length; contentIDX++)
@@ -194,6 +190,8 @@ namespace Lucene.Net.Search
 
             for (int iter = 0; iter < 1000 * RANDOM_MULTIPLIER; iter++)
             {
+                var outputCollector = new StringBuilder();
+
                 // TODO: custom FieldComp...
                 Query query = new TermQuery(new Term("text", tokens[Random().Next(tokens.Length)]));
 
@@ -216,11 +214,12 @@ namespace Lucene.Net.Search
                 int numHits = TestUtil.NextInt(Random(), 1, numDocs + 5);
                 //final int numHits = 5;
 
-                if (VERBOSE)
+                //if (VERBOSE)
                 {
-                    Console.WriteLine("TEST: search query=" + query + " sort=" + sort + " numHits=" + numHits);
+                    //Console.WriteLine("TEST: search query=" + query + " sort=" + sort + " numHits=" + numHits);
+                    outputCollector.AppendLine("TEST: search query=" + query + " sort=" + sort + " numHits=" + numHits);
                 }
-
+                
                 int from = -1;
                 int size = -1;
                 // First search on whole index:
@@ -238,7 +237,7 @@ namespace Lucene.Net.Search
                         {
                             // Can't use TopDocs#topDocs(start, howMany), since it has different behaviour when start >= hitCount
                             // than TopDocs#merge currently has
-                            ScoreDoc[] newScoreDocs = new ScoreDoc[Math.Min(size, tempTopHits.ScoreDocs.Length - from)];
+                            var newScoreDocs = new ScoreDoc[Math.Min(size, tempTopHits.ScoreDocs.Length - from)];
                             Array.Copy(tempTopHits.ScoreDocs, from, newScoreDocs, 0, newScoreDocs.Length);
                             tempTopHits.ScoreDocs = newScoreDocs;
                             topHits = tempTopHits;
@@ -282,19 +281,22 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                if (VERBOSE)
+                //if (VERBOSE)
                 {
                     if (useFrom)
                     {
-                        Console.WriteLine("from=" + from + " size=" + size);
+                        //Console.WriteLine("from=" + from + " size=" + size);
+                        outputCollector.AppendLine("from=" + from + " size=" + size);
                     }
-                    Console.WriteLine("  top search: " + topHits.TotalHits + " totalHits; hits=" + (topHits.ScoreDocs == null ? "null" : topHits.ScoreDocs.Length + " maxScore=" + topHits.MaxScore));
+                    //Console.WriteLine("  top search: " + topHits.TotalHits + " totalHits; hits=" + (topHits.ScoreDocs == null ? "null" : topHits.ScoreDocs.Length + " maxScore=" + topHits.MaxScore));
+                    outputCollector.AppendLine("  top search: " + topHits.TotalHits + " totalHits; hits=" + (topHits.ScoreDocs == null ? "null" : topHits.ScoreDocs.Length + " maxScore=" + topHits.MaxScore));
                     if (topHits.ScoreDocs != null)
                     {
                         for (int hitIDX = 0; hitIDX < topHits.ScoreDocs.Length; hitIDX++)
                         {
                             ScoreDoc sd = topHits.ScoreDocs[hitIDX];
-                            Console.WriteLine("    doc=" + sd.Doc + " score=" + sd.Score);
+                            //Console.WriteLine("    doc=" + sd.Doc + " score=" + sd.Score);
+                            outputCollector.AppendLine("    doc=" + sd.Doc + " score=" + sd.Score);
                         }
                     }
                 }
@@ -321,12 +323,14 @@ namespace Lucene.Net.Search
                     shardHits[shardIDX] = subHits;
                     if (VERBOSE)
                     {
-                        Console.WriteLine("  shard=" + shardIDX + " " + subHits.TotalHits + " totalHits hits=" + (subHits.ScoreDocs == null ? "null" : subHits.ScoreDocs.Length.ToString()));
+                        //Console.WriteLine("  shard=" + shardIDX + " " + subHits.TotalHits + " totalHits hits=" + (subHits.ScoreDocs == null ? "null" : subHits.ScoreDocs.Length.ToString()));
+                        outputCollector.AppendLine("  shard=" + shardIDX + " " + subHits.TotalHits + " totalHits hits=" + (subHits.ScoreDocs == null ? "null" : subHits.ScoreDocs.Length.ToString()));
                         if (subHits.ScoreDocs != null)
                         {
                             foreach (ScoreDoc sd in subHits.ScoreDocs)
                             {
-                                Console.WriteLine("    doc=" + sd.Doc + " score=" + sd.Score);
+                                //Console.WriteLine("    doc=" + sd.Doc + " score=" + sd.Score);
+                                outputCollector.AppendLine("    doc=" + sd.Doc + " score=" + sd.Score);
                             }
                         }
                     }
@@ -353,7 +357,17 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                TestUtil.AssertEquals(topHits, mergedHits);
+                try
+                {
+                    TestUtil.AssertEquals(topHits, mergedHits);
+                }
+                catch (AssertionException)
+                {
+                    Console.WriteLine("RUN FAILURE:");
+                    Console.WriteLine(outputCollector);
+
+                    throw;
+                }
             }
             reader.Dispose();
             dir.Dispose();
