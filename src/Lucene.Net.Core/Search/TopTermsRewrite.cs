@@ -173,6 +173,8 @@ namespace Lucene.Net.Search
 
             public override bool Collect(BytesRef bytes)
             {
+                OutputCollector.AppendLine("");
+                OutputCollector.AppendLine("TopTermsRewrite collector");
                 float boost = boostAtt.Boost;
 
                 // make sure within a single seg we always collect
@@ -186,10 +188,12 @@ namespace Lucene.Net.Search
                     ScoreTerm t = StQueue.Top();
                     if (boost < t.Boost)
                     {
+                        OutputCollector.AppendLine("    return because boost < t.Boost");
                         return true;
                     }
                     if (boost == t.Boost && termComp.Compare(bytes, t.Bytes) > 0)
                     {
+                        OutputCollector.AppendLine("    return because boost = t.boost and compare of bytes > 0");
                         return true;
                     }
                 }
@@ -200,7 +204,11 @@ namespace Lucene.Net.Search
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ
                     Debug.Assert(t2.Boost == boost, "boost should be equal in all segment TermsEnums");
-                    t2.TermState.Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    var ord = ReaderContext.Ord;
+                    var docFreq = termsEnum.DocFreq();
+                    var totalTermFreq = termsEnum.TotalTermFreq();
+                    OutputCollector.AppendLine("    opt 1) register term state " + state + ". ord=" + ord + ", docFreq=" + docFreq + ", totalTermFreq=" + totalTermFreq);
+                    t2.TermState.Register(state, ord, docFreq, totalTermFreq);
                 }
                 else
                 {
@@ -209,7 +217,11 @@ namespace Lucene.Net.Search
                     st.Boost = boost;
                     visitedTerms[st.Bytes] = st;
                     Debug.Assert(st.TermState.DocFreq == 0);
-                    st.TermState.Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    var ord = ReaderContext.Ord;
+                    var docFreq = termsEnum.DocFreq();
+                    var totalTermFreq = termsEnum.TotalTermFreq();
+                    OutputCollector.AppendLine("    opt 2) register term state " + state + ". ord=" + ord + ", docFreq=" + docFreq + ", totalTermFreq=" + totalTermFreq);
+                    st.TermState.Register(state, ord, docFreq, totalTermFreq);
                     StQueue.Add(st);
                     // possibly drop entries from queue
                     if (StQueue.Size() > MaxSize)
@@ -217,10 +229,12 @@ namespace Lucene.Net.Search
                         st = StQueue.Pop();
                         visitedTerms.Remove(st.Bytes);
                         st.TermState.Clear(); // reset the termstate!
+                        OutputCollector.AppendLine("    state reset");
                     }
                     else
                     {
                         st = new ScoreTerm(termComp, new TermContext(TopReaderContext));
+                        OutputCollector.AppendLine("    new score term");
                     }
                     Debug.Assert(StQueue.Size() <= MaxSize, "the PQ size must be limited to maxSize");
                     // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
@@ -232,6 +246,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
+                OutputCollector.AppendLine("    return true");
                 return true;
             }
         }
