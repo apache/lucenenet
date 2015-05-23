@@ -340,6 +340,8 @@ namespace Lucene.Net.Search
                 maxScore = Pq.Pop().Score;
             }
 
+            OutputCollector.AppendLine("Returning top collector. Total hits=" + TotalHits_Renamed + ", results.Length=" +
+                                       results.Length + ", maxScore=" + maxScore);
             return new TopDocs(TotalHits_Renamed, results, maxScore);
         }
 

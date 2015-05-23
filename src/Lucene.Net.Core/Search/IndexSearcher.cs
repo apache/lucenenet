@@ -647,6 +647,7 @@ namespace Lucene.Net.Search
                 }
                 catch (CollectionTerminatedException)
                 {
+                    OutputCollector.AppendLine("IndexSearcher.ColletionTerminated (no doc of interest) for " + ctx);
                     // there is no doc of interest in this reader context
                     // continue with the following leaf
                     continue;
@@ -656,12 +657,14 @@ namespace Lucene.Net.Search
                 {
                     try
                     {
+                        OutputCollector.AppendLine("IndexSearcher.Search bulk scorer " + scorer);
                         scorer.Score(collector);
                     }
                     catch (CollectionTerminatedException)
                     {
                         // collection was terminated prematurely
                         // continue with the following leaf
+                        OutputCollector.AppendLine("IndexSearcher.ColletionTerminated (prematurely) for " + ctx);
                     }
                 }
             }
