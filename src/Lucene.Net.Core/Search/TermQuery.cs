@@ -201,11 +201,13 @@ namespace Lucene.Net.Search
             TermContext termState;
             if (PerReaderTermState == null || PerReaderTermState.TopReaderContext != context)
             {
+                OutputCollector.AppendLine("    Creating term state from context");
                 // make TermQuery single-pass if we don't have a PRTS or if the context differs!
                 termState = TermContext.Build(context, _term);
             }
             else
             {
+                OutputCollector.AppendLine("    Term state was prebuilt");
                 // PRTS was pre-build for this IS
                 termState = this.PerReaderTermState;
             }
