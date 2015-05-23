@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
@@ -243,6 +245,9 @@ namespace Lucene.Net.Search
         [Category("Focus")]
         public virtual void TestTieBreaker()
         {
+            var collector = new StringBuilder();
+            OutputCollector.Init(collector);
+
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
             AddDoc("a123456", writer);
@@ -266,7 +271,19 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(mr);
             FuzzyQuery fq = new FuzzyQuery(new Term("field", "z123456"), 1, 0, 2, false);
             TopDocs docs = searcher.Search(fq, 2);
-            Assert.AreEqual(5, docs.TotalHits); // 5 docs, from the a and b's
+            try
+            {
+
+                Assert.AreEqual(5, docs.TotalHits); // 5 docs, from the a and b's
+            }
+            catch (AssertionException)
+            {
+                Console.WriteLine("Collected output:");
+                Console.WriteLine(collector);
+                OutputCollector.Init(null);
+                throw;
+            }
+
             mr.Dispose();
             ir1.Dispose();
             ir2.Dispose();
