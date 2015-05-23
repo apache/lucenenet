@@ -109,9 +109,11 @@ namespace Lucene.Net.Search
             /// </summary>
             internal TermsEnum GetTermsEnum(AtomicReaderContext context)
             {
+                OutputCollector.AppendLine("    get state for ord: " + context.Ord);
                 TermState state = TermStates.Get(context.Ord);
                 if (state == null) // term is not present in that reader
                 {
+                    OutputCollector.AppendLine("    state is null");
                     Debug.Assert(TermNotInReader(context.AtomicReader, OuterInstance._term), "no termstate found but term exists in reader term=" + OuterInstance._term);
                     return null;
                 }
