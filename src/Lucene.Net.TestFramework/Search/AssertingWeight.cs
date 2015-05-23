@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
                 inScorer = new AssertingBulkOutOfOrderScorer(new Random(Random.Next()), inScorer);
             }
             
-            OutputCollector.AppendLine("Bulk Scorer created by asserting weight: " + inScorer);
+            OutputCollector.AppendLine("Bulk Scorer created by asserting weight: " + inScorer + ", type " + inScorer.GetType());
 
             return inScorer;
         }
