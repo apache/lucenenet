@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 
 namespace Lucene.Net.Search
 {
@@ -63,7 +64,9 @@ namespace Lucene.Net.Search
         /// <returns> the document matching the query or NO_MORE_DOCS if there are no more documents. </returns>
         public override int NextDoc()
         {
-            return DocsEnum.NextDoc();
+            var docId = DocsEnum.NextDoc();
+            OutputCollector.Current.AppendLine(this.DocsEnum.GetType().ToString() + " - " + docId);
+            return docId;
         }
 
         public override float Score()
@@ -95,6 +98,16 @@ namespace Lucene.Net.Search
         public override string ToString()
         {
             return "scorer(" + weight + ")";
+        }
+    }
+
+    public class OutputCollector
+    {
+        public static StringBuilder Current;
+
+        public static void Init(StringBuilder instance)
+        {
+            Current = instance;
         }
     }
 }
