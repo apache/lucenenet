@@ -196,23 +196,23 @@ namespace Lucene.Net.Search
                 Query query = new TermQuery(new Term("text", tokens[Random().Next(tokens.Length)]));
 
                 Sort sort;
-                if (Random().Next(10) == 4)
+                //if (Random().Next(10) == 4)
                 {
                     // Sort by score
                     sort = null;
                 }
-                else
-                {
-                    SortField[] randomSortFields = new SortField[TestUtil.NextInt(Random(), 1, 3)];
-                    for (int sortIDX = 0; sortIDX < randomSortFields.Length; sortIDX++)
-                    {
-                        randomSortFields[sortIDX] = sortFields[Random().Next(sortFields.Count)];
-                    }
-                    sort = new Sort(randomSortFields);
-                }
+                //else
+                //{
+                //    SortField[] randomSortFields = new SortField[TestUtil.NextInt(Random(), 1, 3)];
+                //    for (int sortIDX = 0; sortIDX < randomSortFields.Length; sortIDX++)
+                //    {
+                //        randomSortFields[sortIDX] = sortFields[Random().Next(sortFields.Count)];
+                //    }
+                //    sort = new Sort(randomSortFields);
+                //}
 
-                int numHits = TestUtil.NextInt(Random(), 1, numDocs + 5);
-                //final int numHits = 5;
+                //int numHits = TestUtil.NextInt(Random(), 1, numDocs + 5);
+                int numHits = 5;
 
                 //if (VERBOSE)
                 {
