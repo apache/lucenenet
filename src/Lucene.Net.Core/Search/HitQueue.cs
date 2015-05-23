@@ -77,14 +77,19 @@ namespace Lucene.Net.Search
 
         public override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
         {
+            bool result;
             if (hitA.Score == hitB.Score)
             {
-                return hitA.Doc > hitB.Doc;
+                result = hitA.Doc > hitB.Doc;
             }
             else
             {
-                return hitA.Score < hitB.Score;
+                result = hitA.Score < hitB.Score;
             }
+
+            OutputCollector.AppendLine("Comparing " + hitA + " to " + hitB + "; result " + result);
+
+            return result;
         }
     }
 }

@@ -64,9 +64,7 @@ namespace Lucene.Net.Search
         /// <returns> the document matching the query or NO_MORE_DOCS if there are no more documents. </returns>
         public override int NextDoc()
         {
-            var docId = DocsEnum.NextDoc();
-            OutputCollector.Current.AppendLine(this.DocsEnum.GetType().ToString() + " - " + docId);
-            return docId;
+            return DocsEnum.NextDoc();
         }
 
         public override float Score()
@@ -108,6 +106,14 @@ namespace Lucene.Net.Search
         public static void Init(StringBuilder instance)
         {
             Current = instance;
+        }
+
+        public static void AppendLine(string s)
+        {
+            if (Current != null)
+            {
+                Current.AppendLine(s);
+            }
         }
     }
 }

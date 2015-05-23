@@ -191,8 +191,7 @@ namespace Lucene.Net.Search
             for (int iter = 0; iter < 1000 * RANDOM_MULTIPLIER; iter++)
             {
                 var outputCollector = new StringBuilder();
-                OutputCollector.Init(outputCollector);
-
+                
                 // TODO: custom FieldComp...
                 Query query = new TermQuery(new Term("text", tokens[Random().Next(tokens.Length)]));
 
@@ -250,7 +249,9 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
+                        OutputCollector.Init(outputCollector);
                         topHits = searcher.Search(query, numHits);
+                        OutputCollector.Init(null);
                     }
                 }
                 else
