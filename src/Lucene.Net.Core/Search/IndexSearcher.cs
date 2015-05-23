@@ -471,6 +471,7 @@ namespace Lucene.Net.Search
 
             if (Executor == null)
             {
+                OutputCollector.AppendLine("IndexSearcher.limit=" + limit);
                 return Search(LeafContexts, weight, after, nDocs);
             }
             else
