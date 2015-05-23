@@ -156,6 +156,14 @@ namespace Lucene.Net.Search
             // pq.size() or totalHits.
             int size = TopDocsSize();
 
+            var arr = Pq.ToArray();
+            OutputCollector.AppendLine("Preparing top docs, hits:");
+            foreach (var a in arr)
+            {
+                OutputCollector.AppendLine(a.ToString());
+            }
+            OutputCollector.AppendLine("---");
+
             // Don't bother to throw an exception, just return an empty TopDocs in case
             // the parameters are invalid or out of range.
             // TODO: shouldn't we throw IAE if apps give bad params here so they dont
@@ -174,14 +182,24 @@ namespace Lucene.Net.Search
             // Note that this loop will usually not be executed, since the common usage
             // should be that the caller asks for the last howMany results. However it's
             // needed here for completeness.
+            OutputCollector.AppendLine("Popping:");
             for (int i = Pq.Size() - start - howMany; i > 0; i--)
             {
-                Pq.Pop();
+                var popped = Pq.Pop();
+                OutputCollector.AppendLine(popped.ToString());
             }
+            OutputCollector.AppendLine("---");
 
             // Get the requested results from pq.
             PopulateResults(results, howMany);
 
+            OutputCollector.AppendLine("Results:");
+            foreach (var r in results)
+            {
+                OutputCollector.AppendLine(r.ToString());
+            }
+            OutputCollector.AppendLine("---");
+            
             return NewTopDocs(results, start);
         }
     }
