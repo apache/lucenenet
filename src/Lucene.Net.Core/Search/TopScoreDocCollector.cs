@@ -97,6 +97,8 @@ namespace Lucene.Net.Search
                 Debug.Assert(score != float.NegativeInfinity);
                 Debug.Assert(!float.IsNaN(score));
 
+                OutputCollector.AppendLine("In order paging scored " + doc + " with score " + score);
+
                 TotalHits_Renamed++;
 
                 if (score > After.Score || (score == After.Score && doc <= AfterDoc))
@@ -158,6 +160,8 @@ namespace Lucene.Net.Search
                 // this collector cannot handle NaN
                 Debug.Assert(!float.IsNaN(score));
 
+                OutputCollector.AppendLine("Out of order scored " + doc + " with score " + score);
+
                 TotalHits_Renamed++;
                 if (score < PqTop.Score)
                 {
@@ -203,6 +207,8 @@ namespace Lucene.Net.Search
 
                 // this collector cannot handle NaN
                 Debug.Assert(!float.IsNaN(score));
+
+                OutputCollector.AppendLine("Out of order paging scored " + doc + " with score " + score);
 
                 TotalHits_Renamed++;
                 if (score > After.Score || (score == After.Score && doc <= AfterDoc))
@@ -283,6 +289,8 @@ namespace Lucene.Net.Search
             {
                 throw new System.ArgumentException("numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count");
             }
+
+            OutputCollector.AppendLine("Creating collector numHits=" + numHits + ", scored in order: " + docsScoredInOrder);
 
             if (docsScoredInOrder)
             {
