@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -250,6 +251,7 @@ namespace Lucene.Net.Index
                     {
                         // no more terms to seek to or enum exhausted
                         //System.out.println("  return null");
+                        OutputCollector.AppendLine("    fte:return null, t:" + t);
                         return null;
                     }
                     ActualTerm = Tenum.Term();
@@ -261,6 +263,7 @@ namespace Lucene.Net.Index
                     if (ActualTerm == null)
                     {
                         // enum exhausted
+                        OutputCollector.AppendLine("    fte:return null, enum exhausted");
                         return null;
                     }
                 }
@@ -274,6 +277,7 @@ namespace Lucene.Net.Index
                         goto case FilteredTermsEnum.AcceptStatus.YES;
                     case FilteredTermsEnum.AcceptStatus.YES:
                         // term accepted
+                        OutputCollector.AppendLine("    fte:term accepted: " + ActualTerm);
                         return ActualTerm;
 
                     case FilteredTermsEnum.AcceptStatus.NO_AND_SEEK:
@@ -283,6 +287,7 @@ namespace Lucene.Net.Index
 
                     case FilteredTermsEnum.AcceptStatus.END:
                         // we are supposed to end the enum
+                        OutputCollector.AppendLine("   fte:end return null");
                         return null;
                 }
             }
