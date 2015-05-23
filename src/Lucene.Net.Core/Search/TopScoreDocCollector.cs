@@ -51,10 +51,12 @@ namespace Lucene.Net.Search
                 // this collector cannot handle these scores:
                 Debug.Assert(score != float.NegativeInfinity);
                 Debug.Assert(!float.IsNaN(score));
+                OutputCollector.AppendLine("Scored " + doc + " with score " + score);
 
                 TotalHits_Renamed++;
                 if (score <= PqTop.Score)
                 {
+                    OutputCollector.AppendLine("--- Returned");
                     // Since docs are returned in-order (i.e., increasing doc Id), a document
                     // with equal score to pqTop.score cannot compete since HitQueue favors
                     // documents with lower doc Ids. Therefore reject those docs too.
