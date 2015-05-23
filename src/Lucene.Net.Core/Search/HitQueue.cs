@@ -81,13 +81,14 @@ namespace Lucene.Net.Search
             if (hitA.Score == hitB.Score)
             {
                 result = hitA.Doc > hitB.Doc;
+                OutputCollector.AppendLine("Equal scrore, by doc " + hitA + " is less than " + hitB + ": " + result);
+
             }
             else
             {
                 result = hitA.Score < hitB.Score;
+                OutputCollector.AppendLine("By scrore " + hitA + " is less than " + hitB + ": " + result);
             }
-
-            OutputCollector.AppendLine("Comparing " + hitA + " to " + hitB + "; result " + result);
 
             return result;
         }
