@@ -76,7 +76,27 @@ namespace Lucene.Net.Search
 
             var q = TopLevelQuery;
             ScoreTerm[] scoreTerms = stQueue.ToArray(/*new ScoreTerm[stQueue.size()]*/);
+            OutputCollector.AppendLine("TopTermsRewrite.Rewrite Score terms:");
+            foreach (var t in scoreTerms)
+            {
+                OutputCollector.AppendLine("    " + t + ", term states:");
+                foreach (var s in t.TermState.States)
+                {
+                    OutputCollector.AppendLine("        " + s + " type " + (s != null ? s.GetType().ToString() : "null"));
+                }
+            }
+
             ArrayUtil.TimSort(scoreTerms, scoreTermSortByTermComp);
+
+            OutputCollector.AppendLine("TopTermsRewrite.Rewrite After reorder terms:");
+            foreach (var t in scoreTerms)
+            {
+                OutputCollector.AppendLine("    " + t + ", term states:");
+                foreach (var s in t.TermState.States)
+                {
+                    OutputCollector.AppendLine("        " + s + " type " + (s != null ? s.GetType().ToString() : "null"));
+                }
+            }
 
             foreach (ScoreTerm st in scoreTerms)
             {
