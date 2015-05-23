@@ -225,6 +225,9 @@ namespace Lucene.Net.Search
             {
                 CoordFactors[i] = disableCoord ? 1.0f : weight.Coord(i, maxCoord);
             }
+
+            OutputCollector.AppendLine("Boolean scorer created with opt: " + optionalScorers.Count + ", prohibited: " +
+                                       prohibitedScorers.Count + ", scorers: " + Scorers);
         }
 
         public override bool Score(Collector collector, int max)
