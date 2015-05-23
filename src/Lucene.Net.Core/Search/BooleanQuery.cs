@@ -400,10 +400,11 @@ namespace Lucene.Net.Search
                 {
                     cIter.MoveNext();
                     BooleanClause c = cIter.Current;
-                    OutputCollector.AppendLine("    weight: " + w + ", clause: " + c);
+                    OutputCollector.AppendLine("    weight: " + w + ", clause: " + c + ", accept docs:" + acceptDocs);
                     BulkScorer subScorer = w.BulkScorer(context, false, acceptDocs);
                     if (subScorer == null)
                     {
+                        OutputCollector.AppendLine("    null scorrer returned, c is required:" + c.Required);
                         if (c.Required)
                         {
                             return null;
