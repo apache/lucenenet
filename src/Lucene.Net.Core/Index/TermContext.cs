@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public readonly IndexReaderContext TopReaderContext;
 
-        private readonly TermState[] States;
+        internal readonly TermState[] States;
         private int docFreq;
         private long totalTermFreq;
 

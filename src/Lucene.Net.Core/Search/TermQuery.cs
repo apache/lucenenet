@@ -179,6 +179,12 @@ namespace Lucene.Net.Search
         /// </summary>
         public TermQuery(Term t, TermContext states)
         {
+            OutputCollector.AppendLine("term query created: " + t + ". States:");
+            foreach (var s in states.States)
+            {
+                OutputCollector.AppendLine("    " + s + ", " + (s != null ? s.GetType().ToString() : "null"));
+            }
+
             Debug.Assert(states != null);
             _term = t;
             DocFreq = states.DocFreq;
