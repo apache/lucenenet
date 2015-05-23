@@ -71,6 +71,40 @@ namespace Lucene.Net.Search
 
         [Test]
         [Category("Focus")]
+        public void QueueTest()
+        {
+            var hitQueue = new HitQueue(10, false);
+
+            var builder = new StringBuilder();
+            OutputCollector.Init(builder);
+            
+            hitQueue.Add(new ScoreDoc(6, 1));
+            hitQueue.Add(new ScoreDoc(5, 1));
+            hitQueue.Add(new ScoreDoc(4, 1));
+            hitQueue.Add(new ScoreDoc(3, 1));
+            hitQueue.Add(new ScoreDoc(2, 1));
+            hitQueue.Add(new ScoreDoc(1, 1));
+            hitQueue.Add(new ScoreDoc(1232, 1));
+            hitQueue.Add(new ScoreDoc(12, 1));
+
+            var results = new ScoreDoc[hitQueue.Size()];
+
+            for (int i = hitQueue.Size() - 1; i >= 0; i--)
+            {
+                results[i] = hitQueue.Pop();
+            }
+
+            OutputCollector.Init(null);
+            
+            foreach (var r in results)
+            {
+                Console.WriteLine(r);
+            }
+            //Console.WriteLine(builder);
+        }
+
+        [Test]
+        [Category("Focus")]
         public virtual void TestSort_1()
         {
             TestSort(false);
