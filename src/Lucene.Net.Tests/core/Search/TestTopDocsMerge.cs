@@ -211,8 +211,8 @@ namespace Lucene.Net.Search
                 //    sort = new Sort(randomSortFields);
                 //}
 
-                //int numHits = TestUtil.NextInt(Random(), 1, numDocs + 5);
-                int numHits = 5;
+                int numHits = TestUtil.NextInt(Random(), 1, numDocs + 5);
+                //int numHits = 5;
 
                 //if (VERBOSE)
                 {
