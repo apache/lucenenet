@@ -636,6 +636,8 @@ namespace Lucene.Net.Search
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected internal virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
         {
+            OutputCollector.AppendLine("IndexSearcher.Search weight: " + weight);
+
             // TODO: should we make this
             // threaded...?  the Collector could be sync'd?
             // always use single thread:
