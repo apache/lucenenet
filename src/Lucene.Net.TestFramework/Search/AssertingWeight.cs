@@ -106,6 +106,9 @@ namespace Lucene.Net.Search
                 // randomly shuffling them before collection:
                 inScorer = new AssertingBulkOutOfOrderScorer(new Random(Random.Next()), inScorer);
             }
+            
+            OutputCollector.AppendLine("Bulk Scorer created by asserting weight: " + inScorer);
+
             return inScorer;
         }
 
