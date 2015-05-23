@@ -281,6 +281,7 @@ namespace Lucene.Net.Search
 
         public override BytesRef Next()
         {
+            OutputCollector.AppendLine("FuzzyTermsEnum.Next start");
             if (QueuedBottom != null)
             {
                 BottomChanged(QueuedBottom, false);
@@ -301,6 +302,7 @@ namespace Lucene.Net.Search
                 QueuedBottom = BytesRef.DeepCopyOf(term);
             }
 
+            OutputCollector.AppendLine("FuzzyTermsEnum.Next end: " + term);
             return term;
         }
 
