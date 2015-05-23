@@ -394,12 +394,13 @@ namespace Lucene.Net.Search
                 IList<BulkScorer> optional = new List<BulkScorer>();
                 IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
                 
-                OutputCollector.AppendLine("boolean query bulk scorer, got enumerator: " + cIter.GetType());
+                OutputCollector.AppendLine("boolean query bulk scorer, clauses: " + OuterInstance.clauses.Count + ", got enumerator: " + cIter.GetType());
 
                 foreach (Weight w in Weights)
                 {
                     cIter.MoveNext();
                     BooleanClause c = cIter.Current;
+                    OutputCollector.AppendLine("    weight: " + w + ", clause: " + c);
                     BulkScorer subScorer = w.BulkScorer(context, false, acceptDocs);
                     if (subScorer == null)
                     {
