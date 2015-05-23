@@ -87,6 +87,8 @@ namespace Lucene.Net.Search
                 BytesRef bytes;
                 while ((bytes = termsEnum.Next()) != null)
                 {
+                    OutputCollector.AppendLine("---");
+                    OutputCollector.AppendLine("inside TermCollectingRewrite while loop");
                     if (!collector.Collect(bytes))
                     {
                         return; // interrupt whole term collection, so also don't iterate other subReaders

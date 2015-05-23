@@ -173,7 +173,6 @@ namespace Lucene.Net.Search
 
             public override bool Collect(BytesRef bytes)
             {
-                OutputCollector.AppendLine("");
                 OutputCollector.AppendLine("TopTermsRewrite collector");
                 float boost = boostAtt.Boost;
 

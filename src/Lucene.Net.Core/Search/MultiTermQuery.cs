@@ -77,7 +77,9 @@ namespace Lucene.Net.Search
             /// <seealso cref= MultiTermQuery#getTermsEnum(Terms, AttributeSource) </seealso>
             protected internal virtual TermsEnum GetTermsEnum(MultiTermQuery query, Terms terms, AttributeSource atts)
             {
-                return query.GetTermsEnum(terms, atts); // allow RewriteMethod subclasses to pull a TermsEnum from the MTQ
+                var te = query.GetTermsEnum(terms, atts); // allow RewriteMethod subclasses to pull a TermsEnum from the MTQ
+                OutputCollector.AppendLine("RewriteMethod.GetTermsEnum returned " + te);
+                return te;
             }
         }
 
