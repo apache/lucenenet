@@ -654,12 +654,14 @@ namespace Lucene.Net.Search
                     // continue with the following leaf
                     continue;
                 }
+                OutputCollector.AppendLine("");
+                OutputCollector.AppendLine("IndexSearcher.Search creating scorer");
                 BulkScorer scorer = weight.BulkScorer(ctx, !collector.AcceptsDocsOutOfOrder(), ctx.AtomicReader.LiveDocs);
+                OutputCollector.AppendLine("IndexSearcher.Search bulk scorer " + scorer);
                 if (scorer != null)
                 {
                     try
                     {
-                        OutputCollector.AppendLine("IndexSearcher.Search bulk scorer " + scorer);
                         scorer.Score(collector);
                     }
                     catch (CollectionTerminatedException)

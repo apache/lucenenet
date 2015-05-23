@@ -393,6 +393,9 @@ namespace Lucene.Net.Search
                 IList<BulkScorer> prohibited = new List<BulkScorer>();
                 IList<BulkScorer> optional = new List<BulkScorer>();
                 IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
+                
+                OutputCollector.AppendLine("boolean query bulk scorer, got enumerator: " + cIter.GetType());
+
                 foreach (Weight w in Weights)
                 {
                     cIter.MoveNext();
