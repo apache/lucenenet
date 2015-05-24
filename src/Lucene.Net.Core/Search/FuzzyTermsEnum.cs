@@ -242,7 +242,7 @@ namespace Lucene.Net.Search
             // true if the last term encountered is lexicographically equal or after the bottom term in the PQ
             bool termAfter = BottomTerm == null || (lastTerm != null && TermComparator.Compare(lastTerm, BottomTerm) >= 0);
 
-            OutputCollector.AppendLine("    termAfter=" + termAfter + ", Bottom=" + Bottom);
+            OutputCollector.AppendLine("    termAfter=" + termAfter + ", Bottom=" + Bottom.ToString("R"));
             
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
@@ -283,7 +283,9 @@ namespace Lucene.Net.Search
         private float CalculateMaxBoost(int nEdits)
         {
             float similarity = 1.0f - ((float)nEdits / (float)(TermLength));
-            return (similarity - MinSimilarity_Renamed) * Scale_factor;
+            var val = (similarity - MinSimilarity_Renamed) * Scale_factor;
+            OutputCollector.AppendLine("        max boost calculated: " + val.ToString("R"));
+            return val;
         }
 
         private BytesRef QueuedBottom = null;
