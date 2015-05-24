@@ -242,16 +242,22 @@ namespace Lucene.Net.Search
             // true if the last term encountered is lexicographically equal or after the bottom term in the PQ
             bool termAfter = BottomTerm == null || (lastTerm != null && TermComparator.Compare(lastTerm, BottomTerm) >= 0);
 
+            var maxBoost = CalculateMaxBoost(MaxEdits);
+
+            OutputCollector.AppendLine("    termAfter=" + termAfter + ", Bottom=" + Bottom + ", maxBoost=" + maxBoost);
+            OutputCollector.AppendLine("    bottom >= maxBoost=" + (Bottom >= maxBoost) + ", bottom > maxBoost=" + (Bottom > maxBoost));
+
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
-            while (MaxEdits > 0 && (termAfter ? Bottom >= CalculateMaxBoost(MaxEdits) : Bottom > CalculateMaxBoost(MaxEdits)))
+            while (MaxEdits > 0 && (termAfter ? Bottom >= maxBoost : Bottom > maxBoost))
             {
                 MaxEdits--;
             }
 
-            OutputCollector.AppendLine("FuzzyTermsEnum bottom changed, oldMaxIedits=" + oldMaxEdits + ", maxEdits=" + MaxEdits);
+            OutputCollector.AppendLine("    oldMaxEdits=" + oldMaxEdits + ", maxEdits=" + MaxEdits);
             if (oldMaxEdits != MaxEdits || init) // the maximum n has changed
             {
+                OutputCollector.AppendLine("    Max distance changed");
                 MaxEditDistanceChanged(lastTerm, MaxEdits, init);
             }
         }
