@@ -243,10 +243,12 @@ namespace Lucene.Net.Search
             bool termAfter = BottomTerm == null || (lastTerm != null && TermComparator.Compare(lastTerm, BottomTerm) >= 0);
 
             OutputCollector.AppendLine("    termAfter=" + termAfter + ", Bottom=" + Bottom.ToString("R"));
-            
+
+            var maxBoost = CalculateMaxBoost(MaxEdits);
+
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
-            while (MaxEdits > 0 && (termAfter ? Bottom >= CalculateMaxBoost(MaxEdits) : Bottom > CalculateMaxBoost(MaxEdits)))
+            while (MaxEdits > 0 && (termAfter ? Bottom >= maxBoost : Bottom > maxBoost))
             {
                 OutputCollector.AppendLine("    subtract.");
                 MaxEdits--;
