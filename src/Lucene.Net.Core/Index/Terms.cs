@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
@@ -70,10 +71,12 @@ namespace Lucene.Net.Index
             }
             if (startTerm == null)
             {
+                OutputCollector.AppendLine("Terms.Intersect start null, " + compiled.ToDot());
                 return new AutomatonTermsEnum(Iterator(null), compiled);
             }
             else
             {
+                OutputCollector.AppendLine("Terms.Intersect start not null, " + compiled.ToDot());
                 return new AutomatonTermsEnumAnonymousInnerClassHelper(this, Iterator(null), compiled, startTerm);
             }
         }

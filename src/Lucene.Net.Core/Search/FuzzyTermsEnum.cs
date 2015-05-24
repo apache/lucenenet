@@ -180,6 +180,9 @@ namespace Lucene.Net.Search
             IList<CompiledAutomaton> runAutomata = InitAutomata(editDistance);
             if (editDistance < runAutomata.Count)
             {
+                OutputCollector.AppendLine("fte:getautomatonenum editDistance=" + editDistance + ", lastTerm=" +
+                                           lastTerm);
+
                 //if (BlockTreeTermsWriter.DEBUG) System.out.println("FuzzyTE.getAEnum: ed=" + editDistance + " lastTerm=" + (lastTerm==null ? "null" : lastTerm.utf8ToString()));
                 CompiledAutomaton compiled = runAutomata[editDistance];
                 return new AutomatonFuzzyTermsEnum(this, Terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.SubList(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/));
