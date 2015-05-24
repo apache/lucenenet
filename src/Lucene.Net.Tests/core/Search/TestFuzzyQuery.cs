@@ -235,6 +235,24 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// This test is to help experiment with float calculations and results
+        /// </summary>
+        [Test]
+        [Category("Focus")]
+        public virtual void FloatOutputs()
+        {
+            var minSimilarity = 0.0;
+
+            var scaleFactor = 1.0f / (1.0f - minSimilarity);
+
+            float similarity = 1.0f - (float)1/(float)7;
+            var max = (similarity - minSimilarity)*scaleFactor;
+
+            Console.WriteLine(max.ToString("f20"));
+
+        }
+
+        /// <summary>
         /// MultiTermQuery provides (via attribute) information about which values
         /// must be competitive to enter the priority queue.
         ///
