@@ -271,17 +271,23 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(mr);
             FuzzyQuery fq = new FuzzyQuery(new Term("field", "z123456"), 1, 0, 2, false);
             TopDocs docs = searcher.Search(fq, 2);
+            Exception ex = null;
             try
             {
-
                 Assert.AreEqual(5, docs.TotalHits); // 5 docs, from the a and b's
             }
-            catch (AssertionException)
+            catch (AssertionException e)
             {
-                Console.WriteLine("Collected output:");
-                Console.WriteLine(collector);
-                OutputCollector.Init(null);
-                throw;
+                ex = e;
+            }
+
+            Console.WriteLine("Collected output:");
+            Console.WriteLine(collector);
+            OutputCollector.Init(null);
+            
+            if (ex != null)
+            {
+                throw ex;
             }
 
             mr.Dispose();
