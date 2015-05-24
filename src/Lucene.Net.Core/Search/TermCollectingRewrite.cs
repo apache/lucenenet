@@ -50,9 +50,12 @@ namespace Lucene.Net.Search
         internal void CollectTerms(IndexReader reader, MultiTermQuery query, TermCollector collector)
         {
             IndexReaderContext topReaderContext = reader.Context;
+            OutputCollector.AppendLine("TermCollectingRewrite start, leaves=" + topReaderContext.Leaves.Count);
             IComparer<BytesRef> lastTermComp = null;
             foreach (AtomicReaderContext context in topReaderContext.Leaves)
             {
+                OutputCollector.AppendLine("TermCollectingRewrite leave=" + context);
+            
                 Fields fields = context.AtomicReader.Fields;
                 if (fields == null)
                 {
@@ -87,8 +90,7 @@ namespace Lucene.Net.Search
                 BytesRef bytes;
                 while ((bytes = termsEnum.Next()) != null)
                 {
-                    OutputCollector.AppendLine("---");
-                    OutputCollector.AppendLine("inside TermCollectingRewrite while loop");
+                    OutputCollector.AppendLine("TermCollectingRewrite while loop");
                     if (!collector.Collect(bytes))
                     {
                         return; // interrupt whole term collection, so also don't iterate other subReaders
