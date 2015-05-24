@@ -246,6 +246,8 @@ namespace Lucene.Net.Search
 
             var maxBoost = CalculateMaxBoost(MaxEdits);
 
+            OutputCollector.AppendLine("    maxboost=" + maxBoost.ToString("R"));
+
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
             while (MaxEdits > 0 && (termAfter ? Bottom >= maxBoost : Bottom > maxBoost))
