@@ -241,15 +241,17 @@ namespace Lucene.Net.Search
         [Category("Focus")]
         public virtual void FloatOutputs()
         {
-            var minSimilarity = 0.0;
+            for (var i = 0; i < 20; i++)
+            {
+                var minSimilarity = 0.0;
 
-            var scaleFactor = 1.0f / (1.0f - minSimilarity);
+                var scaleFactor = 1.0f/(1.0f - minSimilarity);
 
-            float similarity = 1.0f - (float)1/(float)7;
-            var max = (similarity - minSimilarity)*scaleFactor;
+                float similarity = 1.0f - (float) 1/(float) 7;
+                var max = (similarity - minSimilarity)*scaleFactor;
 
-            Console.WriteLine(max.ToString("f20"));
-
+                Console.WriteLine(max.ToString("f20"));
+            }
         }
 
         /// <summary>
