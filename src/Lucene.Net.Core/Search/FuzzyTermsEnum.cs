@@ -283,9 +283,7 @@ namespace Lucene.Net.Search
         private float CalculateMaxBoost(int nEdits)
         {
             float similarity = 1.0f - ((float)nEdits / (float)(TermLength));
-            var val = (similarity - MinSimilarity_Renamed) * Scale_factor;
-            OutputCollector.AppendLine("        max boost calculated: " + val.ToString("R"));
-            return val;
+            return (similarity - MinSimilarity_Renamed) * Scale_factor;
         }
 
         private BytesRef QueuedBottom = null;
