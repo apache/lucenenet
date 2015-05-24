@@ -244,21 +244,11 @@ namespace Lucene.Net.Search
 
             OutputCollector.AppendLine("    termAfter=" + termAfter + ", Bottom=" + Bottom.ToString("f20"));
 
-            var maxBoost = CalculateMaxBoost(MaxEdits);
-            
-            // this is just silliness, but worth a shot
-            for (int i = 0; i < 10; i++)
-            {
-                OutputCollector.AppendLine("    repeated calc: " + maxBoost.ToString("f20"));
-                maxBoost = CalculateMaxBoost(MaxEdits);
-            }
-
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
-            while (MaxEdits > 0 && (termAfter ? Bottom >= maxBoost : Bottom > maxBoost))
+            while (MaxEdits > 0 && (termAfter ? Bottom >= CalculateMaxBoost(MaxEdits) : Bottom > CalculateMaxBoost(MaxEdits)))
             {
                 MaxEdits--;
-                maxBoost = CalculateMaxBoost(MaxEdits);
             }
 
             OutputCollector.AppendLine("    oldMaxEdits=" + oldMaxEdits + ", maxEdits=" + MaxEdits);
