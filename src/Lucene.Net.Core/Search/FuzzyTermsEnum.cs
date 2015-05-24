@@ -252,6 +252,7 @@ namespace Lucene.Net.Search
             {
                 OutputCollector.AppendLine("    subtract.");
                 MaxEdits--;
+                maxBoost = CalculateMaxBoost(MaxEdits);
             }
 
             OutputCollector.AppendLine("    oldMaxEdits=" + oldMaxEdits + ", maxEdits=" + MaxEdits);
