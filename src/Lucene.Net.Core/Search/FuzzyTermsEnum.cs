@@ -242,14 +242,18 @@ namespace Lucene.Net.Search
             // true if the last term encountered is lexicographically equal or after the bottom term in the PQ
             bool termAfter = BottomTerm == null || (lastTerm != null && TermComparator.Compare(lastTerm, BottomTerm) >= 0);
 
-            OutputCollector.AppendLine("    termAfter=" + termAfter + ", Bottom=" + Bottom.ToString("f20"));
+            var maxBoost = CalculateMaxBoost(MaxEdits);
 
+            OutputCollector.AppendLine("    termAfter=" + termAfter + ", Bottom=" + Bottom.ToString("f20"));
+            OutputCollector.AppendLine(string.Format("    Bottom >= maxBoost: {0}, Bottom > maxBoost: {1}", Bottom >= maxBoost, Bottom > maxBoost));
+            
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
-            while (MaxEdits > 0 && (termAfter ? Bottom >= CalculateMaxBoost(MaxEdits) : Bottom > CalculateMaxBoost(MaxEdits)))
+            while (MaxEdits > 0 && (termAfter ? Bottom >= maxBoost : Bottom > maxBoost))
             {
-                OutputCollector.AppendLine("        maxBoost:" + CalculateMaxBoost(MaxEdits).ToString("f20"));
+                OutputCollector.AppendLine("        max edits subtracted");
                 MaxEdits--;
+                maxBoost = CalculateMaxBoost(MaxEdits);
             }
 
             OutputCollector.AppendLine("    oldMaxEdits=" + oldMaxEdits + ", maxEdits=" + MaxEdits);
