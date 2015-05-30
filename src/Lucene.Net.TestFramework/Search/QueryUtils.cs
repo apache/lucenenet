@@ -479,7 +479,7 @@ namespace Lucene.Net.Search
                         Assert.AreEqual(doc, scorer_.DocID(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID());
                         float skipToScore = scorer_.Score();
                         Assert.IsTrue(Math.Abs(skipToScore - scorer_.Score()) < MaxDiff, "unstable skipTo(" + i + ") score!");
-                        Assert.AreEqual(Math.Abs(score - skipToScore) < MaxDiff, "query assigned doc " + doc + " a score of <" + score + "> but skipTo(" + i + ") has <" + skipToScore + ">!");
+                        Assert.IsTrue(Math.Abs(score - skipToScore) < MaxDiff, "query assigned doc " + doc + " a score of <" + score + "> but skipTo(" + i + ") has <" + skipToScore + ">!");
 
                         // Hurry things along if they are going slow (eg
                         // if you got SimpleText codec this will kick in):
