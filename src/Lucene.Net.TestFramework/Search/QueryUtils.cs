@@ -486,8 +486,8 @@ namespace Lucene.Net.Search
                         catch (AssertionException ex)
                         {
                             Console.WriteLine("Failed, these two were deemed not equal:");
-                            Console.WriteLine(skipToScore);
-                            Console.WriteLine(scorer_.Score());
+                            Console.WriteLine(skipToScore.ToString("R"));
+                            Console.WriteLine(scorer_.Score().ToString("R"));
                             throw;
                         }
 
