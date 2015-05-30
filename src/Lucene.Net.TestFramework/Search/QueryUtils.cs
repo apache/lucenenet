@@ -465,6 +465,7 @@ namespace Lucene.Net.Search
                 }
             }
 
+            
             public override void Collect(int doc)
             {
                 float score = scorer.Score();
@@ -477,20 +478,19 @@ namespace Lucene.Net.Search
                         Weight w = s.CreateNormalizedWeight(q);
                         Scorer scorer_ = w.Scorer(Context[leafPtr], liveDocs);
                         Assert.IsTrue(scorer_.Advance(i) != DocIdSetIterator.NO_MORE_DOCS, "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
-                        Assert.AreEqual(doc, scorer_.DocID(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID());
+                        Assert.AreNotEqual(doc, scorer_.DocID(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID());
                         float skipToScore = scorer_.Score();
+                       
                         try
                         {
-                            Assert.AreEqual(skipToScore, scorer_.Score(), MaxDiff, "unstable skipTo(" + i + ") score!");
+                            Assert.IsTrue(Math.Abs(skipToScore - scorer_.Score()) < MaxDiff, "unstable skipTo(" + i + ") score!");
                         }
                         catch (AssertionException ex)
                         {
                             Console.WriteLine("Failed, these two were deemed not equal:");
                             Console.WriteLine(skipToScore.ToString("R"));
                             Console.WriteLine(scorer_.Score().ToString("R"));
-                            Console.WriteLine(((double)skipToScore).ToString("R"));
-                            Console.WriteLine(((double)scorer_.Score()).ToString("R"));
-                            
+                            Console.WriteLine("diff: " + (skipToScore - scorer_.Score()).ToString("R"));
                             throw;
                         }
 
