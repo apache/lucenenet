@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Core
 	  {
 		IList<string> stopWords = Arrays.AsList("a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with");
 		var stopSet = new CharArraySet(LuceneVersion.LUCENE_CURRENT, stopWords, false);
-		ENGLISH_STOP_WORDS_SET = CharArraySet.unmodifiableSet(stopSet);
+		ENGLISH_STOP_WORDS_SET = CharArraySet.UnmodifiableSet(stopSet);
 	  }
 
 	  /// <summary>

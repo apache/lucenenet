@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using Lucene.Net.Util;
 
@@ -70,7 +71,8 @@ namespace Lucene.Net.Analysis.Util
 	  /// <param name="ignoreCase">
 	  ///          <code>false</code> if and only if the set should be case sensitive
 	  ///          otherwise <code>true</code>. </param>
-	  public CharArraySet(Lucene.Net.Util.LuceneVersion matchVersion, int startSize, bool ignoreCase) : this(new CharArrayMap<>(matchVersion, startSize, ignoreCase))
+	  public CharArraySet(LuceneVersion matchVersion, int startSize, bool ignoreCase)
+          : this(new CharArrayMap<object>(matchVersion, startSize, ignoreCase))
 	  {
 	  }
 
@@ -85,7 +87,8 @@ namespace Lucene.Net.Analysis.Util
 	  /// <param name="ignoreCase">
 	  ///          <code>false</code> if and only if the set should be case sensitive
 	  ///          otherwise <code>true</code>. </param>
-	  public CharArraySet<T1>(LuceneVersion matchVersion, ICollection<T1> c, bool ignoreCase) : this(matchVersion, c.Count, ignoreCase)
+	  public CharArraySet(LuceneVersion matchVersion, ICollection<T> c, bool ignoreCase)
+          : this(matchVersion, c.Count, ignoreCase)
 	  {
 		AddAll(c);
 	  }
@@ -96,8 +99,8 @@ namespace Lucene.Net.Analysis.Util
 	  {
 		this.map = map;
 	  }
-
-	  /// <summary>
+      
+        /// <summary>
 	  /// Clears all entries in this set. This method is supported for reusing, but not <seealso cref="Set#remove"/>. </summary>
 	  public void Clear()
 	  {
@@ -125,16 +128,26 @@ namespace Lucene.Net.Analysis.Util
 		return map.ContainsKey(o);
 	  }
 
-	  public bool Add(object o)
+        public void CopyTo(object[] array, int arrayIndex)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool Remove(object item)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public virtual bool Add(object o)
 	  {
-		return map.put(o, PLACEHOLDER) == null;
+		return map.Put(o, PLACEHOLDER) == null;
 	  }
 
 	  /// <summary>
 	  /// Add this String into the set </summary>
 	  public virtual bool Add(string text)
 	  {
-		return map.put(text, PLACEHOLDER) == null;
+		return map.Put(text, PLACEHOLDER) == null;
 	  }
 
 	  /// <summary>
@@ -144,18 +157,20 @@ namespace Lucene.Net.Analysis.Util
 	  /// </summary>
 	  public virtual bool Add(char[] text)
 	  {
-		return map.put(text, PLACEHOLDER) == null;
+		return map.Put(text, PLACEHOLDER) == null;
 	  }
 
-        public override int Size
+        public int Count
         {
             get
             {
                 {
-                    return map.size();
+                    return map.Count;
                 }
             }
         }
+
+        public bool IsReadOnly { get; private set; }
 
         /// <summary>
 	  /// Returns an unmodifiable <seealso cref="CharArraySet"/>. This allows to provide
@@ -166,7 +181,7 @@ namespace Lucene.Net.Analysis.Util
 	  /// <returns> an new unmodifiable <seealso cref="CharArraySet"/>. </returns>
 	  /// <exception cref="NullPointerException">
 	  ///           if the given set is <code>null</code>. </exception>
-	  public static CharArraySet unmodifiableSet(CharArraySet set)
+	  public static CharArraySet UnmodifiableSet(CharArraySet set)
 	  {
 		if (set == null)
 		{
@@ -218,15 +233,21 @@ namespace Lucene.Net.Analysis.Util
 	  }
 
 	  /// <summary>
-	  /// Returns an <seealso cref="Iterator"/> for {@code char[]} instances in this set.
+	  /// Returns an <seealso cref="IEnumerator"/> for {@code char[]} instances in this set.
 	  /// </summary>
-	  public override IEnumerator<object> iterator()
-	  {
-		// use the AbstractSet#keySet()'s iterator (to not produce endless recursion)
-		return map.originalKeySet().GetEnumerator();
-	  }
+        public IEnumerator GetEnumerator()
+        {
+            // use the AbstractSet#keySet()'s iterator (to not produce endless recursion)
+            return map.originalKeySet().GetEnumerator();
+        }
 
-	  public override string ToString()
+        IEnumerator<object> IEnumerable<object>.GetEnumerator()
+        {
+            // use the AbstractSet#keySet()'s iterator (to not produce endless recursion)
+            return map.originalKeySet().GetEnumerator();
+        }
+
+        public override string ToString()
 	  {
 		var sb = new StringBuilder("[");
 		foreach (object item in this)
@@ -246,6 +267,62 @@ namespace Lucene.Net.Analysis.Util
 		}
 		return sb.Append(']').ToString();
 	  }
-	}
 
+        #region Not used by the Java implementation anyway
+        void ICollection<object>.Add(object item)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void UnionWith(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void IntersectWith(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ExceptWith(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SymmetricExceptWith(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool IsSubsetOf(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool IsSupersetOf(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool IsProperSupersetOf(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool IsProperSubsetOf(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool Overlaps(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool SetEquals(IEnumerable<object> other)
+        {
+            throw new System.NotImplementedException();
+        }
+        #endregion
+	}
 }

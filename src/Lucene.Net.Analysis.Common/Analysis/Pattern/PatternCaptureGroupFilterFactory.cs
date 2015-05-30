@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+using Lucene.Net.Analysis.Util;
 
-namespace org.apache.lucene.analysis.pattern
+namespace Lucene.Net.Analysis.Pattern
 {
 
 	/*
@@ -20,11 +20,7 @@ namespace org.apache.lucene.analysis.pattern
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using TokenFilterFactory = TokenFilterFactory;
-
-	/// <summary>
+    /// <summary>
 	/// Factory for <seealso cref="PatternCaptureGroupTokenFilter"/>. 
 	/// <pre class="prettyprint">
 	/// &lt;fieldType name="text_ptncapturegroup" class="solr.TextField" positionIncrementGap="100"&gt;
@@ -45,7 +41,7 @@ namespace org.apache.lucene.analysis.pattern
 		pattern = getPattern(args, "pattern");
 		preserveOriginal = args.ContainsKey("preserve_original") ? bool.Parse(args["preserve_original"]) : true;
 	  }
-	  public override PatternCaptureGroupTokenFilter create(TokenStream input)
+	  public override TokenStream Create(TokenStream input)
 	  {
 		return new PatternCaptureGroupTokenFilter(input, preserveOriginal, pattern);
 	  }

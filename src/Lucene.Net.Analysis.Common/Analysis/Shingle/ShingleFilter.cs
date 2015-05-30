@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using Lucene.Net.Analysis;
 
 namespace org.apache.lucene.analysis.shingle
 {
@@ -21,14 +23,6 @@ namespace org.apache.lucene.analysis.shingle
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using PositionLengthAttribute = org.apache.lucene.analysis.tokenattributes.PositionLengthAttribute;
-	using TypeAttribute = org.apache.lucene.analysis.tokenattributes.TypeAttribute;
-	using AttributeSource = org.apache.lucene.util.AttributeSource;
 
 
 	/// <summary>
@@ -329,9 +323,7 @@ namespace org.apache.lucene.analysis.shingle
 		  }
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		bool tokenAvailable = false;
 		int builtGramSize = 0;
@@ -407,8 +399,6 @@ namespace org.apache.lucene.analysis.shingle
 	  /// <param name="target"> Where to put the new token; if null, a new instance is created. </param>
 	  /// <returns> On success, the populated token; null otherwise </returns>
 	  /// <exception cref="IOException"> if the input stream has a problem </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private InputWindowToken getNextToken(InputWindowToken target) throws java.io.IOException
 	  private InputWindowToken getNextToken(InputWindowToken target)
 	  {
 		InputWindowToken newTarget = target;
@@ -507,17 +497,15 @@ namespace org.apache.lucene.analysis.shingle
 		return newTarget;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void end() throws java.io.IOException
-	  public override void end()
+	  public override void End()
 	  {
 		if (!exhausted)
 		{
-		  base.end();
+		  base.End();
 		}
 		else
 		{
-		  restoreState(endState);
+		  RestoreState(endState);
 		}
 	  }
 
@@ -530,8 +518,6 @@ namespace org.apache.lucene.analysis.shingle
 	  /// </para>
 	  /// </summary>
 	  /// <exception cref="IOException"> if there's a problem getting the next token </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void shiftInputWindow() throws java.io.IOException
 	  private void shiftInputWindow()
 	  {
 		InputWindowToken firstToken = null;
@@ -574,11 +560,9 @@ namespace org.apache.lucene.analysis.shingle
 		isOutputHere = false;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
+	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		gramSize.reset();
 		inputWindow.Clear();
 		nextInputStreamToken = null;
@@ -715,8 +699,8 @@ namespace org.apache.lucene.analysis.shingle
 		{
 			this.outerInstance = outerInstance;
 		  this.attSource = attSource;
-		  this.termAtt = attSource.getAttribute(typeof(CharTermAttribute));
-		  this.offsetAtt = attSource.getAttribute(typeof(OffsetAttribute));
+		  this.termAtt = attSource.GetAttribute(typeof(CharTermAttribute));
+		  this.offsetAtt = attSource.GetAttribute(typeof(OffsetAttribute));
 		}
 	  }
 	}

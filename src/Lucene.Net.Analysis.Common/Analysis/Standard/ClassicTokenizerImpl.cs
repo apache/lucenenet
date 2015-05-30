@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Standard
 
 	  /// <summary>
 	  /// This character denotes the end of file </summary>
-	  public const int StandardTokenizerInterface_Fields;
+	  //public const int StandardTokenizerInterface_Fields;
 
 	  /// <summary>
 	  /// initial size of the lookahead buffer </summary>
@@ -537,8 +537,6 @@ namespace Lucene.Net.Analysis.Standard
 	  /// </summary>
 	  /// <returns>      the next token </returns>
 	  /// <exception cref="java.io.IOException">  if any I/O-Error occurs </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public int getNextToken() throws java.io.IOException
 	  public virtual int NextToken
 	  {
 		  get

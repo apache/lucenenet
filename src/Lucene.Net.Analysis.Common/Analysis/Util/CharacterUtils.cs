@@ -78,6 +78,7 @@ namespace Lucene.Net.Analysis.Util
         ///           - if the value offset is negative or not less than the length of
         ///           the character sequence. </exception>
         public abstract int CodePointAt(string seq, int offset);
+        public abstract int CodePointAt(ICharSequence seq, int offset);
 
         /// <summary>
         /// Returns the code point at the given index of the char array where only elements
@@ -258,11 +259,11 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class Java5CharacterUtils : CharacterUtils
         {
-            internal Java5CharacterUtils()
-            {
-            }
-
             public override int CodePointAt(string seq, int offset)
+            {
+                return Character.CodePointAt(seq, offset);
+            }
+            public override int CodePointAt(ICharSequence seq, int offset)
             {
                 return Character.CodePointAt(seq, offset);
             }
@@ -326,13 +327,13 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class Java4CharacterUtils : CharacterUtils
         {
-            internal Java4CharacterUtils()
-            {
-            }
-
             public override int CodePointAt(string seq, int offset)
             {
                 return seq[offset];
+            }
+            public override int CodePointAt(ICharSequence seq, int offset)
+            {
+                return seq.CharAt(offset);
             }
 
             public override int CodePointAt(char[] chars, int offset, int limit)

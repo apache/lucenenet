@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Fst;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -19,21 +24,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using BytesRefHash = org.apache.lucene.util.BytesRefHash;
-	using CharsRef = org.apache.lucene.util.CharsRef;
-	using IntsRef = org.apache.lucene.util.IntsRef;
-	using UnicodeUtil = org.apache.lucene.util.UnicodeUtil;
-	using ByteSequenceOutputs = org.apache.lucene.util.fst.ByteSequenceOutputs;
-	using FST = org.apache.lucene.util.fst.FST;
-	using Arc = org.apache.lucene.util.fst.FST.Arc;
-	using BytesReader = org.apache.lucene.util.fst.FST.BytesReader;
-
-
-	/// <summary>
+    /// <summary>
 	/// Provides the ability to override any <seealso cref="KeywordAttribute"/> aware stemmer
 	/// with custom dictionary-based stemming.
 	/// </summary>
@@ -41,8 +32,8 @@ namespace org.apache.lucene.analysis.miscellaneous
 	{
 	  private readonly StemmerOverrideMap stemmerOverrideMap;
 
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAtt = addAttribute(typeof(KeywordAttribute));
+	  private readonly ICharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+	  private readonly IKeywordAttribute keywordAtt = addAttribute(typeof(KeywordAttribute));
 	  private readonly FST.BytesReader fstReader;
 	  private readonly FST.Arc<BytesRef> scratchArc = new FST.Arc<BytesRef>();
 	  private readonly CharsRef spare = new CharsRef();
@@ -55,19 +46,15 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  /// so that they will not be stemmed with stemmers down the chain.
 	  /// </para>
 	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public StemmerOverrideFilter(final org.apache.lucene.analysis.TokenStream input, final StemmerOverrideMap stemmerOverrideMap)
 	  public StemmerOverrideFilter(TokenStream input, StemmerOverrideMap stemmerOverrideMap) : base(input)
 	  {
 		this.stemmerOverrideMap = stemmerOverrideMap;
 		fstReader = stemmerOverrideMap.BytesReader;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
-		if (input.incrementToken())
+		if (input.IncrementToken())
 		{
 		  if (fstReader == null)
 		  {
@@ -76,15 +63,11 @@ namespace org.apache.lucene.analysis.miscellaneous
 		  }
 		  if (!keywordAtt.Keyword) // don't muck with already-keyworded terms
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.BytesRef stem = stemmerOverrideMap.get(termAtt.buffer(), termAtt.length(), scratchArc, fstReader);
-			BytesRef stem = stemmerOverrideMap.get(termAtt.buffer(), termAtt.length(), scratchArc, fstReader);
+			BytesRef stem = stemmerOverrideMap.get(termAtt.Buffer(), termAtt.Length, scratchArc, fstReader);
 			if (stem != null)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] buffer = spare.chars = termAtt.buffer();
-			  char[] buffer = spare.chars = termAtt.buffer();
-			  UnicodeUtil.UTF8toUTF16(stem.bytes, stem.offset, stem.length, spare);
+			  char[] buffer = spare.chars = termAtt.Buffer();
+			  UnicodeUtil.UTF8toUTF16(stem.Bytes, stem.Offset, stem.Length, spare);
 			  if (spare.chars != buffer)
 			  {
 				termAtt.copyBuffer(spare.chars, spare.offset, spare.length);
@@ -202,17 +185,13 @@ namespace org.apache.lucene.analysis.miscellaneous
 		/// <param name="input"> the input char sequence </param>
 		/// <param name="output"> the stemmer override output char sequence </param>
 		/// <returns> <code>false</code> iff the input has already been added to this builder otherwise <code>true</code>. </returns>
-		public virtual bool add(CharSequence input, CharSequence output)
+		public virtual bool add(ICharSequence input, ICharSequence output)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = input.length();
 		  int length = input.length();
 		  if (ignoreCase)
 		  {
 			// convert on the fly to lowercase
 			charsSpare.grow(length);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] buffer = charsSpare.chars;
 			char[] buffer = charsSpare.chars;
 			for (int i = 0; i < length;)
 			{

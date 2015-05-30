@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Util
 	  {
 		matchVersion = version;
 		// analyzers should use char array set for stopwords!
-		this.stopwords = stopwords == null ? CharArraySet.EMPTY_SET : CharArraySet.unmodifiableSet(CharArraySet.Copy(version, stopwords));
+		this.stopwords = stopwords == null ? CharArraySet.EMPTY_SET : CharArraySet.UnmodifiableSet(CharArraySet.Copy(version, stopwords));
 	  }
 
 	  /// <summary>

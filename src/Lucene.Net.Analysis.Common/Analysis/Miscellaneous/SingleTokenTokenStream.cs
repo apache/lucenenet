@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -19,11 +21,7 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using AttributeImpl = org.apache.lucene.util.AttributeImpl;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-
-	/// <summary>
+    /// <summary>
 	/// A <seealso cref="TokenStream"/> containing a single token.
 	/// </summary>
 	public sealed class SingleTokenTokenStream : TokenStream
@@ -39,13 +37,13 @@ namespace org.apache.lucene.analysis.miscellaneous
 	  {
 
 		Debug.Assert(token != null);
-		this.singleToken = token.clone();
+		this.singleToken = token.Clone();
 
-		tokenAtt = (AttributeImpl) addAttribute(typeof(CharTermAttribute));
-		assert(tokenAtt is Token);
+        tokenAtt = AddAttribute <ICharTermAttribute>();
+		Debug.Assert(tokenAtt is Token);
 	  }
 
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
 		if (exhausted)
 		{
@@ -53,27 +51,22 @@ namespace org.apache.lucene.analysis.miscellaneous
 		}
 		else
 		{
-		  clearAttributes();
-		  singleToken.copyTo(tokenAtt);
+		  ClearAttributes();
+		  singleToken.CopyTo(tokenAtt);
 		  exhausted = true;
 		  return true;
 		}
 	  }
 
-	  public override void reset()
+	  public override void Reset()
 	  {
 		exhausted = false;
 	  }
 
-	  public Token getToken()
-	  {
-		return singleToken.clone();
-	  }
-
-	  public void setToken(Token token)
-	  {
-		this.singleToken = token.clone();
-	  }
+        public Token Token
+        {
+            get { return (Token) singleToken.Clone(); }
+            set { this.singleToken = (Token) value.Clone(); }
+        }
 	}
-
 }

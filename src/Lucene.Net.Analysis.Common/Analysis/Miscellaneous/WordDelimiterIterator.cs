@@ -1,7 +1,4 @@
-﻿using Lucene.Net.Analysis.Miscellaneous;
-using Lucene.Net.Support;
-
-namespace org.apache.lucene.analysis.miscellaneous
+﻿namespace Lucene.Net.Analysis.Miscellaneous
 {
 
 	/*
@@ -20,10 +17,6 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using org.apache.lucene.analysis.miscellaneous;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter.*;
 
 	/// <summary>
 	/// A BreakIterator-like API for iterating over subwords in text, according to WordDelimiterFilter rules.

@@ -25,7 +25,7 @@ namespace org.apache.lucene.analysis.util
 	/// A CharacterIterator used internally for use with <seealso cref="BreakIterator"/>
 	/// @lucene.internal
 	/// </summary>
-	public abstract class CharArrayIterator : CharacterIterator
+	public abstract class CharArrayIterator //: CharacterIterator
 	{
 	  private char[] array;
 	  private int start;
@@ -63,8 +63,6 @@ namespace org.apache.lucene.analysis.util
 	  /// <param name="array"> text buffer to examine </param>
 	  /// <param name="start"> offset into buffer </param>
 	  /// <param name="length"> maximum length to examine </param>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public void setText(final char array[] , int start, int length)
 	  public virtual void setText(char[] array, int start, int length)
 	  {
 		this.array = array;
@@ -74,17 +72,17 @@ namespace org.apache.lucene.analysis.util
 		this.limit = start + length;
 	  }
 
-	  public override char current()
+	  public override char Current()
 	  {
 		return (index == limit) ? DONE : jreBugWorkaround(array[index]);
 	  }
 
 	  protected internal abstract char jreBugWorkaround(char ch);
 
-	  public override char first()
+	  public override char First()
 	  {
 		index = start;
-		return current();
+		return Current();
 	  }
 
 	  public override int BeginIndex
@@ -111,13 +109,13 @@ namespace org.apache.lucene.analysis.util
 		  }
 	  }
 
-	  public override char last()
+	  public override char Last()
 	  {
 		index = (limit == start) ? limit : limit - 1;
 		return current();
 	  }
 
-	  public override char next()
+	  public override char Next()
 	  {
 		if (++index >= limit)
 		{
@@ -130,7 +128,7 @@ namespace org.apache.lucene.analysis.util
 		}
 	  }
 
-	  public override char previous()
+	  public override char Previous()
 	  {
 		if (--index < start)
 		{
@@ -143,7 +141,7 @@ namespace org.apache.lucene.analysis.util
 		}
 	  }
 
-	  public override char setIndex(int position)
+	  public override char SetIndex(int position)
 	  {
 		if (position < BeginIndex || position > EndIndex)
 		{
@@ -153,7 +151,7 @@ namespace org.apache.lucene.analysis.util
 		return current();
 	  }
 
-	  public override CharArrayIterator clone()
+	  public override CharArrayIterator Clone()
 	  {
 		try
 		{

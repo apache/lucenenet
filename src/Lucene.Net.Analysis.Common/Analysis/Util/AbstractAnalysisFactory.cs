@@ -93,12 +93,13 @@ namespace Lucene.Net.Analysis.Util
         }
 
         public virtual string require(IDictionary<string, string> args, string name)
-        {
-            string s = args.Remove(name);
-            if (s == null)
+        {            
+            string s;
+            if (!args.TryGetValue(name, out s))
             {
                 throw new System.ArgumentException("Configuration Error: missing parameter '" + name + "'");
             }
+            args.Remove(name);
             return s;
         }
         public virtual string require(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
@@ -134,14 +135,12 @@ namespace Lucene.Net.Analysis.Util
                 throw new System.ArgumentException("Configuration Error: '" + name + "' value must be one of " + allowedValues);
             }
         }
-        public virtual string get(IDictionary<string, string> args, string name)
+        public virtual string get(IDictionary<string, string> args, string name, string defaultVal = null)
         {
-            return args.Remove(name); // defaultVal = null
-        }
-        public virtual string get(IDictionary<string, string> args, string name, string defaultVal)
-        {
-            string s = args.Remove(name);
-            return s == null ? defaultVal : s;
+            string s;
+            if (args.TryGetValue(name, out s))
+                args.Remove(name);
+            return s ?? defaultVal;
         }
         public virtual string get(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
         {
@@ -153,9 +152,10 @@ namespace Lucene.Net.Analysis.Util
         }
         public virtual string get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal, bool caseSensitive)
         {
-            string s = args.Remove(name);
-            if (s == null)
+            string s = null;
+            if (args.TryGetValue(name, out s))
             {
+                args.Remove(name);
                 return defaultVal;
             }
             else
@@ -177,7 +177,8 @@ namespace Lucene.Net.Analysis.Util
                         }
                     }
                 }
-                throw new System.ArgumentException("Configuration Error: '" + name + "' value must be one of " + allowedValues);
+                throw new System.ArgumentException("Configuration Error: '" + name + "' value must be one of " +
+                                                   allowedValues);
             }
         }
 
@@ -359,7 +360,7 @@ namespace Lucene.Net.Analysis.Util
             IList<string> result = new List<string>();
             foreach (string file in fileNames.Split("(?<!\\\\),", true))
             {
-                result.Add(file.replaceAll("\\\\(?=,)", ""));
+                result.Add(file.ReplaceAll("\\\\(?=,)", ""));
             }
 
             return result;

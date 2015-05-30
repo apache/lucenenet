@@ -16,94 +16,97 @@
  */
 using System;
 using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
     /// <summary>
-	/// Trims leading and trailing whitespace from Tokens in the stream.
-	/// <para>As of Lucene 4.4, this filter does not support updateOffsets=true anymore
-	/// as it can lead to broken token streams.
-	/// </para>
-	/// </summary>
-	public sealed class TrimFilter : TokenFilter
-	{
+    /// Trims leading and trailing whitespace from Tokens in the stream.
+    /// <para>As of Lucene 4.4, this filter does not support updateOffsets=true anymore
+    /// as it can lead to broken token streams.
+    /// </para>
+    /// </summary>
+    public sealed class TrimFilter : TokenFilter
+    {
 
-	  internal readonly bool updateOffsets;
-	  private readonly ICharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly IOffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
+        internal readonly bool updateOffsets;
+        private readonly ICharTermAttribute termAtt;
+        private readonly IOffsetAttribute offsetAtt;
 
-	  /// <summary>
-	  /// Create a new <seealso cref="TrimFilter"/>. </summary>
-	  /// <param name="version">       the Lucene match version </param>
-	  /// <param name="in">            the stream to consume </param>
-	  /// <param name="updateOffsets"> whether to update offsets </param>
-	  /// @deprecated Offset updates are not supported anymore as of Lucene 4.4. 
-	  [Obsolete("Offset updates are not supported anymore as of Lucene 4.4.")]
-	  public TrimFilter(Version version, TokenStream @in, bool updateOffsets) : base(@in)
-	  {
-		if (updateOffsets && version.onOrAfter(Version.LUCENE_44))
-		{
-		  throw new System.ArgumentException("updateOffsets=true is not supported anymore as of Lucene 4.4");
-		}
-		this.updateOffsets = updateOffsets;
-	  }
+        /// <summary>
+        /// Create a new <seealso cref="TrimFilter"/>. </summary>
+        /// <param name="version">       the Lucene match version </param>
+        /// <param name="in">            the stream to consume </param>
+        /// <param name="updateOffsets"> whether to update offsets </param>
+        /// @deprecated Offset updates are not supported anymore as of Lucene 4.4. 
+        [Obsolete("Offset updates are not supported anymore as of Lucene 4.4.")]
+        public TrimFilter(LuceneVersion version, TokenStream @in, bool updateOffsets)
+            : base(@in)
+        {
+            if (updateOffsets && version.OnOrAfter(LuceneVersion.LUCENE_44))
+            {
+                throw new System.ArgumentException("updateOffsets=true is not supported anymore as of Lucene 4.4");
+            }
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            this.updateOffsets = updateOffsets;
+        }
 
-	  /// <summary>
-	  /// Create a new <seealso cref="TrimFilter"/> on top of <code>in</code>. </summary>
-	  public TrimFilter(Version version, TokenStream @in) : this(version, @in, false)
-	  {
-	  }
+        /// <summary>
+        /// Create a new <seealso cref="TrimFilter"/> on top of <code>in</code>. </summary>
+        public TrimFilter(LuceneVersion version, TokenStream @in)
+            : this(version, @in, false)
+        {
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (!input.incrementToken())
-		{
-			return false;
-		}
+        public override bool IncrementToken()
+        {
+            if (!input.IncrementToken())
+            {
+                return false;
+            }
 
-		char[] termBuffer = termAtt.buffer();
-		int len = termAtt.length();
-		//TODO: Is this the right behavior or should we return false?  Currently, "  ", returns true, so I think this should
-		//also return true
-		if (len == 0)
-		{
-		  return true;
-		}
-		int start = 0;
-		int end = 0;
-		int endOff = 0;
+            char[] termBuffer = termAtt.Buffer();
+            int len = termAtt.Length;
+            //TODO: Is this the right behavior or should we return false?  Currently, "  ", returns true, so I think this should
+            //also return true
+            if (len == 0)
+            {
+                return true;
+            }
+            int start = 0;
+            int end = 0;
+            int endOff = 0;
 
-		// eat the first characters
-		for (start = 0; start < len && char.IsWhiteSpace(termBuffer[start]); start++)
-		{
-		}
-		// eat the end characters
-		for (end = len; end >= start && char.IsWhiteSpace(termBuffer[end - 1]); end--)
-		{
-		  endOff++;
-		}
-		if (start > 0 || end < len)
-		{
-		  if (start < end)
-		  {
-			termAtt.copyBuffer(termBuffer, start, (end - start));
-		  }
-		  else
-		  {
-			termAtt.setEmpty();
-		  }
-		  if (updateOffsets && len == offsetAtt.endOffset() - offsetAtt.startOffset())
-		  {
-			int newStart = offsetAtt.startOffset() + start;
-			int newEnd = offsetAtt.endOffset() - (start < end ? endOff:0);
-			offsetAtt.setOffset(newStart, newEnd);
-		  }
-		}
+            // eat the first characters
+            for (start = 0; start < len && char.IsWhiteSpace(termBuffer[start]); start++)
+            {
+            }
+            // eat the end characters
+            for (end = len; end >= start && char.IsWhiteSpace(termBuffer[end - 1]); end--)
+            {
+                endOff++;
+            }
+            if (start > 0 || end < len)
+            {
+                if (start < end)
+                {
+                    termAtt.CopyBuffer(termBuffer, start, (end - start));
+                }
+                else
+                {
+                    termAtt.SetEmpty();
+                }
+                if (updateOffsets && len == offsetAtt.EndOffset() - offsetAtt.StartOffset())
+                {
+                    int newStart = offsetAtt.StartOffset() + start;
+                    int newEnd = offsetAtt.EndOffset() - (start < end ? endOff : 0);
+                    offsetAtt.SetOffset(newStart, newEnd);
+                }
+            }
 
-		return true;
-	  }
-	}
+            return true;
+        }
+    }
 
 }

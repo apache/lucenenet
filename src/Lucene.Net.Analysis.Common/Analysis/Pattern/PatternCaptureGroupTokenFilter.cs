@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
 
-namespace org.apache.lucene.analysis.pattern
+namespace Lucene.Net.Analysis.Pattern
 {
 
 	/*
@@ -19,12 +20,7 @@ namespace org.apache.lucene.analysis.pattern
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using CharsRef = org.apache.lucene.util.CharsRef;
-
-	/// <summary>
+    /// <summary>
 	/// CaptureGroup uses Java regexes to emit multiple tokens - one for each capture
 	/// group in one or more patterns.
 	/// 
@@ -69,7 +65,7 @@ namespace org.apache.lucene.analysis.pattern
 	public sealed class PatternCaptureGroupTokenFilter : TokenFilter
 	{
 
-	  private readonly CharTermAttribute charTermAttr = addAttribute(typeof(CharTermAttribute));
+	  private readonly ICharTermAttribute charTermAttr = addAttribute(typeof(CharTermAttribute));
 	  private readonly PositionIncrementAttribute posAttr = addAttribute(typeof(PositionIncrementAttribute));
 	  private State state;
 	  private readonly Matcher[] matchers;
@@ -118,11 +114,7 @@ namespace org.apache.lucene.analysis.pattern
 		  {
 			while (currentGroup[i] < groupCounts[i] + 1)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int start = matcher.start(currentGroup[i]);
 			  int start = matcher.start(currentGroup[i]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = matcher.end(currentGroup[i]);
 			  int end = matcher.end(currentGroup[i]);
 			  if (start == end || preserveOriginal && start == 0 && spare.length == end)
 			  {
@@ -176,8 +168,8 @@ namespace org.apache.lucene.analysis.pattern
 
 		char[] buffer = charTermAttr.buffer();
 		int length = charTermAttr.length();
-		spare.copyChars(buffer, 0, length);
-		state = captureState();
+		spare.CopyChars(buffer, 0, length);
+		state = CaptureState();
 
 		for (int i = 0; i < matchers.Length; i++)
 		{
