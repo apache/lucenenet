@@ -479,19 +479,15 @@ namespace Lucene.Net.Search
                         Assert.IsTrue(scorer_.Advance(i) != DocIdSetIterator.NO_MORE_DOCS, "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
                         Assert.AreEqual(doc, scorer_.DocID(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID());
                         float skipToScore = scorer_.Score();
-                        float secondScore = scorer_.Score();
-                        sb.AppendLine("Comparing equality:");
-                        sb.AppendLine(skipToScore.ToString());
-                        sb.AppendLine(secondScore.ToString());
                         try
                         {
-                            Assert.IsTrue(Math.Abs(skipToScore - secondScore) < MaxDiff,
-                                          "unstable skipTo(" + i + ") score!");
+                            Assert.IsTrue(Math.Abs(skipToScore - scorer_.Score()) < MaxDiff, "unstable skipTo(" + i + ") score!");
                         }
                         catch (AssertionException ex)
                         {
-                            Console.WriteLine("Failed. Collected output:");
-                            Console.WriteLine(sb.ToString());
+                            Console.WriteLine("Failed, these two were deemed not equal:");
+                            Console.WriteLine(skipToScore);
+                            Console.WriteLine(scorer_.Score());
                             throw;
                         }
 
