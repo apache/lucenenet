@@ -470,6 +470,7 @@ namespace Lucene.Net.Search
                 float score = scorer.Score();
                 try
                 {
+                    var sb = new StringBuilder();
                     long startMS = Environment.TickCount;
                     for (int i = LastDoc[0] + 1; i <= doc; i++)
                     {
@@ -478,7 +479,22 @@ namespace Lucene.Net.Search
                         Assert.IsTrue(scorer_.Advance(i) != DocIdSetIterator.NO_MORE_DOCS, "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
                         Assert.AreEqual(doc, scorer_.DocID(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID());
                         float skipToScore = scorer_.Score();
-                        Assert.IsTrue(Math.Abs(skipToScore - scorer_.Score()) < MaxDiff, "unstable skipTo(" + i + ") score!");
+                        float secondScore = scorer_.Score();
+                        sb.AppendLine("Comparing equality:");
+                        sb.AppendLine(skipToScore.ToString());
+                        sb.AppendLine(secondScore.ToString());
+                        try
+                        {
+                            Assert.IsTrue(Math.Abs(skipToScore - secondScore) < MaxDiff,
+                                          "unstable skipTo(" + i + ") score!");
+                        }
+                        catch (AssertionException ex)
+                        {
+                            Console.WriteLine("Failed. Collected output:");
+                            Console.WriteLine(sb.ToString());
+                            throw;
+                        }
+
                         Assert.IsTrue(Math.Abs(score - skipToScore) < MaxDiff, "query assigned doc " + doc + " a score of <" + score + "> but skipTo(" + i + ") has <" + skipToScore + ">!");
 
                         // Hurry things along if they are going slow (eg
