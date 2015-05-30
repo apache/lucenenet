@@ -478,7 +478,7 @@ namespace Lucene.Net.Search
                         Weight w = s.CreateNormalizedWeight(q);
                         Scorer scorer_ = w.Scorer(Context[leafPtr], liveDocs);
                         Assert.IsTrue(scorer_.Advance(i) != DocIdSetIterator.NO_MORE_DOCS, "query collected " + doc + " but skipTo(" + i + ") says no more docs!");
-                        Assert.AreNotEqual(doc, scorer_.DocID(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID());
+                        Assert.AreEqual(doc, scorer_.DocID(), "query collected " + doc + " but skipTo(" + i + ") got to " + scorer_.DocID());
                         float skipToScore = scorer_.Score();
                        
                         try
