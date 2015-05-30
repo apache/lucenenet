@@ -488,6 +488,9 @@ namespace Lucene.Net.Search
                             Console.WriteLine("Failed, these two were deemed not equal:");
                             Console.WriteLine(skipToScore.ToString("R"));
                             Console.WriteLine(scorer_.Score().ToString("R"));
+                            Console.WriteLine(((double)skipToScore).ToString("R"));
+                            Console.WriteLine(((double)scorer_.Score()).ToString("R"));
+                            
                             throw;
                         }
 
