@@ -481,7 +481,7 @@ namespace Lucene.Net.Search
                         float skipToScore = scorer_.Score();
                         try
                         {
-                            Assert.IsTrue(Math.Abs(skipToScore - scorer_.Score()) < MaxDiff, "unstable skipTo(" + i + ") score!");
+                            Assert.AreEqual(skipToScore, scorer_.Score(), MaxDiff, "unstable skipTo(" + i + ") score!");
                         }
                         catch (AssertionException ex)
                         {
