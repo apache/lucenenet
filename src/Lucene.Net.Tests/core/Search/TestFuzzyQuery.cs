@@ -243,8 +243,8 @@ namespace Lucene.Net.Search
         {
             for (var i = 0; i < 20; i++)
             {
-                var minSimilarity = 0.0;
-
+                var minSimilarity = 0.0f;
+                
                 var scaleFactor = 1.0f/(1.0f - minSimilarity);
 
                 float similarity = 1.0f - (float) 1/(float) 7;
