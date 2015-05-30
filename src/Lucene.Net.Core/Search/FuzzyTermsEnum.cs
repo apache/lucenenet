@@ -246,6 +246,10 @@ namespace Lucene.Net.Search
             // for some edit distance, keep dropping the max edit distance.
             while (MaxEdits > 0 && (termAfter ? Bottom >= CalculateMaxBoost(MaxEdits) : Bottom > CalculateMaxBoost(MaxEdits)))
             {
+                var intBottom = Number.FloatToIntBits(Bottom);
+                var maxBoost = Number.FloatToIntBits(CalculateMaxBoost(MaxEdits));
+
+                OutputCollector.AppendLine("        max edits subtracted. Bottom (int): " + intBottom + ", maxBoost (int): " + maxBoost);
                 MaxEdits--;
             }
 
