@@ -235,12 +235,12 @@ namespace Lucene.Net.Search
         /// </summary>
         private void BottomChanged(BytesRef lastTerm, bool init)
         {
-            OutputCollector.AppendLine("FuzzyTermsEnum bottom changed, lastTerm=" + lastTerm + ", init=" + init + ", MaxEdits=" + MaxEdits);
-                
             int oldMaxEdits = MaxEdits;
 
             // true if the last term encountered is lexicographically equal or after the bottom term in the PQ
             bool termAfter = BottomTerm == null || (lastTerm != null && TermComparator.Compare(lastTerm, BottomTerm) >= 0);
+
+            OutputCollector.AppendLine("FuzzyTermsEnum bottom changed, termAfter=" + termAfter + ", MaxEdits=" + MaxEdits);
 
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
@@ -253,7 +253,7 @@ namespace Lucene.Net.Search
                 MaxEdits--;
             }
 
-            OutputCollector.AppendLine("    oldMaxEdits=" + oldMaxEdits + ", maxEdits=" + MaxEdits);
+            OutputCollector.AppendLine("    oldMaxEdits=" + oldMaxEdits + ", maxEdits=" + MaxEdits + ", init=" + init);
             if (oldMaxEdits != MaxEdits || init) // the maximum n has changed
             {
                 OutputCollector.AppendLine("    Max distance changed");
