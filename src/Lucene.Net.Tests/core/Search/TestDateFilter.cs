@@ -51,6 +51,8 @@ namespace Lucene.Net.Search
 
             try
             {
+                OutputCollector.Init(new System.Text.StringBuilder());
+
                 Document doc = new Document();
                 // add time that is in the past
                 doc.Add(NewStringField("datefield", DateTools.TimeToString(now - 1000, DateTools.Resolution.MILLISECOND),
