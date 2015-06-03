@@ -49,12 +49,22 @@ namespace Lucene.Net.Search
 
             long now = Environment.TickCount / TimeSpan.TicksPerMillisecond;
 
-            Document doc = new Document();
-            // add time that is in the past
-            doc.Add(NewStringField("datefield", DateTools.TimeToString(now - 1000, DateTools.Resolution.MILLISECOND), Field.Store.YES));
-            doc.Add(NewTextField("body", "Today is a very sunny day in New York City", Field.Store.YES));
-            writer.AddDocument(doc);
+            try
+            {
+                Document doc = new Document();
+                // add time that is in the past
+                doc.Add(NewStringField("datefield", DateTools.TimeToString(now - 1000, DateTools.Resolution.MILLISECOND),
+                                       Field.Store.YES));
+                doc.Add(NewTextField("body", "Today is a very sunny day in New York City", Field.Store.YES));
+                writer.AddDocument(doc);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Output collected:");
+                Console.WriteLine(OutputCollector.Current);
 
+                throw;
+            }
             IndexReader reader = writer.Reader;
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(reader);
@@ -98,6 +108,7 @@ namespace Lucene.Net.Search
         }
 
         [Test]
+        [Category("Focus")]
         public void Test()
         {
             // noop, required for the before and after tests to run

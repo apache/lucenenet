@@ -78,6 +78,8 @@ namespace Lucene.Net.Documents
         ///  depending on <code>resolution</code>; using GMT as timezone </returns>
         public static string TimeToString(long time, Resolution resolution)
         {
+            OutputCollector.Current.AppendLine("Received time: " + time);
+
             DateTime date = new DateTime(Round(time, resolution));
 
             if (resolution == Resolution.YEAR)
