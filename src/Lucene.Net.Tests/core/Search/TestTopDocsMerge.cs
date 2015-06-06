@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Lucene.Net.Documents;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Search
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
-    public class TestTopDocsMerge : LuceneTestCase
+    public class TestTopDocsMerge : LuceneTestCaseWithReducedFloatPrecision
     {
         private class ShardSearcher : IndexSearcher
         {

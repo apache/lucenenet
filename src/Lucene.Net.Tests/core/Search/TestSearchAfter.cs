@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -51,7 +52,7 @@ namespace Lucene.Net.Search
     /// Tests IndexSearcher's searchAfter() method
     /// </summary>
     [TestFixture]
-    public class TestSearchAfter : LuceneTestCase
+    public class TestSearchAfter : LuceneTestCaseWithReducedFloatPrecision
     {
         private Directory Dir;
         private IndexReader Reader;

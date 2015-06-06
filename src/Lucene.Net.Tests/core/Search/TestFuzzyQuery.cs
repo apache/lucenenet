@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -39,7 +40,7 @@ namespace Lucene.Net.Search
     ///
     /// </summary>
     [TestFixture]
-    public class TestFuzzyQuery : LuceneTestCase
+    public class TestFuzzyQuery : LuceneTestCaseWithReducedFloatPrecision
     {
         [Test]
         public virtual void TestFuzziness()
