@@ -419,6 +419,7 @@
     <Compile Include="Store\TestHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\FloatUtils.cs" />
     <Compile Include="Support\RandomizedTest.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -452,6 +453,7 @@
     <Compile Include="Util\Paths.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\LuceneTestCaseWithReducedFloatPrecision.cs" />
     <Compile Include="Util\TestRuleSetupAndRestoreClassEnv.cs">
       <SubType>Code</SubType>
     </Compile>

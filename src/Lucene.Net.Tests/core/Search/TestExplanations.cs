@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Util;
 using NUnit.Framework;
 
 namespace Lucene.Net.Search
@@ -48,7 +49,7 @@ namespace Lucene.Net.Search
     /// </summary>
     /// <seealso cref= "Subclasses for actual tests" </seealso>
     [TestFixture]
-    public class TestExplanations : LuceneTestCase
+    public class TestExplanations : LuceneTestCaseWithReducedFloatPrecision
     {
         protected internal static IndexSearcher Searcher;
         protected internal static IndexReader Reader;

@@ -246,7 +246,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(s.Contains("no second pass score"));
             Assert.IsFalse(s.Contains("= second pass score"));
             Assert.IsTrue(s.Contains("NON-MATCH"));
-            Assert.AreEqual(hits2.ScoreDocs[1].Score, explain.Value, 0.0f);
+            Assert.IsTrue(Math.Abs(hits2.ScoreDocs[1].Score - explain.Value) < 0.0000001f);
 
             r.Dispose();
             dir.Dispose();
