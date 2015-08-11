@@ -399,10 +399,10 @@ namespace Lucene.Net.Queries
             }
         }
 
-        public override Weight CreateWeight(IndexSearcher searcher)
-        {                
-            return new CustomWeight(this, searcher);
-        }
+        //            public override Weight CreateWeight(IndexSearcher searcher)
+        //            {                
+        //                return new CustomWeight(this, searcher);
+        //            }
 
         /// <summary>
         /// Checks if this is strict custom scoring.
