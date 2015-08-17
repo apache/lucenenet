@@ -158,7 +158,7 @@ namespace Lucene.Net.Join
 
             public override bool AcceptsDocsOutOfOrder()
             {
-                throw new NotImplementedException();
+                return base.AcceptsDocsOutOfOrder();
             }
 
             internal class Avg : Sv

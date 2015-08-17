@@ -52,6 +52,7 @@
     <Compile Include="TestBlockJoin.cs" />
     <Compile Include="TestBlockJoinSorting.cs" />
     <Compile Include="TestBlockJoinValidation.cs" />
+    <Compile Include="TestJoinUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj">

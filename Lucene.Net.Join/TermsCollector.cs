@@ -120,7 +120,7 @@ namespace Lucene.Net.Join
 
             public override bool AcceptsDocsOutOfOrder()
             {
-                throw new System.NotImplementedException();
+                return base.AcceptsDocsOutOfOrder();
             }
         }
     }
