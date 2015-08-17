@@ -390,7 +390,7 @@ namespace Lucene.Net.Join
 
         public override object Clone()
         {
-            return new ToChildBlockJoinQuery((ToChildBlockJoinQuery) _origParentQuery.Clone(), _parentsFilter, _doScores);
+            return new ToChildBlockJoinQuery((Query) _origParentQuery.Clone(), _parentsFilter, _doScores);
         }
     }
 }

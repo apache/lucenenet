@@ -34,11 +34,11 @@ namespace Lucene.Net.Join
         private readonly Filter _childFilter;
         private readonly int _spareSlot;
 
-        private FieldComparator<object> _wrappedComparator;
+        private FieldComparator _wrappedComparator;
         private FixedBitSet _parentDocuments;
         private FixedBitSet _childDocuments;
 
-        internal ToParentBlockJoinFieldComparator(FieldComparator<object> wrappedComparator, Filter parentFilter, Filter childFilter, int spareSlot)
+        private ToParentBlockJoinFieldComparator(FieldComparator wrappedComparator, Filter parentFilter, Filter childFilter, int spareSlot)
         {
             _wrappedComparator = wrappedComparator;
             _parentFilter = parentFilter;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Join
                 _parentDocuments = iterator != null ? ToFixedBitSet(iterator, context.AtomicReader.MaxDoc) : null;
             }
 
-            _wrappedComparator = _wrappedComparator.SetNextReader(context) as FieldComparator<object>;
+            _wrappedComparator = _wrappedComparator.SetNextReader(context);
             return this;
         }
 
@@ -137,7 +137,8 @@ namespace Lucene.Net.Join
             /// <param name="childFilter">Filter that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparator that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
-            public Lowest(FieldComparator<object> wrappedComparator, Filter parentFilter, Filter childFilter, int spareSlot) : base(wrappedComparator, parentFilter, childFilter, spareSlot)
+            public Lowest(FieldComparator wrappedComparator, Filter parentFilter, Filter childFilter, int spareSlot) 
+                : base(wrappedComparator, parentFilter, childFilter, spareSlot)
             {
             }
             
@@ -271,7 +272,8 @@ namespace Lucene.Net.Join
             /// <param name="childFilter">Filter that defines which child / nested documents participates in sorting. </param>
             /// <param name="spareSlot">The extra slot inside the wrapped comparator that is used to compare which nested document
             ///                  inside the parent document scope is most competitive. </param>
-            public Highest(FieldComparator<object> wrappedComparator, Filter parentFilter, Filter childFilter, int spareSlot) : base(wrappedComparator, parentFilter, childFilter, spareSlot)
+            public Highest(FieldComparator wrappedComparator, Filter parentFilter, Filter childFilter, int spareSlot) 
+                : base(wrappedComparator, parentFilter, childFilter, spareSlot)
             {
             }
             

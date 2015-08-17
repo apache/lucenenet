@@ -53,6 +53,7 @@
     <Compile Include="ToParentBlockJoinCollector.cs" />
     <Compile Include="ToParentBlockJoinFieldComparator.cs" />
     <Compile Include="ToParentBlockJoinQuery.cs" />
+    <Compile Include="ToParentBlockJoinSortField.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj">

@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Join", "Lucene.N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Grouping", "Lucene.Net.Grouping\Lucene.Net.Grouping.csproj", "{02BAB603-067D-48B1-AEDD-316849652568}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Join", "Lucene.Net.Tests.Join\Lucene.Net.Tests.Join.csproj", "{4C1B794F-8158-45E6-85B3-2C46569BEBC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -207,6 +209,18 @@ Global
 		{02BAB603-067D-48B1-AEDD-316849652568}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{02BAB603-067D-48B1-AEDD-316849652568}.Release|x86.ActiveCfg = Release|Any CPU
 		{02BAB603-067D-48B1-AEDD-316849652568}.Release|x86.Build.0 = Release|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Debug|x86.Build.0 = Debug|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Release|x86.ActiveCfg = Release|Any CPU
+		{4C1B794F-8158-45E6-85B3-2C46569BEBC2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
