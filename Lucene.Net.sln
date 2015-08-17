@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Codecs.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Join", "Lucene.Net.Join\Lucene.Net.Join.csproj", "{E8A339C7-FCF6-4A72-8586-56D8961D7B99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Grouping", "Lucene.Net.Grouping\Lucene.Net.Grouping.csproj", "{02BAB603-067D-48B1-AEDD-316849652568}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -193,6 +195,18 @@ Global
 		{E8A339C7-FCF6-4A72-8586-56D8961D7B99}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E8A339C7-FCF6-4A72-8586-56D8961D7B99}.Release|x86.ActiveCfg = Release|Any CPU
 		{E8A339C7-FCF6-4A72-8586-56D8961D7B99}.Release|x86.Build.0 = Release|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Debug|x86.Build.0 = Debug|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Release|x86.ActiveCfg = Release|Any CPU
+		{02BAB603-067D-48B1-AEDD-316849652568}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

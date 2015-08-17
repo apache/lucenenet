@@ -28,9 +28,9 @@ namespace Lucene.Net.Search
         // had to change from internal to public, due to public accessability of FieldValueHitQueue
         public class Entry : ScoreDoc
         {
-            internal int Slot;
+            public int Slot;
 
-            internal Entry(int slot, int doc, float score)
+            public Entry(int slot, int doc, float score)
                 : base(doc, score)
             {
                 this.Slot = slot;
