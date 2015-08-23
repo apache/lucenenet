@@ -607,7 +607,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static Random Random()
         {
-            return _random ?? (_random = new Random(1));
+            return _random ?? (_random = new Random(/* LUCENENET TODO seed */));
             //return RandomizedContext.Current.Random;
         }
 
