@@ -1537,15 +1537,7 @@ namespace Lucene.Net.Tests.Join
 
             ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(new Sort(new SortField("parentID", SortField.Type_e.STRING)), 10, true, true);
 
-            try
-            {
-                NewSearcher(r).Search(parentQuery, c);
-                fail("should have hit exception");
-            }
-            catch (IllegalStateException ise)
-            {
-                // expected
-            }
+            Assert.Throws<InvalidOperationException>(() => NewSearcher(r).Search(parentQuery, c));
 
             r.Dispose();
             d.Dispose();

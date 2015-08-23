@@ -63,11 +63,11 @@
       <Project>{e8a339c7-fcf6-4a72-8586-56d8961d7b99}</Project>
       <Name>Lucene.Net.Join</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
       <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
       <Name>Lucene.Net.TestFramework</Name>
     </ProjectReference>

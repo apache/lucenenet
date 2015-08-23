@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -320,11 +321,15 @@ namespace Lucene.Net.Join
             return false;
         }
 
-        private void enroll(ToParentBlockJoinQuery query, ToParentBlockJoinQuery.BlockJoinScorer scorer)
+        private void Enroll(ToParentBlockJoinQuery query, ToParentBlockJoinQuery.BlockJoinScorer scorer)
         {
             scorer.TrackPendingChildHits();
-            int? slot = joinQueryID[query];
-            if (slot == null)
+            int? slot;
+            if (joinQueryID.TryGetValue(query, out slot))
+            {
+                joinScorers[(int) slot] = scorer;
+            }
+            else
             {
                 joinQueryID[query] = joinScorers.Length;
                 //System.out.println("found JQ: " + query + " slot=" + joinScorers.length);
@@ -332,10 +337,6 @@ namespace Lucene.Net.Join
                 Array.Copy(joinScorers, 0, newArray, 0, joinScorers.Length);
                 joinScorers = newArray;
                 joinScorers[joinScorers.Length - 1] = scorer;
-            }
-            else
-            {
-                joinScorers[(int) slot] = scorer;
             }
         }
 
@@ -354,21 +355,36 @@ namespace Lucene.Net.Join
                 }
                 Arrays.Fill(joinScorers, null);
 
-                var queue = new Queue<Scorer>();
+                var queue2 = new ConcurrentQueue<Scorer>();
                 //System.out.println("\nqueue: add top scorer=" + value);
-                queue.Enqueue(value);
-                while ((queue.Count > 0 && (queue.Dequeue()) != null))
+                queue2.Enqueue(value);
+//                while ((queue.Count > 0 && (queue.Dequeue()) != null))
+//                {
+//                    //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
+//                    if (value is ToParentBlockJoinQuery.BlockJoinScorer)
+//                    {
+//                        Enroll((ToParentBlockJoinQuery)value.Weight.Query, (ToParentBlockJoinQuery.BlockJoinScorer)value);
+//                    }
+//
+//                    foreach (Scorer.ChildScorer sub in value.Children)
+//                    {
+//                        //System.out.println("  add sub: " + sub.child + "; " + sub.child.getWeight().getQuery());
+//                        queue.Enqueue(sub.Child);
+//                    }
+//                }
+
+                while (queue2.TryDequeue(out value))
                 {
                     //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
                     if (value is ToParentBlockJoinQuery.BlockJoinScorer)
                     {
-                        enroll((ToParentBlockJoinQuery)value.Weight.Query, (ToParentBlockJoinQuery.BlockJoinScorer)value);
+                        Enroll((ToParentBlockJoinQuery)value.Weight.Query, (ToParentBlockJoinQuery.BlockJoinScorer)value);
                     }
 
                     foreach (Scorer.ChildScorer sub in value.Children)
                     {
                         //System.out.println("  add sub: " + sub.child + "; " + sub.child.getWeight().getQuery());
-                        queue.Enqueue(sub.Child);
+                        queue2.Enqueue(sub.Child);
                     }
                 }
             }
@@ -403,11 +419,13 @@ namespace Lucene.Net.Join
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual TopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
         {
-
-            var slot = joinQueryID[query];
-            if (slot == null && totalHitCount == 0)
+            int? slot;
+            if (!joinQueryID.TryGetValue(query, out slot))
             {
-                return null;
+                if (totalHitCount == 0)
+                {
+                    return null;
+                }
             }
 
             if (sortedGroups == null)

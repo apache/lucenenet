@@ -38,11 +38,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Codecs", "src\Lu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Codecs.Tests", "src\Lucene.Net.Tests.Codecs\Lucene.Net.Codecs.Tests.csproj", "{351B75B1-BBD5-4E32-8036-7BED4E0135A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Join", "Lucene.Net.Join\Lucene.Net.Join.csproj", "{E8A339C7-FCF6-4A72-8586-56D8961D7B99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Join", "src\Lucene.Net.Join\Lucene.Net.Join.csproj", "{E8A339C7-FCF6-4A72-8586-56D8961D7B99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Grouping", "Lucene.Net.Grouping\Lucene.Net.Grouping.csproj", "{02BAB603-067D-48B1-AEDD-316849652568}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Grouping", "src\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj", "{02BAB603-067D-48B1-AEDD-316849652568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Join", "Lucene.Net.Tests.Join\Lucene.Net.Tests.Join.csproj", "{4C1B794F-8158-45E6-85B3-2C46569BEBC2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Join", "src\Lucene.Net.Tests.Join\Lucene.Net.Tests.Join.csproj", "{4C1B794F-8158-45E6-85B3-2C46569BEBC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
