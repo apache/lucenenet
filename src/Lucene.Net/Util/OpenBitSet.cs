@@ -932,21 +932,21 @@ namespace Lucene.Net.Util
         public virtual void Union(OpenBitSet other)
         {
             int newLen = Math.Max(m_wlen, other.m_wlen);
+            int oldLen = m_wlen;
             EnsureCapacityWords(newLen);
             Debug.Assert((numBits = Math.Max(other.numBits, numBits)) >= 0);
 
             long[] thisArr = this.m_bits;
             long[] otherArr = other.m_bits;
-            int pos = Math.Min(m_wlen, other.m_wlen);
+            int pos = Math.Min(oldLen, other.m_wlen);
             while (--pos >= 0)
             {
                 thisArr[pos] |= otherArr[pos];
             }
-            if (this.m_wlen < newLen)
+            if (oldLen < newLen)
             {
-                Array.Copy(otherArr, this.m_wlen, thisArr, this.m_wlen, newLen - this.m_wlen);
+                Array.Copy(otherArr, oldLen, thisArr, oldLen, newLen - oldLen);
             }
-            this.m_wlen = newLen;
         }
 
         /// <summary>
@@ -967,21 +967,21 @@ namespace Lucene.Net.Util
         public virtual void Xor(OpenBitSet other)
         {
             int newLen = Math.Max(m_wlen, other.m_wlen);
+            int oldLen = m_wlen;
             EnsureCapacityWords(newLen);
             Debug.Assert((numBits = Math.Max(other.numBits, numBits)) >= 0);
 
             long[] thisArr = this.m_bits;
             long[] otherArr = other.m_bits;
-            int pos = Math.Min(m_wlen, other.m_wlen);
+            int pos = Math.Min(oldLen, other.m_wlen);
             while (--pos >= 0)
             {
                 thisArr[pos] ^= otherArr[pos];
             }
-            if (this.m_wlen < newLen)
+            if (oldLen < newLen)
             {
-                Array.Copy(otherArr, this.m_wlen, thisArr, this.m_wlen, newLen - this.m_wlen);
+                Array.Copy(otherArr, oldLen, thisArr, oldLen, newLen - oldLen);
             }
-            this.m_wlen = newLen;
         }
 
         // some BitSet compatability methods
