@@ -514,5 +514,24 @@ namespace Lucene.Net.Util
             bits.FastSet(bit - 1);
             Assert.IsTrue(bits.FastGet(bit - 1));
         }
+
+        [Test]
+        public virtual void TestXorWithDifferentCapacity()
+        {
+            OpenBitSet smaller = new OpenBitSet(2);
+            OpenBitSet larger = new OpenBitSet(64 * 10000);
+
+            larger.Set(64 * 10000 - 1);
+            larger.Set(65);
+            larger.Set(3);
+            smaller.Set(3);
+            smaller.Set(66);
+
+            smaller.Xor(larger);
+            Assert.IsTrue(smaller.Get(64 * 10000 - 1));
+            Assert.IsTrue(smaller.Get(65));
+            Assert.IsFalse(smaller.Get(3));
+            Assert.IsTrue(smaller.Get(66));
+        }
     }
 }
