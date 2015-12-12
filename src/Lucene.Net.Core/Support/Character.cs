@@ -158,6 +158,13 @@ namespace Lucene.Net.Support
             return c1;
         }
 
+        public static int CodePointAt(char high, char low)
+        {
+            return ((high << 10) + low) + (MIN_SUPPLEMENTARY_CODE_POINT
+                                       - (MIN_HIGH_SURROGATE << 10)
+                                       - MIN_LOW_SURROGATE);
+        }
+
         public static int CodePointAt(ICharSequence seq, int index)
         {
             char c1 = seq.CharAt(index++);
@@ -200,6 +207,61 @@ namespace Lucene.Net.Support
                 }
             }
             return c1;
+        }
+
+        /// <summary>
+        /// Copy of the implementation from Character class in Java
+        /// 
+        /// http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b27/java/lang/Character.java
+        /// </summary>
+        public static int OffsetByCodePoints(char[] a, int start, int count,
+                                         int index, int codePointOffset)
+        {
+            if (count > a.Length - start || start < 0 || count < 0
+                || index < start || index > start + count)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            return OffsetByCodePointsImpl(a, start, count, index, codePointOffset);
+        }
+
+        static int OffsetByCodePointsImpl(char[] a, int start, int count,
+                                          int index, int codePointOffset)
+        {
+            int x = index;
+            if (codePointOffset >= 0)
+            {
+                int limit = start + count;
+                int i;
+                for (i = 0; x < limit && i < codePointOffset; i++)
+                {
+                    if (Char.IsHighSurrogate(a[x++]) && x < limit && Char.IsLowSurrogate(a[x]))
+                    {
+                        x++;
+                    }
+                }
+                if (i < codePointOffset)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+            }
+            else
+            {
+                int i;
+                for (i = codePointOffset; x > start && i < 0; i++)
+                {
+                    if (Char.IsLowSurrogate(a[--x]) && x > start &&
+                        Char.IsHighSurrogate(a[x - 1]))
+                    {
+                        x--;
+                    }
+                }
+                if (i < 0)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+            }
+            return x;
         }
     }
 }
