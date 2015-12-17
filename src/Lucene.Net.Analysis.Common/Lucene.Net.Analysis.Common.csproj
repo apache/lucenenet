@@ -61,7 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="ReadMe.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\packages\ICU4C-55.1-bin32.1.0.2\tools\ICU4C\icudt55.dll">
