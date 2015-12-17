@@ -30,14 +30,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICU4NET, Version=1.0.5593.31013, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\ICU4NET.0.0.2\lib\net45\ICU4NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICU4NETExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\ICU4NET.0.0.2\lib\net45\ICU4NETExtension.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Util\CharacterIterator.cs" />
     <Compile Include="Analysis\Util\CharacterUtils.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\Util\CharArrayIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Util\ICharacterIterator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -45,6 +58,52 @@
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="ReadMe.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4C-55.1-bin32.1.0.2\tools\ICU4C\icudt55.dll">
+      <Link>icudt55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4C-55.1-bin32.1.0.2\tools\ICU4C\icuin55.dll">
+      <Link>icuin55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4C-55.1-bin32.1.0.2\tools\ICU4C\icuio55.dll">
+      <Link>icuio55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4C-55.1-bin32.1.0.2\tools\ICU4C\icule55.dll">
+      <Link>icule55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4C-55.1-bin32.1.0.2\tools\ICU4C\iculx55.dll">
+      <Link>iculx55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4C-55.1-bin32.1.0.2\tools\ICU4C\icutu55.dll">
+      <Link>icutu55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4C-55.1-bin32.1.0.2\tools\ICU4C\icuuc55.dll">
+      <Link>icuuc55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

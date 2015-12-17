@@ -1,181 +1,185 @@
 ﻿using System;
+using ICU4NET;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using CharacterIterator = Lucene.Net.Analysis.Util.CharacterIterator;
 
-namespace org.apache.lucene.analysis.util
+namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+    [TestFixture]
+    public class TestCharArrayIterator : LuceneTestCase
+    {
+        [Test]
+        public virtual void TestWordInstance()
+        {
+            DoTests(CharArrayIterator.NewWordInstance());
+        }
 
+        [Test]
+        public virtual void TestConsumeWordInstance()
+        {
+            // we use the default locale, as its randomized by LuceneTestCase
+            var bi = BreakIterator.CreateWordInstance(Locale.GetUS());
+            var ci = CharArrayIterator.NewWordInstance();
+            for (var i = 0; i < 10000; i++)
+            {
+                var text = TestUtil.RandomUnicodeString(Random()).toCharArray();
+                ci.SetText(text, 0, text.Length);
+                Consume(bi, ci);
+            }
+        }
 
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
+        /* run this to test if your JRE is buggy
+        public void testWordInstanceJREBUG() {
+          // we use the default locale, as its randomized by LuceneTestCase
+          BreakIterator bi = BreakIterator.getWordInstance(Locale.getDefault());
+          Segment ci = new Segment();
+          for (int i = 0; i < 10000; i++) {
+            char text[] = TestUtil.randomUnicodeString(random).toCharArray();
+            ci.array = text;
+            ci.offset = 0;
+            ci.count = text.length;
+            consume(bi, ci);
+          }
+        }
+        */
 
-	public class TestCharArrayIterator : LuceneTestCase
-	{
+        [Test]
+        public virtual void TestSentenceInstance()
+        {
+            DoTests(CharArrayIterator.NewSentenceInstance());
+        }
 
-	  public virtual void testWordInstance()
-	  {
-		doTests(CharArrayIterator.newWordInstance());
-	  }
+        [Test]
+        public virtual void TestConsumeSentenceInstance()
+        {
+            // we use the default locale, as its randomized by LuceneTestCase
+            var bi = BreakIterator.CreateSentenceInstance(Locale.GetUS());
+            var ci = CharArrayIterator.NewSentenceInstance();
+            for (var i = 0; i < 10000; i++)
+            {
+                var text = TestUtil.RandomUnicodeString(Random()).toCharArray();
+                ci.SetText(text, 0, text.Length);
+                Consume(bi, ci);
+            }
+        }
 
-	  public virtual void testConsumeWordInstance()
-	  {
-		// we use the default locale, as its randomized by LuceneTestCase
-		BreakIterator bi = BreakIterator.getWordInstance(Locale.Default);
-		CharArrayIterator ci = CharArrayIterator.newWordInstance();
-		for (int i = 0; i < 10000; i++)
-		{
-		  char[] text = TestUtil.randomUnicodeString(random()).toCharArray();
-		  ci.setText(text, 0, text.Length);
-		  consume(bi, ci);
-		}
-	  }
+        /* run this to test if your JRE is buggy
+        public void testSentenceInstanceJREBUG() {
+          // we use the default locale, as its randomized by LuceneTestCase
+          BreakIterator bi = BreakIterator.getSentenceInstance(Locale.getDefault());
+          Segment ci = new Segment();
+          for (int i = 0; i < 10000; i++) {
+            char text[] = TestUtil.randomUnicodeString(random).toCharArray();
+            ci.array = text;
+            ci.offset = 0;
+            ci.count = text.length;
+            consume(bi, ci);
+          }
+        }
+        */
 
-	  /* run this to test if your JRE is buggy
-	  public void testWordInstanceJREBUG() {
-	    // we use the default locale, as its randomized by LuceneTestCase
-	    BreakIterator bi = BreakIterator.getWordInstance(Locale.getDefault());
-	    Segment ci = new Segment();
-	    for (int i = 0; i < 10000; i++) {
-	      char text[] = TestUtil.randomUnicodeString(random).toCharArray();
-	      ci.array = text;
-	      ci.offset = 0;
-	      ci.count = text.length;
-	      consume(bi, ci);
-	    }
-	  }
-	  */
+        private void DoTests(CharArrayIterator ci)
+        {
+            // basics
+            ci.SetText("testing".ToCharArray(), 0, "testing".Length);
+            assertEquals(0, ci.BeginIndex);
+            assertEquals(7, ci.EndIndex);
+            assertEquals(0, ci.Index);
+            assertEquals('t', ci.Current());
+            assertEquals('e', ci.Next());
+            assertEquals('g', ci.Last());
+            assertEquals('n', ci.Previous());
+            assertEquals('t', ci.First());
+            assertEquals(CharacterIterator.DONE, ci.Previous());
 
-	  public virtual void testSentenceInstance()
-	  {
-		doTests(CharArrayIterator.newSentenceInstance());
-	  }
+            // first()
+            ci.SetText("testing".ToCharArray(), 0, "testing".Length);
+            ci.Next();
+            // Sets the position to getBeginIndex() and returns the character at that position. 
+            assertEquals('t', ci.First());
+            assertEquals(ci.BeginIndex, ci.Index);
+            // or DONE if the text is empty
+            ci.SetText(new char[] { }, 0, 0);
+            assertEquals(CharacterIterator.DONE, ci.First());
 
-	  public virtual void testConsumeSentenceInstance()
-	  {
-		// we use the default locale, as its randomized by LuceneTestCase
-		BreakIterator bi = BreakIterator.getSentenceInstance(Locale.Default);
-		CharArrayIterator ci = CharArrayIterator.newSentenceInstance();
-		for (int i = 0; i < 10000; i++)
-		{
-		  char[] text = TestUtil.randomUnicodeString(random()).toCharArray();
-		  ci.setText(text, 0, text.Length);
-		  consume(bi, ci);
-		}
-	  }
+            // last()
+            ci.SetText("testing".ToCharArray(), 0, "testing".Length);
+            // Sets the position to getEndIndex()-1 (getEndIndex() if the text is empty) 
+            // and returns the character at that position. 
+            assertEquals('g', ci.Last());
+            assertEquals(ci.Index, ci.EndIndex - 1);
+            // or DONE if the text is empty
+            ci.SetText(new char[] { }, 0, 0);
+            assertEquals(CharacterIterator.DONE, ci.Last());
+            assertEquals(ci.EndIndex, ci.Index);
 
-	  /* run this to test if your JRE is buggy
-	  public void testSentenceInstanceJREBUG() {
-	    // we use the default locale, as its randomized by LuceneTestCase
-	    BreakIterator bi = BreakIterator.getSentenceInstance(Locale.getDefault());
-	    Segment ci = new Segment();
-	    for (int i = 0; i < 10000; i++) {
-	      char text[] = TestUtil.randomUnicodeString(random).toCharArray();
-	      ci.array = text;
-	      ci.offset = 0;
-	      ci.count = text.length;
-	      consume(bi, ci);
-	    }
-	  }
-	  */
+            // current()
+            // Gets the character at the current position (as returned by getIndex()). 
+            ci.SetText("testing".ToCharArray(), 0, "testing".Length);
+            assertEquals('t', ci.Current());
+            ci.Last();
+            ci.Next();
+            // or DONE if the current position is off the end of the text.
+            assertEquals(CharacterIterator.DONE, ci.Current());
 
-	  private void doTests(CharArrayIterator ci)
-	  {
-		// basics
-		ci.setText("testing".ToCharArray(), 0, "testing".Length);
-		assertEquals(0, ci.BeginIndex);
-		assertEquals(7, ci.EndIndex);
-		assertEquals(0, ci.Index);
-		assertEquals('t', ci.current());
-		assertEquals('e', ci.next());
-		assertEquals('g', ci.last());
-		assertEquals('n', ci.previous());
-		assertEquals('t', ci.first());
-		assertEquals(CharacterIterator.DONE, ci.previous());
+            // next()
+            ci.SetText("te".ToCharArray(), 0, 2);
+            // Increments the iterator's index by one and returns the character at the new index.
+            assertEquals('e', ci.Next());
+            assertEquals(1, ci.Index);
+            // or DONE if the new position is off the end of the text range.
+            assertEquals(CharacterIterator.DONE, ci.Next());
+            assertEquals(ci.EndIndex, ci.Index);
 
-		// first()
-		ci.setText("testing".ToCharArray(), 0, "testing".Length);
-		ci.next();
-		// Sets the position to getBeginIndex() and returns the character at that position. 
-		assertEquals('t', ci.first());
-		assertEquals(ci.BeginIndex, ci.Index);
-		// or DONE if the text is empty
-		ci.setText(new char[] {}, 0, 0);
-		assertEquals(CharacterIterator.DONE, ci.first());
+            // setIndex()
+            ci.SetText("test".ToCharArray(), 0, "test".Length);
+            try
+            {
+                ci.SetIndex(5);
+                fail();
+            }
+            catch (Exception e)
+            {
+                assertTrue(e is System.ArgumentException);
+            }
 
-		// last()
-		ci.setText("testing".ToCharArray(), 0, "testing".Length);
-		// Sets the position to getEndIndex()-1 (getEndIndex() if the text is empty) 
-		// and returns the character at that position. 
-		assertEquals('g', ci.last());
-		assertEquals(ci.Index, ci.EndIndex - 1);
-		// or DONE if the text is empty
-		ci.setText(new char[] {}, 0, 0);
-		assertEquals(CharacterIterator.DONE, ci.last());
-		assertEquals(ci.EndIndex, ci.Index);
+            // clone()
+            var text = "testing".ToCharArray();
+            ci.SetText(text, 0, text.Length);
+            ci.Next();
+            var ci2 = ci.Clone() as CharArrayIterator;
+            assertEquals(ci.Index, ci2.Index);
+            assertEquals(ci.Next(), ci2.Next());
+            assertEquals(ci.Last(), ci2.Last());
+        }
 
-		// current()
-		// Gets the character at the current position (as returned by getIndex()). 
-		ci.setText("testing".ToCharArray(), 0, "testing".Length);
-		assertEquals('t', ci.current());
-		ci.last();
-		ci.next();
-		// or DONE if the current position is off the end of the text.
-		assertEquals(CharacterIterator.DONE, ci.current());
-
-		// next()
-		ci.setText("te".ToCharArray(), 0, 2);
-		// Increments the iterator's index by one and returns the character at the new index.
-		assertEquals('e', ci.next());
-		assertEquals(1, ci.Index);
-		// or DONE if the new position is off the end of the text range.
-		assertEquals(CharacterIterator.DONE, ci.next());
-		assertEquals(ci.EndIndex, ci.Index);
-
-		// setIndex()
-		ci.setText("test".ToCharArray(), 0, "test".Length);
-		try
-		{
-		  ci.Index = 5;
-		  fail();
-		}
-		catch (Exception e)
-		{
-		  assertTrue(e is System.ArgumentException);
-		}
-
-		// clone()
-		char[] text = "testing".ToCharArray();
-		ci.setText(text, 0, text.Length);
-		ci.next();
-		CharArrayIterator ci2 = ci.clone();
-		assertEquals(ci.Index, ci2.Index);
-		assertEquals(ci.next(), ci2.next());
-		assertEquals(ci.last(), ci2.last());
-	  }
-
-	  private void consume(BreakIterator bi, CharacterIterator ci)
-	  {
-		bi.Text = ci;
-		while (bi.next() != BreakIterator.DONE)
-		{
-		  ;
-		}
-	  }
-	}
+        private void Consume(BreakIterator bi, CharacterIterator ci)
+        {
+            bi.SetText(ci.toString());
+            while (bi.Next() != BreakIterator.DONE)
+            {
+                ;
+            }
+        }
+    }
 
 }
