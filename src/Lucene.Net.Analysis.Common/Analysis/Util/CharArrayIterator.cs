@@ -179,25 +179,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static CharArrayIterator NewSentenceInstance()
         {
-            if (HAS_BUGGY_BREAKITERATORS)
-            {
-                return new CharArrayIteratorAnonymousInnerClassHelper();
-            }
-            else
-            {
-                return new CharArrayIteratorAnonymousInnerClassHelper2();
-            }
-        }
-
-        private class CharArrayIteratorAnonymousInnerClassHelper : CharArrayIterator
-        {
-            // work around this for now by lying about all surrogates to 
-            // the sentence tokenizer, instead we treat them all as 
-            // SContinue so we won't break around them.
-            protected internal override char JreBugWorkaround(char ch)
-            {
-                return (char)(ch >= 0xD800 && ch <= 0xDFFF ? 0x002C : ch);
-            }
+            return new CharArrayIteratorAnonymousInnerClassHelper2();
         }
 
         private class CharArrayIteratorAnonymousInnerClassHelper2 : CharArrayIterator
@@ -215,24 +197,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public static CharArrayIterator NewWordInstance()
         {
-            if (HAS_BUGGY_BREAKITERATORS)
-            {
-                return new CharArrayIteratorAnonymousInnerClassHelper3();
-            }
-            else
-            {
-                return new CharArrayIteratorAnonymousInnerClassHelper4();
-            }
-        }
-
-        private class CharArrayIteratorAnonymousInnerClassHelper3 : CharArrayIterator
-        {
-            // work around this for now by lying about all surrogates to the word, 
-            // instead we treat them all as ALetter so we won't break around them.
-            protected internal override char JreBugWorkaround(char ch)
-            {
-                return (char)(ch >= 0xD800 && ch <= 0xDFFF ? 0x0041 : ch);
-            }
+            return new CharArrayIteratorAnonymousInnerClassHelper4();
         }
 
         private class CharArrayIteratorAnonymousInnerClassHelper4 : CharArrayIterator
@@ -242,27 +207,6 @@ namespace Lucene.Net.Analysis.Util
             {
                 return ch;
             }
-        }
-
-        /// <summary>
-        /// True if this JRE has a buggy BreakIterator implementation
-        /// </summary>
-        public static readonly bool HAS_BUGGY_BREAKITERATORS;
-        static CharArrayIterator()
-        {
-            bool v;
-            try
-            {
-                var bi = BreakIterator.CreateSentenceInstance(Locale.GetUS());
-                bi.SetText("\udb40\udc53");
-                bi.Next();
-                v = false;
-            }
-            catch (Exception)
-            {
-                v = true;
-            }
-            HAS_BUGGY_BREAKITERATORS = v;
         }
     }
 }
