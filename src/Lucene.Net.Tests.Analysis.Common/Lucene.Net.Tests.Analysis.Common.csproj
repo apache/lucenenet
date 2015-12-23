@@ -32,8 +32,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICU4NET, Version=1.0.5593.31013, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ICU4NET.0.0.2\lib\net45\ICU4NET.dll</HintPath>
+      <HintPath>..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\lib\net45\ICU4NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICU4NETExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\lib\net45\ICU4NETExtension.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -62,6 +66,51 @@
       <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
       <Name>Lucene.Net.TestFramework</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icudt55.dll">
+      <Link>icudt55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icuin55.dll">
+      <Link>icuin55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icuio55.dll">
+      <Link>icuio55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icule55.dll">
+      <Link>icule55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\iculx55.dll">
+      <Link>iculx55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icutu55.dll">
+      <Link>icutu55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\ref\icuuc55.dll">
+      <Link>icuuc55.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
