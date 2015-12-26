@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,6 +52,8 @@
   <ItemGroup>
     <Compile Include="Analysis\Util\TestCharacterUtils.cs" />
     <Compile Include="Analysis\Util\TestCharArrayIterator.cs" />
+    <Compile Include="Analysis\Util\TestRollingCharBuffer.cs" />
+    <Compile Include="Analysis\Util\TestSegmentingTokenizerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
