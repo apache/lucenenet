@@ -43,6 +43,8 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Core\LetterTokenizer.cs" />
+    <Compile Include="Analysis\Core\LowerCaseTokenizer.cs" />
     <Compile Include="Analysis\Util\CharacterIterator.cs" />
     <Compile Include="Analysis\Util\CharacterUtils.cs">
       <SubType>Code</SubType>
@@ -50,6 +52,7 @@
     <Compile Include="Analysis\Util\CharArrayIterator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\Util\CharTokenizer.cs" />
     <Compile Include="Analysis\Util\ICharacterIterator.cs" />
     <Compile Include="Analysis\Util\RollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\SegmentingTokenizerBase.cs" />

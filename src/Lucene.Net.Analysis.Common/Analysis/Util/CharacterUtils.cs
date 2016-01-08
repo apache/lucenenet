@@ -248,7 +248,7 @@ namespace Lucene.Net.Analysis.Util
             while (read < len)
             {
                 int r = reader.Read(dest, offset + read, len - read);
-                if (r == 0)
+                if (r <= 0)
                 {
                     break;
                 }

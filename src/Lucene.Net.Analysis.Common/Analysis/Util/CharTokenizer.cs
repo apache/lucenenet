@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Util
         /// predicate. Codepoints for which this is false are used to define token
         /// boundaries and are not included in tokens.
         /// </summary>
-        protected abstract bool IsTokenChar(char c);
+        protected abstract bool IsTokenChar(int c);
 
         /// <summary>
         /// Called on each token character to normalize it before it is added to the

@@ -143,6 +143,28 @@ namespace Lucene.Net.Analysis
             return components.TokenStream;
         }
 
+        public TokenStream TokenStream(string fieldName, string text)
+        {
+            TokenStreamComponents components = _reuseStrategy.GetReusableComponents(this, fieldName);
+            ReusableStringReader strReader =
+                (components == null || components.ReusableStringReader == null)
+                    ? new ReusableStringReader()
+                    : components.ReusableStringReader;
+            strReader.Value = text;
+            var r = InitReader(fieldName, strReader);
+            if (components == null)
+            {
+                components = CreateComponents(fieldName, r);
+                _reuseStrategy.SetReusableComponents(this, fieldName, components);
+            }
+            else
+            {
+                components.Reader = r;
+            }
+            components.ReusableStringReader = strReader;
+            return components.TokenStream;
+        }
+
         /// <summary>
         /// Override this if you want to add a CharFilter chain.
         /// <p>

@@ -20,6 +20,7 @@
 */
 
 using System;
+using System.Globalization;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Support
@@ -262,6 +263,20 @@ namespace Lucene.Net.Support
                 }
             }
             return x;
+        }
+
+        public static bool IsLetter(int c)
+        {
+            var str = Char.ConvertFromUtf32(c);
+
+            var unicodeCategory = Char.GetUnicodeCategory(str, 0);
+
+            return unicodeCategory == UnicodeCategory.LowercaseLetter ||
+                   unicodeCategory == UnicodeCategory.UppercaseLetter ||
+                   unicodeCategory == UnicodeCategory.TitlecaseLetter ||
+                   unicodeCategory == UnicodeCategory.ModifierLetter ||
+                   unicodeCategory== UnicodeCategory.OtherLetter;
+
         }
     }
 }

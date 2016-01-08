@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Core
         ///          the attribute factory to use for this <seealso cref="Tokenizer"/> </param>
         /// <param name="in">
         ///          the input to split up into tokens </param>
-        public LowerCaseTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader @in)
+        public LowerCaseTokenizer(LuceneVersion matchVersion, AttributeSource.AttributeFactory factory, TextReader @in)
             : base(matchVersion, factory, @in)
         {
         }
