@@ -154,6 +154,7 @@
     <Compile Include="core\Codecs\Perfield\TestPerFieldDocValuesFormat.cs" />
     <Compile Include="core\Codecs\Perfield\TestPerFieldPostingsFormat.cs" />
     <Compile Include="core\Codecs\Perfield\TestPerFieldPostingsFormat2.cs" />
+    <Compile Include="core\Codecs\TestCodec.cs" />
     <Compile Include="core\Document\TestBinaryDocument.cs" />
     <Compile Include="core\Document\TestDateTools.cs" />
     <Compile Include="core\Document\TestDocument.cs" />
