@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{69D7956C-C2CC-4708-B399-A188FEC384C4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Queries</RootNamespace>
+    <AssemblyName>Lucene.Net.Queries.Portable</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="BooleanFilter.cs" />
+    <Compile Include="BoostingQuery.cs" />
+    <Compile Include="ChainedFilter.cs" />
+    <Compile Include="CommonTermsQuery.cs" />
+    <Compile Include="CustomScoreProvider.cs" />
+    <Compile Include="CustomScoreQuery.cs" />
+    <Compile Include="FilterClause.cs" />
+    <Compile Include="Function\BoostedQuery.cs" />
+    <Compile Include="Function\DocValues\BoolDocValues.cs" />
+    <Compile Include="Function\DocValues\DocTermsIndexDocValues.cs" />
+    <Compile Include="Function\DocValues\DoubleDocValues.cs" />
+    <Compile Include="Function\DocValues\FloatDocValues.cs" />
+    <Compile Include="Function\DocValues\IntDocValues.cs" />
+    <Compile Include="Function\DocValues\LongDocValues.cs" />
+    <Compile Include="Function\DocValues\StrDocValues.cs" />
+    <Compile Include="Function\FunctionQuery.cs" />
+    <Compile Include="Function\FunctionValues.cs" />
+    <Compile Include="Function\ValueSource.cs" />
+    <Compile Include="Function\ValueSourceScorer.cs" />
+    <Compile Include="Function\ValueSources\BoolFunction.cs" />
+    <Compile Include="Function\ValueSources\ByteFieldSource.cs" />
+    <Compile Include="Function\ValueSources\BytesRefFieldSource.cs" />
+    <Compile Include="Function\ValueSources\ConstNumberSource.cs" />
+    <Compile Include="Function\ValueSources\ConstValueSource.cs" />
+    <Compile Include="Function\ValueSources\DefFunction.cs" />
+    <Compile Include="Function\ValueSources\DivFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\DocFreqValueSource.cs" />
+    <Compile Include="Function\ValueSources\DoubleConstValueSource.cs" />
+    <Compile Include="Function\ValueSources\DoubleFieldSource.cs" />
+    <Compile Include="Function\ValueSources\DualFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\EnumFieldSource.cs" />
+    <Compile Include="Function\ValueSources\FieldCacheSource.cs" />
+    <Compile Include="Function\ValueSources\FloatFieldSource.cs" />
+    <Compile Include="Function\ValueSources\IDFValueSource.cs" />
+    <Compile Include="Function\ValueSources\IfFunction.cs" />
+    <Compile Include="Function\ValueSources\IntFieldSource.cs" />
+    <Compile Include="Function\ValueSources\JoinDocFreqValueSource.cs" />
+    <Compile Include="Function\ValueSources\LinearFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\LiteralValueSource.cs" />
+    <Compile Include="Function\ValueSources\LongFieldSource.cs" />
+    <Compile Include="Function\ValueSources\MaxDocValueSource.cs" />
+    <Compile Include="Function\ValueSources\MaxFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\MinFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\MultiBoolFunction.cs" />
+    <Compile Include="Function\ValueSources\MultiFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\MultiFunction.cs" />
+    <Compile Include="Function\ValueSources\MultiValueSource.cs" />
+    <Compile Include="Function\ValueSources\NormValueSource.cs" />
+    <Compile Include="Function\ValueSources\NumDocsValueSource.cs" />
+    <Compile Include="Function\ValueSources\OrdFieldSource.cs" />
+    <Compile Include="Function\ValueSources\PowFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\ProductFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\QueryValueSource.cs" />
+    <Compile Include="Function\ValueSources\RangeMapFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\ReciprocalFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\ReverseOrdFieldSource.cs" />
+    <Compile Include="Function\ValueSources\ScaleFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\ShortFieldSource.cs" />
+    <Compile Include="Function\ValueSources\SimpleBoolFunction.cs" />
+    <Compile Include="Function\ValueSources\SimpleFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\SingleFunction.cs" />
+    <Compile Include="Function\ValueSources\SumFloatFunction.cs" />
+    <Compile Include="Function\ValueSources\SumTotalTermFreqValueSource.cs" />
+    <Compile Include="Function\ValueSources\TermFreqValueSource.cs" />
+    <Compile Include="Function\ValueSources\TFValueSource.cs" />
+    <Compile Include="Function\ValueSources\TotalTermFreqValueSource.cs" />
+    <Compile Include="Function\ValueSources\VectorValueSource.cs" />
+    <Compile Include="Mlt\MoreLikeThis.cs" />
+    <Compile Include="Mlt\MoreLikeThisQuery.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TermFilter.cs" />
+    <Compile Include="TermsFilter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Lucene.Net.Queries.Portable.project.json" />
+    <!-- A reference to the entire .NET Framework is automatically included -->
+  </ItemGroup>
+  
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <NuGetTargetMoniker>.NETPlatform,Version=v5.4</NuGetTargetMoniker>
+  </PropertyGroup>
+</Project>

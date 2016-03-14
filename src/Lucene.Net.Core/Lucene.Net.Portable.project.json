@@ -1,0 +1,24 @@
+﻿{
+  "supports": {
+    "net46.app": { },
+    "dnxcore50.app": { }
+  },
+  "dependencies": {
+    "Microsoft.NETCore": "5.0.1-beta-23516",
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1-beta-23516",
+    "System.Collections.Immutable": "1.1.38-beta-23516",
+    "System.Collections.NonGeneric": "4.0.1-beta-23516",
+    "System.Collections.Specialized": "4.0.1-beta-23516",
+    "System.Console": "4.0.0-beta-23516",
+    "System.IO.MemoryMappedFiles": "4.0.0-beta-23516",
+    "System.Net.Sockets": "4.1.0-beta-23516",
+    "System.Runtime.InteropServices": "4.0.21-beta-23516",
+    "System.Runtime.InteropServices.RuntimeInformation": "4.0.0-beta-23516",
+    "System.Security.Cryptography.Primitives": "4.0.0-beta-23516"
+  },
+  "frameworks": {
+    "dotnet5.4": {
+      "imports": "portable-net452"
+    }
+  }
+}
