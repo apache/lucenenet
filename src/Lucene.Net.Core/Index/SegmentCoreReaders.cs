@@ -166,13 +166,14 @@ namespace Lucene.Net.Index
 
                 StoredFieldsFormat sff = si.Info.Codec.StoredFieldsFormat();
 
-                try
-                {
-                    FieldsReaderOrig = sff.FieldsReader(cfsDir, si.Info, fieldInfos, context);
-                }
-                catch (System.AccessViolationException ave)
-                {
-                }
+                //TODO: conniey
+                //try
+                //{
+                //    FieldsReaderOrig = sff.FieldsReader(cfsDir, si.Info, fieldInfos, context);
+                //}
+                //catch (System.AccessViolationException ave)
+                //{
+                //}
 
                 //FieldsReaderOrig = si.Info.Codec.StoredFieldsFormat().FieldsReader(cfsDir, si.Info, fieldInfos, context);
 

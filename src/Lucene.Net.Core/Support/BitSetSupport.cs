@@ -150,7 +150,7 @@ namespace Lucene.Net.Support
         public static int Cardinality(this BitArray bits)
         {
             int count = 0;
-            for (int i = 0; i < bits.Count; i++)
+            for (int i = 0; i < bits.Length; i++)
             {
                 if (bits[i])
                     count++;
@@ -233,7 +233,7 @@ namespace Lucene.Net.Support
         // Prevents exceptions from being thrown when the index is too high.
         public static bool SafeGet(this BitArray a, int loc)
         {
-            return loc < a.Count && a.Get(loc);
+            return loc < a.Length && a.Get(loc);
         }
 
         //Emulates the Java BitSet.Set() method. Required to reconcile differences between Java BitSet and C# BitArray
@@ -268,10 +268,10 @@ namespace Lucene.Net.Support
         {
             if (bitsA == bitsB)
                 return true;
-            if (bitsA.Count != bitsB.Count)
+            if (bitsA.Length != bitsB.Length)
                 return false;
 
-            for (int i = 0; i < bitsA.Count; i++)
+            for (int i = 0; i < bitsA.Length; i++)
             {
                 if (bitsA[i] != bitsB[i])
                     return false;

@@ -96,8 +96,9 @@ namespace Lucene.Net.Support
 
             if (OS.IsWindows)
             {
-                if (!FlushFileBuffers(fileStream.Handle))
-                    throw new IOException();
+                //TODO: conniey
+                //if (!FlushFileBuffers(fileStream.Handle))
+                //    throw new IOException();
             }
             //else if (OS.IsUnix)
             //{

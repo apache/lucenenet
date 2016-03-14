@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     /// <seealso cref="#EMPTY_CHARS"/> if necessary.
     /// @lucene.internal
     /// </summary>
-    public sealed class CharsRef : IComparable<CharsRef>, ICharSequence, ICloneable
+    public sealed class CharsRef : IComparable<CharsRef>, ICharSequence
     {
         /// <summary>
         /// An empty character array for convenience </summary>

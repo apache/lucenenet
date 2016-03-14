@@ -57,45 +57,46 @@ namespace Lucene.Net.Support
         {
             Type type = deflaterInstance.GetType();
 
-            setLevelMethod = (SetLevelDelegate)Delegate.CreateDelegate(
-                typeof(SetLevelDelegate),
-                deflaterInstance,
-                type.GetMethod("SetLevel", new Type[] { typeof(int) }));
+            //TODO: conniey
+            //setLevelMethod = (SetLevelDelegate)Delegate.CreateDelegate(
+            //    typeof(SetLevelDelegate),
+            //    deflaterInstance,
+            //    type.GetMethod("SetLevel", new Type[] { typeof(int) }));
 
-            setInputMethod = (SetInputDelegate)Delegate.CreateDelegate(
-                typeof(SetInputDelegate),
-                deflaterInstance,
-                type.GetMethod("SetInput", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
+            //setInputMethod = (SetInputDelegate)Delegate.CreateDelegate(
+            //    typeof(SetInputDelegate),
+            //    deflaterInstance,
+            //    type.GetMethod("SetInput", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
 
-            finishMethod = (FinishDelegate)Delegate.CreateDelegate(
-                typeof(FinishDelegate),
-                deflaterInstance,
-                type.GetMethod("Finish", Type.EmptyTypes));
+            //finishMethod = (FinishDelegate)Delegate.CreateDelegate(
+            //    typeof(FinishDelegate),
+            //    deflaterInstance,
+            //    type.GetMethod("Finish", Type.EmptyTypes));
 
-            getIsFinishedMethod = (GetIsFinishedDelegate)Delegate.CreateDelegate(
-                typeof(GetIsFinishedDelegate),
-                deflaterInstance,
-                type.GetMethod("get_IsFinished", Type.EmptyTypes));
+            //getIsFinishedMethod = (GetIsFinishedDelegate)Delegate.CreateDelegate(
+            //    typeof(GetIsFinishedDelegate),
+            //    deflaterInstance,
+            //    type.GetMethod("get_IsFinished", Type.EmptyTypes));
 
-            deflateMethod = (DeflateDelegate)Delegate.CreateDelegate(
-                typeof(DeflateDelegate),
-                deflaterInstance,
-                type.GetMethod("Deflate", new Type[] { typeof(byte[]) }));
+            //deflateMethod = (DeflateDelegate)Delegate.CreateDelegate(
+            //    typeof(DeflateDelegate),
+            //    deflaterInstance,
+            //    type.GetMethod("Deflate", new Type[] { typeof(byte[]) }));
 
-            resetMethod = (ResetDelegate)Delegate.CreateDelegate(
-                typeof(ResetDelegate),
-                deflaterInstance,
-                type.GetMethod("Reset", Type.EmptyTypes));
+            //resetMethod = (ResetDelegate)Delegate.CreateDelegate(
+            //    typeof(ResetDelegate),
+            //    deflaterInstance,
+            //    type.GetMethod("Reset", Type.EmptyTypes));
 
-            getIsNeedingInputMethod = (GetIsNeedingInputDelegate)Delegate.CreateDelegate(
-                typeof(GetIsNeedingInputDelegate),
-                deflaterInstance,
-                type.GetMethod("get_IsNeedingInput", Type.EmptyTypes));
+            //getIsNeedingInputMethod = (GetIsNeedingInputDelegate)Delegate.CreateDelegate(
+            //    typeof(GetIsNeedingInputDelegate),
+            //    deflaterInstance,
+            //    type.GetMethod("get_IsNeedingInput", Type.EmptyTypes));
 
-            deflate3Method = (DeflateDelegate3)Delegate.CreateDelegate(
-                typeof(DeflateDelegate3),
-                deflaterInstance,
-                type.GetMethod("Deflate", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
+            //deflate3Method = (DeflateDelegate3)Delegate.CreateDelegate(
+            //    typeof(DeflateDelegate3),
+            //    deflaterInstance,
+            //    type.GetMethod("Deflate", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
         }
 
         public void SetLevel(int level)

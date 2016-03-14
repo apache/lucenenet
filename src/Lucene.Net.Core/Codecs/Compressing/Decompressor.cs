@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// <summary>
     /// A decompressor.
     /// </summary>
-    public abstract class Decompressor : ICloneable
+    public abstract class Decompressor
     {
         /// <summary>
         /// Sole constructor, typically called from sub-classes. </summary>

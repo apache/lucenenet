@@ -92,7 +92,8 @@ namespace Lucene.Net.Util
 
             try
             {
-                LUCENE_VERSION = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                //TODO: conniey
+                //LUCENE_VERSION = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
             catch (System.Security.SecurityException) //Ignore in medium trust.
             {
@@ -192,7 +193,8 @@ namespace Lucene.Net.Util
         {
             try
             {
-                if (variable == "OS_VERSION") return System.Environment.OSVersion.ToString();
+                //TODO: conniey
+                //if (variable == "OS_VERSION") return Environment.OSVersion.ToString();
 
                 return System.Environment.GetEnvironmentVariable(variable);
             }

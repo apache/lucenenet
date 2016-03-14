@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
 
     public static class FieldCacheRangeFilter
     {
-        [Serializable]
+        
         private class AnonymousStringFieldCacheRangeFilter : FieldCacheRangeFilter<string>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Serializable]
+        
         private class AnonymousBytesRefFieldCacheRangeFilter : FieldCacheRangeFilter<BytesRef>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Serializable]
+        
         private class AnonymousSbyteFieldCacheRangeFilter : FieldCacheRangeFilter<sbyte?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Serializable]
+        
         private class AnonymousShortFieldCacheRangeFilter : FieldCacheRangeFilter<short?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Serializable]
+        
         private class AnonymousIntFieldCacheRangeFilter : FieldCacheRangeFilter<int?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -432,7 +432,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Serializable]
+        
         private class AnonymousLongFieldCacheRangeFilter : FieldCacheRangeFilter<long?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -497,7 +497,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Serializable]
+        
         private class AnonymousFloatFieldCacheRangeFilter : FieldCacheRangeFilter<float?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
@@ -567,7 +567,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Serializable]
+        
         private class AnonymousDoubleFieldCacheRangeFilter : FieldCacheRangeFilter<double?>
         {
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet

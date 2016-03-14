@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
     ///
     ///  @lucene.internal
     /// </summary>
-    public sealed class LongsRef : IComparable<LongsRef>, ICloneable
+    public sealed class LongsRef : IComparable<LongsRef>
     {
         /// <summary>
         /// An empty long array for convenience </summary>

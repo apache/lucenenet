@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
         public int Length()
         {
             // the size may not be correct...
-            return bitSet.Count;
+            return bitSet.Length;
         }
 
         private class DocIdBitSetIterator : DocIdSetIterator

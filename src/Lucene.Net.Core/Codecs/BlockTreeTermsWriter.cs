@@ -491,7 +491,7 @@ namespace Lucene.Net.Codecs
                 Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"));
                 Util.toDot(index, w, false, false);
                 System.out.println("SAVED to out.dot");
-                w.close();
+                w.Dispose();
                 */
             }
 
@@ -1172,7 +1172,7 @@ namespace Lucene.Net.Codecs
                     //   Writer w = new OutputStreamWriter(new FileOutputStream(dotFileName));
                     //   Util.toDot(root.index, w, false, false);
                     //   System.out.println("SAVED to " + dotFileName);
-                    //   w.close();
+                    //   w.Dispose();
                     // }
 
                     OuterInstance.Fields.Add(new FieldMetaData(fieldInfo, ((PendingBlock)Pending[0]).Index.EmptyOutput, NumTerms, IndexStartFP, sumTotalTermFreq, sumDocFreq, docCount, LongsSize));

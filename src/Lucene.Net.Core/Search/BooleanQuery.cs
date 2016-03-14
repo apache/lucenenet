@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
     /// queries, e.g. <seealso cref="TermQuery"/>s, <seealso cref="PhraseQuery"/>s or other
     /// BooleanQuerys.
     /// </summary>
-    public class BooleanQuery : Query, IEnumerable<BooleanClause>, ICloneable
+    public class BooleanQuery : Query, IEnumerable<BooleanClause>
     {
         private static int maxClauseCount = 1024;
 

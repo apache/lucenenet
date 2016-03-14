@@ -33,8 +33,10 @@ namespace Lucene.Net.Support
 
         static OS()
         {
-            PlatformID pid = Environment.OSVersion.Platform;
-            isWindows = pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
+            //TODO: conniey
+            var pid = 10;
+            //PlatformID pid = Environment.OSVersion.Platform;
+            //isWindows = pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
 
             // we use integers instead of enum tags because "MacOS"
             // requires 2.0 SP2, 3.0 SP2 or 3.5 SP1.

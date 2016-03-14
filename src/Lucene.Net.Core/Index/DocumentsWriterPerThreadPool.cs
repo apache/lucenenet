@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     /// new <seealso cref="DocumentsWriterPerThread"/> instance.
     /// </p>
     /// </summary>
-    public abstract class DocumentsWriterPerThreadPool : ICloneable
+    public abstract class DocumentsWriterPerThreadPool
     {
         /// <summary>
         /// <seealso cref="ThreadState"/> references and guards a

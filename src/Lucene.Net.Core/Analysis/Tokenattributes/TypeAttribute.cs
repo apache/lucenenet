@@ -23,8 +23,8 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
     /// <summary>
     /// Default implementation of <seealso cref="TypeAttribute"/>. </summary>
-    [Serializable]
-    public class TypeAttribute : Attribute, ITypeAttribute, ICloneable
+    
+    public class TypeAttribute : Attribute, ITypeAttribute
     {
         private string type;
 

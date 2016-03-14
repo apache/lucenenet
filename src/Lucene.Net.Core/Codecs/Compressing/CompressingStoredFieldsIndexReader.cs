@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// Random-access reader for <seealso cref="CompressingStoredFieldsIndexWriter"/>.
     /// @lucene.internal
     /// </summary>
-    public sealed class CompressingStoredFieldsIndexReader : ICloneable
+    public sealed class CompressingStoredFieldsIndexReader
     {
         internal static long MoveLowOrderBitToSign(long n)
         {

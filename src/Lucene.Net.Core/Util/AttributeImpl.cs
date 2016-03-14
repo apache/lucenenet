@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
 	/// Attributes are used to add data in a dynamic, yet type-safe way to a source
 	/// of usually streamed objects, e. g. a <seealso cref="Lucene.Net.Analysis.TokenStream"/>.
 	/// </summary>
-	public abstract class AttributeImpl : IAttribute, ICloneable 
+	public abstract class AttributeImpl : IAttribute 
 	{
 	  /// <summary>
 	  /// Clears the values in this AttributeImpl and resets it to its 

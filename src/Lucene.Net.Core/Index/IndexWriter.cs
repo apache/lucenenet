@@ -1038,7 +1038,7 @@ namespace Lucene.Net.Index
         ///
         /// <pre class="prettyprint">
         /// try {
-        ///   writer.close();
+        ///   writer.Dispose();
         /// } finally {
         ///   if (IndexWriter.isLocked(directory)) {
         ///     IndexWriter.unlock(directory);
@@ -1190,45 +1190,47 @@ namespace Lucene.Net.Index
                         //LUCENE TO-DO
                         interrupted = false;
 
-                        if (waitForMerges)
-                        {
-                            try
-                            {
-                                // Give merge scheduler last chance to run, in case
-                                // any pending merges are waiting:
-                                mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
-                            }
-                            catch (ThreadInterruptedException)
-                            {
-                                // ignore any interruption, does not matter
-                                interrupted = true;
-                                if (infoStream.IsEnabled("IW"))
-                                {
-                                    infoStream.Message("IW", "interrupted while waiting for final merges");
-                                }
-                            }
-                        }
+                        //TODO: conniey
+                        //if (waitForMerges)
+                        //{
+                        //    try
+                        //    {
+                        //        // Give merge scheduler last chance to run, in case
+                        //        // any pending merges are waiting:
+                        //        mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
+                        //    }
+                        //    catch (ThreadInterruptedException)
+                        //    {
+                        //        // ignore any interruption, does not matter
+                        //        interrupted = true;
+                        //        if (infoStream.IsEnabled("IW"))
+                        //        {
+                        //            infoStream.Message("IW", "interrupted while waiting for final merges");
+                        //        }
+                        //    }
+                        //}
 
                         lock (this)
                         {
                             for (; ; )
                             {
-                                try
-                                {
-                                    FinishMerges(waitForMerges && !interrupted);
-                                    break;
-                                }
-                                catch (ThreadInterruptedException)
-                                {
-                                    // by setting the interrupted status, the
-                                    // next call to finishMerges will pass false,
-                                    // so it will not wait
-                                    interrupted = true;
-                                    if (infoStream.IsEnabled("IW"))
-                                    {
-                                        infoStream.Message("IW", "interrupted while waiting for merges to finish");
-                                    }
-                                }
+                                //TODO: conniey
+                                //try
+                                //{
+                                //    FinishMerges(waitForMerges && !interrupted);
+                                //    break;
+                                //}
+                                //catch (ThreadInterruptedException)
+                                //{
+                                //    // by setting the interrupted status, the
+                                //    // next call to finishMerges will pass false,
+                                //    // so it will not wait
+                                //    interrupted = true;
+                                //    if (infoStream.IsEnabled("IW"))
+                                //    {
+                                //        infoStream.Message("IW", "interrupted while waiting for merges to finish");
+                                //    }
+                                //}
                             }
                             StopMerges = true;
                         }
@@ -1297,7 +1299,8 @@ namespace Lucene.Net.Index
                 // finally, restore interrupt status:
                 if (interrupted)
                 {
-                    Thread.CurrentThread.Interrupt();
+                    //TODO: conniey
+                    //Thread.CurrentThread.Interrupt();
                 }
             }
         }
@@ -5355,23 +5358,24 @@ namespace Lucene.Net.Index
 
         private void DoWait()
         {
-            lock (this)
-            {
-                // NOTE: the callers of this method should in theory
-                // be able to do simply wait(), but, as a defense
-                // against thread timing hazards where notifyAll()
-                // fails to be called, we wait for at most 1 second
-                // and then return so caller can check if wait
-                // conditions are satisfied:
-                try
-                {
-                    Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-                }
-                catch (ThreadInterruptedException ie)
-                {
-                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-                }
-            }
+            //TODO: conniey
+            //lock (this)
+            //{
+            //    // NOTE: the callers of this method should in theory
+            //    // be able to do simply wait(), but, as a defense
+            //    // against thread timing hazards where notifyAll()
+            //    // fails to be called, we wait for at most 1 second
+            //    // and then return so caller can check if wait
+            //    // conditions are satisfied:
+            //    try
+            //    {
+            //        Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+            //    }
+            //    catch (ThreadInterruptedException ie)
+            //    {
+            //        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+            //    }
+            //}
         }
 
         private bool KeepFullyDeletedSegments_Renamed;

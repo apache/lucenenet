@@ -29,8 +29,7 @@ namespace Lucene.Net.Util
     /// Attributes are used to add data in a dynamic, yet type-safe way to a source
     /// of usually streamed objects, e. g. a <see cref="Lucene.Net.Analysis.TokenStream" />.
     /// </summary>
-    [Serializable]
-    public abstract class Attribute : ICloneable, IAttribute
+    public abstract class Attribute : IAttribute
     {
         /// <summary> Clears the values in this Attribute and resets it to its
         /// default value. If this implementation implements more than one Attribute interface
@@ -161,7 +160,8 @@ namespace Lucene.Net.Util
             {
                 // this should never happen, because we're just accessing fields
                 // from 'this'
-                throw new System.SystemException(e.Message, e);
+                //TODO: conniey
+                //throw new System.SystemException(e.Message, e);
             }
 
             return buffer.ToString();
@@ -185,7 +185,8 @@ namespace Lucene.Net.Util
             }
             catch (System.Exception e)
             {
-                throw new System.SystemException(e.Message, e); // shouldn't happen
+                //TODO: conniey
+                //throw new System.SystemException(e.Message, e); // shouldn't happen
             }
             return clone;
         }
