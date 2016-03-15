@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -101,7 +101,16 @@
     <None Include="Lucene.Net.Facet.Portable.project.json" />
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
-  
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.Portable.csproj">
+      <Project>{dbc3b677-805c-430e-af78-a9abf3975d17}</Project>
+      <Name>Lucene.Net.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.Portable.csproj">
+      <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
+      <Name>Lucene.Net.Queries.Portable</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
