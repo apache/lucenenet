@@ -113,7 +113,12 @@
     <None Include="Lucene.Net.Queries.Portable.project.json" />
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
-  
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.Portable.csproj">
+      <Project>{dbc3b677-805c-430e-af78-a9abf3975d17}</Project>
+      <Name>Lucene.Net.Portable</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
