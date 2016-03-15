@@ -53,7 +53,16 @@
     <None Include="Lucene.Net.Join.Portable.project.json" />
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
-  
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.Portable.csproj">
+      <Project>{dbc3b677-805c-430e-af78-a9abf3975d17}</Project>
+      <Name>Lucene.Net.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Grouping\Lucene.Net.Grouping.Portable.csproj">
+      <Project>{202d4160-72bd-4646-8892-30477bdc6fbf}</Project>
+      <Name>Lucene.Net.Grouping.Portable</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
