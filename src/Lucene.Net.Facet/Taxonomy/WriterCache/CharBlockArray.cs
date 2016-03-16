@@ -30,6 +30,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// 
     /// @lucene.experimental
     /// </summary>
+#if !NETCORE
+    [Serializable]
+#endif 
     public class CharBlockArray : ICharSequence
     {
 
@@ -37,6 +40,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private const int DefaultBlockSize = 32 * 1024; // 32 KB default size
 
+#if !NETCORE
+        [Serializable]
+#endif
         internal sealed class Block
         {
             internal const long serialVersionUID = 1L;
