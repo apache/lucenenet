@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -81,7 +83,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override Compressor NewCompressor()
             {
-                return new DeflateCompressor(Deflater.BEST_COMPRESSION);
+                return new DeflateCompressor(System.IO.Compression.CompressionLevel.Optimal);
             }
 
             public override Decompressor NewDecompressor()
@@ -204,16 +206,12 @@ namespace Lucene.Net.Codecs.Compressing
 
         private sealed class DeflateDecompressor : Decompressor
         {
-            internal readonly Inflater decompressor;
-            internal byte[] Compressed;
 
             internal DeflateDecompressor()
             {
-                decompressor = SharpZipLib.CreateInflater();
-                Compressed = new byte[0];
             }
 
-            public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
+            public override void Decompress(DataInput input, int originalLength, int offset, int length, BytesRef bytes)
             {
                 Debug.Assert(offset + length <= originalLength);
                 if (length == 0)
@@ -221,45 +219,31 @@ namespace Lucene.Net.Codecs.Compressing
                     bytes.Length = 0;
                     return;
                 }
-                int compressedLength = @in.ReadVInt();
-                if (compressedLength > Compressed.Length)
-                {
-                    Compressed = new byte[ArrayUtil.Oversize(compressedLength, 1)];
-                }
-                @in.ReadBytes(Compressed, 0, compressedLength);
 
-                decompressor.Reset();
-                decompressor.SetInput(Compressed, 0, compressedLength);
+                byte[] compressedBytes = new byte[input.ReadVInt()];
+                input.ReadBytes(compressedBytes, 0, compressedBytes.Length);
+                byte[] decompressedBytes = null;
 
-                bytes.Offset = bytes.Length = 0;
-                while (true)
+                using (MemoryStream decompressedStream = new MemoryStream())
                 {
-                    int count;
-                    try
+                    using (MemoryStream compressedStream = new MemoryStream(compressedBytes))
                     {
-                        int remaining = bytes.Bytes.Length - bytes.Length;
-                        count = decompressor.Inflate((byte[])(Array)(bytes.Bytes), bytes.Length, remaining);
+                        using (DeflateStream dStream = new DeflateStream(compressedStream, System.IO.Compression.CompressionMode.Decompress))
+                        {
+                            dStream.CopyTo(decompressedStream);
+                        }
                     }
-                    catch (System.FormatException e)
-                    {
-                        throw new System.IO.IOException("See inner", e);
-                    }
-                    bytes.Length += count;
-                    if (decompressor.IsFinished)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        bytes.Bytes = ArrayUtil.Grow(bytes.Bytes);
-                    }
+                    decompressedBytes = decompressedStream.ToArray();
                 }
-                if (bytes.Length != originalLength)
+
+                if (decompressedBytes.Length != originalLength)
                 {
-                    throw new CorruptIndexException("Lengths mismatch: " + bytes.Length + " != " + originalLength + " (resource=" + @in + ")");
+                    throw new CorruptIndexException($"Length mismatch: {decompressedBytes.Length} != {originalLength} (resource={input})");
                 }
+
+                bytes.Bytes = decompressedBytes;
                 bytes.Offset = offset;
-                bytes.Length = length;
+                bytes.Length = length;            
             }
 
             public override object Clone()
@@ -270,47 +254,35 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class DeflateCompressor : Compressor
         {
-            private readonly Deflater Compressor;
-            private byte[] Compressed;
-
-            internal DeflateCompressor(int level)
+            private CompressionLevel compressionLevel;
+            internal DeflateCompressor(CompressionLevel level)
             {
-                Compressor = SharpZipLib.CreateDeflater();
-                Compressed = new byte[64];
+                compressionLevel = level;
             }
 
-            public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
+            public override void Compress(byte[] bytes, int off, int len, DataOutput output)
             {
-                Compressor.Reset();
-                Compressor.SetInput((byte[])(Array)bytes, off, len);
-                Compressor.Finish();
-
-                if (Compressor.NeedsInput)
+                byte[] resultArray = null;
+                using (MemoryStream compressionMemoryStream = new MemoryStream())
                 {
-                    // no output
+                    using (DeflateStream deflateStream = new DeflateStream(compressionMemoryStream, compressionLevel))
+                    {
+                        deflateStream.Write(bytes, off, len);
+                    }
+                    resultArray = compressionMemoryStream.ToArray();
+                }
+
+                if (resultArray.Length == 0)
+                {
                     Debug.Assert(len == 0, len.ToString());
-                    @out.WriteVInt(0);
+                    output.WriteVInt(0);
                     return;
                 }
-
-                int totalCount = 0;
-                for (; ; )
+                else
                 {
-                    int count = Compressor.Deflate(Compressed, totalCount, Compressed.Length - totalCount);
-                    totalCount += count;
-                    Debug.Assert(totalCount <= Compressed.Length);
-                    if (Compressor.IsFinished)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Compressed = ArrayUtil.Grow(Compressed);
-                    }
+                    output.WriteVInt(resultArray.Length);
+                    output.WriteBytes(resultArray, resultArray.Length);
                 }
-
-                @out.WriteVInt(totalCount);
-                @out.WriteBytes(Compressed, totalCount);
             }
         }
     }

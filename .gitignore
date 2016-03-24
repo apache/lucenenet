@@ -11,6 +11,7 @@ obj
 *.userprefs
 *.pidb
 *.ide
+*.project.lock.json
 test-results
 build/artifacts
 build/bin

@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.IO.Compression;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 
@@ -37,67 +39,50 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Compresses the specified byte range using the
-        ///  specified compressionLevel (constants are defined in
-        ///  java.util.zip.Deflater).
+        ///  specified compressionLevel 
         /// </summary>
-        public static byte[] Compress(byte[] value, int offset, int length, int compressionLevel)
+        public static byte[] Compress(byte[] value, int offset, int length, CompressionLevel compressionLevel)
         {
-            /* Create an expandable byte array to hold the compressed data.
-             * You cannot use an array that's the same size as the orginal because
-             * there is no guarantee that the compressed data will be smaller than
-             * the uncompressed data. */
-            var bos = new ByteArrayOutputStream(length);
-
-            Deflater compressor = SharpZipLib.CreateDeflater();
-
-            try
+            byte[] resultArray = null;
+            using (MemoryStream compressionMemoryStream = new MemoryStream())
             {
-                compressor.SetLevel(compressionLevel);
-                compressor.SetInput(value, offset, length);
-                compressor.Finish();
-
-                // Compress the data
-                var buf = new byte[1024];
-                while (!compressor.IsFinished)
+                using (DeflateStream deflateStream = new DeflateStream(compressionMemoryStream, compressionLevel))
                 {
-                    int count = compressor.Deflate(buf);
-                    bos.Write(buf, 0, count);
-                }
-            }
-            finally
-            {
-            }
 
-            return bos.ToArray();
+                    deflateStream.Write(value, offset, length);
+                }
+                resultArray = compressionMemoryStream.ToArray();
+            }
+            return resultArray;
         }
 
         /// <summary>
-        /// Compresses the specified byte range, with default BEST_COMPRESSION level </summary>
+        /// Compresses the specified byte range, with default Optimal level 
+        /// </summary>
         public static byte[] Compress(byte[] value, int offset, int length)
         {
-            return Compress(value, offset, length, Deflater.BEST_COMPRESSION);
+            return Compress(value, offset, length, CompressionLevel.Optimal);
         }
 
         /// <summary>
-        /// Compresses all bytes in the array, with default BEST_COMPRESSION level </summary>
+        /// Compresses all bytes in the array, with default Optimal level </summary>
         public static byte[] Compress(byte[] value)
         {
-            return Compress(value, 0, value.Length, Deflater.BEST_COMPRESSION);
+            return Compress(value, 0, value.Length, CompressionLevel.Optimal);
         }
 
         /// <summary>
         /// Compresses the String value, with default BEST_COMPRESSION level </summary>
         public static byte[] CompressString(string value)
         {
-            return CompressString(value, Deflater.BEST_COMPRESSION);
+            return CompressString(value, CompressionLevel.Optimal);
         }
 
         /// <summary>
         /// Compresses the String value using the specified
-        ///  compressionLevel (constants are defined in
-        ///  java.util.zip.Deflater).
+        ///  compressionLevel.
         /// </summary>
-        public static byte[] CompressString(string value, int compressionLevel)
+        public static byte[] CompressString(string value, CompressionLevel compressionLevel)
         {
             var result = new BytesRef();
             UnicodeUtil.UTF16toUTF8(value.ToCharArray(), 0, value.Length, result);
@@ -128,28 +113,21 @@ namespace Lucene.Net.Documents
         /// </summary>
         public static byte[] Decompress(byte[] value, int offset, int length)
         {
-            // Create an expandable byte array to hold the decompressed data
-            var bos = new ByteArrayOutputStream(length);
+            byte[] decompressedBytes = null;
 
-            Inflater decompressor = SharpZipLib.CreateInflater();
-
-            try
+            using (MemoryStream decompressedStream = new MemoryStream())
             {
-                decompressor.SetInput(value);
-
-                // Decompress the data
-                var buf = new byte[1024];
-                while (!decompressor.IsFinished)
+                using (MemoryStream compressedStream = new MemoryStream(value))
                 {
-                    int count = decompressor.Inflate(buf);
-                    bos.Write(buf, 0, count);
+                    using (DeflateStream dStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
+                    {
+                        dStream.CopyTo(decompressedStream);
+                    }
                 }
-            }
-            finally
-            {
+                decompressedBytes = decompressedStream.ToArray();
             }
 
-            return bos.ToArray();
+            return decompressedBytes;
         }
 
         /// <summary>
