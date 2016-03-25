@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 if (decompressedBytes.Length != originalLength)
                 {
-                    throw new CorruptIndexException($"Length mismatch: {decompressedBytes.Length} != {originalLength} (resource={input})");
+                    throw new CorruptIndexException("Length mismatch: " + decompressedBytes.Length + " != " + originalLength + " (resource=" + input + ")");
                 }
 
                 bytes.Bytes = decompressedBytes;
