@@ -40,7 +40,7 @@ namespace Lucene.Net.Support
         /// <param name="converter">The <see cref="Converter{TInput, TOutput}"/> which will convert
         /// instances of <typeparamref name="TItem"/> to <typeparamref name="TKey"/>
         /// when the override of <see cref="GetKeyForItem(TItem)"/> is called.</param>
-        internal GeneralKeyedCollection(Converter<TItem, TKey> converter)
+        internal GeneralKeyedCollection(Func<TItem, TKey> converter)
             : base()
         {
             // If the converter is null, throw an exception.
@@ -56,7 +56,7 @@ namespace Lucene.Net.Support
         /// <summary>The <see cref="Converter{TInput, TOutput}"/> which will convert
         /// instances of <typeparamref name="TItem"/> to <typeparamref name="TKey"/>
         /// when the override of <see cref="GetKeyForItem(TItem)"/> is called.</summary>
-        private readonly Converter<TItem, TKey> converter;
+        private readonly Func<TItem, TKey> converter;
 
         /// <summary>Converts an item that is added to the collection to
         /// a key.</summary>

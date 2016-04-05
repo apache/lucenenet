@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     ///  iwc.setMergePolicy(new UpgradeIndexMergePolicy(iwc.getMergePolicy()));
     ///  IndexWriter w = new IndexWriter(dir, iwc);
     ///  w.forceMerge(1);
-    ///  w.close();
+    ///  w.Dispose();
     /// </pre>
     /// <p><b>Warning:</b> this merge policy may reorder documents if the index was partially
     /// upgraded before calling forceMerge (e.g., documents were added). If your application relies

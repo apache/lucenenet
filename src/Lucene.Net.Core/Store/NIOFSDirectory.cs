@@ -108,7 +108,7 @@ namespace Lucene.Net.Store
             {
                 if (disposing)
                 {
-                    Descriptor.Close();
+                    Descriptor.Dispose();
                 }
             }
 
@@ -179,7 +179,7 @@ namespace Lucene.Net.Store
             {
                 if (!IsClone)
                 {
-                    Channel.Close();
+                    Channel.Dispose();
                 }
             }
 

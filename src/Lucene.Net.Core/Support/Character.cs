@@ -269,7 +269,7 @@ namespace Lucene.Net.Support
         {
             var str = Char.ConvertFromUtf32(c);
 
-            var unicodeCategory = Char.GetUnicodeCategory(str, 0);
+            var unicodeCategory = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(str, 0);
 
             return unicodeCategory == UnicodeCategory.LowercaseLetter ||
                    unicodeCategory == UnicodeCategory.UppercaseLetter ||

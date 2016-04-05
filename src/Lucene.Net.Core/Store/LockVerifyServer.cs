@@ -49,19 +49,24 @@ namespace Lucene.Net.Store
             if (args.Length != 2)
             {
                 Console.WriteLine("Usage: java Lucene.Net.Store.LockVerifyServer bindToIp clients\n");
-                Environment.Exit(1);
+                Environment.FailFast("1");
             }
 
+            //TODO: conniey
             int arg = 0;
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(args[arg++]);
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPAddress ipAddress = new IPAddress(12341);
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 0);
+            //IPHostEntry ipHostInfo = Dns.GetHostEntry(args[arg++]);
+            //IPAddress ipAddress = ipHostInfo.AddressList[0];
+            //IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 0);
             int maxClients = Convert.ToInt32(args[arg++]);
 
             using (Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
-                s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
-                s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 30000);// SoTimeout = 30000; // initially 30 secs to give clients enough time to startup
+                //TODO: conniey
+                //s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+                //s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 30000);// SoTimeout = 30000; // initially 30 secs to give clients enough time to startup
+
                 s.Bind(localEndPoint);
                 Console.WriteLine("Listening on " + ((IPEndPoint)s.LocalEndPoint).Port.ToString() + "...");
 
@@ -74,12 +79,13 @@ namespace Lucene.Net.Store
                 CountdownEvent startingGun = new CountdownEvent(1);
                 ThreadClass[] threads = new ThreadClass[maxClients];
 
-                for (int count = 0; count < maxClients; count++)
-                {
-                    Socket cs = s.Accept();
-                    threads[count] = new ThreadAnonymousInnerClassHelper(localLock, lockedID, startingGun, cs);
-                    threads[count].Start();
-                }
+                //TODO: conniey
+                //for (int count = 0; count < maxClients; count++)
+                //{
+                //    Socket cs = s.Accept();
+                //    threads[count] = new ThreadAnonymousInnerClassHelper(localLock, lockedID, startingGun, cs);
+                //    threads[count].Start();
+                //}
 
                 // start
                 Console.WriteLine("All clients started, fire gun...");
@@ -116,77 +122,78 @@ namespace Lucene.Net.Store
 
             public override void Run()
             {
-                using (Stream @in = new NetworkStream(Cs, FileAccess.Read), os = new NetworkStream(Cs, FileAccess.ReadWrite))
-                {
-                    BinaryReader intReader = new BinaryReader(@in);
-                    BinaryWriter intWriter = new BinaryWriter(os);
-                    try
-                    {
-                        int id = intReader.ReadInt32();
-                        if (id < 0)
-                        {
-                            throw new System.IO.IOException("Client closed connection before communication started.");
-                        }
+                //TODO: conniey
+                //using (Stream @in = new NetworkStream(Cs, FileAccess.Read), os = new NetworkStream(Cs, FileAccess.ReadWrite))
+                //{
+                //    BinaryReader intReader = new BinaryReader(@in);
+                //    BinaryWriter intWriter = new BinaryWriter(os);
+                //    try
+                //    {
+                //        int id = intReader.ReadInt32();
+                //        if (id < 0)
+                //        {
+                //            throw new System.IO.IOException("Client closed connection before communication started.");
+                //        }
 
-                        //LUCENE TO-DO NOt sure about this
-                        StartingGun.Wait();
-                        intWriter.Write(43);
-                        os.Flush();
+                //        //LUCENE TO-DO NOt sure about this
+                //        StartingGun.Wait();
+                //        intWriter.Write(43);
+                //        os.Flush();
 
-                        while (true)
-                        {
-                            int command = intReader.ReadInt32();
-                            if (command < 0)
-                            {
-                                return; // closed
-                            }
+                //        while (true)
+                //        {
+                //            int command = intReader.ReadInt32();
+                //            if (command < 0)
+                //            {
+                //                return; // closed
+                //            }
 
-                            lock (LocalLock)
-                            {
-                                int currentLock = LockedID[0];
-                                if (currentLock == -2)
-                                {
-                                    return; // another thread got error, so we exit, too!
-                                }
-                                switch (command)
-                                {
-                                    case 1:
-                                        // Locked
-                                        if (currentLock != -1)
-                                        {
-                                            LockedID[0] = -2;
-                                            throw new InvalidOperationException("id " + id + " got lock, but " + currentLock + " already holds the lock");
-                                        }
-                                        LockedID[0] = id;
-                                        break;
+                //            lock (LocalLock)
+                //            {
+                //                int currentLock = LockedID[0];
+                //                if (currentLock == -2)
+                //                {
+                //                    return; // another thread got error, so we exit, too!
+                //                }
+                //                switch (command)
+                //                {
+                //                    case 1:
+                //                        // Locked
+                //                        if (currentLock != -1)
+                //                        {
+                //                            LockedID[0] = -2;
+                //                            throw new InvalidOperationException("id " + id + " got lock, but " + currentLock + " already holds the lock");
+                //                        }
+                //                        LockedID[0] = id;
+                //                        break;
 
-                                    case 0:
-                                        // Unlocked
-                                        if (currentLock != id)
-                                        {
-                                            LockedID[0] = -2;
-                                            throw new InvalidOperationException("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
-                                        }
-                                        LockedID[0] = -1;
-                                        break;
+                //                    case 0:
+                //                        // Unlocked
+                //                        if (currentLock != id)
+                //                        {
+                //                            LockedID[0] = -2;
+                //                            throw new InvalidOperationException("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
+                //                        }
+                //                        LockedID[0] = -1;
+                //                        break;
 
-                                    default:
-                                        throw new Exception("Unrecognized command: " + command);
-                                }
-                                intWriter.Write(command);
-                                os.Flush();
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        throw e;
-                    }
-                    finally
-                    {
-                        IOUtils.CloseWhileHandlingException(Cs);
-                    }
-                }
+                //                    default:
+                //                        throw new Exception("Unrecognized command: " + command);
+                //                }
+                //                intWriter.Write(command);
+                //                os.Flush();
+                //            }
+                //        }
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        throw e;
+                //    }
+                //    finally
+                //    {
+                //        IOUtils.CloseWhileHandlingException(Cs);
+                //    }
+                //}
             }
         }
     }

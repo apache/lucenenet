@@ -433,7 +433,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     }
                     sb.Append(i + ": " + category.ToString() + "\n");
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     throw;
                 }

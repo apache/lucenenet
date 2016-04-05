@@ -74,7 +74,6 @@ namespace Lucene.Net.Documents
         /// </summary>
         protected internal TokenStream TokenStream_Renamed;
 
-        [NonSerialized]
         private TokenStream InternalTokenStream;
 
         /// <summary>

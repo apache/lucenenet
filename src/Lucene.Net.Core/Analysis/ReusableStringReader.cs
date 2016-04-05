@@ -65,10 +65,12 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
             _pos = _size; // this prevents NPE when reading after close!
             _s = null;
+
+            base.Dispose(disposing);
         }
     }
 }

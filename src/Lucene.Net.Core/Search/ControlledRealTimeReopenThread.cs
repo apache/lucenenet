@@ -143,14 +143,15 @@ namespace Lucene.Net.Search
                     ReopenLock.Unlock();
                 }
 
-                try
-                {
-                    Join();
-                }
-                catch (ThreadInterruptedException ie)
-                {
-                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-                }
+                //TODO: conniey
+                //try
+                //{
+                //    Join();
+                //}
+                //catch (ThreadInterruptedException ie)
+                //{
+                //    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+                //}
 
                 // Max it out so any waiting search threads will return:
                 SearchingGen = long.MaxValue;
@@ -263,33 +264,35 @@ namespace Lucene.Net.Search
                 while (!Finish)
                 {
                     // Need lock before finding out if has waiting
-                    ReopenLock.Lock();
-                    try
-                    {
-                        // True if we have someone waiting for reopened searcher:
-                        bool hasWaiting = WaitingGen > SearchingGen;
-                        long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? TargetMinStaleNS : TargetMaxStaleNS);
 
-                        long sleepNS = nextReopenStartNS - (DateTime.Now.Ticks * 100);
+                    //TODO: conniey
+                    //ReopenLock.Lock();
+                    //try
+                    //{
+                    //    // True if we have someone waiting for reopened searcher:
+                    //    bool hasWaiting = WaitingGen > SearchingGen;
+                    //    long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? TargetMinStaleNS : TargetMaxStaleNS);
 
-                        if (sleepNS > 0)
-                        {
-                            ReopenCond.WaitOne(new TimeSpan(sleepNS / 100));//Convert NS to Ticks
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    catch (ThreadInterruptedException ie)
-                    {
-                        Thread.CurrentThread.Interrupt();
-                        return;
-                    }
-                    finally
-                    {
-                        ReopenLock.Unlock();
-                    }
+                    //    long sleepNS = nextReopenStartNS - (DateTime.Now.Ticks * 100);
+
+                    //    if (sleepNS > 0)
+                    //    {
+                    //        ReopenCond.WaitOne(new TimeSpan(sleepNS / 100));//Convert NS to Ticks
+                    //    }
+                    //    else
+                    //    {
+                    //        break;
+                    //    }
+                    //}
+                    //catch (ThreadInterruptedException ie)
+                    //{
+                    //    Thread.CurrentThread.Interrupt();
+                    //    return;
+                    //}
+                    //finally
+                    //{
+                    //    ReopenLock.Unlock();
+                    //}
                 }
 
                 if (Finish)

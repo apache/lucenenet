@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
     /// </table>
     /// </summary>
 
-    public class OpenBitSet : DocIdSet, Bits, ICloneable
+    public class OpenBitSet : DocIdSet, Bits
     {
         protected internal long[] bits;
         protected internal int Wlen; // number of words (elements) used in the array
@@ -902,7 +902,9 @@ namespace Lucene.Net.Util
             }
             catch (Exception e)
             {
-                throw new SystemException(e.Message, e);
+                //TODO: conniey
+                //throw new SystemException(e.Message, e);
+                return null;
             }
         }
 

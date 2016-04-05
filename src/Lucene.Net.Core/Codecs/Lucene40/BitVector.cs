@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// </summary>
     // pkg-private: if this thing is generally useful then it can go back in .util,
     // but the serialization must be here underneath the codec.
-    public sealed class BitVector : ICloneable, MutableBits
+    public sealed class BitVector : MutableBits
     {
         private byte[] Bits;
         private int Size_Renamed;

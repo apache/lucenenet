@@ -295,7 +295,7 @@ namespace Lucene.Net.Search
             internal readonly Similarity Similarity;
             internal readonly Similarity.SimWeight Stats;
 
-            [NonSerialized]
+            
             internal TermContext[] States;
 
             public PhraseWeight(PhraseQuery outerInstance, IndexSearcher searcher)

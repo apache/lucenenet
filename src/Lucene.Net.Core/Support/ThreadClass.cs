@@ -92,7 +92,8 @@ namespace Lucene.Net.Support
         /// </summary>
         public virtual void Interrupt()
         {
-            _threadField.Interrupt();
+            //TODO: conniey
+            //_threadField.Interrupt();
         }
 
         /// <summary>
@@ -134,28 +135,29 @@ namespace Lucene.Net.Support
         /// <summary>
         /// Gets or sets a value indicating the scheduling priority of a thread
         /// </summary>
-        public ThreadPriority Priority
-        {
-            get
-            {
-                try
-                {
-                    return _threadField.Priority;
-                }
-                catch
-                {
-                    return ThreadPriority.Normal;
-                }
-            }
-            set
-            {
-                try
-                {
-                    _threadField.Priority = value;
-                }
-                catch { }
-            }
-        }
+        //TODO: conniey
+            //public ThreadPriority Priority
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            return _threadField.Priority;
+        //        }
+        //        catch
+        //        {
+        //            return ThreadPriority.Normal;
+        //        }
+        //    }
+        //    set
+        //    {
+        //        try
+        //        {
+        //            _threadField.Priority = value;
+        //        }
+        //        catch { }
+        //    }
+        //}
 
         /// <summary>
         /// Gets a value indicating the execution status of the current thread
@@ -197,7 +199,8 @@ namespace Lucene.Net.Support
         /// <param name="MiliSeconds">Time of wait in milliseconds</param>
         public void Join(long MiliSeconds)
         {
-            _threadField.Join(new System.TimeSpan(MiliSeconds * 10000));
+            //TODO: conniey
+            //_threadField.Join(new System.TimeSpan(MiliSeconds * 10000));
         }
 
         /// <summary>
@@ -207,7 +210,8 @@ namespace Lucene.Net.Support
         /// <param name="NanoSeconds">Time of wait in nanoseconds</param>
         public void Join(long MiliSeconds, int NanoSeconds)
         {
-            _threadField.Join(new System.TimeSpan(MiliSeconds * 10000 + NanoSeconds * 100));
+            //TODO: conniey
+            //_threadField.Join(new System.TimeSpan(MiliSeconds * 10000 + NanoSeconds * 100));
         }
 
         /// <summary>
@@ -225,7 +229,8 @@ namespace Lucene.Net.Support
         /// </summary>
         public void Abort()
         {
-            _threadField.Abort();
+            //TODO: conniey
+            //_threadField.Abort();
         }
 
         /// <summary>
@@ -237,7 +242,8 @@ namespace Lucene.Net.Support
         /// <param name="stateInfo">An object that contains application-specific information, such as state, which can be used by the thread being aborted</param>
         public void Abort(object stateInfo)
         {
-            _threadField.Abort(stateInfo);
+            //TODO: conniey
+            //_threadField.Abort(stateInfo);
         }
 
         /// <summary>
@@ -254,7 +260,9 @@ namespace Lucene.Net.Support
         /// <returns>A String that represents the current object</returns>
         public override System.String ToString()
         {
-            return "Thread[" + Name + "," + Priority.ToString() + "]";
+            //TODO: conniey
+            return string.Empty;
+            //return "Thread[" + Name + "," + Priority.ToString() + "]";
         }
 
         [ThreadStatic]

@@ -44,7 +44,7 @@ namespace Lucene.Net.Store
 
         public void Dispose()
         {
-            Os.Close();
+            Os.Dispose();
         }
     }
 }

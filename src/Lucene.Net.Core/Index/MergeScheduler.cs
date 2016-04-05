@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     ///  instance.</p>
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergeScheduler : IDisposable, ICloneable
+    public abstract class MergeScheduler : IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass

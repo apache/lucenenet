@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
     ///    <p>See also the family of <seealso cref="Lucene.Net.Search.Spans Span Queries"/>
     ///       and additional queries available in the <a href="{@docRoot}/../queries/overview-summary.html">Queries module</a>
     /// </summary>
-    public abstract class Query : ICloneable
+    public abstract class Query
     {
         protected Query()
         {
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
                 return false;
             }
 
-            if (GetType() != obj.GetType())
+            if (this.GetType() != obj.GetType())
             {
                 return false;
             }

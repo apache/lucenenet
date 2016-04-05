@@ -202,7 +202,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         return scorer.Score();
                     }
-                    catch (Exception exception)
+                    catch (Exception)
                     {
                         throw;
                     }

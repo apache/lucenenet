@@ -45,53 +45,54 @@ namespace Lucene.Net.Util
             // it is unavailable. So we go to the next level on each and check each referenced
             // assembly.
 
-            foreach (var loadedAssembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                try
-                {
-                    foreach (var type in loadedAssembly.GetTypes())
-                    {
-                        try
-                        {
-                            if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
-                                types.Add(type);
-                        }
-                        catch
-                        {
-                            // swallow
-                        }
-                    }
-                }
-                catch
-                {
-                    // swallow
-                }
+            //TODO: conniey
+            //foreach (var loadedAssembly in AppDomain.CurrentDomain.GetAssemblies())
+            //{
+            //    try
+            //    {
+            //        foreach (var type in loadedAssembly.GetTypes())
+            //        {
+            //            try
+            //            {
+            //                if (typeof(S).IsAssignableFrom(type) && !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
+            //                    types.Add(type);
+            //            }
+            //            catch
+            //            {
+            //                // swallow
+            //            }
+            //        }
+            //    }
+            //    catch
+            //    {
+            //        // swallow
+            //    }
 
-                foreach (var assemblyName in loadedAssembly.GetReferencedAssemblies())
-                {
-                    try
-                    {
-                        var assembly = Assembly.Load(assemblyName);
+            //    foreach (var assemblyName in loadedAssembly.GetReferencedAssemblies())
+            //    {
+            //        try
+            //        {
+            //            var assembly = Assembly.Load(assemblyName);
 
-                        foreach (var type in assembly.GetTypes())
-                        {
-                            try
-                            {
-                                if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
-                                    types.Add(type);
-                            }
-                            catch
-                            {
-                                // swallow
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // swallow
-                    }
-                }
-            }
+            //            foreach (var type in assembly.GetTypes())
+            //            {
+            //                try
+            //                {
+            //                    if (typeof(S).IsAssignableFrom(type) && !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
+            //                        types.Add(type);
+            //                }
+            //                catch
+            //                {
+            //                    // swallow
+            //                }
+            //            }
+            //        }
+            //        catch
+            //        {
+            //            // swallow
+            //        }
+            //    }
+            //}
         }
 
         public static SPIClassIterator<S> Get()

@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.experimental
     /// </summary>
-    public sealed class SetOnce<T> : ICloneable
+    public sealed class SetOnce<T>
     {
         /// <summary>
         /// Thrown when <seealso cref="SetOnce#set(Object)"/> is called more than once. </summary>

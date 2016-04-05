@@ -59,7 +59,8 @@ namespace Lucene.Net.Util
             {
                 Name = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", this.ThreadNamePrefix, Interlocked.Increment(ref ThreadNumber)),
                 IsBackground = false,
-                Priority = ThreadPriority.Normal
+                //TODO: conniey
+                //Priority = ThreadPriority.Normal
             };
 
             return t;

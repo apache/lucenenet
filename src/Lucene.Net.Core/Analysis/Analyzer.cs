@@ -255,7 +255,6 @@ namespace Lucene.Net.Analysis
 
             /// <summary>
             /// Internal cache only used by <seealso cref="Analyzer#tokenStream(String, String)"/>. </summary>
-            [NonSerialized]
             internal ReusableStringReader ReusableStringReader;
 
             /// <summary>
