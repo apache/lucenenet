@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs
         {
             if (Loader == null)
             {
-                throw new InvalidOperationException("You called Codec.forName() before all Codecs could be initialized. " + "this likely happens if you call it from a Codec's ctor.");
+                throw new InvalidOperationException("You called Codec.ForName() before all Codecs could be initialized. This likely happens if you call it from a Codec's ctor.");
             }
             return Loader.Lookup(name);
         }
@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs
         {
             if (Loader == null)
             {
-                throw new InvalidOperationException("You called Codec.availableCodecs() before all Codecs could be initialized. " + "this likely happens if you call it from a Codec's ctor.");
+                throw new InvalidOperationException("You called Codec.AvailableCodecs() before all Codecs could be initialized. This likely happens if you call it from a Codec's ctor.");
             }
             return Loader.AvailableServices();
         }
