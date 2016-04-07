@@ -318,7 +318,7 @@ namespace Lucene.Net.Util.Fst
             if (bytes.length == 665) {
               Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"), StandardCharsets.UTF_8);
               Util.toDot(this, w, false, false);
-              w.close();
+              w.Dispose();
               System.out.println("Wrote FST to out.dot");
             }
             */
@@ -562,24 +562,25 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public void Save(FileInfo file)
         {
-            bool success = false;
-            var bs = new BufferedStream(file.OpenWrite());
-            try
-            {
-                Save(new OutputStreamDataOutput(bs));
-                success = true;
-            }
-            finally
-            {
-                if (success)
-                {
-                    IOUtils.Close(bs);
-                }
-                else
-                {
-                    IOUtils.CloseWhileHandlingException(bs);
-                }
-            }
+            //TODO: conniey
+            //bool success = false;
+            //var bs = new BufferedStream(file.OpenWrite());
+            //try
+            //{
+            //    Save(new OutputStreamDataOutput(bs));
+            //    success = true;
+            //}
+            //finally
+            //{
+            //    if (success)
+            //    {
+            //        IOUtils.Close(bs);
+            //    }
+            //    else
+            //    {
+            //        IOUtils.CloseWhileHandlingException(bs);
+            //    }
+            //}
         }
 
         /// <summary>
@@ -587,25 +588,27 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public static FST<T> Read<T>(FileInfo file, Outputs<T> outputs)
         {
-            var bs = new BufferedStream(file.OpenRead());
-            bool success = false;
-            try
-            {
-                FST<T> fst = new FST<T>(new InputStreamDataInput(bs), outputs);
-                success = true;
-                return fst;
-            }
-            finally
-            {
-                if (success)
-                {
-                    IOUtils.Close(bs);
-                }
-                else
-                {
-                    IOUtils.CloseWhileHandlingException(bs);
-                }
-            }
+            //TODO: conniey
+            throw new NotImplementedException("");
+            //var bs = new BufferedStream(file.OpenRead());
+            //bool success = false;
+            //try
+            //{
+            //    FST<T> fst = new FST<T>(new InputStreamDataInput(bs), outputs);
+            //    success = true;
+            //    return fst;
+            //}
+            //finally
+            //{
+            //    if (success)
+            //    {
+            //        IOUtils.Close(bs);
+            //    }
+            //    else
+            //    {
+            //        IOUtils.CloseWhileHandlingException(bs);
+            //    }
+            //}
         }
 
         private void WriteLabel(DataOutput @out, int v)

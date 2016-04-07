@@ -167,15 +167,16 @@ namespace Lucene.Net.Index
             }
             set
             {
-                lock (this)
-                {
-                    if (value > (int)ThreadPriority.Highest || value < (int)ThreadPriority.Lowest)
-                    {
-                        throw new System.ArgumentException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive");
-                    }
-                    MergeThreadPriority_Renamed = value;
-                    UpdateMergeThreads();
-                }
+                //TODO: conniey
+                //lock (this)
+                //{
+                //    if (value > (int)ThreadPriority.Highest || value < (int)ThreadPriority.Lowest)
+                //    {
+                //        throw new System.ArgumentException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive");
+                //    }
+                //    MergeThreadPriority_Renamed = value;
+                //    UpdateMergeThreads();
+                //}
             }
         }
 
@@ -274,8 +275,11 @@ namespace Lucene.Net.Index
                         {
                             Message("set priority of merge thread " + mergeThread.Name + " to " + pri);
                         }
-                        mergeThread.ThreadPriority = pri;
-                        pri = Math.Min((int)ThreadPriority.Highest, 1 + pri);
+
+                        //TODO: conniey
+                        //mergeThread.ThreadPriority = pri;
+                        //pri = Math.Min((int)ThreadPriority.Highest, 1 + pri);
+
                     }
                 }
             }
@@ -307,19 +311,20 @@ namespace Lucene.Net.Index
 
         private void InitMergeThreadPriority()
         {
-            lock (this)
-            {
-                if (MergeThreadPriority_Renamed == -1)
-                {
-                    // Default to slightly higher priority than our
-                    // calling thread
-                    MergeThreadPriority_Renamed = 1 + (int)ThreadClass.Current().Priority;
-                    if (MergeThreadPriority_Renamed > (int)ThreadPriority.Highest)
-                    {
-                        MergeThreadPriority_Renamed = (int)ThreadPriority.Highest;
-                    }
-                }
-            }
+            //TODO: conniey
+            //lock (this)
+            //{
+            //    if (MergeThreadPriority_Renamed == -1)
+            //    {
+            //        // Default to slightly higher priority than our
+            //        // calling thread
+            //        MergeThreadPriority_Renamed = 1 + (int)ThreadClass.Current().Priority;
+            //        if (MergeThreadPriority_Renamed > (int)ThreadPriority.Highest)
+            //        {
+            //            MergeThreadPriority_Renamed = (int)ThreadPriority.Highest;
+            //        }
+            //    }
+            //}
         }
 
         public override void Dispose()
@@ -331,49 +336,50 @@ namespace Lucene.Net.Index
         /// Wait for any running merge threads to finish. this call is not interruptible as used by <seealso cref="#close()"/>. </summary>
         public virtual void Sync()
         {
-            bool interrupted = false;
-            try
-            {
-                while (true)
-                {
-                    MergeThread toSync = null;
-                    lock (this)
-                    {
-                        foreach (MergeThread t in MergeThreads)
-                        {
-                            if (t.IsAlive)
-                            {
-                                toSync = t;
-                                break;
-                            }
-                        }
-                    }
-                    if (toSync != null)
-                    {
-                        try
-                        {
-                            toSync.Join();
-                        }
-                        catch (ThreadInterruptedException ie)
-                        {
-                            // ignore this Exception, we will retry until all threads are dead
-                            interrupted = true;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            finally
-            {
-                // finally, restore interrupt status:
-                if (interrupted)
-                {
-                    Thread.CurrentThread.Interrupt();
-                }
-            }
+            //TODO: conniey
+            //bool interrupted = false;
+            //try
+            //{
+            //    while (true)
+            //    {
+            //        MergeThread toSync = null;
+            //        lock (this)
+            //        {
+            //            foreach (MergeThread t in MergeThreads)
+            //            {
+            //                if (t.IsAlive)
+            //                {
+            //                    toSync = t;
+            //                    break;
+            //                }
+            //            }
+            //        }
+            //        if (toSync != null)
+            //        {
+            //            try
+            //            {
+            //                toSync.Join();
+            //            }
+            //            catch (ThreadInterruptedException ie)
+            //            {
+            //                // ignore this Exception, we will retry until all threads are dead
+            //                interrupted = true;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            break;
+            //        }
+            //    }
+            //}
+            //finally
+            //{
+            //    // finally, restore interrupt status:
+            //    if (interrupted)
+            //    {
+            //        Thread.CurrentThread.Interrupt();
+            //    }
+            //}
         }
 
         /// <summary>
@@ -442,14 +448,16 @@ namespace Lucene.Net.Index
                         {
                             Message("    too many merges; stalling...");
                         }
-                        try
-                        {
-                            Monitor.Wait(this);
-                        }
-                        catch (ThreadInterruptedException ie)
-                        {
-                            throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-                        }
+
+                        //TODO: conniey
+                        //try
+                        //{
+                        //    Monitor.Wait(this);
+                        //}
+                        //catch (ThreadInterruptedException ie)
+                        //{
+                        //    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+                        //}
                     }
 
                     if (Verbose())
@@ -602,20 +610,21 @@ namespace Lucene.Net.Index
             {
                 set
                 {
-                    try
-                    {
-                        Priority = (ThreadPriority)value;
-                    }
-                    catch (System.NullReferenceException npe)
-                    {
-                        // Strangely, Sun's JDK 1.5 on Linux sometimes
-                        // throws NPE out of here...
-                    }
-                    catch (System.Security.SecurityException se)
-                    {
-                        // Ignore this because we will still run fine with
-                        // normal thread priority
-                    }
+                    //TODO: conniey
+                    //try
+                    //{
+                    //    Priority = (ThreadPriority)value;
+                    //}
+                    //catch (System.NullReferenceException npe)
+                    //{
+                    //    // Strangely, Sun's JDK 1.5 on Linux sometimes
+                    //    // throws NPE out of here...
+                    //}
+                    //catch (System.Security.SecurityException se)
+                    //{
+                    //    // Ignore this because we will still run fine with
+                    //    // normal thread priority
+                    //}
                 }
             }
 
@@ -701,20 +710,21 @@ namespace Lucene.Net.Index
         /// </summary>
         protected internal virtual void HandleMergeException(Exception exc)
         {
-            try
-            {
-                // When an exception is hit during merge, IndexWriter
-                // removes any partial files and then allows another
-                // merge to run.  If whatever caused the error is not
-                // transient then the exception will keep happening,
-                // so, we sleep here to avoid saturating CPU in such
-                // cases:
-                Thread.Sleep(250);
-            }
-            catch (ThreadInterruptedException ie)
-            {
-                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-            }
+            //TODO: conniey
+            //try
+            //{
+            //    // When an exception is hit during merge, IndexWriter
+            //    // removes any partial files and then allows another
+            //    // merge to run.  If whatever caused the error is not
+            //    // transient then the exception will keep happening,
+            //    // so, we sleep here to avoid saturating CPU in such
+            //    // cases:
+            //    Thread.Sleep(250);
+            //}
+            //catch (ThreadInterruptedException ie)
+            //{
+            //    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+            //}
             throw new MergePolicy.MergeException(exc, Dir);
         }
 

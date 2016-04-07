@@ -697,7 +697,7 @@ namespace Lucene.Net.Util.Fst
         /// <pre class="prettyprint">
         /// PrintWriter pw = new PrintWriter(&quot;out.dot&quot;);
         /// Util.toDot(fst, pw, true, true);
-        /// pw.close();
+        /// pw.Dispose();
         /// </pre>
         ///
         /// and then, from command line:
@@ -1053,7 +1053,7 @@ namespace Lucene.Net.Util.Fst
         public static <T> void dotToFile(FST<T> fst, String filePath) throws IOException {
           Writer w = new OutputStreamWriter(new FileOutputStream(filePath));
           toDot(fst, w, true, true);
-          w.close();
+          w.Dispose();
         }
         */
 

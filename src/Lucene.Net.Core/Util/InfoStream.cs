@@ -32,7 +32,7 @@ namespace Lucene.Net.Util
     ///
     /// @lucene.internal
     /// </summary>
-    public abstract class InfoStream : IDisposable, ICloneable
+    public abstract class InfoStream : IDisposable
     {
         /// <summary>
         /// Instance of InfoStream that does no logging at all. </summary>

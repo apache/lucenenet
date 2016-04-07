@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis
         /// <p>
         /// <b>NOTE:</b>
         /// The default implementation chains the call to the input TokenStream, so
-        /// be sure to call <code>super.close()</code> when overriding this method.
+        /// be sure to call <code>super.Dispose()</code> when overriding this method.
         /// </summary>
         public override void Dispose()
         {

@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Automaton
     ///
     /// @lucene.experimental
     /// </summary>
-    public class Transition : ICloneable
+    public class Transition
     {
         /*
          * CLASS INVARIANT: min<=max

@@ -78,21 +78,22 @@ namespace Lucene.Net.Index
                 {
                     if (Stalled) // react on the first wakeup call!
                     {
-                        // don't loop here, higher level logic will re-stall!
-                        try
-                        {
-                            // make sure not to run IncWaiters / DecrWaiters in Debug.Assert as that gets 
-                            // removed at compile time if built in Release mode
-                            var result = IncWaiters();
-                            Debug.Assert(result);
-                            Monitor.Wait(this);
-                            result = DecrWaiters();
-                            Debug.Assert(result);
-                        }
-                        catch (ThreadInterruptedException e)
-                        {
-                            throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-                        }
+                        //TODO: conniey
+                        //// don't loop here, higher level logic will re-stall!
+                        //try
+                        //{
+                        //    // make sure not to run IncWaiters / DecrWaiters in Debug.Assert as that gets 
+                        //    // removed at compile time if built in Release mode
+                        //    var result = IncWaiters();
+                        //    Debug.Assert(result);
+                        //    Monitor.Wait(this);
+                        //    result = DecrWaiters();
+                        //    Debug.Assert(result);
+                        //}
+                        //catch (ThreadInterruptedException e)
+                        //{
+                        //    throw new ThreadInterruptedException("Thread Interrupted Exception", e);
+                        //}
                     }
                 }
             }

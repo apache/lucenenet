@@ -290,7 +290,7 @@ namespace Lucene.Net.Analysis
           final String s = a.toDot();
           Writer w = new OutputStreamWriter(new FileOutputStream("/tmp/out.dot"));
           w.write(s);
-          w.close();
+          w.Dispose();
           System.out.println("TEST: saved to /tmp/out.dot");
         }
         */

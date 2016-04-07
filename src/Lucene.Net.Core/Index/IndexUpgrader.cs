@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
             Console.Error.WriteLine("this, allowing the tool to delete all but the last commit.");
             Console.Error.WriteLine("Specify a " + typeof(FSDirectory).Name + " implementation through the -dir-impl option to force its use. If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.");
             Console.Error.WriteLine("WARNING: this tool may reorder document IDs!");
-            Environment.Exit(1);
+            Environment.FailFast("1");
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
                     if (i == args.Length - 1)
                     {
                         Console.WriteLine("ERROR: missing value for -dir-impl option");
-                        Environment.Exit(1);
+                        Environment.FailFast("1");
                     }
                     i++;
                     dirImpl = args[i];

@@ -347,7 +347,8 @@ namespace Lucene.Net.Store
 
             if (input.memoryMappedFile == null)
             {
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 100 : length, MemoryMappedFileAccess.Read, null, HandleInheritability.Inheritable, false);
+                //TODO: conniey
+                //input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 100 : length, MemoryMappedFileAccess.Read, null, HandleInheritability.Inheritable, false);
             }
 
             long bufferStart = 0L;

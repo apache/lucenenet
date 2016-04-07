@@ -49,35 +49,36 @@ namespace Lucene.Net.Support
         {
             Type type = inflaterInstance.GetType();
 
-            setInputMethod = (SetInputDelegate)Delegate.CreateDelegate(
-                typeof(SetInputDelegate),
-                inflaterInstance,
-                type.GetMethod("SetInput", new Type[] { typeof(byte[]) }));
+            //TODO: conniey
+            //setInputMethod = (SetInputDelegate)Delegate.CreateDelegate(
+            //    typeof(SetInputDelegate),
+            //    inflaterInstance,
+            //    type.GetMethod("SetInput", new Type[] { typeof(byte[]) }));
 
-            getIsFinishedMethod = (GetIsFinishedDelegate)Delegate.CreateDelegate(
-                typeof(GetIsFinishedDelegate),
-                inflaterInstance,
-                type.GetMethod("get_IsFinished", Type.EmptyTypes));
+            //getIsFinishedMethod = (GetIsFinishedDelegate)Delegate.CreateDelegate(
+            //    typeof(GetIsFinishedDelegate),
+            //    inflaterInstance,
+            //    type.GetMethod("get_IsFinished", Type.EmptyTypes));
 
-            inflateMethod = (InflateDelegate)Delegate.CreateDelegate(
-                typeof(InflateDelegate),
-                inflaterInstance,
-                type.GetMethod("Inflate", new Type[] { typeof(byte[]) }));
+            //inflateMethod = (InflateDelegate)Delegate.CreateDelegate(
+            //    typeof(InflateDelegate),
+            //    inflaterInstance,
+            //    type.GetMethod("Inflate", new Type[] { typeof(byte[]) }));
 
-            resetMethod = (ResetDelegate)Delegate.CreateDelegate(
-                typeof(ResetDelegate),
-                inflaterInstance,
-                type.GetMethod("Reset", Type.EmptyTypes));
+            //resetMethod = (ResetDelegate)Delegate.CreateDelegate(
+            //    typeof(ResetDelegate),
+            //    inflaterInstance,
+            //    type.GetMethod("Reset", Type.EmptyTypes));
 
-            setInput3Method = (SetInputDelegate3)Delegate.CreateDelegate(
-                typeof(SetInputDelegate3),
-                inflaterInstance,
-                type.GetMethod("SetInput", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
+            //setInput3Method = (SetInputDelegate3)Delegate.CreateDelegate(
+            //    typeof(SetInputDelegate3),
+            //    inflaterInstance,
+            //    type.GetMethod("SetInput", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
 
-            inflate3Method = (InflateDelegate3)Delegate.CreateDelegate(
-                typeof(InflateDelegate3),
-                inflaterInstance,
-                type.GetMethod("Inflate", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
+            //inflate3Method = (InflateDelegate3)Delegate.CreateDelegate(
+            //    typeof(InflateDelegate3),
+            //    inflaterInstance,
+            //    type.GetMethod("Inflate", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
         }
 
         public void SetInput(byte[] buffer)

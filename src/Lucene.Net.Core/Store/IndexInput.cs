@@ -34,7 +34,7 @@ namespace Lucene.Net.Store
     /// <seealso cref="AlreadyClosedException"/> when the original one is closed.
     /// </summary>
     /// <seealso cref= Directory </seealso>
-    public abstract class IndexInput : DataInput, ICloneable, IDisposable
+    public abstract class IndexInput : DataInput, IDisposable
     {
         private readonly string ResourceDescription;
 

@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Lucene.Net.Support
 {
@@ -52,7 +53,7 @@ namespace Lucene.Net.Support
     /// </summary>
     /// <typeparam name="TKey">The type of keys in the dictionary</typeparam>
     /// <typeparam name="TValue">The type of values in the dictionary</typeparam>
-    [Serializable]
+    
     public class HashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {
         internal IEqualityComparer<TKey> _comparer;
@@ -101,7 +102,7 @@ namespace Lucene.Net.Support
             _dict = wrappedDict;
             _hasNullValue = false;
 
-            if (typeof(TKey).IsValueType)
+            if (typeof(TKey).GetTypeInfo().IsValueType)
             {
                 _isValueType = Nullable.GetUnderlyingType(typeof(TKey)) == null;
             }

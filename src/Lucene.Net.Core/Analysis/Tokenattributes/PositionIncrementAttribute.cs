@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
     /// <summary>
     /// Default implementation of <seealso cref="PositionIncrementAttribute"/>. </summary>
-    public class PositionIncrementAttribute : Attribute, IPositionIncrementAttribute, ICloneable
+    public class PositionIncrementAttribute : Attribute, IPositionIncrementAttribute
     {
         private int positionIncrement = 1;
 

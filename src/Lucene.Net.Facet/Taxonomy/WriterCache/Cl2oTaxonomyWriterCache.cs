@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -33,7 +34,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     public class Cl2oTaxonomyWriterCache : TaxonomyWriterCache
     {
         private const int LockTimeOut = 1000;
-        private readonly ReaderWriterLock @lock = new ReaderWriterLock();
+        private readonly ReaderWriterLockSlim @lock = new ReaderWriterLockSlim();
         private readonly int initialCapcity, numHashArrays;
         private readonly float loadFactor;
 
@@ -51,14 +52,20 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public virtual void Clear()
         {
-            @lock.AcquireWriterLock(LockTimeOut);
-            try
+            if (@lock.TryEnterWriteLock(LockTimeOut))
             {
-                cache = new CompactLabelToOrdinal(initialCapcity, loadFactor, numHashArrays);
+                try
+                {
+                    cache = new CompactLabelToOrdinal(initialCapcity, loadFactor, numHashArrays);
+                }
+                finally
+                {
+                    @lock.ExitWriteLock();
+                }
             }
-            finally
-            {
-                @lock.ReleaseWriterLock();
+            else {
+                //Throwing ArguementException to maintain behavoir with ReaderWriterLock.AquireWriteLock.
+                throw new ArgumentException();
             }
         }
 
@@ -81,30 +88,44 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public virtual int Get(FacetLabel categoryPath)
         {
-            @lock.AcquireReaderLock(LockTimeOut);
-            try
+            if (@lock.TryEnterReadLock(LockTimeOut))
             {
-                return cache.GetOrdinal(categoryPath);
+                try
+                {
+                    return cache.GetOrdinal(categoryPath);
+                }
+                finally
+                {
+                    @lock.ExitReadLock();
+                }
             }
-            finally
+            else
             {
-                @lock.ReleaseReaderLock();
+                //Throwing ArguementException to maintain behavoir with ReaderWriterLock.AquireWriteLock.
+                throw new ArgumentException();
             }
         }
 
         public virtual bool Put(FacetLabel categoryPath, int ordinal)
         {
-            @lock.AcquireWriterLock(LockTimeOut);
-            try
+            if (@lock.TryEnterWriteLock(LockTimeOut))
             {
-                cache.AddLabel(categoryPath, ordinal);
-                // Tell the caller we didn't clear part of the cache, so it doesn't
-                // have to flush its on-disk index now
-                return false;
+                try
+                {
+                    cache.AddLabel(categoryPath, ordinal);
+                    // Tell the caller we didn't clear part of the cache, so it doesn't
+                    // have to flush its on-disk index now
+                    return false;
+                }
+                finally
+                {
+                    @lock.ExitWriteLock();
+                }
             }
-            finally
+            else
             {
-                @lock.ReleaseWriterLock();
+                //Throwing ArguementException to maintain behavoir with ReaderWriterLock.AquireWriteLock.
+                throw new ArgumentException();
             }
         }
 
