@@ -286,6 +286,8 @@
     <Compile Include="Index\FreqProxTermsWriter.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
     <Compile Include="Index\FrozenBufferedUpdates.cs" />
+    <Compile Include="Index\IConcurrentMergeScheduler.cs" />
+    <Compile Include="Index\IMergeScheduler.cs" />
     <Compile Include="Index\IndexableField.cs" />
     <Compile Include="Index\IndexableFieldType.cs" />
     <Compile Include="Index\IndexCommit.cs" />

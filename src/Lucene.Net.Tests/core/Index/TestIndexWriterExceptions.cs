@@ -2150,11 +2150,11 @@ namespace Lucene.Net.Index
                 if (w == null)
                 {
                     IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-                    MergeScheduler ms = iwc.MergeScheduler;
-                    if (ms is ConcurrentMergeScheduler)
+                    IMergeScheduler ms = iwc.MergeScheduler;
+                    if (ms is IConcurrentMergeScheduler)
                     {
                         ConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousInnerClassHelper(this);
-                        ConcurrentMergeScheduler cms = (ConcurrentMergeScheduler)ms;
+                        IConcurrentMergeScheduler cms = (IConcurrentMergeScheduler)ms;
                         suppressFakeIOE.SetMaxMergesAndThreads(cms.MaxMergeCount, cms.MaxThreadCount);
                         suppressFakeIOE.MergeThreadPriority = cms.MergeThreadPriority;
                         iwc.SetMergeScheduler(suppressFakeIOE);

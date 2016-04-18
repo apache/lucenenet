@@ -72,13 +72,13 @@ namespace Lucene.Net.Index
                     MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new RAMDirectory());
                     dir.MaxSizeInBytes = diskFree;
                     IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-                    MergeScheduler ms = writer.Config.MergeScheduler;
-                    if (ms is ConcurrentMergeScheduler)
+                    IMergeScheduler ms = writer.Config.MergeScheduler;
+                    if (ms is IConcurrentMergeScheduler)
                     {
                         // this test intentionally produces exceptions
                         // in the threads that CMS launches; we don't
                         // want to pollute test output with these.
-                        ((ConcurrentMergeScheduler)ms).SetSuppressExceptions();
+                        ((IConcurrentMergeScheduler)ms).SetSuppressExceptions();
                     }
 
                     bool hitError = false;
@@ -297,21 +297,21 @@ namespace Lucene.Net.Index
                     indWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMergePolicy(NewLogMergePolicy(false)));
                     IOException err = null;
 
-                    MergeScheduler ms = indWriter.Config.MergeScheduler;
+                    IMergeScheduler ms = indWriter.Config.MergeScheduler;
                     for (int x = 0; x < 2; x++)
                     {
-                        if (ms is ConcurrentMergeScheduler)
+                        if (ms is IConcurrentMergeScheduler)
                         // this test intentionally produces exceptions
                         // in the threads that CMS launches; we don't
                         // want to pollute test output with these.
                         {
                             if (0 == x)
                             {
-                                ((ConcurrentMergeScheduler)ms).SetSuppressExceptions();
+                                ((IConcurrentMergeScheduler)ms).SetSuppressExceptions();
                             }
                             else
                             {
-                                ((ConcurrentMergeScheduler)ms).ClearSuppressExceptions();
+                                ((IConcurrentMergeScheduler)ms).ClearSuppressExceptions();
                             }
                         }
 

@@ -279,8 +279,8 @@ namespace Lucene.Net.Index
             MergePolicy mergePolicyClone = clone.MergePolicy;
             Assert.IsTrue(mergePolicy.GetType() == mergePolicyClone.GetType() && (mergePolicy != mergePolicyClone || mergePolicy.Clone() == mergePolicyClone.Clone()));
 
-            MergeScheduler mergeSched = conf.MergeScheduler;
-            MergeScheduler mergeSchedClone = clone.MergeScheduler;
+            IMergeScheduler mergeSched = conf.MergeScheduler;
+            IMergeScheduler mergeSchedClone = clone.MergeScheduler;
             Assert.IsTrue(mergeSched.GetType() == mergeSchedClone.GetType() && (mergeSched != mergeSchedClone || mergeSched.Clone() == mergeSchedClone.Clone()));
 
             conf.SetMergeScheduler(new SerialMergeScheduler());

@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// <seealso cref="MergeScheduler"/> to use for running merges. </summary>
-        protected internal volatile MergeScheduler mergeScheduler;
+        protected internal volatile IMergeScheduler mergeScheduler;
 
         /// <summary>
         /// Timeout when trying to obtain the write lock on init. </summary>
@@ -149,7 +149,9 @@ namespace Lucene.Net.Index
             useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
             openMode = OpenMode_e.CREATE_OR_APPEND;
             similarity = IndexSearcher.DefaultSimilarity;
+
             mergeScheduler = new ConcurrentMergeScheduler();
+
             writeLockTimeout = IndexWriterConfig.WRITE_LOCK_TIMEOUT;
             indexingChain = DocumentsWriterPerThread.defaultIndexingChain;
             codec = Codec.Default;
@@ -547,7 +549,7 @@ namespace Lucene.Net.Index
         /// Returns the <seealso cref="MergeScheduler"/> that was set by
         /// <seealso cref="IndexWriterConfig#setMergeScheduler(MergeScheduler)"/>.
         /// </summary>
-        public virtual MergeScheduler MergeScheduler
+        public virtual IMergeScheduler MergeScheduler
         {
             get
             {
