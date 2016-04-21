@@ -1,5 +1,5 @@
-using Apache.NMS.Util;
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
 
@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
             }
 
-            CountDownLatch done = new CountDownLatch(numThreads);
+            CountdownEvent done = new CountdownEvent(numThreads);
             AtomicInteger numUpdates = new AtomicInteger(AtLeast(100));
 
             // same thread updates a field as well as reopens
@@ -279,7 +279,7 @@ namespace Lucene.Net.Index
             {
                 t.Start();
             }
-            done.@await();
+            done.Wait();
             writer.Dispose();
 
             DirectoryReader reader = DirectoryReader.Open(dir);
@@ -323,12 +323,12 @@ namespace Lucene.Net.Index
 
             private IndexWriter Writer;
             private int NumDocs;
-            private CountDownLatch Done;
+            private CountdownEvent Done;
             private AtomicInteger NumUpdates;
             private string f;
             private string Cf;
 
-            public ThreadAnonymousInnerClassHelper(TestMixedDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountDownLatch done, AtomicInteger numUpdates, string f, string cf)
+            public ThreadAnonymousInnerClassHelper(TestMixedDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInteger numUpdates, string f, string cf)
                 : base(str)
             {
                 this.OuterInstance = outerInstance;
@@ -438,7 +438,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    Done.countDown();
+                    Done.Signal();
                 }
             }
         }

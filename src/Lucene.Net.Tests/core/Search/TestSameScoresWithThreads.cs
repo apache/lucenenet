@@ -1,6 +1,6 @@
-using Apache.NMS.Util;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 
             if (answers.Count > 0)
             {
-                CountDownLatch startingGun = new CountDownLatch(1);
+                CountdownEvent startingGun = new CountdownEvent(1);
                 int numThreads = TestUtil.NextInt(Random(), 2, 5);
                 ThreadClass[] threads = new ThreadClass[numThreads];
                 for (int threadID = 0; threadID < numThreads; threadID++)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
                     threads[threadID] = thread;
                     thread.Start();
                 }
-                startingGun.countDown();
+                startingGun.Signal();
                 foreach (ThreadClass thread in threads)
                 {
                     thread.Join();
@@ -114,9 +114,9 @@ namespace Lucene.Net.Search
 
             private IndexSearcher s;
             private IDictionary<BytesRef, TopDocs> Answers;
-            private CountDownLatch StartingGun;
+            private CountdownEvent StartingGun;
 
-            public ThreadAnonymousInnerClassHelper(TestSameScoresWithThreads outerInstance, IndexSearcher s, IDictionary<BytesRef, TopDocs> answers, CountDownLatch startingGun)
+            public ThreadAnonymousInnerClassHelper(TestSameScoresWithThreads outerInstance, IndexSearcher s, IDictionary<BytesRef, TopDocs> answers, CountdownEvent startingGun)
             {
                 this.OuterInstance = outerInstance;
                 this.s = s;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    StartingGun.@await();
+                    StartingGun.Wait();
                     for (int i = 0; i < 20; i++)
                     {
                         IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(Answers.EntrySet());

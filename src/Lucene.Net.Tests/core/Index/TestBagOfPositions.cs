@@ -1,8 +1,8 @@
-using Apache.NMS.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
             // else just positions
 
             ThreadClass[] threads = new ThreadClass[threadCount];
-            CountDownLatch startingGun = new CountDownLatch(1);
+            CountdownEvent startingGun = new CountdownEvent(1);
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
                 threads[threadID] = new ThreadAnonymousInnerClassHelper(this, numTerms, maxTermsPerDoc, postings, iw, startingGun, threadRandom, document, field);
                 threads[threadID].Start();
             }
-            startingGun.countDown();
+            startingGun.Signal();
             foreach (ThreadClass t in threads)
             {
                 t.Join();
@@ -156,12 +156,12 @@ namespace Lucene.Net.Index
             private int MaxTermsPerDoc;
             private ConcurrentQueue<string> Postings;
             private RandomIndexWriter Iw;
-            private CountDownLatch StartingGun;
+            private CountdownEvent StartingGun;
             private Random ThreadRandom;
             private Document Document;
             private Field Field;
 
-            public ThreadAnonymousInnerClassHelper(TestBagOfPositions outerInstance, int numTerms, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountDownLatch startingGun, Random threadRandom, Document document, Field field)
+            public ThreadAnonymousInnerClassHelper(TestBagOfPositions outerInstance, int numTerms, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun, Random threadRandom, Document document, Field field)
             {
                 this.OuterInstance = outerInstance;
                 this.NumTerms = numTerms;
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    StartingGun.@await();
+                    StartingGun.Wait();
                     while (!(Postings.Count == 0))
                     {
                         StringBuilder text = new StringBuilder();
