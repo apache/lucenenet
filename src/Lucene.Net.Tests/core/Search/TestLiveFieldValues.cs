@@ -1,9 +1,9 @@
-using Apache.NMS.Util;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
                 Console.WriteLine(numThreads + " threads");
             }
 
-            CountDownLatch startingGun = new CountDownLatch(1);
+            CountdownEvent startingGun = new CountdownEvent(1);
             IList<ThreadClass> threads = new List<ThreadClass>();
 
             int iters = AtLeast(1000);
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
                 thread.Start();
             }
 
-            startingGun.countDown();
+            startingGun.Signal();
 
             foreach (ThreadClass thread in threads)
             {
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
             private SearcherManager Mgr;
             private int? Missing;
             private LiveFieldValues<IndexSearcher, int?> Rt;
-            private CountDownLatch StartingGun;
+            private CountdownEvent StartingGun;
             private int Iters;
             private int IdCount;
             private double ReopenChance;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
             private int ThreadID;
             private Random ThreadRandom;
 
-            public ThreadAnonymousInnerClassHelper(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountDownLatch startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
+            public ThreadAnonymousInnerClassHelper(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountdownEvent startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
             {
                 this.w = w;
                 this.Mgr = mgr;
@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
                     IDictionary<string, int?> values = new Dictionary<string, int?>();
                     IList<string> allIDs = new SynchronizedCollection<string>();
 
-                    StartingGun.@await();
+                    StartingGun.Wait();
                     for (int iter = 0; iter < Iters; iter++)
                     {
                         // Add/update a document

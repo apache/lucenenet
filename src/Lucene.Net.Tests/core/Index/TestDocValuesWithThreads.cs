@@ -1,6 +1,6 @@
-using Apache.NMS.Util;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 
             int numThreads = TestUtil.NextInt(Random(), 2, 5);
             IList<ThreadClass> threads = new List<ThreadClass>();
-            CountDownLatch startingGun = new CountDownLatch(1);
+            CountdownEvent startingGun = new CountdownEvent(1);
             for (int t = 0; t < numThreads; t++)
             {
                 Random threadRandom = new Random(Random().Next());
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
                 threads.Add(thread);
             }
 
-            startingGun.countDown();
+            startingGun.Signal();
 
             foreach (ThreadClass thread in threads)
             {
@@ -104,10 +104,10 @@ namespace Lucene.Net.Index
             private IList<BytesRef> Sorted;
             private int NumDocs;
             private AtomicReader Ar;
-            private CountDownLatch StartingGun;
+            private CountdownEvent StartingGun;
             private Random ThreadRandom;
 
-            public ThreadAnonymousInnerClassHelper(TestDocValuesWithThreads outerInstance, IList<long?> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountDownLatch startingGun, Random threadRandom)
+            public ThreadAnonymousInnerClassHelper(TestDocValuesWithThreads outerInstance, IList<long?> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountdownEvent startingGun, Random threadRandom)
             {
                 this.OuterInstance = outerInstance;
                 this.Numbers = numbers;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
                     //BinaryDocValues bdv = ar.GetBinaryDocValues("bytes");
                     BinaryDocValues bdv = FieldCache.DEFAULT.GetTerms(Ar, "bytes", false);
                     SortedDocValues sdv = FieldCache.DEFAULT.GetTermsIndex(Ar, "sorted");
-                    StartingGun.@await();
+                    StartingGun.Wait();
                     int iters = AtLeast(1000);
                     BytesRef scratch = new BytesRef();
                     BytesRef scratch2 = new BytesRef();

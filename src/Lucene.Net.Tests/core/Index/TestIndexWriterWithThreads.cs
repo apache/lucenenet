@@ -1,4 +1,3 @@
-using Apache.NMS.Util;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -545,13 +544,13 @@ namespace Lucene.Net.Index
         public virtual void TestOpenTwoIndexWritersOnDifferentThreads()
         {
             Directory dir = NewDirectory();
-            CountDownLatch oneIWConstructed = new CountDownLatch(1);
+            CountdownEvent oneIWConstructed = new CountdownEvent(1);
             DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
             DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
 
             thread1.Start();
             thread2.Start();
-            oneIWConstructed.@await();
+            oneIWConstructed.Wait();
 
             thread1.StartIndexing();
             thread2.StartIndexing();
@@ -585,10 +584,10 @@ namespace Lucene.Net.Index
             internal readonly Directory Dir;
             internal bool Failed = false;
             internal Exception Failure = null;
-            internal readonly CountDownLatch StartIndexing_Renamed = new CountDownLatch(1);
-            internal CountDownLatch IwConstructed;
+            internal readonly CountdownEvent StartIndexing_Renamed = new CountdownEvent(1);
+            internal CountdownEvent IwConstructed;
 
-            public DelayedIndexAndCloseRunnable(Directory dir, CountDownLatch iwConstructed)
+            public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed)
             {
                 this.Dir = dir;
                 this.IwConstructed = iwConstructed;
@@ -596,7 +595,7 @@ namespace Lucene.Net.Index
 
             public virtual void StartIndexing()
             {
-                this.StartIndexing_Renamed.countDown();
+                this.StartIndexing_Renamed.Signal();
             }
 
             public override void Run()
@@ -607,8 +606,8 @@ namespace Lucene.Net.Index
                     Field field = NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
                     IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-                    IwConstructed.countDown();
-                    StartIndexing_Renamed.@await();
+                    IwConstructed.Signal();
+                    StartIndexing_Renamed.Wait();
                     writer.AddDocument(doc);
                     writer.Dispose();
                 }
@@ -634,11 +633,11 @@ namespace Lucene.Net.Index
 
             int threadCount = TestUtil.NextInt(Random(), 2, 6);
 
-            AtomicReference<IndexWriter> writerRef = new AtomicReference<IndexWriter>();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            AtomicObject<IndexWriter> writerRef = 
+                new AtomicObject<IndexWriter>(new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)));
 
-            writerRef.Value = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             LineFileDocs docs = new LineFileDocs(Random());
             ThreadClass[] threads = new ThreadClass[threadCount];
             int iters = AtLeast(100);
@@ -666,14 +665,14 @@ namespace Lucene.Net.Index
             private readonly TestIndexWriterWithThreads OuterInstance;
 
             private BaseDirectoryWrapper d;
-            private AtomicReference<IndexWriter> WriterRef;
+            private AtomicObject<IndexWriter> WriterRef;
             private LineFileDocs Docs;
             private int Iters;
             private AtomicBoolean Failed;
             private ReentrantLock RollbackLock;
             private ReentrantLock CommitLock;
 
-            public ThreadAnonymousInnerClassHelper(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
+            public ThreadAnonymousInnerClassHelper(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicObject<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
             {
                 this.OuterInstance = outerInstance;
                 this.d = d;
@@ -708,7 +707,8 @@ namespace Lucene.Net.Index
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": rollback done; now open new writer");
                                     }
-                                    WriterRef.Value = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                                    WriterRef.Value = 
+                                        new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
                                 }
                                 finally
                                 {
@@ -730,11 +730,11 @@ namespace Lucene.Net.Index
                                     }
                                     WriterRef.Value.Commit();
                                 }
-                                catch (AlreadyClosedException ace)
+                                catch (AlreadyClosedException)
                                 {
                                     // ok
                                 }
-                                catch (System.NullReferenceException npe)
+                                catch (NullReferenceException)
                                 {
                                     // ok
                                 }
@@ -753,15 +753,15 @@ namespace Lucene.Net.Index
                                 {
                                     WriterRef.Value.AddDocument(Docs.NextDoc());
                                 }
-                                catch (AlreadyClosedException ace)
+                                catch (AlreadyClosedException)
                                 {
                                     // ok
                                 }
-                                catch (System.NullReferenceException npe)
+                                catch (System.NullReferenceException)
                                 {
                                     // ok
                                 }
-                                catch (InvalidOperationException ae)
+                                catch (InvalidOperationException)
                                 {
                                     // ok
                                 }

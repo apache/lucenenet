@@ -1,4 +1,3 @@
-using Apache.NMS.Util;
 using Lucene.Net.Analysis.Tokenattributes;
 using System;
 using System.Collections.Generic;
@@ -890,7 +889,7 @@ namespace Lucene.Net.Index
                     AssertEquals(docs[i], reader.GetTermVectors(docID));
                 }
 
-                AtomicReference<Exception> exception = new AtomicReference<Exception>();
+                AtomicObject<Exception> exception = new AtomicObject<Exception>();
                 ThreadClass[] threads = new ThreadClass[2];
                 for (int i = 0; i < threads.Length; ++i)
                 {
@@ -918,10 +917,10 @@ namespace Lucene.Net.Index
             private int NumDocs;
             private Lucene.Net.Index.BaseTermVectorsFormatTestCase.RandomDocument[] Docs;
             private IndexReader Reader;
-            private AtomicReference<Exception> ARException;
+            private AtomicObject<Exception> ARException;
             private int i;
 
-            public ThreadAnonymousInnerClassHelper(BaseTermVectorsFormatTestCase outerInstance, int numDocs, Lucene.Net.Index.BaseTermVectorsFormatTestCase.RandomDocument[] docs, IndexReader reader, AtomicReference<Exception> exception, int i)
+            public ThreadAnonymousInnerClassHelper(BaseTermVectorsFormatTestCase outerInstance, int numDocs, Lucene.Net.Index.BaseTermVectorsFormatTestCase.RandomDocument[] docs, IndexReader reader, AtomicObject<Exception> exception, int i)
             {
                 this.OuterInstance = outerInstance;
                 this.NumDocs = numDocs;
@@ -944,7 +943,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception t)
                 {
-                    ARException.Value = t;
+                    this.ARException.Value = t;
                 }
             }
         }

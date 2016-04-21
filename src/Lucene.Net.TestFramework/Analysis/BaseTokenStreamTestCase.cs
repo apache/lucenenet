@@ -1,5 +1,4 @@
 using System.Linq;
-using Apache.NMS.Util;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using NUnit.Framework;
@@ -560,14 +559,14 @@ namespace Lucene.Net.Analysis
             internal readonly bool Simple;
             internal readonly bool OffsetsAreCorrect;
             internal readonly RandomIndexWriter Iw;
-            private readonly CountDownLatch _latch;
+            private readonly CountdownEvent _latch;
 
             // NOTE: not volatile because we don't want the tests to
             // add memory barriers (ie alter how threads
             // interact)... so this is just "best effort":
             public bool Failed;
 
-            internal AnalysisThread(long seed, /*CountDownLatch latch,*/ Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
+            internal AnalysisThread(long seed, /*CountdownEvent latch,*/ Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
             {
                 this.Seed = seed;
                 this.a = a;
@@ -585,7 +584,7 @@ namespace Lucene.Net.Analysis
                 bool success = false;
                 try
                 {
-                    if (_latch != null) _latch.await();
+                    if (_latch != null) _latch.Wait();
                     // see the part in checkRandomData where it replays the same text again
                     // to verify reproducability/reuse: hopefully this would catch thread hazards.
                     CheckRandomData(new Random((int)Seed), a, Iterations, MaxWordLength, UseCharFilter, Simple, OffsetsAreCorrect, Iw);
@@ -631,7 +630,7 @@ namespace Lucene.Net.Analysis
                 // now test with multiple threads: note we do the EXACT same thing we did before in each thread,
                 // so this should only really fail from another thread if its an actual thread problem
                 int numThreads = TestUtil.NextInt(random, 2, 4);
-                var startingGun = new CountDownLatch(1);
+                var startingGun = new CountdownEvent(1);
                 var threads = new AnalysisThread[numThreads];
                 for (int i = 0; i < threads.Length; i++)
                 {
@@ -640,7 +639,7 @@ namespace Lucene.Net.Analysis
                 
                 Array.ForEach(threads, thread => thread.Start());                
 
-                startingGun.countDown();
+                startingGun.Signal();
                 
                 foreach (var t in threads)
                 {
