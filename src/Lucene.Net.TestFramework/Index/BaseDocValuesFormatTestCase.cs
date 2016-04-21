@@ -1,9 +1,9 @@
-using Apache.NMS.Util;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
@@ -3209,14 +3209,14 @@ namespace Lucene.Net.Index
             DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt(Random(), 2, 7);
             ThreadClass[] threads = new ThreadClass[numThreads];
-            CountDownLatch startingGun = new CountDownLatch(1);
+            CountdownEvent startingGun = new CountdownEvent(1);
 
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousInnerClassHelper(this, ir, startingGun);
                 threads[i].Start();
             }
-            startingGun.countDown();
+            startingGun.Signal();
             foreach (ThreadClass t in threads)
             {
                 t.Join();
@@ -3230,9 +3230,9 @@ namespace Lucene.Net.Index
             private readonly BaseDocValuesFormatTestCase OuterInstance;
 
             private DirectoryReader Ir;
-            private CountDownLatch StartingGun;
+            private CountdownEvent StartingGun;
 
-            public ThreadAnonymousInnerClassHelper(BaseDocValuesFormatTestCase outerInstance, DirectoryReader ir, CountDownLatch startingGun)
+            public ThreadAnonymousInnerClassHelper(BaseDocValuesFormatTestCase outerInstance, DirectoryReader ir, CountdownEvent startingGun)
             {
                 this.OuterInstance = outerInstance;
                 this.Ir = ir;
@@ -3243,7 +3243,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    StartingGun.@await();
+                    StartingGun.Wait();
                     foreach (AtomicReaderContext context in Ir.Leaves)
                     {
                         AtomicReader r = context.AtomicReader;
@@ -3347,14 +3347,14 @@ namespace Lucene.Net.Index
             DirectoryReader ir = DirectoryReader.Open(dir);
             int numThreads = TestUtil.NextInt(Random(), 2, 7);
             ThreadClass[] threads = new ThreadClass[numThreads];
-            CountDownLatch startingGun = new CountDownLatch(1);
+            CountdownEvent startingGun = new CountdownEvent(1);
 
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousInnerClassHelper2(this, ir, startingGun);
                 threads[i].Start();
             }
-            startingGun.countDown();
+            startingGun.Signal();
             foreach (ThreadClass t in threads)
             {
                 t.Join();
@@ -3368,9 +3368,9 @@ namespace Lucene.Net.Index
             private readonly BaseDocValuesFormatTestCase OuterInstance;
 
             private DirectoryReader Ir;
-            private CountDownLatch StartingGun;
+            private CountdownEvent StartingGun;
 
-            public ThreadAnonymousInnerClassHelper2(BaseDocValuesFormatTestCase outerInstance, DirectoryReader ir, CountDownLatch startingGun)
+            public ThreadAnonymousInnerClassHelper2(BaseDocValuesFormatTestCase outerInstance, DirectoryReader ir, CountdownEvent startingGun)
             {
                 this.OuterInstance = outerInstance;
                 this.Ir = ir;
@@ -3381,7 +3381,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    StartingGun.@await();
+                    StartingGun.Wait();
                     foreach (AtomicReaderContext context in Ir.Leaves)
                     {
                         AtomicReader r = context.AtomicReader;

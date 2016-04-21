@@ -1,4 +1,3 @@
-using Apache.NMS.Util;
 using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
@@ -10,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -472,7 +472,7 @@ namespace Lucene.Net.Index
             int concurrentReads = AtLeast(5);
             int readsPerThread = AtLeast(50);
             IList<ThreadClass> readThreads = new List<ThreadClass>();
-            AtomicReference<Exception> ex = new AtomicReference<Exception>();
+            AtomicObject<Exception> ex = new AtomicObject<Exception>();
             for (int i = 0; i < concurrentReads; ++i)
             {
                 readThreads.Add(new ThreadAnonymousInnerClassHelper(numDocs, rd, searcher, readsPerThread, ex, i));
@@ -501,11 +501,11 @@ namespace Lucene.Net.Index
             private readonly DirectoryReader Rd;
             private readonly IndexSearcher Searcher;
             private int ReadsPerThread;
-            private AtomicReference<Exception> Ex;
+            private AtomicObject<Exception> Ex;
             private int i;
             private readonly int[] queries;
 
-            public ThreadAnonymousInnerClassHelper(int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicReference<Exception> ex, int i)
+            public ThreadAnonymousInnerClassHelper(int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicObject<Exception> ex, int i)
             {
                 this.NumDocs = numDocs;
                 this.Rd = rd;
@@ -546,8 +546,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception e)
                     {
-                        Ex.GetAndSet(e);
-                        //Ex.compareAndSet(null, e);
+                        Ex.Value = e;
                     }
                 }
             }

@@ -606,6 +606,7 @@
     <Compile Include="Support\AtomicBoolean.cs" />
     <Compile Include="Support\AtomicInteger.cs" />
     <Compile Include="Support\AtomicLong.cs" />
+    <Compile Include="Support\AtomicObject.cs" />
     <Compile Include="Support\Buffer.cs" />
     <Compile Include="Support\AttributeImplItem.cs" />
     <Compile Include="Support\BitSetSupport.cs" />

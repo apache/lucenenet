@@ -1,4 +1,3 @@
-using Apache.NMS.Util;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -265,8 +264,8 @@ namespace Lucene.Net.Search
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new ConcurrentMergeScheduler()));
             writer.AddDocument(new Document());
             writer.Commit();
-            CountDownLatch awaitEnterWarm = new CountDownLatch(1);
-            CountDownLatch awaitClose = new CountDownLatch(1);
+            CountdownEvent awaitEnterWarm = new CountdownEvent(1);
+            CountdownEvent awaitClose = new CountdownEvent(1);
             AtomicBoolean triedReopen = new AtomicBoolean(false);
             TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
             SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper2(this, awaitEnterWarm, awaitClose, triedReopen, es);
@@ -294,13 +293,13 @@ namespace Lucene.Net.Search
             {
                 Console.WriteLine("THREAD started");
             }
-            awaitEnterWarm.@await();
+            awaitEnterWarmWait();
             if (VERBOSE)
             {
                 Console.WriteLine("NOW call close");
             }
             searcherManager.Dispose();
-            awaitClose.countDown();
+            awaitClose.Signal();
             thread.Join();
             try
             {
@@ -327,12 +326,12 @@ namespace Lucene.Net.Search
         {
             private readonly TestSearcherManager OuterInstance;
 
-            private CountDownLatch AwaitEnterWarm;
-            private CountDownLatch AwaitClose;
+            private CountdownEvent AwaitEnterWarm;
+            private CountdownEvent AwaitClose;
             private AtomicBoolean TriedReopen;
             private TaskScheduler Es;
 
-            public SearcherFactoryAnonymousInnerClassHelper2(TestSearcherManager outerInstance, CountDownLatch awaitEnterWarm, CountDownLatch awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
+            public SearcherFactoryAnonymousInnerClassHelper2(TestSearcherManager outerInstance, CountdownEvent awaitEnterWarm, CountdownEvent awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
             {
                 this.OuterInstance = outerInstance;
                 this.AwaitEnterWarm = awaitEnterWarm;
@@ -347,8 +346,8 @@ namespace Lucene.Net.Search
                 {
                     if (TriedReopen.Get())
                     {
-                        AwaitEnterWarm.countDown();
-                        AwaitClose.@await();
+                        AwaitEnterWarm.Signal();
+                        AwaitClose.Wait();
                     }
                 }
                 catch (ThreadInterruptedException e)

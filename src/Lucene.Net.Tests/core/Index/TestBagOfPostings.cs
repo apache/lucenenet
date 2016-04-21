@@ -1,8 +1,8 @@
-using Apache.NMS.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -89,14 +89,14 @@ namespace Lucene.Net.Index
             }
 
             ThreadClass[] threads = new ThreadClass[threadCount];
-            CountDownLatch startingGun = new CountDownLatch(1);
+            CountdownEvent startingGun = new CountdownEvent(1);
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
                 threads[threadID] = new ThreadAnonymousInnerClassHelper(this, maxTermsPerDoc, postings, iw, startingGun);
                 threads[threadID].Start();
             }
-            startingGun.countDown();
+            startingGun.Signal();
             foreach (ThreadClass t in threads)
             {
                 t.Join();
@@ -135,9 +135,9 @@ namespace Lucene.Net.Index
             private int MaxTermsPerDoc;
             private ConcurrentQueue<string> Postings;
             private RandomIndexWriter Iw;
-            private CountDownLatch StartingGun;
+            private CountdownEvent StartingGun;
 
-            public ThreadAnonymousInnerClassHelper(TestBagOfPostings outerInstance, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountDownLatch startingGun)
+            public ThreadAnonymousInnerClassHelper(TestBagOfPostings outerInstance, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun)
             {
                 this.OuterInstance = outerInstance;
                 this.MaxTermsPerDoc = maxTermsPerDoc;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
                     Document document = new Document();
                     Field field = NewTextField("field", "", Field.Store.NO);
                     document.Add(field);
-                    StartingGun.@await();
+                    StartingGun.Wait();
                     while (!(Postings.Count == 0))
                     {
                         StringBuilder text = new StringBuilder();
