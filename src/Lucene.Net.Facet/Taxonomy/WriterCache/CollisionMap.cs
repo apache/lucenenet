@@ -261,7 +261,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Entry e = this.next_Renamed;
                 if (e == null)
                 {
-					throw new Exception("InstanceNotFoundException");
+					throw new InvalidOperationException(this.GetType() + " cannot get next entry");;
                 }
 
                 Entry n = e.next;
