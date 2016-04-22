@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+using org.apache.lucene.analysis.reverse;
 
-namespace org.apache.lucene.analysis.reverse
+namespace Lucene.Net.Analysis.Reverse
 {
 
 	/*

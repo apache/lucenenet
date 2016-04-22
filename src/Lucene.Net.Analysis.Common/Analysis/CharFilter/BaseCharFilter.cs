@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
         /// <summary>
         /// Retrieve the corrected offset. </summary>
-        protected internal override int Correct(int currentOff)
+        protected override int Correct(int currentOff)
         {
             if (offsets == null || currentOff < offsets[0])
             {
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.CharFilters
 		  diffs = ArrayUtil.Grow(diffs);
 		}
 
-		Debug.Assert(size == 0 || off >= offsets[size - 1]) : "Offset #" + size + "(" + off + ") is less than the last recorded offset " + offsets[size - 1] + "\n" + Arrays.ToString(offsets) + "\n" + Arrays.ToString(diffs);
+		Debug.Assert(size == 0 || off >= offsets[size - 1],  "Offset #" + size + "(" + off + ") is less than the last recorded offset " + offsets[size - 1] + "\n" + Arrays.ToString(offsets) + "\n" + Arrays.ToString(diffs));
 
 		if (size == 0 || off != offsets[size - 1])
 		{

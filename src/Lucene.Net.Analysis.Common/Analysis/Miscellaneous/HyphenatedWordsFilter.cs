@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -149,7 +150,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 term = termAttribute.ResizeBuffer(length);
             }
 
-            hyphenated.GetChars(0, length, term, 0);
+            term = hyphenated.ToString().ToCharArray();       
             termAttribute.Length = length;
             offsetAttribute.SetOffset(offsetAttribute.StartOffset(), lastEndOffset);
             hyphenated.Length = 0;

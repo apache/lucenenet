@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             : base(PER_FIELD_REUSE_STRATEGY)
         {
             this.defaultAnalyzer = defaultAnalyzer;
-            this.fieldAnalyzers = (fieldAnalyzers != null) ? fieldAnalyzers : System.Linq.Enumerable.Empty<string, Analyzer>();
+            this.fieldAnalyzers = fieldAnalyzers ?? new Dictionary<string, Analyzer>();
         }
 
         protected override Analyzer GetWrappedAnalyzer(string fieldName)

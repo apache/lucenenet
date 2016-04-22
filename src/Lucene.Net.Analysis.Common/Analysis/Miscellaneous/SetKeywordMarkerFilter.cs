@@ -1,6 +1,4 @@
 ﻿using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Analysis.Util;
-using org.apache.lucene.analysis.miscellaneous;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {

@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="maxTokenCount"> max number of tokens to produce </param>
         /// <param name="consumeAllTokens"> whether all tokens from the delegate should be consumed even if maxTokenCount is reached. </param>
         public LimitTokenCountAnalyzer(Analyzer @delegate, int maxTokenCount, bool consumeAllTokens)
-            : base(@delegate.ReuseStrategy)
+            : base(@delegate.Strategy)
         {
             this.@delegate = @delegate;
             this.maxTokenCount = maxTokenCount;

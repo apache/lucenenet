@@ -38,13 +38,35 @@
       <HintPath>..\..\packages\ICU4NET-ICU4C55.1-bin32.1.0.0\lib\net45\ICU4NETExtension.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\CharFilter\BaseCharFilter.cs" />
+    <Compile Include="Analysis\Core\KeywordAnalyzer.cs" />
+    <Compile Include="Analysis\Core\KeywordTokenizer.cs" />
     <Compile Include="Analysis\Core\LetterTokenizer.cs" />
+    <Compile Include="Analysis\Core\LowerCaseFilter.cs" />
     <Compile Include="Analysis\Core\LowerCaseTokenizer.cs" />
+    <Compile Include="Analysis\Core\SimpleAnalyzer.cs" />
+    <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\EmptyTokenStream.cs" />
+    <Compile Include="Analysis\Miscellaneous\HyphenatedWordsFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\KeywordMarkerFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\KeywordRepeatFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\LimitTokenCountAnalyzer.cs" />
+    <Compile Include="Analysis\Miscellaneous\LimitTokenCountFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\LimitTokenPositionFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\PerFieldAnalyzerWrapper.cs" />
+    <Compile Include="Analysis\Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\PrefixAwareTokenFilter.cs" />
+    <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
+    <Compile Include="Analysis\Util\StemmerUtil.cs" />
+    <Compile Include="Analysis\Core\UpperCaseFilter.cs" />
+    <Compile Include="Analysis\Core\WhitespaceAnalyzer.cs" />
+    <Compile Include="Analysis\Core\WhitespaceTokenizer.cs" />
     <Compile Include="Analysis\Util\CharacterIterator.cs" />
     <Compile Include="Analysis\Util\CharacterUtils.cs">
       <SubType>Code</SubType>

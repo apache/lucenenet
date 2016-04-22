@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <param name="currentOff"> current offset </param>
         /// <returns> corrected offset </returns>
-        protected internal abstract int Correct(int currentOff);
+        protected abstract int Correct(int currentOff);
 
         /// <summary>
         /// Chains the corrected offset through the input

@@ -4,7 +4,6 @@ using System.IO;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.util;
 using Reader = System.IO.TextReader;
 using Version = Lucene.Net.Util.LuceneVersion;
 

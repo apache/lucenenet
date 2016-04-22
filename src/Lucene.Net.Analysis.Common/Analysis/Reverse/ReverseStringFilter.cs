@@ -1,4 +1,8 @@
 ﻿using System;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,10 +23,6 @@
 
 namespace org.apache.lucene.analysis.reverse
 {
-
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using Version = org.apache.lucene.util.Version;
-
 	/// <summary>
 	/// Reverse token string, for example "country" => "yrtnuoc".
 	/// <para>
@@ -43,7 +43,7 @@ namespace org.apache.lucene.analysis.reverse
 	public sealed class ReverseStringFilter : TokenFilter
 	{
 
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+	    private readonly CharTermAttribute termAtt;
 	  private readonly char marker;
 	  private readonly Version matchVersion;
 	  private const char NOMARKER = '\uFFFF';
@@ -98,20 +98,18 @@ namespace org.apache.lucene.analysis.reverse
 		this.marker = marker;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
+	  public override bool IncrementToken()
 	  {
-		if (input.incrementToken())
+		if (input.IncrementToken())
 		{
-		  int len = termAtt.length();
+		  int len = termAtt.Length;
 		  if (marker != NOMARKER)
 		  {
 			len++;
-			termAtt.resizeBuffer(len);
-			termAtt.buffer()[len - 1] = marker;
+			termAtt.ResizeBuffer(len);
+			termAtt.Buffer()[len - 1] = marker;
 		  }
-		  reverse(matchVersion, termAtt.buffer(), 0, len);
+		  reverse(matchVersion, termAtt.Buffer(), 0, len);
 		  termAtt.Length = len;
 		  return true;
 		}
@@ -188,11 +186,9 @@ namespace org.apache.lucene.analysis.reverse
 	  /// <param name="start"> the offset from where to reverse the buffer </param>
 	  /// <param name="len"> the length in the buffer up to where the
 	  ///        buffer should be reversed </param>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public static void reverse(org.apache.lucene.util.Version matchVersion, final char[] buffer, final int start, final int len)
 	  public static void reverse(Version matchVersion, char[] buffer, int start, int len)
 	  {
-		if (!matchVersion.onOrAfter(Version.LUCENE_31))
+		if (!matchVersion.OnOrAfter(Version.LUCENE_31))
 		{
 		  reverseUnicode3(buffer, start, len);
 		  return;

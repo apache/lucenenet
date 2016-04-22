@@ -25,118 +25,118 @@ namespace Lucene.Net.Analysis.CharFilters
 {
     // TODO: save/load?
 
-	/// <summary>
-	/// Holds a map of String input to String output, to be used
-	/// with <seealso cref="Builder"/>.  Use the <seealso cref="MappingCharFilter"/>
-	/// to create this.
-	/// </summary>
-	public class NormalizeCharMap
-	{
+    /// <summary>
+    /// Holds a map of String input to String output, to be used
+    /// with <seealso cref="Builder"/>.  Use the <seealso cref="MappingCharFilter"/>
+    /// to create this.
+    /// </summary>
+    public class NormalizeCharMap
+    {
 
-	  internal readonly FST<CharsRef> map;
-	  internal readonly IDictionary<char?, FST.Arc<CharsRef>> cachedRootArcs = new Dictionary<char?, FST.Arc<CharsRef>>();
+        internal readonly FST<CharsRef> map;
+        internal readonly IDictionary<char?, FST.Arc<CharsRef>> cachedRootArcs = new Dictionary<char?, FST.Arc<CharsRef>>();
 
-	  // Use the builder to create:
-	  private NormalizeCharMap(FST<CharsRef> map)
-	  {
-		this.map = map;
-		if (map != null)
-		{
-		  try
-		  {
-			// Pre-cache root arcs:
-			var scratchArc = new FST.Arc<CharsRef>();
-			FST.BytesReader fstReader = map.BytesReader;
-			map.GetFirstArc(scratchArc);
-			if (FST<CharsRef>.TargetHasArcs(scratchArc))
-			{
-			  map.ReadFirstRealTargetArc(scratchArc.Target, scratchArc, fstReader);
-			  while (true)
-			  {
-				Debug.Assert(scratchArc.Label != FST<CharsRef>.END_LABEL); // LUCENENET TODO END_LABEL shouldn't be under generic?
-				cachedRootArcs[Convert.ToChar((char) scratchArc.Label)] = (new FST.Arc<CharsRef>()).CopyFrom(scratchArc);
-				if (scratchArc.Last)
-				{
-				  break;
-				}
-				map.ReadNextRealArc(scratchArc, fstReader);
-			  }
-			}
-			//System.out.println("cached " + cachedRootArcs.size() + " root arcs");
-		  }
-		  catch (IOException ioe)
-		  {
-			// Bogus FST IOExceptions!!  (will never happen)
-			throw new Exception(ioe);
-		  }
-		}
-	  }
+        // Use the builder to create:
+        private NormalizeCharMap(FST<CharsRef> map)
+        {
+            this.map = map;
+            if (map != null)
+            {
+                try
+                {
+                    // Pre-cache root arcs:
+                    var scratchArc = new FST.Arc<CharsRef>();
+                    FST.BytesReader fstReader = map.BytesReader;
+                    map.GetFirstArc(scratchArc);
+                    if (FST<CharsRef>.TargetHasArcs(scratchArc))
+                    {
+                        map.ReadFirstRealTargetArc(scratchArc.Target, scratchArc, fstReader);
+                        while (true)
+                        {
+                            Debug.Assert(scratchArc.Label != FST<CharsRef>.END_LABEL); // LUCENENET TODO END_LABEL shouldn't be under generic?
+                            cachedRootArcs[Convert.ToChar((char)scratchArc.Label)] = (new FST.Arc<CharsRef>()).CopyFrom(scratchArc);
+                            if (scratchArc.Last)
+                            {
+                                break;
+                            }
+                            map.ReadNextRealArc(scratchArc, fstReader);
+                        }
+                    }
+                    //System.out.println("cached " + cachedRootArcs.size() + " root arcs");
+                }
+                catch (IOException ioe)
+                {
+                    // Bogus FST IOExceptions!!  (will never happen)
+                    throw new Exception("Should never happen", ioe);
+                }
+            }
+        }
 
-	  /// <summary>
-	  /// Builds an NormalizeCharMap.
-	  /// <para>
-	  /// Call add() until you have added all the mappings, then call build() to get a NormalizeCharMap
-	  /// @lucene.experimental
-	  /// </para>
-	  /// </summary>
-	  public class Builder
-	  {
+        /// <summary>
+        /// Builds an NormalizeCharMap.
+        /// <para>
+        /// Call add() until you have added all the mappings, then call build() to get a NormalizeCharMap
+        /// @lucene.experimental
+        /// </para>
+        /// </summary>
+        public class Builder
+        {
 
-		internal readonly IDictionary<string, string> pendingPairs = new SortedDictionary<string, string>();
+            internal readonly IDictionary<string, string> pendingPairs = new SortedDictionary<string, string>();
 
-		/// <summary>
-		/// Records a replacement to be applied to the input
-		///  stream.  Whenever <code>singleMatch</code> occurs in
-		///  the input, it will be replaced with
-		///  <code>replacement</code>.
-		/// </summary>
-		/// <param name="match"> input String to be replaced </param>
-		/// <param name="replacement"> output String </param>
-		/// <exception cref="IllegalArgumentException"> if
-		/// <code>match</code> is the empty string, or was
-		/// already previously added </exception>
-		public virtual void add(string match, string replacement)
-		{
-		  if (match.Length == 0)
-		  {
-			throw new System.ArgumentException("cannot match the empty string");
-		  }
-		  if (pendingPairs.ContainsKey(match))
-		  {
-			throw new System.ArgumentException("match \"" + match + "\" was already added");
-		  }
-		  pendingPairs[match] = replacement;
-		}
+            /// <summary>
+            /// Records a replacement to be applied to the input
+            ///  stream.  Whenever <code>singleMatch</code> occurs in
+            ///  the input, it will be replaced with
+            ///  <code>replacement</code>.
+            /// </summary>
+            /// <param name="match"> input String to be replaced </param>
+            /// <param name="replacement"> output String </param>
+            /// <exception cref="IllegalArgumentException"> if
+            /// <code>match</code> is the empty string, or was
+            /// already previously added </exception>
+            public virtual void Add(string match, string replacement)
+            {
+                if (match.Length == 0)
+                {
+                    throw new System.ArgumentException("cannot match the empty string");
+                }
+                if (pendingPairs.ContainsKey(match))
+                {
+                    throw new System.ArgumentException("match \"" + match + "\" was already added");
+                }
+                pendingPairs[match] = replacement;
+            }
 
-		/// <summary>
-		/// Builds the NormalizeCharMap; call this once you
-		///  are done calling <seealso cref="#add"/>. 
-		/// </summary>
-		public virtual NormalizeCharMap build()
-		{
+            /// <summary>
+            /// Builds the NormalizeCharMap; call this once you
+            ///  are done calling <seealso cref="#add"/>. 
+            /// </summary>
+            public virtual NormalizeCharMap build()
+            {
 
-		  FST<CharsRef> map;
-		  try
-		  {
-			Outputs<CharsRef> outputs = CharSequenceOutputs.Singleton;
-			Builder<CharsRef> builder = new Builder<CharsRef>(FST.INPUT_TYPE.BYTE2, outputs);
-			IntsRef scratch = new IntsRef();
-			foreach (KeyValuePair<string, string> ent in pendingPairs.SetOfKeyValuePairs())
-			{
-			  builder.Add(Util.ToUTF16(ent.Key, scratch), new CharsRef(ent.Value));
-			}
-			map = builder.Finish();
-			pendingPairs.Clear();
-		  }
-		  catch (IOException ioe)
-		  {
-			// Bogus FST IOExceptions!!  (will never happen)
-			throw new Exception(ioe);
-		  }
+                FST<CharsRef> map;
+                try
+                {
+                    Outputs<CharsRef> outputs = CharSequenceOutputs.Singleton;
+                    Builder<CharsRef> builder = new Builder<CharsRef>(FST.INPUT_TYPE.BYTE2, outputs);
+                    IntsRef scratch = new IntsRef();
+                    foreach (var ent in pendingPairs)
+                    {
+                        builder.Add(Util.ToUTF16(ent.Key, scratch), new CharsRef(ent.Value));
+                    }
+                    map = builder.Finish();
+                    pendingPairs.Clear();
+                }
+                catch (IOException ioe)
+                {
+                    // Bogus FST IOExceptions!!  (will never happen)
+                    throw new Exception("Should never happen", ioe);
+                }
 
-		  return new NormalizeCharMap(map);
-		}
-	  }
-	}
+                return new NormalizeCharMap(map);
+            }
+        }
+    }
 
 }

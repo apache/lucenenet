@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using org.apache.lucene.analysis.util;
+using System.IO;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.CharFilters
 		}
 	  }
 
-	  public override HTMLStripCharFilter create(Reader input)
+	  public override HTMLStripCharFilter create(TextReader input)
 	  {
 		HTMLStripCharFilter charFilter;
 		if (null == escapedTags)

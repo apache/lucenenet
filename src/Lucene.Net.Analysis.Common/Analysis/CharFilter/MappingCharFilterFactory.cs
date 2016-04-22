@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
-using org.apache.lucene.analysis.charfilter;
-using org.apache.lucene.analysis.util;
 
 namespace Lucene.Net.Analysis.CharFilters
 {

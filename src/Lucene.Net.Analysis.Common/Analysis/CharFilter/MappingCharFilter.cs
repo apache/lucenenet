@@ -21,7 +21,6 @@ using System.IO;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
-using org.apache.lucene.analysis.charfilter;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
@@ -49,7 +48,7 @@ namespace Lucene.Net.Analysis.CharFilters
 	  private int inputOff;
 
 	  /// <summary>
-	  /// Default constructor that takes a <seealso cref="Reader"/>. </summary>
+	  /// Default constructor that takes a <seealso cref="TextReader"/>. </summary>
 	  public MappingCharFilter(NormalizeCharMap normMap, TextReader @in) : base(@in)
 	  {
 		buffer.Reset(@in);
@@ -70,21 +69,19 @@ namespace Lucene.Net.Analysis.CharFilters
 	  public override void Reset()
 	  {
 		input.Reset();
-		buffer.reset(input);
+		buffer.Reset(input);
 		replacement = null;
 		inputOff = 0;
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int read() throws java.io.IOException
-	  public override int read()
+	  public override int Read()
 	  {
 
 		//System.out.println("\nread");
 		while (true)
 		{
 
-		  if (replacement != null && replacementPointer < replacement.length)
+		  if (replacement != null && replacementPointer < replacement.Length)
 		  {
 			//System.out.println("  return repl[" + replacementPointer + "]=" + replacement.chars[replacement.offset + replacementPointer]);
 			return replacement.chars[replacement.offset + replacementPointer++];
@@ -105,25 +102,23 @@ namespace Lucene.Net.Analysis.CharFilters
 		  int lastMatchLen = -1;
 		  CharsRef lastMatch = null;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int firstCH = buffer.get(inputOff);
-		  int firstCH = buffer.get(inputOff);
+		  int firstCH = buffer.Get(inputOff);
 		  if (firstCH != -1)
 		  {
 			FST.Arc<CharsRef> arc = cachedRootArcs[Convert.ToChar((char) firstCH)];
 			if (arc != null)
 			{
-			  if (!FST.targetHasArcs(arc))
+			  if (!FST.TargetHasArcs(arc))
 			  {
 				// Fast pass for single character match:
 				Debug.Assert(arc.Final);
 				lastMatchLen = 1;
-				lastMatch = arc.output;
+				lastMatch = arc.Output;
 			  }
 			  else
 			  {
 				int lookahead = 0;
-				CharsRef output = arc.output;
+				CharsRef output = arc.Output;
 				while (true)
 				{
 				  lookahead++;
@@ -132,27 +127,27 @@ namespace Lucene.Net.Analysis.CharFilters
 				  {
 					// Match! (to node is final)
 					lastMatchLen = lookahead;
-					lastMatch = outputs.add(output, arc.nextFinalOutput);
+					lastMatch = outputs.Add(output, arc.NextFinalOutput);
 					// Greedy: keep searching to see if there's a
 					// longer match...
 				  }
 
-				  if (!FST.targetHasArcs(arc))
+				  if (!FST.TargetHasArcs(arc))
 				  {
 					break;
 				  }
 
-				  int ch = buffer.get(inputOff + lookahead);
+				  int ch = buffer.Get(inputOff + lookahead);
 				  if (ch == -1)
 				  {
 					break;
 				  }
-				  if ((arc = map.findTargetArc(ch, arc, scratchArc, fstReader)) == null)
+				  if ((arc = map.FindTargetArc(ch, arc, scratchArc, fstReader)) == null)
 				  {
 					// Dead end
 					break;
 				  }
-				  output = outputs.add(output, arc.output);
+				  output = outputs.Add(output, arc.Output);
 				}
 			  }
 			}
@@ -162,20 +157,15 @@ namespace Lucene.Net.Analysis.CharFilters
 		  {
 			inputOff += lastMatchLen;
 			//System.out.println("  match!  len=" + lastMatchLen + " repl=" + lastMatch);
-
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int diff = lastMatchLen - lastMatch.length;
-			int diff = lastMatchLen - lastMatch.length;
+			int diff = lastMatchLen - lastMatch.Length;
 
 			if (diff != 0)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int prevCumulativeDiff = getLastCumulativeDiff();
 			  int prevCumulativeDiff = LastCumulativeDiff;
 			  if (diff > 0)
 			  {
 				// Replacement is shorter than matched input:
-				addOffCorrectMap(inputOff - diff - prevCumulativeDiff, prevCumulativeDiff + diff);
+				AddOffCorrectMap(inputOff - diff - prevCumulativeDiff, prevCumulativeDiff + diff);
 			  }
 			  else
 			  {
@@ -187,7 +177,7 @@ namespace Lucene.Net.Analysis.CharFilters
 				int outputStart = inputOff - prevCumulativeDiff;
 				for (int extraIDX = 0;extraIDX < -diff;extraIDX++)
 				{
-				  addOffCorrectMap(outputStart + extraIDX, prevCumulativeDiff - extraIDX - 1);
+				  AddOffCorrectMap(outputStart + extraIDX, prevCumulativeDiff - extraIDX - 1);
 				}
 			  }
 			}
@@ -198,27 +188,23 @@ namespace Lucene.Net.Analysis.CharFilters
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ret = buffer.get(inputOff);
-			int ret = buffer.get(inputOff);
+			int ret = buffer.Get(inputOff);
 			if (ret != -1)
 			{
 			  inputOff++;
-			  buffer.freeBefore(inputOff);
+			  buffer.FreeBefore(inputOff);
 			}
 			return ret;
 		  }
 		}
 	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int read(char[] cbuf, int off, int len) throws java.io.IOException
-	  public override int read(char[] cbuf, int off, int len)
+	  public override int Read(char[] cbuf, int off, int len)
 	  {
 		int numRead = 0;
 		for (int i = off; i < off + len; i++)
 		{
-		  int c = read();
+		  int c = Read();
 		  if (c == -1)
 		  {
 			  break;

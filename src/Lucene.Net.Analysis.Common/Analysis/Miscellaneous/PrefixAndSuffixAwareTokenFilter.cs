@@ -4,7 +4,7 @@ using Lucene.Net.Analysis.Miscellaneous;
 namespace org.apache.lucene.analysis.miscellaneous
 {
 
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -22,89 +22,84 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 */
 
 
-	/// <summary>
-	/// Links two <seealso cref="PrefixAwareTokenFilter"/>.
-	/// <p/>
-	/// <b>NOTE:</b> This filter might not behave correctly if used with custom Attributes, i.e. Attributes other than
-	/// the ones located in org.apache.lucene.analysis.tokenattributes. 
-	/// </summary>
-	public class PrefixAndSuffixAwareTokenFilter : TokenStream
-	{
+    /// <summary>
+    /// Links two <seealso cref="PrefixAwareTokenFilter"/>.
+    /// <p/>
+    /// <b>NOTE:</b> This filter might not behave correctly if used with custom Attributes, i.e. Attributes other than
+    /// the ones located in org.apache.lucene.analysis.tokenattributes. 
+    /// </summary>
+    public class PrefixAndSuffixAwareTokenFilter : TokenStream
+    {
 
-	  private readonly PrefixAwareTokenFilter suffix;
+        private readonly PrefixAwareTokenFilter suffix;
 
-	  public PrefixAndSuffixAwareTokenFilter(TokenStream prefix, TokenStream input, TokenStream suffix) : base(suffix)
-	  {
-		prefix = new PrefixAwareTokenFilterAnonymousInnerClassHelper(this, prefix, input);
-		this.suffix = new PrefixAwareTokenFilterAnonymousInnerClassHelper2(this, prefix, suffix);
-	  }
+        public PrefixAndSuffixAwareTokenFilter(TokenStream prefix, TokenStream input, TokenStream suffix) : base(suffix)
+        {
+            prefix = new PrefixAwareTokenFilterAnonymousInnerClassHelper(this, prefix, input);
+            this.suffix = new PrefixAwareTokenFilterAnonymousInnerClassHelper2(this, prefix, suffix);
+        }
 
-	  private class PrefixAwareTokenFilterAnonymousInnerClassHelper : PrefixAwareTokenFilter
-	  {
-		  private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
+        private class PrefixAwareTokenFilterAnonymousInnerClassHelper : PrefixAwareTokenFilter
+        {
+            private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
-		  public PrefixAwareTokenFilterAnonymousInnerClassHelper(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream input) : base(prefix, input)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+            public PrefixAwareTokenFilterAnonymousInnerClassHelper(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream input) : base(prefix, input)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-		  public override Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
-		  {
-			return outerInstance.updateInputToken(suffixToken, lastInputToken);
-		  }
-	  }
+            public override Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
+            {
+                return outerInstance.updateInputToken(suffixToken, lastInputToken);
+            }
+        }
 
-	  private class PrefixAwareTokenFilterAnonymousInnerClassHelper2 : PrefixAwareTokenFilter
-	  {
-		  private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
+        private class PrefixAwareTokenFilterAnonymousInnerClassHelper2 : PrefixAwareTokenFilter
+        {
+            private readonly PrefixAndSuffixAwareTokenFilter outerInstance;
 
-		  public PrefixAwareTokenFilterAnonymousInnerClassHelper2(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream suffix) : base(prefix, suffix)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+            public PrefixAwareTokenFilterAnonymousInnerClassHelper2(PrefixAndSuffixAwareTokenFilter outerInstance, TokenStream prefix, TokenStream suffix) : base(prefix, suffix)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-		  public override Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
-		  {
-			return outerInstance.updateSuffixToken(suffixToken, lastInputToken);
-		  }
-	  }
+            public override Token UpdateSuffixToken(Token suffixToken, Token lastInputToken)
+            {
+                return outerInstance.updateSuffixToken(suffixToken, lastInputToken);
+            }
+        }
 
-	  public virtual Token updateInputToken(Token inputToken, Token lastPrefixToken)
-	  {
-		inputToken.SetOffset(lastPrefixToken.endOffset() + inputToken.startOffset(), lastPrefixToken.endOffset() + inputToken.endOffset());
-		return inputToken;
-	  }
+        public virtual Token updateInputToken(Token inputToken, Token lastPrefixToken)
+        {
+            inputToken.SetOffset(lastPrefixToken.EndOffset() + inputToken.StartOffset(), lastPrefixToken.EndOffset() + inputToken.EndOffset());
+            return inputToken;
+        }
 
-	  public virtual Token updateSuffixToken(Token suffixToken, Token lastInputToken)
-	  {
-		suffixToken.SetOffset(lastInputToken.endOffset() + suffixToken.startOffset(), lastInputToken.endOffset() + suffixToken.endOffset());
-		return suffixToken;
-	  }
+        public virtual Token updateSuffixToken(Token suffixToken, Token lastInputToken)
+        {
+            suffixToken.SetOffset(lastInputToken.EndOffset() + suffixToken.StartOffset(), lastInputToken.EndOffset() + suffixToken.EndOffset());
+            return suffixToken;
+        }
 
-	  public override bool IncrementToken()
-	  {
-		return suffix.incrementToken();
-	  }
+        public override bool IncrementToken()
+        {
+            return suffix.IncrementToken();
+        }
 
-	  public override void Reset()
-	  {
-		suffix.Reset();
-	  }
+        public override void Reset()
+        {
+            suffix.Reset();
+        }
 
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void close() throws java.io.IOException
-	  public override void close()
-	  {
-		suffix.close();
-	  }
+        public override void Dispose()
+        {
+            suffix.Dispose();
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void end() throws java.io.IOException
-	  public override void end()
-	  {
-		suffix.end();
-	  }
-	}
-
+        public override void End()
+        {
+            suffix.End();
+        }
+    }
 }
