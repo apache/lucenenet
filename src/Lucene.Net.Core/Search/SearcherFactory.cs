@@ -1,3 +1,5 @@
+using Lucene.Net.Index;
+
 namespace Lucene.Net.Search
 {
     /*
