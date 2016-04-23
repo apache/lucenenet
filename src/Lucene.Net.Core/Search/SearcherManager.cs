@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -192,12 +193,19 @@ namespace Lucene.Net.Search
         }
 
         public delegate void SearchExecutor(IndexSearcher arg);
-        public void ExecuteSearch(SearchExecutor searchFunc)
+        public void ExecuteSearch(SearchExecutor searchFunc, OnErrorDelegate onErrorFunc = null)
         {
             var s = Acquire();
             try
             {
                 searchFunc(s);
+            }
+            catch (Exception e)
+            {
+                if (onErrorFunc != null)
+                {
+                    onErrorFunc(e);
+                }
             }
             finally
             {

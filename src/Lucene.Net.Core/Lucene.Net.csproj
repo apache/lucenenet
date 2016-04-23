@@ -620,6 +620,7 @@
     <Compile Include="Support\Compatibility\Collections.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
+    <Compile Include="Support\ErrorHandling.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
     <Compile Include="Support\HashCodeMerge.cs" />
     <Compile Include="Support\ICallable.cs" />
