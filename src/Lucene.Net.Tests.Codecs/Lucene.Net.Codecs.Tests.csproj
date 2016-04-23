@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="diskdv\TestDiskDocValuesFormat.cs" />
+    <Compile Include="DiskDv\TestDiskDocValuesFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
