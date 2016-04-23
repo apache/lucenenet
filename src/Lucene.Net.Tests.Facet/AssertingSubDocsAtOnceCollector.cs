@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Apache.NMS;
 
 namespace Lucene.Net.Facet
 {
@@ -26,7 +25,7 @@ namespace Lucene.Net.Facet
     using Collector = Lucene.Net.Search.Collector;
     using ChildScorer = Lucene.Net.Search.Scorer.ChildScorer;
     using Scorer = Lucene.Net.Search.Scorer;
-
+    using System;
     /// <summary>
     /// Verifies in collect() that all child subScorers are on
     ///  the collected doc. 
@@ -63,7 +62,7 @@ namespace Lucene.Net.Facet
             {
                 if (docID != s.DocID())
                 {
-                    throw new IllegalStateException("subScorer=" + s + " has docID=" + s.DocID() + " != collected docID=" + docID);
+                    throw new InvalidOperationException("subScorer=" + s + " has docID=" + s.DocID() + " != collected docID=" + docID);
                 }
             }
         }
