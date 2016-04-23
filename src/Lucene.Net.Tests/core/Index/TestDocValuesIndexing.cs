@@ -1,5 +1,5 @@
+using Apache.NMS.Util;
 using System;
-using System.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 
@@ -510,7 +510,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
-            CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
             AtomicBoolean hitExc = new AtomicBoolean();
             ThreadClass[] threads = new ThreadClass[3];
             for (int i = 0; i < 3; i++)
@@ -535,7 +535,7 @@ namespace Lucene.Net.Index
                 threads[i].Start();
             }
 
-            startingGun.Signal();
+            startingGun.countDown();
 
             foreach (ThreadClass t in threads)
             {
@@ -551,11 +551,11 @@ namespace Lucene.Net.Index
             private readonly TestDocValuesIndexing OuterInstance;
 
             private IndexWriter w;
-            private CountdownEvent StartingGun;
+            private CountDownLatch StartingGun;
             private AtomicBoolean HitExc;
             private Document Doc;
 
-            public ThreadAnonymousInnerClassHelper(TestDocValuesIndexing outerInstance, IndexWriter w, CountdownEvent startingGun, AtomicBoolean hitExc, Document doc)
+            public ThreadAnonymousInnerClassHelper(TestDocValuesIndexing outerInstance, IndexWriter w, CountDownLatch startingGun, AtomicBoolean hitExc, Document doc)
             {
                 this.OuterInstance = outerInstance;
                 this.w = w;
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    StartingGun.Wait();
+                    StartingGun.@await();
                     w.AddDocument(Doc);
                 }
                 catch (System.ArgumentException iae)

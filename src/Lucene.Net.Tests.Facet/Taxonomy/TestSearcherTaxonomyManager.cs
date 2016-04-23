@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Apache.NMS;
 using Lucene.Net.Support;
 using NUnit.Framework;
 
@@ -338,7 +339,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 mgr.MaybeRefresh();
                 Fail("should have hit exception");
             }
-            catch (InvalidOperationException)
+            catch (IllegalStateException)
             {
                 // expected
             }

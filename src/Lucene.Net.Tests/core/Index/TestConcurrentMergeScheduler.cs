@@ -1,3 +1,4 @@
+using Apache.NMS.Util;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -300,7 +301,7 @@ namespace Lucene.Net.Index
 
             int maxMergeCount = TestUtil.NextInt(Random(), 1, 5);
             int maxMergeThreads = TestUtil.NextInt(Random(), 1, maxMergeCount);
-            CountdownEvent enoughMergesWaiting = new CountdownEvent(maxMergeCount);
+            CountDownLatch enoughMergesWaiting = new CountDownLatch(maxMergeCount);
             AtomicInteger runningMergeCount = new AtomicInteger(0);
             AtomicBoolean failed = new AtomicBoolean();
 
@@ -322,7 +323,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, iwc);
             Document doc = new Document();
             doc.Add(NewField("field", "field", TextField.TYPE_NOT_STORED));
-            while (enoughMergesWaiting.CurrentCount != 0 && !failed.Get())
+            while (enoughMergesWaiting.Remaining != 0 && !failed.Get())
             {
                 for (int i = 0; i < 10; i++)
                 {
@@ -338,11 +339,11 @@ namespace Lucene.Net.Index
             private readonly TestConcurrentMergeScheduler OuterInstance;
 
             private int MaxMergeCount;
-            private CountdownEvent EnoughMergesWaiting;
+            private CountDownLatch EnoughMergesWaiting;
             private AtomicInteger RunningMergeCount;
             private AtomicBoolean Failed;
 
-            public ConcurrentMergeSchedulerAnonymousInnerClassHelper(TestConcurrentMergeScheduler outerInstance, int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInteger runningMergeCount, AtomicBoolean failed)
+            public ConcurrentMergeSchedulerAnonymousInnerClassHelper(TestConcurrentMergeScheduler outerInstance, int maxMergeCount, CountDownLatch enoughMergesWaiting, AtomicInteger runningMergeCount, AtomicBoolean failed)
             {
                 this.OuterInstance = outerInstance;
                 this.MaxMergeCount = maxMergeCount;
@@ -361,14 +362,14 @@ namespace Lucene.Net.Index
                     try
                     {
                         Assert.IsTrue(count <= MaxMergeCount, "count=" + count + " vs maxMergeCount=" + MaxMergeCount);
-                        EnoughMergesWaiting.Signal();
+                        EnoughMergesWaiting.countDown();
 
                         // Stall this merge until we see exactly
                         // maxMergeCount merges waiting
                         while (true)
                         {
                             // wait for 10 milliseconds
-                            if (EnoughMergesWaiting.Wait(new TimeSpan(0, 0, 0, 0, 10)) || Failed.Get())
+                            if (EnoughMergesWaiting.@await(new TimeSpan(0, 0, 0, 0, 10)) || Failed.Get())
                             {
                                 break;
                             }

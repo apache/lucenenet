@@ -1,4 +1,5 @@
 using System.Threading;
+using Apache.NMS.Util;
 using Lucene.Net.Search;
 using System;
 using System.Collections;
@@ -218,7 +219,7 @@ namespace Lucene.Net.Index
                 ids[i] = Random().Next();
                 uniqueValues.Add(new Term("id", ids[i].ToString()));
             }
-            CountdownEvent latch = new CountdownEvent(1);
+            CountDownLatch latch = new CountDownLatch(1);
             AtomicInteger index = new AtomicInteger(0);
             int numThreads = 2 + Random().Next(5);
             UpdateThread[] threads = new UpdateThread[numThreads];
@@ -227,7 +228,7 @@ namespace Lucene.Net.Index
                 threads[i] = new UpdateThread(queue, index, ids, latch);
                 threads[i].Start();
             }
-            latch.Signal();
+            latch.countDown();
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i].Join();
@@ -261,9 +262,9 @@ namespace Lucene.Net.Index
             internal readonly int?[] Ids;
             internal readonly DeleteSlice Slice;
             internal readonly BufferedUpdates Deletes;
-            internal readonly CountdownEvent Latch;
+            internal readonly CountDownLatch Latch;
 
-            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInteger index, int?[] ids, CountdownEvent latch)
+            protected internal UpdateThread(DocumentsWriterDeleteQueue queue, AtomicInteger index, int?[] ids, CountDownLatch latch)
             {
                 this.Queue = queue;
                 this.Index = index;
@@ -277,7 +278,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    Latch.Wait();
+                    Latch.@await();
                 }
                 catch (ThreadInterruptedException e)
                 {

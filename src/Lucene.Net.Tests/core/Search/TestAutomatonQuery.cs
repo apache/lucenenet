@@ -1,7 +1,7 @@
+using Apache.NMS.Util;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
-using System.Threading;
 
 namespace Lucene.Net.Search
 {
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
             {
                 queries[i] = new AutomatonQuery(new Term("bogus", "bogus"), AutomatonTestUtil.RandomAutomaton(Random()));
             }
-            CountdownEvent startingGun = new CountdownEvent(1);
+            CountDownLatch startingGun = new CountDownLatch(1);
             int numThreads = TestUtil.NextInt(Random(), 2, 5);
             ThreadClass[] threads = new ThreadClass[numThreads];
             for (int threadID = 0; threadID < numThreads; threadID++)
@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
                 threads[threadID] = thread;
                 thread.Start();
             }
-            startingGun.Signal();
+            startingGun.countDown();
             foreach (ThreadClass thread in threads)
             {
                 thread.Join();
@@ -251,9 +251,9 @@ namespace Lucene.Net.Search
             private readonly TestAutomatonQuery OuterInstance;
 
             private AutomatonQuery[] Queries;
-            private CountdownEvent StartingGun;
+            private CountDownLatch StartingGun;
 
-            public ThreadAnonymousInnerClassHelper(TestAutomatonQuery outerInstance, AutomatonQuery[] queries, CountdownEvent startingGun)
+            public ThreadAnonymousInnerClassHelper(TestAutomatonQuery outerInstance, AutomatonQuery[] queries, CountDownLatch startingGun)
             {
                 this.OuterInstance = outerInstance;
                 this.Queries = queries;
@@ -262,7 +262,7 @@ namespace Lucene.Net.Search
 
             public override void Run()
             {
-                StartingGun.Wait();
+                StartingGun.@await();
                 for (int i = 0; i < Queries.Length; i++)
                 {
                     Queries[i].GetHashCode();

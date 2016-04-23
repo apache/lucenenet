@@ -1,3 +1,4 @@
+using Apache.NMS.Util;
 using System;
 using System.Threading;
 using Lucene.Net.Documents;
@@ -51,7 +52,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, conf);
             ReaderHolder holder = new ReaderHolder();
             ReaderThread[] threads = new ReaderThread[AtLeast(3)];
-            CountdownEvent latch = new CountdownEvent(1);
+            CountDownLatch latch = new CountDownLatch(1);
             WriterThread writerThread = new WriterThread(holder, writer, AtLeast(500), Random(), latch);
             for (int i = 0; i < threads.Length; i++)
             {
@@ -88,10 +89,10 @@ namespace Lucene.Net.Index
             internal readonly IndexWriter Writer;
             internal readonly int NumOps;
             internal bool Countdown = true;
-            internal readonly CountdownEvent Latch;
+            internal readonly CountDownLatch Latch;
             internal Exception Failed;
 
-            internal WriterThread(ReaderHolder holder, IndexWriter writer, int numOps, Random random, CountdownEvent latch)
+            internal WriterThread(ReaderHolder holder, IndexWriter writer, int numOps, Random random, CountDownLatch latch)
                 : base()
             {
                 this.Holder = holder;
@@ -134,7 +135,7 @@ namespace Lucene.Net.Index
                             if (Countdown)
                             {
                                 Countdown = false;
-                                Latch.Signal();
+                                Latch.countDown();
                             }
                         }
                         if (random.NextBoolean())
@@ -162,7 +163,7 @@ namespace Lucene.Net.Index
                     Holder.Reader = null;
                     if (Countdown)
                     {
-                        Latch.Signal();
+                        Latch.countDown();
                     }
                     if (currentReader != null)
                     {
@@ -185,10 +186,10 @@ namespace Lucene.Net.Index
         public sealed class ReaderThread : ThreadClass
         {
             internal readonly ReaderHolder Holder;
-            internal readonly CountdownEvent Latch;
+            internal readonly CountDownLatch Latch;
             internal Exception Failed;
 
-            internal ReaderThread(ReaderHolder holder, CountdownEvent latch)
+            internal ReaderThread(ReaderHolder holder, CountDownLatch latch)
                 : base()
             {
                 this.Holder = holder;
@@ -199,7 +200,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    Latch.Wait();
+                    Latch.@await();
                 }
                 catch (ThreadInterruptedException e)
                 {

@@ -1,6 +1,5 @@
 using Lucene.Net.Support;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Util
@@ -116,10 +115,7 @@ namespace Lucene.Net.Util
             {
                 return service;
             }
-            var availableServices = string.Join(", ", AvailableServices());
-            throw new ArgumentException("An SPI class of type " + Clazz.Name + " with name '" + name + "' does not exist. "
-                + "You need to reference the corresponding assembly that contains the class. "
-                + "The current NamedSPILoader supports the following names: " + availableServices);
+            throw new System.ArgumentException("A SPI class of type " + Clazz.Name + " with name '" + name + "' does not exist. " + "You need to add the corresponding JAR file supporting this SPI to your classpath." + "The current classpath supports the following names: " + AvailableServices());
         }
 
         public ISet<string> AvailableServices()

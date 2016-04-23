@@ -1,8 +1,10 @@
-using System;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
+    using Codec = Lucene.Net.Codecs.Codec;
+
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,77 +22,37 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
+    // TODO: maybe we should test this with mocks, but its easy
+    // enough to test the basics via Codec
     [TestFixture]
     public class TestNamedSPILoader : LuceneTestCase
     {
         [Test]
-        public void Lookup_ExistingService_ReturnServiceByName()
+        public virtual void TestLookup()
         {
-            // Arrange
-            var loader = CreateNamedSPILoaderForCodecClass();
-
-            // Act
-            var codec = loader.Lookup("CustomCodec1");
-
-            // Assert
-            Assert.IsInstanceOf<CustomCodec1>(codec);
-            Assert.AreEqual("CustomCodec1", codec.Name);
+            Codec codec = Codec.ForName("Lucene46");
+            Assert.AreEqual("Lucene46", codec.Name);
         }
 
+        // we want an exception if its not found.
         [Test]
-        public void Lookup_NonexistingService_ThrowsException()
+        public virtual void TestBogusLookup()
         {
-            // Arrange
-            var loader = CreateNamedSPILoaderForCodecClass();
-
-            // Act
-            var actualException = Assert.Throws<ArgumentException>(() => loader.Lookup("NonexistingCodecName"));
-
-            // Assert
-            const string expectedMessage = "An SPI class of type CustomCodec with name 'NonexistingCodecName' does not exist. "
-                + "You need to reference the corresponding assembly that contains the class. "
-                + "The current NamedSPILoader supports the following names: CustomCodec1, CustomCodec2";
-            Assert.AreEqual(expectedMessage, actualException.Message);
-        }
-
-        [Test]
-        public void AvailableServices_LoaderWithServices_ReturnsListOfNamesOfRegisteredServices()
-        {
-            // Arrange
-            var expectedServices = new [] { "CustomCodec1", "CustomCodec2" };
-            var loader = CreateNamedSPILoaderForCodecClass();
-
-            // Act
-            var actualServices = loader.AvailableServices();
-
-            // Assert
-            Assert.IsNotNull(actualServices);
-            CollectionAssert.IsNotEmpty(actualServices);
-            CollectionAssert.AreEqual(expectedServices, actualServices);
-        }
-
-        private static NamedSPILoader<CustomCodec> CreateNamedSPILoaderForCodecClass()
-        {
-            return new NamedSPILoader<CustomCodec>(typeof(CustomCodec));
-        }
-
-        private abstract class CustomCodec : NamedSPILoader<CustomCodec>.NamedSPI
-        {
-            public string Name
+            try
             {
-                get
-                {
-                    return this.GetType().Name;
-                }
+                Codec.ForName("dskfdskfsdfksdfdsf");
+                Assert.Fail();
+            }
+            catch (System.ArgumentException expected)
+            {
             }
         }
 
-        private class CustomCodec1 : CustomCodec
+        [Test]
+        public virtual void TestAvailableServices()
         {
-        }
-
-        private class CustomCodec2 : CustomCodec
-        {
+            ISet<string> codecs = Codec.AvailableCodecs();
+            Assert.IsTrue(codecs.Contains("Lucene46"));
         }
     }
 }
