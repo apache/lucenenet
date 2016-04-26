@@ -29,13 +29,11 @@ namespace Lucene.Net.Documents
     ///
     /// <pre class="prettyprint">
     ///   document.add(new SortedDocValuesField(name, new BytesRef("hello")));
-    /// </pre>
+    /// </pre></p>
     ///
     /// <p>
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance.
-    ///
-    ///
+    /// separate <seealso cref="StoredField"/> instance.</p>
     /// </summary>
     public class SortedDocValuesField : Field
     {

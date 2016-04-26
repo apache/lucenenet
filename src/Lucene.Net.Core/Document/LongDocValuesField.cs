@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Index;
 
 
 namespace Lucene.Net.Documents
@@ -27,14 +28,14 @@ namespace Lucene.Net.Documents
     ///
     /// <pre class="prettyprint">
     ///   document.add(new LongDocValuesField(name, 22L));
-    /// </pre>
+    /// </pre></p>
     ///
     /// <p>
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance. </summary>
-    /// <seealso cref= NumericDocValues </seealso>
-    /// @deprecated use <seealso cref="NumericDocValuesField"/> instead.
-    ///
+    /// separate <seealso cref="StoredField"/> instance.</p>
+    /// </summary>
+    /// <seealso cref="NumericDocValues"/>
+    [Obsolete("Use NumericDocValuesField instead")]
     public class LongDocValuesField : NumericDocValuesField
     {
         /// <summary>

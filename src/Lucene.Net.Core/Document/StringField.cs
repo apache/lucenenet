@@ -1,3 +1,4 @@
+using System;
 using Lucene.Net.Index;
 
 namespace Lucene.Net.Documents
@@ -57,11 +58,12 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Creates a new StringField. </summary>
+        /// Creates a new StringField (a field that is indexed but not tokenized)
+        /// </summary>
         ///  <param name="name"> field name </param>
         ///  <param name="value"> String value </param>
         ///  <param name="stored"> Store.YES if the content should also be stored </param>
-        ///  <exception cref="IllegalArgumentException"> if the field name or value is null. </exception>
+        ///  <exception cref="ArgumentException"> if the field name or value is null. </exception>
         public StringField(string name, string value, Store stored)
             : base(name, value, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {

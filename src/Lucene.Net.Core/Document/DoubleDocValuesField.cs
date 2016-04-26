@@ -27,10 +27,10 @@ namespace Lucene.Net.Documents
     /// <summary>
     /// Syntactic sugar for encoding doubles as NumericDocValues
     /// via <seealso cref="Double#doubleToRawLongBits(double)"/>.
-    /// <p>
+    /// 
     /// Per-document double values can be retrieved via
     /// <seealso cref="IFieldCache#getDoubles(AtomicReader, String, boolean)"/>.
-    /// <p>
+    /// 
     /// <b>NOTE</b>: In most all cases this will be rather inefficient,
     /// requiring eight bytes per document. Consider encoding double
     /// values yourself with only as much precision as you require.
@@ -41,7 +41,7 @@ namespace Lucene.Net.Documents
         /// Creates a new DocValues field with the specified 64-bit double value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 64-bit double value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentException"> if the field name is null </exception>
         public DoubleDocValuesField(string name, double value)
             : base(name, BitConverter.DoubleToInt64Bits(value))
         {

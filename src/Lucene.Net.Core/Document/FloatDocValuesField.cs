@@ -29,11 +29,11 @@ namespace Lucene.Net.Documents
     /// via <seealso cref="Float#floatToRawIntBits(float)"/>.
     /// <p>
     /// Per-document floating point values can be retrieved via
-    /// <seealso cref="IFieldCache#getFloats(AtomicReader, String, boolean)"/>.
+    /// <seealso cref="IFieldCache#getFloats(AtomicReader, String, boolean)"/>.</p>
     /// <p>
     /// <b>NOTE</b>: In most all cases this will be rather inefficient,
     /// requiring four bytes per document. Consider encoding floating
-    /// point values yourself with only as much precision as you require.
+    /// point values yourself with only as much precision as you require.</p>
     /// </summary>
     public class FloatDocValuesField : NumericDocValuesField
     {

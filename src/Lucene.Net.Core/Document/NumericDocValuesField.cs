@@ -21,7 +21,6 @@ namespace Lucene.Net.Documents
      * limitations under the License.
      */
     /// <summary>
-    /// <p>
     /// Field that stores a per-document <code>long</code> value for scoring,
     /// sorting or value retrieval. Here's an example usage:
     ///
@@ -29,12 +28,9 @@ namespace Lucene.Net.Documents
     ///   document.add(new NumericDocValuesField(name, 22L));
     /// </pre>
     ///
-    /// <p>
     /// If you also need to store the value, you should add a
     /// separate <seealso cref="StoredField"/> instance.
-    ///
     /// </summary>
-
     public class NumericDocValuesField : Field
     {
         /// <summary>

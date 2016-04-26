@@ -1,5 +1,7 @@
 
 
+using System;
+
 namespace Lucene.Net.Documents
 {
     /*
@@ -20,27 +22,24 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// <p>
-    /// Field that stores a per-document <code>int</code> value for scoring,
+    ///  Field that stores a per-document <code>int</code> value for scoring,
     /// sorting or value retrieval. Here's an example usage:
     ///
     /// <pre class="prettyprint">
     ///   document.add(new IntDocValuesField(name, 22));
     /// </pre>
     ///
-    /// <p>
     /// If you also need to store the value, you should add a
     /// separate <seealso cref="StoredField"/> instance. </summary>
-    /// <seealso cref= NumericDocValues </seealso>
-    /// @deprecated use <seealso cref="NumericDocValuesField"/> instead.
-    ///
+    /// <seealso cref="NumericDocValuesField"/>
+    [Obsolete("Deprecated, use NumericDocValuesField instead")]
     public class IntDocValuesField : NumericDocValuesField
     {
         /// <summary>
         /// Creates a new DocValues field with the specified 32-bit integer value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 32-bit integer value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentException"> if the field name is null </exception>
         public IntDocValuesField(string name, int value)
             : base(name, value)
         {

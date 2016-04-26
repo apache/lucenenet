@@ -1,4 +1,6 @@
 
+using System;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Documents
@@ -20,7 +22,6 @@ namespace Lucene.Net.Documents
      * limitations under the License.
      */
     /// <summary>
-    /// <p>
     /// Field that stores
     /// a per-document <seealso cref="BytesRef"/> value. Here's an example usage:
     ///
@@ -28,14 +29,11 @@ namespace Lucene.Net.Documents
     ///   document.add(new DerefBytesDocValuesField(name, new BytesRef("hello")));
     /// </pre>
     ///
-    /// <p>
     /// If you also need to store the value, you should add a
     /// separate <seealso cref="StoredField"/> instance.
     /// </summary>
-    /// <seealso cref= BinaryDocValues </seealso>
-    /// @deprecated Use <seealso cref="BinaryDocValuesField"/> instead.
-    ///
-    ///[Obsolete("Use <seealso cref="BinaryDocValuesField"/> instead.")]
+    /// <seealso cref="BinaryDocValues"/>
+    [Obsolete("Use BinaryDocValuesField instead.")]
     public class DerefBytesDocValuesField : BinaryDocValuesField
     {
         /// <summary>

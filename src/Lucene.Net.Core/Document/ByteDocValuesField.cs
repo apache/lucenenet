@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Index;
 
 
 namespace Lucene.Net.Documents
@@ -21,7 +22,6 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// <p>
     /// Field that stores a per-document <code>byte</code> value for scoring,
     /// sorting or value retrieval. Here's an example usage:
     ///
@@ -29,15 +29,11 @@ namespace Lucene.Net.Documents
     ///   document.add(new ByteDocValuesField(name, (byte) 22));
     /// </pre>
     ///
-    /// <p>
     /// If you also need to store the value, you should add a
     /// separate <seealso cref="StoredField"/> instance.
     /// </summary>
-    /// <seealso cref= NumericDocValues </seealso>
-    /// @deprecated use <seealso cref="NumericDocValuesField"/> instead.
-    ///
-
-    [Obsolete]
+    /// <seealso cref="NumericDocValues"/>
+    [Obsolete("Use NumericDocValuesField instead")]
     public class ByteDocValuesField : NumericDocValuesField
     {
         /// <summary>

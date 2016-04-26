@@ -1,3 +1,4 @@
+using System;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 
@@ -37,8 +38,7 @@ namespace Lucene.Net.Documents
 
         static StoredField()
         {
-            TYPE = new FieldType();
-            TYPE.Stored = true;
+            TYPE = new FieldType {Stored = true};
             TYPE.Freeze();
         }
 
@@ -48,7 +48,7 @@ namespace Lucene.Net.Documents
         /// not to change it until you're done with this field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> byte array pointing to binary content (not copied) </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
+        /// <exception cref="ArgumentException"> if the field name is null. </exception>
         public StoredField(string name, byte[] value)
             : base(name, value, TYPE)
         {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Documents
         /// <param name="value"> byte array pointing to binary content (not copied) </param>
         /// <param name="offset"> starting position of the byte array </param>
         /// <param name="length"> valid length of the byte array </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
+        /// <exception cref="ArgumentException"> if the field name is null. </exception>
         public StoredField(string name, byte[] value, int offset, int length)
             : base(name, value, offset, length, TYPE)
         {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Documents
         /// not to change it until you're done with this field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> BytesRef pointing to binary content (not copied) </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
+        /// <exception cref="ArgumentException"> if the field name is null. </exception>
         public StoredField(string name, BytesRef value)
             : base(name, value, TYPE)
         {
@@ -84,7 +84,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given string value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> string value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name or value is null. </exception>
+        /// <exception cref="ArgumentException"> if the field name or value is null. </exception>
         public StoredField(string name, string value)
             : base(name, value, TYPE)
         {
@@ -95,7 +95,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given integer value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> integer value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
+        /// <exception cref="ArgumentException"> if the field name is null. </exception>
         public StoredField(string name, int value)
             : base(name, TYPE)
         {
@@ -106,7 +106,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given float value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> float value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
+        /// <exception cref="ArgumentException"> if the field name is null. </exception>
         public StoredField(string name, float value)
             : base(name, TYPE)
         {
@@ -117,7 +117,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given long value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> long value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
+        /// <exception cref="ArgumentException"> if the field name is null. </exception>
         public StoredField(string name, long value)
             : base(name, TYPE)
         {
@@ -128,7 +128,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given double value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> double value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
+        /// <exception cref="ArgumentException"> if the field name is null. </exception>
         public StoredField(string name, double value)
             : base(name, TYPE)
         {

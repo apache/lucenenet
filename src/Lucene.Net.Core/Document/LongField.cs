@@ -1,5 +1,7 @@
 using System;
 using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Documents
 {
@@ -50,11 +52,11 @@ namespace Lucene.Net.Documents
     ///
     /// Any type that can be converted to long can also be
     /// indexed.  For example, date/time values represented by a
-    /// <seealso cref="java.util.Date"/> can be translated into a long
-    /// value using the <seealso cref="java.util.Date#getTime"/> method.  If you
+    /// <seealso cref="Date"/> can be translated into a long
+    /// value using the <seealso cref="Date#getTime"/> method.  If you
     /// don't need millisecond precision, you can quantize the
     /// value, either by dividing the result of
-    /// <seealso cref="java.util.Date#getTime"/> or using the separate getters
+    /// <seealso cref="Date#getTime"/> or using the separate getters
     /// (for year, month, etc.) to construct an <code>int</code> or
     /// <code>long</code> value.</p>
     ///
@@ -97,13 +99,13 @@ namespace Lucene.Net.Documents
     /// For low cardinality fields larger precision steps are good.
     /// If the cardinality is &lt; 100, it is fair
     /// to use <seealso cref="Integer#MAX_VALUE"/>, which produces one
-    /// term per value.
+    /// term per value.</p>
     ///
     /// <p>For more information on the internals of numeric trie
     /// indexing, including the <a
     /// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
     /// configuration, see <seealso cref="NumericRangeQuery"/>. The format of
-    /// indexed values is described in <seealso cref="NumericUtils"/>.
+    /// indexed values is described in <seealso cref="NumericUtils"/>.</p>
     ///
     /// <p>If you only need to sort by numeric value, and never
     /// run range querying/filtering, you can index using a
@@ -117,7 +119,6 @@ namespace Lucene.Net.Documents
     ///
     /// @since 2.9
     /// </summary>
-
     public sealed class LongField : Field
     {
         /// <summary>

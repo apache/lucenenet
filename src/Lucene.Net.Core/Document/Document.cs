@@ -39,7 +39,7 @@ namespace Lucene.Net.Documents
     /// </summary>
     public sealed class Document : IEnumerable<IndexableField>
     {
-        private readonly List<IndexableField> Fields_Renamed = new List<IndexableField>();
+        private readonly List<IndexableField> fields = new List<IndexableField>();
 
         /// <summary>
         /// Constructs a new document with no fields. </summary>
@@ -49,7 +49,7 @@ namespace Lucene.Net.Documents
 
         public IEnumerator<IndexableField> GetEnumerator()
         {
-            return Fields_Renamed.GetEnumerator();
+            return fields.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -69,7 +69,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public void Add(IndexableField field)
         {
-            Fields_Renamed.Add(field);
+            fields.Add(field);
         }
 
         /// <summary>
@@ -84,13 +84,13 @@ namespace Lucene.Net.Documents
         /// </summary>
         public void RemoveField(string name)
         {
-            for (int i = Fields_Renamed.Count - 1; i >= 0; i--)
+            for (int i = fields.Count - 1; i >= 0; i--)
             {
-                IndexableField field = Fields_Renamed[i];
+                IndexableField field = fields[i];
 
                 if (field.Name().Equals(name))
                 {
-                    Fields_Renamed.RemoveAt(i);
+                    fields.RemoveAt(i);
                     return;
                 }
             }
@@ -107,13 +107,13 @@ namespace Lucene.Net.Documents
         /// </summary>
         public void RemoveFields(string name)
         {
-            for (int i = Fields_Renamed.Count - 1; i >= 0; i--)
+            for (int i = fields.Count - 1; i >= 0; i--)
             {
-                IndexableField field = Fields_Renamed[i];
+                IndexableField field = fields[i];
 
                 if (field.Name().Equals(name))
                 {
-                    Fields_Renamed.RemoveAt(i);
+                    fields.RemoveAt(i);
                 }
             }
         }
@@ -130,7 +130,7 @@ namespace Lucene.Net.Documents
         {
             var result = new List<BytesRef>();
 
-            foreach (IndexableField field in Fields_Renamed)
+            foreach (IndexableField field in fields)
             {
                 if (field.Name().Equals(name))
                 {
@@ -156,7 +156,7 @@ namespace Lucene.Net.Documents
         /// <returns> a <code>BytesRef</code> containing the binary field value or <code>null</code> </returns>
         public BytesRef GetBinaryValue(string name)
         {
-            foreach (IndexableField field in Fields_Renamed)
+            foreach (IndexableField field in fields)
             {
                 if (field.Name().Equals(name))
                 {
@@ -177,7 +177,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public IndexableField GetField(string name)
         {
-            foreach (IndexableField field in Fields_Renamed)
+            foreach (IndexableField field in fields)
             {
                 if (field.Name().Equals(name))
                 {
@@ -197,7 +197,7 @@ namespace Lucene.Net.Documents
         public IndexableField[] GetFields(string name)
         {
             var result = new List<IndexableField>();
-            foreach (IndexableField field in Fields_Renamed)
+            foreach (IndexableField field in fields)
             {
                 if (field.Name().Equals(name))
                 {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Documents
         {
             get
             {
-                return Fields_Renamed;
+                return fields;
             }
         }
 
@@ -237,7 +237,7 @@ namespace Lucene.Net.Documents
         public string[] GetValues(string name)
         {
             var result = new List<string>();
-            foreach (IndexableField field in Fields_Renamed)
+            foreach (IndexableField field in fields)
             {
                 if (field.Name().Equals(name) && field.StringValue != null)
                 {
@@ -264,7 +264,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public string Get(string name)
         {
-            foreach (IndexableField field in Fields_Renamed)
+            foreach (IndexableField field in fields)
             {
                 if (field.Name().Equals(name) && field.StringValue != null)
                 {
@@ -280,11 +280,11 @@ namespace Lucene.Net.Documents
         {
             var buffer = new StringBuilder();
             buffer.Append("Document<");
-            for (int i = 0; i < Fields_Renamed.Count; i++)
+            for (int i = 0; i < fields.Count; i++)
             {
-                IndexableField field = Fields_Renamed[i];
+                IndexableField field = fields[i];
                 buffer.Append(field.ToString());
-                if (i != Fields_Renamed.Count - 1)
+                if (i != fields.Count - 1)
                 {
                     buffer.Append(" ");
                 }

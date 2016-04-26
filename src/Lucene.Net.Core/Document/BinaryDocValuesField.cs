@@ -23,7 +23,7 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// Field that stores a per-document <seealso cref="BytesRef"/> value.
-    /// <p>
+    /// 
     /// The values are stored directly with no sharing, which is a good fit when
     /// the fields don't share (many) values, such as a title field.  If values
     /// may be shared and sorted it's better to use <seealso cref="SortedDocValuesField"/>.
@@ -33,11 +33,10 @@ namespace Lucene.Net.Documents
     ///   document.add(new BinaryDocValuesField(name, new BytesRef("hello")));
     /// </pre>
     ///
-    /// <p>
     /// If you also need to store the value, you should add a
     /// separate <seealso cref="StoredField"/> instance.
     /// </summary>
-    /// <seealso cref= BinaryDocValues</seealso>
+    /// <seealso cref="BinaryDocValues"/>
     public class BinaryDocValuesField : Field
     {
         /// <summary>
