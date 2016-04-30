@@ -34,8 +34,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Queries", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Codecs", "src\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj", "{3F79B6D4-4359-4F83-B64F-07F4F6262425}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Codecs.Tests", "src\Lucene.Net.Tests.Codecs\Lucene.Net.Codecs.Tests.csproj", "{351B75B1-BBD5-4E32-8036-7BED4E0135A6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Join", "src\Lucene.Net.Join\Lucene.Net.Join.csproj", "{E8A339C7-FCF6-4A72-8586-56D8961D7B99}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Grouping", "src\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj", "{02BAB603-067D-48B1-AEDD-316849652568}"
@@ -45,6 +43,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Analysis.Common", "src\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj", "{4ADD0BBC-B900-4715-9526-D871DE8EEA64}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Analysis.Common", "src\Lucene.Net.Tests.Analysis.Common\Lucene.Net.Tests.Analysis.Common.csproj", "{C54FE8FA-7986-4C94-B872-D5BFF7C6C74E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Codecs", "src\Lucene.Net.Tests.Codecs\Lucene.Net.Tests.Codecs.csproj", "{351B75B1-BBD5-4E32-8036-7BED4E0135A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -177,16 +177,6 @@ Global
 		{3F79B6D4-4359-4F83-B64F-07F4F6262425}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3F79B6D4-4359-4F83-B64F-07F4F6262425}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{3F79B6D4-4359-4F83-B64F-07F4F6262425}.Release|x86.ActiveCfg = Release|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|x86.ActiveCfg = Release|Any CPU
 		{E8A339C7-FCF6-4A72-8586-56D8961D7B99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E8A339C7-FCF6-4A72-8586-56D8961D7B99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8A339C7-FCF6-4A72-8586-56D8961D7B99}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -243,6 +233,18 @@ Global
 		{C54FE8FA-7986-4C94-B872-D5BFF7C6C74E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C54FE8FA-7986-4C94-B872-D5BFF7C6C74E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C54FE8FA-7986-4C94-B872-D5BFF7C6C74E}.Release|x86.ActiveCfg = Release|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Debug|x86.Build.0 = Debug|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|x86.ActiveCfg = Release|Any CPU
+		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
