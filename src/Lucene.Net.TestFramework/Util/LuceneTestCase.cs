@@ -872,9 +872,19 @@ namespace Lucene.Net.Util
             {
                 int maxThreadCount = TestUtil.NextInt(Random(), 1, 4);
                 int maxMergeCount = TestUtil.NextInt(Random(), maxThreadCount, maxThreadCount + 4);
-                ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
-                cms.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
-                c.SetMergeScheduler(cms);
+                IConcurrentMergeScheduler mergeScheduler;
+
+                if (r.NextBoolean())
+                {
+                    mergeScheduler = new ConcurrentMergeScheduler();
+                }
+                else
+                {
+                    mergeScheduler = new TaskMergeScheduler();
+                }
+
+                mergeScheduler.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
+                c.SetMergeScheduler(mergeScheduler);
             }
             if (r.NextBoolean())
             {
@@ -983,7 +993,7 @@ namespace Lucene.Net.Util
         public static LogMergePolicy NewLogMergePolicy(Random r)
         {
             LogMergePolicy logmp = r.NextBoolean() ? (LogMergePolicy)new LogDocMergePolicy() : new LogByteSizeMergePolicy();
-            
+
             logmp.CalibrateSizeByDeletes = r.NextBoolean();
             if (Rarely(r))
             {
