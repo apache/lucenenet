@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
         //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test2BTerms() throws java.io.IOException
         [Ignore]
         [Test]
-        public virtual void Test2BTerms_Mem()
+        public virtual void Test2BTerms_Mem([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             if ("Lucene3x".Equals(Codec.Default.Name))
             {
@@ -192,7 +192,11 @@ namespace Lucene.Net.Index
             if (true)
             {
                 IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-                                           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+                                           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                                           .SetRAMBufferSizeMB(256.0)
+                                           .SetMergeScheduler(scheduler)
+                                           .SetMergePolicy(NewLogMergePolicy(false, 10))
+                                           .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
                 MergePolicy mp = w.Config.MergePolicy;
                 if (mp is LogByteSizeMergePolicy)

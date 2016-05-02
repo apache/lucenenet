@@ -111,15 +111,21 @@ namespace Lucene.Net.Index
         private class IndexerThread : TimedThread
         {
             private readonly TestTransactions OuterInstance;
-
+            private IConcurrentMergeScheduler _scheduler1;
+            private IConcurrentMergeScheduler _scheduler2;
             internal Directory Dir1;
             internal Directory Dir2;
             internal object @lock;
             internal int NextID;
 
-            public IndexerThread(TestTransactions outerInstance, object @lock, Directory dir1, Directory dir2, TimedThread[] threads)
+            public IndexerThread(TestTransactions outerInstance, object @lock, 
+                Directory dir1, Directory dir2,
+                IConcurrentMergeScheduler scheduler1, IConcurrentMergeScheduler scheduler2, 
+                TimedThread[] threads)
                 : base(threads)
             {
+                _scheduler1 = scheduler1;
+                _scheduler2 = scheduler2;
                 this.OuterInstance = outerInstance;
                 this.@lock = @lock;
                 this.Dir1 = dir1;
@@ -128,13 +134,21 @@ namespace Lucene.Net.Index
 
             public override void DoWork()
             {
-                IndexWriter writer1 = new IndexWriter(Dir1, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(3)).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(2)));
-                ((ConcurrentMergeScheduler)writer1.Config.MergeScheduler).SetSuppressExceptions();
+                var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                                .SetMaxBufferedDocs(3)
+                                .SetMergeScheduler(_scheduler1)
+                                .SetMergePolicy(NewLogMergePolicy(2));
+                IndexWriter writer1 = new IndexWriter(Dir1, config);
+                ((IConcurrentMergeScheduler)writer1.Config.MergeScheduler).SetSuppressExceptions();
 
                 // Intentionally use different params so flush/merge
                 // happen @ different times
-                IndexWriter writer2 = new IndexWriter(Dir2, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2)).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(3)));
-                ((ConcurrentMergeScheduler)writer2.Config.MergeScheduler).SetSuppressExceptions();
+                var config2 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                                .SetMaxBufferedDocs(2)
+                                .SetMergeScheduler(_scheduler2)
+                                .SetMergePolicy(NewLogMergePolicy(3));
+                IndexWriter writer2 = new IndexWriter(Dir2, config2);
+                ((IConcurrentMergeScheduler)writer2.Config.MergeScheduler).SetSuppressExceptions();
 
                 Update(writer1);
                 Update(writer2);
@@ -148,7 +162,7 @@ namespace Lucene.Net.Index
                         {
                             writer1.PrepareCommit();
                         }
-                        catch (Exception t)
+                        catch (Exception)
                         {
                             writer1.Rollback();
                             writer2.Rollback();
@@ -158,7 +172,7 @@ namespace Lucene.Net.Index
                         {
                             writer2.PrepareCommit();
                         }
-                        catch (Exception t)
+                        catch (Exception)
                         {
                             writer1.Rollback();
                             writer2.Rollback();
@@ -265,8 +279,10 @@ namespace Lucene.Net.Index
             writer.Dispose();
         }
 
-        [Test]
-        public virtual void TestTransactions_Mem()
+        [Test, Sequential]
+        public virtual void TestTransactions_Mem(
+            [ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler1, 
+            [ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler2)
         {
             Console.WriteLine("Start test");
             // we cant use non-ramdir on windows, because this test needs to double-write.
@@ -290,7 +306,7 @@ namespace Lucene.Net.Index
             TimedThread[] threads = new TimedThread[3];
             int numThread = 0;
 
-            IndexerThread indexerThread = new IndexerThread(this, this, dir1, dir2, threads);
+            IndexerThread indexerThread = new IndexerThread(this, this, dir1, dir2, scheduler1, scheduler2, threads);
             threads[numThread++] = indexerThread;
             indexerThread.Start();
 

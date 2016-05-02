@@ -741,12 +741,17 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestMergeWarmer()
+        public virtual void TestMergeWarmer([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
             // Enroll warmer
             MyWarmer warmer = new MyWarmer();
-            IndexWriter writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergedSegmentWarmer(warmer).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy()));
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                            .SetMaxBufferedDocs(2)
+                            .SetMergedSegmentWarmer(warmer)
+                            .SetMergeScheduler(scheduler)
+                            .SetMergePolicy(NewLogMergePolicy());
+            IndexWriter writer = new IndexWriter(dir1, config);
 
             // create the index
             CreateIndexNoClose(false, "test", writer);
@@ -756,17 +761,20 @@ namespace Lucene.Net.Index
 
             ((LogMergePolicy)writer.Config.MergePolicy).MergeFactor = 2;
 
-            int num = AtLeast(100);
+            //int num = AtLeast(100);
+            int num = 101;
             for (int i = 0; i < num; i++)
             {
                 writer.AddDocument(DocHelper.CreateDocument(i, "test", 4));
             }
-            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
+            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
 
             Assert.IsTrue(warmer.WarmCount > 0);
+            Console.WriteLine("Count {0}", warmer.WarmCount);
             int count = warmer.WarmCount;
 
-            writer.AddDocument(DocHelper.CreateDocument(17, "test", 4));
+            var newDocument = DocHelper.CreateDocument(17, "test", 4);
+            writer.AddDocument(newDocument);
             writer.ForceMerge(1);
             Assert.IsTrue(warmer.WarmCount > count);
 
@@ -776,10 +784,11 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestAfterCommit()
+        public virtual void TestAfterCommit([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
-            IndexWriter writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new ConcurrentMergeScheduler()));
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(scheduler);
+            IndexWriter writer = new IndexWriter(dir1, config);
             writer.Commit();
 
             // create the index
@@ -796,7 +805,7 @@ namespace Lucene.Net.Index
             {
                 writer.AddDocument(DocHelper.CreateDocument(i, "test", 4));
             }
-            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
+            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
 
             DirectoryReader r2 = DirectoryReader.OpenIfChanged(r1);
             if (r2 != null)

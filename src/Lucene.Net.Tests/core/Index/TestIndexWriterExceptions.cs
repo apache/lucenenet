@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestRandomExceptions()
+        public virtual void TestRandomExceptions([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             if (VERBOSE)
             {
@@ -321,8 +321,14 @@ namespace Lucene.Net.Index
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
 
-            IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetRAMBufferSizeMB(0.1).SetMergeScheduler(new ConcurrentMergeScheduler()), new TestPoint1(this));
-            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
+
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                            .SetRAMBufferSizeMB(0.1)
+                            .SetMergeScheduler(scheduler);
+
+            scheduler.SetSuppressExceptions();
+
+            IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, config , new TestPoint1(this));
             //writer.SetMaxBufferedDocs(10);
             if (VERBOSE)
             {
@@ -366,13 +372,19 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestRandomExceptionsThreads()
+        public virtual void TestRandomExceptionsThreads([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-            IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetRAMBufferSizeMB(0.2).SetMergeScheduler(new ConcurrentMergeScheduler()), new TestPoint1(this));
-            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).SetSuppressExceptions();
+
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+                            .SetRAMBufferSizeMB(0.2)
+                            .SetMergeScheduler(scheduler);
+
+            IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, config, new TestPoint1(this));
+            scheduler.SetSuppressExceptions();
+
             //writer.SetMaxBufferedDocs(10);
             writer.Commit();
 
@@ -553,13 +565,13 @@ namespace Lucene.Net.Index
 
         // LUCENE-1210
         [Test]
-        public virtual void TestExceptionOnMergeInit()
+        public virtual void TestExceptionOnMergeInit([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
-            ConcurrentMergeScheduler cms = new ConcurrentMergeScheduler();
-            cms.SetSuppressExceptions();
-            conf.SetMergeScheduler(cms);
+
+            scheduler.SetSuppressExceptions();
+            conf.SetMergeScheduler(scheduler);
             ((LogMergePolicy)conf.MergePolicy).MergeFactor = 2;
             TestPoint3 testPoint = new TestPoint3();
             IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, conf, testPoint);
@@ -572,13 +584,13 @@ namespace Lucene.Net.Index
                 {
                     w.AddDocument(doc);
                 }
-                catch (Exception re)
+                catch (Exception)
                 {
                     break;
                 }
             }
 
-            ((ConcurrentMergeScheduler)w.Config.MergeScheduler).Sync();
+            ((IConcurrentMergeScheduler)w.Config.MergeScheduler).Sync();
             Assert.IsTrue(testPoint.Failed);
             w.Dispose();
             dir.Dispose();
@@ -1088,13 +1100,18 @@ namespace Lucene.Net.Index
 
         // LUCENE-1044: test exception during sync
         [Test]
-        public virtual void TestExceptionDuringSync()
+        public virtual void TestExceptionDuringSync([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             MockDirectoryWrapper dir = NewMockDirectory();
             FailOnlyInSync failure = new FailOnlyInSync();
             dir.FailOn(failure);
 
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(5)));
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                            .SetMaxBufferedDocs(2)
+                            .SetMergeScheduler(scheduler)
+                            .SetMergePolicy(NewLogMergePolicy(5));
+
+            IndexWriter writer = new IndexWriter(dir, config);
             failure.SetDoFail();
 
             for (int i = 0; i < 23; i++)
@@ -1112,7 +1129,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            ((ConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
+            ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
             Assert.IsTrue(failure.DidFail);
             failure.ClearDoFail();
             writer.Dispose();
@@ -1221,7 +1238,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestForceMergeExceptions()
+        public virtual void TestForceMergeExceptions([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory startDir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
@@ -1241,8 +1258,8 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: iter " + i);
                 }
                 MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new RAMDirectory(startDir, NewIOContext(Random())));
-                conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new ConcurrentMergeScheduler());
-                ((ConcurrentMergeScheduler)conf.MergeScheduler).SetSuppressExceptions();
+                conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(scheduler);
+                scheduler.SetSuppressExceptions();
                 w = new IndexWriter(dir, conf);
                 dir.RandomIOExceptionRate = 0.5;
                 try

@@ -2675,6 +2675,17 @@ namespace Lucene.Net.Util
                 }
             }
         }
+
+        /// <summary>
+        /// Contains a list of all the IConcurrentMergeSchedulers to be tested.
+        /// </summary>
+        public class ConcurrentMergeSchedulers
+        {
+            public readonly IConcurrentMergeScheduler[] Values = new IConcurrentMergeScheduler[] {
+                new ConcurrentMergeScheduler(),
+                new TaskMergeScheduler()
+            };
+        }
     }
 
     /*internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
