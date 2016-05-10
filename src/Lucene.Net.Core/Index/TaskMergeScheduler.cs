@@ -37,6 +37,8 @@ namespace Lucene.Net.Index
     ///  requested then this class will forcefully throttle the
     ///  incoming threads by pausing until one more more merges
     ///  complete.</p>
+    ///  
+    /// LUCENENET specific
     /// </summary>
     public class TaskMergeScheduler : MergeScheduler, IConcurrentMergeScheduler
     {

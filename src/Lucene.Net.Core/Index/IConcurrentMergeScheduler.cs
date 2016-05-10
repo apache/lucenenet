@@ -1,5 +1,6 @@
 ﻿namespace Lucene.Net.Index
 {
+    // LUCENENET specific
     public interface IConcurrentMergeScheduler : IMergeScheduler
     {
         int MaxThreadCount { get; }

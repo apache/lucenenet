@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Util
 {
     /// <summary>
-    /// From:
+    /// Extensions to help obtain/release from a ReaderWriterSlimLock.
+    /// Taken from:
     /// http://stackoverflow.com/questions/170028/how-would-you-simplify-entering-and-exiting-a-readerwriterlock
+    /// 
+    /// LUCENENET specific
     /// </summary>
     internal static class ReaderWriterExtension
     {

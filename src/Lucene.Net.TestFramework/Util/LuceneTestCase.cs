@@ -2688,6 +2688,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Contains a list of all the IConcurrentMergeSchedulers to be tested.
+        /// 
+        /// LUCENENET specific
         /// </summary>
         public class ConcurrentMergeSchedulers
         {
