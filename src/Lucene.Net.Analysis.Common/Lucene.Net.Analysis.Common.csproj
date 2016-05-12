@@ -63,6 +63,9 @@
     <Compile Include="Analysis\Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\PrefixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
+    <Compile Include="Analysis\Util\CharArrayMap.cs" />
+    <Compile Include="Analysis\Util\CharArraySet.cs" />
+    <Compile Include="Analysis\Util\FilteringTokenFilter.cs" />
     <Compile Include="Analysis\Util\StemmerUtil.cs" />
     <Compile Include="Analysis\Core\UpperCaseFilter.cs" />
     <Compile Include="Analysis\Core\WhitespaceAnalyzer.cs" />

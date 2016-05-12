@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Core
     /// </para>
     /// <para><b>NOTE:</b> In Unicode, this transformation may lose information when the
     /// upper case character represents more than one lower case character. Use this filter
-    /// when you require uppercase tokens.  Use the <seealso cref="LowerCaseFilter"/> for 
+    /// when you Require uppercase tokens.  Use the <seealso cref="LowerCaseFilter"/> for 
     /// general search matching
     /// </para>
     /// </summary>

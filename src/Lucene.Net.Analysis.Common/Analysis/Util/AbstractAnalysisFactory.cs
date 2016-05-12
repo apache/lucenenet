@@ -32,9 +32,9 @@ namespace Lucene.Net.Analysis.Util
     /// <para>
     /// The typical lifecycle for a factory consumer is:
     /// <ol>
-    ///   <li>Create factory via its constructor (or via XXXFactory.forName)
-    ///   <li>(Optional) If the factory uses resources such as files, <seealso cref="ResourceLoaderAware#inform(ResourceLoader)"/> is called to initialize those resources.
-    ///   <li>Consumer calls create() to obtain instances.
+    ///   <li>Create factory via its constructor (or via XXXFactory.forName)</li>
+    ///   <li>(Optional) If the factory uses resources such as files, <seealso cref="ResourceLoaderAware#inform(ResourceLoader)"/> is called to initialize those resources.</li>
+    ///   <li>Consumer calls create() to obtain instances.</li>
     /// </ol>
     /// </para>
     /// </summary>
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// the luceneVersion arg </summary>
-        protected internal readonly LuceneVersion? luceneMatchVersion;
+        protected internal readonly Version? luceneMatchVersion;
 
         /// <summary>
         /// Initialize this factory via a set of key-value pairs.
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Util
         {
             ExplicitLuceneMatchVersion = false;
             originalArgs = Collections.UnmodifiableMap(args);
-            string version = get(args, LUCENE_MATCH_VERSION_PARAM);
+            string version = Get(args, LUCENE_MATCH_VERSION_PARAM);
             luceneMatchVersion = version == null ? (LuceneVersion?)null : LuceneVersionHelpers.ParseLeniently(version);
             args.Remove(CLASS_NAME); // consume the class arg
         }
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        public virtual string require(IDictionary<string, string> args, string name)
+        public virtual string Require(IDictionary<string, string> args, string name)
         {            
             string s;
             if (!args.TryGetValue(name, out s))
@@ -101,55 +101,58 @@ namespace Lucene.Net.Analysis.Util
             args.Remove(name);
             return s;
         }
-        public virtual string require(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
+        public virtual string Require(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
         {
-            return require(args, name, allowedValues, true);
+            return Require(args, name, allowedValues, true);
         }
-        public virtual string require(IDictionary<string, string> args, string name, ICollection<string> allowedValues, bool caseSensitive)
+
+        public virtual string Require(IDictionary<string, string> args, string name, ICollection<string> allowedValues,
+            bool caseSensitive)
         {
-            string s = args.Remove(name);
-            if (s == null)
+            string s;
+            if (!args.TryGetValue(name, out s) || s == null)
             {
-                throw new System.ArgumentException("Configuration Error: missing parameter '" + name + "'");
+                throw new ArgumentException("Configuration Error: missing parameter '" + name + "'");
             }
-            else
+
+            args.Remove(name);
+            foreach (var allowedValue in allowedValues)
             {
-                foreach (string allowedValue in allowedValues)
+                if (caseSensitive)
                 {
-                    if (caseSensitive)
+                    if (s.Equals(allowedValue))
                     {
-                        if (s.Equals(allowedValue))
-                        {
-                            return s;
-                        }
-                    }
-                    else
-                    {
-                        if (s.Equals(allowedValue, StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            return s;
-                        }
+                        return s;
                     }
                 }
-                throw new System.ArgumentException("Configuration Error: '" + name + "' value must be one of " + allowedValues);
+                else
+                {
+                    if (s.Equals(allowedValue, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        return s;
+                    }
+                }
             }
+            throw new ArgumentException("Configuration Error: '" + name + "' value must be one of " +
+                                               allowedValues);
         }
-        public virtual string get(IDictionary<string, string> args, string name, string defaultVal = null)
+
+        public virtual string Get(IDictionary<string, string> args, string name, string defaultVal = null)
         {
             string s;
             if (args.TryGetValue(name, out s))
                 args.Remove(name);
             return s ?? defaultVal;
         }
-        public virtual string get(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
+        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
         {
-            return get(args, name, allowedValues, null); // defaultVal = null
+            return Get(args, name, allowedValues, null); // defaultVal = null
         }
-        public virtual string get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal)
+        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal)
         {
-            return get(args, name, allowedValues, defaultVal, true);
+            return Get(args, name, allowedValues, defaultVal, true);
         }
-        public virtual string get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal, bool caseSensitive)
+        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal, bool caseSensitive)
         {
             string s = null;
             if (args.TryGetValue(name, out s))
@@ -181,41 +184,41 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        protected internal int requireInt(IDictionary<string, string> args, string name)
+        protected internal int RequireInt(IDictionary<string, string> args, string name)
         {
-            return int.Parse(require(args, name));
+            return int.Parse(Require(args, name));
         }
-        protected internal int getInt(IDictionary<string, string> args, string name, int defaultVal)
+        protected internal int GetInt(IDictionary<string, string> args, string name, int defaultVal)
         {
             string s = args.Remove(name);
             return s == null ? defaultVal : int.Parse(s);
         }
 
-        protected internal bool requireBoolean(IDictionary<string, string> args, string name)
+        protected internal bool RequireBoolean(IDictionary<string, string> args, string name)
         {
-            return bool.Parse(require(args, name));
+            return bool.Parse(Require(args, name));
         }
-        protected internal bool getBoolean(IDictionary<string, string> args, string name, bool defaultVal)
+        protected internal bool GetBoolean(IDictionary<string, string> args, string name, bool defaultVal)
         {
             string s = args.Remove(name);
             return s == null ? defaultVal : bool.Parse(s);
         }
 
-        protected internal float requireFloat(IDictionary<string, string> args, string name)
+        protected internal float RequireFloat(IDictionary<string, string> args, string name)
         {
-            return float.Parse(require(args, name));
+            return float.Parse(Require(args, name));
         }
-        protected internal float getFloat(IDictionary<string, string> args, string name, float defaultVal)
+        protected internal float GetFloat(IDictionary<string, string> args, string name, float defaultVal)
         {
             string s = args.Remove(name);
             return s == null ? defaultVal : float.Parse(s);
         }
 
-        public virtual char requireChar(IDictionary<string, string> args, string name)
+        public virtual char RequireChar(IDictionary<string, string> args, string name)
         {
-            return require(args, name)[0];
+            return Require(args, name)[0];
         }
-        public virtual char getChar(IDictionary<string, string> args, string name, char defaultValue)
+        public virtual char GetChar(IDictionary<string, string> args, string name, char defaultValue)
         {
             string s = args.Remove(name);
             if (s == null)
@@ -239,7 +242,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Returns whitespace- and/or comma-separated set of values, or null if none are found </summary>
-        public virtual HashSet<string> getSet(IDictionary<string, string> args, string name)
+        public virtual HashSet<string> GetSet(IDictionary<string, string> args, string name)
 	  {
 		string s = args.Remove(name);
 		if (s == null)
@@ -270,7 +273,7 @@ namespace Lucene.Net.Analysis.Util
         {
             try
             {
-                return Pattern.compile(require(args, name));
+                return Pattern.compile(Require(args, name));
             }
             catch (PatternSyntaxException e)
             {

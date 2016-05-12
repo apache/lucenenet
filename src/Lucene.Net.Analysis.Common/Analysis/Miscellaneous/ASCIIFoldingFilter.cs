@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 char[] buffer = termAtt.Buffer();
                 int length = termAtt.Length;
 
-                // If no characters actually require rewriting then we
+                // If no characters actually Require rewriting then we
                 // just return token as-is:
                 for (int i = 0; i < length; ++i)
                 {

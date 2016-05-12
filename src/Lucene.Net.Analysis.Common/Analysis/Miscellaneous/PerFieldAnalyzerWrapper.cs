@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
     /// <summary>
     /// This analyzer is used to facilitate scenarios where different
-    /// fields require different analysis techniques.  Use the Map
+    /// fields Require different analysis techniques.  Use the Map
     /// argument in <seealso cref="#PerFieldAnalyzerWrapper(Analyzer, java.util.Map)"/>
     /// to add non-default analyzers for fields.
     /// 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 
@@ -108,6 +109,16 @@ namespace Lucene.Net.Util
         protected static void assertArrayEquals(IEnumerable a1, IEnumerable a2)
         {
             CollectionAssert.AreEqual(a1, a2);
+        }
+
+        protected static void assertSame(Object expected, Object actual)
+        {
+            Assert.AreSame(expected, actual);
+        }
+
+        protected static void assertSame(string message, Object expected, Object actual)
+        {
+            Assert.AreSame(expected, actual, message);
         }
 
         protected static void fail()

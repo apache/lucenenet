@@ -52,6 +52,8 @@
   <ItemGroup>
     <Compile Include="Analysis\Util\TestCharacterUtils.cs" />
     <Compile Include="Analysis\Util\TestCharArrayIterator.cs" />
+    <Compile Include="Analysis\Util\TestCharArrayMap.cs" />
+    <Compile Include="Analysis\Util\TestCharArraySet.cs" />
     <Compile Include="Analysis\Util\TestCharTokenizers.cs" />
     <Compile Include="Analysis\Util\TestRollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\TestSegmentingTokenizerBase.cs" />

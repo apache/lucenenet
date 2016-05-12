@@ -37,5 +37,10 @@ namespace Lucene.Net
             builder.AddRange(d);
             return builder.ToImmutable();
         }
+
+        public static IDictionary<T, S> SingletonMap<T, S>(T key, S value)
+        {
+            return new Dictionary<T, S> {{key, value}};
+        }
     }
 }
