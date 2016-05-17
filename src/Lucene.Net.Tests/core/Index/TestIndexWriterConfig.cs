@@ -61,11 +61,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(typeof(MockAnalyzer), conf.Analyzer.GetType());
             Assert.IsNull(conf.IndexCommit);
             Assert.AreEqual(typeof(KeepOnlyLastCommitDeletionPolicy), conf.DelPolicy.GetType());
-#if FEATURE_TASKMERGESCHEDULER
-            Assert.AreEqual(typeof(TaskMergeScheduler), conf.MergeScheduler.GetType());
-#else
             Assert.AreEqual(typeof(ConcurrentMergeScheduler), conf.MergeScheduler.GetType());
-#endif
             Assert.AreEqual(OpenMode_e.CREATE_OR_APPEND, conf.OpenMode);
             // we don't need to assert this, it should be unspecified
             Assert.IsTrue(IndexSearcher.DefaultSimilarity == conf.Similarity);
@@ -288,11 +284,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(mergeSched.GetType() == mergeSchedClone.GetType() && (mergeSched != mergeSchedClone || mergeSched.Clone() == mergeSchedClone.Clone()));
 
             conf.SetMergeScheduler(new SerialMergeScheduler());
-#if FEATURE_TASKMERGESCHEDULER
-            Assert.AreEqual(typeof(TaskMergeScheduler), clone.MergeScheduler.GetType());
-#else
             Assert.AreEqual(typeof(ConcurrentMergeScheduler), clone.MergeScheduler.GetType());
-#endif
         }
 
         [Test]
@@ -315,11 +307,7 @@ namespace Lucene.Net.Index
             }
 
             // Test MergeScheduler
-#if FEATURE_TASKMERGESCHEDULER
-            Assert.AreEqual(typeof(TaskMergeScheduler), conf.MergeScheduler.GetType());
-#else
             Assert.AreEqual(typeof(ConcurrentMergeScheduler), conf.MergeScheduler.GetType());
-#endif
             conf.SetMergeScheduler(new SerialMergeScheduler());
             Assert.AreEqual(typeof(SerialMergeScheduler), conf.MergeScheduler.GetType());
             try

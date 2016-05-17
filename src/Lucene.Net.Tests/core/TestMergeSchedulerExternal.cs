@@ -76,9 +76,7 @@ namespace Lucene.Net.Tests
             {
                 MergeThread thread = new MyMergeThread(this, writer, merge);
                 thread.ThreadPriority = MergeThreadPriority;
-#if !FEATURE_TASKMERGESCHEDULER
                 thread.SetDaemon(true);
-#endif
                 thread.Name = "MyMergeThread";
                 return thread;
             }
