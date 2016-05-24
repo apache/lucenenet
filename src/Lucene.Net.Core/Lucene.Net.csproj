@@ -7,6 +7,7 @@
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
     <AssemblyName>Lucene.Net</AssemblyName>
+    <RootNamespace>Lucene.Net</RootNamespace>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -34,10 +35,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Lucene.Net</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -286,6 +283,8 @@
     <Compile Include="Index\FreqProxTermsWriter.cs" />
     <Compile Include="Index\FreqProxTermsWriterPerField.cs" />
     <Compile Include="Index\FrozenBufferedUpdates.cs" />
+    <Compile Include="Index\IConcurrentMergeScheduler.cs" />
+    <Compile Include="Index\IMergeScheduler.cs" />
     <Compile Include="Index\IndexableField.cs" />
     <Compile Include="Index\IndexableFieldType.cs" />
     <Compile Include="Index\IndexCommit.cs" />
@@ -366,6 +365,7 @@
     <Compile Include="Index\StoredFieldsConsumer.cs" />
     <Compile Include="Index\StoredFieldsProcessor.cs" />
     <Compile Include="Index\StoredFieldVisitor.cs" />
+    <Compile Include="Index\TaskMergeScheduler.cs" />
     <Compile Include="Index\Term.cs" />
     <Compile Include="Index\TermContext.cs" />
     <Compile Include="Index\Terms.cs" />
@@ -839,6 +839,7 @@
     <Compile Include="Util\PriorityQueue.cs" />
     <Compile Include="Util\QueryBuilder.cs" />
     <Compile Include="Util\RamUsageEstimator.cs" />
+    <Compile Include="Util\ReaderWriterLockSlimExtension.cs" />
     <Compile Include="Util\RecyclingByteBlockAllocator.cs" />
     <Compile Include="Util\RecyclingIntBlockAllocator.cs" />
     <Compile Include="Util\RefCount.cs" />

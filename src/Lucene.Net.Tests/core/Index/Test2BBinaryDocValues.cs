@@ -42,16 +42,20 @@ namespace Lucene.Net.Index
     {
         // indexes Integer.MAX_VALUE docs with a fixed binary field
         [Test]
-        public virtual void TestFixedBinary()
+        public virtual void TestFixedBinary([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BFixedBinary"));
             if (dir is MockDirectoryWrapper)
             {
                 ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
             }
-
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                            .SetRAMBufferSizeMB(256.0)
+                            .SetMergeScheduler(scheduler)
+                            .SetMergePolicy(NewLogMergePolicy(false, 10))
+                            .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
+            IndexWriter w = new IndexWriter(dir, config);
 
             Document doc = new Document();
             var bytes = new byte[4];
@@ -104,7 +108,7 @@ namespace Lucene.Net.Index
 
         // indexes Integer.MAX_VALUE docs with a variable binary field
         [Test]
-        public virtual void TestVariableBinary()
+        public virtual void TestVariableBinary([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BVariableBinary"));
             if (dir is MockDirectoryWrapper)
@@ -112,8 +116,13 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
             }
 
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-           .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                            .SetRAMBufferSizeMB(256.0)
+                            .SetMergeScheduler(scheduler)
+                            .SetMergePolicy(NewLogMergePolicy(false, 10))
+                            .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
+            IndexWriter w = new IndexWriter(dir, config);
 
             Document doc = new Document();
             var bytes = new byte[4];

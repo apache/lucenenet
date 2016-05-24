@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     ///  instance.</p>
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergeScheduler : IDisposable, ICloneable
+    public abstract class MergeScheduler : IDisposable, IMergeScheduler
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
         /// Close this MergeScheduler. </summary>
         public abstract void Dispose();
 
-        public virtual object Clone()
+        public virtual IMergeScheduler Clone()
         {
             return (MergeScheduler)base.MemberwiseClone();
         }

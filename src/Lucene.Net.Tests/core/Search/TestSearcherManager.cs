@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
 {
+    using Index;
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
@@ -388,7 +389,7 @@ namespace Lucene.Net.Search
                     SearcherManager.MaybeRefresh();
                     Success.Set(true);
                 }
-                catch (AlreadyClosedException e)
+                catch (AlreadyClosedException)
                 {
                     // expected
                 }
@@ -419,10 +420,12 @@ namespace Lucene.Net.Search
         }
 
         [Test]
-        public virtual void TestReferenceDecrementIllegally()
+        public virtual void TestReferenceDecrementIllegally([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new ConcurrentMergeScheduler()));
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                            .SetMergeScheduler(scheduler);
+            IndexWriter writer = new IndexWriter(dir, config);
             SearcherManager sm = new SearcherManager(writer, false, new SearcherFactory());
             writer.AddDocument(new Document());
             writer.Commit();
@@ -436,15 +439,8 @@ namespace Lucene.Net.Search
             acquire = sm.Acquire();
             acquire.IndexReader.DecRef();
             sm.Release(acquire);
-            try
-            {
-                sm.Acquire();
-                Assert.Fail("acquire should have thrown an InvalidOperationException since we modified the refCount outside of the manager");
-            }
-            catch (InvalidOperationException ex)
-            {
-                //
-            }
+
+            Assert.Throws<InvalidOperationException>(() => sm.Acquire(), "acquire should have thrown an InvalidOperationException since we modified the refCount outside of the manager");
 
             // sm.Dispose(); -- already closed
             writer.Dispose();

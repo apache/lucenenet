@@ -70,10 +70,10 @@ namespace Lucene.Net.Index
                         // we see incrementing messageID:
                         iwc.InfoStream = new PrintStreamInfoStream(Console.Out);
                     }
-                    MergeScheduler ms = iwc.MergeScheduler;
-                    if (ms is ConcurrentMergeScheduler)
+                    var ms = iwc.MergeScheduler;
+                    if (ms is IConcurrentMergeScheduler)
                     {
-                        ((ConcurrentMergeScheduler)ms).SetSuppressExceptions();
+                        ((IConcurrentMergeScheduler)ms).SetSuppressExceptions();
                     }
                     w = new IndexWriter(dir, iwc);
                     if (r != null && Random().Next(5) == 3)

@@ -222,13 +222,14 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestChangesAfterClose()
+        public virtual void TestChangesAfterClose([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
             Directory dir = NewDirectory();
 
             IndexWriter writer = null;
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(scheduler);
+            writer = new IndexWriter(dir, config);
             AddDoc(writer);
 
             // close

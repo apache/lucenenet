@@ -542,22 +542,24 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestDeletesOnDiskFull()
+        public virtual void TestDeletesOnDiskFull(
+            [ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
-            DoTestOperationsOnDiskFull(false);
+            DoTestOperationsOnDiskFull(scheduler, false);
         }
 
         [Test]
-        public virtual void TestUpdatesOnDiskFull()
+        public virtual void TestUpdatesOnDiskFull(
+            [ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
         {
-            DoTestOperationsOnDiskFull(true);
+            DoTestOperationsOnDiskFull(scheduler, true);
         }
 
         /// <summary>
         /// Make sure if modifier tries to commit but hits disk full that modifier
         /// remains consistent and usable. Similar to TestIndexReader.testDiskFull().
         /// </summary>
-        private void DoTestOperationsOnDiskFull(bool updates)
+        private void DoTestOperationsOnDiskFull(IConcurrentMergeScheduler scheduler, bool updates)
         {
             Term searchTerm = new Term("content", "aaa");
             int START_COUNT = 157;
@@ -598,8 +600,15 @@ namespace Lucene.Net.Index
                 MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new RAMDirectory(startDir, NewIOContext(Random())));
                 dir.PreventDoubleWrite = false;
                 dir.AllowRandomFileNotFoundException = false;
-                IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(1000).SetMaxBufferedDeleteTerms(1000).SetMergeScheduler(new ConcurrentMergeScheduler()));
-                ((ConcurrentMergeScheduler)modifier.Config.MergeScheduler).SetSuppressExceptions();
+
+                var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
+                                .SetMaxBufferedDocs(1000)
+                                .SetMaxBufferedDeleteTerms(1000)
+                                .SetMergeScheduler(scheduler);
+
+                scheduler.SetSuppressExceptions();
+
+                IndexWriter modifier = new IndexWriter(dir, config);
 
                 // For each disk size, first try to commit against
                 // dir that will hit random IOExceptions & disk

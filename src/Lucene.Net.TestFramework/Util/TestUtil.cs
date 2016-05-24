@@ -128,11 +128,11 @@ namespace Lucene.Net.Util
             SyncConcurrentMerges(writer.Config.MergeScheduler);
         }
 
-        public static void SyncConcurrentMerges(MergeScheduler ms)
+        public static void SyncConcurrentMerges(IMergeScheduler ms)
         {
-            if (ms is ConcurrentMergeScheduler)
+            if (ms is IConcurrentMergeScheduler)
             {
-                ((ConcurrentMergeScheduler)ms).Sync();
+                ((IConcurrentMergeScheduler)ms).Sync();
             }
         }
 
@@ -916,11 +916,11 @@ namespace Lucene.Net.Util
                 tmp.SegmentsPerTier = Math.Min(5, tmp.SegmentsPerTier);
                 tmp.NoCFSRatio = 1.0;
             }
-            MergeScheduler ms = w.Config.MergeScheduler;
-            if (ms is ConcurrentMergeScheduler)
+            IMergeScheduler ms = w.Config.MergeScheduler;
+            if (ms is IConcurrentMergeScheduler)
             {
                 // wtf... shouldnt it be even lower since its 1 by default?!?!
-                ((ConcurrentMergeScheduler)ms).SetMaxMergesAndThreads(3, 2);
+                ((IConcurrentMergeScheduler)ms).SetMaxMergesAndThreads(3, 2);
             }
         }
 
