@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
             var count = Interlocked.Increment(ref _mergeThreadCount);
             var name = string.Format("Lucene Merge Task #{0}", count);
 
-            return new MergeThread(name, writer, merge, writer.infoStream, _manualResetEvent, HandleMergeException);
+            return new MergeThread(name, writer, merge, writer.infoStream, Verbose(), _manualResetEvent, HandleMergeException);
         }
 
         /// <summary>
@@ -420,6 +420,7 @@ namespace Lucene.Net.Index
             private readonly InfoStream _logger;
             private readonly IndexWriter _writer;
             private readonly MergePolicy.OneMerge _startingMerge;
+            private readonly bool _isLoggingEnabled;
 
             private Task _task;
             private MergePolicy.OneMerge _runningMerge;
@@ -428,7 +429,8 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Sole constructor. </summary>
-            public MergeThread(string name, IndexWriter writer, MergePolicy.OneMerge startMerge, InfoStream logger,
+            public MergeThread(string name, IndexWriter writer, MergePolicy.OneMerge startMerge,
+                InfoStream logger, bool isLoggingEnabled,
                 ManualResetEventSlim resetEvent, Action<Exception> exceptionHandler)
             {
                 Name = name;
@@ -436,16 +438,9 @@ namespace Lucene.Net.Index
                 _writer = writer;
                 _startingMerge = startMerge;
                 _logger = logger;
+                _isLoggingEnabled = isLoggingEnabled;
                 _resetEvent = resetEvent;
                 _exceptionHandler = exceptionHandler;
-            }
-
-            private bool IsLoggingEnabled
-            {
-                get
-                {
-                    return _logger != null && _logger.IsEnabled(COMPONENT_NAME);
-                }
             }
 
             public string Name { get; private set; }
@@ -562,7 +557,7 @@ namespace Lucene.Net.Index
 
                 try
                 {
-                    if (IsLoggingEnabled)
+                    if (_isLoggingEnabled)
                     {
                         _logger.Message(COMPONENT_NAME, "  merge thread: start");
                     }
@@ -583,7 +578,7 @@ namespace Lucene.Net.Index
 
                         if (merge != null)
                         {
-                            if (IsLoggingEnabled)
+                            if (_isLoggingEnabled)
                             {
                                 _logger.Message(COMPONENT_NAME, "  merge thread: do another merge " + _writer.SegString(merge.Segments));
                             }
@@ -594,7 +589,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (IsLoggingEnabled)
+                    if (_isLoggingEnabled)
                     {
                         _logger.Message(COMPONENT_NAME, "  merge thread: done");
                     }
