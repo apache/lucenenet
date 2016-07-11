@@ -286,13 +286,13 @@ namespace Lucene.Net.Util
         /// Use this constant when creating Analyzers and any other version-dependent stuff.
         /// <p><b>NOTE:</b> Change this when development starts for new Lucene version:
         /// </summary>
-        public static LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
+        public static readonly LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
 
         /// <summary>
         /// True if and only if tests are run in verbose mode. If this flag is false
         /// tests are not expected to print any messages.
         /// </summary>
-        public static bool VERBOSE = RandomizedTest.SystemPropertyAsBoolean("tests.verbose",
+        public static readonly bool VERBOSE = RandomizedTest.SystemPropertyAsBoolean("tests.verbose",
 #if DEBUG
  true
 #else
@@ -302,65 +302,65 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static bool INFOSTREAM = RandomizedTest.SystemPropertyAsBoolean("tests.infostream", VERBOSE);
+        public static readonly bool INFOSTREAM = RandomizedTest.SystemPropertyAsBoolean("tests.infostream", VERBOSE);
 
         /// <summary>
         /// A random multiplier which you should use when writing random tests:
         /// multiply it by the number of iterations to scale your tests (for nightly builds).
         /// </summary>
-        public static int RANDOM_MULTIPLIER = RandomizedTest.SystemPropertyAsInt("tests.multiplier", 1);
+        public static readonly int RANDOM_MULTIPLIER = RandomizedTest.SystemPropertyAsInt("tests.multiplier", 1);
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static string DEFAULT_LINE_DOCS_FILE = "europarl.lines.txt.gz";
+        public static readonly string DEFAULT_LINE_DOCS_FILE = "europarl.lines.txt.gz";
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static string JENKINS_LARGE_LINE_DOCS_FILE = "enwiki.random.lines.txt";
+        public static readonly string JENKINS_LARGE_LINE_DOCS_FILE = "enwiki.random.lines.txt";
 
         /// <summary>
         /// Gets the codec to run tests with. </summary>
-        public static string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
+        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
 
         /// <summary>
         /// Gets the postingsFormat to run tests with. </summary>
-        public static string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests.postingsformat", "random");
+        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests.postingsformat", "random");
 
         /// <summary>
         /// Gets the docValuesFormat to run tests with </summary>
-        public static string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
+        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
 
         /// <summary>
         /// Gets the directory to run tests with </summary>
-        public static string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
+        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
 
         /// <summary>
         /// the line file used by LineFileDocs </summary>
-        public static string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
+        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
 
         /// <summary>
         /// Whether or not <seealso cref="Nightly"/> tests should run. </summary>
-        public static bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_NIGHTLY, false);
+        public static readonly bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_NIGHTLY, false);
 
         /// <summary>
         /// Whether or not <seealso cref="Weekly"/> tests should run. </summary>
-        public static bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_WEEKLY, false);
+        public static readonly bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_WEEKLY, false);
 
         /// <summary>
         /// Whether or not <seealso cref="AwaitsFix"/> tests should run. </summary>
-        public static bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
+        public static readonly bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
 
         /// <summary>
         /// Whether or not <seealso cref="Slow"/> tests should run. </summary>
-        public static bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_SLOW, false);
+        public static readonly bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_SLOW, false);
 
         /// <summary>
         /// Throttling, see <seealso cref="MockDirectoryWrapper#setThrottling(Throttling)"/>. </summary>
-        public static MockDirectoryWrapper.Throttling_e TEST_THROTTLING = TEST_NIGHTLY ? MockDirectoryWrapper.Throttling_e.SOMETIMES : MockDirectoryWrapper.Throttling_e.NEVER;
+        public static readonly MockDirectoryWrapper.Throttling_e TEST_THROTTLING = TEST_NIGHTLY ? MockDirectoryWrapper.Throttling_e.SOMETIMES : MockDirectoryWrapper.Throttling_e.NEVER;
 
         /// <summary>
         /// Leave temporary files on disk, even on successful runs. </summary>
-        public static bool LEAVE_TEMPORARY;
+        public static readonly bool LEAVE_TEMPORARY;
 
         static LuceneTestCase()
         {
@@ -400,17 +400,17 @@ namespace Lucene.Net.Util
         /// <seealso> cref= SystemPropertiesInvariantRule </seealso>
         /// <seealso> cref= #ruleChain </seealso>
         /// <seealso> cref= #classRules </seealso>
-        private static string[] IGNORED_INVARIANT_PROPERTIES = { "user.timezone", "java.rmi.server.randomIDs" };
+        private static readonly string[] IGNORED_INVARIANT_PROPERTIES = { "user.timezone", "java.rmi.server.randomIDs" };
 
         /// <summary>
         /// Filesystem-based <seealso cref="Directory"/> implementations. </summary>
-        private static IList<string> FS_DIRECTORIES = Arrays.AsList("SimpleFSDirectory", "NIOFSDirectory", "MMapDirectory");
+        private static readonly IList<string> FS_DIRECTORIES = Arrays.AsList("SimpleFSDirectory", "NIOFSDirectory", "MMapDirectory");
 
         /// <summary>
         /// All <seealso cref="Directory"/> implementations. </summary>
-        private static IList<string> CORE_DIRECTORIES;
+        private static readonly IList<string> CORE_DIRECTORIES;
 
-        protected static HashSet<string> DoesntSupportOffsets = new HashSet<string>(Arrays.AsList("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom"));
+        protected static readonly HashSet<string> DoesntSupportOffsets = new HashSet<string>(Arrays.AsList("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom"));
 
         // -----------------------------------------------------------------
         // Fields initialized in class or instance rules.
@@ -443,7 +443,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Suite failure marker (any error in the test or suite scope).
         /// </summary>
-        public static /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
+        public static readonly /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
 
         /// <summary>
         /// Ignore tests after hitting a designated number of initial failures. this
@@ -473,7 +473,7 @@ namespace Lucene.Net.Util
         /// Max 10mb of static data stored in a test suite class after the suite is complete.
         /// Prevents static data structures leaking and causing OOMs in subsequent tests.
         /// </summary>
-        private static long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
+        private static readonly long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
 
         /// <summary>
         /// By-name list of ignored types like loggers etc. </summary>
