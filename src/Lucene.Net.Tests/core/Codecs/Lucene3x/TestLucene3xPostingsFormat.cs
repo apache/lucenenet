@@ -29,8 +29,8 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         private readonly Codec Codec_Renamed = new PreFlexRWCodec();
 
-        [TestFixtureSetUp]
-        public static void BeforeClass()
+        [SetUp]
+        public void Setup()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }
