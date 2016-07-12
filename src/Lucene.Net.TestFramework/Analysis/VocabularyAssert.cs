@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis
     {
         /// <summary>
         /// Run a vocabulary test against two data files. </summary>
-        public static void AssertVocabulary(Analyzer a, Stream voc, Stream @out)
+        public static void AssertVocabulary(Analyzer a, Stream voc, Stream @out, BaseTokenStreamTestCase testCase)
         {
             TextReader vocReader = (TextReader)(new StreamReader(voc, IOUtils.CHARSET_UTF_8));
             TextReader outputReader = (TextReader)(new StreamReader(@out, IOUtils.CHARSET_UTF_8));
@@ -36,13 +36,14 @@ namespace Lucene.Net.Analysis
             {
                 string expectedWord = outputReader.ReadLine();
                 Assert.IsNotNull(expectedWord);
-                BaseTokenStreamTestCase.CheckOneTerm(a, inputWord, expectedWord);
+
+                testCase.CheckOneTerm(a, inputWord, expectedWord);
             }
         }
 
         /// <summary>
         /// Run a vocabulary test against one file: tab separated. </summary>
-        public static void AssertVocabulary(Analyzer a, Stream vocOut)
+        public static void AssertVocabulary(Analyzer a, Stream vocOut, BaseTokenStreamTestCase testCase)
         {
             TextReader vocReader = (TextReader)(new StreamReader(vocOut, IOUtils.CHARSET_UTF_8));
             string inputLine = null;
@@ -53,7 +54,7 @@ namespace Lucene.Net.Analysis
                     continue; // comment
                 }
                 string[] words = inputLine.Split('\t');
-                BaseTokenStreamTestCase.CheckOneTerm(a, words[0], words[1]);
+                testCase.CheckOneTerm(a, words[0], words[1]);
             }
         }
 

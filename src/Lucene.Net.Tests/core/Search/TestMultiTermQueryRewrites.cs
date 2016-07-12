@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
         internal static IndexSearcher Searcher, MultiSearcher, MultiSearcherDupls;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Dir = NewDirectory();
             Sdir1 = NewDirectory();

@@ -1109,7 +1109,12 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUpdateOldSegments()
         {
-            Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec(), new Lucene45RWCodec() };
+            Codec[] oldCodecs = new Codec[] {
+                new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
+                new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
+                new Lucene42RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
+                new Lucene45RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            };
             Directory dir = NewDirectory();
 
             bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;

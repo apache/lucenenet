@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     public class TestLucene3xStoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }
@@ -35,7 +35,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return new PreFlexRWCodec();
+                Assert.IsTrue(OLD_FORMAT_IMPERSONATION_IS_ACTIVE, "This should have been set up in the test fixture");
+                return new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
             }
         }
 

@@ -145,14 +145,14 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        internal static void AddDoc(IndexWriter writer)
+        private void AddDoc(IndexWriter writer)
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", "aaa", Field.Store.NO));
             writer.AddDocument(doc);
         }
 
-        internal static void AddDocWithIndex(IndexWriter writer, int index)
+        private void AddDocWithIndex(IndexWriter writer, int index)
         {
             Document doc = new Document();
             doc.Add(NewField("content", "aaa " + index, StoredTextType));
@@ -1140,8 +1140,8 @@ namespace Lucene.Net.Index
                 IndexWriterConfig conf = NewIndexWriterConfig(this.Random, TEST_VERSION_CURRENT, new MockAnalyzer(this.Random));
                 IndexWriter w = new IndexWriter(Adder, conf);
                 Document doc = new Document();
-                doc.Add(NewStringField(this.Random, "id", "500", Field.Store.NO));
-                doc.Add(NewField(this.Random, "field", "some prepackaged text contents", StoredTextType));
+                doc.Add(OuterInstance.NewStringField(this.Random, "id", "500", Field.Store.NO));
+                doc.Add(OuterInstance.NewField(this.Random, "field", "some prepackaged text contents", StoredTextType));
                 if (DefaultCodecSupportsDocValues())
                 {
                     doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("500")));
@@ -1155,8 +1155,8 @@ namespace Lucene.Net.Index
                 }
                 w.AddDocument(doc);
                 doc = new Document();
-                doc.Add(NewStringField(this.Random, "id", "501", Field.Store.NO));
-                doc.Add(NewField(this.Random, "field", "some more contents", StoredTextType));
+                doc.Add(OuterInstance.NewStringField(this.Random, "id", "501", Field.Store.NO));
+                doc.Add(OuterInstance.NewField(this.Random, "field", "some more contents", StoredTextType));
                 if (DefaultCodecSupportsDocValues())
                 {
                     doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("501")));
@@ -1203,13 +1203,13 @@ namespace Lucene.Net.Index
                             w = new IndexWriter(dir, conf);
 
                             Document doc = new Document();
-                            Field idField = NewStringField(Random, "id", "", Field.Store.NO);
+                            Field idField = OuterInstance.NewStringField(Random, "id", "", Field.Store.NO);
                             Field binaryDVField = null;
                             Field numericDVField = null;
                             Field sortedDVField = null;
                             Field sortedSetDVField = new SortedSetDocValuesField("sortedsetdv", new BytesRef());
                             doc.Add(idField);
-                            doc.Add(NewField(Random, "field", "some text contents", StoredTextType));
+                            doc.Add(OuterInstance.NewField(Random, "field", "some text contents", StoredTextType));
                             if (DefaultCodecSupportsDocValues())
                             {
                                 binaryDVField = new BinaryDocValuesField("binarydv", new BytesRef());

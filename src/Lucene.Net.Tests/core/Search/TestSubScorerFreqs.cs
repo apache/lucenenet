@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
         private static IndexSearcher s;
 
         [TestFixtureSetUp]
-        public static void MakeIndex()
+        public void MakeIndex()
         {
             Dir = new RAMDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));

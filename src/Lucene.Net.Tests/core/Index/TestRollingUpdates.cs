@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
                 IndexingThread[] threads = new IndexingThread[numThreads];
                 for (int i = 0; i < numThreads; i++)
                 {
-                    threads[i] = new IndexingThread(docs, w, numUpdates);
+                    threads[i] = new IndexingThread(docs, w, numUpdates, NewStringField);
                     threads[i].Start();
                 }
 
@@ -229,12 +229,15 @@ namespace Lucene.Net.Index
             internal readonly IndexWriter Writer;
             internal readonly int Num;
 
-            public IndexingThread(LineFileDocs docs, IndexWriter writer, int num)
+            private readonly Func<string, string, Field.Store, Field> NewStringField;
+
+            public IndexingThread(LineFileDocs docs, IndexWriter writer, int num, Func<string, string, Field.Store, Field> newStringField)
                 : base()
             {
                 this.Docs = docs;
                 this.Writer = writer;
                 this.Num = num;
+                NewStringField = newStringField;
             }
 
             public override void Run()

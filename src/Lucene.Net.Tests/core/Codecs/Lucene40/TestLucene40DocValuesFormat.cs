@@ -26,10 +26,8 @@ namespace Lucene.Net.Codecs.Lucene40
     /// </summary>
     public class TestLucene40DocValuesFormat : BaseDocValuesFormatTestCase
     {
-        private readonly Codec Codec_Renamed = new Lucene40RWCodec();
-
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }
@@ -38,7 +36,8 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             get
             {
-                return Codec_Renamed;
+                Assert.True(OLD_FORMAT_IMPERSONATION_IS_ACTIVE, "Expecting that this is true");
+                return new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
             }
         }
 

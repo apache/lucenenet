@@ -89,10 +89,14 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
+            private readonly Func<string, string, Field.Store, Field> NewStringField;
+            private readonly Func<string, string, Field.Store, Field> NewTextField;
+
             internal IndexWriter Writer;
             internal int NextID;
 
-            public IndexerThread(IndexWriter writer, TimedThread[] threads)
+            public IndexerThread(IndexWriter writer, TimedThread[] threads, 
+                Func<string, string, Field.Store, Field> newStringField, Func<string, string, Field.Store, Field> newTextField)
                 : base(threads)
             {
                 this.Writer = writer;
@@ -157,11 +161,11 @@ namespace Lucene.Net.Index
 
             // One modifier that writes 10 docs then removes 5, over
             // and over:
-            IndexerThread indexerThread = new IndexerThread(modifier, threads);
+            IndexerThread indexerThread = new IndexerThread(modifier, threads, NewStringField, NewTextField);
             threads[numThread++] = indexerThread;
             indexerThread.Start();
 
-            IndexerThread indexerThread2 = new IndexerThread(modifier, threads);
+            IndexerThread indexerThread2 = new IndexerThread(modifier, threads, NewStringField, NewTextField);
             threads[numThread++] = indexerThread2;
             indexerThread2.Start();
 

@@ -66,7 +66,7 @@ namespace Lucene.Net.Tests.Queries.Function
         }
 
         
-        protected internal static void CreateIndex(bool doMultiSegment)
+        protected internal void CreateIndex(bool doMultiSegment)
         {
             if (VERBOSE)
             {
@@ -111,7 +111,7 @@ namespace Lucene.Net.Tests.Queries.Function
             }
         }
         
-        private static void AddDoc(RandomIndexWriter iw, int i)
+        private void AddDoc(RandomIndexWriter iw, int i)
         {
             Document d = new Document();
             Field f;

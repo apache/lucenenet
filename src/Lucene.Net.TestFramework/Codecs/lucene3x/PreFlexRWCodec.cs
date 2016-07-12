@@ -31,10 +31,16 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly TermVectorsFormat TermVectors = new PreFlexRWTermVectorsFormat();
         private readonly SegmentInfoFormat SegmentInfos = new PreFlexRWSegmentInfoFormat();
         private readonly StoredFieldsFormat StoredFields = new PreFlexRWStoredFieldsFormat();
+        private readonly bool _oldFormatImpersonationIsActive;
+
+        public PreFlexRWCodec(bool oldFormatImpersonationIsActive) : base()
+        {
+            _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
+        }
 
         public override PostingsFormat PostingsFormat()
         {
-            if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (_oldFormatImpersonationIsActive)
             {
                 return Postings;
             }
@@ -46,7 +52,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override NormsFormat NormsFormat()
         {
-            if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (_oldFormatImpersonationIsActive)
             {
                 return Norms;
             }
@@ -58,7 +64,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override SegmentInfoFormat SegmentInfoFormat()
         {
-            if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (_oldFormatImpersonationIsActive)
             {
                 return SegmentInfos;
             }
@@ -70,7 +76,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override FieldInfosFormat FieldInfosFormat()
         {
-            if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (_oldFormatImpersonationIsActive)
             {
                 return FieldInfos;
             }
@@ -82,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override TermVectorsFormat TermVectorsFormat()
         {
-            if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (_oldFormatImpersonationIsActive)
             {
                 return TermVectors;
             }
@@ -94,7 +100,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override StoredFieldsFormat StoredFieldsFormat()
         {
-            if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (_oldFormatImpersonationIsActive)
             {
                 return StoredFields;
             }
