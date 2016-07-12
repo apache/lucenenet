@@ -364,8 +364,6 @@ namespace Lucene.Net.Util
 
         static LuceneTestCase()
         {
-            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
-
             bool defaultValue = false;
             foreach (string property in Arrays.AsList("tests.leaveTemporary", "tests.leavetemporary", "tests.leavetmpdir", "solr.test.leavetmpdir")) // Solr's legacy -  default -  lowercase -  ANT tasks's (junit4) flag.
             {
@@ -437,7 +435,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Class environment setup rule.
         /// </summary>
-        private static TestRuleSetupAndRestoreClassEnv ClassEnvRule;
+        internal TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; private set; }
 
         // LUCENENET TODO
         /// <summary>
@@ -842,14 +840,14 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// create a new index writer config with random defaults </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
+        public IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(Random(), v, a);
         }
 
         /// <summary>
         /// create a new index writer config with random defaults using the specified random </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
+        public IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
             c.SetSimilarity(ClassEnvRule.Similarity);
@@ -948,7 +946,7 @@ namespace Lucene.Net.Util
             return c;
         }
 
-        public static MergePolicy NewMergePolicy(Random r)
+        public MergePolicy NewMergePolicy(Random r)
         {
             if (Rarely(r))
             {
@@ -965,32 +963,32 @@ namespace Lucene.Net.Util
             return NewLogMergePolicy(r);
         }
 
-        public static MergePolicy NewMergePolicy()
+        public MergePolicy NewMergePolicy()
         {
             return NewMergePolicy(Random());
         }
 
-        public static LogMergePolicy NewLogMergePolicy()
+        public LogMergePolicy NewLogMergePolicy()
         {
             return NewLogMergePolicy(Random());
         }
 
-        public static TieredMergePolicy NewTieredMergePolicy()
+        public TieredMergePolicy NewTieredMergePolicy()
         {
             return NewTieredMergePolicy(Random());
         }
 
-        public static AlcoholicMergePolicy NewAlcoholicMergePolicy()
+        public AlcoholicMergePolicy NewAlcoholicMergePolicy()
         {
             return NewAlcoholicMergePolicy(Random(), ClassEnvRule.TimeZone);
         }
 
-        public static AlcoholicMergePolicy NewAlcoholicMergePolicy(Random r, TimeZone tz)
+        public AlcoholicMergePolicy NewAlcoholicMergePolicy(Random r, TimeZone tz)
         {
             return new AlcoholicMergePolicy(tz, new Random(r.Next()));
         }
 
-        public static LogMergePolicy NewLogMergePolicy(Random r)
+        public LogMergePolicy NewLogMergePolicy(Random r)
         {
             LogMergePolicy logmp = r.NextBoolean() ? (LogMergePolicy)new LogDocMergePolicy() : new LogByteSizeMergePolicy();
 
@@ -1028,7 +1026,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static TieredMergePolicy NewTieredMergePolicy(Random r)
+        public TieredMergePolicy NewTieredMergePolicy(Random r)
         {
             TieredMergePolicy tmp = new TieredMergePolicy();
             if (Rarely(r))
@@ -1064,14 +1062,14 @@ namespace Lucene.Net.Util
             return tmp;
         }
 
-        public static MergePolicy NewLogMergePolicy(bool useCFS)
+        public MergePolicy NewLogMergePolicy(bool useCFS)
         {
             MergePolicy logmp = NewLogMergePolicy();
             logmp.NoCFSRatio = useCFS ? 1.0 : 0.0;
             return logmp;
         }
 
-        public static MergePolicy NewLogMergePolicy(bool useCFS, int mergeFactor)
+        public MergePolicy NewLogMergePolicy(bool useCFS, int mergeFactor)
         {
             LogMergePolicy logmp = NewLogMergePolicy();
             logmp.NoCFSRatio = useCFS ? 1.0 : 0.0;
@@ -1079,7 +1077,7 @@ namespace Lucene.Net.Util
             return logmp;
         }
 
-        public static MergePolicy NewLogMergePolicy(int mergeFactor)
+        public MergePolicy NewLogMergePolicy(int mergeFactor)
         {
             LogMergePolicy logmp = NewLogMergePolicy();
             logmp.MergeFactor = mergeFactor;
@@ -1545,7 +1543,7 @@ namespace Lucene.Net.Util
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r)
+        public IndexSearcher NewSearcher(IndexReader r)
         {
             return NewSearcher(r, true);
         }
@@ -1554,7 +1552,7 @@ namespace Lucene.Net.Util
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap)
+        public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap)
         {
             return NewSearcher(r, maybeWrap, true);
         }
@@ -1566,7 +1564,7 @@ namespace Lucene.Net.Util
         /// <code>wrapWithAssertions</code> is true, this searcher might be an
         /// <seealso cref="AssertingIndexSearcher"/> instance.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
+        public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
         {
             Random random = Random();
             if (Usually())
