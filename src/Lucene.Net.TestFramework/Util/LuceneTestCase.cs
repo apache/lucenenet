@@ -196,8 +196,8 @@ namespace Lucene.Net.Util
 
         public LuceneTestCase()
         {
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
             String directory = Paths.TempDirectory;
-
             TEMP_DIR = new System.IO.FileInfo(directory);
         }
 
@@ -423,7 +423,7 @@ namespace Lucene.Net.Util
         ///
         /// @lucene.internal
         /// </summary>
-        public static bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+        public bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE { get; protected set; }
 
         // -----------------------------------------------------------------
         // Class level (suite) rules.
