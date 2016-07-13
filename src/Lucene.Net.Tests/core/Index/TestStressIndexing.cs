@@ -127,11 +127,13 @@ namespace Lucene.Net.Index
         private class SearcherThread : TimedThread
         {
             internal Directory Directory;
+            private readonly Func<IndexReader, IndexSearcher> NewSearcher;
 
-            public SearcherThread(Directory directory, TimedThread[] threads)
+            public SearcherThread(Directory directory, TimedThread[] threads, Func<IndexReader, IndexSearcher> newSearcher)
                 : base(threads)
             {
                 this.Directory = directory;
+                NewSearcher = newSearcher;
             }
 
             public override void DoWork()
@@ -171,11 +173,11 @@ namespace Lucene.Net.Index
 
             // Two searchers that constantly just re-instantiate the
             // searcher:
-            SearcherThread searcherThread1 = new SearcherThread(directory, threads);
+            SearcherThread searcherThread1 = new SearcherThread(directory, threads, NewSearcher);
             threads[numThread++] = searcherThread1;
             searcherThread1.Start();
 
-            SearcherThread searcherThread2 = new SearcherThread(directory, threads);
+            SearcherThread searcherThread2 = new SearcherThread(directory, threads, NewSearcher);
             threads[numThread++] = searcherThread2;
             searcherThread2.Start();
 

@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
         private static IndexSearcher Searcher = null;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             NoDocs = AtLeast(4096);
             Distance = (1L << 60) / NoDocs;

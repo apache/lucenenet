@@ -72,7 +72,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestBasicLong()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig());
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -149,7 +149,7 @@ namespace Lucene.Net.Facet.Range
         {
 
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig());
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestOverlappedEndStart()
         {
             Directory d = NewDirectory();
-            var w = new RandomIndexWriter(Random(), d);
+            var w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig());
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -216,7 +216,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestMixedRangeAndNonRangeTaxonomy()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig());
             Directory td = NewDirectory();
             DirectoryTaxonomyWriter tw = new DirectoryTaxonomyWriter(td, IndexWriterConfig.OpenMode_e.CREATE);
 
@@ -331,7 +331,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestBasicDouble()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig());
             Document doc = new Document();
             DoubleDocValuesField field = new DoubleDocValuesField("field", 0.0);
             doc.Add(field);
@@ -358,7 +358,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestBasicFloat()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig());
             Document doc = new Document();
             FloatDocValuesField field = new FloatDocValuesField("field", 0.0f);
             doc.Add(field);
@@ -386,7 +386,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomLongs()
         {
             Directory dir = NewDirectory();
-            var w = new RandomIndexWriter(Random(), dir);
+            var w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
 
             int numDocs = AtLeast(1000);
             if (VERBOSE)
@@ -579,7 +579,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomFloats()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
 
             int numDocs = AtLeast(1000);
             float[] values = new float[numDocs];
@@ -784,7 +784,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomDoubles()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
 
             int numDocs = AtLeast(1000);
             double[] values = new double[numDocs];
@@ -973,7 +973,7 @@ namespace Lucene.Net.Facet.Range
         {
             AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig());
             Document doc = new Document();
             NumericDocValuesField field = new NumericDocValuesField("field", 0L);
             doc.Add(field);
@@ -1006,7 +1006,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestCustomDoublesValueSource()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
 
             Document doc = new Document();
             writer.AddDocument(doc);

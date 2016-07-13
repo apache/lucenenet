@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
         public void TestOneNumber()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
         public void TestOneFloat()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
         public void TestTwoNumbers()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
         public void TestTwoBinaryValues()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
         public void TestTwoFieldsMixed()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
         public void TestThreeFieldsMixed()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
         public void TestThreeFieldsMixed2()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -1835,7 +1835,7 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -1863,7 +1863,7 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -1946,7 +1946,7 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -1979,7 +1979,7 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig());
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
@@ -3476,7 +3476,7 @@ namespace Lucene.Net.Index
                     break;
                 }
                 Directory dir = NewDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+                RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
                 BytesRef bytes = new BytesRef();
                 bytes.Bytes = new byte[1 << i];
                 bytes.Length = 1 << i;

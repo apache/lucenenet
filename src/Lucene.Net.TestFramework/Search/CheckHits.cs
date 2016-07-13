@@ -91,9 +91,9 @@ namespace Lucene.Net.Search
         /// <param name="defaultFieldName"> used for displaying the query in assertion messages </param>
         /// <param name="results"> a list of documentIds that must match the query </param>
         /// <seealso cref= #checkHits </seealso>
-        public static void CheckHitCollector(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
+        public static void CheckHitCollector(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Func<IndexReader, bool, IndexSearcher> NewSearcher)
         {
-            QueryUtils.Check(random, query, searcher);
+            QueryUtils.Check(random, query, searcher, NewSearcher);
 
             Trace.TraceInformation("Checked");
 
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
             for (int i = -1; i < 2; i++)
             {
                 actual.Clear();
-                IndexSearcher s = QueryUtils.WrapUnderlyingReader(random, searcher, i);
+                IndexSearcher s = QueryUtils.WrapUnderlyingReader(random, searcher, i, NewSearcher);
                 s.Search(query, c);
                 Assert.AreEqual(correct, actual, "Wrap Reader " + i + ": " + query.ToString(defaultFieldName));
             }
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
         /// <param name="defaultFieldName"> used for displaing the query in assertion messages </param>
         /// <param name="results"> a list of documentIds that must match the query </param>
         /// <seealso cref= #checkHitCollector </seealso>
-        public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
+        public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Func<IndexReader, bool, IndexSearcher> NewSearcher)
         {
             ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
 
             Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
 
-            QueryUtils.Check(random, query, searcher, LuceneTestCase.Rarely(random));
+            QueryUtils.Check(random, query, searcher, LuceneTestCase.Rarely(random), NewSearcher);
         }
 
         /// <summary>

@@ -317,7 +317,7 @@ namespace Lucene.Net.Index
         {
             Random rnd = Random();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(rnd, dir);
+            RandomIndexWriter writer = new RandomIndexWriter(rnd, dir, NewIndexWriterConfig());
             Document d = new Document();
             // Single segment
             Field f = NewStringField("f", "", Field.Store.NO);

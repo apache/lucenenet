@@ -21,7 +21,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(analyzer));
             var docs = new string[]
             {
                 @"this is the end of the world right", @"is this it or maybe not",
@@ -153,7 +153,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(analyzer));
             string[] docs = new string[]
             {
                 @"this is the end of the world right", @"is this it or maybe not",
@@ -305,7 +305,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(analyzer));
             var docs = new string[]
             {
                 @"this is the end of the world right", @"is this it or maybe not",
@@ -366,7 +366,7 @@ namespace Lucene.Net.Tests.Queries
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(analyzer));
             CreateRandomIndex(AtLeast(50), w, Random().NextLong());
             DirectoryReader reader = w.Reader;
             AtomicReader wrapper = SlowCompositeReaderWrapper.Wrap(reader);

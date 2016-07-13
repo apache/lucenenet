@@ -622,7 +622,7 @@ namespace Lucene.Net.Analysis
             if (Rarely(random) && codecOk)
             {
                 dir = NewFSDirectory(CreateTempDir("bttc"));
-                iw = new RandomIndexWriter(new Random((int)seed), dir, a);
+                iw = new RandomIndexWriter(new Random((int)seed), dir, NewIndexWriterConfig(a));
             }
 
             bool success = false;

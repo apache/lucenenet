@@ -1137,7 +1137,7 @@ namespace Lucene.Net.Index
                 // make a little directory for addIndexes
                 // LUCENE-2239: won't work with NIOFS/MMAP
                 Adder = new MockDirectoryWrapper(this.Random, new RAMDirectory());
-                IndexWriterConfig conf = NewIndexWriterConfig(this.Random, TEST_VERSION_CURRENT, new MockAnalyzer(this.Random));
+                IndexWriterConfig conf = OuterInstance.NewIndexWriterConfig(this.Random, TEST_VERSION_CURRENT, new MockAnalyzer(this.Random));
                 IndexWriter w = new IndexWriter(Adder, conf);
                 Document doc = new Document();
                 doc.Add(OuterInstance.NewStringField(this.Random, "id", "500", Field.Store.NO));
@@ -1199,7 +1199,7 @@ namespace Lucene.Net.Index
                                 w.Dispose();
                                 w = null;
                             }
-                            IndexWriterConfig conf = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2);
+                            IndexWriterConfig conf = OuterInstance.NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2);
                             w = new IndexWriter(dir, conf);
 
                             Document doc = new Document();
@@ -1933,7 +1933,7 @@ namespace Lucene.Net.Index
         public virtual void TestWickedLongTerm()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, new StringSplitAnalyzer());
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(new StringSplitAnalyzer()));
 
             char[] chars = new char[DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8];
             Arrays.Fill(chars, 'x');
@@ -1986,7 +1986,7 @@ namespace Lucene.Net.Index
             Field contentField = new Field("content", "", customType);
             doc.Add(contentField);
 
-            w = new RandomIndexWriter(Random(), dir);
+            w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
 
             contentField.StringValue = "other";
             w.AddDocument(doc);
@@ -2090,7 +2090,7 @@ namespace Lucene.Net.Index
             // somehow "knows" a lock is held against write.lock
             // even if you remove that file:
             d.LockFactory = new SimpleFSLockFactory();
-            RandomIndexWriter w1 = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w1 = new RandomIndexWriter(Random(), d, NewIndexWriterConfig());
             w1.DeleteAll();
             try
             {
@@ -2278,7 +2278,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, a);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(a));
             Document doc = new Document();
             doc.Add(new TextField("body", "just a", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
@@ -2320,7 +2320,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             Automaton secondSet = BasicAutomata.MakeString("foobar");
             Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, secondSet);
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, a);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(a));
             Document doc = new Document();
             doc.Add(new TextField("body", "just a foobar", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
@@ -2854,7 +2854,7 @@ namespace Lucene.Net.Index
                 dir.DeleteFile(fileName);
             }
 
-            w = new RandomIndexWriter(Random(), dir);
+            w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             w.AddDocument(doc);
             w.Dispose();
             r.Dispose();

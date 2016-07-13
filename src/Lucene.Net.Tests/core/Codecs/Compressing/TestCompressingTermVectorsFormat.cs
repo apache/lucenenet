@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.Compressing
         public virtual void TestNoOrds()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
             ft.StoreTermVectors = true;

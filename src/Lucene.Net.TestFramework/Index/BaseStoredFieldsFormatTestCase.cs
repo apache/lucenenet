@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
         public void TestNumericField()
         {
             Directory dir = NewDirectory();
-            var w = new RandomIndexWriter(Random(), dir);
+            var w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             var numDocs = AtLeast(500);
             var answers = new object[numDocs];
             FieldType.NumericType[] typeAnswers = new FieldType.NumericType[numDocs];
@@ -348,7 +348,7 @@ namespace Lucene.Net.Index
         public void TestIndexedBit()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             Document doc = new Document();
             FieldType onlyStored = new FieldType();
             onlyStored.Stored = true;
@@ -766,7 +766,7 @@ namespace Lucene.Net.Index
             }
             w.Commit();
             w.Dispose();
-            w = new RandomIndexWriter(Random(), dir);
+            w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             w.ForceMerge(TestUtil.NextInt(Random(), 1, 3));
             w.Commit();
             w.Dispose();

@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Spans
 
         protected internal virtual void Check(SpanQuery q, int[] docs)
         {
-            CheckHits.CheckHitCollector(Random(), q, null, Searcher, docs);
+            CheckHits.CheckHitCollector(Random(), q, null, Searcher, docs, NewSearcher);
         }
 
         [Test]

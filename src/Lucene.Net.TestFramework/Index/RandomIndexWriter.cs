@@ -85,24 +85,24 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT and MockAnalyzer </summary>
-        public RandomIndexWriter(Random r, Directory dir)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r)))
-        {
-        }
+        //public RandomIndexWriter(Random r, Directory dir)
+        //    : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r)))
+        //{
+        //}
 
         /// <summary>
         /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT </summary>
-        public RandomIndexWriter(Random r, Directory dir, Analyzer a)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a))
-        {
-        }
+        //public RandomIndexWriter(Random r, Directory dir, Analyzer a)
+        //    : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a))
+        //{
+        //}
 
         /// <summary>
         /// create a RandomIndexWriter with a random config </summary>
-        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a))
-        {
-        }
+        //public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a)
+        //    : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a))
+        //{
+        //}
 
         /// <summary>
         /// create a RandomIndexWriter with the provided config </summary>

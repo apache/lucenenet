@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            Iw = new RandomIndexWriter(Random(), Dir);
+            Iw = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig());
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             doc.Add(idField);
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
         public virtual void TestCachingWorks()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             writer.Dispose();
 
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullDocIdSet()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             writer.Dispose();
 
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullDocIdSetIterator()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             writer.Dispose();
 
             IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
@@ -324,7 +324,7 @@ namespace Lucene.Net.Search
         public virtual void TestIsCacheAble()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             writer.AddDocument(new Document());
             writer.Dispose();
 

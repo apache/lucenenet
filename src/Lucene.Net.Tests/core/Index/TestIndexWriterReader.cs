@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
                 this.NumDirs = numDirs;
                 this.MainWriter = mainWriter;
                 AddDir = NewDirectory();
-                IndexWriter writer = new IndexWriter(AddDir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
+                IndexWriter writer = new IndexWriter(AddDir, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
                 TestUtil.ReduceOpenFiles(writer);
                 for (int i = 0; i < NUM_INIT_DOCS; i++)
                 {
@@ -704,9 +704,9 @@ namespace Lucene.Net.Index
          * //} //writer.DeleteDocuments(term); td.Dispose(); return doc; }
          */
 
-        public static void CreateIndex(Random random, Directory dir1, string indexName, bool multiSegment)
+        public void CreateIndex(Random random, Directory dir1, string indexName, bool multiSegment)
         {
-            IndexWriter w = new IndexWriter(dir1, LuceneTestCase.NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(new LogDocMergePolicy()));
+            IndexWriter w = new IndexWriter(dir1, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(new LogDocMergePolicy()));
             for (int i = 0; i < 100; i++)
             {
                 w.AddDocument(DocHelper.CreateDocument(i, indexName, 4));
@@ -1186,7 +1186,7 @@ namespace Lucene.Net.Index
 
             public override void Warm(AtomicReader r)
             {
-                IndexSearcher s = NewSearcher(r);
+                IndexSearcher s = OuterInstance.NewSearcher(r);
                 TopDocs hits = s.Search(new TermQuery(new Term("foo", "bar")), 10);
                 Assert.AreEqual(20, hits.TotalHits);
                 DidWarm.Set(true);

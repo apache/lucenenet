@@ -128,9 +128,9 @@ namespace Lucene.Net.Search.Spans
         /// <param name="description"> the description of the search </param>
         /// <param name="expectedIds"> the expected document ids of the hits </param>
         /// <param name="expectedScores"> the expected scores of the hits </param>
-        protected internal static void AssertHits(IndexSearcher s, Query query, string description, string[] expectedIds, float[] expectedScores)
+        protected internal void AssertHits(IndexSearcher s, Query query, string description, string[] expectedIds, float[] expectedScores)
         {
-            QueryUtils.Check(Random(), query, s);
+            QueryUtils.Check(Random(), query, s, NewSearcher);
 
             const float tolerance = 1e-5f;
 

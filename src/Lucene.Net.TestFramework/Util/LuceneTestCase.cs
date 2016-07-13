@@ -101,6 +101,7 @@ namespace Lucene.Net.Util
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TextField = TextField;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
+    using Analysis;
 
     /*using After = org.junit.After;
     using AfterClass = org.junit.AfterClass;
@@ -944,6 +945,24 @@ namespace Lucene.Net.Util
             c.SetReaderTermsIndexDivisor(TestUtil.NextInt(r, 1, 4));
             c.SetCheckIntegrityAtMerge(r.NextBoolean());
             return c;
+        }
+
+        /// <summary>
+        /// Gets an IndexWriterConfig using the current TEST_LUCENE_VERSION and a MockAnalyzer
+        /// </summary>
+        public IndexWriterConfig NewIndexWriterConfig()
+        {
+            var random = Random();
+
+            return NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random));
+        }
+
+        /// <summary>
+        /// Gets an IndexWriterConfig using the current TEST_LUCENE_VERSION and the given analyzer
+        /// </summary>
+        public IndexWriterConfig NewIndexWriterConfig(Analyzer a)
+        {
+            return NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, a);
         }
 
         public MergePolicy NewMergePolicy(Random r)

@@ -801,7 +801,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                IndexSearcher searcher = NewSearcher(reader);
+                IndexSearcher searcher = OuterInstance.NewSearcher(reader);
                 sum += searcher.Search(new TermQuery(new Term("body", "united")), 10).TotalHits;
 
                 if (VERBOSE)

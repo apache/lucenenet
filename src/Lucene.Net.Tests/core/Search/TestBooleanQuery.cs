@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullOrSubScorer()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             Document doc = new Document();
             doc.Add(NewTextField("field", "a b c d", Field.Store.NO));
             w.AddDocument(doc);
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
             iw1.Dispose();
 
             Directory dir2 = NewDirectory();
-            RandomIndexWriter iw2 = new RandomIndexWriter(Random(), dir2);
+            RandomIndexWriter iw2 = new RandomIndexWriter(Random(), dir2, NewIndexWriterConfig());;
             Document doc2 = new Document();
             doc2.Add(NewTextField("field", "foo baz", Field.Store.NO));
             iw2.AddDocument(doc2);
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
         public virtual void TestBS2DisjunctionNextVsAdvance()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig());
             int numDocs = AtLeast(300);
             for (int docUpto = 0; docUpto < numDocs; docUpto++)
             {
@@ -369,7 +369,7 @@ namespace Lucene.Net.Search
         public virtual void TestInOrderWithMinShouldMatch()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             Document doc = new Document();
             doc.Add(NewTextField("field", "some text here", Field.Store.NO));
             w.AddDocument(doc);
