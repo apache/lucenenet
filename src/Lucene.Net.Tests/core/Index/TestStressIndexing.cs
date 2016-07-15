@@ -92,10 +92,14 @@ namespace Lucene.Net.Index
             internal IndexWriter Writer;
             internal int NextID;
 
-            public IndexerThread(IndexWriter writer, TimedThread[] threads)
+            public IndexerThread(IndexWriter writer, TimedThread[] threads,
+                Func<string, string, Field.Store, Field> newStringField,
+                Func<string, string, Field.Store, Field> newTextField)
                 : base(threads)
             {
                 this.Writer = writer;
+                NewStringField = newStringField;
+                NewTextField = newTextField;
             }
 
             public override void DoWork()
