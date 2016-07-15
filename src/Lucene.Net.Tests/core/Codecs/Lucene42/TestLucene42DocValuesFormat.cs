@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Lucene42
     {
         private Codec Codec_Renamed;
 
-        [SetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec

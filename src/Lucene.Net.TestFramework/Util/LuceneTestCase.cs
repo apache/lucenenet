@@ -198,6 +198,7 @@ namespace Lucene.Net.Util
         public LuceneTestCase()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
             String directory = Paths.TempDirectory;
             TEMP_DIR = new System.IO.FileInfo(directory);
         }
@@ -565,7 +566,6 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
-            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
         }
 
         /// <summary>

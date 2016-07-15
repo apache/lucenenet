@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
     public class TestLucene41StoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
-        [SetUp]
+        [TestFixtureSetUp]
         public void BeforeClass()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
