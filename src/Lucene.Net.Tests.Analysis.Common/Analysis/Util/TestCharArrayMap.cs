@@ -149,9 +149,9 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
 //        }
 
         [Test]
-        public virtual void TestModifyOnUnmodifiable()
+        public void TestModifyOnUnmodifiable()
         {
-            CharArrayMap<int> map = new CharArrayMap<int>(TEST_VERSION_CURRENT, 2, false);
+            CharArrayMap<int?> map = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 2, false);
             map.Put("foo", 1);
             map.Put("bar", 2);
             int size = map.Count;
@@ -161,9 +161,9 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
             assertTrue(map.ContainsKey("bar"));
             assertEquals(2, map.Get("bar"));
 
-            map = CharArrayMap<int>.UnmodifiableMap(map);
+            map = CharArrayMap<int?>.UnmodifiableMap(map);
             assertEquals("Map size changed due to unmodifiableMap call", size, map.Count);
-            string NOT_IN_MAP = "SirGallahad";
+            var NOT_IN_MAP = "SirGallahad";
             assertFalse("Test String already exists in map", map.ContainsKey(NOT_IN_MAP));
             assertNull("Test String already exists in map", map.Get(NOT_IN_MAP));
 
@@ -219,7 +219,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
 
             try
             {
-                map.EntrySet().Clear();
+                map.GetEntrySet().Clear();
                 fail("Modified unmodifiable map");
             }
             catch (System.NotSupportedException)

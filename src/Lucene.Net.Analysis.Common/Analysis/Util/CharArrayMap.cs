@@ -358,7 +358,7 @@ namespace Lucene.Net.Analysis.Util
             return true;
         }
 
-        private bool Equals(ICharSequence text1, char[] text2)
+        private bool Equals(string text1, char[] text2)
         {
             int len = text1.Length;
             if (len != text2.Length)
@@ -381,7 +381,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 for (int i = 0; i < len; i++)
                 {
-                    if (text1.CharAt(i) != text2[i])
+                    if (text1[i] != text2[i])
                     {
                         return false;
                     }
@@ -421,8 +421,9 @@ namespace Lucene.Net.Analysis.Util
         {
             if (text == null)
             {
-                throw new ArgumentException("text can't be null", "text");
+                throw new ArgumentException("text can't be null", nameof(text));
             }
+
             int code = 0;
             int len = text.Length;
             if (ignoreCase)
@@ -483,7 +484,7 @@ namespace Lucene.Net.Analysis.Util
 
         public IEnumerator<KeyValuePair<object, V>> GetEnumerator()
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public override string ToString()

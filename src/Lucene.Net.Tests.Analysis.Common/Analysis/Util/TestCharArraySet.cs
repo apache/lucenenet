@@ -85,18 +85,18 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         [Test]
         public virtual void TestClear()
         {
-            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            var set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
             set.AddAll(TEST_STOP_WORDS);
             assertEquals("Not all words added", TEST_STOP_WORDS.Length, set.size());
             set.Clear();
             assertEquals("not empty", 0, set.size());
-            for (int i = 0; i < TEST_STOP_WORDS.Length; i++)
+            for (var i = 0; i < TEST_STOP_WORDS.Length; i++)
             {
                 assertFalse(set.Contains(TEST_STOP_WORDS[i]));
             }
             set.AddAll(TEST_STOP_WORDS);
             assertEquals("Not all words added", TEST_STOP_WORDS.Length, set.size());
-            for (int i = 0; i < TEST_STOP_WORDS.Length; i++)
+            for (var i = 0; i < TEST_STOP_WORDS.Length; i++)
             {
                 assertTrue("Set doesn't contain " + TEST_STOP_WORDS[i], set.Contains(TEST_STOP_WORDS[i]));
             }
@@ -215,21 +215,21 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         }
 
         [Test]
-        public virtual void testUnmodifiableSet()
+        public virtual void TestUnmodifiableSet()
         {
-            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
-            set.addAll(TEST_STOP_WORDS);
-            set.add(Convert.ToInt32(1));
+            var set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
+            set.AddAll(TEST_STOP_WORDS);
+            set.Add(Convert.ToInt32(1));
             int size = set.size();
             set = CharArraySet.UnmodifiableSet(set);
             assertEquals("Set size changed due to unmodifiableSet call", size, set.size());
-            foreach (string stopword in TEST_STOP_WORDS)
+            foreach (var stopword in TEST_STOP_WORDS)
             {
                 assertTrue(set.contains(stopword));
             }
             assertTrue(set.contains(Convert.ToInt32(1)));
             assertTrue(set.contains("1"));
-            assertTrue(set.contains(new char[] { '1' }));
+            assertTrue(set.contains(new[] { '1' }));
 
             try
             {
