@@ -89,13 +89,20 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
+            private readonly Func<string, string, Field.Store, Field> NewStringField;
+            private readonly Func<string, string, Field.Store, Field> NewTextField;
+
             internal IndexWriter Writer;
             internal int NextID;
 
-            public IndexerThread(IndexWriter writer, TimedThread[] threads)
+            public IndexerThread(IndexWriter writer, TimedThread[] threads,
+                Func<string, string, Field.Store, Field> newStringField,
+                Func<string, string, Field.Store, Field> newTextField)
                 : base(threads)
             {
                 this.Writer = writer;
+                NewStringField = newStringField;
+                NewTextField = newTextField;
             }
 
             public override void DoWork()
@@ -123,11 +130,13 @@ namespace Lucene.Net.Index
         private class SearcherThread : TimedThread
         {
             internal Directory Directory;
+            private readonly Func<IndexReader, IndexSearcher> NewSearcher;
 
-            public SearcherThread(Directory directory, TimedThread[] threads)
+            public SearcherThread(Directory directory, TimedThread[] threads, Func<IndexReader, IndexSearcher> newSearcher)
                 : base(threads)
             {
                 this.Directory = directory;
+                NewSearcher = newSearcher;
             }
 
             public override void DoWork()
@@ -157,21 +166,21 @@ namespace Lucene.Net.Index
 
             // One modifier that writes 10 docs then removes 5, over
             // and over:
-            IndexerThread indexerThread = new IndexerThread(modifier, threads);
+            IndexerThread indexerThread = new IndexerThread(modifier, threads, NewStringField, NewTextField);
             threads[numThread++] = indexerThread;
             indexerThread.Start();
 
-            IndexerThread indexerThread2 = new IndexerThread(modifier, threads);
+            IndexerThread indexerThread2 = new IndexerThread(modifier, threads, NewStringField, NewTextField);
             threads[numThread++] = indexerThread2;
             indexerThread2.Start();
 
             // Two searchers that constantly just re-instantiate the
             // searcher:
-            SearcherThread searcherThread1 = new SearcherThread(directory, threads);
+            SearcherThread searcherThread1 = new SearcherThread(directory, threads, NewSearcher);
             threads[numThread++] = searcherThread1;
             searcherThread1.Start();
 
-            SearcherThread searcherThread2 = new SearcherThread(directory, threads);
+            SearcherThread searcherThread2 = new SearcherThread(directory, threads, NewSearcher);
             threads[numThread++] = searcherThread2;
             searcherThread2.Start();
 

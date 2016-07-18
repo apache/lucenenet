@@ -101,6 +101,7 @@ namespace Lucene.Net.Util
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TextField = TextField;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
+    using Analysis;
 
     /*using After = org.junit.After;
     using AfterClass = org.junit.AfterClass;
@@ -196,8 +197,9 @@ namespace Lucene.Net.Util
 
         public LuceneTestCase()
         {
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
             String directory = Paths.TempDirectory;
-
             TEMP_DIR = new System.IO.FileInfo(directory);
         }
 
@@ -286,13 +288,13 @@ namespace Lucene.Net.Util
         /// Use this constant when creating Analyzers and any other version-dependent stuff.
         /// <p><b>NOTE:</b> Change this when development starts for new Lucene version:
         /// </summary>
-        public static LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
+        public static readonly LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
 
         /// <summary>
         /// True if and only if tests are run in verbose mode. If this flag is false
         /// tests are not expected to print any messages.
         /// </summary>
-        public static bool VERBOSE = RandomizedTest.SystemPropertyAsBoolean("tests.verbose",
+        public static readonly bool VERBOSE = RandomizedTest.SystemPropertyAsBoolean("tests.verbose",
 #if DEBUG
  true
 #else
@@ -302,70 +304,68 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static bool INFOSTREAM = RandomizedTest.SystemPropertyAsBoolean("tests.infostream", VERBOSE);
+        public static readonly bool INFOSTREAM = RandomizedTest.SystemPropertyAsBoolean("tests.infostream", VERBOSE);
 
         /// <summary>
         /// A random multiplier which you should use when writing random tests:
         /// multiply it by the number of iterations to scale your tests (for nightly builds).
         /// </summary>
-        public static int RANDOM_MULTIPLIER = RandomizedTest.SystemPropertyAsInt("tests.multiplier", 1);
+        public static readonly int RANDOM_MULTIPLIER = RandomizedTest.SystemPropertyAsInt("tests.multiplier", 1);
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static string DEFAULT_LINE_DOCS_FILE = "europarl.lines.txt.gz";
+        public static readonly string DEFAULT_LINE_DOCS_FILE = "europarl.lines.txt.gz";
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static string JENKINS_LARGE_LINE_DOCS_FILE = "enwiki.random.lines.txt";
+        public static readonly string JENKINS_LARGE_LINE_DOCS_FILE = "enwiki.random.lines.txt";
 
         /// <summary>
         /// Gets the codec to run tests with. </summary>
-        public static string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
+        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
 
         /// <summary>
         /// Gets the postingsFormat to run tests with. </summary>
-        public static string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests.postingsformat", "random");
+        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests.postingsformat", "random");
 
         /// <summary>
         /// Gets the docValuesFormat to run tests with </summary>
-        public static string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
+        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
 
         /// <summary>
         /// Gets the directory to run tests with </summary>
-        public static string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
+        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
 
         /// <summary>
         /// the line file used by LineFileDocs </summary>
-        public static string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
+        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
 
         /// <summary>
         /// Whether or not <seealso cref="Nightly"/> tests should run. </summary>
-        public static bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_NIGHTLY, false);
+        public static readonly bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_NIGHTLY, false);
 
         /// <summary>
         /// Whether or not <seealso cref="Weekly"/> tests should run. </summary>
-        public static bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_WEEKLY, false);
+        public static readonly bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_WEEKLY, false);
 
         /// <summary>
         /// Whether or not <seealso cref="AwaitsFix"/> tests should run. </summary>
-        public static bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
+        public static readonly bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
 
         /// <summary>
         /// Whether or not <seealso cref="Slow"/> tests should run. </summary>
-        public static bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_SLOW, false);
+        public static readonly bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_SLOW, false);
 
         /// <summary>
         /// Throttling, see <seealso cref="MockDirectoryWrapper#setThrottling(Throttling)"/>. </summary>
-        public static MockDirectoryWrapper.Throttling_e TEST_THROTTLING = TEST_NIGHTLY ? MockDirectoryWrapper.Throttling_e.SOMETIMES : MockDirectoryWrapper.Throttling_e.NEVER;
+        public static readonly MockDirectoryWrapper.Throttling_e TEST_THROTTLING = TEST_NIGHTLY ? MockDirectoryWrapper.Throttling_e.SOMETIMES : MockDirectoryWrapper.Throttling_e.NEVER;
 
         /// <summary>
         /// Leave temporary files on disk, even on successful runs. </summary>
-        public static bool LEAVE_TEMPORARY;
+        public static readonly bool LEAVE_TEMPORARY;
 
         static LuceneTestCase()
         {
-            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
-
             bool defaultValue = false;
             foreach (string property in Arrays.AsList("tests.leaveTemporary", "tests.leavetemporary", "tests.leavetmpdir", "solr.test.leavetmpdir")) // Solr's legacy -  default -  lowercase -  ANT tasks's (junit4) flag.
             {
@@ -400,17 +400,17 @@ namespace Lucene.Net.Util
         /// <seealso> cref= SystemPropertiesInvariantRule </seealso>
         /// <seealso> cref= #ruleChain </seealso>
         /// <seealso> cref= #classRules </seealso>
-        private static string[] IGNORED_INVARIANT_PROPERTIES = { "user.timezone", "java.rmi.server.randomIDs" };
+        private static readonly string[] IGNORED_INVARIANT_PROPERTIES = { "user.timezone", "java.rmi.server.randomIDs" };
 
         /// <summary>
         /// Filesystem-based <seealso cref="Directory"/> implementations. </summary>
-        private static IList<string> FS_DIRECTORIES = Arrays.AsList("SimpleFSDirectory", "NIOFSDirectory", "MMapDirectory");
+        private static readonly IList<string> FS_DIRECTORIES = Arrays.AsList("SimpleFSDirectory", "NIOFSDirectory", "MMapDirectory");
 
         /// <summary>
         /// All <seealso cref="Directory"/> implementations. </summary>
-        private static IList<string> CORE_DIRECTORIES;
+        private static readonly IList<string> CORE_DIRECTORIES;
 
-        protected static HashSet<string> DoesntSupportOffsets = new HashSet<string>(Arrays.AsList("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom"));
+        protected static readonly HashSet<string> DoesntSupportOffsets = new HashSet<string>(Arrays.AsList("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom"));
 
         // -----------------------------------------------------------------
         // Fields initialized in class or instance rules.
@@ -423,7 +423,7 @@ namespace Lucene.Net.Util
         ///
         /// @lucene.internal
         /// </summary>
-        public static bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+        public bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE { get; protected set; }
 
         // -----------------------------------------------------------------
         // Class level (suite) rules.
@@ -437,13 +437,13 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Class environment setup rule.
         /// </summary>
-        private static TestRuleSetupAndRestoreClassEnv ClassEnvRule;
+        internal TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; private set; }
 
         // LUCENENET TODO
         /// <summary>
         /// Suite failure marker (any error in the test or suite scope).
         /// </summary>
-        public static /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
+        public static readonly /*TestRuleMarkFailure*/ bool SuiteFailureMarker = true; // Means: was successful
 
         /// <summary>
         /// Ignore tests after hitting a designated number of initial failures. this
@@ -473,7 +473,7 @@ namespace Lucene.Net.Util
         /// Max 10mb of static data stored in a test suite class after the suite is complete.
         /// Prevents static data structures leaking and causing OOMs in subsequent tests.
         /// </summary>
-        private static long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
+        private static readonly long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
 
         /// <summary>
         /// By-name list of ignored types like loggers etc. </summary>
@@ -566,7 +566,6 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
-            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
         }
 
         /// <summary>
@@ -842,14 +841,14 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// create a new index writer config with random defaults </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
+        public IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(Random(), v, a);
         }
 
         /// <summary>
         /// create a new index writer config with random defaults using the specified random </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
+        public IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
             c.SetSimilarity(ClassEnvRule.Similarity);
@@ -948,7 +947,25 @@ namespace Lucene.Net.Util
             return c;
         }
 
-        public static MergePolicy NewMergePolicy(Random r)
+        /// <summary>
+        /// Gets an IndexWriterConfig using the current TEST_LUCENE_VERSION and a MockAnalyzer
+        /// </summary>
+        public IndexWriterConfig NewIndexWriterConfig()
+        {
+            var random = Random();
+
+            return NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random));
+        }
+
+        /// <summary>
+        /// Gets an IndexWriterConfig using the current TEST_LUCENE_VERSION and the given analyzer
+        /// </summary>
+        public IndexWriterConfig NewIndexWriterConfig(Analyzer a)
+        {
+            return NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, a);
+        }
+
+        public MergePolicy NewMergePolicy(Random r)
         {
             if (Rarely(r))
             {
@@ -965,32 +982,32 @@ namespace Lucene.Net.Util
             return NewLogMergePolicy(r);
         }
 
-        public static MergePolicy NewMergePolicy()
+        public MergePolicy NewMergePolicy()
         {
             return NewMergePolicy(Random());
         }
 
-        public static LogMergePolicy NewLogMergePolicy()
+        public LogMergePolicy NewLogMergePolicy()
         {
             return NewLogMergePolicy(Random());
         }
 
-        public static TieredMergePolicy NewTieredMergePolicy()
+        public TieredMergePolicy NewTieredMergePolicy()
         {
             return NewTieredMergePolicy(Random());
         }
 
-        public static AlcoholicMergePolicy NewAlcoholicMergePolicy()
+        public AlcoholicMergePolicy NewAlcoholicMergePolicy()
         {
             return NewAlcoholicMergePolicy(Random(), ClassEnvRule.TimeZone);
         }
 
-        public static AlcoholicMergePolicy NewAlcoholicMergePolicy(Random r, TimeZone tz)
+        public AlcoholicMergePolicy NewAlcoholicMergePolicy(Random r, TimeZone tz)
         {
             return new AlcoholicMergePolicy(tz, new Random(r.Next()));
         }
 
-        public static LogMergePolicy NewLogMergePolicy(Random r)
+        public LogMergePolicy NewLogMergePolicy(Random r)
         {
             LogMergePolicy logmp = r.NextBoolean() ? (LogMergePolicy)new LogDocMergePolicy() : new LogByteSizeMergePolicy();
 
@@ -1028,7 +1045,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static TieredMergePolicy NewTieredMergePolicy(Random r)
+        public TieredMergePolicy NewTieredMergePolicy(Random r)
         {
             TieredMergePolicy tmp = new TieredMergePolicy();
             if (Rarely(r))
@@ -1064,14 +1081,14 @@ namespace Lucene.Net.Util
             return tmp;
         }
 
-        public static MergePolicy NewLogMergePolicy(bool useCFS)
+        public MergePolicy NewLogMergePolicy(bool useCFS)
         {
             MergePolicy logmp = NewLogMergePolicy();
             logmp.NoCFSRatio = useCFS ? 1.0 : 0.0;
             return logmp;
         }
 
-        public static MergePolicy NewLogMergePolicy(bool useCFS, int mergeFactor)
+        public MergePolicy NewLogMergePolicy(bool useCFS, int mergeFactor)
         {
             LogMergePolicy logmp = NewLogMergePolicy();
             logmp.NoCFSRatio = useCFS ? 1.0 : 0.0;
@@ -1079,7 +1096,7 @@ namespace Lucene.Net.Util
             return logmp;
         }
 
-        public static MergePolicy NewLogMergePolicy(int mergeFactor)
+        public MergePolicy NewLogMergePolicy(int mergeFactor)
         {
             LogMergePolicy logmp = NewLogMergePolicy();
             logmp.MergeFactor = mergeFactor;
@@ -1244,32 +1261,32 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static Field NewStringField(string name, string value, Field.Store stored)
+        public Field NewStringField(string name, string value, Field.Store stored)
         {
             return NewField(Random(), name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
-        public static Field NewTextField(string name, string value, Field.Store stored)
+        public Field NewTextField(string name, string value, Field.Store stored)
         {
             return NewField(Random(), name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
-        public static Field NewStringField(Random random, string name, string value, Field.Store stored)
+        public Field NewStringField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
-        public static Field NewTextField(Random random, string name, string value, Field.Store stored)
+        public Field NewTextField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
-        public static Field NewField(string name, string value, FieldType type)
+        public Field NewField(string name, string value, FieldType type)
         {
             return NewField(Random(), name, value, type);
         }
 
-        public static Field NewField(Random random, string name, string value, FieldType type)
+        public Field NewField(Random random, string name, string value, FieldType type)
         {
             name = new string(name.ToCharArray());
             if (Usually(random) || !type.Indexed)
@@ -1545,7 +1562,7 @@ namespace Lucene.Net.Util
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r)
+        public IndexSearcher NewSearcher(IndexReader r)
         {
             return NewSearcher(r, true);
         }
@@ -1554,7 +1571,7 @@ namespace Lucene.Net.Util
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap)
+        public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap)
         {
             return NewSearcher(r, maybeWrap, true);
         }
@@ -1566,7 +1583,7 @@ namespace Lucene.Net.Util
         /// <code>wrapWithAssertions</code> is true, this searcher might be an
         /// <seealso cref="AssertingIndexSearcher"/> instance.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
+        public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
         {
             Random random = Random();
             if (Usually())

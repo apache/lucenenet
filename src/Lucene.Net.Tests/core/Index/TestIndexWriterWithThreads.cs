@@ -55,6 +55,8 @@ namespace Lucene.Net.Index
         // Used by test cases below
         private class IndexerThread : ThreadClass
         {
+            private readonly Func<string, string, FieldType, Field> NewField;
+
             internal bool DiskFull;
             internal Exception Error;
             internal AlreadyClosedException Ace;
@@ -62,10 +64,11 @@ namespace Lucene.Net.Index
             internal bool NoErrors;
             internal volatile int AddCount;
 
-            public IndexerThread(IndexWriter writer, bool noErrors)
+            public IndexerThread(IndexWriter writer, bool noErrors, Func<string, string, FieldType, Field> newField)
             {
                 this.Writer = writer;
                 this.NoErrors = noErrors;
+                NewField = newField;
             }
 
             public override void Run()
@@ -168,7 +171,7 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new IndexerThread(writer, true);
+                    threads[i] = new IndexerThread(writer, true, NewField);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -219,7 +222,7 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new IndexerThread(writer, false);
+                    threads[i] = new IndexerThread(writer, false, NewField);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -303,7 +306,7 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    threads[i] = new IndexerThread(writer, true);
+                    threads[i] = new IndexerThread(writer, true, NewField);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -555,8 +558,8 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             CountdownEvent oneIWConstructed = new CountdownEvent(1);
-            DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
-            DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed);
+            DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed, this);
+            DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed, this);
 
             thread1.Start();
             thread2.Start();
@@ -591,16 +594,19 @@ namespace Lucene.Net.Index
 
         internal class DelayedIndexAndCloseRunnable : ThreadClass
         {
+            private readonly LuceneTestCase TestCase;
+
             internal readonly Directory Dir;
             internal bool Failed = false;
             internal Exception Failure = null;
             internal readonly CountdownEvent StartIndexing_Renamed = new CountdownEvent(1);
             internal CountdownEvent IwConstructed;
 
-            public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed)
+            public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed, LuceneTestCase testCase)
             {
                 this.Dir = dir;
                 this.IwConstructed = iwConstructed;
+                TestCase = testCase;
             }
 
             public virtual void StartIndexing()
@@ -613,9 +619,9 @@ namespace Lucene.Net.Index
                 try
                 {
                     Document doc = new Document();
-                    Field field = NewTextField("field", "testData", Field.Store.YES);
+                    Field field = TestCase.NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
-                    IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                    IndexWriter writer = new IndexWriter(Dir, TestCase.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
                     IwConstructed.Signal();
                     StartIndexing_Renamed.Wait();
                     writer.AddDocument(doc);
@@ -718,7 +724,7 @@ namespace Lucene.Net.Index
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": rollback done; now open new writer");
                                     }
                                     WriterRef.Value = 
-                                        new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                                        new IndexWriter(d, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
                                 }
                                 finally
                                 {

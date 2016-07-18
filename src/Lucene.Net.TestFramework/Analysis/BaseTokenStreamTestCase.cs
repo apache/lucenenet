@@ -522,21 +522,21 @@ namespace Lucene.Net.Analysis
 
         // simple utility method for testing stemmers
 
-        public static void CheckOneTerm(Analyzer a, string input, string expected)
+        public void CheckOneTerm(Analyzer a, string input, string expected)
         {
             AssertAnalyzesTo(a, input, new string[] { expected });
         }
 
         /// <summary>
         /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy </summary>
-        public static void CheckRandomData(Random random, Analyzer a, int iterations)
+        public void CheckRandomData(Random random, Analyzer a, int iterations)
         {
             CheckRandomData(random, a, iterations, 20, false, true);
         }
 
         /// <summary>
         /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy </summary>
-        public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength)
+        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength)
         {
             CheckRandomData(random, a, iterations, maxWordLength, false, true);
         }
@@ -544,7 +544,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy </summary>
         /// <param name="simple"> true if only ascii strings will be used (try to avoid) </param>
-        public static void CheckRandomData(Random random, Analyzer a, int iterations, bool simple)
+        public void CheckRandomData(Random random, Analyzer a, int iterations, bool simple)
         {
             CheckRandomData(random, a, iterations, 20, simple, true);
         }
@@ -560,13 +560,14 @@ namespace Lucene.Net.Analysis
             internal readonly bool OffsetsAreCorrect;
             internal readonly RandomIndexWriter Iw;
             private readonly CountdownEvent _latch;
-
+            private readonly Action<Random, Analyzer, int, int, bool, bool, bool, RandomIndexWriter> _checkRandomData;
             // NOTE: not volatile because we don't want the tests to
             // add memory barriers (ie alter how threads
             // interact)... so this is just "best effort":
             public bool Failed;
 
-            internal AnalysisThread(long seed, /*CountdownEvent latch,*/ Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
+            internal AnalysisThread(long seed, /*CountdownEvent latch,*/ Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw,
+                Action<Random, Analyzer, int, int, bool, bool, bool, RandomIndexWriter> checkRandomDataAction)
             {
                 this.Seed = seed;
                 this.a = a;
@@ -577,6 +578,7 @@ namespace Lucene.Net.Analysis
                 this.OffsetsAreCorrect = offsetsAreCorrect;
                 this.Iw = iw;
                 this._latch = null;
+                _checkRandomData = checkRandomDataAction;
             }
 
             public override void Run()
@@ -587,7 +589,7 @@ namespace Lucene.Net.Analysis
                     if (_latch != null) _latch.Wait();
                     // see the part in checkRandomData where it replays the same text again
                     // to verify reproducability/reuse: hopefully this would catch thread hazards.
-                    CheckRandomData(new Random((int)Seed), a, Iterations, MaxWordLength, UseCharFilter, Simple, OffsetsAreCorrect, Iw);
+                    _checkRandomData(new Random((int)Seed), a, Iterations, MaxWordLength, UseCharFilter, Simple, OffsetsAreCorrect, Iw);
                     success = true;
                 }
                 catch (Exception e)
@@ -602,12 +604,12 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple)
+        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple)
         {
             CheckRandomData(random, a, iterations, maxWordLength, simple, true);
         }
 
-        public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple, bool offsetsAreCorrect)
+        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple, bool offsetsAreCorrect)
         {
             CheckResetException(a, "best effort");
             long seed = random.Next();
@@ -620,7 +622,7 @@ namespace Lucene.Net.Analysis
             if (Rarely(random) && codecOk)
             {
                 dir = NewFSDirectory(CreateTempDir("bttc"));
-                iw = new RandomIndexWriter(new Random((int)seed), dir, a);
+                iw = new RandomIndexWriter(new Random((int)seed), dir, NewIndexWriterConfig(a));
             }
 
             bool success = false;
@@ -634,7 +636,7 @@ namespace Lucene.Net.Analysis
                 var threads = new AnalysisThread[numThreads];
                 for (int i = 0; i < threads.Length; i++)
                 {
-                    threads[i] = new AnalysisThread(seed, /*startingGun,*/ a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
+                    threads[i] = new AnalysisThread(seed, /*startingGun,*/ a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw, CheckRandomData);
                 }
                 
                 Array.ForEach(threads, thread => thread.Start());                
@@ -671,7 +673,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
+        private void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
         {
             LineFileDocs docs = new LineFileDocs(random);
             Document doc = null;

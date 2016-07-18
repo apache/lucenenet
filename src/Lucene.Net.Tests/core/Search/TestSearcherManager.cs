@@ -529,7 +529,7 @@ namespace Lucene.Net.Search
         {
             Random random = Random();
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(random, dir);
+            RandomIndexWriter w = new RandomIndexWriter(random, dir, NewIndexWriterConfig());
             w.Commit();
 
             IndexReader other = DirectoryReader.Open(dir);
@@ -571,7 +571,7 @@ namespace Lucene.Net.Search
 
             public override IndexSearcher NewSearcher(IndexReader ignored)
             {
-                return LuceneTestCase.NewSearcher(Other);
+                return OuterInstance.NewSearcher(Other);
             }
         }
 
@@ -581,7 +581,7 @@ namespace Lucene.Net.Search
             // make sure that maybeRefreshBlocking releases the lock, otherwise other
             // threads cannot obtain it.
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             w.Dispose();
 
             SearcherManager sm = new SearcherManager(dir, null);

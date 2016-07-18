@@ -47,10 +47,10 @@ namespace Lucene.Net.Search
         private static IndexSearcher Searcher;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig());
 
             Document doc = new Document();
             Field field = NewStringField(FIELD, "meaninglessnames", Field.Store.NO);

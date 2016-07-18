@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Spans
         {
             base.SetUp();
             PayloadHelper helper = new PayloadHelper();
-            Searcher_Renamed = helper.SetUp(Random(), Similarity, 1000);
+            Searcher_Renamed = helper.SetUp(Random(), Similarity, 1000, NewSearcher);
             IndexReader = Searcher_Renamed.IndexReader;
         }
 

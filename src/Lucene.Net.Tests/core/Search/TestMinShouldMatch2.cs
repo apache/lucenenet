@@ -61,10 +61,10 @@ namespace Lucene.Net.Search
         internal static readonly string[] RareTerms = new string[] { "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig());
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {

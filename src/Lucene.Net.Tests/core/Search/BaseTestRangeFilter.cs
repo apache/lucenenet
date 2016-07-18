@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
         }
 
         [TestFixtureSetUp]
-        public static void BeforeClassBaseTestRangeFilter()
+        public void BeforeClassBaseTestRangeFilter()
         {
             MaxId = AtLeast(500);
             SignedIndexDir = new TestIndex(Random(), int.MaxValue, int.MinValue, true);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
             UnsignedIndexDir = null;
         }
 
-        private static IndexReader Build(Random random, TestIndex index)
+        private IndexReader Build(Random random, TestIndex index)
         {
             /* build an index */
 

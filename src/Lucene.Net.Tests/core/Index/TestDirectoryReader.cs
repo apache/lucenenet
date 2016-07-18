@@ -497,7 +497,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        internal static void AddDocumentWithFields(IndexWriter writer)
+        internal void AddDocumentWithFields(IndexWriter writer)
         {
             Document doc = new Document();
 
@@ -510,7 +510,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        internal static void AddDocumentWithDifferentFields(IndexWriter writer)
+        internal void AddDocumentWithDifferentFields(IndexWriter writer)
         {
             Document doc = new Document();
 
@@ -523,7 +523,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        internal static void AddDocumentWithTermVectorFields(IndexWriter writer)
+        internal void AddDocumentWithTermVectorFields(IndexWriter writer)
         {
             Document doc = new Document();
             FieldType customType5 = new FieldType(TextField.TYPE_STORED);
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
-        internal static void AddDoc(IndexWriter writer, string value)
+        internal void AddDoc(IndexWriter writer, string value)
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", value, Field.Store.NO));
@@ -718,7 +718,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        internal static Document CreateDocument(string id)
+        internal Document CreateDocument(string id)
         {
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -1206,7 +1206,7 @@ namespace Lucene.Net.Index
         public virtual void TestLoadCertainFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig());
             Document doc = new Document();
             doc.Add(NewStringField("field1", "foobar", Field.Store.YES));
             doc.Add(NewStringField("field2", "foobaz", Field.Store.YES));

@@ -35,9 +35,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <summary>
         /// we will manually instantiate preflex-rw here </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
-            LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
         }
 
         private static string MakeDifficultRandomUnicodeString(Random r)
@@ -340,7 +340,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual void TestSurrogatesOrder()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(new PreFlexRWCodec()));
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                .SetCodec(new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)));
 
             int numField = TestUtil.NextInt(Random(), 2, 5);
 

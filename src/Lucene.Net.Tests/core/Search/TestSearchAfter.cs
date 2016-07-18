@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             }
 
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig());
             int numDocs = AtLeast(200);
             for (int i = 0; i < numDocs; i++)
             {

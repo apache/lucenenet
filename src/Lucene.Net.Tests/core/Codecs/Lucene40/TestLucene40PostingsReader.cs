@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }

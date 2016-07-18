@@ -33,10 +33,10 @@ namespace Lucene.Net.Search
         private static Directory Directory;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig());
             writer.Dispose();
             Reader = DirectoryReader.Open(Directory);
         }

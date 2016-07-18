@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         private static FieldInfos.Builder FieldInfos = null;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             TestDoc = new Document();
             FieldInfos = new FieldInfos.Builder();

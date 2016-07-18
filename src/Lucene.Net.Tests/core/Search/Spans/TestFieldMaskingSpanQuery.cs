@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Spans
             return doc;
         }
 
-        protected internal static Field GetField(string name, string value)
+        protected internal Field GetField(string name, string value)
         {
             return NewTextField(name, value, Field.Store.NO);
         }
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search.Spans
         protected internal static IndexReader Reader;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Spans
 
         protected internal virtual void Check(SpanQuery q, int[] docs)
         {
-            CheckHits.CheckHitCollector(Random(), q, null, Searcher, docs);
+            CheckHits.CheckHitCollector(Random(), q, null, Searcher, docs, NewSearcher);
         }
 
         [Test]

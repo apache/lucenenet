@@ -68,7 +68,7 @@ namespace Lucene.Net.Facet
         }
 
         [TestFixtureSetUp]
-        public static void BeforeClassDrillDownQueryTest()
+        public void BeforeClassDrillDownQueryTest()
         {
             dir = NewDirectory();
             Random r = Random();

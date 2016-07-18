@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Payloads
         /// <param name="numDocs"> The num docs to add </param>
         /// <returns> An IndexSearcher </returns>
         // TODO: randomize
-        public virtual IndexSearcher SetUp(Random random, Similarity similarity, int numDocs)
+        public virtual IndexSearcher SetUp(Random random, Similarity similarity, int numDocs, Func<IndexReader, IndexSearcher> NewSearcher)
         {
             Directory directory = new MockDirectoryWrapper(random, new RAMDirectory());
             PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search.Payloads
             Reader = DirectoryReader.Open(writer, true);
             writer.Dispose();
 
-            IndexSearcher searcher = LuceneTestCase.NewSearcher(Reader);
+            IndexSearcher searcher = NewSearcher(Reader);
             searcher.Similarity = similarity;
             return searcher;
         }

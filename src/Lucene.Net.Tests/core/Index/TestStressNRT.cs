@@ -337,8 +337,8 @@ namespace Lucene.Net.Index
                                     if (Tombstones)
                                     {
                                         Document d = new Document();
-                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Documents.Field.Store.YES));
-                                        d.Add(NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
+                                        d.Add(OuterInstance.NewStringField("id", "-" + Convert.ToString(id), Documents.Field.Store.YES));
+                                        d.Add(OuterInstance.NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
                                         Writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
                                     }
 
@@ -357,8 +357,8 @@ namespace Lucene.Net.Index
                                     if (Tombstones)
                                     {
                                         Document d = new Document();
-                                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Documents.Field.Store.YES));
-                                        d.Add(NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
+                                        d.Add(OuterInstance.NewStringField("id", "-" + Convert.ToString(id), Documents.Field.Store.YES));
+                                        d.Add(OuterInstance.NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
                                         Writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
                                     }
 
@@ -373,8 +373,8 @@ namespace Lucene.Net.Index
                                 {
                                     // assertU(adoc("id",Integer.toString(id), field, Long.toString(nextVal)));
                                     Document d = new Document();
-                                    d.Add(NewStringField("id", Convert.ToString(id), Documents.Field.Store.YES));
-                                    d.Add(NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
+                                    d.Add(OuterInstance.NewStringField("id", Convert.ToString(id), Documents.Field.Store.YES));
+                                    d.Add(OuterInstance.NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
                                     if (VERBOSE)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": u id:" + id + " val=" + nextVal);
@@ -465,7 +465,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            searcher = NewSearcher(r);
+                            searcher = OuterInstance.NewSearcher(r);
                             lastReader = r;
                             lastSearcher = searcher;
                         }

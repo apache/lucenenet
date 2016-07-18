@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
             long stopTime = Environment.TickCount + AtLeast(1000);
             for (int x = 0; x < indexThreads.Length; x++)
             {
-                indexThreads[x] = new ThreadAnonymousInnerClassHelper(w, stopTime);
+                indexThreads[x] = new ThreadAnonymousInnerClassHelper(w, stopTime, NewStringField, NewTextField);
                 indexThreads[x].Name = "Thread " + x;
                 indexThreads[x].Start();
             }
@@ -104,13 +104,19 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
+            private readonly Func<string, string, Field.Store, Field> NewStringField;
+            private readonly Func<string, string, Field.Store, Field> NewTextField;
+
             private RandomIndexWriter w;
             private long StopTime;
 
-            public ThreadAnonymousInnerClassHelper(RandomIndexWriter w, long stopTime)
+            public ThreadAnonymousInnerClassHelper(RandomIndexWriter w, long stopTime, 
+                Func<string, string, Field.Store, Field> newStringField, Func<string, string, Field.Store, Field> newTextField)
             {
                 this.w = w;
                 this.StopTime = stopTime;
+                NewStringField = newStringField;
+                NewTextField = newTextField;
             }
 
             public override void Run()
