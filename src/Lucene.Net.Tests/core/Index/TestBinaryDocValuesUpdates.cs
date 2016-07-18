@@ -1128,8 +1128,6 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             writer.Dispose();
             dir.Dispose();
-
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
         }
 
         [Test]

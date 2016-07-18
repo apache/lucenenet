@@ -445,7 +445,7 @@ namespace Lucene.Net.Search
             private int[] LastDoc;
             private AtomicReader[] LastReader;
             private IList<AtomicReaderContext> Context;
-            private readonly Func<IndexReader, bool, IndexSearcher> NewSearcher;
+            private readonly Func<IndexReader, bool, IndexSearcher> NewSearcherFunc;
 
             public CollectorAnonymousInnerClassHelper2(Query q, IndexSearcher s, float maxDiff, int[] lastDoc, AtomicReader[] lastReader, IList<AtomicReaderContext> context, Func<IndexReader, bool, IndexSearcher> newSearcher)
             {
@@ -455,7 +455,7 @@ namespace Lucene.Net.Search
                 this.LastDoc = lastDoc;
                 this.LastReader = lastReader;
                 this.Context = context;
-                NewSearcher = newSearcher;
+                NewSearcherFunc = newSearcher;
             }
 
             private Scorer scorer;
@@ -510,7 +510,7 @@ namespace Lucene.Net.Search
                     if (LastReader[0] != null)
                     {
                         AtomicReader previousReader = LastReader[0];
-                        IndexSearcher indexSearcher = NewSearcher(previousReader, true);
+                        IndexSearcher indexSearcher = NewSearcherFunc(previousReader, true);
                         indexSearcher.Similarity = s.Similarity;
                         Weight w = indexSearcher.CreateNormalizedWeight(q);
                         Scorer scorer = w.Scorer((AtomicReaderContext)indexSearcher.TopReaderContext, previousReader.LiveDocs);

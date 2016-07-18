@@ -335,7 +335,7 @@ namespace Lucene.Net.Tests.Queries
             assertEquals("queries should have same #hits", h1.Count, h5CustomMulAdd.Count);
 
             QueryUtils.Check(Random(), q1, s, Rarely(), NewSearcher);
-            QueryUtils.Check(Random(), q1, s, Rarely(), NewSearcher);
+            QueryUtils.Check(Random(), q2, s, Rarely(), NewSearcher);
             QueryUtils.Check(Random(), q3, s, Rarely(), NewSearcher);
             QueryUtils.Check(Random(), q4, s, Rarely(), NewSearcher);
             QueryUtils.Check(Random(), q5, s, Rarely(), NewSearcher);
