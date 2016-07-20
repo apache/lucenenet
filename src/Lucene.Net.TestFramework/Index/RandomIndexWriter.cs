@@ -8,21 +8,21 @@ using Lucene.Net.Util;
 namespace Lucene.Net.Index
 {
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NullInfoStream = Lucene.Net.Util.NullInfoStream;
     using Query = Lucene.Net.Search.Query;
+    using Similarity = Search.Similarities.Similarity;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
@@ -85,22 +86,22 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT and MockAnalyzer </summary>
-        public RandomIndexWriter(Random r, Directory dir)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r)))
+        public RandomIndexWriter(Random r, Directory dir, Similarity similarity, TimeZone timezone)
+            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r), similarity, timezone))
         {
         }
 
         /// <summary>
         /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT </summary>
-        public RandomIndexWriter(Random r, Directory dir, Analyzer a)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a))
+        public RandomIndexWriter(Random r, Directory dir, Analyzer a, Similarity similarity, TimeZone timezone)
+            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a, similarity, timezone))
         {
         }
 
         /// <summary>
         /// create a RandomIndexWriter with a random config </summary>
-        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a))
+        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a, Similarity similarity, TimeZone timezone)
+            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a, similarity, timezone))
         {
         }
 
