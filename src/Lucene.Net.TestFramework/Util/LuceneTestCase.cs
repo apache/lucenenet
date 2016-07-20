@@ -101,6 +101,8 @@ namespace Lucene.Net.Util
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TextField = TextField;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
+    using Analysis;
+    using Search.Similarities;
 
     /*using After = org.junit.After;
     using AfterClass = org.junit.AfterClass;
@@ -845,12 +847,17 @@ namespace Lucene.Net.Util
             return NewIndexWriterConfig(Random(), v, a);
         }
 
+        public IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
+        {
+            return NewIndexWriterConfig(r, v, a, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+        }
+
         /// <summary>
         /// create a new index writer config with random defaults using the specified random </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
+        public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a, Similarity similarity, TimeZone timezone)
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
-            c.SetSimilarity(ClassEnvRule.Similarity);
+            c.SetSimilarity(similarity);
             if (VERBOSE)
             {
                 // Even though TestRuleSetupAndRestoreClassEnv calls
@@ -933,7 +940,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            c.SetMergePolicy(NewMergePolicy(r));
+            c.SetMergePolicy(NewMergePolicy(r, timezone));
 
             if (Rarely(r))
             {
@@ -946,7 +953,25 @@ namespace Lucene.Net.Util
             return c;
         }
 
-        public static MergePolicy NewMergePolicy(Random r)
+        /// <summary>
+        /// Gets an IndexWriterConfig using the current TEST_LUCENE_VERSION and a MockAnalyzer
+        /// </summary>
+        public IndexWriterConfig NewIndexWriterConfig()
+        {
+            var random = Random();
+
+            return NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random));
+        }
+
+        /// <summary>
+        /// Gets an IndexWriterConfig using the current TEST_LUCENE_VERSION and the given analyzer
+        /// </summary>
+        public IndexWriterConfig NewIndexWriterConfig(Analyzer a)
+        {
+            return NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, a);
+        }
+
+        public static MergePolicy NewMergePolicy(Random r, TimeZone timezone)
         {
             if (Rarely(r))
             {
@@ -958,14 +983,14 @@ namespace Lucene.Net.Util
             }
             else if (r.Next(5) == 0)
             {
-                return NewAlcoholicMergePolicy(r, ClassEnvRule.TimeZone);
+                return NewAlcoholicMergePolicy(r, timezone);
             }
             return NewLogMergePolicy(r);
         }
 
-        public static MergePolicy NewMergePolicy()
+        public static MergePolicy NewMergePolicy(TimeZone timezone)
         {
-            return NewMergePolicy(Random());
+            return NewMergePolicy(Random(), timezone);
         }
 
         public static LogMergePolicy NewLogMergePolicy()
