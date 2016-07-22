@@ -364,8 +364,6 @@ namespace Lucene.Net.Util
 
         static LuceneTestCase()
         {
-            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
-
             bool defaultValue = false;
             foreach (string property in Arrays.AsList("tests.leaveTemporary", "tests.leavetemporary", "tests.leavetmpdir", "solr.test.leavetmpdir")) // Solr's legacy -  default -  lowercase -  ANT tasks's (junit4) flag.
             {
@@ -437,7 +435,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Class environment setup rule.
         /// </summary>
-        private static TestRuleSetupAndRestoreClassEnv ClassEnvRule;
+        internal TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; private set; }
 
         // LUCENENET TODO
         /// <summary>
