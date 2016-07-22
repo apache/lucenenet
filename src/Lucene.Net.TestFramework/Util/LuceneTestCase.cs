@@ -842,7 +842,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// create a new index writer config with random defaults </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
+        public IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(Random(), v, a);
         }
