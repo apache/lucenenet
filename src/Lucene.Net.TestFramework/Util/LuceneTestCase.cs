@@ -1570,7 +1570,12 @@ namespace Lucene.Net.Util
         /// </summary>
         public IndexSearcher NewSearcher(IndexReader r)
         {
-            return NewSearcher(r, true, ClassEnvRule.Similarity);
+            return NewSearcher(r, ClassEnvRule.Similarity);
+        }
+
+        public static IndexSearcher NewSearcher(IndexReader r, Similarity similarity)
+        {
+            return NewSearcher(r, true, similarity);
         }
 
         /// <summary>
