@@ -1003,7 +1003,7 @@ namespace Lucene.Net.Util
             return NewTieredMergePolicy(Random());
         }
 
-        public static AlcoholicMergePolicy NewAlcoholicMergePolicy()
+        public AlcoholicMergePolicy NewAlcoholicMergePolicy()
         {
             return NewAlcoholicMergePolicy(Random(), ClassEnvRule.TimeZone);
         }
@@ -1568,18 +1568,23 @@ namespace Lucene.Net.Util
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r)
+        public IndexSearcher NewSearcher(IndexReader r)
         {
-            return NewSearcher(r, true);
+            return NewSearcher(r, true, ClassEnvRule.Similarity);
         }
 
         /// <summary>
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap)
+        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, Similarity similarity)
         {
-            return NewSearcher(r, maybeWrap, true);
+            return NewSearcher(r, maybeWrap, true, similarity);
+        }
+
+        public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
+        {
+            return NewSearcher(r, maybeWrap, wrapWithAssertions, ClassEnvRule.Similarity);
         }
 
         /// <summary>
@@ -1589,7 +1594,7 @@ namespace Lucene.Net.Util
         /// <code>wrapWithAssertions</code> is true, this searcher might be an
         /// <seealso cref="AssertingIndexSearcher"/> instance.
         /// </summary>
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
+        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions, Similarity similarity)
         {
             Random random = Random();
             if (Usually())
@@ -1615,7 +1620,7 @@ namespace Lucene.Net.Util
                 {
                     ret = random.NextBoolean() ? new IndexSearcher(r) : new IndexSearcher(r.Context);
                 }
-                ret.Similarity = ClassEnvRule.Similarity;
+                ret.Similarity = similarity;
                 return ret;
             }
             else
@@ -1650,7 +1655,7 @@ namespace Lucene.Net.Util
                 {
                     ret = random.NextBoolean() ? new IndexSearcher(r, ex) : new IndexSearcher(r.Context, ex);
                 }
-                ret.Similarity = ClassEnvRule.Similarity;
+                ret.Similarity = similarity;
                 return ret;
             }
         }
