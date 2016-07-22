@@ -98,7 +98,7 @@ namespace Lucene.Net.Document
             var doc = new Documents.Document {binaryFldCompressed, stringFldCompressed};
 
             using (Directory dir = NewDirectory())
-            using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir))
+            using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone))
             {
                 writer.AddDocument(doc);
 

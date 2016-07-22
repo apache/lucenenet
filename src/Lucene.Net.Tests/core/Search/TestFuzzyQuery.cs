@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
         public virtual void TestFuzziness()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             AddDoc("aaaaa", writer);
             AddDoc("aaaab", writer);
             AddDoc("aaabb", writer);
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
         public virtual void TestTieBreaker()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             AddDoc("a123456", writer);
             AddDoc("c123456", writer);
             AddDoc("d123456", writer);
@@ -282,7 +282,7 @@ namespace Lucene.Net.Search
         public virtual void TestBoostOnlyRewrite()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             AddDoc("Lucene", writer);
             AddDoc("Lucene", writer);
             AddDoc("Lucenne", writer);

@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 
             string[] values = new string[] { "1", "2", "3", "4" };
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             for (int i = 0; i < values.Length; i++)
             {
                 Document doc = new Document();
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             // changes, we have a test to back it up.
 
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             writer.Commit();
             IndexReader ir = writer.Reader;
             writer.Dispose();
@@ -321,7 +321,7 @@ namespace Lucene.Net.Search
         public virtual void TestEmbeddedBooleanScorer()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "doctors are people who prescribe medicines of which they know little, to cure diseases of which they know less, in human beings of whom they know nothing", Field.Store.NO));
             w.AddDocument(doc);

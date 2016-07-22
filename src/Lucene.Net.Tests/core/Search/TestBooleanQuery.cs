@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullOrSubScorer()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "a b c d", Field.Store.NO));
             w.AddDocument(doc);
@@ -369,7 +369,7 @@ namespace Lucene.Net.Search
         public virtual void TestInOrderWithMinShouldMatch()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "some text here", Field.Store.NO));
             w.AddDocument(doc);

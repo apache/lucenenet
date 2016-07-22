@@ -22,7 +22,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             // Add series of docs with specific information for MoreLikeThis
             AddDoc(writer, "lucene");

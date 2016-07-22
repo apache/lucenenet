@@ -56,7 +56,7 @@ namespace Lucene.Net.Facet.SortedSet
 
             FacetsConfig config = new FacetsConfig();
             config.SetMultiValued("a", true);
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesFacetField("a", "foo"));
@@ -105,7 +105,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -253,7 +253,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 

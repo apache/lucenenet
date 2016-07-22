@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
         public static void BeforeClass()
         {
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             writer.Dispose();
             Reader = DirectoryReader.Open(Directory);
         }

@@ -386,7 +386,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomLongs()
         {
             Directory dir = NewDirectory();
-            var w = new RandomIndexWriter(Random(), dir);
+            var w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             int numDocs = AtLeast(1000);
             if (VERBOSE)
@@ -579,7 +579,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomFloats()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             int numDocs = AtLeast(1000);
             float[] values = new float[numDocs];
@@ -784,7 +784,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestRandomDoubles()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             int numDocs = AtLeast(1000);
             double[] values = new double[numDocs];
@@ -1006,7 +1006,7 @@ namespace Lucene.Net.Facet.Range
         public virtual void TestCustomDoublesValueSource()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             Document doc = new Document();
             writer.AddDocument(doc);

@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         public virtual void Test()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             long startTime = Environment.TickCount;
 

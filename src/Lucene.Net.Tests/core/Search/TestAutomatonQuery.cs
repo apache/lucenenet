@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             Field titleField = NewTextField("title", "some title", Field.Store.NO);
             Field field = NewTextField(FN, "this is document one 2345", Field.Store.NO);

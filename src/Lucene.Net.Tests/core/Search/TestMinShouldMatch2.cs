@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
         public static void BeforeClass()
         {
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {

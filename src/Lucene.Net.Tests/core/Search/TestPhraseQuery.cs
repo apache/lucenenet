@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
         public virtual void TestPhraseQueryInConjunctionScorer()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             Documents.Document doc = new Documents.Document();
             doc.Add(NewTextField("source", "marketing info", Field.Store.YES));

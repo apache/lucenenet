@@ -1986,7 +1986,7 @@ namespace Lucene.Net.Index
             Field contentField = new Field("content", "", customType);
             doc.Add(contentField);
 
-            w = new RandomIndexWriter(Random(), dir);
+            w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             contentField.StringValue = "other";
             w.AddDocument(doc);
@@ -2854,7 +2854,7 @@ namespace Lucene.Net.Index
                 dir.DeleteFile(fileName);
             }
 
-            w = new RandomIndexWriter(Random(), dir);
+            w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             w.AddDocument(doc);
             w.Dispose();
             r.Dispose();

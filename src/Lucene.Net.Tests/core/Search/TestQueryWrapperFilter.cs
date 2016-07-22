@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
         public virtual void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "value", Field.Store.NO));
             writer.AddDocument(doc);
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
         public virtual void TestThousandDocuments()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();

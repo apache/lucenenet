@@ -290,7 +290,7 @@ namespace Lucene.Net.Search
         public virtual void TestSlopWithHoles()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.OmitNorms = true;
             Field f = new Field("lyrics", "", customType);
@@ -329,7 +329,7 @@ namespace Lucene.Net.Search
             string document = "drug druggy drug drug drug";
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             doc.Add(NewField("lyrics", document, new FieldType(TextField.TYPE_NOT_STORED)));
             iw.AddDocument(doc);
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search
 
             Directory dir = NewDirectory();
 
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             doc.Add(NewField("lyrics", document, new FieldType(TextField.TYPE_NOT_STORED)));
             iw.AddDocument(doc);

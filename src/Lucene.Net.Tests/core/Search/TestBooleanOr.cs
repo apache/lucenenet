@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
             Dir = NewDirectory();
 
             //
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             //
             Document d = new Document();

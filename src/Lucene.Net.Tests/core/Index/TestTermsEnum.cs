@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
         public virtual void TestIntersectRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             int numTerms = AtLeast(300);
             //final int numTerms = 50;

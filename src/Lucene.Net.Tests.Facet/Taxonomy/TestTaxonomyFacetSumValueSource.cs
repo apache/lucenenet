@@ -75,7 +75,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // main index:
             DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             FacetsConfig config = new FacetsConfig();
 
             // Reused across documents, to add the necessary facet
@@ -144,7 +144,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // main index:
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             FacetsConfig config = new FacetsConfig();
 
             Document doc = new Document();
@@ -213,7 +213,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsConfig config = new FacetsConfig();
             config.SetIndexFieldName("a", "$facets2");
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             Document doc = new Document();
             doc.Add(new IntField("num", 10, Field.Store.NO));

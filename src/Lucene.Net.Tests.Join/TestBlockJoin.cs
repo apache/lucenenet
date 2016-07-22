@@ -131,7 +131,7 @@ namespace Lucene.Net.Tests.Join
         public void TestSimple()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             IList<Document> docs = new List<Document>();
 
@@ -221,7 +221,7 @@ namespace Lucene.Net.Tests.Join
         public void TestBugCausedByRewritingTwice()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             IList<Document> docs = new List<Document>();
 
@@ -278,7 +278,7 @@ namespace Lucene.Net.Tests.Join
         public virtual void TestSimpleFilter()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             IList<Document> docs = new List<Document>();
             docs.Add(MakeJob("java", 2007));
@@ -376,7 +376,7 @@ namespace Lucene.Net.Tests.Join
         public void TestBoostBug()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             IndexReader r = w.Reader;
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
@@ -521,7 +521,7 @@ namespace Lucene.Net.Tests.Join
             IList<int> toDelete = new List<int>();
 
             // TODO: parallel star join, nested join cases too!
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             RandomIndexWriter joinW = new RandomIndexWriter(Random(), joinDir);
             for (int parentDocID = 0; parentDocID < numParentDocs; parentDocID++)
             {
@@ -1125,7 +1125,7 @@ namespace Lucene.Net.Tests.Join
         public void TestMultiChildTypes()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             IList<Document> docs = new List<Document>();
 
@@ -1212,7 +1212,7 @@ namespace Lucene.Net.Tests.Join
         public void TestAdvanceSingleParentSingleChild()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document childDoc = new Document();
             childDoc.Add(NewStringField("child", "1", Field.Store.NO));
             Document parentDoc = new Document();
@@ -1271,7 +1271,7 @@ namespace Lucene.Net.Tests.Join
         {
 
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             IList<Document> docs = new List<Document>();
             docs.Add(MakeJob("ruby", 2005));
@@ -1547,7 +1547,7 @@ namespace Lucene.Net.Tests.Join
         public void TestAdvanceSingleDeletedParentNoChild()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             // First doc with 1 children
             Document parentDoc = new Document();

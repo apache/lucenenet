@@ -54,7 +54,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             int num = AtLeast(100);
             var terms = new List<Term>();
             for (int i = 0; i < num; i++)

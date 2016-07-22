@@ -581,7 +581,7 @@ namespace Lucene.Net.Search
             // make sure that maybeRefreshBlocking releases the lock, otherwise other
             // threads cannot obtain it.
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             w.Dispose();
 
             SearcherManager sm = new SearcherManager(dir, null);

@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
         public virtual void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomCombine()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
         public virtual void TestExplain()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search
         public virtual void TestMissingSecondPassScore()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
@@ -335,7 +335,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             int numDocs = AtLeast(1000);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
             int[] idToNum = new int[numDocs];
             int maxValue = TestUtil.NextInt(Random(), 10, 1000000);

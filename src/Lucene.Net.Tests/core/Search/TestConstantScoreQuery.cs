@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
             try
             {
                 directory = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
 
                 Document doc = new Document();
                 doc.Add(NewStringField("field", "term", Field.Store.NO));

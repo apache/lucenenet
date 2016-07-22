@@ -114,7 +114,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestFieldNotPresent()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             int num = AtLeast(3);
             int skip = Random().Next(num);
             var terms = new List<Term>();
@@ -150,7 +150,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestSkipField()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             int num = AtLeast(10);
             var terms = new HashSet<Term>();
             for (int i = 0; i < num; i++)
@@ -192,7 +192,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             int num = AtLeast(100);
             bool singleField = Random().NextBoolean();
             IList<Term> terms = new List<Term>();

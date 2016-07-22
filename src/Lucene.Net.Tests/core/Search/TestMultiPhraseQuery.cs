@@ -408,7 +408,7 @@ namespace Lucene.Net.Search
             tokens[2].Append("c");
             tokens[2].PositionIncrement = 0;
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             Document doc = new Document();
             doc.Add(new TextField("field", new CannedTokenStream(tokens)));
             writer.AddDocument(doc);
