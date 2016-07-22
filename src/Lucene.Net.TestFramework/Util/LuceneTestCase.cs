@@ -1267,32 +1267,32 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static Field NewStringField(string name, string value, Field.Store stored)
+        public Field NewStringField(string name, string value, Field.Store stored)
         {
             return NewField(Random(), name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
-        public static Field NewTextField(string name, string value, Field.Store stored)
+        public Field NewTextField(string name, string value, Field.Store stored)
         {
             return NewField(Random(), name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
-        public static Field NewStringField(Random random, string name, string value, Field.Store stored)
+        public Field NewStringField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
-        public static Field NewTextField(Random random, string name, string value, Field.Store stored)
+        public Field NewTextField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
-        public static Field NewField(string name, string value, FieldType type)
+        public Field NewField(string name, string value, FieldType type)
         {
             return NewField(Random(), name, value, type);
         }
 
-        public static Field NewField(Random random, string name, string value, FieldType type)
+        public Field NewField(Random random, string name, string value, FieldType type)
         {
             name = new string(name.ToCharArray());
             if (Usually(random) || !type.Indexed)
