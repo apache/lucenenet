@@ -180,7 +180,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             /// <exception cref="System.IO.IOException"></exception>
             public VisitorTemplate(AbstractVisitingPrefixTreeFilter _enclosing, AtomicReaderContext
-                                                                                    context, IBits acceptDocs,
+                                                                                    context, Bits acceptDocs,
                                    bool hasIndexedLeaves)
                 : base(_enclosing, context, acceptDocs)
             {
@@ -250,31 +250,27 @@ namespace Lucene.Net.Spatial.Prefix
                         }
                     }
                     //Seek to curVNode's cell (or skip if termsEnum has moved beyond)
-                    curVNodeTerm.bytes = curVNode.cell.GetTokenBytes().ToSByteArray();
-                    curVNodeTerm.length = curVNodeTerm.bytes.Length;
+                    curVNodeTerm.Bytes = curVNode.cell.GetTokenBytes();
+                    curVNodeTerm.Length = curVNodeTerm.Bytes.Length;
                     int compare = termsEnum.Comparator.Compare(thisTerm, curVNodeTerm
                         );
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)
-                        Debug.Assert(
-                            !((AtomicReader)context.Reader).Terms(_enclosing.fieldName).Iterator(null).SeekExact(
-                                curVNodeTerm, false), "should be absent"
-                            );
+                        Debug.Assert(!((AtomicReader)context.Reader).Terms(_enclosing.fieldName).Iterator(null).SeekExact(curVNodeTerm), "should be absent");
                     }
                     else
                     {
                         if (compare < 0)
                         {
                             // Seek !
-                            TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(curVNodeTerm, true
-                                );
+                            TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(curVNodeTerm);
                             if (seekStatus == TermsEnum.SeekStatus.END)
                             {
                                 break;
                             }
                             // all done
-                            thisTerm = termsEnum.Term;
+                            thisTerm = termsEnum.Term();
                             if (seekStatus == TermsEnum.SeekStatus.NOT_FOUND)
                             {
                                 continue;
@@ -324,8 +320,8 @@ namespace Lucene.Net.Spatial.Prefix
                     // then add all of those docs
                     Debug.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm
                                      ));
-                    scanCell = _enclosing.grid.GetCell(thisTerm.bytes.ToByteArray(), thisTerm.offset
-                                                       , thisTerm.length, scanCell);
+                    scanCell = _enclosing.grid.GetCell(thisTerm.Bytes, thisTerm.Offset
+                                                       , thisTerm.Length, scanCell);
                     if (scanCell.Level == cell.Level && scanCell.IsLeaf())
                     {
                         VisitLeaf(scanCell);
@@ -397,8 +393,8 @@ namespace Lucene.Net.Spatial.Prefix
                                             );
                     thisTerm = termsEnum.Next())
                 {
-                    scanCell = _enclosing.grid.GetCell(thisTerm.bytes.ToByteArray(), thisTerm.offset
-                                                       , thisTerm.length, scanCell);
+                    scanCell = _enclosing.grid.GetCell(thisTerm.Bytes, thisTerm.Offset
+                                                       , thisTerm.Length, scanCell);
                     int termLevel = scanCell.Level;
                     if (termLevel > scanDetailLevel)
                     {

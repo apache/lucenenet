@@ -92,14 +92,14 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal readonly AtomicReaderContext context;
 
             protected internal readonly int maxDoc;
-            protected internal IBits acceptDocs;
+            protected internal Bits acceptDocs;
 
             protected internal DocsEnum docsEnum;
             protected internal TermsEnum termsEnum;
 
             /// <exception cref="System.IO.IOException"></exception>
             public BaseTermsEnumTraverser(AbstractPrefixTreeFilter _enclosing, AtomicReaderContext
-                                                                                   context, IBits acceptDocs)
+                                                                                   context, Bits acceptDocs)
             {
                 this._enclosing = _enclosing;
                 //remember to check for null in getDocIdSet

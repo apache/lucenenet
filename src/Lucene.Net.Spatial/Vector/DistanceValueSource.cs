@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Function;
 using Lucene.Net.Util;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
@@ -33,11 +34,13 @@ namespace Lucene.Net.Spatial.Vector
     {
         private readonly Point from;
         private readonly PointVectorStrategy strategy;
+        private readonly double multiplier;
 
-        public DistanceValueSource(PointVectorStrategy strategy, Point from)
+        public DistanceValueSource(PointVectorStrategy strategy, Point from, double multiplier)
         {
             this.strategy = strategy;
             this.from = from;
+            this.multiplier = multiplier;
         }
 
         public override string Description
@@ -45,7 +48,7 @@ namespace Lucene.Net.Spatial.Vector
             get { return "DistanceValueSource(" + strategy + ", " + from + ")"; }
         }
 
-        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             return new DistanceFunctionValue(this, readerContext.AtomicReader);
         }
@@ -76,9 +79,10 @@ namespace Lucene.Net.Spatial.Vector
             private readonly DistanceValueSource enclosingInstance;
             private readonly Point from;
             private readonly double nullValue;
+            private readonly double multiplier;
 
             private readonly FieldCache.Doubles ptX, ptY;
-            private readonly IBits validX, validY;
+            private readonly Bits validX, validY;
 
             public DistanceFunctionValue(DistanceValueSource enclosingInstance, AtomicReader reader)
             {
@@ -90,8 +94,9 @@ namespace Lucene.Net.Spatial.Vector
                 validY = FieldCache.DEFAULT.GetDocsWithField(reader, enclosingInstance.strategy.FieldNameY);
 
                 from = enclosingInstance.from;
+                multiplier = enclosingInstance.multiplier;
                 calculator = enclosingInstance.strategy.SpatialContext.GetDistCalc();
-                nullValue = (enclosingInstance.strategy.SpatialContext.IsGeo() ? 180 : double.MaxValue);
+                nullValue = (enclosingInstance.strategy.SpatialContext.IsGeo() ? 180 * multiplier : double.MaxValue);
             }
 
             public override float FloatVal(int doc)
@@ -102,10 +107,10 @@ namespace Lucene.Net.Spatial.Vector
             public override double DoubleVal(int doc)
             {
                 // make sure it has minX and area
-                if (validX[doc])
+                if (validX.Get(doc))
                 {
-                    Debug.Assert(validY[doc]);
-                    return calculator.Distance(from, ptX.Get(doc), ptY.Get(doc));
+                    Debug.Assert(validY.Get(doc));
+                    return calculator.Distance(from, ptX.Get(doc), ptY.Get(doc)) * multiplier;
                 }
                 return nullValue;
             }

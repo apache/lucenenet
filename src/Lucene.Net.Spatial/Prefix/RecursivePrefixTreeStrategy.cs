@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
@@ -35,25 +37,28 @@ namespace Lucene.Net.Spatial.Prefix
     /// <lucene.experimental></lucene.experimental>
     public class RecursivePrefixTreeStrategy : PrefixTreeStrategy
     {
+        protected readonly SpatialPrefixTree grid;
         private int prefixGridScanLevel;
 
+        /** True if only indexed points shall be supported.  See
+        *  {@link IntersectsPrefixTreeFilter#hasIndexedLeaves}. */
+        protected bool pointsOnly = false;
+
+        /** See {@link ContainsPrefixTreeFilter#multiOverlappingIndexedShapes}. */
+        protected bool multiOverlappingIndexedShapes = true;
+
         public RecursivePrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
-            : base(grid, fieldName, true)
+            : base(grid, fieldName, true) //simplify indexed cells
         {
-            //simplify indexed cells
-            prefixGridScanLevel = grid.MaxLevels - 4;
+            this.grid = grid;
+            prefixGridScanLevel = grid.MaxLevels - 4;//TODO this default constant is dependent on the prefix grid size
         }
 
-        //TODO this default constant is dependent on the prefix grid size
         /// <summary>
         /// Sets the grid level [1-maxLevels] at which indexed terms are scanned brute-force
-        /// instead of by grid decomposition.
-        /// </summary>
-        /// <remarks>
-        /// Sets the grid level [1-maxLevels] at which indexed terms are scanned brute-force
-        /// instead of by grid decomposition.  By default this is maxLevels - 4.  The
+        /// instead of by grid decomposition.By default this is maxLevels - 4.  The
         /// final level, maxLevels, is always scanned.
-        /// </remarks>
+        /// </summary>
         public virtual int PrefixGridScanLevel
         {
             set
@@ -77,27 +82,22 @@ namespace Lucene.Net.Spatial.Prefix
             }
             Shape shape = args.Shape;
             int detailLevel = grid.GetLevelForDistance(args.ResolveDistErr(ctx, distErrPct));
-            bool hasIndexedLeaves = true;
-            if (op == SpatialOperation.Intersects)
+
+        
+            if (pointsOnly || op == SpatialOperation.Intersects)
             {
-                return new IntersectsPrefixTreeFilter(shape, FieldName, grid, detailLevel, prefixGridScanLevel
-                                                      , hasIndexedLeaves);
+                return new IntersectsPrefixTreeFilter(
+                    shape, FieldName, grid, detailLevel, prefixGridScanLevel, !pointsOnly);
             }
-            else
+            else if (op == SpatialOperation.IsWithin)
             {
-                if (op == SpatialOperation.IsWithin)
-                {
-                    return new WithinPrefixTreeFilter(shape, FieldName, grid, detailLevel, prefixGridScanLevel
-                                                      , -1);
-                }
-                else
-                {
-                    //-1 flag is slower but ensures correct results
-                    if (op == SpatialOperation.Contains)
-                    {
-                        return new ContainsPrefixTreeFilter(shape, FieldName, grid, detailLevel);
-                    }
-                }
+                return new WithinPrefixTreeFilter(shape, FieldName, grid, detailLevel, prefixGridScanLevel
+                    , -1); //-1 flag is slower but ensures correct results
+            }
+            else if (op == SpatialOperation.Contains)
+            {
+                return new ContainsPrefixTreeFilter(shape, FieldName, grid, detailLevel, 
+                    multiOverlappingIndexedShapes);
             }
             throw new UnsupportedSpatialOperation(op);
         }

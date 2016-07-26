@@ -16,6 +16,7 @@
  */
 using System;
 using Lucene.Net.Index;
+using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
@@ -40,8 +41,7 @@ namespace Lucene.Net.Spatial
     /// <lucene.experimental></lucene.experimental>
     public class DisjointSpatialFilter : Filter
     {
-        private readonly string field;
-
+        private readonly string field;//maybe null
         private readonly Filter intersectsFilter;
 
         /// <param name="strategy">Needed to compute intersects</param>
@@ -54,16 +54,12 @@ namespace Lucene.Net.Spatial
         /// .
         /// Passing null will assume all docs have spatial data.
         /// </param>
-        public DisjointSpatialFilter(SpatialStrategy strategy, SpatialArgs args, string field
-            )
+        public DisjointSpatialFilter(SpatialStrategy strategy, SpatialArgs args, string field)
         {
-            //maybe null
             this.field = field;
             // TODO consider making SpatialArgs cloneable
-            SpatialOperation origOp = args.Operation;
-            //copy so we can restore
-            args.Operation = SpatialOperation.Intersects;
-            //temporarily set to intersects
+            SpatialOperation origOp = args.Operation; //copy so we can restore
+            args.Operation = SpatialOperation.Intersects; //temporarily set to intersects
             intersectsFilter = strategy.MakeFilter(args);
             args.Operation = origOp;
         }
@@ -99,45 +95,37 @@ namespace Lucene.Net.Spatial
         }
 
         /// <exception cref="System.IO.IOException"></exception>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs
-            )
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            IBits docsWithField;
+            Bits docsWithField;
             if (field == null)
             {
                 docsWithField = null;
             }
             else
             {
-                //all docs
                 //NOTE By using the FieldCache we re-use a cache
                 // which is nice but loading it in this way might be slower than say using an
                 // intersects filter against the world bounds. So do we add a method to the
                 // strategy, perhaps?  But the strategy can't cache it.
                 docsWithField = FieldCache.DEFAULT.GetDocsWithField((context.AtomicReader), field);
                 int maxDoc = context.AtomicReader.MaxDoc;
-                if (docsWithField.Length != maxDoc)
+                if (docsWithField.Length() != maxDoc)
                 {
-                    throw new InvalidOperationException("Bits length should be maxDoc (" + maxDoc + ") but wasn't: "
-                                                        + docsWithField);
+                    throw new InvalidOperationException("Bits length should be maxDoc (" + maxDoc + ") but wasn't: " + docsWithField);
                 }
-                if (docsWithField is Bits.MatchNoBits)
+                if (docsWithField is Bits_MatchNoBits)
                 {
-                    return null;
+                    return null;//match nothing
                 }
-                else
+                else if (docsWithField is Bits_MatchAllBits)
                 {
-                    //match nothing
-                    if (docsWithField is Bits.MatchAllBits)
-                    {
-                        docsWithField = null;
-                    }
+                    docsWithField = null;//all docs
                 }
             }
-            //all docs
+            
             //not so much a chain but a way to conveniently invert the Filter
-            DocIdSet docIdSet = new ChainedFilter(new[] { intersectsFilter }, ChainedFilter.ANDNOT).GetDocIdSet(context,
-                                                                                                              acceptDocs);
+            DocIdSet docIdSet = new ChainedFilter(new[] { intersectsFilter }, ChainedFilter.ANDNOT).GetDocIdSet(context, acceptDocs);
             return BitsFilteredDocIdSet.Wrap(docIdSet, docsWithField);
         }
     }

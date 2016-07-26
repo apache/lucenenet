@@ -25,9 +25,9 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Search.Function;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Queries.Function;
 using Lucene.Net.Spatial.Util;
 using Lucene.Net.Support;
 using Spatial4n.Core.Shapes;
@@ -92,8 +92,8 @@ namespace Lucene.Net.Spatial.Prefix
     {
         protected internal readonly SpatialPrefixTree grid;
 
-        private readonly IDictionary<string, PointPrefixTreeFieldCacheProvider> provider =
-            new ConcurrentHashMap<string, PointPrefixTreeFieldCacheProvider>();
+        private readonly ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider> provider =
+            new ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider>();
 
         protected internal readonly bool simplifyIndexedCells;
 
@@ -101,11 +101,9 @@ namespace Lucene.Net.Spatial.Prefix
 
         protected internal double distErrPct = SpatialArgs.DEFAULT_DISTERRPCT;
 
-        public PrefixTreeStrategy(SpatialPrefixTree grid, string fieldName, bool simplifyIndexedCells
-            )
+        public PrefixTreeStrategy(SpatialPrefixTree grid, string fieldName, bool simplifyIndexedCells)
             : base(grid.SpatialContext, fieldName)
         {
-            // [ 0 TO 0.5 ]
             this.grid = grid;
             this.simplifyIndexedCells = simplifyIndexedCells;
         }
@@ -150,23 +148,19 @@ namespace Lucene.Net.Spatial.Prefix
             set { distErrPct = value; }
         }
 
-        public override Field[] CreateIndexableFields(Shape shape
-            )
+        public override Field[] CreateIndexableFields(Shape shape)
         {
             double distErr = SpatialArgs.CalcDistanceFromErrPct(shape, distErrPct, ctx);
             return CreateIndexableFields(shape, distErr);
         }
 
-        public virtual Field[] CreateIndexableFields(Shape shape
-            , double distErr)
+        public virtual Field[] CreateIndexableFields(Shape shape, double distErr)
         {
             int detailLevel = grid.GetLevelForDistance(distErr);
             IList<Cell> cells = grid.GetCells(shape, detailLevel, true, simplifyIndexedCells);
-            //intermediates cells
             //TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
             //  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
-            Field field = new Field(FieldName, new PrefixTreeStrategy.CellTokenStream(cells
-                .GetEnumerator()), FieldType);
+            Field field = new Field(FieldName, new CellTokenStream(cells.GetEnumerator()), FieldType);
             return new Field[] { field };
         }
 
@@ -224,27 +218,10 @@ namespace Lucene.Net.Spatial.Prefix
             }
         }
 
-        public ShapeFieldCacheProvider<Point> GetCacheProvider()
+        public override ValueSource MakeDistanceValueSource(Point queryPoint, double multiplier)
         {
-            PointPrefixTreeFieldCacheProvider p;
-            if (!provider.TryGetValue(FieldName, out p) || p == null)
-            {
-                lock (this)
-                {//double checked locking idiom is okay since provider is threadsafe
-                    if (!provider.ContainsKey(FieldName))
-                    {
-                        p = new PointPrefixTreeFieldCacheProvider(grid, FieldName, defaultFieldValuesArrayLen);
-                        provider[FieldName] = p;
-                    }
-                }
-            }
-            return p;
-        }
-
-        public override ValueSource MakeDistanceValueSource(Point queryPoint)
-        {
-            var p = (PointPrefixTreeFieldCacheProvider)GetCacheProvider();
-            return new ShapeFieldCacheDistanceValueSource(ctx, p, queryPoint);
+            var p = provider.GetOrAdd(FieldName, f => new PointPrefixTreeFieldCacheProvider(grid, FieldName, defaultFieldValuesArrayLen));
+            return new ShapeFieldCacheDistanceValueSource(ctx, p, queryPoint, multiplier);
         }
 
         public virtual SpatialPrefixTree Grid
