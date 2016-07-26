@@ -33,10 +33,9 @@ namespace Lucene.Net.Spatial.Prefix
     {
         private readonly bool hasIndexedLeaves;
 
-        public IntersectsPrefixTreeFilter(Shape queryShape, string
-                                                                fieldName, SpatialPrefixTree grid, int detailLevel,
-                                          int prefixGridScanLevel, bool
-                                                                       hasIndexedLeaves)
+        public IntersectsPrefixTreeFilter(Shape queryShape, string fieldName, 
+                                          SpatialPrefixTree grid, int detailLevel,
+                                          int prefixGridScanLevel, bool hasIndexedLeaves)
             : base(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel)
         {
             this.hasIndexedLeaves = hasIndexedLeaves;
@@ -48,8 +47,7 @@ namespace Lucene.Net.Spatial.Prefix
         }
 
         /// <exception cref="System.IO.IOException"></exception>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs
-            )
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
             return new _VisitorTemplate_55(this, context, acceptDocs, hasIndexedLeaves).GetDocIdSet
                 ();
@@ -62,9 +60,8 @@ namespace Lucene.Net.Spatial.Prefix
             private readonly IntersectsPrefixTreeFilter _enclosing;
             private FixedBitSet results;
 
-            public _VisitorTemplate_55(IntersectsPrefixTreeFilter _enclosing, AtomicReaderContext
-                                                                                  baseArg1, IBits baseArg2,
-                                       bool baseArg3)
+            public _VisitorTemplate_55(IntersectsPrefixTreeFilter _enclosing, AtomicReaderContext baseArg1, 
+                Bits baseArg2, bool baseArg3)
                 : base(_enclosing, baseArg1, baseArg2, baseArg3)
             {
                 this._enclosing = _enclosing;

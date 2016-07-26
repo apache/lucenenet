@@ -17,11 +17,10 @@
 
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Queries.Function;
+using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Function;
-using Lucene.Net.Search.Function.ValueSources;
 using Lucene.Net.Spatial.Queries;
-using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 
@@ -85,9 +84,15 @@ namespace Lucene.Net.Spatial
         /// <returns>Not null nor will it have null elements.</returns>
         public abstract Field[] CreateIndexableFields(Shape shape);
 
-        public Field CreateStoredField(Shape shape)
+        /// <summary>
+        /// See {@link #makeDistanceValueSource(com.spatial4j.core.shape.Point, double)} called with
+        /// a multiplier of 1.0 (i.e. units of degrees).
+        /// </summary>
+        /// <param name="queryPoint"></param>
+        /// <returns></returns>
+        public ValueSource MakeDistanceValueSource(Point queryPoint)
         {
-            return new Field(FieldName, ctx.ToString(shape), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
+            return MakeDistanceValueSource(queryPoint, 1.0);
         }
 
         /// <summary>
@@ -95,7 +100,7 @@ namespace Lucene.Net.Spatial
         /// indexed shape and {@code queryPoint}.  If there are multiple indexed shapes
         /// then the closest one is chosen.
         /// </summary>
-        public abstract ValueSource MakeDistanceValueSource(Point queryPoint);
+        public abstract ValueSource MakeDistanceValueSource(Point queryPoint, double multiplier);
 
         /// <summary>
         /// Make a (ConstantScore) Query based principally on {@link org.apache.lucene.spatial.query.SpatialOperation}

@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
         /// Validation method to determine whether a docid should be in the result set. </summary>
         /// <param name="docid"> docid to be tested </param>
         /// <returns> true if input docid should be in the result set, false otherwise. </returns>
-        protected internal abstract bool Match(int docid);
+        protected abstract bool Match(int docid);
 
         /// <summary>
         /// Implementation of the contract to build a DocIdSetIterator. </summary>

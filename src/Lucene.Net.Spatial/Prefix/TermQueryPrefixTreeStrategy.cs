@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using System.Collections.Generic;
+using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
@@ -31,7 +32,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// 	</see>
     /// of all the cells from
     /// <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetCells(Shape, int, bool, bool)
-    /// 	">Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetCells(Shape, int, bool, bool)
+    /// 	"SpatialPrefixTree.GetCells(Shape, int, bool, bool)
     /// 	</see>
     /// . It only supports the search of indexed Point shapes.
     /// <p/>

@@ -28,32 +28,27 @@ namespace Lucene.Net.Spatial.Prefix
     /// <see cref="Lucene.Net.Spatial.Util.ShapeFieldCacheProvider{T}">Lucene.Net.Spatial.Util.ShapeFieldCacheProvider&lt;T&gt;
     /// 	</see>
     /// designed for
-    /// <see cref="PrefixTreeStrategy">PrefixTreeStrategy</see>
-    /// s.
+    /// <see cref="PrefixTreeStrategy">PrefixTreeStrategy</see>s.
     /// Note, due to the fragmented representation of Shapes in these Strategies, this implementation
-    /// can only retrieve the central
-    /// <see cref="Point">Point</see>
-    /// of the original Shapes.
+    /// can only retrieve the central <see cref="Point">Point</see> of the original Shapes.
     /// </summary>
     /// <lucene.internal></lucene.internal>
     public class PointPrefixTreeFieldCacheProvider : ShapeFieldCacheProvider<Point>
     {
-        internal readonly SpatialPrefixTree grid;
+        internal readonly SpatialPrefixTree grid; //
 
-        public PointPrefixTreeFieldCacheProvider(SpatialPrefixTree grid, string shapeField
-            , int defaultSize)
+        public PointPrefixTreeFieldCacheProvider(SpatialPrefixTree grid, string shapeField, int defaultSize)
             : base(shapeField, defaultSize)
         {
-            //
             this.grid = grid;
         }
 
-        private Cell scanCell = null;
+        private Cell scanCell = null;//re-used in readShape to save GC
 
         //re-used in readShape to save GC
         protected internal override Point ReadShape(BytesRef term)
         {
-            scanCell = grid.GetCell(term.bytes.ToByteArray(), term.offset, term.length, scanCell);
+            scanCell = grid.GetCell(term.Bytes, term.Offset, term.Length, scanCell);
             if (scanCell.Level == grid.MaxLevels && !scanCell.IsLeaf())
             {
                 return scanCell.GetCenter();

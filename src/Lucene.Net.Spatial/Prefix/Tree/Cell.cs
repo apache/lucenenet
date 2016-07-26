@@ -118,7 +118,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             //bytes = Encoding.UTF8.GetBytes(token);
             BytesRef utf8Result = new BytesRef(token.Length);
             UnicodeUtil.UTF16toUTF8(token.ToCharArray(), 0, token.Length, utf8Result);
-            bytes = utf8Result.bytes.ToByteArray();
+            bytes = utf8Result.Bytes;
 
             b_off = 0;
             b_len = bytes.Length;
@@ -192,7 +192,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 //bytes = Encoding.UTF8.GetBytes(token);
                 BytesRef utf8Result = new BytesRef(token.Length);
                 UnicodeUtil.UTF16toUTF8(token.ToCharArray(), 0, token.Length, utf8Result);
-                bytes = utf8Result.bytes.ToByteArray();
+                bytes = utf8Result.Bytes;
                 b_off = 0;
                 b_len = bytes.Length;
             }
