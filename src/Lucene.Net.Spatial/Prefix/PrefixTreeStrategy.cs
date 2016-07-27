@@ -26,8 +26,8 @@ using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Queries.Function;
+using Lucene.Net.Spatial.Query;
 using Lucene.Net.Spatial.Util;
 using Lucene.Net.Support;
 using Spatial4n.Core.Shapes;
@@ -96,9 +96,7 @@ namespace Lucene.Net.Spatial.Prefix
             new ConcurrentDictionary<string, PointPrefixTreeFieldCacheProvider>();
 
         protected internal readonly bool simplifyIndexedCells;
-
         protected internal int defaultFieldValuesArrayLen = 2;
-
         protected internal double distErrPct = SpatialArgs.DEFAULT_DISTERRPCT;
 
         public PrefixTreeStrategy(SpatialPrefixTree grid, string fieldName, bool simplifyIndexedCells)
@@ -158,8 +156,10 @@ namespace Lucene.Net.Spatial.Prefix
         {
             int detailLevel = grid.GetLevelForDistance(distErr);
             IList<Cell> cells = grid.GetCells(shape, detailLevel, true, simplifyIndexedCells);
+
             //TODO is CellTokenStream supposed to be re-used somehow? see Uwe's comments:
             //  http://code.google.com/p/lucene-spatial-playground/issues/detail?id=4
+
             Field field = new Field(FieldName, new CellTokenStream(cells.GetEnumerator()), FieldType);
             return new Field[] { field };
         }

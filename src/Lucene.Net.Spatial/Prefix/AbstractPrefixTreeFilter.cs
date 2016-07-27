@@ -23,21 +23,19 @@ using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
 {
-    /// <summary>Base class for Lucene Filters on SpatialPrefixTree fields.</summary>
-    /// <remarks>Base class for Lucene Filters on SpatialPrefixTree fields.</remarks>
-    /// <lucene.experimental></lucene.experimental>
+    /// <summary>
+    /// Base class for Lucene Filters on SpatialPrefixTree fields.
+    /// @lucene.experimental
+    /// </summary>
     public abstract class AbstractPrefixTreeFilter : Filter
     {
-        protected internal readonly int detailLevel;
-        protected internal readonly string fieldName;
-
-        protected internal readonly SpatialPrefixTree grid;
         protected internal readonly Shape queryShape;
-
-        public AbstractPrefixTreeFilter(Shape queryShape, string
-                                                              fieldName, SpatialPrefixTree grid, int detailLevel)
+        protected internal readonly string fieldName;
+        protected internal readonly SpatialPrefixTree grid;//not in equals/hashCode since it's implied for a specific field
+        protected internal readonly int detailLevel;
+        
+        public AbstractPrefixTreeFilter(Shape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel)
         {
-            //not in equals/hashCode since it's implied for a specific field
             this.queryShape = queryShape;
             this.fieldName = fieldName;
             this.grid = grid;
@@ -82,32 +80,29 @@ namespace Lucene.Net.Spatial.Prefix
 
         /// <summary>
         /// Holds transient state and docid collecting utility methods as part of
-        /// traversing a
-        /// <see cref="TermsEnum">Lucene.Net.Index.TermsEnum</see>
-        /// .
+        /// traversing a <see cref="TermsEnum">Lucene.Net.Index.TermsEnum</see>.
         /// </summary>
         public abstract class BaseTermsEnumTraverser
         {
-            private readonly AbstractPrefixTreeFilter _enclosing;
-            protected internal readonly AtomicReaderContext context;
+            private readonly AbstractPrefixTreeFilter outerInstance;
+            protected readonly AtomicReaderContext context;
+            protected Bits acceptDocs;
+            protected readonly int maxDoc;
 
-            protected internal readonly int maxDoc;
-            protected internal Bits acceptDocs;
-
-            protected internal DocsEnum docsEnum;
-            protected internal TermsEnum termsEnum;
+            protected TermsEnum termsEnum;//remember to check for null in getDocIdSet
+            protected DocsEnum docsEnum;
+            
 
             /// <exception cref="System.IO.IOException"></exception>
-            public BaseTermsEnumTraverser(AbstractPrefixTreeFilter _enclosing, AtomicReaderContext
-                                                                                   context, Bits acceptDocs)
+            public BaseTermsEnumTraverser(AbstractPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs)
             {
-                this._enclosing = _enclosing;
-                //remember to check for null in getDocIdSet
+                this.outerInstance = outerInstance;
+                
                 this.context = context;
                 AtomicReader reader = context.AtomicReader;
                 this.acceptDocs = acceptDocs;
                 maxDoc = reader.MaxDoc;
-                Terms terms = reader.Terms(this._enclosing.fieldName);
+                Terms terms = reader.Terms(this.outerInstance.fieldName);
                 if (terms != null)
                 {
                     termsEnum = terms.Iterator(null);
@@ -115,12 +110,11 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <exception cref="System.IO.IOException"></exception>
-            protected internal virtual void CollectDocs(FixedBitSet bitSet)
+            protected virtual void CollectDocs(FixedBitSet bitSet)
             {
                 //WARN: keep this specialization in sync
                 Debug.Assert(termsEnum != null);
-                docsEnum = termsEnum.Docs(acceptDocs, docsEnum, DocsEnum.FLAG_NONE
-                    );
+                docsEnum = termsEnum.Docs(acceptDocs, docsEnum, DocsEnum.FLAG_NONE);
                 int docid;
                 while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {

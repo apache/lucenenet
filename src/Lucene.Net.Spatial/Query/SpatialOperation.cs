@@ -17,9 +17,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Spatial4n.Core.Exceptions;
 
-namespace Lucene.Net.Spatial.Queries
+namespace Lucene.Net.Spatial.Query
 {
     public class SpatialOperation
     {
@@ -83,7 +82,6 @@ namespace Lucene.Net.Spatial.Queries
         {
             return tst.Any(t => op == t);
         }
-
 
         // ================================================= Getters / Setters =============================================
 

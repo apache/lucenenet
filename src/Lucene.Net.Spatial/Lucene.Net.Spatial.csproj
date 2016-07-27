@@ -82,10 +82,11 @@
     <Compile Include="Prefix\Tree\SpatialPrefixTreeFactory.cs" />
     <Compile Include="Prefix\WithinPrefixTreeFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Queries\SpatialArgs.cs" />
-    <Compile Include="Queries\SpatialArgsParser.cs" />
-    <Compile Include="Queries\SpatialOperation.cs" />
-    <Compile Include="Queries\UnsupportedSpatialOperation.cs" />
+    <Compile Include="Query\SpatialArgs.cs" />
+    <Compile Include="Query\SpatialArgsParser.cs" />
+    <Compile Include="Query\SpatialOperation.cs" />
+    <Compile Include="Query\UnsupportedSpatialOperation.cs" />
+    <Compile Include="Serialized\SerializedDVStrategy.cs" />
     <Compile Include="SpatialStrategy.cs" />
     <Compile Include="Util\ShapeFieldCacheDistanceValueSource.cs" />
     <Compile Include="Util\CachingDoubleValueSource.cs" />

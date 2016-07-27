@@ -28,36 +28,27 @@ using Spatial4n.Core.Shapes;
 namespace Lucene.Net.Spatial.Prefix
 {
     /// <summary>
-    /// Traverses a
-    /// <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree">Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree
-    /// 	</see>
-    /// indexed field, using the template &
+    /// Traverses a <see cref="SpatialPrefixTree">SpatialPrefixTree</see> indexed field, using the template &
     /// visitor design patterns for subclasses to guide the traversal and collect
     /// matching documents.
     /// <p/>
-    /// Subclasses implement
-    /// <see cref="Lucene.Net.Search.Filter.GetDocIdSet(AtomicReaderContext, Bits)
-    /// 	">Lucene.Search.Filter.GetDocIdSet(AtomicReaderContext, Bits)
-    /// 	</see>
-    /// by instantiating a custom
-    /// <see cref="VisitorTemplate">VisitorTemplate</see>
+    /// Subclasses implement <see cref="Filter.GetDocIdSet(AtomicReaderContext, Bits)">Lucene.Search.Filter.GetDocIdSet(AtomicReaderContext, Bits)</see>
+    /// by instantiating a custom <see cref="VisitorTemplate">VisitorTemplate</see>
     /// subclass (i.e. an anonymous inner class) and implement the
     /// required methods.
+    /// @lucene.internal
     /// </summary>
-    /// <lucene.internal></lucene.internal>
     public abstract class AbstractVisitingPrefixTreeFilter : AbstractPrefixTreeFilter
     {
+        // Historical note: this code resulted from a refactoring of RecursivePrefixTreeFilter,
+        // which in turn came out of SOLR-2155
+
         protected internal readonly int prefixGridScanLevel;
 
-        public AbstractVisitingPrefixTreeFilter(Shape queryShape
-                                                , string fieldName, SpatialPrefixTree grid, int detailLevel,
-                                                int prefixGridScanLevel
-            )
+        public AbstractVisitingPrefixTreeFilter(Shape queryShape, string fieldName, SpatialPrefixTree grid, 
+                                                int detailLevel, int prefixGridScanLevel)
             : base(queryShape, fieldName, grid, detailLevel)
         {
-            //Historical note: this code resulted from a refactoring of RecursivePrefixTreeFilter,
-            // which in turn came out of SOLR-2155
-            //at least one less than grid.getMaxLevels()
             this.prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
             Debug.Assert(detailLevel <= grid.MaxLevels);
         }
@@ -66,9 +57,9 @@ namespace Lucene.Net.Spatial.Prefix
         {
             if (!base.Equals(o))
             {
-                return false;
+                return false;//checks getClass == o.getClass & instanceof
             }
-            //checks getClass == o.getClass & instanceof
+            
             var that = (AbstractVisitingPrefixTreeFilter)o;
             if (prefixGridScanLevel != that.prefixGridScanLevel)
             {
@@ -168,27 +159,20 @@ namespace Lucene.Net.Spatial.Prefix
         /// <lucene.internal></lucene.internal>
         public abstract class VisitorTemplate : BaseTermsEnumTraverser
         {
-            private readonly AbstractVisitingPrefixTreeFilter _enclosing;
+            private readonly AbstractVisitingPrefixTreeFilter outerInstance;
             private readonly BytesRef curVNodeTerm = new BytesRef();
-            protected internal readonly bool hasIndexedLeaves;
+            protected internal readonly bool hasIndexedLeaves;//if false then we can skip looking for them
 
-            private VNode curVNode;
-
-            private Cell scanCell;
-
-            private BytesRef thisTerm;
+            private VNode curVNode;//current pointer, derived from query shape
+            private BytesRef thisTerm; //the result of termsEnum.term()
+            private Cell scanCell;//curVNode.cell's term.
 
             /// <exception cref="System.IO.IOException"></exception>
-            public VisitorTemplate(AbstractVisitingPrefixTreeFilter _enclosing, AtomicReaderContext
-                                                                                    context, Bits acceptDocs,
+            public VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs,
                                    bool hasIndexedLeaves)
-                : base(_enclosing, context, acceptDocs)
+                : base(outerInstance, context, acceptDocs)
             {
-                this._enclosing = _enclosing;
-                //if false then we can skip looking for them
-                //current pointer, derived from query shape
-                //curVNode.cell's term.
-                //the result of termsEnum.term()
+                this.outerInstance = outerInstance;
                 this.hasIndexedLeaves = hasIndexedLeaves;
             }
 
@@ -207,7 +191,7 @@ namespace Lucene.Net.Spatial.Prefix
                 }
                 // all done
                 curVNode = new VNode(null);
-                curVNode.Reset(_enclosing.grid.WorldCell);
+                curVNode.Reset(outerInstance.grid.WorldCell);
                 Start();
                 AddIntersectingChildren();
                 while (thisTerm != null)
@@ -257,7 +241,7 @@ namespace Lucene.Net.Spatial.Prefix
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)
-                        Debug.Assert(!((AtomicReader)context.Reader).Terms(_enclosing.fieldName).Iterator(null).SeekExact(curVNodeTerm), "should be absent");
+                        Debug.Assert(!((AtomicReader)context.Reader).Terms(outerInstance.fieldName).Iterator(null).SeekExact(curVNodeTerm), "should be absent");
                     }
                     else
                     {
@@ -309,7 +293,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 Debug.Assert(thisTerm != null);
                 Cell cell = curVNode.cell;
-                if (cell.Level >= _enclosing.detailLevel)
+                if (cell.Level >= outerInstance.detailLevel)
                 {
                     throw new InvalidOperationException("Spatial logic error");
                 }
@@ -320,7 +304,7 @@ namespace Lucene.Net.Spatial.Prefix
                     // then add all of those docs
                     Debug.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm
                                      ));
-                    scanCell = _enclosing.grid.GetCell(thisTerm.Bytes, thisTerm.Offset
+                    scanCell = outerInstance.grid.GetCell(thisTerm.Bytes, thisTerm.Offset
                                                        , thisTerm.Length, scanCell);
                     if (scanCell.Level == cell.Level && scanCell.IsLeaf())
                     {
@@ -337,7 +321,7 @@ namespace Lucene.Net.Spatial.Prefix
                 // scan through terms beneath this cell.
                 // Scanning is a performance optimization trade-off.
                 //TODO use termsEnum.docFreq() as heuristic
-                bool scan = cell.Level >= _enclosing.prefixGridScanLevel;
+                bool scan = cell.Level >= outerInstance.prefixGridScanLevel;
                 //simple heuristic
                 if (!scan)
                 {
@@ -354,7 +338,7 @@ namespace Lucene.Net.Spatial.Prefix
                 else
                 {
                     //Scan (loop of termsEnum.next())
-                    Scan(_enclosing.detailLevel);
+                    Scan(outerInstance.detailLevel);
                 }
             }
 
@@ -370,7 +354,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// </summary>
             protected internal virtual IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
             {
-                return cell.GetSubCells(_enclosing.queryShape).GetEnumerator();
+                return cell.GetSubCells(outerInstance.queryShape).GetEnumerator();
             }
 
             /// <summary>
@@ -393,7 +377,7 @@ namespace Lucene.Net.Spatial.Prefix
                                             );
                     thisTerm = termsEnum.Next())
                 {
-                    scanCell = _enclosing.grid.GetCell(thisTerm.Bytes, thisTerm.Offset
+                    scanCell = outerInstance.grid.GetCell(thisTerm.Bytes, thisTerm.Offset
                                                        , thisTerm.Length, scanCell);
                     int termLevel = scanCell.Level;
                     if (termLevel > scanDetailLevel)

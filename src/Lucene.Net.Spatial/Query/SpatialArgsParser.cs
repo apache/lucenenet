@@ -18,11 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Support;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Io;
-using Spatial4n.Core.Shapes;
 
-namespace Lucene.Net.Spatial.Queries
+namespace Lucene.Net.Spatial.Query
 {
     public class SpatialArgsParser
     {
@@ -83,8 +82,12 @@ namespace Lucene.Net.Spatial.Queries
                 if (body.Length > 0)
                 {
                     Dictionary<String, String> aa = ParseMap(body);
-                    args.DistErrPct = ReadDouble(aa["distErrPct"]); aa.Remove(DIST_ERR_PCT);
-                    args.DistErr = ReadDouble(aa["distErr"]); aa.Remove(DIST_ERR);
+                    args.DistErrPct = ReadDouble(aa[DIST_ERR_PCT]);
+                    aa.Remove(DIST_ERR_PCT);
+
+                    args.DistErr = ReadDouble(aa[DIST_ERR]);
+                    aa.Remove(DIST_ERR);
+
                     if (aa.Count != 0)
                     {
                         throw new ArgumentException("unused parameters: " + aa);
@@ -116,11 +119,11 @@ namespace Lucene.Net.Spatial.Queries
         protected static Dictionary<String, String> ParseMap(String body)
         {
             var map = new Dictionary<String, String>();
-            int tokenPos = 0;
-            var st = body.Split(new[] { ' ', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-            while (tokenPos < st.Length)
+            StringTokenizer st = new StringTokenizer(body, " \n\t");
+
+            while (st.HasMoreTokens())
             {
-                String a = st[tokenPos++];
+                String a = st.NextToken();
                 int idx = a.IndexOf('=');
                 if (idx > 0)
                 {
@@ -133,6 +136,7 @@ namespace Lucene.Net.Spatial.Queries
                     map[a] = a;
                 }
             }
+
             return map;
         }
 

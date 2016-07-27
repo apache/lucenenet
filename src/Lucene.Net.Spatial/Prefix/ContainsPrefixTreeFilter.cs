@@ -16,13 +16,13 @@
  */
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Shapes;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
+using Lucene.Net.Spatial.Query;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Spatial.Prefix
@@ -59,14 +59,13 @@ namespace Lucene.Net.Spatial.Prefix
             private SpatialPrefixTree grid;
 
             /// <exception cref="System.IO.IOException"></exception>
-            public ContainsVisitor(ContainsPrefixTreeFilter enclosing, AtomicReaderContext context
-                , Bits acceptDocs)
-                : base(enclosing, context, acceptDocs)
+            public ContainsVisitor(ContainsPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs)
+                : base(outerInstance, context, acceptDocs)
             {
-                this.queryShape = enclosing.queryShape;
-                this.detailLevel = enclosing.detailLevel;
-                this.grid = enclosing.grid;
-                this.multiOverlappingIndexedShapes = enclosing.multiOverlappingIndexedShapes;
+                this.queryShape = outerInstance.queryShape;
+                this.detailLevel = outerInstance.detailLevel;
+                this.grid = outerInstance.grid;
+                this.multiOverlappingIndexedShapes = outerInstance.multiOverlappingIndexedShapes;
             }
 
             internal BytesRef termBytes = new BytesRef();
@@ -221,6 +220,11 @@ namespace Lucene.Net.Spatial.Prefix
                 intSet = new SentinelIntSet(size, -1);
             }
 
+            public bool Get(int index)
+            {
+                return intSet.Exists(index);
+            }
+
             public virtual void Set(int index)
             {
                 intSet.Put(index);
@@ -230,14 +234,9 @@ namespace Lucene.Net.Spatial.Prefix
                 }
             }
 
-            /// <summary>Largest docid.</summary>
-            /// <remarks>Largest docid.</remarks>
-            public int Length
+            int Bits.Length()
             {
-                get
-                {
-                    return maxInt;
-                }
+                return maxInt;
             }
 
             /// <summary>Number of docids.</summary>
@@ -248,11 +247,10 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <summary>NOTE: modifies and returns either "this" or "other"</summary>
-            public virtual ContainsPrefixTreeFilter.SmallDocSet Union(ContainsPrefixTreeFilter.SmallDocSet
-                 other)
+            public virtual SmallDocSet Union(SmallDocSet other)
             {
-                ContainsPrefixTreeFilter.SmallDocSet bigger;
-                ContainsPrefixTreeFilter.SmallDocSet smaller;
+                SmallDocSet bigger;
+                SmallDocSet smaller;
                 if (other.intSet.Size() > this.intSet.Size())
                 {
                     bigger = other;
@@ -275,19 +273,18 @@ namespace Lucene.Net.Spatial.Prefix
                 return bigger;
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
-            public Lucene.Net.Util.Bits Bits
+            public override Bits GetBits()
             {
-                get
-                {
-                    //if the # of docids is super small, return null since iteration is going
-                    // to be faster
-                    return Size() > 4 ? this : null;
-                }
+                //if the # of docids is super small, return null since iteration is going
+                // to be faster
+                return Size() > 4 ? this : null;
             }
 
             private sealed class _DocIdSetIterator_225 : DocIdSetIterator
             {
+                private readonly int size;
+                private readonly int[] docs;
+
                 public _DocIdSetIterator_225(int size, int[] docs)
                 {
                     this.size = size;
@@ -299,9 +296,9 @@ namespace Lucene.Net.Spatial.Prefix
 
                 public override int DocID()
                 {
-                    if (this.idx >= 0 && this.idx < size)
+                    if (idx >= 0 && idx < size)
                     {
-                        return docs[this.idx];
+                        return docs[idx];
                     }
                     else
                     {
@@ -312,11 +309,11 @@ namespace Lucene.Net.Spatial.Prefix
                 /// <exception cref="System.IO.IOException"></exception>
                 public override int NextDoc()
                 {
-                    if (++this.idx < size)
+                    if (++idx < size)
                     {
-                        return docs[this.idx];
+                        return docs[idx];
                     }
-                    return DocIdSetIterator.NO_MORE_DOCS;
+                    return NO_MORE_DOCS;
                 }
 
                 /// <exception cref="System.IO.IOException"></exception>
@@ -324,22 +321,13 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     //for this small set this is likely faster vs. a binary search
                     // into the sorted array
-                    return this.SlowAdvance(target);
+                    return SlowAdvance(target);
                 }
 
                 public override long Cost()
                 {
                     return size;
                 }
-
-                private readonly int size;
-
-                private readonly int[] docs;
-            }
-            //class SmallDocSet
-            public bool this[int index]
-            {
-                get { return intSet.Exists(index); }
             }
 
             public override DocIdSetIterator GetIterator()
@@ -364,16 +352,6 @@ namespace Lucene.Net.Spatial.Prefix
                 //sort them
                 Array.Sort(docs, 0, size);
                 return new _DocIdSetIterator_225(size, docs);
-            }
-
-            public bool Get(int index)
-            {
-                throw new NotImplementedException();
-            }
-
-            int Bits.Length()
-            {
-                throw new NotImplementedException();
             }
         }
     }

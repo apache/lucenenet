@@ -20,7 +20,7 @@ using System.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Query;
 using Lucene.Net.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
@@ -48,7 +48,11 @@ namespace Lucene.Net.Spatial.Prefix
     /// <lucene.experimental></lucene.experimental>
     public class WithinPrefixTreeFilter : AbstractVisitingPrefixTreeFilter
     {
-        private readonly Shape bufferedQueryShape;
+        /// TODO LUCENE-4869: implement faster algorithm based on filtering out false-positives of a
+        //  minimal query buffer by looking in a DocValues cache holding a representative
+        //  point of each disjoint component of a document's shape(s).
+
+        private readonly Shape bufferedQueryShape;//if null then the whole world
 
         /// <summary>
         /// See
@@ -60,16 +64,10 @@ namespace Lucene.Net.Spatial.Prefix
         /// where non-matching documents are looked for so they can be excluded. If
         /// -1 is used then the whole world is examined (a good default for correctness).
         /// </summary>
-        public WithinPrefixTreeFilter(Shape queryShape, string fieldName
-                                      , SpatialPrefixTree grid, int detailLevel, int prefixGridScanLevel,
-                                      double queryBuffer
-            )
+        public WithinPrefixTreeFilter(Shape queryShape, string fieldName, SpatialPrefixTree grid, 
+                                      int detailLevel, int prefixGridScanLevel, double queryBuffer)
             : base(queryShape, fieldName, grid, detailLevel, prefixGridScanLevel)
         {
-            //TODO LUCENE-4869: implement faster algorithm based on filtering out false-positives of a
-            //  minimal query buffer by looking in a DocValues cache holding a representative
-            //  point of each disjoint component of a document's shape(s).
-            //if null then the whole world
             if (queryBuffer == -1)
             {
                 bufferedQueryShape = null;
@@ -80,10 +78,10 @@ namespace Lucene.Net.Spatial.Prefix
             }
         }
 
-        /// <summary>Returns a new shape that is larger than shape by at distErr.</summary>
-        /// <remarks>Returns a new shape that is larger than shape by at distErr.</remarks>
-        protected internal virtual Shape BufferShape(Shape
-                                                         shape, double distErr)
+        /// <summary>
+        /// Returns a new shape that is larger than shape by at distErr
+        /// </summary>
+        protected virtual Shape BufferShape(Shape shape, double distErr)
         {
             //TODO move this generic code elsewhere?  Spatial4j?
             if (distErr <= 0)
@@ -149,8 +147,7 @@ namespace Lucene.Net.Spatial.Prefix
         }
 
         /// <exception cref="System.IO.IOException"></exception>
-        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs
-            )
+        public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
             return new _VisitorTemplate_121(this, context, acceptDocs, true).GetDocIdSet();
         }
@@ -159,18 +156,18 @@ namespace Lucene.Net.Spatial.Prefix
 
         private sealed class _VisitorTemplate_121 : VisitorTemplate
         {
-            private readonly WithinPrefixTreeFilter _enclosing;
+            private readonly WithinPrefixTreeFilter outerInstance;
             private FixedBitSet inside;
 
             private FixedBitSet outside;
 
             private SpatialRelation visitRelation;
 
-            public _VisitorTemplate_121(WithinPrefixTreeFilter _enclosing, AtomicReaderContext
-                                                                               baseArg1, Bits baseArg2, bool baseArg3)
-                : base(_enclosing, baseArg1, baseArg2, baseArg3)
+            public _VisitorTemplate_121(WithinPrefixTreeFilter outerInstance, AtomicReaderContext context, 
+                Bits acceptDocs, bool hasIndexedLeaves)
+                : base(outerInstance, context, acceptDocs, hasIndexedLeaves)
             {
-                this._enclosing = _enclosing;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override void Start()
@@ -188,7 +185,7 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal override IEnumerator<Cell> FindSubCellsToVisit(Cell cell)
             {
                 //use buffered query shape instead of orig.  Works with null too.
-                return cell.GetSubCells(_enclosing.bufferedQueryShape).GetEnumerator();
+                return cell.GetSubCells(outerInstance.bufferedQueryShape).GetEnumerator();
             }
 
             /// <exception cref="System.IO.IOException"></exception>
@@ -196,27 +193,21 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 //cell.relate is based on the bufferedQueryShape; we need to examine what
                 // the relation is against the queryShape
-                visitRelation = cell.GetShape().Relate(_enclosing.queryShape);
+                visitRelation = cell.GetShape().Relate(outerInstance.queryShape);
                 if (visitRelation == SpatialRelation.WITHIN)
                 {
                     CollectDocs(inside);
                     return false;
                 }
-                else
+                else if (visitRelation == SpatialRelation.DISJOINT)
                 {
-                    if (visitRelation == SpatialRelation.DISJOINT)
-                    {
-                        CollectDocs(outside);
-                        return false;
-                    }
-                    else
-                    {
-                        if (cell.Level == _enclosing.detailLevel)
-                        {
-                            CollectDocs(inside);
-                            return false;
-                        }
-                    }
+                    CollectDocs(outside);
+                    return false;
+                }
+                else if (cell.Level == outerInstance.detailLevel)
+                {
+                    CollectDocs(inside);
+                    return false;
                 }
                 return true;
             }
@@ -225,8 +216,8 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal override void VisitLeaf(Cell cell)
             {
                 //visitRelation is declared as a field, populated by visit() so we don't recompute it
-                Debug.Assert(_enclosing.detailLevel != cell.Level);
-                Debug.Assert(visitRelation == cell.GetShape().Relate(_enclosing.queryShape));
+                Debug.Assert(outerInstance.detailLevel != cell.Level);
+                Debug.Assert(visitRelation == cell.GetShape().Relate(outerInstance.queryShape));
                 if (AllCellsIntersectQuery(cell, visitRelation))
                 {
                     CollectDocs(inside);
@@ -249,9 +240,9 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (relate == SpatialRelation.NULL_VALUE)
                 {
-                    relate = cell.GetShape().Relate(_enclosing.queryShape);
+                    relate = cell.GetShape().Relate(outerInstance.queryShape);
                 }
-                if (cell.Level == _enclosing.detailLevel)
+                if (cell.Level == outerInstance.detailLevel)
                 {
                     return relate.Intersects();
                 }

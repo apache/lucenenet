@@ -45,7 +45,6 @@ namespace Lucene.Net.Spatial.Prefix
 
         private Cell scanCell = null;//re-used in readShape to save GC
 
-        //re-used in readShape to save GC
         protected internal override Point ReadShape(BytesRef term)
         {
             scanCell = grid.GetCell(term.Bytes, term.Offset, term.Length, scanCell);
