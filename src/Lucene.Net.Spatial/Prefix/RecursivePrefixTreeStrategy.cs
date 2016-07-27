@@ -18,7 +18,7 @@
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Query;
 using Spatial4n.Core.Shapes;
 
 namespace Lucene.Net.Spatial.Prefix
@@ -37,9 +37,8 @@ namespace Lucene.Net.Spatial.Prefix
     /// <lucene.experimental></lucene.experimental>
     public class RecursivePrefixTreeStrategy : PrefixTreeStrategy
     {
-        protected readonly SpatialPrefixTree grid;
         private int prefixGridScanLevel;
-
+        
         /** True if only indexed points shall be supported.  See
         *  {@link IntersectsPrefixTreeFilter#hasIndexedLeaves}. */
         protected bool pointsOnly = false;
@@ -50,7 +49,6 @@ namespace Lucene.Net.Spatial.Prefix
         public RecursivePrefixTreeStrategy(SpatialPrefixTree grid, string fieldName)
             : base(grid, fieldName, true) //simplify indexed cells
         {
-            this.grid = grid;
             prefixGridScanLevel = grid.MaxLevels - 4;//TODO this default constant is dependent on the prefix grid size
         }
 

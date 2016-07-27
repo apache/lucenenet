@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Query;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
 
@@ -65,7 +65,7 @@ namespace Lucene.Net.Spatial.Prefix
             int i = 0;
             foreach (Cell cell in cells)
             {
-                terms[i++] = new BytesRef(cell.TokenString);
+                terms[i++] = new BytesRef(cell.TokenString);//TODO use cell.getTokenBytes()
             }
             return new TermsFilter(FieldName, terms);
         }

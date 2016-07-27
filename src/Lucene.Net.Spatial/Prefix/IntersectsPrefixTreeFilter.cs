@@ -49,22 +49,20 @@ namespace Lucene.Net.Spatial.Prefix
         /// <exception cref="System.IO.IOException"></exception>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
         {
-            return new _VisitorTemplate_55(this, context, acceptDocs, hasIndexedLeaves).GetDocIdSet
-                ();
+            return new _VisitorTemplate_55(this, context, acceptDocs, hasIndexedLeaves).GetDocIdSet();
         }
 
         #region Nested type: _VisitorTemplate_55
 
         private sealed class _VisitorTemplate_55 : VisitorTemplate
         {
-            private readonly IntersectsPrefixTreeFilter _enclosing;
+            private readonly IntersectsPrefixTreeFilter outerInstance;
             private FixedBitSet results;
 
-            public _VisitorTemplate_55(IntersectsPrefixTreeFilter _enclosing, AtomicReaderContext baseArg1, 
-                Bits baseArg2, bool baseArg3)
-                : base(_enclosing, baseArg1, baseArg2, baseArg3)
+            public _VisitorTemplate_55(IntersectsPrefixTreeFilter outerInstance, AtomicReaderContext context, Bits acceptDocs, bool hasIndexedLeaves)
+                : base(outerInstance, context, acceptDocs, hasIndexedLeaves)
             {
-                this._enclosing = _enclosing;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override void Start()
@@ -80,8 +78,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="System.IO.IOException"></exception>
             protected internal override bool Visit(Cell cell)
             {
-                if (cell.GetShapeRel() == SpatialRelation.WITHIN || cell.Level == _enclosing
-                                                                                      .detailLevel)
+                if (cell.GetShapeRel() == SpatialRelation.WITHIN || cell.Level == outerInstance.detailLevel)
                 {
                     CollectDocs(results);
                     return false;
@@ -98,19 +95,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="System.IO.IOException"></exception>
             protected internal override void VisitScanned(Cell cell)
             {
-                Shape cShape;
-                //if this cell represents a point, use the cell center vs the box
-                // TODO this behavior is debatable; might want to be configurable
-                // (points never have isLeaf())
-                if (cell.Level == _enclosing.grid.MaxLevels && !cell.IsLeaf())
-                {
-                    cShape = cell.GetCenter();
-                }
-                else
-                {
-                    cShape = cell.GetShape();
-                }
-                if (_enclosing.queryShape.Relate(cShape).Intersects())
+                if (outerInstance.queryShape.Relate(cell.GetShape()).Intersects())
                 {
                     CollectDocs(results);
                 }

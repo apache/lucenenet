@@ -20,7 +20,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
-using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Query;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 
