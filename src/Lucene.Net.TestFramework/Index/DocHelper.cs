@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
 
         private static void Add(IDictionary<string, IndexableField> map, IndexableField field)
         {
-            map[field.Name()] = field;
+            map[field.Name] = field;
         }
 
         /// <summary>

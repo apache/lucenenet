@@ -2004,9 +2004,9 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            public string Name()
+            public string Name
             {
-                return "foo";
+                get { return "foo"; }
             }
 
             public IndexableFieldType FieldType()

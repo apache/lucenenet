@@ -102,7 +102,7 @@ namespace Lucene.Net.Codecs.SimpleText
             NewLine();
 
             Write(NAME);
-            Write(field.Name());
+            Write(field.Name);
             NewLine();
 
             Write(TYPE);
@@ -166,7 +166,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else if (field.StringValue == null)
                 {
-                    throw new ArgumentException("field " + field.Name() +
+                    throw new ArgumentException("field " + field.Name +
                                                        " is stored but does not have binaryValue, stringValue nor numericValue");
                 }
                 else

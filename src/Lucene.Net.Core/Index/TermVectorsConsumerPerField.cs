@@ -89,22 +89,22 @@ namespace Lucene.Net.Index
                         else if (field.FieldType().StoreTermVectorPayloads)
                         {
                             // TODO: move this check somewhere else, and impl the other missing ones
-                            throw new System.ArgumentException("cannot index term vector payloads without term vector positions (field=\"" + field.Name() + "\")");
+                            throw new System.ArgumentException("cannot index term vector payloads without term vector positions (field=\"" + field.Name + "\")");
                         }
                     }
                     else
                     {
                         if (field.FieldType().StoreTermVectorOffsets)
                         {
-                            throw new System.ArgumentException("cannot index term vector offsets when term vectors are not indexed (field=\"" + field.Name() + "\")");
+                            throw new System.ArgumentException("cannot index term vector offsets when term vectors are not indexed (field=\"" + field.Name + "\")");
                         }
                         if (field.FieldType().StoreTermVectorPositions)
                         {
-                            throw new System.ArgumentException("cannot index term vector positions when term vectors are not indexed (field=\"" + field.Name() + "\")");
+                            throw new System.ArgumentException("cannot index term vector positions when term vectors are not indexed (field=\"" + field.Name + "\")");
                         }
                         if (field.FieldType().StoreTermVectorPayloads)
                         {
-                            throw new System.ArgumentException("cannot index term vector payloads when term vectors are not indexed (field=\"" + field.Name() + "\")");
+                            throw new System.ArgumentException("cannot index term vector payloads when term vectors are not indexed (field=\"" + field.Name + "\")");
                         }
                     }
                 }
@@ -112,19 +112,19 @@ namespace Lucene.Net.Index
                 {
                     if (field.FieldType().StoreTermVectors)
                     {
-                        throw new System.ArgumentException("cannot index term vectors when field is not indexed (field=\"" + field.Name() + "\")");
+                        throw new System.ArgumentException("cannot index term vectors when field is not indexed (field=\"" + field.Name + "\")");
                     }
                     if (field.FieldType().StoreTermVectorOffsets)
                     {
-                        throw new System.ArgumentException("cannot index term vector offsets when field is not indexed (field=\"" + field.Name() + "\")");
+                        throw new System.ArgumentException("cannot index term vector offsets when field is not indexed (field=\"" + field.Name + "\")");
                     }
                     if (field.FieldType().StoreTermVectorPositions)
                     {
-                        throw new System.ArgumentException("cannot index term vector positions when field is not indexed (field=\"" + field.Name() + "\")");
+                        throw new System.ArgumentException("cannot index term vector positions when field is not indexed (field=\"" + field.Name + "\")");
                     }
                     if (field.FieldType().StoreTermVectorPayloads)
                     {
-                        throw new System.ArgumentException("cannot index term vector payloads when field is not indexed (field=\"" + field.Name() + "\")");
+                        throw new System.ArgumentException("cannot index term vector payloads when field is not indexed (field=\"" + field.Name + "\")");
                     }
                 }
             }

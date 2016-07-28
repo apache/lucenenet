@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
             foreach (IndexableField field in fields)
             {
                 Assert.IsTrue(field != null);
-                Assert.IsTrue(DocHelper.NameValues.ContainsKey(field.Name()));
+                Assert.IsTrue(DocHelper.NameValues.ContainsKey(field.Name));
             }
         }
 
@@ -193,12 +193,12 @@ namespace Lucene.Net.Index
                 IndexableField f = DocHelper.Fields[i];
                 if (f.FieldType().Indexed)
                 {
-                    Assert.AreEqual(reader.GetNormValues(f.Name()) != null, !f.FieldType().OmitNorms);
-                    Assert.AreEqual(reader.GetNormValues(f.Name()) != null, !DocHelper.NoNorms.ContainsKey(f.Name()));
-                    if (reader.GetNormValues(f.Name()) == null)
+                    Assert.AreEqual(reader.GetNormValues(f.Name) != null, !f.FieldType().OmitNorms);
+                    Assert.AreEqual(reader.GetNormValues(f.Name) != null, !DocHelper.NoNorms.ContainsKey(f.Name));
+                    if (reader.GetNormValues(f.Name) == null)
                     {
                         // test for norms of null
-                        NumericDocValues norms = MultiDocValues.GetNormValues(reader, f.Name());
+                        NumericDocValues norms = MultiDocValues.GetNormValues(reader, f.Name);
                         Assert.IsNull(norms);
                     }
                 }

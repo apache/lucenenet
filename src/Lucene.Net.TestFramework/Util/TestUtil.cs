@@ -1000,15 +1000,15 @@ namespace Lucene.Net.Util
                     switch (dvType)
                     {
                         case DocValuesType_e.NUMERIC:
-                            field2 = new NumericDocValuesField(field1.Name(), (long)field1.NumericValue);
+                            field2 = new NumericDocValuesField(field1.Name, (long)field1.NumericValue);
                             break;
 
                         case DocValuesType_e.BINARY:
-                            field2 = new BinaryDocValuesField(field1.Name(), field1.BinaryValue());
+                            field2 = new BinaryDocValuesField(field1.Name, field1.BinaryValue());
                             break;
 
                         case DocValuesType_e.SORTED:
-                            field2 = new SortedDocValuesField(field1.Name(), field1.BinaryValue());
+                            field2 = new SortedDocValuesField(field1.Name, field1.BinaryValue());
                             break;
 
                         default:
@@ -1020,19 +1020,19 @@ namespace Lucene.Net.Util
                     switch (numType)
                     {
                         case NumericType.INT:
-                            field2 = new IntField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new IntField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType());
                             break;
 
                         case NumericType.FLOAT:
-                            field2 = new FloatField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new FloatField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType());
                             break;
 
                         case NumericType.LONG:
-                            field2 = new LongField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new LongField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType());
                             break;
 
                         case NumericType.DOUBLE:
-                            field2 = new DoubleField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new DoubleField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType());
                             break;
 
                         default:
@@ -1041,7 +1041,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    field2 = new Field(field1.Name(), field1.StringValue, (FieldType)field1.FieldType());
+                    field2 = new Field(field1.Name, field1.StringValue, (FieldType)field1.FieldType());
                 }
                 doc2.Add(field2);
             }

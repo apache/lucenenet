@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
             DocHelper.SetupDoc(TestDoc);
             foreach (IndexableField field in TestDoc)
             {
-                FieldInfos.AddOrUpdate(field.Name(), field.FieldType());
+                FieldInfos.AddOrUpdate(field.Name, field.FieldType());
             }
             Dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy());
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
             reader.Document(0, visitor);
             IList<IndexableField> fields = visitor.Document.Fields;
             Assert.AreEqual(1, fields.Count);
-            Assert.AreEqual(DocHelper.TEXT_FIELD_3_KEY, fields[0].Name());
+            Assert.AreEqual(DocHelper.TEXT_FIELD_3_KEY, fields[0].Name);
             reader.Dispose();
         }
 

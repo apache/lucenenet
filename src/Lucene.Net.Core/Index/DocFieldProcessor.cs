@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
 
             foreach (IndexableField field in DocState.Doc)
             {
-                string fieldName = field.Name();
+                string fieldName = field.Name;
 
                 // Make sure we have a PerField allocated
                 int hashPos = fieldName.GetHashCode() & HashMask;

@@ -145,7 +145,7 @@ namespace Lucene.Net.Codecs
             {
                 if (field.FieldType().Stored)
                 {
-                    WriteField(fieldInfos.FieldInfo(field.Name()), field);
+                    WriteField(fieldInfos.FieldInfo(field.Name), field);
                 }
             }
 

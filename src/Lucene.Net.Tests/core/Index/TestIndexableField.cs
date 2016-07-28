@@ -152,9 +152,9 @@ namespace Lucene.Net.Index
                 this.Counter = counter;
             }
 
-            public string Name()
+            public string Name
             {
-                return "f" + Counter;
+                get { return "f" + Counter; }
             }
 
             public float GetBoost()
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
 
             public TokenStream GetTokenStream(Analyzer analyzer)
             {
-                return ReaderValue != null ? analyzer.TokenStream(Name(), ReaderValue) : analyzer.TokenStream(Name(), new StringReader(StringValue));
+                return ReaderValue != null ? analyzer.TokenStream(Name, ReaderValue) : analyzer.TokenStream(Name, new StringReader(StringValue));
             }
         }
 

@@ -620,7 +620,7 @@ namespace Lucene.Net.Index
                         Field curField1 = (Field)itField1.Current;
                         itField2.MoveNext();
                         Field curField2 = (Field)itField2.Current;
-                        Assert.AreEqual(curField1.Name(), curField2.Name(), "Different fields names for doc " + i + ".");
+                        Assert.AreEqual(curField1.Name, curField2.Name, "Different fields names for doc " + i + ".");
                         Assert.AreEqual(curField1.StringValue, curField2.StringValue, "Different field values for doc " + i + ".");
                     }
                 }

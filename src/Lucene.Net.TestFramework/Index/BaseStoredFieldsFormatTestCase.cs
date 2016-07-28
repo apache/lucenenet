@@ -208,17 +208,17 @@ namespace Lucene.Net.Index
             IEnumerator<IndexableField> it = doc2.Fields.GetEnumerator();
             Assert.IsTrue(it.MoveNext());
             Field f = (Field)it.Current;
-            Assert.AreEqual(f.Name(), "zzz");
+            Assert.AreEqual(f.Name, "zzz");
             Assert.AreEqual(f.StringValue, "a b c");
 
             Assert.IsTrue(it.MoveNext());
             f = (Field)it.Current;
-            Assert.AreEqual(f.Name(), "aaa");
+            Assert.AreEqual(f.Name, "aaa");
             Assert.AreEqual(f.StringValue, "a b c");
 
             Assert.IsTrue(it.MoveNext());
             f = (Field)it.Current;
-            Assert.AreEqual(f.Name(), "zzz");
+            Assert.AreEqual(f.Name, "zzz");
             Assert.AreEqual(f.StringValue, "1 2 3");
             Assert.IsFalse(it.MoveNext());
             r.Dispose();
@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
             int docID = Random().Next(100);
             foreach (Field fld in fields)
             {
-                string fldName = fld.Name();
+                string fldName = fld.Name;
                 Document sDoc = reader.Document(docID, Collections.Singleton(fldName));
                 IndexableField sField = sDoc.GetField(fldName);
                 if (typeof(Field) == fld.GetType())

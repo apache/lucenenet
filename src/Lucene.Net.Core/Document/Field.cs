@@ -480,9 +480,9 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public string Name()
+        public string Name
         {
-            return Name_Renamed;
+            get { return Name_Renamed; }
         }
 
         /// <summary>
@@ -640,12 +640,12 @@ namespace Lucene.Net.Documents
             }
             else if (ReaderValue != null)
             {
-                return analyzer.TokenStream(Name(), ReaderValue);
+                return analyzer.TokenStream(Name, ReaderValue);
             }
             else if (StringValue != null)
             {
                 TextReader sr = new StringReader(StringValue);
-                return analyzer.TokenStream(Name(), sr);
+                return analyzer.TokenStream(Name, sr);
             }
 
             throw new System.ArgumentException("Field must have either TokenStream, String, Reader or Number value; got " + this);

@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Field name </summary>
-        string Name();
+        string Name { get; }
 
         /// <summary>
         /// <seealso cref="IndexableFieldType"/> describing the properties
