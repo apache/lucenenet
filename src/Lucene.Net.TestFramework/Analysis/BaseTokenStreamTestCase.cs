@@ -769,7 +769,7 @@ namespace Lucene.Net.Analysis
                             if (random.Next(7) == 0)
                             {
                                 // pile up a multivalued field
-                                var ft = (FieldType)field.FieldType();
+                                var ft = (FieldType)field.FieldType;
                                 currentField = new Field("dummy", bogus, ft);
                                 doc.Add(currentField);
                             }

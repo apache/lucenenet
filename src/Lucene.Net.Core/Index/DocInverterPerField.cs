@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < count; i++)
             {
                 IndexableField field = fields[i];
-                IndexableFieldType fieldType = field.FieldType();
+                IndexableFieldType fieldType = field.FieldType;
 
                 // TODO FI: this should be "genericized" to querying
                 // consumer if it wants to see this particular field

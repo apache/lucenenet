@@ -571,18 +571,18 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns the <seealso cref="FieldType"/> for this field. </summary>
-        public IndexableFieldType FieldType()
+        public IndexableFieldType FieldType
         {
-            return Type;
+            get { return Type; }
         }
 
         public TokenStream GetTokenStream(Analyzer analyzer)
         {
-            if (!((FieldType)FieldType()).Indexed)
+            if (!((FieldType)FieldType).Indexed)
             {
                 return null;
             }
-            FieldType.NumericType? numericType = ((FieldType)FieldType()).NumericTypeValue;
+            FieldType.NumericType? numericType = ((FieldType)FieldType).NumericTypeValue;
             if (numericType != null)
             {
                 if (!(InternalTokenStream is NumericTokenStream))
@@ -618,7 +618,7 @@ namespace Lucene.Net.Documents
                 return InternalTokenStream;
             }
 
-            if (!((FieldType)FieldType()).Tokenized)
+            if (!((FieldType)FieldType).Tokenized)
             {
                 if (StringValue == null)
                 {

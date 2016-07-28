@@ -357,8 +357,8 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             IndexReader r = w.Reader;
             w.Dispose();
-            Assert.IsFalse(r.Document(0).GetField("field").FieldType().Indexed);
-            Assert.IsTrue(r.Document(0).GetField("field2").FieldType().Indexed);
+            Assert.IsFalse(r.Document(0).GetField("field").FieldType.Indexed);
+            Assert.IsTrue(r.Document(0).GetField("field2").FieldType.Indexed);
             r.Dispose();
             dir.Dispose();
         }

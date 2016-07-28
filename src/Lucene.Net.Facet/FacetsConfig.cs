@@ -290,7 +290,7 @@ namespace Lucene.Net.Facet
 
             foreach (IndexableField field in doc.Fields)
             {
-                if (field.FieldType() == FacetField.TYPE)
+                if (field.FieldType == FacetField.TYPE)
                 {
                     FacetField facetField = (FacetField)field;
                     FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.dim);
@@ -308,7 +308,7 @@ namespace Lucene.Net.Facet
                     fields.Add(facetField);
                 }
 
-                if (field.FieldType() == SortedSetDocValuesFacetField.TYPE)
+                if (field.FieldType == SortedSetDocValuesFacetField.TYPE)
                 {
                     var facetField = (SortedSetDocValuesFacetField)field;
                     FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.Dim);
@@ -326,7 +326,7 @@ namespace Lucene.Net.Facet
                     fields.Add(facetField);
                 }
 
-                if (field.FieldType() == AssociationFacetField.TYPE)
+                if (field.FieldType == AssociationFacetField.TYPE)
                 {
                     AssociationFacetField facetField = (AssociationFacetField)field;
                     FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.dim);
@@ -390,7 +390,7 @@ namespace Lucene.Net.Facet
 
             foreach (IndexableField field in doc.Fields)
             {
-                IndexableFieldType ft = field.FieldType();
+                IndexableFieldType ft = field.FieldType;
                 if (ft != FacetField.TYPE && ft != SortedSetDocValuesFacetField.TYPE && ft != AssociationFacetField.TYPE)
                 {
                     result.Add(field);

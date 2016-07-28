@@ -215,9 +215,9 @@ namespace Lucene.Net.Index
                 get { return null; }
             }
 
-            public IndexableFieldType FieldType()
+            public IndexableFieldType FieldType
             {
-                return fieldType;
+                get { return fieldType; }
             }
 
             public TokenStream GetTokenStream(Analyzer analyzer)

@@ -993,8 +993,8 @@ namespace Lucene.Net.Util
             {
                 Field field1 = (Field)f;
                 Field field2;
-                DocValuesType_e? dvType = field1.FieldType().DocValueType;
-                NumericType? numType = field1.FieldType().NumericTypeValue;
+                DocValuesType_e? dvType = field1.FieldType.DocValueType;
+                NumericType? numType = field1.FieldType.NumericTypeValue;
                 if (dvType != null)
                 {
                     switch (dvType)
@@ -1020,19 +1020,19 @@ namespace Lucene.Net.Util
                     switch (numType)
                     {
                         case NumericType.INT:
-                            field2 = new IntField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new IntField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType);
                             break;
 
                         case NumericType.FLOAT:
-                            field2 = new FloatField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new FloatField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType);
                             break;
 
                         case NumericType.LONG:
-                            field2 = new LongField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new LongField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType);
                             break;
 
                         case NumericType.DOUBLE:
-                            field2 = new DoubleField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType());
+                            field2 = new DoubleField(field1.Name, (int)field1.NumericValue, (FieldType)field1.FieldType);
                             break;
 
                         default:
@@ -1041,7 +1041,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    field2 = new Field(field1.Name, field1.StringValue, (FieldType)field1.FieldType());
+                    field2 = new Field(field1.Name, field1.StringValue, (FieldType)field1.FieldType);
                 }
                 doc2.Add(field2);
             }

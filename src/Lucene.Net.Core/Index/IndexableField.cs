@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexableFieldType"/> describing the properties
         /// of this field.
         /// </summary>
-        IndexableFieldType FieldType();
+        IndexableFieldType FieldType { get; }
 
         /// <summary>
         /// Returns the field's index-time boost.
