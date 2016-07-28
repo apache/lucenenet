@@ -681,9 +681,9 @@ namespace Lucene.Net.Index
             {
                 IndexableField f1 = ff1[i];
                 IndexableField f2 = ff2[i];
-                if (f1.BinaryValue() != null)
+                if (f1.BinaryValue != null)
                 {
-                    Debug.Assert(f2.BinaryValue() != null);
+                    Debug.Assert(f2.BinaryValue != null);
                 }
                 else
                 {

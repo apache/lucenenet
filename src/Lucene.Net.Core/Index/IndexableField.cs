@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Non-null if this field has a binary value </summary>
-        BytesRef BinaryValue();
+        BytesRef BinaryValue { get; }
 
         /// <summary>
         /// Non-null if this field has a string value </summary>

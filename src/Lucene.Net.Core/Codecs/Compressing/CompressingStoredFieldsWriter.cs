@@ -316,7 +316,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
             else
             {
-                bytes = field.BinaryValue();
+                bytes = field.BinaryValue;
                 if (bytes != null)
                 {
                     bits = BYTE_ARR;

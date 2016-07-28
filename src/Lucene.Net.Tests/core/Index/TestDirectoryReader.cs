@@ -389,8 +389,8 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(fields);
             Assert.AreEqual(1, fields.Length);
             IndexableField b1 = fields[0];
-            Assert.IsTrue(b1.BinaryValue() != null);
-            BytesRef bytesRef = b1.BinaryValue();
+            Assert.IsTrue(b1.BinaryValue != null);
+            BytesRef bytesRef = b1.BinaryValue;
             Assert.AreEqual(bin.Length, bytesRef.Length);
             for (int i = 0; i < bin.Length; i++)
             {
@@ -408,8 +408,8 @@ namespace Lucene.Net.Index
             Assert.IsNotNull(fields);
             Assert.AreEqual(1, fields.Length);
             b1 = fields[0];
-            Assert.IsTrue(b1.BinaryValue() != null);
-            bytesRef = b1.BinaryValue();
+            Assert.IsTrue(b1.BinaryValue != null);
+            bytesRef = b1.BinaryValue;
             Assert.AreEqual(bin.Length, bytesRef.Length);
             for (int i = 0; i < bin.Length; i++)
             {

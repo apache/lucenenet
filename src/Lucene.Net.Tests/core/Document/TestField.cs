@@ -211,7 +211,7 @@ namespace Lucene.Net.Document
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue());
+            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue);
         }
 
         [Test]
@@ -232,7 +232,7 @@ namespace Lucene.Net.Document
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue());
+            Assert.AreEqual(new BytesRef("baz"), field.BinaryValue);
         }
 
         [Test]
@@ -332,7 +332,7 @@ namespace Lucene.Net.Document
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(new BytesRef("baz"), field.BinaryValue());
+                Assert.AreEqual(new BytesRef("baz"), field.BinaryValue);
             }
         }
 

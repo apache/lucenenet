@@ -2227,7 +2227,7 @@ namespace Lucene.Net.Util
         public void AssertStoredFieldEquals(string info, IndexableField leftField, IndexableField rightField)
         {
             Assert.AreEqual(leftField.Name, rightField.Name, info);
-            Assert.AreEqual(leftField.BinaryValue(), rightField.BinaryValue(), info);
+            Assert.AreEqual(leftField.BinaryValue, rightField.BinaryValue, info);
             Assert.AreEqual(leftField.StringValue, rightField.StringValue, info);
             Assert.AreEqual(leftField.NumericValue, rightField.NumericValue, info);
             // TODO: should we check the FT at all?

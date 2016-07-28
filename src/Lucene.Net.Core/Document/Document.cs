@@ -134,7 +134,7 @@ namespace Lucene.Net.Documents
             {
                 if (field.Name.Equals(name))
                 {
-                    BytesRef bytes = field.BinaryValue();
+                    BytesRef bytes = field.BinaryValue;
 
                     if (bytes != null)
                     {
@@ -160,7 +160,7 @@ namespace Lucene.Net.Documents
             {
                 if (field.Name.Equals(name))
                 {
-                    BytesRef bytes = field.BinaryValue();
+                    BytesRef bytes = field.BinaryValue;
                     if (bytes != null)
                     {
                         return bytes;

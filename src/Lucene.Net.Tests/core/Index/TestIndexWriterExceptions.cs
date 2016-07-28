@@ -2019,9 +2019,9 @@ namespace Lucene.Net.Index
                 get { return 5f; }
             }
 
-            public BytesRef BinaryValue()
+            public BytesRef BinaryValue
             {
-                return null;
+                get { return null; }
             }
 
             public string StringValue

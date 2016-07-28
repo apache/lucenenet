@@ -1004,11 +1004,11 @@ namespace Lucene.Net.Util
                             break;
 
                         case DocValuesType_e.BINARY:
-                            field2 = new BinaryDocValuesField(field1.Name, field1.BinaryValue());
+                            field2 = new BinaryDocValuesField(field1.Name, field1.BinaryValue);
                             break;
 
                         case DocValuesType_e.SORTED:
-                            field2 = new SortedDocValuesField(field1.Name, field1.BinaryValue());
+                            field2 = new SortedDocValuesField(field1.Name, field1.BinaryValue);
                             break;
 
                         default:

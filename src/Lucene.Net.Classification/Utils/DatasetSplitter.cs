@@ -99,9 +99,9 @@ namespace Lucene.Net.Classification.Utils
                             {
                                 doc.Add(new Field(storableField.Name, storableField.ReaderValue, ft));
                             }
-                            else if (storableField.BinaryValue() != null)
+                            else if (storableField.BinaryValue != null)
                             {
-                                doc.Add(new Field(storableField.Name, storableField.BinaryValue(), ft));
+                                doc.Add(new Field(storableField.Name, storableField.BinaryValue, ft));
                             }
                             else if (storableField.StringValue != null)
                             {

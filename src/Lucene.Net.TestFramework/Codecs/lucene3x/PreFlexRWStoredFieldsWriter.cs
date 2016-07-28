@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                bytes = field.BinaryValue();
+                bytes = field.BinaryValue;
                 if (bytes != null)
                 {
                     bits |= Lucene3xStoredFieldsReader.FIELD_IS_BINARY;

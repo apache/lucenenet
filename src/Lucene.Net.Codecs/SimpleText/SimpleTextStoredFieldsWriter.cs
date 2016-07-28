@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
             else
             {
-                BytesRef bytes = field.BinaryValue();
+                BytesRef bytes = field.BinaryValue;
                 if (bytes != null)
                 {
                     Write(TYPE_BINARY);

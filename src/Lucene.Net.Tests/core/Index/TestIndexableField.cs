@@ -162,20 +162,23 @@ namespace Lucene.Net.Index
                 get { return 1.0f + (float)Random().NextDouble(); }
             }
 
-            public BytesRef BinaryValue()
+            public BytesRef BinaryValue
             {
-                if ((Counter % 10) == 3)
+                get
                 {
-                    var bytes = new byte[10];
-                    for (int idx = 0; idx < bytes.Length; idx++)
+                    if ((Counter % 10) == 3)
                     {
-                        bytes[idx] = (byte)(Counter + idx);
+                        var bytes = new byte[10];
+                        for (int idx = 0; idx < bytes.Length; idx++)
+                        {
+                            bytes[idx] = (byte)(Counter + idx);
+                        }
+                        return new BytesRef(bytes, 0, bytes.Length);
                     }
-                    return new BytesRef(bytes, 0, bytes.Length);
-                }
-                else
-                {
-                    return null;
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
 
@@ -302,7 +305,7 @@ namespace Lucene.Net.Index
                         if (binary)
                         {
                             Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
-                            BytesRef b = f.BinaryValue();
+                            BytesRef b = f.BinaryValue;
                             Assert.IsNotNull(b);
                             Assert.AreEqual(10, b.Length);
                             for (int idx = 0; idx < 10; idx++)

@@ -533,15 +533,18 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public BytesRef BinaryValue()
+        public BytesRef BinaryValue
         {
-            if (FieldsData is BytesRef)
+            get
             {
-                return (BytesRef)FieldsData;
-            }
-            else
-            {
-                return null;
+                if (FieldsData is BytesRef)
+                {
+                    return (BytesRef)FieldsData;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 

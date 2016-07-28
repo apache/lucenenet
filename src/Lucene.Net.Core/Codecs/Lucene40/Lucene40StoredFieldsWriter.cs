@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             else
             {
-                bytes = field.BinaryValue();
+                bytes = field.BinaryValue;
                 if (bytes != null)
                 {
                     bits |= FIELD_IS_BINARY;
