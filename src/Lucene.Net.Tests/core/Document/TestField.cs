@@ -280,7 +280,7 @@ namespace Lucene.Net.Document
                 field.TokenStream = new CannedTokenStream(new Token("foo", 0, 3));
 
                 Assert.AreEqual("baz", field.StringValue);
-                Assert.AreEqual(5f, field.GetBoost(), 0f);
+                Assert.AreEqual(5f, field.Boost, 0f);
             }
         }
 
@@ -303,7 +303,7 @@ namespace Lucene.Net.Document
             field.TokenStream = new CannedTokenStream(new Token("foo", 0, 3));
 
             Assert.IsNotNull(field.ReaderValue);
-            Assert.AreEqual(5f, field.GetBoost(), 0f);
+            Assert.AreEqual(5f, field.Boost, 0f);
         }
 
         /* TODO: this is pretty expert and crazy

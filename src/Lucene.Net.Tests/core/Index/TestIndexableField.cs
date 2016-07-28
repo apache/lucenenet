@@ -157,9 +157,9 @@ namespace Lucene.Net.Index
                 get { return "f" + Counter; }
             }
 
-            public float GetBoost()
+            public float Boost
             {
-                return 1.0f + (float)Random().NextDouble();
+                get { return 1.0f + (float)Random().NextDouble(); }
             }
 
             public BytesRef BinaryValue()

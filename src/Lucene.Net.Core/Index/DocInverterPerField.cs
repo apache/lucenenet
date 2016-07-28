@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                     bool analyzed = fieldType.Tokenized && DocState.Analyzer != null;
 
                     // if the field omits norms, the boost cannot be indexed.
-                    if (fieldType.OmitNorms && field.GetBoost() != 1.0f)
+                    if (fieldType.OmitNorms && field.Boost != 1.0f)
                     {
                         throw new System.NotSupportedException("You cannot set an index-time boost: norms are omitted for field '" + field.Name + "'");
                     }
@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
                     }
 
                     FieldState.Offset_Renamed += analyzed ? DocState.Analyzer.GetOffsetGap(fieldInfo.Name) : 0;
-                    FieldState.Boost_Renamed *= field.GetBoost();
+                    FieldState.Boost_Renamed *= field.Boost;
                 }
 
                 // LUCENE-2387: don't hang onto the field, so GC can

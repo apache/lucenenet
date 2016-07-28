@@ -486,22 +486,17 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// {@inheritDoc}
-        /// <p>
-        /// The default value is <code>1.0f</code> (no boost). </summary>
-        /// <seealso> cref= #setBoost(float) </seealso>
-        public float GetBoost()
-        {
-            return Boost_Renamed;
-        }
-
-        /// <summary>
-        /// Sets the boost factor on this field. </summary>
+        /// Gets or sets the boost factor on this field. </summary>
+        /// <remarks>The default value is <code>1.0f</code> (no boost).</remarks>
         /// <exception cref="IllegalArgumentException"> if this field is not indexed,
         ///         or if it omits norms. </exception>
         /// <seealso> cref= #boost() </seealso>
         public virtual float Boost
         {
+            get
+            {
+                return Boost_Renamed;
+            }
             set
             {
                 if (value != 1.0f)

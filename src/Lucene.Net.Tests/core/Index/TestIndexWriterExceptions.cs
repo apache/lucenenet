@@ -2014,9 +2014,9 @@ namespace Lucene.Net.Index
                 get { return StringField.TYPE_NOT_STORED; }
             }
 
-            public float GetBoost()
+            public float Boost
             {
-                return 5f;
+                get { return 5f; }
             }
 
             public BytesRef BinaryValue()

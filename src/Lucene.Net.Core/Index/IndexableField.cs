@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <seealso cref= Similarity#computeNorm(FieldInvertState) </seealso>
         /// <seealso cref= DefaultSimilarity#encodeNormValue(float) </seealso>
-        float GetBoost();
+        float Boost { get; }
 
         /// <summary>
         /// Non-null if this field has a binary value </summary>
