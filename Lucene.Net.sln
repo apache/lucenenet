@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Analysis.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Codecs", "src\Lucene.Net.Tests.Codecs\Lucene.Net.Tests.Codecs.csproj", "{351B75B1-BBD5-4E32-8036-7BED4E0135A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.QueryParser", "Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj", "{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -245,6 +247,16 @@ Global
 		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|x86.ActiveCfg = Release|Any CPU
 		{351B75B1-BBD5-4E32-8036-7BED4E0135A6}.Release|x86.Build.0 = Release|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
