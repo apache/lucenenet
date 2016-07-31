@@ -134,16 +134,16 @@ namespace Lucene.Net.QueryParser.Classic
 						{
 							
 							case 49: 
-							case 33: 
-								if ((0xfbff7cf8ffffd9ffL & l) == (ulong) 0L)
+							case 33:
+                                if ((0xfbff7cf8ffffd9ffL & l) == (ulong)0L)
 									break;
 								if (kind > 23)
 									kind = 23;
 								JjCheckNAddTwoStates(33, 34);
 								break;
 							
-							case 0: 
-								if ((0xfbff54f8ffffd9ffL & l) != (ulong) 0L)
+							case 0:
+                                if ((0xfbff54f8ffffd9ffL & l) != (ulong)0L)
 								{
 									if (kind > 23)
 										kind = 23;
@@ -276,7 +276,7 @@ namespace Lucene.Net.QueryParser.Classic
 								break;
 							
 							case 32:
-                                if ((0xfbff54f8ffffd9ffL & l) == 0L)
+                                if ((0xfbff54f8ffffd9ffL & l) == (ulong)0L)
                                     break;
                                 if (kind > 23)
                                     kind = 23;
@@ -293,7 +293,7 @@ namespace Lucene.Net.QueryParser.Classic
                                     JjCheckNAddStates(0, 2);
                                 break;
                             case 37:
-                                if ((0xffff7fffffffffffL & l) != 0L)
+                                if ((0xffff7fffffffffffL & l) != (ulong)0L)
                                     JjCheckNAddStates(0, 2);
                                 break;
                             case 40:
@@ -496,14 +496,14 @@ namespace Lucene.Net.QueryParser.Classic
                                 JjCheckNAddTwoStates(28, 29);
                                 break;
                             case 32:
-                                if ((0x97ffffff87ffffffL & l) == 0L)
+                                if ((0x97ffffff87ffffffL & l) == (ulong)0L)
                                     break;
                                 if (kind > 23)
                                     kind = 23;
                                 JjCheckNAddTwoStates(33, 34);
                                 break;
                             case 33:
-                                if ((0x97ffffff87ffffffL & l) == 0L)
+                                if ((0x97ffffff87ffffffL & l) == (ulong)0L)
                                     break;
                                 if (kind > 23)
                                     kind = 23;
@@ -526,14 +526,14 @@ namespace Lucene.Net.QueryParser.Classic
                                     jjstateSet[jjnewStateCnt++] = 38;
                                 break;
                             case 41:
-                                if ((0x97ffffff87ffffffL & l) == 0L)
+                                if ((0x97ffffff87ffffffL & l) == (ulong)0L)
                                     break;
                                 if (kind > 20)
                                     kind = 20;
                                 JjCheckNAddStates(6, 10);
                                 break;
                             case 42:
-                                if ((0x97ffffff87ffffffL & l) == 0L)
+                                if ((0x97ffffff87ffffffL & l) == (ulong)0L)
                                     break;
                                 if (kind > 20)
                                     kind = 20;
@@ -549,7 +549,7 @@ namespace Lucene.Net.QueryParser.Classic
                                 JjCheckNAddTwoStates(42, 43);
                                 break;
                             case 45:
-                                if ((0x97ffffff87ffffffL & l) != 0L)
+                                if ((0x97ffffff87ffffffL & l) != (ulong)0L)
                                     JjCheckNAddStates(18, 20);
                                 break;
                             case 46:
@@ -927,8 +927,8 @@ namespace Lucene.Net.QueryParser.Classic
 						switch (jjstateSet[--i])
 						{
 							
-							case 0: 
-								if ((0xfffffffeffffffffL & l) != (ulong) 0L)
+							case 0:
+                                if ((0xfffffffeffffffffL & l) != (ulong)0L)
 								{
 									if (kind > 32)
 										kind = 32;
@@ -948,8 +948,8 @@ namespace Lucene.Net.QueryParser.Classic
 									JjCheckNAddTwoStates(2, 4);
 								break;
 							
-							case 2: 
-								if ((0xfffffffbffffffffL & l) != (ulong) 0L)
+							case 2:
+                                if ((0xfffffffbffffffffL & l) != (ulong)0L)
 									JjCheckNAddStates(33, 35);
 								break;
 							
@@ -963,8 +963,8 @@ namespace Lucene.Net.QueryParser.Classic
 									kind = 31;
 								break;
 							
-							case 6: 
-								if ((0xfffffffeffffffffL & l) == (ulong) 0L)
+							case 6:
+                                if ((0xfffffffeffffffffL & l) == (ulong)0L)
 									break;
 								if (kind > 32)
 									kind = 32;
