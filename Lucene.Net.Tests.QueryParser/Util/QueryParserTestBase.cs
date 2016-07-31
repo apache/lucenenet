@@ -12,6 +12,7 @@ using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -112,58 +113,81 @@ namespace Lucene.Net.QueryParser.Util
             originalMaxClauses = BooleanQuery.MaxClauseCount;
         }
 
+        // Moved from TestQueryParser
+        public Classic.QueryParser GetParser(Analyzer a)
+        {
+            if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Classic.QueryParser qp = new Classic.QueryParser(TEST_VERSION_CURRENT, DefaultField, a);
+            qp.DefaultOperator = (QueryParserBase.OR_OPERATOR);
+            return qp;
+        }
+
         // Moved to AbstractQueryParserTestBase
         public override ICommonQueryParserConfiguration GetParserConfig(Analyzer a)
         {
-            throw new NotImplementedException();
+            return GetParser(a);
         }
 
         // Moved to AbstractQueryParserTestBase
         public override void SetDefaultOperatorOR(ICommonQueryParserConfiguration cqpC)
         {
-            throw new NotImplementedException();
+            Debug.Assert(cqpC is Classic.QueryParser);
+            Classic.QueryParser qp = (Classic.QueryParser)cqpC;
+            qp.DefaultOperator = QueryParserBase.Operator.OR;
         }
 
         // Moved to AbstractQueryParserTestBase
         public override void SetDefaultOperatorAND(ICommonQueryParserConfiguration cqpC)
         {
-            throw new NotImplementedException();
+            Debug.Assert(cqpC is Classic.QueryParser);
+            Classic.QueryParser qp = (Classic.QueryParser)cqpC;
+            qp.DefaultOperator = QueryParserBase.Operator.AND;
         }
 
         // Moved to AbstractQueryParserTestBase
         public override void SetAnalyzeRangeTerms(ICommonQueryParserConfiguration cqpC, bool value)
         {
-            throw new NotImplementedException();
+            Debug.Assert(cqpC is Classic.QueryParser);
+            Classic.QueryParser qp = (Classic.QueryParser)cqpC;
+            qp.AnalyzeRangeTerms = (value);
         }
 
         // Moved to AbstractQueryParserTestBase
         public override void SetAutoGeneratePhraseQueries(ICommonQueryParserConfiguration cqpC, bool value)
         {
-            throw new NotImplementedException();
+            Debug.Assert(cqpC is Classic.QueryParser);
+            Classic.QueryParser qp = (Classic.QueryParser)cqpC;
+            qp.AutoGeneratePhraseQueries = value;
         }
 
         // Moved to AbstractQueryParserTestBase
         public override void SetDateResolution(ICommonQueryParserConfiguration cqpC, ICharSequence field, DateTools.Resolution value)
         {
-            throw new NotImplementedException();
+            Debug.Assert(cqpC is Classic.QueryParser);
+            Classic.QueryParser qp = (Classic.QueryParser)cqpC;
+            qp.SetDateResolution(field.toString(), value);
         }
 
         // Moved to AbstractQueryParserTestBase
         public override Query GetQuery(string query, ICommonQueryParserConfiguration cqpC)
         {
-            throw new NotImplementedException();
+            Debug.Assert(cqpC != null, "Parameter must not be null");
+            Debug.Assert(cqpC is Classic.QueryParser, "Parameter must be instance of QueryParser");
+            Classic.QueryParser qp = (Classic.QueryParser)cqpC;
+            return qp.Parse(query);
         }
 
         // Moved to AbstractQueryParserTestBase
         public override Query GetQuery(string query, Analyzer a)
         {
-            throw new NotImplementedException();
+            return GetParser(a).Parse(query);
         }
+
 
         // Moved to AbstractQueryParserTestBase
         public override bool IsQueryParserException(Exception exception)
         {
-            throw new NotImplementedException();
+            return exception is ParseException;
         }
 
         public Query GetQuery(string query)
