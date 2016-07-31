@@ -48,6 +48,9 @@
     <Compile Include="Classic\TestMultiPhraseQueryParsing.cs" />
     <Compile Include="Classic\TestQueryParser.cs" />
     <Compile Include="ComplexPhrase\TestComplexPhraseQuery.cs" />
+    <Compile Include="Ext\ExtensionStub.cs" />
+    <Compile Include="Ext\TestExtendableQueryParser.cs" />
+    <Compile Include="Ext\TestExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classic\TestMultiAnalyzer.cs" />
     <Compile Include="Util\QueryParserTestBase.cs" />

@@ -114,7 +114,7 @@ namespace Lucene.Net.QueryParser.Util
         }
 
         // Moved from TestQueryParser
-        public Classic.QueryParser GetParser(Analyzer a)
+        public virtual Classic.QueryParser GetParser(Analyzer a)
         {
             if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
             Classic.QueryParser qp = new Classic.QueryParser(TEST_VERSION_CURRENT, DefaultField, a);
