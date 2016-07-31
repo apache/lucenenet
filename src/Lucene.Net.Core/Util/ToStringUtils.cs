@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -36,12 +37,13 @@ namespace Lucene.Net.Util
         {
             if (boost != 1.0f)
             {
-                return "^" + Convert.ToString(boost);
+                float boostAsLong = (long)boost;
+                if (boostAsLong == boost)
+                    return "^" + boost.ToString(".0").Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+                return "^" + boost.ToString().Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
             }
             else
-            {
                 return "";
-            }
         }
 
         public static void ByteArray(StringBuilder buffer, byte[] bytes)
