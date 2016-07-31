@@ -184,7 +184,7 @@ namespace Lucene.Net.QueryParser.Classic
                     float fms = FuzzyMinSim;
                     try
                     {
-                        fms = float.Parse(fuzzySlop.image.Substring(1, fuzzySlop.image.Length - 1));
+                        fms = float.Parse(fuzzySlop.image.Substring(1, fuzzySlop.image.Length - 2));
                     }
                     catch (Exception ignored) { }
                     float value = float.Parse(termImage);

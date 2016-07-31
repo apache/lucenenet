@@ -817,7 +817,7 @@ namespace Lucene.Net.QueryParser.Classic
             }
             else if (regexp)
             {
-                q = GetRegexpQuery(qfield, term.image.Substring(1, term.image.Length - 1));
+                q = GetRegexpQuery(qfield, term.image.Substring(1, term.image.Length - 2));
             }
             else if (fuzzy)
             {
@@ -863,7 +863,7 @@ namespace Lucene.Net.QueryParser.Classic
                 }
                 catch (Exception ignored) { }
             }
-            return GetFieldQuery(qfield, DiscardEscapeChar(term.image.Substring(1, term.image.Length - 1)), s);
+            return GetFieldQuery(qfield, DiscardEscapeChar(term.image.Substring(1, term.image.Length - 2)), s);
         }
 
         // extracted from the .jj grammar
