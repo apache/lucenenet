@@ -250,7 +250,7 @@ namespace Lucene.Net.QueryParser.Classic
             }
 
             // wrap super's version
-            protected override Query GetFieldQuery(string field, string queryText, bool quoted)
+            protected internal override Query GetFieldQuery(string field, string queryText, bool quoted)
             {
                 return new DumbQueryWrapper(GetSuperFieldQuery(field, queryText, quoted));
             }

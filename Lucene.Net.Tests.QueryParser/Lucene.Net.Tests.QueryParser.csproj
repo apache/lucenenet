@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analyzing\TestAnalyzingQueryParser.cs" />
     <Compile Include="Classic\TestMultiFieldQueryParser.cs" />
     <Compile Include="Classic\TestMultiPhraseQueryParsing.cs" />
     <Compile Include="Classic\TestQueryParser.cs" />

@@ -38,12 +38,12 @@ namespace Lucene.Net.QueryParser.Classic
             {
             }
 
-            protected override Query GetFuzzyQuery(string field, string termStr, float minSimilarity)
+            protected internal override Query GetFuzzyQuery(string field, string termStr, float minSimilarity)
             {
                 throw new ParseException("Fuzzy queries not allowed");
             }
 
-            protected override Query GetWildcardQuery(string field, string termStr)
+            protected internal override Query GetWildcardQuery(string field, string termStr)
             {
                 throw new ParseException("Wildcard queries not allowed");
             }
@@ -177,7 +177,7 @@ namespace Lucene.Net.QueryParser.Classic
                 : base(TEST_VERSION_CURRENT, "a", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
             {}
 
-            protected override Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
+            protected internal override Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
             {
                 if (fuzzySlop.image.EndsWith("€"))
                 {
@@ -209,21 +209,21 @@ namespace Lucene.Net.QueryParser.Classic
                 : base(TEST_VERSION_CURRENT, "field", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
             { }
 
-            protected override Query GetWildcardQuery(string field, string termStr)
+            protected internal override Query GetWildcardQuery(string field, string termStr)
             {
                 // override error checking of superclass
                 type[0] = 1;
                 return new TermQuery(new Index.Term(field, termStr));
             }
 
-            protected override Query GetPrefixQuery(string field, string termStr)
+            protected internal override Query GetPrefixQuery(string field, string termStr)
             {
                 // override error checking of superclass
                 type[0] = 2;
                 return new TermQuery(new Index.Term(field, termStr));
             }
 
-            protected override Query GetFieldQuery(string field, string queryText, bool quoted)
+            protected internal override Query GetFieldQuery(string field, string queryText, bool quoted)
             {
                 type[0] = 3;
                 return base.GetFieldQuery(field, queryText, quoted);
@@ -314,7 +314,7 @@ namespace Lucene.Net.QueryParser.Classic
             {
             }
 
-            protected override Query GetFieldQuery(string field, string queryText, bool quoted)
+            protected internal override Query GetFieldQuery(string field, string queryText, bool quoted)
             {
                 if (quoted) return NewFieldQuery(morePrecise, field, queryText, quoted);
                 else return base.GetFieldQuery(field, queryText, quoted);
