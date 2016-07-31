@@ -164,7 +164,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// </remarks>
         /// <param name="query">the query string to be parsed.</param>
         /// <returns></returns>
-        public Query Parse(string query)
+        public virtual Query Parse(string query)
         {
             ReInit(new FastCharStream(new StringReader(query)));
             try

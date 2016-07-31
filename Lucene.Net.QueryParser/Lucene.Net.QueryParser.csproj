@@ -50,6 +50,7 @@
     <Compile Include="Classic\QueryParserTokenManager.cs" />
     <Compile Include="Classic\Token.cs" />
     <Compile Include="Classic\TokenMgrError.cs" />
+    <Compile Include="ComplexPhrase\ComplexPhraseQueryParser.cs" />
     <Compile Include="Flexible\Standard\CommonQueryParserConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
