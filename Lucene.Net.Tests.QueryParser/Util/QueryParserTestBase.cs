@@ -370,7 +370,7 @@ namespace Lucene.Net.QueryParser.Util
         }
 
         [Test]
-        public void testCJKSloppyPhrase()
+        public void TestCJKSloppyPhrase()
         {
             // individual CJK chars as terms
             SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
