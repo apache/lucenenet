@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analyzing\AnalyzingQueryParser.cs" />
     <Compile Include="Classic\CharStream.cs" />
     <Compile Include="Classic\FastCharStream.cs" />
     <Compile Include="Classic\MultiFieldQueryParser.cs" />
