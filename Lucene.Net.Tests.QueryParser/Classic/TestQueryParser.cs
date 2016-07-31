@@ -414,7 +414,7 @@ namespace Lucene.Net.QueryParser.Classic
                 IPositionIncrementAttribute posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
-            public override bool IncrementToken()
+            public override sealed bool IncrementToken()
             {
                 if (addSynonym)
                 { // inject our synonym

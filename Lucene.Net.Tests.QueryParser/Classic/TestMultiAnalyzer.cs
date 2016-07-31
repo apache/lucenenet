@@ -137,7 +137,7 @@ namespace Lucene.Net.QueryParser.Classic
                 typeAtt = AddAttribute<ITypeAttribute>();
             }
 
-            public override bool IncrementToken()
+            public override sealed bool IncrementToken()
             {
                 if (multiToken > 0)
                 {
@@ -210,7 +210,7 @@ namespace Lucene.Net.QueryParser.Classic
                 posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
-            public override bool IncrementToken()
+            public override sealed bool IncrementToken()
             {
                 while (input.IncrementToken())
                 {
