@@ -485,7 +485,7 @@ namespace Lucene.Net.QueryParser.Classic
                     bool endOpen = false;
                     if (goop1.kind == RegexpToken.RANGE_QUOTED)
                     {
-                        goop1.image = goop1.image.Substring(1, goop1.image.Length - 1);
+                        goop1.image = goop1.image.Substring(1, goop1.image.Length - 2);
                     }
                     else if ("*".Equals(goop1.image))
                     {
@@ -493,7 +493,7 @@ namespace Lucene.Net.QueryParser.Classic
                     }
                     if (goop2.kind == RegexpToken.RANGE_QUOTED)
                     {
-                        goop2.image = goop2.image.Substring(1, goop2.image.Length - 1);
+                        goop2.image = goop2.image.Substring(1, goop2.image.Length - 2);
                     }
                     else if ("*".Equals(goop2.image))
                     {
