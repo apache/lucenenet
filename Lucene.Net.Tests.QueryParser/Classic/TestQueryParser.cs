@@ -401,33 +401,33 @@ namespace Lucene.Net.QueryParser.Classic
         /// <summary>
         /// adds synonym of "國" for "国".
         /// </summary>
-        protected class MockCJKSynonymFilter : TokenFilter
+        protected internal class MockCJKSynonymFilter : TokenFilter
         {
-            ICharTermAttribute termAtt;
-            IPositionIncrementAttribute posIncAtt;
-            bool addSynonym = false;
+            internal ICharTermAttribute TermAtt;
+            internal IPositionIncrementAttribute PosIncAtt;
+            internal bool AddSynonym = false;
 
             public MockCJKSynonymFilter(TokenStream input)
                 : base(input)
             {
-                ICharTermAttribute termAtt = AddAttribute<ICharTermAttribute>();
-                IPositionIncrementAttribute posIncAtt = AddAttribute<IPositionIncrementAttribute>();
+                TermAtt = AddAttribute<ICharTermAttribute>();
+                PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
-            public override sealed bool IncrementToken()
+            public sealed override bool IncrementToken()
             {
-                if (addSynonym)
-                { // inject our synonym
+                if (AddSynonym) // inject our synonym
+                {
                     ClearAttributes();
-                    termAtt.SetEmpty().Append("國");
-                    posIncAtt.PositionIncrement = (0);
-                    addSynonym = false;
+                    TermAtt.SetEmpty().Append("國");
+                    PosIncAtt.PositionIncrement = 0;
+                    AddSynonym = false;
                     return true;
                 }
 
                 if (input.IncrementToken())
                 {
-                    addSynonym = termAtt.toString().equals("国");
+                    AddSynonym = TermAtt.ToString().Equals("国");
                     return true;
                 }
                 else
