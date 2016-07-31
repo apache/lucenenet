@@ -335,9 +335,11 @@ namespace Lucene.Net.QueryParser.Classic
 				}
 				else if (curChar < 128)
 				{
-                    // TODO: This didn't change in Java from 3.0.1 to 4.8.0, but it is different in .NET
-                    //ulong l = (ulong) (1L << (curChar & 63)); 
-                    ulong l = (ulong)(1L << (curChar & 077));
+                    // NOTE: This didn't change in Java from 3.0.1 to 4.8.0, but it is different in .NET.
+                    // But changing it back made more tests pass, so I am working under the assumption 63
+                    // is the correct value.
+                    //ulong l = (ulong)(1L << (curChar & 077));
+                    ulong l = (ulong) (1L << (curChar & 63)); 
 					do 
 					{
 						switch (jjstateSet[--i])
