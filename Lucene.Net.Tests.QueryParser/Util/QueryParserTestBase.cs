@@ -61,7 +61,7 @@ namespace Lucene.Net.QueryParser.Util
             bool inPhrase = false;
             int savedStart = 0, savedEnd = 0;
 
-            public override bool IncrementToken()
+            public override sealed bool IncrementToken()
             {
                 if (inPhrase)
                 {
@@ -1343,7 +1343,7 @@ namespace Lucene.Net.QueryParser.Util
                 termAtt = AddAttribute<ICharTermAttribute>();
             }
 
-            public override bool IncrementToken()
+            public override sealed bool IncrementToken()
             {
                 if (input.IncrementToken())
                 {
