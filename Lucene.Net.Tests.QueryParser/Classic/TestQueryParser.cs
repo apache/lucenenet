@@ -50,71 +50,81 @@ namespace Lucene.Net.QueryParser.Classic
 
         }
 
-        public QueryParser GetParser(Analyzer a)
-        {
-            if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
-            QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, DefaultField, a);
-            qp.DefaultOperator = (QueryParserBase.OR_OPERATOR);
-            return qp;
-        }
+        // Moved to QueryParserTestBase
+        //public QueryParser GetParser(Analyzer a)
+        //{
+        //    if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+        //    QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, DefaultField, a);
+        //    qp.DefaultOperator = (QueryParserBase.OR_OPERATOR);
+        //    return qp;
+        //}
 
-        public override ICommonQueryParserConfiguration GetParserConfig(Analyzer a)
-        {
-            return GetParser(a);
-        }
+        // Moved to QueryParserTestBase
+        //public override ICommonQueryParserConfiguration GetParserConfig(Analyzer a)
+        //{
+        //    return GetParser(a);
+        //}
 
-        public override Query GetQuery(string query, ICommonQueryParserConfiguration cqpC)
-        {
-            Debug.Assert(cqpC != null, "Parameter must not be null");
-            Debug.Assert(cqpC is QueryParser, "Parameter must be instance of QueryParser");
-            QueryParser qp = (QueryParser)cqpC;
-            return qp.Parse(query);
-        }
+        // Moved to QueryParserTestBase
+        //public override Query GetQuery(string query, ICommonQueryParserConfiguration cqpC)
+        //{
+        //    Debug.Assert(cqpC != null, "Parameter must not be null");
+        //    Debug.Assert(cqpC is QueryParser, "Parameter must be instance of QueryParser");
+        //    QueryParser qp = (QueryParser)cqpC;
+        //    return qp.Parse(query);
+        //}
 
-        public override Query GetQuery(string query, Analyzer a)
-        {
-            return GetParser(a).Parse(query);
-        }
+        // Moved to QueryParserTestBase
+        //public override Query GetQuery(string query, Analyzer a)
+        //{
+        //    return GetParser(a).Parse(query);
+        //}
 
-        public override bool IsQueryParserException(Exception exception)
-        {
-            return exception is ParseException;
-        }
+        // Moved to QueryParserTestBase
+        //public override bool IsQueryParserException(Exception exception)
+        //{
+        //    return exception is ParseException;
+        //}
 
-        public override void SetDefaultOperatorOR(ICommonQueryParserConfiguration cqpC)
-        {
-            Debug.Assert(cqpC is QueryParser);
-            QueryParser qp = (QueryParser)cqpC;
-            qp.DefaultOperator = QueryParserBase.Operator.OR;
-        }
+        // Moved to QueryParserTestBase
+        //public override void SetDefaultOperatorOR(ICommonQueryParserConfiguration cqpC)
+        //{
+        //    Debug.Assert(cqpC is QueryParser);
+        //    QueryParser qp = (QueryParser)cqpC;
+        //    qp.DefaultOperator = QueryParserBase.Operator.OR;
+        //}
 
-        public override void SetDefaultOperatorAND(ICommonQueryParserConfiguration cqpC)
-        {
-            Debug.Assert(cqpC is QueryParser);
-            QueryParser qp = (QueryParser)cqpC;
-            qp.DefaultOperator = QueryParserBase.Operator.AND;
-        }
+        // Moved to QueryParserTestBase
+        //public override void SetDefaultOperatorAND(ICommonQueryParserConfiguration cqpC)
+        //{
+        //    Debug.Assert(cqpC is QueryParser);
+        //    QueryParser qp = (QueryParser)cqpC;
+        //    qp.DefaultOperator = QueryParserBase.Operator.AND;
+        //}
 
-        public override void SetAnalyzeRangeTerms(ICommonQueryParserConfiguration cqpC, bool value)
-        {
-            Debug.Assert(cqpC is QueryParser);
-            QueryParser qp = (QueryParser)cqpC;
-            qp.AnalyzeRangeTerms = (value);
-        }
+        // Moved to QueryParserTestBase
+        //public override void SetAnalyzeRangeTerms(ICommonQueryParserConfiguration cqpC, bool value)
+        //{
+        //    Debug.Assert(cqpC is QueryParser);
+        //    QueryParser qp = (QueryParser)cqpC;
+        //    qp.AnalyzeRangeTerms = (value);
+        //}
 
-        public override void SetAutoGeneratePhraseQueries(ICommonQueryParserConfiguration cqpC, bool value)
-        {
-            Debug.Assert(cqpC is QueryParser);
-            QueryParser qp = (QueryParser)cqpC;
-            qp.AutoGeneratePhraseQueries = value;
-        }
+        // Moved to QueryParserTestBase
+        //public override void SetAutoGeneratePhraseQueries(ICommonQueryParserConfiguration cqpC, bool value)
+        //{
+        //    Debug.Assert(cqpC is QueryParser);
+        //    QueryParser qp = (QueryParser)cqpC;
+        //    qp.AutoGeneratePhraseQueries = value;
+        //}
 
-        public override void SetDateResolution(ICommonQueryParserConfiguration cqpC, ICharSequence field, DateTools.Resolution value)
-        {
-            Debug.Assert(cqpC is QueryParser);
-            QueryParser qp = (QueryParser)cqpC;
-            qp.SetDateResolution(field.toString(), value);
-        }
+        // Moved to QueryParserTestBase
+        //public override void SetDateResolution(ICommonQueryParserConfiguration cqpC, ICharSequence field, DateTools.Resolution value)
+        //{
+        //    Debug.Assert(cqpC is QueryParser);
+        //    QueryParser qp = (QueryParser)cqpC;
+        //    qp.SetDateResolution(field.toString(), value);
+        //}
 
         [Test]
         public override void TestDefaultOperator()
