@@ -57,6 +57,7 @@
     <Compile Include="Ext\ParserExtension.cs" />
     <Compile Include="Flexible\Standard\CommonQueryParserConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Simple\SimpleQueryParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
