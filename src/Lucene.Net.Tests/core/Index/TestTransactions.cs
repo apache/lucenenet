@@ -201,8 +201,8 @@ namespace Lucene.Net.Index
                 {
                     Document d = new Document();
                     int n = Random().Next();
-                    d.Add(NewField("id", Convert.ToString(NextID++), customType));
-                    d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+                    d.Add(OuterInstance.NewField("id", Convert.ToString(NextID++), customType));
+                    d.Add(OuterInstance.NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
                     writer.AddDocument(d);
                 }
 

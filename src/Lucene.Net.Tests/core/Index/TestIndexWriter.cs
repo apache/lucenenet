@@ -145,14 +145,14 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        internal static void AddDoc(IndexWriter writer)
+        private void AddDoc(IndexWriter writer)
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", "aaa", Field.Store.NO));
             writer.AddDocument(doc);
         }
 
-        internal static void AddDocWithIndex(IndexWriter writer, int index)
+        private void AddDocWithIndex(IndexWriter writer, int index)
         {
             Document doc = new Document();
             doc.Add(NewField("content", "aaa " + index, StoredTextType));
@@ -1137,11 +1137,11 @@ namespace Lucene.Net.Index
                 // make a little directory for addIndexes
                 // LUCENE-2239: won't work with NIOFS/MMAP
                 Adder = new MockDirectoryWrapper(this.Random, new RAMDirectory());
-                IndexWriterConfig conf = NewIndexWriterConfig(this.Random, TEST_VERSION_CURRENT, new MockAnalyzer(this.Random));
+                IndexWriterConfig conf = OuterInstance.NewIndexWriterConfig(this.Random, TEST_VERSION_CURRENT, new MockAnalyzer(this.Random));
                 IndexWriter w = new IndexWriter(Adder, conf);
                 Document doc = new Document();
-                doc.Add(NewStringField(this.Random, "id", "500", Field.Store.NO));
-                doc.Add(NewField(this.Random, "field", "some prepackaged text contents", StoredTextType));
+                doc.Add(OuterInstance.NewStringField(this.Random, "id", "500", Field.Store.NO));
+                doc.Add(OuterInstance.NewField(this.Random, "field", "some prepackaged text contents", StoredTextType));
                 if (DefaultCodecSupportsDocValues())
                 {
                     doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("500")));
@@ -1155,8 +1155,8 @@ namespace Lucene.Net.Index
                 }
                 w.AddDocument(doc);
                 doc = new Document();
-                doc.Add(NewStringField(this.Random, "id", "501", Field.Store.NO));
-                doc.Add(NewField(this.Random, "field", "some more contents", StoredTextType));
+                doc.Add(OuterInstance.NewStringField(this.Random, "id", "501", Field.Store.NO));
+                doc.Add(OuterInstance.NewField(this.Random, "field", "some more contents", StoredTextType));
                 if (DefaultCodecSupportsDocValues())
                 {
                     doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("501")));
@@ -1199,17 +1199,17 @@ namespace Lucene.Net.Index
                                 w.Dispose();
                                 w = null;
                             }
-                            IndexWriterConfig conf = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2);
+                            IndexWriterConfig conf = OuterInstance.NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2);
                             w = new IndexWriter(dir, conf);
 
                             Document doc = new Document();
-                            Field idField = NewStringField(Random, "id", "", Field.Store.NO);
+                            Field idField = OuterInstance.NewStringField(Random, "id", "", Field.Store.NO);
                             Field binaryDVField = null;
                             Field numericDVField = null;
                             Field sortedDVField = null;
                             Field sortedSetDVField = new SortedSetDocValuesField("sortedsetdv", new BytesRef());
                             doc.Add(idField);
-                            doc.Add(NewField(Random, "field", "some text contents", StoredTextType));
+                            doc.Add(OuterInstance.NewField(Random, "field", "some text contents", StoredTextType));
                             if (DefaultCodecSupportsDocValues())
                             {
                                 binaryDVField = new BinaryDocValuesField("binarydv", new BytesRef());
@@ -1933,7 +1933,7 @@ namespace Lucene.Net.Index
         public virtual void TestWickedLongTerm()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, new StringSplitAnalyzer());
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, new StringSplitAnalyzer(), Similarity, TimeZone);
 
             char[] chars = new char[DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8];
             Arrays.Fill(chars, 'x');
@@ -1986,7 +1986,7 @@ namespace Lucene.Net.Index
             Field contentField = new Field("content", "", customType);
             doc.Add(contentField);
 
-            w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             contentField.StringValue = "other";
             w.AddDocument(doc);
@@ -2090,7 +2090,7 @@ namespace Lucene.Net.Index
             // somehow "knows" a lock is held against write.lock
             // even if you remove that file:
             d.LockFactory = new SimpleFSLockFactory();
-            RandomIndexWriter w1 = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w1 = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             w1.DeleteAll();
             try
             {
@@ -2854,7 +2854,7 @@ namespace Lucene.Net.Index
                 dir.DeleteFile(fileName);
             }
 
-            w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             w.AddDocument(doc);
             w.Dispose();
             r.Dispose();

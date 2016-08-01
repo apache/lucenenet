@@ -89,6 +89,9 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
+            private readonly Func<string, string, Field.Store, Field> NewStringFieldFunc;
+            private readonly Func<string, string, Field.Store, Field> NewTextFieldFunc;
+
             internal IndexWriter Writer;
             internal int NextID;
 
@@ -98,8 +101,8 @@ namespace Lucene.Net.Index
                 : base(threads)
             {
                 this.Writer = writer;
-                NewStringField = newStringField;
-                NewTextField = newTextField;
+                NewStringFieldFunc = newStringField;
+                NewTextFieldFunc = newTextField;
             }
 
             public override void DoWork()
@@ -109,8 +112,8 @@ namespace Lucene.Net.Index
                 {
                     Documents.Document d = new Documents.Document();
                     int n = Random().Next();
-                    d.Add(NewStringField("id", Convert.ToString(NextID++), Field.Store.YES));
-                    d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+                    d.Add(NewStringFieldFunc("id", Convert.ToString(NextID++), Field.Store.YES));
+                    d.Add(NewTextFieldFunc("contents", English.IntToEnglish(n), Field.Store.NO));
                     Writer.AddDocument(d);
                 }
 
@@ -161,11 +164,11 @@ namespace Lucene.Net.Index
 
             // One modifier that writes 10 docs then removes 5, over
             // and over:
-            IndexerThread indexerThread = new IndexerThread(modifier, threads);
+            IndexerThread indexerThread = new IndexerThread(modifier, threads, NewStringField, NewTextField);
             threads[numThread++] = indexerThread;
             indexerThread.Start();
 
-            IndexerThread indexerThread2 = new IndexerThread(modifier, threads);
+            IndexerThread indexerThread2 = new IndexerThread(modifier, threads, NewStringField, NewTextField);
             threads[numThread++] = indexerThread2;
             indexerThread2.Start();
 
