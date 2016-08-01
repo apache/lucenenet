@@ -34,6 +34,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterForceMerge : LuceneTestCase
     {
+        private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
+
         [Test]
         public virtual void TestPartialMerge()
         {
@@ -150,13 +152,13 @@ namespace Lucene.Net.Index
 
             for (int j = 0; j < 500; j++)
             {
-                TestIndexWriter.AddDocWithIndex(writer, j);
+                AddDocWithIndex(writer, j);
             }
             int termIndexInterval = writer.Config.TermIndexInterval;
             // force one extra segment w/ different doc store so
             // we see the doc stores get merged
             writer.Commit();
-            TestIndexWriter.AddDocWithIndex(writer, 500);
+            AddDocWithIndex(writer, 500);
             writer.Dispose();
 
             if (VERBOSE)
@@ -233,5 +235,21 @@ namespace Lucene.Net.Index
 
             dir.Dispose();
         }
+
+        private void AddDoc(IndexWriter writer)
+        {
+            Document doc = new Document();
+            doc.Add(NewTextField("content", "aaa", Field.Store.NO));
+            writer.AddDocument(doc);
+        }
+
+        private void AddDocWithIndex(IndexWriter writer, int index)
+        {
+            Document doc = new Document();
+            doc.Add(NewField("content", "aaa " + index, StoredTextType));
+            doc.Add(NewField("id", "" + index, StoredTextType));
+            writer.AddDocument(doc);
+        }
+
     }
 }
