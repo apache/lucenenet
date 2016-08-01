@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
         }
 
         [TestFixtureSetUp]
-        public static void BeforeClassTestExplanations()
+        public void BeforeClassTestExplanations()
         {
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));

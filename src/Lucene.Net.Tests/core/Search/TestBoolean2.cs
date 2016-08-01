@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
         private static int MulFactor;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));

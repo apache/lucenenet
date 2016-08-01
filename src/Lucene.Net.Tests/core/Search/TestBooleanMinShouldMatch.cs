@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
         private static IndexSearcher s;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 

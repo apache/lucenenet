@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Spans
         internal static Analyzer SimplePayloadAnalyzer;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             SimplePayloadAnalyzer = new AnalyzerAnonymousInnerClassHelper();
 

@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
         private static Directory Directory;
 
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();

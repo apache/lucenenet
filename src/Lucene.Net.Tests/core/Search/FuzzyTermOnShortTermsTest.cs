@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static Directory GetDirectory(Analyzer analyzer, string[] vals)
+        public Directory GetDirectory(Analyzer analyzer, string[] vals)
         {
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));

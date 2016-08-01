@@ -41,7 +41,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
             base.TearDown();
         }
         
-        private static void AddDoc(RandomIndexWriter writer, string text)
+        private void AddDoc(RandomIndexWriter writer, string text)
         {
             Document doc = new Document();
             doc.Add(NewTextField("text", text, Field.Store.YES));
