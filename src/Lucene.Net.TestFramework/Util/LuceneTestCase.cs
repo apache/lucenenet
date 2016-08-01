@@ -440,6 +440,16 @@ namespace Lucene.Net.Util
         /// </summary>
         internal TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; private set; }
 
+        /// <summary>
+        /// Gets the Similarity from the Class Environment setup rule
+        /// </summary>
+        public Similarity Similarity { get { return ClassEnvRule.Similarity; } }
+
+        /// <summary>
+        /// Gets the Timezone from the Class Environment setup rule
+        /// </summary>
+        public TimeZone TimeZone { get { return ClassEnvRule.TimeZone; } }
+
         // LUCENENET TODO
         /// <summary>
         /// Suite failure marker (any error in the test or suite scope).
