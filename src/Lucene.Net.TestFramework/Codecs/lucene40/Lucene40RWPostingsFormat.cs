@@ -25,9 +25,16 @@ namespace Lucene.Net.Codecs.Lucene40
     /// </summary>
     public class Lucene40RWPostingsFormat : Lucene40PostingsFormat
     {
+        private readonly bool _oldFormatImpersonationIsActive;
+
+        public Lucene40RWPostingsFormat(bool oldFormatImpersonationIsActive) : base()
+        {
+            _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
+        }
+
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {
-            if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (!_oldFormatImpersonationIsActive)
             {
                 return base.FieldsConsumer(state);
             }

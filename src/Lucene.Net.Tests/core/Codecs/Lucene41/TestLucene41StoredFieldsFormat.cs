@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             get
             {
-                return new Lucene41RWCodec();
+                return new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
             }
         }
     }

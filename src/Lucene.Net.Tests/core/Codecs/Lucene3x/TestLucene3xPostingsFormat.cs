@@ -27,12 +27,12 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// </summary>
     public class TestLucene3xPostingsFormat : BasePostingsFormatTestCase
     {
-        private readonly Codec Codec_Renamed = new PreFlexRWCodec();
+        private readonly Codec Codec_Renamed;
 
-        [TestFixtureSetUp]
-        public static void BeforeClass()
+        public TestLucene3xPostingsFormat() : base()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
+            Codec_Renamed = new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
         }
 
         protected override Codec Codec

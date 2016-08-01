@@ -26,19 +26,27 @@ namespace Lucene.Net.Codecs.Lucene45
     /// </summary>
     public class Lucene45RWCodec : Lucene45Codec
     {
-        private readonly FieldInfosFormat fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousInnerClassHelper();
+        private readonly FieldInfosFormat fieldInfosFormat;
+
+        public Lucene45RWCodec(bool oldFormatImpersonationIsActive) : base()
+        {
+             fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousInnerClassHelper(oldFormatImpersonationIsActive);
+        }
 
         private class Lucene42FieldInfosFormatAnonymousInnerClassHelper : Lucene42FieldInfosFormat
         {
-            public Lucene42FieldInfosFormatAnonymousInnerClassHelper()
+            private readonly bool _oldFormatImpersonationIsActive;
+
+            public Lucene42FieldInfosFormatAnonymousInnerClassHelper(bool oldFormatImpersonationIsActive) : base()
             {
+                _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
             }
 
             public override FieldInfosWriter FieldInfosWriter
             {
                 get
                 {
-                    if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                    if (!_oldFormatImpersonationIsActive)
                     {
                         return base.FieldInfosWriter;
                     }

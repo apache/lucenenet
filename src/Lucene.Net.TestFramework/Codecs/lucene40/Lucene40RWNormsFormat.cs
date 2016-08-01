@@ -25,9 +25,16 @@ namespace Lucene.Net.Codecs.Lucene40
     /// Read-write version of <seealso cref="Lucene40NormsFormat"/> for testing </summary>
     public class Lucene40RWNormsFormat : Lucene40NormsFormat
     {
+        private readonly bool _oldFormatImpersonationIsActive;
+
+        public Lucene40RWNormsFormat(bool oldFormatImpersonationIsActive) : base()
+        {
+            _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
+        }
+
         public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
         {
-            if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (!_oldFormatImpersonationIsActive)
             {
                 return base.NormsConsumer(state);
             }

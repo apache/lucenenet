@@ -66,10 +66,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <summary>
         /// we will manually instantiate preflex-rw here </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             // NOTE: turn off compound file, this test will open some index files directly.
-            LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
 
             TermIndexInterval = config.TermIndexInterval;
@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             Directory = NewDirectory();
 
-            config.SetCodec(new PreFlexRWCodec());
+            config.SetCodec(new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE));
             LogMergePolicy mp = NewLogMergePolicy();
             // NOTE: turn off compound file, this test will open some index files directly.
             mp.NoCFSRatio = 0.0;
@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             string segment = r.SegmentName;
             r.Dispose();
 
-            FieldInfosReader infosReader = (new PreFlexRWCodec()).FieldInfosFormat().FieldInfosReader;
+            FieldInfosReader infosReader = (new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)).FieldInfosFormat().FieldInfosReader;
             FieldInfos fieldInfos = infosReader.Read(Directory, segment, "", IOContext.READONCE);
             string segmentFileName = IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
             long tiiFileLength = Directory.FileLength(segmentFileName);
@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return term;
         }
 
-        private static void Populate(Directory directory, IndexWriterConfig config)
+        private void Populate(Directory directory, IndexWriterConfig config)
         {
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, config);
             for (int i = 0; i < NUMBER_OF_DOCUMENTS; i++)
