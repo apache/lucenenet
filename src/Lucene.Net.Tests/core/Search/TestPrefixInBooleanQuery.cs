@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
         public void BeforeClass()
         {
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, Similarity, TimeZone);
 
             Document doc = new Document();
             Field field = NewStringField(FIELD, "meaninglessnames", Field.Store.NO);

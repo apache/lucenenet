@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
         /// check the expDocNrs first, then check the query (and the explanations) </summary>
         public virtual void Qtest(Query q, int[] expDocNrs)
         {
-            CheckHits.CheckHitCollector(Random(), q, FIELD, Searcher, expDocNrs);
+            CheckHits.CheckHitCollector(Random(), q, FIELD, Searcher, expDocNrs, Similarity);
         }
 
         /// <summary>

@@ -123,9 +123,9 @@ namespace Lucene.Net.Search
         /// <seealso cref= #checkSkipTo </seealso>
         /// <seealso cref= #checkExplanations </seealso>
         /// <seealso cref= #checkEqual </seealso>
-        public static void Check(Random random, Query q1, IndexSearcher s)
+        public static void Check(Random random, Query q1, IndexSearcher s, Similarity similarity)
         {
-            Check(random, q1, s, true);
+            Check(random, q1, s, true, similarity);
         }
 
         public static void Check(Random random, Query q1, IndexSearcher s, bool wrap, Similarity similarity)

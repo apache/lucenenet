@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAllNoDeadLock()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter modifier = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter modifier = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             int numThreads = AtLeast(2);
             ThreadClass[] threads = new ThreadClass[numThreads];
             CountdownEvent latch = new CountdownEvent(1);
@@ -1106,7 +1106,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAllSlowly()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             int NUM_DOCS = AtLeast(1000);
             IList<int?> ids = new List<int?>(NUM_DOCS);
             for (int id = 0; id < NUM_DOCS; id++)

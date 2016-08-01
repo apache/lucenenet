@@ -190,7 +190,7 @@ namespace Lucene.Net.Document
         public virtual void TestGetValuesForIndexedDocument()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.AddDocument(MakeDocumentWithFields());
             IndexReader reader = writer.Reader;
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.Document
         public virtual void TestPositionIncrementMultiFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.AddDocument(MakeDocumentWithFields());
             IndexReader reader = writer.Reader;
 
@@ -303,7 +303,7 @@ namespace Lucene.Net.Document
             doc.Add(new StringField("keyword", "test", Field.Store.YES));
 
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             writer.AddDocument(doc);
             field.StringValue = "id2";
             writer.AddDocument(doc);
@@ -366,7 +366,7 @@ namespace Lucene.Net.Document
         public virtual void TestTransitionAPI()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Documents.Document doc = new Documents.Document();
             doc.Add(new Field("stored", "abc", Field.Store.YES, Field.Index.NO));
@@ -443,7 +443,7 @@ namespace Lucene.Net.Document
             Assert.AreEqual(new string[] { "5", "4" }, doc.GetValues("int"));
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             iw.AddDocument(doc);
             DirectoryReader ir = iw.Reader;
             Documents.Document sdoc = ir.Document(0);

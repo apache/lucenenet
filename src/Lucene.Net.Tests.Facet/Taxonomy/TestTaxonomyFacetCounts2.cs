@@ -246,7 +246,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         [TestFixtureSetUp]
-        public static void BeforeClassCountingFacetsAggregatorTest()
+        public void BeforeClassCountingFacetsAggregatorTest()
         {
             indexDir = NewDirectory();
             taxoDir = NewDirectory();

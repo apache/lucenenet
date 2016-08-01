@@ -130,10 +130,12 @@ namespace Lucene.Net.Index
         private class SearcherThread : TimedThread
         {
             internal Directory Directory;
+            private readonly LuceneTestCase OuterInstance;
 
-            public SearcherThread(Directory directory, TimedThread[] threads)
+            public SearcherThread(Directory directory, TimedThread[] threads, LuceneTestCase outerInstance)
                 : base(threads)
             {
+                OuterInstance = outerInstance;
                 this.Directory = directory;
             }
 
@@ -142,7 +144,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < 100; i++)
                 {
                     IndexReader ir = DirectoryReader.Open(Directory);
-                    IndexSearcher @is = NewSearcher(ir);
+                    IndexSearcher @is = OuterInstance.NewSearcher(ir);
                     ir.Dispose();
                 }
                 Count += 100;
@@ -174,11 +176,11 @@ namespace Lucene.Net.Index
 
             // Two searchers that constantly just re-instantiate the
             // searcher:
-            SearcherThread searcherThread1 = new SearcherThread(directory, threads);
+            SearcherThread searcherThread1 = new SearcherThread(directory, threads, this);
             threads[numThread++] = searcherThread1;
             searcherThread1.Start();
 
-            SearcherThread searcherThread2 = new SearcherThread(directory, threads);
+            SearcherThread searcherThread2 = new SearcherThread(directory, threads, this);
             threads[numThread++] = searcherThread2;
             searcherThread2.Start();
 

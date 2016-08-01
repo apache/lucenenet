@@ -606,7 +606,7 @@ namespace Lucene.Net.Search.Spans
 
         private void CheckHits(Query query, int[] results)
         {
-            Search.CheckHits.DoCheckHits(Random(), query, "field", Searcher, results);
+            Search.CheckHits.DoCheckHits(Random(), query, "field", Searcher, results, Similarity);
         }
     }
 }

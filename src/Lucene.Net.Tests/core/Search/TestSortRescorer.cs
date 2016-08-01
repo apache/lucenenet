@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "1", Field.Store.YES));
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             int numDocs = AtLeast(1000);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             int[] idToNum = new int[numDocs];
             int maxValue = TestUtil.NextInt(Random(), 10, 1000000);

@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
             Index = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), Index);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), Index, Similarity, TimeZone);
 
             for (int i = 0; i < data.Length; i++)
             {
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             }
             Assert.AreEqual(expected, h2.Length, "result count (bs2)");
 
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
         }
 
         [Test]
@@ -352,8 +352,8 @@ namespace Lucene.Net.Search
                 TopDocs top2 = s.Search(q2, null, 100);
                 if (i < 100)
                 {
-                    QueryUtils.Check(Random(), q1, s);
-                    QueryUtils.Check(Random(), q2, s);
+                    QueryUtils.Check(Random(), q1, s, Similarity);
+                    QueryUtils.Check(Random(), q2, s, Similarity);
                 }
                 AssertSubsetOfSameScores(q2, top1, top2);
             }

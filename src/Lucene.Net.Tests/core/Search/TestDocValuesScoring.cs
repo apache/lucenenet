@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         public virtual void TestSimple()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             Field field = NewTextField("foo", "", Field.Store.NO);
             doc.Add(field);
@@ -72,16 +72,16 @@ namespace Lucene.Net.Search
             iw.Dispose();
 
             // no boosting
-            IndexSearcher searcher1 = NewSearcher(ir, false);
+            IndexSearcher searcher1 = NewSearcher(ir, false, Similarity);
             Similarity @base = searcher1.Similarity;
             // boosting
-            IndexSearcher searcher2 = NewSearcher(ir, false);
+            IndexSearcher searcher2 = NewSearcher(ir, false, Similarity);
             searcher2.Similarity = new PerFieldSimilarityWrapperAnonymousInnerClassHelper(this, field, @base);
 
             // in this case, we searched on field "foo". first document should have 2x the score.
             TermQuery tq = new TermQuery(new Term("foo", "quick"));
-            QueryUtils.Check(Random(), tq, searcher1);
-            QueryUtils.Check(Random(), tq, searcher2);
+            QueryUtils.Check(Random(), tq, searcher1, Similarity);
+            QueryUtils.Check(Random(), tq, searcher2, Similarity);
 
             TopDocs noboost = searcher1.Search(tq, 10);
             TopDocs boost = searcher2.Search(tq, 10);
@@ -93,8 +93,8 @@ namespace Lucene.Net.Search
 
             // this query matches only the second document, which should have 4x the score.
             tq = new TermQuery(new Term("foo", "jumps"));
-            QueryUtils.Check(Random(), tq, searcher1);
-            QueryUtils.Check(Random(), tq, searcher2);
+            QueryUtils.Check(Random(), tq, searcher1, Similarity);
+            QueryUtils.Check(Random(), tq, searcher2, Similarity);
 
             noboost = searcher1.Search(tq, 10);
             boost = searcher2.Search(tq, 10);
@@ -106,8 +106,8 @@ namespace Lucene.Net.Search
             // search on on field bar just for kicks, nothing should happen, since we setup
             // our sim provider to only use foo_boost for field foo.
             tq = new TermQuery(new Term("bar", "quick"));
-            QueryUtils.Check(Random(), tq, searcher1);
-            QueryUtils.Check(Random(), tq, searcher2);
+            QueryUtils.Check(Random(), tq, searcher1, Similarity);
+            QueryUtils.Check(Random(), tq, searcher2, Similarity);
 
             noboost = searcher1.Search(tq, 10);
             boost = searcher2.Search(tq, 10);

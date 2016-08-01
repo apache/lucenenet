@@ -272,9 +272,9 @@ namespace Lucene.Net.Index
             return docs;
         }
 
-        public static void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
+        public void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
         {
-            IndexWriter w = new IndexWriter(dir, LuceneTestCase.NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
 
             // index all docs in a single thread
             IEnumerator<Document> iter = docs.Values.GetEnumerator();

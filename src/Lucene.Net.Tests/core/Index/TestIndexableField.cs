@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
         public virtual void TestArbitraryFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             int NUM_DOCS = AtLeast(27);
             if (VERBOSE)
