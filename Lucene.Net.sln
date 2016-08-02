@@ -46,9 +46,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Analysis.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Codecs", "src\Lucene.Net.Tests.Codecs\Lucene.Net.Tests.Codecs.csproj", "{351B75B1-BBD5-4E32-8036-7BED4E0135A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.QueryParser", "Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj", "{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.QueryParser", "src\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj", "{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.QueryParser", "Lucene.Net.Tests.QueryParser\Lucene.Net.Tests.QueryParser.csproj", "{5719FB4F-BF80-40E5-BACC-37E8E18FCA2E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.QueryParser", "src\Lucene.Net.Tests.QueryParser\Lucene.Net.Tests.QueryParser.csproj", "{5719FB4F-BF80-40E5-BACC-37E8E18FCA2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
