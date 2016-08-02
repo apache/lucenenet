@@ -58,6 +58,33 @@
     <Compile Include="Flexible\Standard\CommonQueryParserConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simple\SimpleQueryParser.cs" />
+    <Compile Include="Surround\Parser\CharStream.cs" />
+    <Compile Include="Surround\Parser\FastCharStream.cs" />
+    <Compile Include="Surround\Parser\ParseException.cs" />
+    <Compile Include="Surround\Parser\QueryParser.cs" />
+    <Compile Include="Surround\Parser\QueryParserConstants.cs" />
+    <Compile Include="Surround\Parser\QueryParserTokenManager.cs" />
+    <Compile Include="Surround\Parser\Token.cs" />
+    <Compile Include="Surround\Parser\TokenMgrError.cs" />
+    <Compile Include="Surround\Query\AndQuery.cs" />
+    <Compile Include="Surround\Query\BasicQueryFactory.cs" />
+    <Compile Include="Surround\Query\ComposedQuery.cs" />
+    <Compile Include="Surround\Query\DistanceQuery.cs" />
+    <Compile Include="Surround\Query\DistanceRewriteQuery.cs" />
+    <Compile Include="Surround\Query\DistanceSubQuery.cs" />
+    <Compile Include="Surround\Query\FieldsQuery.cs" />
+    <Compile Include="Surround\Query\NotQuery.cs" />
+    <Compile Include="Surround\Query\OrQuery.cs" />
+    <Compile Include="Surround\Query\RewriteQuery.cs" />
+    <Compile Include="Surround\Query\SimpleTerm.cs" />
+    <Compile Include="Surround\Query\SimpleTermRewriteQuery.cs" />
+    <Compile Include="Surround\Query\SpanNearClauseFactory.cs" />
+    <Compile Include="Surround\Query\SrndBooleanQuery.cs" />
+    <Compile Include="Surround\Query\SrndPrefixQuery.cs" />
+    <Compile Include="Surround\Query\SrndQuery.cs" />
+    <Compile Include="Surround\Query\SrndTermQuery.cs" />
+    <Compile Include="Surround\Query\SrndTruncQuery.cs" />
+    <Compile Include="Surround\Query\TooManyBasicQueries.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">

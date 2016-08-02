@@ -54,6 +54,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classic\TestMultiAnalyzer.cs" />
     <Compile Include="Simple\TestSimpleQueryParser.cs" />
+    <Compile Include="Surround\Query\BooleanQueryTst.cs" />
+    <Compile Include="Surround\Query\ExceptionQueryTst.cs" />
+    <Compile Include="Surround\Query\SingleFieldTestDb.cs" />
+    <Compile Include="Surround\Query\SrndQueryTest.cs" />
+    <Compile Include="Surround\Query\Test01Exceptions.cs" />
+    <Compile Include="Surround\Query\Test02Boolean.cs" />
+    <Compile Include="Surround\Query\Test03Distance.cs" />
     <Compile Include="Util\QueryParserTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
