@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParser.Classic
 	/// <summary> 
     /// This exception is thrown when parse errors are encountered.
 	/// You can explicitly create objects of this exception type by
-	/// calling the method generateParseException in the generated
+	/// calling the method GenerateParseException in the generated
 	/// parser.
 	/// 
 	/// You can modify this class to customize your error reporting
@@ -34,7 +34,7 @@ namespace Lucene.Net.QueryParser.Classic
 	public class ParseException : Exception
 	{
         /// <summary>
-        /// This constructor is used by the method "generateParseException"
+        /// This constructor is used by the method "GenerateParseException"
         /// in the generated parser.  Calling this constructor generates
         /// a new object of this type with the fields "currentToken",
         /// "expectedTokenSequences", and "tokenImage" set.

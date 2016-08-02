@@ -95,7 +95,7 @@ namespace Lucene.Net.QueryParser.Simple
         /** Map of fields to query against with their weights */
         protected readonly IDictionary<string, float> weights;
 
-        // TODO: Make these into a [Flags] enum??
+        // TODO: Make these into a [Flags] enum in .NET??
         /** flags to the parser (to turn features on/off) */
         protected readonly int flags;
 
