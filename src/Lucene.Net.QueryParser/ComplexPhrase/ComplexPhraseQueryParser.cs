@@ -58,7 +58,7 @@ namespace Lucene.Net.QueryParser.ComplexPhrase
         /// exists in the documents as the same order as in query.
         /// Choose between ordered (true) or un-ordered (false) proximity search.
         /// </summary>
-        public bool InOrder { get; set; }
+        public virtual bool InOrder { get; internal set; }
 
         private ComplexPhraseQuery currentPhraseQuery = null;
 

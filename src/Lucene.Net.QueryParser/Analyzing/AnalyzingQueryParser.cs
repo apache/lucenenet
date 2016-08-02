@@ -138,7 +138,7 @@ namespace Lucene.Net.QueryParser.Analyzing
         /// <param name="chunk">The portion of the given termStr to be analyzed</param>
         /// <returns>The result of analyzing the given chunk</returns>
         /// <exception cref="ParseException">ParseException when analysis returns other than one output token</exception>
-        protected internal string AnalyzeSingleChunk(string field, string termStr, string chunk)
+        protected internal virtual string AnalyzeSingleChunk(string field, string termStr, string chunk)
         {
             string analyzed = null;
             TokenStream stream = null;

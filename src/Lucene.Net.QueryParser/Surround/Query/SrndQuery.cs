@@ -48,7 +48,6 @@ namespace Lucene.Net.QueryParser.Surround.Query
 
         public virtual string WeightOperator { get { return "^"; } }
 
-
         protected virtual void WeightToString(StringBuilder r)
         { 
             /* append the weight part of a query */

@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
             get { return false; }
         }
 
-        public Search.Query MakeLuceneQueryNoBoost(BasicQueryFactory qf)
+        public virtual Search.Query MakeLuceneQueryNoBoost(BasicQueryFactory qf)
         {
             if (fieldNames.Count() == 1)
             { /* single field name: no new queries needed */

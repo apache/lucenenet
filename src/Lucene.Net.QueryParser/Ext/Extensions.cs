@@ -94,7 +94,7 @@ namespace Lucene.Net.QueryParser.Ext
         /// <param name="field">the extension field string</param>
         /// <returns>a {<see cref="Tuple{String,String}"/> with the field name as the <see cref="Tuple{String,String}.Item1"/> and the
         /// extension key as the <see cref="Tuple{String,String}.Item2"/></returns>
-        public Tuple<string, string> SplitExtensionField(string defaultField, string field)
+        public virtual Tuple<string, string> SplitExtensionField(string defaultField, string field)
         {
             int indexOf = field.IndexOf(this.extensionFieldDelimiter);
             if (indexOf < 0)
@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParser.Ext
         /// <param name="extfield">the extension field identifier</param>
         /// <returns>the extension field identifier with all special chars escaped with
         /// a backslash character.</returns>
-        public string EscapeExtensionField(string extfield)
+        public virtual string EscapeExtensionField(string extfield)
         {
             return QueryParserBase.Escape(extfield);
         }
@@ -132,7 +132,7 @@ namespace Lucene.Net.QueryParser.Ext
         /// </summary>
         /// <param name="extensionKey">the extension key</param>
         /// <returns>escaped extension field identifier</returns>
-        public string BuildExtensionField(string extensionKey)
+        public virtual string BuildExtensionField(string extensionKey)
         {
             return BuildExtensionField(extensionKey, "");
         }
@@ -154,7 +154,7 @@ namespace Lucene.Net.QueryParser.Ext
         /// <param name="field">the field to apply the extension on.</param>
         /// <returns>escaped extension field identifier</returns>
         /// <remarks>See <see cref="M:BuildExtensionField(String)"/> to use the default query field</remarks>
-        public string BuildExtensionField(string extensionKey, string field)
+        public virtual string BuildExtensionField(string extensionKey, string field)
         {
             StringBuilder builder = new StringBuilder(field);
             builder.Append(this.extensionFieldDelimiter);

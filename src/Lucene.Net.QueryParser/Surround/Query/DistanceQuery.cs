@@ -77,7 +77,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
             sncf.AddSpanQuery(snq);
         }
 
-        public Search.Query GetSpanNearQuery(
+        public virtual Search.Query GetSpanNearQuery(
             IndexReader reader,
             String fieldName,
             float boost,

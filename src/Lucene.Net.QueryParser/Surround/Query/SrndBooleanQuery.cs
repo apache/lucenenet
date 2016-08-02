@@ -22,7 +22,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
      * limitations under the License.
      */
 
-    public static class SrndBooleanQuery
+    internal class SrndBooleanQuery
     {
         public static void AddQueriesToBoolean(
             BooleanQuery bq,

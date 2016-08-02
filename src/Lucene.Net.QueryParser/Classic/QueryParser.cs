@@ -191,7 +191,7 @@ namespace Lucene.Net.QueryParser.Classic
         }
 
         // This makes sure that there is no garbage after the query string
-        public override Query TopLevelQuery(string field)
+        public override sealed Query TopLevelQuery(string field)
         {
             Query q;
             q = Query(field);
@@ -322,7 +322,7 @@ namespace Lucene.Net.QueryParser.Classic
             throw new Exception("Missing return statement in function");
         }
 
-        public Query Term(String field)
+        public Query Term(string field)
         {
             Token term, boost = null, fuzzySlop = null, goop1, goop2;
             bool prefix = false;
@@ -618,7 +618,7 @@ namespace Lucene.Net.QueryParser.Classic
             };
         }
 
-        private JJCalls[] jj_2_rtns = new JJCalls[1];
+        private readonly JJCalls[] jj_2_rtns = new JJCalls[1];
         private bool jj_rescan = false;
         private int jj_gc = 0;
 
@@ -656,7 +656,7 @@ namespace Lucene.Net.QueryParser.Classic
         }
 
         /// <summary>Reinitialise. </summary>
-        public void ReInit(QueryParserTokenManager tm)
+        public virtual void ReInit(QueryParserTokenManager tm)
         {
             token_source = tm;
             token = new Token();

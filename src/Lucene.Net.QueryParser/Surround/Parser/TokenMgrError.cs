@@ -29,16 +29,16 @@ namespace Lucene.Net.QueryParser.Surround.Parser
 		*/
 
         /// <summary> Lexical error occurred.</summary>
-        internal const int LEXICAL_ERROR = 0;
+        internal static readonly int LEXICAL_ERROR = 0;
 
         /// <summary> An attempt was made to create a second instance of a static token manager.</summary>
-        internal const int STATIC_LEXER_ERROR = 1;
+        internal static readonly int STATIC_LEXER_ERROR = 1;
 
         /// <summary> Tried to change to an invalid lexical state.</summary>
-        internal const int INVALID_LEXICAL_STATE = 2;
+        internal static readonly int INVALID_LEXICAL_STATE = 2;
 
         /// <summary> Detected (and bailed out of) an infinite loop in the token manager.</summary>
-        internal const int LOOP_DETECTED = 3;
+        internal static readonly int LOOP_DETECTED = 3;
 
         /// <summary> Indicates the reason why the exception is thrown. It will have
         /// one of the above 4 values.

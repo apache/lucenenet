@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParser.Classic
      * limitations under the License.
      */
 
-    public abstract partial class QueryParserBase : QueryBuilder, ICommonQueryParserConfiguration
+    public abstract class QueryParserBase : QueryBuilder, ICommonQueryParserConfiguration
     {
         /// <summary>
         /// Do not catch this exception in your code, it means you are using methods that you should no longer use.
@@ -138,7 +138,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// <param name="matchVersion">Lucene version to match.</param>
         /// <param name="f">the default field for query terms.</param>
         /// <param name="a">used to find terms in the query text.</param>
-        public void Init(LuceneVersion matchVersion, string f, Analyzer a)
+        public virtual void Init(LuceneVersion matchVersion, string f, Analyzer a)
         {
             Analyzer = a;
             field = f;
@@ -191,7 +191,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// <summary>
         /// Returns the default field.
         /// </summary>
-        public string Field
+        public virtual string Field
         {
             get { return field; }
         }
@@ -211,20 +211,20 @@ namespace Lucene.Net.QueryParser.Classic
         /// Get or Set the minimum similarity for fuzzy queries.
         /// Default is 2f.
         /// </summary>
-        public float FuzzyMinSim { get; set; }
+        public virtual float FuzzyMinSim { get; set; }
 
         /// <summary>
         /// Get or Set the prefix length for fuzzy queries. 
         /// Default is 0.
         /// </summary>
-        public int FuzzyPrefixLength { get; set; }
+        public virtual int FuzzyPrefixLength { get; set; }
 
         /// <summary>
         /// Gets or Sets the default slop for phrases. 
         /// If zero, then exact phrase matches are required. 
         /// Default value is zero.
         /// </summary>
-        public int PhraseSlop { get; set; }
+        public virtual int PhraseSlop { get; set; }
 
         /// <summary>
         /// Set to <code>true</code> to allow leading wildcard characters.
@@ -236,7 +236,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// <p>
         /// Default: false.
         /// </summary>
-        public bool AllowLeadingWildcard { get; set; }
+        public virtual bool AllowLeadingWildcard { get; set; }
 
         /// <summary>
         /// Gets or Sets the boolean operator of the QueryParser.
@@ -246,13 +246,13 @@ namespace Lucene.Net.QueryParser.Classic
         /// In <code>AND_OPERATOR</code> mode terms are considered to be in conjunction: the
         /// above mentioned query is parsed as <code>capital AND of AND Hungary
         /// </summary>
-        public Operator DefaultOperator { get; set; }
+        public virtual Operator DefaultOperator { get; set; }
 
         /// <summary>
         /// Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically
         //  lower-cased or not.  Default is <code>true</code>.
         /// </summary>
-        public bool LowercaseExpandedTerms { get; set; }
+        public virtual bool LowercaseExpandedTerms { get; set; }
 
         /// <summary>
         /// By default QueryParser uses <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
@@ -264,22 +264,22 @@ namespace Lucene.Net.QueryParser.Classic
         /// points are not relevant then use this to change
         /// the rewrite method.
         /// </summary>
-        public MultiTermQuery.RewriteMethod MultiTermRewriteMethod { get; set; }
+        public virtual MultiTermQuery.RewriteMethod MultiTermRewriteMethod { get; set; }
 
         /// <summary>
         /// Get or Set locale used by date range parsing, lowercasing, and other
         /// locale-sensitive operations.
         /// </summary>
-        public CultureInfo Locale { get; set; }
+        public virtual CultureInfo Locale { get; set; }
 
-        public TimeZoneInfo TimeZone { get; set; }
+        public virtual TimeZoneInfo TimeZone { get; set; }
 
         /// <summary>
         /// Gets or Sets the default date resolution used by RangeQueries for fields for which no
         /// specific date resolutions has been set. Field specific resolutions can be set
         /// with <see cref="SetDateResolution(string,DateTools.Resolution)"/>.
         /// </summary>
-        public void SetDateResolution(DateTools.Resolution dateResolution)
+        public virtual void SetDateResolution(DateTools.Resolution dateResolution)
         {
             this.dateResolution = dateResolution;
         }
@@ -289,7 +289,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// </summary>
         /// <param name="fieldName">field for which the date resolution is to be set</param>
         /// <param name="dateResolution">date resolution to set</param>
-        public void SetDateResolution(string fieldName, DateTools.Resolution dateResolution)
+        public virtual void SetDateResolution(string fieldName, DateTools.Resolution dateResolution)
         {
             if (string.IsNullOrEmpty(fieldName))
             {
@@ -312,7 +312,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// </summary>
         /// <param name="fieldName"></param>
         /// <returns></returns>
-        public DateTools.Resolution GetDateResolution(string fieldName)
+        public virtual DateTools.Resolution GetDateResolution(string fieldName)
         {
             if (string.IsNullOrEmpty(fieldName))
             {
@@ -339,7 +339,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// For example, setting this to true can enable analyzing terms into 
         /// collation keys for locale-sensitive <see cref="TermRangeQuery"/>.
         /// </summary>
-        public bool AnalyzeRangeTerms { get; set; }
+        public virtual bool AnalyzeRangeTerms { get; set; }
 
         protected internal virtual void AddClause(IList<BooleanClause> clauses, int conj, int mods, Query q)
         {
@@ -548,7 +548,7 @@ namespace Lucene.Net.QueryParser.Classic
             return new FuzzyQuery(term, numEdits, prefixLength);
         }
 
-        // LUCENE TODO: Should this be protected instead?
+        // LUCENETODO: Should this be protected instead?
         private BytesRef AnalyzeMultitermTerm(string field, string part)
         {
             return AnalyzeMultitermTerm(field, part, Analyzer);
@@ -802,7 +802,7 @@ namespace Lucene.Net.QueryParser.Classic
         }
 
         // extracted from the .jj grammar
-        protected internal virtual Query HandleBareTokenQuery(string qfield, Token term, Token fuzzySlop, bool prefix, bool wildcard, bool fuzzy, bool regexp)
+        internal virtual Query HandleBareTokenQuery(string qfield, Token term, Token fuzzySlop, bool prefix, bool wildcard, bool fuzzy, bool regexp)
         {
             Query q;
 
@@ -830,7 +830,7 @@ namespace Lucene.Net.QueryParser.Classic
             return q;
         }
 
-        protected internal virtual Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
+        internal virtual Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
         {
             Query q;
             float fms = FuzzyMinSim;
@@ -852,7 +852,7 @@ namespace Lucene.Net.QueryParser.Classic
         }
 
         // extracted from the .jj grammar
-        protected internal virtual Query HandleQuotedTerm(string qfield, Token term, Token fuzzySlop)
+        internal virtual Query HandleQuotedTerm(string qfield, Token term, Token fuzzySlop)
         {
             int s = PhraseSlop;  // default
             if (fuzzySlop != null)
@@ -867,7 +867,7 @@ namespace Lucene.Net.QueryParser.Classic
         }
 
         // extracted from the .jj grammar
-        protected internal virtual Query HandleBoost(Query q, Token boost)
+        internal virtual Query HandleBoost(Query q, Token boost)
         {
             if (boost != null)
             {
@@ -901,7 +901,7 @@ namespace Lucene.Net.QueryParser.Classic
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        protected internal virtual string DiscardEscapeChar(string input)
+        internal virtual string DiscardEscapeChar(string input)
         {
             // Create char array to hold unescaped char sequence
             char[] output = new char[input.Length];

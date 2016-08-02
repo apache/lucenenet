@@ -76,7 +76,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
             AddSpanQueryWeighted((SpanQuery)q, q.Boost);
         }
 
-        public SpanQuery MakeSpanClause()
+        public virtual SpanQuery MakeSpanClause()
         {
             List<SpanQuery> spanQueries = new List<SpanQuery>();
             foreach (var wsq in weightBySpanQuery)
