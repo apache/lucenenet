@@ -721,8 +721,18 @@ namespace Lucene.Net.QueryParser.Simple
         /// </summary>
         public virtual BooleanClause.Occur DefaultOperator
         {
-            get { return defaultOperator; }
-            set { defaultOperator = value; }
+            get 
+            { 
+                return defaultOperator; 
+            }
+            set 
+            {
+                if (value != BooleanClause.Occur.SHOULD && value != BooleanClause.Occur.MUST)
+                {
+                    throw new ArgumentException("invalid operator: only SHOULD or MUST are allowed");
+                }
+                defaultOperator = value; 
+            }
         }
 
 
