@@ -39,16 +39,16 @@
         /// <summary>
         /// Returns the query field
         /// </summary>
-        public string Field { get; protected set; }
+        public virtual string Field { get; protected set; }
 
         /// <summary>
         /// Returns the raw extension query string
         /// </summary>
-        public string RawQueryString { get; protected set; }
+        public virtual string RawQueryString { get; protected set; }
 
         /// <summary>
         /// Returns the top level parser which created this <see cref="ExtensionQuery"/>
         /// </summary>
-        public Classic.QueryParser TopLevelParser { get; protected set; }
+        public virtual Classic.QueryParser TopLevelParser { get; protected set; }
     }
 }

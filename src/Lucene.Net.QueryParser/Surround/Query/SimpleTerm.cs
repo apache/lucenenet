@@ -80,12 +80,12 @@ namespace Lucene.Net.QueryParser.Surround.Query
             void VisitMatchingTerm(Term t);
         }
 
-        public string DistanceSubQueryNotAllowed()
+        public virtual string DistanceSubQueryNotAllowed()
         {
             return null;
         }
 
-        public void AddSpanQueries(SpanNearClauseFactory sncf)
+        public virtual void AddSpanQueries(SpanNearClauseFactory sncf)
         {
             VisitMatchingTerms(
                 sncf.IndexReader,

@@ -52,8 +52,8 @@ namespace Lucene.Net.QueryParser.Surround.Query
         private int maxBasicQueries;
         private int queriesMade;
 
-        public int NrQueriesMade { get { return queriesMade; } }
-        public int MaxBasicQueries { get { return maxBasicQueries; } }
+        public virtual int NrQueriesMade { get { return queriesMade; } }
+        public virtual int MaxBasicQueries { get { return maxBasicQueries; } }
 
         public override string ToString()
         {
@@ -76,13 +76,13 @@ namespace Lucene.Net.QueryParser.Surround.Query
             queriesMade++;
         }
 
-        public TermQuery NewTermQuery(Term term)
+        public virtual TermQuery NewTermQuery(Term term)
         {
             CheckMax();
             return new TermQuery(term);
         }
 
-        public SpanTermQuery NewSpanTermQuery(Term term)
+        public virtual SpanTermQuery NewSpanTermQuery(Term term)
         {
             CheckMax();
             return new SpanTermQuery(term);

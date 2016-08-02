@@ -20,7 +20,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
      * limitations under the License.
      */
 
-    public abstract class RewriteQuery<SQ> : Search.Query
+    internal abstract class RewriteQuery<SQ> : Search.Query
     {
         protected readonly SQ srndQuery;
         protected readonly string fieldName;

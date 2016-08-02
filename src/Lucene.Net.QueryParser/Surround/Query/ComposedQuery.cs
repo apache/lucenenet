@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
         private bool operatorInfix;
         public virtual bool IsOperatorInfix { get { return operatorInfix; } } /* else prefix operator */
 
-        public IEnumerable<Search.Query> MakeLuceneSubQueriesField(string fn, BasicQueryFactory qf)
+        public virtual IEnumerable<Search.Query> MakeLuceneSubQueriesField(string fn, BasicQueryFactory qf)
         {
             List<Search.Query> luceneSubQueries = new List<Search.Query>();
             IEnumerator<SrndQuery> sqi = GetSubQueriesEnumerator();

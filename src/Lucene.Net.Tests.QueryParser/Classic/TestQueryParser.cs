@@ -177,7 +177,7 @@ namespace Lucene.Net.QueryParser.Classic
                 : base(TEST_VERSION_CURRENT, "a", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
             {}
 
-            protected internal override Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
+            internal override Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
             {
                 if (fuzzySlop.image.EndsWith("€"))
                 {

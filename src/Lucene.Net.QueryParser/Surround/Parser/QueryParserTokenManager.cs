@@ -651,7 +651,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
 
         /// <summary>Get the next Token.</summary>
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public Token GetNextToken()
+        public virtual Token GetNextToken()
         {
             Token matchedToken;
             int curPos = 0;
@@ -755,6 +755,5 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                 JjCheckNAdd(jjnextStates[start]);
             } while (start++ != end);
         }
-
     }
 }

@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParser.Surround.Query
 
     internal class SimpleTermRewriteQuery : RewriteQuery<SimpleTerm>
     {
-        public  SimpleTermRewriteQuery(
+        public SimpleTermRewriteQuery(
             SimpleTerm srndQuery,
             string fieldName,
             BasicQueryFactory qf)

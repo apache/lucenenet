@@ -1170,14 +1170,14 @@ namespace Lucene.Net.QueryParser.Classic
 		}
 		
 		/// <summary>Reinitialise parser. </summary>
-		public virtual void  ReInit(ICharStream stream)
+		public virtual void ReInit(ICharStream stream)
 		{
 			jjmatchedPos = jjnewStateCnt = 0;
 			curLexState = defaultLexState;
 			input_stream = stream;
 			ReInitRounds();
 		}
-		private void  ReInitRounds()
+		private void ReInitRounds()
 		{
 			int i;
 			jjround = 0x80000001;
@@ -1186,14 +1186,14 @@ namespace Lucene.Net.QueryParser.Classic
 		}
 		
 		/// <summary>Reinitialise parser. </summary>
-		public virtual void  ReInit(ICharStream stream, int lexState)
+		public virtual void ReInit(ICharStream stream, int lexState)
 		{
 			ReInit(stream);
 			SwitchTo(lexState);
 		}
 		
 		/// <summary>Switch to specified lex state. </summary>
-		public virtual void  SwitchTo(int lexState)
+		public virtual void SwitchTo(int lexState)
 		{
 			if (lexState >= 3 || lexState < 0)
 				throw new TokenMgrError("Error: Ignoring invalid lexical state : " + lexState + ". State unchanged.", TokenMgrError.INVALID_LEXICAL_STATE);
@@ -1322,7 +1322,7 @@ EOFLoop: ;
 			}
 		}
 		
-		private void  JjCheckNAdd(int state)
+		private void JjCheckNAdd(int state)
 		{
 			if (jjrounds[state] != jjround)
 			{
@@ -1330,7 +1330,7 @@ EOFLoop: ;
 				jjrounds[state] = jjround;
 			}
 		}
-		private void  JjAddStates(int start, int end)
+		private void JjAddStates(int start, int end)
 		{
 			do 
 			{
@@ -1338,13 +1338,13 @@ EOFLoop: ;
 			}
 			while (start++ != end);
 		}
-		private void  JjCheckNAddTwoStates(int state1, int state2)
+		private void JjCheckNAddTwoStates(int state1, int state2)
 		{
 			JjCheckNAdd(state1);
 			JjCheckNAdd(state2);
 		}
 		
-		private void  JjCheckNAddStates(int start, int end)
+		private void JjCheckNAddStates(int start, int end)
 		{
 			do 
 			{
