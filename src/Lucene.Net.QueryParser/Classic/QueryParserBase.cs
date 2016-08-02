@@ -2,7 +2,6 @@
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser.Classic;
 using Lucene.Net.QueryParser.Flexible.Standard;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
