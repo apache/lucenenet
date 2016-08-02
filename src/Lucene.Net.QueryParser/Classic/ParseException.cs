@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.QueryParser.Classic
 {

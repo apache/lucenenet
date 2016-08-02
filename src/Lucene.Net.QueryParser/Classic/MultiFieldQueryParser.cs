@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
-using Lucene.Net.Search;
 using Lucene.Net.Analysis;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParser.Classic
 {

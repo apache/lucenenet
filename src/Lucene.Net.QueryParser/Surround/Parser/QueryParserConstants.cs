@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Lucene.Net.QueryParser.Surround.Parser
+﻿namespace Lucene.Net.QueryParser.Surround.Parser
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
