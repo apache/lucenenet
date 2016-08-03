@@ -7,7 +7,6 @@ using System.Linq;
 
 namespace Lucene.Net.Analysis.Core
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +23,7 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Removes stop words from a token stream.
     /// 
@@ -125,7 +125,5 @@ namespace Lucene.Net.Analysis.Core
         {
             return !stopWords.Contains(termAtt.Buffer(), 0, termAtt.Length);
         }
-
     }
-
 }
