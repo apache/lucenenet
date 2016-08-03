@@ -154,7 +154,7 @@ namespace Lucene.Net.Analysis.Core
         }
 
         // stupid filter that inserts synonym of 'hte' for 'the'
-        private class MockSynonymFilter : TokenFilter
+        private sealed class MockSynonymFilter : TokenFilter
         {
             private readonly TestStopFilter outerInstance;
 
@@ -170,7 +170,7 @@ namespace Lucene.Net.Analysis.Core
                 posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
-            public override bool IncrementToken()
+            public override sealed bool IncrementToken()
             {
                 if (bufferedState != null)
                 {
@@ -204,29 +204,28 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestFirstPosInc()
         {
-            Assert.Fail("Depends on StopAnalyzer, not currently implemented");
-            //Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
 
-            //AssertAnalyzesTo(analyzer, "the quick brown fox", new string[] { "hte", "quick", "brown", "fox" }, new int[] { 1, 1, 1, 1 });
+            AssertAnalyzesTo(analyzer, "the quick brown fox", new string[] { "hte", "quick", "brown", "fox" }, new int[] { 1, 1, 1, 1 });
         }
 
-        //private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        //{
-        //    private readonly TestStopFilter outerInstance;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestStopFilter outerInstance;
 
-        //    public AnalyzerAnonymousInnerClassHelper(TestStopFilter outerInstance)
-        //    {
-        //        this.outerInstance = outerInstance;
-        //    }
+            public AnalyzerAnonymousInnerClassHelper(TestStopFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-        //    protected internal override TokenStreamComponents createComponents(string fieldName, TextReader reader)
-        //    {
-        //        Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-        //        TokenFilter filter = new MockSynonymFilter(outerInstance, tokenizer);
-        //        StopFilter stopfilter = new StopFilter(Version.LUCENE_43, filter, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
-        //        stopfilter.EnablePositionIncrements = false;
-        //        return new TokenStreamComponents(tokenizer, stopfilter);
-        //    }
-        //}
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenFilter filter = new MockSynonymFilter(outerInstance, tokenizer);
+                StopFilter stopfilter = new StopFilter(Version.LUCENE_43, filter, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+                stopfilter.EnablePositionIncrements = false;
+                return new TokenStreamComponents(tokenizer, stopfilter);
+            }
+        }
     }
 }

@@ -51,6 +51,7 @@
     <Compile Include="Analysis\Core\LowerCaseFilter.cs" />
     <Compile Include="Analysis\Core\LowerCaseTokenizer.cs" />
     <Compile Include="Analysis\Core\SimpleAnalyzer.cs" />
+    <Compile Include="Analysis\Core\StopAnalyzer.cs" />
     <Compile Include="Analysis\Core\StopFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\EmptyTokenStream.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Analysis\Util\ICharacterIterator.cs" />
     <Compile Include="Analysis\Util\RollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\SegmentingTokenizerBase.cs" />
+    <Compile Include="Analysis\Util\StopwordAnalyzerBase.cs" />
     <Compile Include="Analysis\Util\WordlistLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
