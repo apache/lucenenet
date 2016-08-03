@@ -421,7 +421,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (text == null)
             {
-                throw new ArgumentException("text can't be null", nameof(text));
+                throw new ArgumentException("text can't be null", "text");
             }
 
             int code = 0;
@@ -826,7 +826,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             public int Count { get { return outerInstance.count; } private set { throw new NotSupportedException(); } }
-            public bool IsReadOnly { get; }
+            public bool IsReadOnly { get { return !allowModify; } }
 
             #region Not implemented members
 
@@ -924,7 +924,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (map == null)
             {
-                throw new ArgumentException("Given map is null", nameof(map));
+                throw new ArgumentException("Given map is null", "map");
             }
             if (map == EmptyMap() || map.Count == 0)
             {
