@@ -1,10 +1,9 @@
-﻿using System;
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +20,7 @@ namespace Lucene.Net.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Abstract base class for TokenFilters that may remove tokens.
     /// You have to implement <seealso cref="#accept"/> and return a boolean if the current
@@ -58,7 +58,6 @@ namespace Lucene.Net.Analysis.Util
         public FilteringTokenFilter(Lucene.Net.Util.LuceneVersion version, bool enablePositionIncrements, TokenStream input)
             : this(version, input)
         {
-            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
             CheckPositionIncrement(version, enablePositionIncrements);
             this.enablePositionIncrements = enablePositionIncrements;
         }
@@ -70,6 +69,7 @@ namespace Lucene.Net.Analysis.Util
         public FilteringTokenFilter(LuceneVersion version, TokenStream @in)
             : base(@in)
         {
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
             this.version = version;
             this.enablePositionIncrements = true;
         }
