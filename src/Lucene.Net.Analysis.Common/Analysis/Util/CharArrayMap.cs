@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -25,7 +25,6 @@ namespace Lucene.Net.Analysis.Util
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
 
     /// <summary>
     /// A simple class that stores key Strings as char[]'s in a
@@ -62,6 +61,11 @@ namespace Lucene.Net.Analysis.Util
         internal readonly LuceneVersion matchVersion; // package private because used in CharArraySet
         internal char[][] keys; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
         internal V[] values; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
+
+        /// <summary>
+        /// Added in .NET to prevent infinite recursion when accessing the Keys collection
+        /// </summary>
+        private IDictionary<object, V> innerDictionary = new Dictionary<object, V>();
 
         /// <summary>
         /// Create map with enough capacity to hold startSize terms
@@ -109,13 +113,22 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Lucene.NET specific, in order to support the KeySet functionality without doing much copying.
+        /// Lucene.NET specific, in order to support the KeySet functionality.
         /// </summary>
         /// <param name="keys"></param>
-        private CharArrayMap(char[][] keys, int count)
+        private CharArrayMap(char[][] keys, V[] values, bool ignoreCase, int count, CharacterUtils charUtils, LuceneVersion matchVersion, Dictionary<object, V> innerDictionary)
         {
             this.keys = keys;
+            this.values = values;
+            this.ignoreCase = ignoreCase;
             this.count = count;
+            this.charUtils = charUtils;
+            this.matchVersion = matchVersion;
+
+            foreach (var kvp in innerDictionary)
+            {
+                this.innerDictionary[kvp.Key] = kvp.Value;
+            }
         }
 
         /// <summary>
@@ -128,11 +141,21 @@ namespace Lucene.Net.Analysis.Util
             this.count = toCopy.count;
             this.charUtils = toCopy.charUtils;
             this.matchVersion = toCopy.matchVersion;
+
+            foreach (var kvp in toCopy.innerDictionary)
+            {
+                this.innerDictionary[kvp.Key] = kvp.Value;
+            }
         }
 
-        public void Add(KeyValuePair<object, V> item)
+        public virtual void Add(KeyValuePair<object, V> item)
         {
             Put(item.Key, item.Value);
+        }
+
+        public virtual void Add(object key, V value)
+        {
+            Put(key, value);
         }
 
         /// <summary>
@@ -142,14 +165,15 @@ namespace Lucene.Net.Analysis.Util
             count = 0;
             Arrays.Fill(keys, null);
             Arrays.Fill(values, default(V));
+            innerDictionary.Clear();
         }
 
-        public bool Contains(KeyValuePair<object, V> item)
+        public virtual bool Contains(KeyValuePair<object, V> item)
         {
             throw new NotImplementedException();
         }
 
-        public void CopyTo(KeyValuePair<object, V>[] array, int arrayIndex)
+        public virtual void CopyTo(KeyValuePair<object, V>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
@@ -172,6 +196,11 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual bool ContainsKey(object o)
         {
+            if (o == null)
+            {
+                throw new ArgumentException("o can't be null", "o");
+            }
+
             var c = o as char[];
             if (c != null)
             {
@@ -179,11 +208,6 @@ namespace Lucene.Net.Analysis.Util
                 return ContainsKey(text, 0, text.Length);
             }
             return ContainsKey(o.ToString());
-        }
-
-        public void Add(object key, V value)
-        {
-            Put(key, value);
         }
 
         /// <summary>
@@ -301,12 +325,17 @@ namespace Lucene.Net.Analysis.Util
                 Rehash();
             }
 
-            return default(V);
+            innerDictionary[text] = value;
+
+            return value;
         }
 
         private void Rehash()
         {
             Debug.Assert(keys.Length == values.Length);
+
+            innerDictionary.Clear();
+
             int newSize = 2 * keys.Length;
             char[][] oldkeys = keys;
             V[] oldvalues = values;
@@ -322,6 +351,8 @@ namespace Lucene.Net.Analysis.Util
                     int slot = GetSlot(text, 0, text.Length);
                     keys[slot] = text;
                     values[slot] = oldvalues[i];
+
+                    innerDictionary.Add(text, oldvalues[i]);
                 }
             }
         }
@@ -445,60 +476,30 @@ namespace Lucene.Net.Analysis.Util
             return code;
         }
 
-        public virtual bool Remove(object key)
-        {
-            throw new NotSupportedException();
-        }
+        #region For .NET Support
 
-        public bool TryGetValue(object key, out V value)
+        public virtual bool TryGetValue(object key, out V value)
         {
             throw new NotImplementedException();
         }
 
-        public V this[object key]
+        public virtual V this[object key]
         {
             get { return Get(key); }
-            set { throw new NotSupportedException(); }
+            set { Put(key, value); }
         }
 
-        public ICollection<object> Keys { get { return KeySet(); } }
+        public virtual ICollection<object> Keys { get { return KeySet(); } }
 
         public ICollection<V> Values { get { return values; } }
 
-        public bool Remove(KeyValuePair<object, V> item)
-        {
-            throw new NotSupportedException();
-        }
+        #endregion
 
-        public int Count
-        {
-            get
-            {
-                {
-                    return count;
-                }
-            }
-        }
+        public virtual bool IsReadOnly { get; private set; }
 
-        public bool IsReadOnly { get; private set; }
-
-        public IEnumerator<KeyValuePair<object, V>> GetEnumerator()
+        public virtual IEnumerator<KeyValuePair<object, V>> GetEnumerator()
         {
-            throw new NotSupportedException();
-        }
-
-        public override string ToString()
-        {
-            var sb = new StringBuilder("{");
-            foreach (KeyValuePair<object, V> entry in GetEntrySet())
-            {
-                if (sb.Length > 1)
-                {
-                    sb.Append(", ");
-                }
-                sb.Append(entry);
-            }
-            return sb.Append('}').ToString();
+            return new EntryIterator(this, false);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -506,15 +507,58 @@ namespace Lucene.Net.Analysis.Util
             return GetEnumerator();
         }
 
-        private EntrySet entrySet = null;
-        private CharArraySet keySet = null;
 
-        protected virtual EntrySet CreateEntrySet()
+        public virtual bool Remove(object key)
         {
-            return new EntrySet(this, true);
+            throw new NotSupportedException();
         }
 
-        public EntrySet GetEntrySet()
+        public virtual bool Remove(KeyValuePair<object, V> item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual int Count
+        {
+            get { return count; }
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder("{");
+
+            IEnumerator<KeyValuePair<object, V>> iter1 = IDictionaryExtensions.EntrySet(this).GetEnumerator();
+            while (iter1.MoveNext())
+            {
+                KeyValuePair<object, V> entry = iter1.Current;
+                if (sb.Length > 1)
+                {
+                    sb.Append(", ");
+                }
+                if (entry.Key.GetType().Equals(typeof(char[])))
+                {
+                    sb.Append(new string((char[])entry.Key));
+                }
+                else
+                {
+                    sb.Append(entry.Key);
+                }
+                sb.Append("=");
+                sb.Append(entry.Value);
+            }
+
+            return sb.Append('}').ToString();
+        }
+
+        private EntrySet_ entrySet = null;
+        private CharArraySet keySet = null;
+
+        internal virtual EntrySet_ CreateEntrySet()
+        {
+            return new EntrySet_(this, true);
+        }
+
+        public EntrySet_ EntrySet()
         {
             if (entrySet == null)
             {
@@ -524,114 +568,9 @@ namespace Lucene.Net.Analysis.Util
         }
 
         // helper for CharArraySet to not produce endless recursion
-        // TODO LUCENENET
-        private ISet<object> originalKeySet;
-        internal ISet<object> OriginalKeySet()
+        internal IEnumerable<object> OriginalKeySet()
         {
-            return originalKeySet ?? (originalKeySet = new LightWrapperSet(this));
-        }
-
-        private class LightWrapperSet : ISet<object>
-        {
-            private readonly CharArrayMap<V> map;
-
-            public LightWrapperSet(CharArrayMap<V> map)
-            {
-                this.map = map;
-            }
-
-            public IEnumerator<object> GetEnumerator()
-            {
-                return map.Keys.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
-
-            public void Add(object item)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void UnionWith(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void IntersectWith(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void ExceptWith(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void SymmetricExceptWith(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool IsSubsetOf(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool IsSupersetOf(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool IsProperSupersetOf(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool IsProperSubsetOf(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool Overlaps(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool SetEquals(IEnumerable<object> other)
-            {
-                throw new NotImplementedException();
-            }
-
-            bool ISet<object>.Add(object item)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Clear()
-            {
-                map.Clear();
-            }
-
-            public bool Contains(object item)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void CopyTo(object[] array, int arrayIndex)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool Remove(object item)
-            {
-                throw new NotImplementedException();
-            }
-
-            public int Count { get { return map.Count; } }
-            public bool IsReadOnly { get { return map.IsReadOnly; } }
+            return innerDictionary.Keys;
         }
 
         /// <summary>
@@ -642,8 +581,25 @@ namespace Lucene.Net.Analysis.Util
         {
             if (keySet == null)
             {
-                // prevent adding of entries                
-                keySet = new UnmodifiableCharArraySet(new CharArrayMap<object>(this.keys, this.count));
+                // prevent adding of entries
+
+                // TODO: Should find a way to pass a direct reference to this object to
+                // CharArraySet's constructor. The only known side effect this causes is to make
+                // the ToString test fail when calling it on the Keys property after changing
+                // the main set, so perhaps this is not a huge issue.
+
+                // A possible solution is to create an interface with no generics that this class 
+                // implements to be passed into the CharArraySet's constructor. Another possible 
+                // solution is to make the CharArraySet class generic so the inner type can be 
+                // inferred at compile time.
+                var innerDictionaryObj = new Dictionary<object, object>();
+                foreach (var kvp in this.innerDictionary)
+                {
+                    innerDictionaryObj.Add(kvp.Key, kvp.Value);
+                }
+                var copy = new CharArrayMap<object>(this.keys, this.values.Cast<object>().ToArray(), 
+                    this.ignoreCase, this.count, this.charUtils, this.matchVersion, innerDictionaryObj);
+                keySet = new UnmodifiableCharArraySet(copy);
             }
             return keySet;
         }
@@ -667,6 +623,14 @@ namespace Lucene.Net.Analysis.Util
                 throw new NotSupportedException();
             }
             public override bool Add(char[] text)
+            {
+                throw new NotSupportedException();
+            }
+            public override void Clear()
+            {
+                throw new NotSupportedException();
+            }
+            public override bool Remove(object item)
             {
                 throw new NotSupportedException();
             }
@@ -700,7 +664,7 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
-            public bool HasNext()
+            public virtual bool HasNext()
             {
                 return pos < outerInstance.keys.Length;
             }
@@ -743,55 +707,65 @@ namespace Lucene.Net.Analysis.Util
             /// <summary>
             /// use nextCharArray() + currentValue() for better efficiency.
             /// </summary>
-            //public KeyValuePair<object, V> Next()
+            //public virtual KeyValuePair<object, V> Next()
             //{
             //    GoNext();
             //    //return new KeyValuePair<object, V>();
             //    return new MapEntry(outerInstance, lastPos, allowModify);
             //}
 
-            public void Remove()
+            public virtual void Remove()
             {
                 throw new NotSupportedException();
             }
 
             #region Added for better .NET support
-            public void Dispose()
+            public virtual void Dispose()
             {
             }
 
-            public bool MoveNext()
+            public virtual bool MoveNext()
             {
                 if (!HasNext()) return false;
                 GoNext();
                 return true;
             }
 
-            public void Reset()
+            public virtual void Reset()
             {
                 pos = -1;
                 GoNext();
             }
 
-            public KeyValuePair<object, V> Current { get { return new KeyValuePair<object, V>(outerInstance.keys[lastPos], outerInstance.values[lastPos]); } private set { } }
+            public virtual KeyValuePair<object, V> Current { get { return new KeyValuePair<object, V>(outerInstance.keys[lastPos], outerInstance.values[lastPos]); } private set { } }
 
             object IEnumerator.Current
             {
                 get { return CurrentValue(); }
             }
+
             #endregion
         }
 
+        // NOTE: The Java Lucene type MapEntry was removed here because it is not possible 
+        // to inherit the value type KeyValuePair in .NET.
+
         /// <summary>
-        /// public EntrySet class so efficient methods are exposed to users
+        /// public EntrySet_ class so efficient methods are exposed to users
+        /// 
+        /// NOTE: In .NET this was renamed to EntrySet_ because it conflicted with the
+        /// method EntrySet(). Since there is also an extension method named IDictionary<K,V>.EntrySet()
+        /// that this class needs to override, changing the name of the method was not
+        /// possible because the extension method would produce incorrect results if it were
+        /// inadvertently called.
         /// </summary>
-        public sealed class EntrySet : ISet<KeyValuePair<object, V>>
+        public sealed class EntrySet_ : ISet<KeyValuePair<object, V>>
         {
             private readonly CharArrayMap<V> outerInstance;
 
             internal readonly bool allowModify;
 
-            internal EntrySet(CharArrayMap<V> outerInstance, bool allowModify)
+            internal EntrySet_(CharArrayMap<V> outerInstance, bool allowModify)
             {
                 this.outerInstance = outerInstance;
                 this.allowModify = allowModify;
@@ -800,6 +774,11 @@ namespace Lucene.Net.Analysis.Util
             public IEnumerator GetEnumerator()
             {
                 return new EntryIterator(outerInstance, allowModify);
+            }
+
+            IEnumerator<KeyValuePair<object, V>> IEnumerable<KeyValuePair<object, V>>.GetEnumerator()
+            {
+                return (IEnumerator<KeyValuePair<object, V>>)GetEnumerator();
             }
 
             public bool Contains(object o)
@@ -815,22 +794,34 @@ namespace Lucene.Net.Analysis.Util
                 return v == null ? val == null : v.Equals(val);
             }
 
-            public void CopyTo(KeyValuePair<object, V>[] array, int arrayIndex)
-            {
-                throw new NotImplementedException();
-            }
-
             public bool Remove(KeyValuePair<object, V> item)
             {
                 throw new NotSupportedException();
             }
 
             public int Count { get { return outerInstance.count; } private set { throw new NotSupportedException(); } }
-            public bool IsReadOnly { get { return !allowModify; } }
+            
+            public void Clear()
+            {
+                if (!allowModify)
+                {
+                    throw new NotSupportedException();
+                }
+                outerInstance.Clear();
+            }
+
+            #region Added for better .NET support
 
             #region Not implemented members
 
-            IEnumerator<KeyValuePair<object, V>> IEnumerable<KeyValuePair<object, V>>.GetEnumerator()
+            // TODO: Either implement these (and write tests for them) or throw
+            // NotSupportedException.
+            public void CopyTo(KeyValuePair<object, V>[] array, int arrayIndex)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool Contains(KeyValuePair<object, V> item)
             {
                 throw new NotImplementedException();
             }
@@ -896,19 +887,35 @@ namespace Lucene.Net.Analysis.Util
             }
             #endregion
 
-            public void Clear()
-            {
-                if (!allowModify)
-                {
-                    throw new NotSupportedException();
-                }
-                outerInstance.Clear();
-            }
+            public bool IsReadOnly { get { return !allowModify; } }
 
-            public bool Contains(KeyValuePair<object, V> item)
+            public override string ToString()
             {
-                throw new NotImplementedException();
+                var sb = new StringBuilder("[");
+
+                IEnumerator<KeyValuePair<object, V>> iter1 = new EntryIterator(this.outerInstance, false);
+                while (iter1.MoveNext())
+                {
+                    KeyValuePair<object, V> entry = iter1.Current;
+                    if (sb.Length > 1)
+                    {
+                        sb.Append(", ");
+                    }
+                    if (entry.Key.GetType().Equals(typeof(char[])))
+                    {
+                        sb.Append(new string((char[])entry.Key));
+                    }
+                    else
+                    {
+                        sb.Append(entry.Key);
+                    }
+                    sb.Append("=");
+                    sb.Append(entry.Value);
+                }
+
+                return sb.Append(']').ToString();
             }
+            #endregion
         }
 
         /// <summary>
@@ -974,7 +981,14 @@ namespace Lucene.Net.Analysis.Util
                 Array.Copy(m.keys, 0, keys, 0, keys.Length);
                 var values = new V[m.values.Length];
                 Array.Copy(m.values, 0, values, 0, values.Length);
-                m = new CharArrayMap<V>(m) { keys = keys, values = values };
+
+                IDictionary<object, V> innerDictionaryCopy = new Dictionary<object, V>();
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    if (keys[i] != null)
+                        innerDictionaryCopy.Add(keys[i], values[i]);
+                }
+                m = new CharArrayMap<V>(m) { keys = keys, values = values, innerDictionary = innerDictionaryCopy };
                 return m;
             }
             return new CharArrayMap<V>(matchVersion, map, false);
@@ -995,7 +1009,7 @@ namespace Lucene.Net.Analysis.Util
             {
 
             }
-
+            
             public override void Clear()
             {
                 throw new System.NotSupportedException();
@@ -1026,10 +1040,30 @@ namespace Lucene.Net.Analysis.Util
                 throw new System.NotSupportedException();
             }
 
-            protected override EntrySet CreateEntrySet()
+            internal override EntrySet_ CreateEntrySet()
             {
-                return new EntrySet(this, false);
+                return new EntrySet_(this, false);
             }
+
+            #region Added for better .NET support
+            public override void Add(object key, V value)
+            {
+                throw new System.NotSupportedException();
+            }
+            public override void Add(KeyValuePair<object, V> item)
+            {
+                throw new System.NotSupportedException();
+            }
+            public override V this[object key]
+            {
+                get { return base[key]; }
+                set { throw new System.NotSupportedException(); }
+            }
+            public override bool Remove(KeyValuePair<object, V> item)
+            {
+                throw new System.NotSupportedException();
+            }
+            #endregion
         }
 
         /// <summary>
@@ -1039,9 +1073,9 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         private class EmptyCharArrayMap<V> : UnmodifiableCharArrayMap<V>
         {
-            public EmptyCharArrayMap() : base(new CharArrayMap<V>(LuceneVersion.LUCENE_CURRENT, 0, false))
+            public EmptyCharArrayMap() 
+                : base(new CharArrayMap<V>(LuceneVersion.LUCENE_CURRENT, 0, false))
             {
-
             }
 
             public override bool ContainsKey(char[] text, int off, int len)
