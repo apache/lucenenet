@@ -80,7 +80,9 @@ namespace Lucene.Net.Util
                         try
                         {
                             if (IsInvokableSubclassOf<S>(type))
+                            {
                                 types.Add(type);
+                            }
                         }
                         catch
                         {
