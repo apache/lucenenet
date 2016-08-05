@@ -142,23 +142,22 @@ namespace Lucene.Net.Analysis.Standard
 
         private void Init(Version matchVersion)
         {
-            // TODO: Add the other version support for backward compatibility.
             if (matchVersion.OnOrAfter(Version.LUCENE_47))
             {
                 this.scanner = new StandardTokenizerImpl(input);
             }
-            //else if (matchVersion.OnOrAfter(Version.LUCENE_40))
-            //{
-            //    this.scanner = new StandardTokenizerImpl40(input);
-            //}
-            //else if (matchVersion.OnOrAfter(Version.LUCENE_34))
-            //{
-            //    this.scanner = new StandardTokenizerImpl34(input);
-            //}
-            //else if (matchVersion.OnOrAfter(Version.LUCENE_31))
-            //{
-            //    this.scanner = new StandardTokenizerImpl31(input);
-            //}
+            else if (matchVersion.OnOrAfter(Version.LUCENE_40))
+            {
+                this.scanner = new StandardTokenizerImpl40(input);
+            }
+            else if (matchVersion.OnOrAfter(Version.LUCENE_34))
+            {
+                this.scanner = new StandardTokenizerImpl34(input);
+            }
+            else if (matchVersion.OnOrAfter(Version.LUCENE_31))
+            {
+                this.scanner = new StandardTokenizerImpl31(input);
+            }
             else
             {
                 this.scanner = new ClassicTokenizerImpl(input);

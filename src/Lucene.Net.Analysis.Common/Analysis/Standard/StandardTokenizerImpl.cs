@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// This character denotes the end of file </summary>
-        //public const int StandardTokenizerInterface_Fields;
+        public static readonly int YYEOF = -1;
 
         /// <summary>
         /// initial size of the lookahead buffer </summary>
@@ -860,7 +860,11 @@ namespace Lucene.Net.Analysis.Standard
         private const int ZZ_PUSHBACK_2BIG = 2;
 
         /* error messages for the codes above */
-        private static readonly string[] ZZ_ERROR_MSG = { };
+        private static readonly string[] ZZ_ERROR_MSG = {
+            "Unkown internal scanner error",
+            "Error: could not match input",
+            "Error: pushback value was too large"
+        };
 
         /// <summary>
         /// ZZ_ATTRIBUTE[aState] contains the attributes of state <code>aState</code>
@@ -962,11 +966,11 @@ namespace Lucene.Net.Analysis.Standard
         /* user code: */
         /// <summary>
         /// Alphanumeric sequences </summary>
-        public const int WORD_TYPE = StandardTokenizer.ALPHANUM;
+        public static readonly int WORD_TYPE = StandardTokenizer.ALPHANUM;
 
         /// <summary>
         /// Numbers </summary>
-        public const int NUMERIC_TYPE = StandardTokenizer.NUM;
+        public static readonly int NUMERIC_TYPE = StandardTokenizer.NUM;
 
         /// <summary>
         /// Chars in class \p{Line_Break = Complex_Context} are from South East Asian
@@ -977,15 +981,15 @@ namespace Lucene.Net.Analysis.Standard
         /// See Unicode Line Breaking Algorithm: http://www.unicode.org/reports/tr14/#SA
         /// </para>
         /// </summary>
-        public const int SOUTH_EAST_ASIAN_TYPE = StandardTokenizer.SOUTHEAST_ASIAN;
+        public static readonly int SOUTH_EAST_ASIAN_TYPE = StandardTokenizer.SOUTHEAST_ASIAN;
 
-        public const int IDEOGRAPHIC_TYPE = StandardTokenizer.IDEOGRAPHIC;
+        public static readonly int IDEOGRAPHIC_TYPE = StandardTokenizer.IDEOGRAPHIC;
 
-        public const int HIRAGANA_TYPE = StandardTokenizer.HIRAGANA;
+        public static readonly int HIRAGANA_TYPE = StandardTokenizer.HIRAGANA;
 
-        public const int KATAKANA_TYPE = StandardTokenizer.KATAKANA;
+        public static readonly int KATAKANA_TYPE = StandardTokenizer.KATAKANA;
 
-        public const int HANGUL_TYPE = StandardTokenizer.HANGUL;
+        public static readonly int HANGUL_TYPE = StandardTokenizer.HANGUL;
 
         public int YyChar
         {

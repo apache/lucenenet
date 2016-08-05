@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using Lucene.Net.Analysis.Tokenattributes;
-using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -38,7 +37,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// This character denotes the end of file </summary>
-        //public const int StandardTokenizerInterface_Fields;
+        public static readonly int YYEOF = -1;
 
         /// <summary>
         /// initial size of the lookahead buffer </summary>
@@ -59,7 +58,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Translates characters to character classes
         /// </summary>
-        private static readonly string ZZ_CMAP_PACKED =
+        private const string ZZ_CMAP_PACKED =
             "\x0026\x0000\x0001\x0005\x0001\x0003\x0004\x0000\x0001\x0009\x0001\x0007\x0001\x0004\x0001\x0009\x000A\x0002\x0006\x0000" +
             "\x0001\x0006\x001A\x000A\x0004\x0000\x0001\x0008\x0001\x0000\x001A\x000A\x002F\x0000\x0001\x000A\x000A\x0000\x0001\x000A" +
             "\x0004\x0000\x0001\x000A\x0005\x0000\x0017\x000A\x0001\x0000\x001F\x000A\x0001\x0000\u0128\x000A\x0002\x0000\x0012\x000A" +
@@ -274,7 +273,11 @@ namespace Lucene.Net.Analysis.Standard
         private const int ZZ_PUSHBACK_2BIG = 2;
 
         /* error messages for the codes above */
-        private static readonly string[] ZZ_ERROR_MSG = { };
+        private static readonly string[] ZZ_ERROR_MSG = {
+            "Unkown internal scanner error",
+            "Error: could not match input",
+            "Error: pushback value was too large"
+        };
 
         /// <summary>
         /// ZZ_ATTRIBUTE[aState] contains the attributes of state <code>aState</code>
@@ -375,15 +378,15 @@ namespace Lucene.Net.Analysis.Standard
 
         /* user code: */
 
-        public const int ALPHANUM = StandardTokenizer.ALPHANUM;
-        public const int APOSTROPHE = StandardTokenizer.APOSTROPHE;
-        public const int ACRONYM = StandardTokenizer.ACRONYM;
-        public const int COMPANY = StandardTokenizer.COMPANY;
-        public const int EMAIL = StandardTokenizer.EMAIL;
-        public const int HOST = StandardTokenizer.HOST;
-        public const int NUM = StandardTokenizer.NUM;
-        public const int CJ = StandardTokenizer.CJ;
-        public const int ACRONYM_DEP = StandardTokenizer.ACRONYM_DEP;
+        public static readonly int ALPHANUM = StandardTokenizer.ALPHANUM;
+        public static readonly int APOSTROPHE = StandardTokenizer.APOSTROPHE;
+        public static readonly int ACRONYM = StandardTokenizer.ACRONYM;
+        public static readonly int COMPANY = StandardTokenizer.COMPANY;
+        public static readonly int EMAIL = StandardTokenizer.EMAIL;
+        public static readonly int HOST = StandardTokenizer.HOST;
+        public static readonly int NUM = StandardTokenizer.NUM;
+        public static readonly int CJ = StandardTokenizer.CJ;
+        public static readonly int ACRONYM_DEP = StandardTokenizer.ACRONYM_DEP;
 
         public static readonly string[] TOKEN_TYPES = StandardTokenizer.TOKEN_TYPES;
 
@@ -406,7 +409,7 @@ namespace Lucene.Net.Analysis.Standard
         /// Creates a new scanner
         /// </summary>
         /// <param name="in">  the java.io.Reader to read input from. </param>
-        internal ClassicTokenizerImpl(Reader @in)
+        internal ClassicTokenizerImpl(TextReader @in)
         {
             this.zzReader = @in;
         }
@@ -503,7 +506,7 @@ namespace Lucene.Net.Analysis.Standard
 
             if (zzReader != null)
             {
-                zzReader.Close();
+                zzReader.Dispose();
             }
         }
 
@@ -519,7 +522,7 @@ namespace Lucene.Net.Analysis.Standard
         /// Internal scan buffer is resized down to its initial length, if it has grown.
         /// </summary>
         /// <param name="reader">   the new input stream  </param>
-        public void YyReset(Reader reader)
+        public void YyReset(TextReader reader)
         {
             zzReader = reader;
             zzAtBOL = true;
