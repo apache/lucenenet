@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Analysis.Standard
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -48,7 +47,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <para>Removes dots from acronyms.
         /// </para>
         /// </summary>
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (!input.IncrementToken())
             {
@@ -81,5 +80,4 @@ namespace Lucene.Net.Analysis.Standard
             return true;
         }
     }
-
 }

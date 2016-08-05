@@ -47,13 +47,19 @@
     <Compile Include="Analysis\CharFilter\BaseCharFilter.cs" />
     <Compile Include="Analysis\Core\KeywordAnalyzer.cs" />
     <Compile Include="Analysis\Core\KeywordTokenizer.cs" />
+    <Compile Include="Analysis\Core\KeywordTokenizerFactory.cs" />
     <Compile Include="Analysis\Core\LetterTokenizer.cs" />
+    <Compile Include="Analysis\Core\LetterTokenizerFactory.cs" />
     <Compile Include="Analysis\Core\LowerCaseFilter.cs" />
+    <Compile Include="Analysis\Core\LowerCaseFilterFactory.cs" />
     <Compile Include="Analysis\Core\LowerCaseTokenizer.cs" />
+    <Compile Include="Analysis\Core\LowerCaseTokenizerFactory.cs" />
     <Compile Include="Analysis\Core\SimpleAnalyzer.cs" />
     <Compile Include="Analysis\Core\StopAnalyzer.cs" />
     <Compile Include="Analysis\Core\StopFilter.cs" />
+    <Compile Include="Analysis\Core\WhitespaceTokenizerFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\EmptyTokenStream.cs" />
     <Compile Include="Analysis\Miscellaneous\HyphenatedWordsFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordMarkerFilter.cs" />
@@ -65,9 +71,46 @@
     <Compile Include="Analysis\Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\PrefixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
+    <Compile Include="Analysis\Standard\ClassicFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\ClassicFilterFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\ClassicTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\ClassicTokenizerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\ClassicTokenizerImpl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\StandardAnalyzer.cs" />
+    <Compile Include="Analysis\Standard\StandardFilter.cs" />
+    <Compile Include="Analysis\Standard\StandardFilterFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\StandardTokenizer.cs" />
+    <Compile Include="Analysis\Standard\StandardTokenizerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\StandardTokenizerImpl.cs" />
+    <Compile Include="Analysis\Standard\StandardTokenizerInterface.cs" />
+    <Compile Include="Analysis\Util\AbstractAnalysisFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Util\AnalysisSPILoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Analysis\Util\CharArrayMap.cs" />
     <Compile Include="Analysis\Util\CharArraySet.cs" />
+    <Compile Include="Analysis\Util\CharFilterFactory.cs" />
+    <Compile Include="Analysis\Util\ClasspathResourceLoader.cs" />
     <Compile Include="Analysis\Util\FilteringTokenFilter.cs" />
+    <Compile Include="Analysis\Util\MultiTermAwareComponent.cs" />
+    <Compile Include="Analysis\Util\ResourceLoader.cs" />
+    <Compile Include="Analysis\Util\ResourceLoaderAware.cs" />
     <Compile Include="Analysis\Util\StemmerUtil.cs" />
     <Compile Include="Analysis\Core\UpperCaseFilter.cs" />
     <Compile Include="Analysis\Core\WhitespaceAnalyzer.cs" />
@@ -84,6 +127,8 @@
     <Compile Include="Analysis\Util\RollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\SegmentingTokenizerBase.cs" />
     <Compile Include="Analysis\Util\StopwordAnalyzerBase.cs" />
+    <Compile Include="Analysis\Util\TokenFilterFactory.cs" />
+    <Compile Include="Analysis\Util\TokenizerFactory.cs" />
     <Compile Include="Analysis\Util\WordlistLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

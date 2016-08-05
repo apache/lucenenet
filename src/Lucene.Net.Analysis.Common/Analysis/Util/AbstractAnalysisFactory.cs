@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Analysis.Core;
+﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,6 +26,7 @@ namespace Lucene.Net.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Abstract parent class for analysis factories <seealso cref="TokenizerFactory"/>,
     /// <seealso cref="TokenFilterFactory"/> and <seealso cref="CharFilterFactory"/>.
@@ -48,7 +49,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// the luceneVersion arg </summary>
-        protected internal readonly Version? luceneMatchVersion;
+        protected internal readonly LuceneVersion luceneMatchVersion;
 
         /// <summary>
         /// Initialize this factory via a set of key-value pairs.
@@ -58,16 +59,15 @@ namespace Lucene.Net.Analysis.Util
             ExplicitLuceneMatchVersion = false;
             originalArgs = Collections.UnmodifiableMap(args);
             string version = Get(args, LUCENE_MATCH_VERSION_PARAM);
-            luceneMatchVersion = version == null ? (LuceneVersion?)null : LuceneVersionHelpers.ParseLeniently(version);
+            // LUCENENET TODO: What should we do if the version is null?
+            //luceneMatchVersion = version == null ? (LuceneVersion?)null : LuceneVersionHelpers.ParseLeniently(version);
+            luceneMatchVersion = version == null ? LuceneVersion.LUCENE_CURRENT : LuceneVersionHelpers.ParseLeniently(version);
             args.Remove(CLASS_NAME); // consume the class arg
         }
 
         public IDictionary<string, string> OriginalArgs
         {
-            get
-            {
-                return originalArgs;
-            }
+            get { return originalArgs; }
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Util
         /// or <seealso cref="TokenFilterFactory#create(org.apache.lucene.analysis.TokenStream)"/> methods,
         /// to inform user, that for this factory a <seealso cref="#luceneMatchVersion"/> is required 
         /// </summary>
-        protected internal void assureMatchVersion()
+        protected internal void AssureMatchVersion()
         {
             if (luceneMatchVersion == null)
             {
@@ -83,16 +83,13 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        public LuceneVersion? LuceneMatchVersion
+        public LuceneVersion LuceneMatchVersion
         {
-            get
-            {
-                return this.luceneMatchVersion;
-            }
+            get { return this.luceneMatchVersion; }
         }
 
         public virtual string Require(IDictionary<string, string> args, string name)
-        {            
+        {
             string s;
             if (!args.TryGetValue(name, out s))
             {
@@ -144,15 +141,15 @@ namespace Lucene.Net.Analysis.Util
                 args.Remove(name);
             return s ?? defaultVal;
         }
-        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
+        public virtual string Get(IDictionary<string, string> args, string name, IEnumerable<string> allowedValues)
         {
             return Get(args, name, allowedValues, null); // defaultVal = null
         }
-        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal)
+        public virtual string Get(IDictionary<string, string> args, string name, IEnumerable<string> allowedValues, string defaultVal)
         {
             return Get(args, name, allowedValues, defaultVal, true);
         }
-        public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal, bool caseSensitive)
+        public virtual string Get(IDictionary<string, string> args, string name, IEnumerable<string> allowedValues, string defaultVal, bool caseSensitive)
         {
             string s = null;
             if (args.TryGetValue(name, out s))
@@ -190,8 +187,13 @@ namespace Lucene.Net.Analysis.Util
         }
         protected internal int GetInt(IDictionary<string, string> args, string name, int defaultVal)
         {
-            string s = args.Remove(name);
-            return s == null ? defaultVal : int.Parse(s);
+            string s;
+            if (args.TryGetValue(name, out s))
+            {
+                args.Remove(name);
+                return int.Parse(s);
+            }
+            return defaultVal;
         }
 
         protected internal bool RequireBoolean(IDictionary<string, string> args, string name)
@@ -200,8 +202,13 @@ namespace Lucene.Net.Analysis.Util
         }
         protected internal bool GetBoolean(IDictionary<string, string> args, string name, bool defaultVal)
         {
-            string s = args.Remove(name);
-            return s == null ? defaultVal : bool.Parse(s);
+            string s;
+            if (args.TryGetValue(name, out s))
+            {
+                args.Remove(name);
+                return bool.Parse(s);
+            }
+            return defaultVal;
         }
 
         protected internal float RequireFloat(IDictionary<string, string> args, string name)
@@ -210,23 +217,25 @@ namespace Lucene.Net.Analysis.Util
         }
         protected internal float GetFloat(IDictionary<string, string> args, string name, float defaultVal)
         {
-            string s = args.Remove(name);
-            return s == null ? defaultVal : float.Parse(s);
+            string s;
+            if (args.TryGetValue(name, out s))
+            {
+                args.Remove(name);
+                return float.Parse(s);
+            }
+            return defaultVal;
         }
 
         public virtual char RequireChar(IDictionary<string, string> args, string name)
         {
             return Require(args, name)[0];
         }
-        public virtual char GetChar(IDictionary<string, string> args, string name, char defaultValue)
+        public virtual char GetChar(IDictionary<string, string> args, string name, char defaultVal)
         {
-            string s = args.Remove(name);
-            if (s == null)
+            string s;
+            if (args.TryGetValue(name, out s))
             {
-                return defaultValue;
-            }
-            else
-            {
+                args.Remove(name);
                 if (s.Length != 1)
                 {
                     throw new System.ArgumentException(name + " should be a char. \"" + s + "\" is invalid");
@@ -236,46 +245,47 @@ namespace Lucene.Net.Analysis.Util
                     return s[0];
                 }
             }
+            return defaultVal;
         }
 
-        private static readonly Pattern ITEM_PATTERN = Pattern.compile("[^,\\s]+");
+        //private static readonly Pattern ITEM_PATTERN = Pattern.compile("[^,\\s]+");
+        private static readonly Regex ITEM_PATTERN = new Regex(@"[^,\\s]+");
 
         /// <summary>
         /// Returns whitespace- and/or comma-separated set of values, or null if none are found </summary>
-        public virtual HashSet<string> GetSet(IDictionary<string, string> args, string name)
-	  {
-		string s = args.Remove(name);
-		if (s == null)
-		{
-		 return null;
-		}
-		else
-		{
-		  HashSet<string> set = null;
-		  Matcher matcher = ITEM_PATTERN.matcher(s);
-		  if (matcher.find())
-		  {
-			set = new HashSet<>();
-			set.Add(matcher.group(0));
-			while (matcher.find())
-			{
-			  set.Add(matcher.group(0));
-			}
-		  }
-		  return set;
-		}
-	  }
+        public virtual IEnumerable<string> GetSet(IDictionary<string, string> args, string name)
+        {
+            string s;
+            if (args.TryGetValue(name, out s))
+            {
+                args.Remove(name);
+                HashSet<string> set = null;
+                Match matcher = ITEM_PATTERN.Match(s);
+                if (matcher.Success)
+                {
+                    set = new HashSet<string>();
+                    set.Add(matcher.Groups[0].Value); // LUCENENET TODO: Should this be 0 or 1?
+                    while (matcher.Success)
+                    {
+                        set.Add(matcher.Groups[0].Value); // LUCENENET TODO: Should this be 0 or 1?
+                        matcher = matcher.NextMatch();
+                    }
+                }
+                return set;
+            }
+            return null;
+        }
 
         /// <summary>
         /// Compiles a pattern for the value of the specified argument key <code>name</code> 
         /// </summary>
-        protected internal Pattern GetPattern(IDictionary<string, string> args, string name)
+        protected internal Regex GetPattern(IDictionary<string, string> args, string name)
         {
             try
             {
-                return Pattern.compile(Require(args, name));
+                return new Regex(Require(args, name), RegexOptions.Compiled);
             }
-            catch (PatternSyntaxException e)
+            catch (Exception e)
             {
                 throw new System.ArgumentException("Configuration Error: '" + name + "' can not be parsed in " + this.GetType().Name, e);
             }
@@ -285,20 +295,20 @@ namespace Lucene.Net.Analysis.Util
         /// Returns as <seealso cref="CharArraySet"/> from wordFiles, which
         /// can be a comma-separated list of filenames
         /// </summary>
-        protected internal CharArraySet GetWordSet(ResourceLoader loader, string wordFiles, bool ignoreCase)
+        protected internal CharArraySet GetWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
         {
-            assureMatchVersion();
-            IList<string> files = splitFileNames(wordFiles);
+            AssureMatchVersion();
+            IEnumerable<string> files = SplitFileNames(wordFiles);
             CharArraySet words = null;
-            if (files.Count > 0)
+            if (files.Count() > 0)
             {
                 // default stopwords list has 35 or so words, but maybe don't make it that
                 // big to start
-                words = new CharArraySet(luceneMatchVersion, files.Count * 10, ignoreCase);
+                words = new CharArraySet(luceneMatchVersion, files.Count() * 10, ignoreCase);
                 foreach (string file in files)
                 {
-                    var wlist = getLines(loader, file.Trim());
-                    words.AddAll(StopFilter.makeStopSet(luceneMatchVersion, wlist, ignoreCase));
+                    var wlist = GetLines(loader, file.Trim());
+                    words.AddAll(StopFilter.MakeStopSet(luceneMatchVersion, wlist, ignoreCase));
                 }
             }
             return words;
@@ -307,39 +317,33 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Returns the resource's lines (with content treated as UTF-8)
         /// </summary>
-        protected internal IList<string> getLines(ResourceLoader loader, string resource)
+        protected internal IEnumerable<string> GetLines(IResourceLoader loader, string resource)
         {
-            return WordlistLoader.getLines(loader.openResource(resource), StandardCharsets.UTF_8);
+            return WordlistLoader.GetLines(loader.OpenResource(resource), Encoding.UTF8);
         }
 
         /// <summary>
         /// same as <seealso cref="#getWordSet(ResourceLoader, String, boolean)"/>,
         /// except the input is in snowball format. 
         /// </summary>
-        protected internal CharArraySet getSnowballWordSet(ResourceLoader loader, string wordFiles, bool ignoreCase)
+        protected internal CharArraySet GetSnowballWordSet(IResourceLoader loader, string wordFiles, bool ignoreCase)
         {
-            assureMatchVersion();
-            IList<string> files = splitFileNames(wordFiles);
+            AssureMatchVersion();
+            IEnumerable<string> files = SplitFileNames(wordFiles);
             CharArraySet words = null;
-            if (files.Count > 0)
+            if (files.Count() > 0)
             {
                 // default stopwords list has 35 or so words, but maybe don't make it that
                 // big to start
-                words = new CharArraySet(luceneMatchVersion, files.Count * 10, ignoreCase);
+                words = new CharArraySet(luceneMatchVersion, files.Count() * 10, ignoreCase);
                 foreach (string file in files)
                 {
-                    InputStream stream = null;
-                    TextReader reader = null;
-                    try
+                    using (Stream stream = loader.OpenResource(file.Trim()))
                     {
-                        stream = loader.openResource(file.Trim());
-                        CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
-                        reader = new InputStreamReader(stream, decoder);
-                        WordlistLoader.getSnowballWordSet(reader, words);
-                    }
-                    finally
-                    {
-                        IOUtils.closeWhileHandlingException(reader, stream);
+                        using (TextReader reader = new StreamReader(stream, Encoding.UTF8))
+                        {
+                            WordlistLoader.GetSnowballWordSet(reader, words);
+                        }
                     }
                 }
             }
@@ -352,17 +356,17 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <param name="fileNames"> the string containing file names </param>
         /// <returns> a list of file names with the escaping backslashed removed </returns>
-        protected internal IList<string> splitFileNames(string fileNames)
+        protected internal IEnumerable<string> SplitFileNames(string fileNames)
         {
             if (fileNames == null)
             {
-                return System.Linq.Enumerable.Empty<string>();
+                return Enumerable.Empty<string>();
             }
 
             IList<string> result = new List<string>();
-            foreach (string file in fileNames.Split("(?<!\\\\),", true))
+            foreach (string file in Regex.Split(fileNames, "(?<!\\\\),"))
             {
-                result.Add(file.ReplaceAll("\\\\(?=,)", ""));
+                result.Add(Regex.Replace(file, "\\\\(?=,)", ""));
             }
 
             return result;

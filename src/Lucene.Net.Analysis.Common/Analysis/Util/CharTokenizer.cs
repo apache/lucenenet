@@ -6,7 +6,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +22,7 @@ namespace Lucene.Net.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// An abstract base class for simple, character-oriented tokenizers. 
     /// <para>
@@ -76,10 +76,7 @@ namespace Lucene.Net.Analysis.Util
         protected CharTokenizer(LuceneVersion matchVersion, TextReader input)
             : base(input)
         {
-            termAtt = AddAttribute<ICharTermAttribute>();
-            offsetAtt = AddAttribute<IOffsetAttribute>();
-
-            charUtils = CharacterUtils.GetInstance(matchVersion);
+            Init(matchVersion);
         }
 
         /// <summary>
@@ -95,17 +92,29 @@ namespace Lucene.Net.Analysis.Util
             : base(factory, input)
         {
             _input = input;
+            Init(matchVersion);
+        }
+
+        /// <summary>
+        /// Added in the .NET version to assist with setting the attributes
+        /// from multiple constructors.
+        /// </summary>
+        /// <param name="matchVersion"></param>
+        private void Init(LuceneVersion matchVersion)
+        {
             charUtils = CharacterUtils.GetInstance(matchVersion);
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         private int offset = 0, bufferIndex = 0, dataLen = 0, finalOffset = 0;
         private const int MAX_WORD_LEN = 255;
         private const int IO_BUFFER_SIZE = 4096;
 
-        private readonly ICharTermAttribute termAtt;
-        private readonly IOffsetAttribute offsetAtt;
+        private ICharTermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
 
-        private readonly CharacterUtils charUtils;
+        private CharacterUtils charUtils;
         private readonly CharacterUtils.CharacterBuffer ioBuffer = CharacterUtils.NewCharacterBuffer(IO_BUFFER_SIZE);
 
         /// <summary>
@@ -126,7 +135,7 @@ namespace Lucene.Net.Analysis.Util
             return c;
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             ClearAttributes();
             int length = 0;
@@ -191,7 +200,7 @@ namespace Lucene.Net.Analysis.Util
             return true;
         }
 
-        public override void End()
+        public override sealed void End()
         {
             base.End();
             // set final offset
