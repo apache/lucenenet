@@ -71,6 +71,7 @@
     <Compile Include="Analysis\Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\PrefixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
+    <Compile Include="Analysis\Standard\ClassicAnalyzer.cs" />
     <Compile Include="Analysis\Standard\ClassicFilter.cs">
       <SubType>Code</SubType>
     </Compile>
