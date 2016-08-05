@@ -3124,9 +3124,6 @@ namespace Lucene.Net.Analysis.Standard.Std31
             "\x0004\u04c5\x0002\x0000\x0001\u04c5\x000D\x0000\x0001\u04c5\x0006\x0000\x000A\u04c5\x000C\x0000" +
             "\x0001\u0307\x0009\x0000";
 
-
-
-
         private static int[] ZzUnpackTrans()
         {
             int[] result = new int[214182];
