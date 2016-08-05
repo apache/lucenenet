@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Reflection;
 
 namespace Lucene.Net.Analysis.Util
@@ -31,41 +32,41 @@ namespace Lucene.Net.Analysis.Util
         // NOTE: This class was refactored significantly from its Java counterpart.
         // It is basically just a wrapper around the System.Assembly type.
 
-        private readonly Assembly assembly;
-
-        /// <summary>
-        /// Creates an instance using the current Executing Assembly to load Resources and classes.
-        /// Resource paths must be absolute.
-        /// </summary>
-        public ClasspathResourceLoader()
-            : this(Assembly.GetExecutingAssembly())
-        {
-        }
+        private readonly Type clazz;
+        private readonly string namespaceExcludeRegex;
 
         /// <summary>
         /// Creates an instance using the System.Assembly of the given class to load Resources and classes
         /// Resource paths must be absolute.
         /// </summary>
         public ClasspathResourceLoader(Type clazz)
-            : this(clazz.Assembly)
         {
+            this.clazz = clazz;
         }
 
         /// <summary>
-        /// Creates an instance using the given System.Assembly to load Resources and classes
-        /// Resource paths must be absolute.
+        /// Creates an instance using the System.Assembly of the given class to load Resources and classes
+        /// Resource names are relative to the resourcePrefix.
         /// </summary>
-        public ClasspathResourceLoader(Assembly assembly)
+        /// <param name="clazz">The class type</param>
+        /// <param name="namespacePrefixToExclude">Removes the part of the namespace of the class that matches the regex. 
+        /// This is useful to get to the resource if the assembly name and namespace name don't happen to match.
+        /// If provided, the assembly name will be concatnated with the namespace name (excluding the part tha matches the regex)
+        /// to provide the complete path to the embedded resource in the assembly. Note you can view the entire path to all of 
+        /// the resources by calling Assembly.GetManifestResourceNames() so you can better understand how to build this path.</param>
+        public ClasspathResourceLoader(Type clazz, string namespaceExcludeRegex)
         {
-            this.assembly = assembly;
+            this.clazz = clazz;
+            this.namespaceExcludeRegex = namespaceExcludeRegex;
         }
 
         public Stream OpenResource(string resource)
         {
-            Stream stream = this.assembly.GetManifestResourceStream(resource);
+            var qualifiedResourceName = this.GetQualifiedResourceName(resource);
+            Stream stream = this.clazz.Assembly.GetManifestResourceStream(qualifiedResourceName);
             if (stream == null)
             {
-                throw new IOException("Resource not found: " + resource);
+                throw new IOException("Resource not found: " + qualifiedResourceName);
             }
             return stream;
         }
@@ -74,7 +75,7 @@ namespace Lucene.Net.Analysis.Util
         {
             try
             {
-                return this.assembly.GetType(cname, true);
+                return this.clazz.Assembly.GetType(cname, true);
             }
             catch (Exception e)
             {
@@ -93,6 +94,29 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new Exception("Cannot create instance: " + cname, e);
             }
+        }
+
+        /// <summary>
+        /// Added for .NET help in finding the resource name.
+        /// </summary>
+        /// <param name="resource"></param>
+        /// <returns></returns>
+        private string GetQualifiedResourceName(string resource)
+        {
+            var namespaceName = this.clazz.Namespace;
+            var assemblyName = clazz.Assembly.GetName().Name;
+            if (string.IsNullOrEmpty(this.namespaceExcludeRegex) && (assemblyName.Equals(namespaceName, StringComparison.OrdinalIgnoreCase)))
+                return namespaceName;
+
+            // Get the prefix of the class. We need the assembly name + any folders
+            // that may be in the project, which we get from the class namespace (minus the "Lucene.Net" part).
+            //var namespaceSegment = clazz.Namespace.Replace("Lucene.Net.", "");
+
+            //// Remove the part of the path that matches the Regex.
+            var namespaceSegment = Regex.Replace(namespaceName, this.namespaceExcludeRegex, string.Empty, RegexOptions.Compiled);
+
+            // Qualify by namespace and separate by .
+            return string.Concat(assemblyName, ".", namespaceSegment.Trim('.'), ".", resource);
         }
     }
 }

@@ -54,6 +54,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Analysis\Core\TestStopFilter.cs" />
+    <Compile Include="Analysis\Core\TestStopFilterFactory.cs" />
     <Compile Include="Analysis\Standard\TestStandardFactories.cs" />
     <Compile Include="Analysis\Standard\TestUAX29URLEmailTokenizerFactory.cs">
       <SubType>Code</SubType>
@@ -130,6 +131,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Core\stop-1.txt" />
+    <EmbeddedResource Include="Analysis\Core\stop-2.txt" />
+    <EmbeddedResource Include="Analysis\Core\stop-snowball.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Util
         public static readonly CharArraySet EMPTY_SET = new CharArraySet(CharArrayMap<object>.EmptyMap());
         private static readonly object PLACEHOLDER = new object();
 
-        private readonly CharArrayMap<object> map;
+        internal readonly CharArrayMap<object> map;
 
         /// <summary>
         /// Create set with enough capacity to hold startSize terms
@@ -274,6 +274,27 @@ namespace Lucene.Net.Analysis.Util
             return sb.Append(']').ToString();
         }
 
+        public bool SetEquals(IEnumerable<object> other)
+        {
+            var otherSet = other as CharArraySet;
+            if (otherSet == null)
+                return false;
+
+            if (this.Count != otherSet.Count)
+                return false;
+
+            foreach (var kvp in this.map)
+            {
+                if (!otherSet.map.ContainsKey(kvp.Key))
+                    return false;
+
+                if (!otherSet.map[kvp.Key].Equals(kvp.Value))
+                    return false;
+            }
+
+            return true;
+        }
+
         #region Not used by the Java implementation anyway
         public void UnionWith(IEnumerable<object> other)
         {
@@ -320,10 +341,6 @@ namespace Lucene.Net.Analysis.Util
             throw new System.NotImplementedException();
         }
 
-        public bool SetEquals(IEnumerable<object> other)
-        {
-            throw new System.NotImplementedException();
-        }
         #endregion
     }
 }

@@ -52,27 +52,22 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new System.ArgumentException("invalid keysAndValues map");
             }
+            string previous;
             IDictionary<string, string> args = new Dictionary<string, string>();
             for (int i = 0; i < keysAndValues.Length; i += 2)
             {
-                string previous;
                 if (args.TryGetValue(keysAndValues[i], out previous))
                 {
                     fail("duplicate values for key: " + keysAndValues[i]);
                 }
                 args[keysAndValues[i]] = keysAndValues[i + 1];
-                
             }
-            if (matchVersion != null)
-            {
-                string previous;
-                if (args.TryGetValue("luceneMatchVersion", out previous))
-                {
-                    fail("duplicate values for key: luceneMatchVersion");
-                }
-                args["luceneMatchVersion"] = matchVersion.ToString();
 
+            if (args.TryGetValue("luceneMatchVersion", out previous))
+            {
+                fail("duplicate values for key: luceneMatchVersion");
             }
+            args["luceneMatchVersion"] = matchVersion.ToString();
 
             AbstractAnalysisFactory factory = null;
             try
@@ -117,7 +112,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected internal virtual TokenizerFactory TokenizerFactory(string name, Version version, params string[] keysAndValues)
         {
-            return TokenizerFactory(name, version, new ClasspathResourceLoader(this.GetType()), keysAndValues);
+            return TokenizerFactory(name, version, GetCurrentTypeResourceLoader(), keysAndValues);
         }
 
         /// <summary>
@@ -136,7 +131,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected internal virtual TokenFilterFactory TokenFilterFactory(string name, Version version, params string[] keysAndValues)
         {
-            return TokenFilterFactory(name, version, new ClasspathResourceLoader(this.GetType()), keysAndValues);
+            return TokenFilterFactory(name, version, GetCurrentTypeResourceLoader(), keysAndValues);
         }
 
         /// <summary>
@@ -165,7 +160,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected internal virtual CharFilterFactory CharFilterFactory(string name, params string[] keysAndValues)
         {
-            return CharFilterFactory(name, TEST_VERSION_CURRENT, new ClasspathResourceLoader(this.GetType()), keysAndValues);
+            return CharFilterFactory(name, TEST_VERSION_CURRENT, GetCurrentTypeResourceLoader(), keysAndValues);
         }
 
         /// <summary>
@@ -175,6 +170,16 @@ namespace Lucene.Net.Analysis.Util
         protected internal virtual CharFilterFactory CharFilterFactory(string name, Version matchVersion, IResourceLoader loader, params string[] keysAndValues)
         {
             return (CharFilterFactory)AnalysisFactory(Lucene.Net.Analysis.Util.CharFilterFactory.LookupClass(name), matchVersion, loader, keysAndValues);
+        }
+
+        /// <summary>
+        /// Added for .NET support. Since the namespace of the classes don't match the assembly name, we need to
+        /// exclude part of the namespace.
+        /// </summary>
+        /// <returns></returns>
+        protected internal virtual IResourceLoader GetCurrentTypeResourceLoader()
+        {
+            return new ClasspathResourceLoader(this.GetType(), "Lucene.Net");
         }
     }
 }
