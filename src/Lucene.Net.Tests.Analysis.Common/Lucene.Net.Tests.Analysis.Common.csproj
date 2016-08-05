@@ -55,6 +55,9 @@
     </Compile>
     <Compile Include="Analysis\Core\TestStopFilter.cs" />
     <Compile Include="Analysis\Standard\TestStandardFactories.cs" />
+    <Compile Include="Analysis\Standard\TestUAX29URLEmailTokenizerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Analysis\Util\BaseTokenStreamFactoryTestCase.cs" />
     <Compile Include="Analysis\Util\TestCharacterUtils.cs" />
     <Compile Include="Analysis\Util\TestCharArrayIterator.cs" />

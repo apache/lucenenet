@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.standard;
 using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Standard
@@ -141,7 +140,7 @@ namespace Lucene.Net.Analysis.Standard
 
             while (true)
             {
-                int tokenType = scanner.NextToken;
+                int tokenType = scanner.GetNextToken();
 
                 if (tokenType == StandardTokenizerInterface_Fields.YYEOF)
                 {

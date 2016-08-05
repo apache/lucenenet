@@ -97,6 +97,20 @@
     </Compile>
     <Compile Include="Analysis\Standard\StandardTokenizerImpl.cs" />
     <Compile Include="Analysis\Standard\StandardTokenizerInterface.cs" />
+    <Compile Include="Analysis\Standard\Std31\UAX29URLEmailTokenizerImpl31.cs" />
+    <Compile Include="Analysis\Standard\Std34\UAX29URLEmailTokenizerImpl34.cs" />
+    <Compile Include="Analysis\Standard\Std36\UAX29URLEmailTokenizerImpl36.cs" />
+    <Compile Include="Analysis\Standard\Std40\UAX29URLEmailTokenizerImpl40.cs" />
+    <Compile Include="Analysis\Standard\UAX29URLEmailAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\UAX29URLEmailTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\UAX29URLEmailTokenizerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Standard\UAX29URLEmailTokenizerImpl.cs" />
     <Compile Include="Analysis\Util\AbstractAnalysisFactory.cs">
       <SubType>Code</SubType>
     </Compile>

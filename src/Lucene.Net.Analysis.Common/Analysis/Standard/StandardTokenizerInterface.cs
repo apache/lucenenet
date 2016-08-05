@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         /// <returns>      the next token, <seealso cref="#YYEOF"/> on end of stream </returns>
         /// <exception cref="IOException">  if any I/O-Error occurs </exception>
-        int NextToken { get; }
+        int GetNextToken();
 
     }
 

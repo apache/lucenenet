@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using Lucene.Net.Analysis.Tokenattributes;
-using org.apache.lucene.analysis.standard;
 using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Standard
@@ -43,7 +42,7 @@ namespace Lucene.Net.Analysis.Standard
 
         /// <summary>
         /// initial size of the lookahead buffer </summary>
-        private const int ZZ_BUFFERSIZE = 4096;
+        private static readonly int ZZ_BUFFERSIZE = 4096;
 
         /// <summary>
         /// lexical states </summary>
@@ -60,7 +59,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Translates characters to character classes
         /// </summary>
-        private const string ZZ_CMAP_PACKED = "\x0026\0\x0001\x0005\x0001\x0003\x0004\0\x0001\x0009\x0001\x0007\x0001\x0004\x0001\x0009\x000A\x0002\x0006\0" + "\x0001\x0006\x001A\x000A\x0004\0\x0001\x0008\x0001\0\x001A\x000A\x002F\0\x0001\x000A\x000A\0\x0001\x000A" + "\x0004\0\x0001\x000A\x0005\0\x0017\x000A\x0001\0\x001F\x000A\x0001\0\u0128\x000A\x0002\0\x0012\x000A" + "\x001C\0\x005E\x000A\x0002\0\x0009\x000A\x0002\0\x0007\x000A\x000E\0\x0002\x000A\x000E\0\x0005\x000A" + "\x0009\0\x0001\x000A\x008B\0\x0001\x000A\x000B\0\x0001\x000A\x0001\0\x0003\x000A\x0001\0\x0001\x000A" + "\x0001\0\x0014\x000A\x0001\0\x002C\x000A\x0001\0\x0008\x000A\x0002\0\x001A\x000A\x000C\0\x0082\x000A" + "\x000A\0\x0039\x000A\x0002\0\x0002\x000A\x0002\0\x0002\x000A\x0003\0\x0026\x000A\x0002\0\x0002\x000A" + "\x0037\0\x0026\x000A\x0002\0\x0001\x000A\x0007\0\x0027\x000A\x0048\0\x001B\x000A\x0005\0\x0003\x000A" + "\x002E\0\x001A\x000A\x0005\0\x000B\x000A\x0015\0\x000A\x0002\x0007\0\x0063\x000A\x0001\0\x0001\x000A" + "\x000F\0\x0002\x000A\x0009\0\x000A\x0002\x0003\x000A\x0013\0\x0001\x000A\x0001\0\x001B\x000A\x0053\0" + "\x0026\x000A\u015f\0\x0035\x000A\x0003\0\x0001\x000A\x0012\0\x0001\x000A\x0007\0\x000A\x000A\x0004\0" + "\x000A\x0002\x0015\0\x0008\x000A\x0002\0\x0002\x000A\x0002\0\x0016\x000A\x0001\0\x0007\x000A\x0001\0" + "\x0001\x000A\x0003\0\x0004\x000A\x0022\0\x0002\x000A\x0001\0\x0003\x000A\x0004\0\x000A\x0002\x0002\x000A" + "\x0013\0\x0006\x000A\x0004\0\x0002\x000A\x0002\0\x0016\x000A\x0001\0\x0007\x000A\x0001\0\x0002\x000A" + "\x0001\0\x0002\x000A\x0001\0\x0002\x000A\x001F\0\x0004\x000A\x0001\0\x0001\x000A\x0007\0\x000A\x0002" + "\x0002\0\x0003\x000A\x0010\0\x0007\x000A\x0001\0\x0001\x000A\x0001\0\x0003\x000A\x0001\0\x0016\x000A" + "\x0001\0\x0007\x000A\x0001\0\x0002\x000A\x0001\0\x0005\x000A\x0003\0\x0001\x000A\x0012\0\x0001\x000A" + "\x000F\0\x0001\x000A\x0005\0\x000A\x0002\x0015\0\x0008\x000A\x0002\0\x0002\x000A\x0002\0\x0016\x000A" + "\x0001\0\x0007\x000A\x0001\0\x0002\x000A\x0002\0\x0004\x000A\x0003\0\x0001\x000A\x001E\0\x0002\x000A" + "\x0001\0\x0003\x000A\x0004\0\x000A\x0002\x0015\0\x0006\x000A\x0003\0\x0003\x000A\x0001\0\x0004\x000A" + "\x0003\0\x0002\x000A\x0001\0\x0001\x000A\x0001\0\x0002\x000A\x0003\0\x0002\x000A\x0003\0\x0003\x000A" + "\x0003\0\x0008\x000A\x0001\0\x0003\x000A\x002D\0\x0009\x0002\x0015\0\x0008\x000A\x0001\0\x0003\x000A" + "\x0001\0\x0017\x000A\x0001\0\x000A\x000A\x0001\0\x0005\x000A\x0026\0\x0002\x000A\x0004\0\x000A\x0002" + "\x0015\0\x0008\x000A\x0001\0\x0003\x000A\x0001\0\x0017\x000A\x0001\0\x000A\x000A\x0001\0\x0005\x000A" + "\x0024\0\x0001\x000A\x0001\0\x0002\x000A\x0004\0\x000A\x0002\x0015\0\x0008\x000A\x0001\0\x0003\x000A" + "\x0001\0\x0017\x000A\x0001\0\x0010\x000A\x0026\0\x0002\x000A\x0004\0\x000A\x0002\x0015\0\x0012\x000A" + "\x0003\0\x0018\x000A\x0001\0\x0009\x000A\x0001\0\x0001\x000A\x0002\0\x0007\x000A\x0039\0\x0001\x0001" + "\x0030\x000A\x0001\x0001\x0002\x000A\x000C\x0001\x0007\x000A\x0009\x0001\x000A\x0002\x0027\0\x0002\x000A\x0001\0" + "\x0001\x000A\x0002\0\x0002\x000A\x0001\0\x0001\x000A\x0002\0\x0001\x000A\x0006\0\x0004\x000A\x0001\0" + "\x0007\x000A\x0001\0\x0003\x000A\x0001\0\x0001\x000A\x0001\0\x0001\x000A\x0002\0\x0002\x000A\x0001\0" + "\x0004\x000A\x0001\0\x0002\x000A\x0009\0\x0001\x000A\x0002\0\x0005\x000A\x0001\0\x0001\x000A\x0009\0" + "\x000A\x0002\x0002\0\x0002\x000A\x0022\0\x0001\x000A\x001F\0\x000A\x0002\x0016\0\x0008\x000A\x0001\0" + "\x0022\x000A\x001D\0\x0004\x000A\x0074\0\x0022\x000A\x0001\0\x0005\x000A\x0001\0\x0002\x000A\x0015\0" + "\x000A\x0002\x0006\0\x0006\x000A\x004A\0\x0026\x000A\x000A\0\x0027\x000A\x0009\0\x005A\x000A\x0005\0" + "\x0044\x000A\x0005\0\x0052\x000A\x0006\0\x0007\x000A\x0001\0\x003F\x000A\x0001\0\x0001\x000A\x0001\0" + "\x0004\x000A\x0002\0\x0007\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0002\0\x0027\x000A\x0001\0" + "\x0001\x000A\x0001\0\x0004\x000A\x0002\0\x001F\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0002\0" + "\x0007\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0002\0\x0007\x000A\x0001\0\x0007\x000A\x0001\0" + "\x0017\x000A\x0001\0\x001F\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0002\0\x0007\x000A\x0001\0" + "\x0027\x000A\x0001\0\x0013\x000A\x000E\0\x0009\x0002\x002E\0\x0055\x000A\x000C\0\u026c\x000A\x0002\0" + "\x0008\x000A\x000A\0\x001A\x000A\x0005\0\x004B\x000A\x0095\0\x0034\x000A\x002C\0\x000A\x0002\x0026\0" + "\x000A\x0002\x0006\0\x0058\x000A\x0008\0\x0029\x000A\u0557\0\x009C\x000A\x0004\0\x005A\x000A\x0006\0" + "\x0016\x000A\x0002\0\x0006\x000A\x0002\0\x0026\x000A\x0002\0\x0006\x000A\x0002\0\x0008\x000A\x0001\0" + "\x0001\x000A\x0001\0\x0001\x000A\x0001\0\x0001\x000A\x0001\0\x001F\x000A\x0002\0\x0035\x000A\x0001\0" + "\x0007\x000A\x0001\0\x0001\x000A\x0003\0\x0003\x000A\x0001\0\x0007\x000A\x0003\0\x0004\x000A\x0002\0" + "\x0006\x000A\x0004\0\x000D\x000A\x0005\0\x0003\x000A\x0001\0\x0007\x000A\x0082\0\x0001\x000A\x0082\0" + "\x0001\x000A\x0004\0\x0001\x000A\x0002\0\x000A\x000A\x0001\0\x0001\x000A\x0003\0\x0005\x000A\x0006\0" + "\x0001\x000A\x0001\0\x0001\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0001\0\x0003\x000A\x0001\0" + "\x0007\x000A\u0ecb\0\x0002\x000A\x002A\0\x0005\x000A\x000A\0\x0001\x000B\x0054\x000B\x0008\x000B\x0002\x000B" + "\x0002\x000B\x005A\x000B\x0001\x000B\x0003\x000B\x0006\x000B\x0028\x000B\x0003\x000B\x0001\0\x005E\x000A\x0011\0" + "\x0018\x000A\x0038\0\x0010\x000B\u0100\0\x0080\x000B\x0080\0\u19b6\x000B\x000A\x000B\x0040\0\u51a6\x000B" + "\x005A\x000B\u048d\x000A\u0773\0\u2ba4\x000A\u215c\0\u012e\x000B\x00D2\x000B\x0007\x000A\x000C\0\x0005\x000A" + "\x0005\0\x0001\x000A\x0001\0\x000A\x000A\x0001\0\x000D\x000A\x0001\0\x0005\x000A\x0001\0\x0001\x000A" + "\x0001\0\x0002\x000A\x0001\0\x0002\x000A\x0001\0\x006C\x000A\x0021\0\u016b\x000A\x0012\0\x0040\x000A" + "\x0002\0\x0036\x000A\x0028\0\x000C\x000A\x0074\0\x0003\x000A\x0001\0\x0001\x000A\x0001\0\x0087\x000A" + "\x0013\0\x000A\x0002\x0007\0\x001A\x000A\x0006\0\x001A\x000A\x000A\0\x0001\x000B\x003A\x000B\x001F\x000A" + "\x0003\0\x0006\x000A\x0002\0\x0006\x000A\x0002\0\x0006\x000A\x0002\0\x0003\x000A\x0023\0";
+        private static readonly string ZZ_CMAP_PACKED = "\x0026\0\x0001\x0005\x0001\x0003\x0004\0\x0001\x0009\x0001\x0007\x0001\x0004\x0001\x0009\x000A\x0002\x0006\0" + "\x0001\x0006\x001A\x000A\x0004\0\x0001\x0008\x0001\0\x001A\x000A\x002F\0\x0001\x000A\x000A\0\x0001\x000A" + "\x0004\0\x0001\x000A\x0005\0\x0017\x000A\x0001\0\x001F\x000A\x0001\0\u0128\x000A\x0002\0\x0012\x000A" + "\x001C\0\x005E\x000A\x0002\0\x0009\x000A\x0002\0\x0007\x000A\x000E\0\x0002\x000A\x000E\0\x0005\x000A" + "\x0009\0\x0001\x000A\x008B\0\x0001\x000A\x000B\0\x0001\x000A\x0001\0\x0003\x000A\x0001\0\x0001\x000A" + "\x0001\0\x0014\x000A\x0001\0\x002C\x000A\x0001\0\x0008\x000A\x0002\0\x001A\x000A\x000C\0\x0082\x000A" + "\x000A\0\x0039\x000A\x0002\0\x0002\x000A\x0002\0\x0002\x000A\x0003\0\x0026\x000A\x0002\0\x0002\x000A" + "\x0037\0\x0026\x000A\x0002\0\x0001\x000A\x0007\0\x0027\x000A\x0048\0\x001B\x000A\x0005\0\x0003\x000A" + "\x002E\0\x001A\x000A\x0005\0\x000B\x000A\x0015\0\x000A\x0002\x0007\0\x0063\x000A\x0001\0\x0001\x000A" + "\x000F\0\x0002\x000A\x0009\0\x000A\x0002\x0003\x000A\x0013\0\x0001\x000A\x0001\0\x001B\x000A\x0053\0" + "\x0026\x000A\u015f\0\x0035\x000A\x0003\0\x0001\x000A\x0012\0\x0001\x000A\x0007\0\x000A\x000A\x0004\0" + "\x000A\x0002\x0015\0\x0008\x000A\x0002\0\x0002\x000A\x0002\0\x0016\x000A\x0001\0\x0007\x000A\x0001\0" + "\x0001\x000A\x0003\0\x0004\x000A\x0022\0\x0002\x000A\x0001\0\x0003\x000A\x0004\0\x000A\x0002\x0002\x000A" + "\x0013\0\x0006\x000A\x0004\0\x0002\x000A\x0002\0\x0016\x000A\x0001\0\x0007\x000A\x0001\0\x0002\x000A" + "\x0001\0\x0002\x000A\x0001\0\x0002\x000A\x001F\0\x0004\x000A\x0001\0\x0001\x000A\x0007\0\x000A\x0002" + "\x0002\0\x0003\x000A\x0010\0\x0007\x000A\x0001\0\x0001\x000A\x0001\0\x0003\x000A\x0001\0\x0016\x000A" + "\x0001\0\x0007\x000A\x0001\0\x0002\x000A\x0001\0\x0005\x000A\x0003\0\x0001\x000A\x0012\0\x0001\x000A" + "\x000F\0\x0001\x000A\x0005\0\x000A\x0002\x0015\0\x0008\x000A\x0002\0\x0002\x000A\x0002\0\x0016\x000A" + "\x0001\0\x0007\x000A\x0001\0\x0002\x000A\x0002\0\x0004\x000A\x0003\0\x0001\x000A\x001E\0\x0002\x000A" + "\x0001\0\x0003\x000A\x0004\0\x000A\x0002\x0015\0\x0006\x000A\x0003\0\x0003\x000A\x0001\0\x0004\x000A" + "\x0003\0\x0002\x000A\x0001\0\x0001\x000A\x0001\0\x0002\x000A\x0003\0\x0002\x000A\x0003\0\x0003\x000A" + "\x0003\0\x0008\x000A\x0001\0\x0003\x000A\x002D\0\x0009\x0002\x0015\0\x0008\x000A\x0001\0\x0003\x000A" + "\x0001\0\x0017\x000A\x0001\0\x000A\x000A\x0001\0\x0005\x000A\x0026\0\x0002\x000A\x0004\0\x000A\x0002" + "\x0015\0\x0008\x000A\x0001\0\x0003\x000A\x0001\0\x0017\x000A\x0001\0\x000A\x000A\x0001\0\x0005\x000A" + "\x0024\0\x0001\x000A\x0001\0\x0002\x000A\x0004\0\x000A\x0002\x0015\0\x0008\x000A\x0001\0\x0003\x000A" + "\x0001\0\x0017\x000A\x0001\0\x0010\x000A\x0026\0\x0002\x000A\x0004\0\x000A\x0002\x0015\0\x0012\x000A" + "\x0003\0\x0018\x000A\x0001\0\x0009\x000A\x0001\0\x0001\x000A\x0002\0\x0007\x000A\x0039\0\x0001\x0001" + "\x0030\x000A\x0001\x0001\x0002\x000A\x000C\x0001\x0007\x000A\x0009\x0001\x000A\x0002\x0027\0\x0002\x000A\x0001\0" + "\x0001\x000A\x0002\0\x0002\x000A\x0001\0\x0001\x000A\x0002\0\x0001\x000A\x0006\0\x0004\x000A\x0001\0" + "\x0007\x000A\x0001\0\x0003\x000A\x0001\0\x0001\x000A\x0001\0\x0001\x000A\x0002\0\x0002\x000A\x0001\0" + "\x0004\x000A\x0001\0\x0002\x000A\x0009\0\x0001\x000A\x0002\0\x0005\x000A\x0001\0\x0001\x000A\x0009\0" + "\x000A\x0002\x0002\0\x0002\x000A\x0022\0\x0001\x000A\x001F\0\x000A\x0002\x0016\0\x0008\x000A\x0001\0" + "\x0022\x000A\x001D\0\x0004\x000A\x0074\0\x0022\x000A\x0001\0\x0005\x000A\x0001\0\x0002\x000A\x0015\0" + "\x000A\x0002\x0006\0\x0006\x000A\x004A\0\x0026\x000A\x000A\0\x0027\x000A\x0009\0\x005A\x000A\x0005\0" + "\x0044\x000A\x0005\0\x0052\x000A\x0006\0\x0007\x000A\x0001\0\x003F\x000A\x0001\0\x0001\x000A\x0001\0" + "\x0004\x000A\x0002\0\x0007\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0002\0\x0027\x000A\x0001\0" + "\x0001\x000A\x0001\0\x0004\x000A\x0002\0\x001F\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0002\0" + "\x0007\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0002\0\x0007\x000A\x0001\0\x0007\x000A\x0001\0" + "\x0017\x000A\x0001\0\x001F\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0002\0\x0007\x000A\x0001\0" + "\x0027\x000A\x0001\0\x0013\x000A\x000E\0\x0009\x0002\x002E\0\x0055\x000A\x000C\0\u026c\x000A\x0002\0" + "\x0008\x000A\x000A\0\x001A\x000A\x0005\0\x004B\x000A\x0095\0\x0034\x000A\x002C\0\x000A\x0002\x0026\0" + "\x000A\x0002\x0006\0\x0058\x000A\x0008\0\x0029\x000A\u0557\0\x009C\x000A\x0004\0\x005A\x000A\x0006\0" + "\x0016\x000A\x0002\0\x0006\x000A\x0002\0\x0026\x000A\x0002\0\x0006\x000A\x0002\0\x0008\x000A\x0001\0" + "\x0001\x000A\x0001\0\x0001\x000A\x0001\0\x0001\x000A\x0001\0\x001F\x000A\x0002\0\x0035\x000A\x0001\0" + "\x0007\x000A\x0001\0\x0001\x000A\x0003\0\x0003\x000A\x0001\0\x0007\x000A\x0003\0\x0004\x000A\x0002\0" + "\x0006\x000A\x0004\0\x000D\x000A\x0005\0\x0003\x000A\x0001\0\x0007\x000A\x0082\0\x0001\x000A\x0082\0" + "\x0001\x000A\x0004\0\x0001\x000A\x0002\0\x000A\x000A\x0001\0\x0001\x000A\x0003\0\x0005\x000A\x0006\0" + "\x0001\x000A\x0001\0\x0001\x000A\x0001\0\x0001\x000A\x0001\0\x0004\x000A\x0001\0\x0003\x000A\x0001\0" + "\x0007\x000A\u0ecb\0\x0002\x000A\x002A\0\x0005\x000A\x000A\0\x0001\x000B\x0054\x000B\x0008\x000B\x0002\x000B" + "\x0002\x000B\x005A\x000B\x0001\x000B\x0003\x000B\x0006\x000B\x0028\x000B\x0003\x000B\x0001\0\x005E\x000A\x0011\0" + "\x0018\x000A\x0038\0\x0010\x000B\u0100\0\x0080\x000B\x0080\0\u19b6\x000B\x000A\x000B\x0040\0\u51a6\x000B" + "\x005A\x000B\u048d\x000A\u0773\0\u2ba4\x000A\u215c\0\u012e\x000B\x00D2\x000B\x0007\x000A\x000C\0\x0005\x000A" + "\x0005\0\x0001\x000A\x0001\0\x000A\x000A\x0001\0\x000D\x000A\x0001\0\x0005\x000A\x0001\0\x0001\x000A" + "\x0001\0\x0002\x000A\x0001\0\x0002\x000A\x0001\0\x006C\x000A\x0021\0\u016b\x000A\x0012\0\x0040\x000A" + "\x0002\0\x0036\x000A\x0028\0\x000C\x000A\x0074\0\x0003\x000A\x0001\0\x0001\x000A\x0001\0\x0087\x000A" + "\x0013\0\x000A\x0002\x0007\0\x001A\x000A\x0006\0\x001A\x000A\x000A\0\x0001\x000B\x003A\x000B\x001F\x000A" + "\x0003\0\x0006\x000A\x0002\0\x0006\x000A\x0002\0\x0006\x000A\x0002\0\x0003\x000A\x0023\0";
 
         /// <summary>
         /// Translates characters to character classes
@@ -534,178 +533,175 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         /// <returns>      the next token </returns>
         /// <exception cref="java.io.IOException">  if any I/O-Error occurs </exception>
-        public virtual int NextToken
+        public virtual int GetNextToken()
         {
-            get
+            int zzInput;
+            int zzAction;
+
+            // cached fields:
+            int zzCurrentPosL;
+            int zzMarkedPosL;
+            int zzEndReadL = zzEndRead;
+            char[] zzBufferL = zzBuffer;
+            char[] zzCMapL = ZZ_CMAP;
+
+            int[] zzTransL = ZZ_TRANS;
+            int[] zzRowMapL = ZZ_ROWMAP;
+            int[] zzAttrL = ZZ_ATTRIBUTE;
+
+            while (true)
             {
-                int zzInput;
-                int zzAction;
+                zzMarkedPosL = zzMarkedPos;
 
-                // cached fields:
-                int zzCurrentPosL;
-                int zzMarkedPosL;
-                int zzEndReadL = zzEndRead;
-                char[] zzBufferL = zzBuffer;
-                char[] zzCMapL = ZZ_CMAP;
+                yyChar += zzMarkedPosL - zzStartRead;
 
-                int[] zzTransL = ZZ_TRANS;
-                int[] zzRowMapL = ZZ_ROWMAP;
-                int[] zzAttrL = ZZ_ATTRIBUTE;
+                zzAction = -1;
 
-                while (true)
+                zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
+
+                zzState = ZZ_LEXSTATE[zzLexicalState];
+
+                // set up zzAction for empty match case:
+                int zzAttributes = zzAttrL[zzState];
+                if ((zzAttributes & 1) == 1)
                 {
-                    zzMarkedPosL = zzMarkedPos;
+                    zzAction = zzState;
+                }
 
-                    yyChar += zzMarkedPosL - zzStartRead;
 
-                    zzAction = -1;
-
-                    zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
-
-                    zzState = ZZ_LEXSTATE[zzLexicalState];
-
-                    // set up zzAction for empty match case:
-                    int zzAttributes = zzAttrL[zzState];
-                    if ((zzAttributes & 1) == 1)
+                {
+                    while (true)
                     {
-                        zzAction = zzState;
-                    }
 
-
-                    {
-                        while (true)
+                        if (zzCurrentPosL < zzEndReadL)
                         {
-
-                            if (zzCurrentPosL < zzEndReadL)
-                            {
-                                zzInput = zzBufferL[zzCurrentPosL++];
-                            }
-                            else if (zzAtEOF)
+                            zzInput = zzBufferL[zzCurrentPosL++];
+                        }
+                        else if (zzAtEOF)
+                        {
+                            zzInput = StandardTokenizerInterface_Fields.YYEOF;
+                            goto zzForActionBreak;
+                        }
+                        else
+                        {
+                            // store back cached positions
+                            zzCurrentPos = zzCurrentPosL;
+                            zzMarkedPos = zzMarkedPosL;
+                            bool eof = ZzRefill();
+                            // get translated positions and possibly new buffer
+                            zzCurrentPosL = zzCurrentPos;
+                            zzMarkedPosL = zzMarkedPos;
+                            zzBufferL = zzBuffer;
+                            zzEndReadL = zzEndRead;
+                            if (eof)
                             {
                                 zzInput = StandardTokenizerInterface_Fields.YYEOF;
                                 goto zzForActionBreak;
                             }
                             else
                             {
-                                // store back cached positions
-                                zzCurrentPos = zzCurrentPosL;
-                                zzMarkedPos = zzMarkedPosL;
-                                bool eof = ZzRefill();
-                                // get translated positions and possibly new buffer
-                                zzCurrentPosL = zzCurrentPos;
-                                zzMarkedPosL = zzMarkedPos;
-                                zzBufferL = zzBuffer;
-                                zzEndReadL = zzEndRead;
-                                if (eof)
-                                {
-                                    zzInput = StandardTokenizerInterface_Fields.YYEOF;
-                                    goto zzForActionBreak;
-                                }
-                                else
-                                {
-                                    zzInput = zzBufferL[zzCurrentPosL++];
-                                }
+                                zzInput = zzBufferL[zzCurrentPosL++];
                             }
-                            int zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
-                            if (zzNext == -1)
+                        }
+                        int zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
+                        if (zzNext == -1)
+                        {
+                            goto zzForActionBreak;
+                        }
+                        zzState = zzNext;
+
+                        zzAttributes = zzAttrL[zzState];
+                        if ((zzAttributes & 1) == 1)
+                        {
+                            zzAction = zzState;
+                            zzMarkedPosL = zzCurrentPosL;
+                            if ((zzAttributes & 8) == 8)
                             {
                                 goto zzForActionBreak;
                             }
-                            zzState = zzNext;
-
-                            zzAttributes = zzAttrL[zzState];
-                            if ((zzAttributes & 1) == 1)
-                            {
-                                zzAction = zzState;
-                                zzMarkedPosL = zzCurrentPosL;
-                                if ((zzAttributes & 8) == 8)
-                                {
-                                    goto zzForActionBreak;
-                                }
-                            }
-
                         }
+
                     }
+                }
                 zzForActionBreak:
 
-                    // store back cached position
-                    zzMarkedPos = zzMarkedPosL;
+                // store back cached position
+                zzMarkedPos = zzMarkedPosL;
 
-                    switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction])
-                    {
-                        case 1:
-                            { // Break so we don't hit fall-through warning:
-                                break; // ignore
-                            }
-                            goto case 11;
-                        case 11:
-                            break;
-                        case 2:
-                            {
-                                return ALPHANUM;
-                            }
-                        case 12:
-                            break;
-                        case 3:
-                            {
-                                return CJ;
-                            }
-                        case 13:
-                            break;
-                        case 4:
-                            {
-                                return HOST;
-                            }
-                        case 14:
-                            break;
-                        case 5:
-                            {
-                                return NUM;
-                            }
-                        case 15:
-                            break;
-                        case 6:
-                            {
-                                return APOSTROPHE;
-                            }
-                        case 16:
-                            break;
-                        case 7:
-                            {
-                                return COMPANY;
-                            }
-                        case 17:
-                            break;
-                        case 8:
-                            {
-                                return ACRONYM_DEP;
-                            }
-                        case 18:
-                            break;
-                        case 9:
-                            {
-                                return ACRONYM;
-                            }
-                        case 19:
-                            break;
-                        case 10:
-                            {
-                                return EMAIL;
-                            }
-                        case 20:
-                            break;
-                        default:
-                            if (zzInput == StandardTokenizerInterface_Fields.YYEOF && zzStartRead == zzCurrentPos)
-                            {
-                                zzAtEOF = true;
-                                return StandardTokenizerInterface_Fields.YYEOF;
-                            }
-                            else
-                            {
-                                ZzScanError(ZZ_NO_MATCH);
-                            }
-                            break;
-                    }
+                switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction])
+                {
+                    case 1:
+                        { // Break so we don't hit fall-through warning:
+                            break; // ignore
+                        }
+                        goto case 11;
+                    case 11:
+                        break;
+                    case 2:
+                        {
+                            return ALPHANUM;
+                        }
+                    case 12:
+                        break;
+                    case 3:
+                        {
+                            return CJ;
+                        }
+                    case 13:
+                        break;
+                    case 4:
+                        {
+                            return HOST;
+                        }
+                    case 14:
+                        break;
+                    case 5:
+                        {
+                            return NUM;
+                        }
+                    case 15:
+                        break;
+                    case 6:
+                        {
+                            return APOSTROPHE;
+                        }
+                    case 16:
+                        break;
+                    case 7:
+                        {
+                            return COMPANY;
+                        }
+                    case 17:
+                        break;
+                    case 8:
+                        {
+                            return ACRONYM_DEP;
+                        }
+                    case 18:
+                        break;
+                    case 9:
+                        {
+                            return ACRONYM;
+                        }
+                    case 19:
+                        break;
+                    case 10:
+                        {
+                            return EMAIL;
+                        }
+                    case 20:
+                        break;
+                    default:
+                        if (zzInput == StandardTokenizerInterface_Fields.YYEOF && zzStartRead == zzCurrentPos)
+                        {
+                            zzAtEOF = true;
+                            return StandardTokenizerInterface_Fields.YYEOF;
+                        }
+                        else
+                        {
+                            ZzScanError(ZZ_NO_MATCH);
+                        }
+                        break;
                 }
             }
         }
