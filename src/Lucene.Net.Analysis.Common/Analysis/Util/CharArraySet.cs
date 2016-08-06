@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Clears all entries in this set. This method is supported for reusing, but not <seealso cref="Set#Remove"/>.
         /// </summary>
-        public void Clear()
+        public virtual void Clear()
         {
             map.Clear();
         }
@@ -148,7 +148,8 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Add this String into the set </summary>
+        /// Add this String into the set
+        /// </summary>
         public virtual bool Add(string text)
         {
             return map.Put(text, PLACEHOLDER) == null;
@@ -256,7 +257,7 @@ namespace Lucene.Net.Analysis.Util
         public override string ToString()
         {
             var sb = new StringBuilder("[");
-            foreach (object item in this)
+            foreach (var item in this)
             {
                 if (sb.Length > 1)
                 {

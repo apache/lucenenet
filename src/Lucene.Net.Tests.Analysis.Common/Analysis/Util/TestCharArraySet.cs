@@ -51,7 +51,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         [Test]
         public virtual void TestNonZeroOffset()
         {
-            string[] words = new string[] { "Hello", "World", "this", "is", "a", "test" };
+            string[] words = { "Hello", "World", "this", "is", "a", "test" };
             char[] findme = "xthisy".ToCharArray();
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
             set.AddAll(words);
@@ -245,8 +245,8 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         [Test]
         public virtual void TestSupplementaryChars()
         {
-            string missing = "Term %s is missing in the set";
-            string falsePos = "Term %s is in the set but shouldn't";
+            string missing = "Term {0} is missing in the set";
+            string falsePos = "Term {0} is in the set but shouldn't";
             // for reference see
             // http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[[%3ACase_Sensitive%3DTrue%3A]%26[^[\u0000-\uFFFF]]]&esc=on
             string[] upperArr = new string[] { "Abc\ud801\udc1c", "\ud801\udc1c\ud801\udc1cCDE", "A\ud801\udc1cB" };
@@ -276,8 +276,8 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         [Test]
         public virtual void TestSingleHighSurrogate()
         {
-            string missing = "Term %s is missing in the set";
-            string falsePos = "Term %s is in the set but shouldn't";
+            string missing = "Term {0} is missing in the set";
+            string falsePos = "Term {0} is in the set but shouldn't";
             string[] upperArr = { "ABC\uD800", "ABC\uD800EfG", "\uD800EfG", "\uD800\ud801\udc1cB" };
 
             string[] lowerArr = { "abc\uD800", "abc\uD800efg", "\uD800efg", "\uD800\ud801\udc44b" };
