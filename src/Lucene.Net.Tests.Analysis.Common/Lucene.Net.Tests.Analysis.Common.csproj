@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Analysis\Core\TestAnalyzers.cs" />
     <Compile Include="Analysis\Core\TestClassicAnalyzer.cs" />
+    <Compile Include="Analysis\Core\TestDuelingAnalyzers.cs" />
     <Compile Include="Analysis\Core\TestFactories.cs" />
     <Compile Include="Analysis\Core\TestKeywordAnalyzer.cs" />
     <Compile Include="Analysis\Core\TestStandardAnalyzer.cs" />

@@ -1,9 +1,14 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Automaton;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.core
+namespace Lucene.Net.Analysis.Core
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,283 +25,260 @@ namespace org.apache.lucene.analysis.core
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Compares MockTokenizer (which is simple with no optimizations) with equivalent 
+    /// core tokenizers (that have optimizations like buffering).
+    /// 
+    /// Any tests here need to probably consider unicode version of the JRE (it could
+    /// cause false fails).
+    /// </summary>
+    public class TestDuelingAnalyzers : LuceneTestCase
+    {
+        private CharacterRunAutomaton jvmLetter;
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using TestUtil = org.apache.lucene.util.TestUtil;
-	using Automaton = org.apache.lucene.util.automaton.Automaton;
-	using BasicOperations = org.apache.lucene.util.automaton.BasicOperations;
-	using CharacterRunAutomaton = org.apache.lucene.util.automaton.CharacterRunAutomaton;
-	using State = org.apache.lucene.util.automaton.State;
-	using Transition = org.apache.lucene.util.automaton.Transition;
+        public override void SetUp()
+        {
+            base.SetUp();
+            // build an automaton matching this jvm's letter definition
+            State initial = new State();
+            State accept = new State();
+            accept.Accept = true;
+            for (int i = 0; i <= 0x10FFFF; i++)
+            {
+                if (Character.IsLetter(i))
+                {
+                    initial.AddTransition(new Transition(i, i, accept));
+                }
+            }
+            Automaton single = new Automaton(initial);
+            single.Reduce();
+            Automaton repeat = BasicOperations.Repeat(single);
+            jvmLetter = new CharacterRunAutomaton(repeat);
+        }
 
-	/// <summary>
-	/// Compares MockTokenizer (which is simple with no optimizations) with equivalent 
-	/// core tokenizers (that have optimizations like buffering).
-	/// 
-	/// Any tests here need to probably consider unicode version of the JRE (it could
-	/// cause false fails).
-	/// </summary>
-	public class TestDuelingAnalyzers : LuceneTestCase
-	{
-	  private CharacterRunAutomaton jvmLetter;
+        [Test]
+        public virtual void TestLetterAscii()
+        {
+            Random random = Random();
+            Analyzer left = new MockAnalyzer(random, jvmLetter, false);
+            Analyzer right = new AnalyzerAnonymousInnerClassHelper(this);
+            for (int i = 0; i < 1000; i++)
+            {
+                string s = TestUtil.RandomSimpleString(random);
+                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void setUp() throws Exception
-	  public override void setUp()
-	  {
-		base.setUp();
-		// build an automaton matching this jvm's letter definition
-		State initial = new State();
-		State accept = new State();
-		accept.Accept = true;
-		for (int i = 0; i <= 0x10FFFF; i++)
-		{
-		  if (char.IsLetter(i))
-		  {
-			initial.addTransition(new Transition(i, i, accept));
-		  }
-		}
-		Automaton single = new Automaton(initial);
-		single.reduce();
-		Automaton repeat = BasicOperations.repeat(single);
-		jvmLetter = new CharacterRunAutomaton(repeat);
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestDuelingAnalyzers outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLetterAscii() throws Exception
-	  public virtual void testLetterAscii()
-	  {
-		Random random = random();
-		Analyzer left = new MockAnalyzer(random, jvmLetter, false);
-		Analyzer right = new AnalyzerAnonymousInnerClassHelper(this);
-		for (int i = 0; i < 1000; i++)
-		{
-		  string s = TestUtil.randomSimpleString(random);
-		  assertEquals(s, left.tokenStream("foo", newStringReader(s)), right.tokenStream("foo", newStringReader(s)));
-		}
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestDuelingAnalyzers outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestDuelingAnalyzers outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper(TestDuelingAnalyzers outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        // not so useful since its all one token?!
+        [Test]
+        public virtual void TestLetterAsciiHuge()
+        {
+            Random random = Random();
+            int maxLength = 8192; // CharTokenizer.IO_BUFFER_SIZE*2
+            MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
+            left.MaxTokenLength = 255; // match CharTokenizer's max token length
+            Analyzer right = new AnalyzerAnonymousInnerClassHelper2(this);
+            int numIterations = AtLeast(50);
+            for (int i = 0; i < numIterations; i++)
+            {
+                string s = TestUtil.RandomSimpleString(random, maxLength);
+                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+            }
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-			return new TokenStreamComponents(tokenizer, tokenizer);
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestDuelingAnalyzers outerInstance;
 
-	  // not so useful since its all one token?!
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLetterAsciiHuge() throws Exception
-	  public virtual void testLetterAsciiHuge()
-	  {
-		Random random = random();
-		int maxLength = 8192; // CharTokenizer.IO_BUFFER_SIZE*2
-		MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
-		left.MaxTokenLength = 255; // match CharTokenizer's max token length
-		Analyzer right = new AnalyzerAnonymousInnerClassHelper2(this);
-		int numIterations = atLeast(50);
-		for (int i = 0; i < numIterations; i++)
-		{
-		  string s = TestUtil.randomSimpleString(random, maxLength);
-		  assertEquals(s, left.tokenStream("foo", newStringReader(s)), right.tokenStream("foo", newStringReader(s)));
-		}
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestDuelingAnalyzers outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestDuelingAnalyzers outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper2(TestDuelingAnalyzers outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        [Test]
+        public virtual void TestLetterHtmlish()
+        {
+            Random random = Random();
+            Analyzer left = new MockAnalyzer(random, jvmLetter, false);
+            Analyzer right = new AnalyzerAnonymousInnerClassHelper3(this);
+            for (int i = 0; i < 1000; i++)
+            {
+                string s = TestUtil.RandomHtmlishString(random, 20);
+                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+            }
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-			return new TokenStreamComponents(tokenizer, tokenizer);
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            private readonly TestDuelingAnalyzers outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLetterHtmlish() throws Exception
-	  public virtual void testLetterHtmlish()
-	  {
-		Random random = random();
-		Analyzer left = new MockAnalyzer(random, jvmLetter, false);
-		Analyzer right = new AnalyzerAnonymousInnerClassHelper3(this);
-		for (int i = 0; i < 1000; i++)
-		{
-		  string s = TestUtil.randomHtmlishString(random, 20);
-		  assertEquals(s, left.tokenStream("foo", newStringReader(s)), right.tokenStream("foo", newStringReader(s)));
-		}
-	  }
+            public AnalyzerAnonymousInnerClassHelper3(TestDuelingAnalyzers outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-	  {
-		  private readonly TestDuelingAnalyzers outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper3(TestDuelingAnalyzers outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        [Test]
+        public virtual void TestLetterHtmlishHuge()
+        {
+            Random random = Random();
+            int maxLength = 1024; // this is number of elements, not chars!
+            MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
+            left.MaxTokenLength = 255; // match CharTokenizer's max token length
+            Analyzer right = new AnalyzerAnonymousInnerClassHelper4(this);
+            int numIterations = AtLeast(50);
+            for (int i = 0; i < numIterations; i++)
+            {
+                string s = TestUtil.RandomHtmlishString(random, maxLength);
+                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+            }
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-			return new TokenStreamComponents(tokenizer, tokenizer);
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
+        {
+            private readonly TestDuelingAnalyzers outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLetterHtmlishHuge() throws Exception
-	  public virtual void testLetterHtmlishHuge()
-	  {
-		Random random = random();
-		int maxLength = 1024; // this is number of elements, not chars!
-		MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
-		left.MaxTokenLength = 255; // match CharTokenizer's max token length
-		Analyzer right = new AnalyzerAnonymousInnerClassHelper4(this);
-		int numIterations = atLeast(50);
-		for (int i = 0; i < numIterations; i++)
-		{
-		  string s = TestUtil.randomHtmlishString(random, maxLength);
-		  assertEquals(s, left.tokenStream("foo", newStringReader(s)), right.tokenStream("foo", newStringReader(s)));
-		}
-	  }
+            public AnalyzerAnonymousInnerClassHelper4(TestDuelingAnalyzers outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-	  {
-		  private readonly TestDuelingAnalyzers outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper4(TestDuelingAnalyzers outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        [Test]
+        public virtual void TestLetterUnicode()
+        {
+            Random random = Random();
+            Analyzer left = new MockAnalyzer(Random(), jvmLetter, false);
+            Analyzer right = new AnalyzerAnonymousInnerClassHelper5(this);
+            for (int i = 0; i < 1000; i++)
+            {
+                string s = TestUtil.RandomUnicodeString(random);
+                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+            }
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-			return new TokenStreamComponents(tokenizer, tokenizer);
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
+        {
+            private readonly TestDuelingAnalyzers outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLetterUnicode() throws Exception
-	  public virtual void testLetterUnicode()
-	  {
-		Random random = random();
-		Analyzer left = new MockAnalyzer(random(), jvmLetter, false);
-		Analyzer right = new AnalyzerAnonymousInnerClassHelper5(this);
-		for (int i = 0; i < 1000; i++)
-		{
-		  string s = TestUtil.randomUnicodeString(random);
-		  assertEquals(s, left.tokenStream("foo", newStringReader(s)), right.tokenStream("foo", newStringReader(s)));
-		}
-	  }
+            public AnalyzerAnonymousInnerClassHelper5(TestDuelingAnalyzers outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
-	  {
-		  private readonly TestDuelingAnalyzers outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper5(TestDuelingAnalyzers outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        [Test]
+        public virtual void TestLetterUnicodeHuge()
+        {
+            Random random = Random();
+            int maxLength = 4300; // CharTokenizer.IO_BUFFER_SIZE + fudge
+            MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
+            left.MaxTokenLength = 255; // match CharTokenizer's max token length
+            Analyzer right = new AnalyzerAnonymousInnerClassHelper6(this);
+            int numIterations = AtLeast(50);
+            for (int i = 0; i < numIterations; i++)
+            {
+                string s = TestUtil.RandomUnicodeString(random, maxLength);
+                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+            }
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-			return new TokenStreamComponents(tokenizer, tokenizer);
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper6 : Analyzer
+        {
+            private readonly TestDuelingAnalyzers outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLetterUnicodeHuge() throws Exception
-	  public virtual void testLetterUnicodeHuge()
-	  {
-		Random random = random();
-		int maxLength = 4300; // CharTokenizer.IO_BUFFER_SIZE + fudge
-		MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
-		left.MaxTokenLength = 255; // match CharTokenizer's max token length
-		Analyzer right = new AnalyzerAnonymousInnerClassHelper6(this);
-		int numIterations = atLeast(50);
-		for (int i = 0; i < numIterations; i++)
-		{
-		  string s = TestUtil.randomUnicodeString(random, maxLength);
-		  assertEquals(s, left.tokenStream("foo", newStringReader(s)), right.tokenStream("foo", newStringReader(s)));
-		}
-	  }
+            public AnalyzerAnonymousInnerClassHelper6(TestDuelingAnalyzers outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper6 : Analyzer
-	  {
-		  private readonly TestDuelingAnalyzers outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper6(TestDuelingAnalyzers outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+        // we only check a few core attributes here.
+        // TODO: test other things
+        public virtual void assertEquals(string s, TokenStream left, TokenStream right)
+        {
+            left.Reset();
+            right.Reset();
+            ICharTermAttribute leftTerm = left.AddAttribute<ICharTermAttribute>();
+            ICharTermAttribute rightTerm = right.AddAttribute<ICharTermAttribute>();
+            IOffsetAttribute leftOffset = left.AddAttribute<IOffsetAttribute>();
+            IOffsetAttribute rightOffset = right.AddAttribute<IOffsetAttribute>();
+            IPositionIncrementAttribute leftPos = left.AddAttribute<IPositionIncrementAttribute>();
+            IPositionIncrementAttribute rightPos = right.AddAttribute<IPositionIncrementAttribute>();
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-			return new TokenStreamComponents(tokenizer, tokenizer);
-		  }
-	  }
+            while (left.IncrementToken())
+            {
+                assertTrue("wrong number of tokens for input: " + s, right.IncrementToken());
+                assertEquals("wrong term text for input: " + s, leftTerm.ToString(), rightTerm.ToString());
+                assertEquals("wrong position for input: " + s, leftPos.PositionIncrement, rightPos.PositionIncrement);
+                assertEquals("wrong start offset for input: " + s, leftOffset.StartOffset(), rightOffset.StartOffset());
+                assertEquals("wrong end offset for input: " + s, leftOffset.EndOffset(), rightOffset.EndOffset());
+            };
+            assertFalse("wrong number of tokens for input: " + s, right.IncrementToken());
+            left.End();
+            right.End();
+            assertEquals("wrong final offset for input: " + s, leftOffset.EndOffset(), rightOffset.EndOffset());
+            left.Dispose();
+            right.Dispose();
+        }
 
-	  // we only check a few core attributes here.
-	  // TODO: test other things
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void assertEquals(String s, org.apache.lucene.analysis.TokenStream left, org.apache.lucene.analysis.TokenStream right) throws Exception
-	  public virtual void assertEquals(string s, TokenStream left, TokenStream right)
-	  {
-		left.reset();
-		right.reset();
-		CharTermAttribute leftTerm = left.addAttribute(typeof(CharTermAttribute));
-		CharTermAttribute rightTerm = right.addAttribute(typeof(CharTermAttribute));
-		OffsetAttribute leftOffset = left.addAttribute(typeof(OffsetAttribute));
-		OffsetAttribute rightOffset = right.addAttribute(typeof(OffsetAttribute));
-		PositionIncrementAttribute leftPos = left.addAttribute(typeof(PositionIncrementAttribute));
-		PositionIncrementAttribute rightPos = right.addAttribute(typeof(PositionIncrementAttribute));
-
-		while (left.incrementToken())
-		{
-		  assertTrue("wrong number of tokens for input: " + s, right.incrementToken());
-		  assertEquals("wrong term text for input: " + s, leftTerm.ToString(), rightTerm.ToString());
-		  assertEquals("wrong position for input: " + s, leftPos.PositionIncrement, rightPos.PositionIncrement);
-		  assertEquals("wrong start offset for input: " + s, leftOffset.startOffset(), rightOffset.startOffset());
-		  assertEquals("wrong end offset for input: " + s, leftOffset.endOffset(), rightOffset.endOffset());
-		};
-		assertFalse("wrong number of tokens for input: " + s, right.incrementToken());
-		left.end();
-		right.end();
-		assertEquals("wrong final offset for input: " + s, leftOffset.endOffset(), rightOffset.endOffset());
-		left.close();
-		right.close();
-	  }
-
-	  // TODO: maybe push this out to TestUtil or LuceneTestCase and always use it instead?
-	  private static Reader newStringReader(string s)
-	  {
-		Random random = random();
-		Reader r = new StringReader(s);
-		if (random.nextBoolean())
-		{
-		  r = new MockReaderWrapper(random, r);
-		}
-		return r;
-	  }
-	}
-
+        // TODO: maybe push this out to TestUtil or LuceneTestCase and always use it instead?
+        private static TextReader newStringReader(string s)
+        {
+            Random random = Random();
+            TextReader r = new StringReader(s);
+            if (random.Next(1) == 1)
+            {
+                r = new MockReaderWrapper(random, s);
+            }
+            return r;
+        }
+    }
 }
