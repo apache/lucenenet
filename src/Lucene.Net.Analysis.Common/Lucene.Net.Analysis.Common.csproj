@@ -58,6 +58,8 @@
     <Compile Include="Analysis\Core\StopAnalyzer.cs" />
     <Compile Include="Analysis\Core\StopFilter.cs" />
     <Compile Include="Analysis\Core\StopFilterFactory.cs" />
+    <Compile Include="Analysis\Core\TypeTokenFilter.cs" />
+    <Compile Include="Analysis\Core\TypeTokenFilterFactory.cs" />
     <Compile Include="Analysis\Core\WhitespaceTokenizerFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilterFactory.cs" />

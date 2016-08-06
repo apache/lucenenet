@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util
@@ -129,6 +130,12 @@ namespace Lucene.Net.Util
         protected static void fail(string message)
         {
             Assert.Fail(message);
+        }
+
+
+        protected static ISet<T> AsSet<T>(params T[] args)
+        {
+            return new HashSet<T>(args);
         }
     }
 }

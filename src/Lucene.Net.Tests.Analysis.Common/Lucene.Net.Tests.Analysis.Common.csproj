@@ -61,6 +61,8 @@
     </Compile>
     <Compile Include="Analysis\Core\TestStopFilter.cs" />
     <Compile Include="Analysis\Core\TestStopFilterFactory.cs" />
+    <Compile Include="Analysis\Core\TestTypeTokenFilter.cs" />
+    <Compile Include="Analysis\Core\TestTypeTokenFilterFactory.cs" />
     <Compile Include="Analysis\Core\TestUAX29URLEmailAnalyzer.cs" />
     <Compile Include="Analysis\Core\TestUAX29URLEmailTokenizer.cs" />
     <Compile Include="Analysis\Core\WordBreakTestUnicode_6_3_0.cs" />
@@ -156,6 +158,12 @@
     <EmbeddedResource Include="Analysis\Core\LuceneResourcesWikiPageURLs.txt" />
     <EmbeddedResource Include="Analysis\Core\random.text.with.email.addresses.txt" />
     <EmbeddedResource Include="Analysis\Core\random.text.with.urls.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Core\stoptypes-1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Core\stoptypes-2.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
