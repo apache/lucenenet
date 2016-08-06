@@ -237,7 +237,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
          */
         private static readonly int[] ZZ_ROWMAP = ZzUnpackRowMap();
 
-        private static readonly string ZZ_ROWMAP_PACKED_0 =
+        private const string ZZ_ROWMAP_PACKED_0 =
             "\x0000\x0000\x0000\x0089\x0000\u0112\x0000\u019b\x0000\u0224\x0000\u02ad\x0000\u0336\x0000\u03bf" +
             "\x0000\u0448\x0000\u04d1\x0000\u055a\x0000\u05e3\x0000\u066c\x0000\u06f5\x0000\u077e\x0000\u0807" +
             "\x0000\u0890\x0000\u0919\x0000\u09a2\x0000\u0a2b\x0000\u0ab4\x0000\u0b3d\x0000\u0bc6\x0000\u0c4f" +

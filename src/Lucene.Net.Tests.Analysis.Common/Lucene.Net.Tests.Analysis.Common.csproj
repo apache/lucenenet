@@ -52,11 +52,13 @@
   <ItemGroup>
     <Compile Include="Analysis\Core\TestAnalyzers.cs" />
     <Compile Include="Analysis\Core\TestClassicAnalyzer.cs" />
+    <Compile Include="Analysis\Core\TestStandardAnalyzer.cs" />
     <Compile Include="Analysis\Core\TestStopAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Analysis\Core\TestStopFilter.cs" />
     <Compile Include="Analysis\Core\TestStopFilterFactory.cs" />
+    <Compile Include="Analysis\Core\WordBreakTestUnicode_6_3_0.cs" />
     <Compile Include="Analysis\Standard\TestStandardFactories.cs" />
     <Compile Include="Analysis\Standard\TestUAX29URLEmailTokenizerFactory.cs">
       <SubType>Code</SubType>
