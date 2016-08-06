@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters;
+using System.Reflection;
 using System.Text;
-using Lucene.Net.Support;
 
 namespace Lucene.Net
 {
@@ -99,5 +100,25 @@ namespace Lucene.Net
         {
             Console.WriteLine(e.StackTrace);
         }
+
+        /// <summary>
+        /// Locates resources in the same directory as this type
+        /// </summary>
+        public static Stream getResourceAsStream(this Type t, string name)
+        {
+            Assembly assembly = t.Assembly;
+            string namespaceSegment = t.Namespace.Replace("Lucene.Net", string.Empty);
+            string assemblyName = assembly.GetName().Name;
+            string fullResourcePath = string.Concat(assemblyName, namespaceSegment, ".", name);
+            return assembly.GetManifestResourceStream(fullResourcePath);
+        }
+
+        public static int read(this TextReader reader, char[] buffer)
+        {
+            int bytesRead = reader.Read(buffer, 0, buffer.Length - 1);
+            // Convert the .NET 0 based bytes to the Java -1 behavior when reading is done.
+            return bytesRead == 0 ? -1 : bytesRead;
+        }
+
     }
 }
