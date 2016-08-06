@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis
         {
         }
 
-        public MockTokenizer(AttributeFactory factory, StreamReader input, CharacterRunAutomaton runAutomaton, bool lowerCase)
+        public MockTokenizer(AttributeFactory factory, TextReader input, CharacterRunAutomaton runAutomaton, bool lowerCase)
             : this(factory, input, runAutomaton, lowerCase, DEFAULT_MAX_TOKEN_LENGTH)
         {
         }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis
         /// Calls {@link #MockTokenizer(Lucene.Net.Util.AttributeSource.AttributeFactory,Reader,CharacterRunAutomaton,boolean)
         ///                MockTokenizer(AttributeFactory, Reader, WHITESPACE, true)}
         /// </summary>
-        public MockTokenizer(AttributeFactory factory, StreamReader input)
+        public MockTokenizer(AttributeFactory factory, TextReader input)
             : this(input, WHITESPACE, true)
         {
         }
