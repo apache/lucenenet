@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Core\TestAnalyzers.cs" />
     <Compile Include="Analysis\Core\TestStopAnalyzer.cs">
       <SubType>Code</SubType>
     </Compile>
