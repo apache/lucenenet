@@ -584,6 +584,7 @@
     <Compile Include="core\Util\TestTimSorter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestToStringUtils.cs" />
     <Compile Include="core\Util\TestUnicodeUtil.cs">
       <SubType>Code</SubType>
     </Compile>
