@@ -33,6 +33,8 @@ namespace Lucene.Net.Core.Util
             float boostFractional = 2.5f;
             float boostNonFractional = 5f;
             float boostLong = 1.111111111f;
+            float boostZeroNonFractional = 0f;
+            float boostZeroFractional = 0.123f;
 
             foreach (CultureInfo culture in CultureInfo.GetCultures(CultureTypes.SpecificCultures | CultureTypes.NeutralCultures))
             {
@@ -42,6 +44,8 @@ namespace Lucene.Net.Core.Util
                 assertEquals("^2.5", ToStringUtils.Boost(boostFractional));
                 assertEquals("^5.0", ToStringUtils.Boost(boostNonFractional));
                 assertEquals("^1.111111", ToStringUtils.Boost(boostLong));
+                assertEquals("^0.0", ToStringUtils.Boost(boostZeroNonFractional));
+                assertEquals("^0.123", ToStringUtils.Boost(boostZeroFractional));
             }
         }
     }
