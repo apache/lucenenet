@@ -327,7 +327,7 @@ namespace Lucene.Net.Analysis.Util
 
             innerDictionary[text] = value;
 
-            return value;
+            return default(V);
         }
 
         private void Rehash()

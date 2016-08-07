@@ -30,7 +30,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         public virtual void DoRandom(int iter, bool ignoreCase)
         {
             CharArrayMap<int?> map = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 1, ignoreCase);
-            Dictionary<string, int?> hmap = new Dictionary<string, int?>();
+            HashMap<string, int?> hmap = new HashMap<string, int?>();
 
             char[] key;
             for (int i = 0; i < iter; i++)
@@ -47,7 +47,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
                 int val = Random().Next();
 
                 object o1 = map.Put(key, val);
-                object o2 = hmap[hmapKey] = val;
+                object o2 = hmap.Put(hmapKey, val);
                 assertEquals(o1, o2);
 
                 // add it again with the string method

@@ -21,5 +21,15 @@ namespace Lucene.Net.Support
             }
             return iset;
         }
+
+        public static TValue Put<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+        {
+            if (dict == null)
+                return default(TValue);
+
+            var oldValue = dict[key];
+            dict[key] = value;
+            return oldValue;
+        }
     }
 }
