@@ -37,10 +37,8 @@ namespace Lucene.Net.Util
         {
             if (boost != 1.0f)
             {
-                float boostAsLong = (long)boost;
-                if (boostAsLong == boost)
-                    return "^" + boost.ToString(".0").Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
-                return "^" + boost.ToString().Replace(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
+                // .NET compatibility fix
+                return "^" + boost.ToString(".0######", CultureInfo.InvariantCulture);
             }
             else
                 return "";
