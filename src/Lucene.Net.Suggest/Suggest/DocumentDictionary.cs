@@ -172,11 +172,11 @@ namespace Lucene.Net.Search.Suggest
                     if (hasPayloads)
                     {
                         IndexableField payload = doc.GetField(outerInstance.payloadField);
-                        if (payload == null || (payload.BinaryValue() == null && payload.StringValue == null))
+                        if (payload == null || (payload.BinaryValue == null && payload.StringValue == null))
                         {
                             continue;
                         }
-                        tempPayload = payload.BinaryValue() ?? new BytesRef(payload.StringValue);
+                        tempPayload = payload.BinaryValue ?? new BytesRef(payload.StringValue);
                     }
 
                     if (hasContexts)
@@ -184,23 +184,23 @@ namespace Lucene.Net.Search.Suggest
                         IndexableField[] contextFields = doc.GetFields(outerInstance.contextsField);
                         foreach (IndexableField contextField in contextFields)
                         {
-                            if (contextField.BinaryValue() == null && contextField.StringValue == null)
+                            if (contextField.BinaryValue == null && contextField.StringValue == null)
                             {
                                 continue;
                             }
                             else
                             {
-                                tempContexts.Add(contextField.BinaryValue() ?? new BytesRef(contextField.StringValue));
+                                tempContexts.Add(contextField.BinaryValue ?? new BytesRef(contextField.StringValue));
                             }
                         }
                     }
 
                     IndexableField fieldVal = doc.GetField(outerInstance.field);
-                    if (fieldVal == null || (fieldVal.BinaryValue() == null && fieldVal.StringValue == null))
+                    if (fieldVal == null || (fieldVal.BinaryValue == null && fieldVal.StringValue == null))
                     {
                         continue;
                     }
-                    tempTerm = (fieldVal.StringValue != null) ? new BytesRef(fieldVal.StringValue) : fieldVal.BinaryValue();
+                    tempTerm = (fieldVal.StringValue != null) ? new BytesRef(fieldVal.StringValue) : fieldVal.BinaryValue;
 
                     currentPayload = tempPayload;
                     currentContexts = tempContexts;
