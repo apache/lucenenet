@@ -230,7 +230,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
 
             try
             {
-                map.KeySet().Clear();
+                map.Keys.Clear();
                 fail("Modified unmodifiable map");
             }
             catch (System.NotSupportedException)

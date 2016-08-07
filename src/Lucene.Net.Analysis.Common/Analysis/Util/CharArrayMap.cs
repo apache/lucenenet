@@ -116,7 +116,6 @@ namespace Lucene.Net.Analysis.Util
         {
             this.keys = keys;
             this.count = count;
-            this.values = new V[count];
         }
 
         /// <summary>
@@ -534,38 +533,6 @@ namespace Lucene.Net.Analysis.Util
 
         private class LightWrapperSet : ISet<object>
         {
-            private class CustomEnumerator:IEnumerator<object>
-            {
-                private readonly EntryIterator _enumerator;
-
-                public CustomEnumerator(EntryIterator enumerator)
-                {
-                    _enumerator = enumerator;
-                }
-
-                public void Dispose()
-                {
-                    _enumerator.Dispose();
-                }
-
-                public bool MoveNext()
-                {
-                    return _enumerator.MoveNext();
-                }
-
-                public void Reset()
-                {
-                    _enumerator.Reset();
-                }
-
-                public object Current { get { return _enumerator.Current.Key; } }
-
-                object IEnumerator.Current
-                {
-                    get { return _enumerator.Current.Key; }
-                }
-            }
-
             private readonly CharArrayMap<V> map;
 
             public LightWrapperSet(CharArrayMap<V> map)
@@ -575,7 +542,7 @@ namespace Lucene.Net.Analysis.Util
 
             public IEnumerator<object> GetEnumerator()
             {
-                return new CustomEnumerator((EntryIterator)map.entrySet.GetEnumerator());
+                return map.Keys.GetEnumerator();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -583,7 +550,6 @@ namespace Lucene.Net.Analysis.Util
                 return GetEnumerator();
             }
 
-            #region NotImplemented parts
             public void Add(object item)
             {
                 throw new NotImplementedException();
@@ -643,11 +609,10 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new NotImplementedException();
             }
-            #endregion
 
             public void Clear()
             {
-                throw new NotImplementedException();
+                map.Clear();
             }
 
             public bool Contains(object item)
@@ -673,7 +638,7 @@ namespace Lucene.Net.Analysis.Util
         /// Returns an <seealso cref="CharArraySet"/> view on the map's keys.
         /// The set will use the same {@code matchVersion} as this map. 
         /// </summary>
-        public CharArraySet KeySet()
+        private CharArraySet KeySet()
         {
             if (keySet == null)
             {
@@ -683,9 +648,6 @@ namespace Lucene.Net.Analysis.Util
             return keySet;
         }
 
-        /// <summary>
-        /// Lucene.NET specific
-        /// </summary>
         private sealed class UnmodifiableCharArraySet : CharArraySet
         {
             internal UnmodifiableCharArraySet(CharArrayMap<object> map) : base(map)
@@ -705,10 +667,6 @@ namespace Lucene.Net.Analysis.Util
                 throw new NotSupportedException();
             }
             public override bool Add(char[] text)
-            {
-                throw new NotSupportedException();
-            }
-            public override void Clear()
             {
                 throw new NotSupportedException();
             }
@@ -732,7 +690,7 @@ namespace Lucene.Net.Analysis.Util
                 GoNext();
             }
 
-            internal bool GoNext()
+            internal void GoNext()
             {
                 lastPos = pos;
                 pos++;
@@ -740,11 +698,6 @@ namespace Lucene.Net.Analysis.Util
                 {
                     pos++;
                 }
-
-                if (pos == outerInstance.keys.Length)
-                    return false;
-
-                return true;
             }
 
             public bool HasNext()
@@ -809,7 +762,9 @@ namespace Lucene.Net.Analysis.Util
 
             public bool MoveNext()
             {
-                return GoNext();
+                if (!HasNext()) return false;
+                GoNext();
+                return true;
             }
 
             public void Reset()
@@ -862,7 +817,7 @@ namespace Lucene.Net.Analysis.Util
 
             public void CopyTo(KeyValuePair<object, V>[] array, int arrayIndex)
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
             }
 
             public bool Remove(KeyValuePair<object, V> item)
