@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Core
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="LowerCaseFilter"/>. 
     /// <pre class="prettyprint">
@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Core
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</pre>
     /// </summary>
-    public class LowerCaseFilterFactory : TokenFilterFactory, MultiTermAwareComponent
+    public class LowerCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Core
         public LowerCaseFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            assureMatchVersion();
+            AssureMatchVersion();
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
@@ -52,10 +52,7 @@ namespace Lucene.Net.Analysis.Core
 
         public virtual AbstractAnalysisFactory MultiTermComponent
         {
-            get
-            {
-                return this;
-            }
+            get { return this; }
         }
     }
 }

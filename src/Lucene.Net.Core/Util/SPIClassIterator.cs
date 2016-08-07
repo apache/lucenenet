@@ -53,7 +53,7 @@ namespace Lucene.Net.Util
                     {
                         try
                         {
-                            if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
+                            if (IsInvokableSubclassOf<S>(type))
                                 types.Add(type);
                         }
                         catch
@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
                         {
                             try
                             {
-                                if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
+                                if (IsInvokableSubclassOf<S>(type))
                                     types.Add(type);
                             }
                             catch
@@ -93,6 +93,12 @@ namespace Lucene.Net.Util
                 }
             }
         }
+
+        internal static bool IsInvokableSubclassOf<S>(Type type)
+        {
+            return typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface;
+        }
+
 
         public static SPIClassIterator<S> Get()
         {

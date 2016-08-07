@@ -1,13 +1,12 @@
-﻿using System.Collections;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -24,6 +23,7 @@ namespace Lucene.Net.Analysis.Util
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
     /// A simple class that stores Strings as char[]'s in a
     /// hash table.  Note that this is not a general purpose
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Util
         public static readonly CharArraySet EMPTY_SET = new CharArraySet(CharArrayMap<object>.EmptyMap());
         private static readonly object PLACEHOLDER = new object();
 
-        private readonly CharArrayMap<object> map;
+        internal readonly CharArrayMap<object> map;
 
         /// <summary>
         /// Create set with enough capacity to hold startSize terms
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Clears all entries in this set. This method is supported for reusing, but not <seealso cref="Set#Remove"/>.
         /// </summary>
-        public void Clear()
+        public virtual void Clear()
         {
             map.Clear();
         }
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Util
             return map.ContainsKey(cs);
         }
 
-        public bool Contains(object o)
+        public virtual bool Contains(object o)
         {
             return map.ContainsKey(o);
         }
@@ -137,9 +137,9 @@ namespace Lucene.Net.Analysis.Util
             throw new System.NotImplementedException();
         }
 
-        public bool Remove(object item)
+        public virtual bool Remove(object item)
         {
-            throw new System.NotImplementedException();
+            return map.Remove(item);
         }
 
         public virtual bool Add(object o)
@@ -164,17 +164,17 @@ namespace Lucene.Net.Analysis.Util
             return map.Put(text, PLACEHOLDER) == null;
         }
 
-        public int Count
+        void ICollection<object>.Add(object item)
         {
-            get
-            {
-                {
-                    return map.Count;
-                }
-            }
+            Add(item);
         }
 
-        public bool IsReadOnly { get; private set; }
+        public virtual int Count
+        {
+            get { return map.Count; }
+        }
+
+        public virtual bool IsReadOnly { get; private set; }
 
         /// <summary>
         /// Returns an unmodifiable <seealso cref="CharArraySet"/>. This allows to provide
@@ -241,7 +241,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Returns an <seealso cref="IEnumerator"/> for {@code char[]} instances in this set.
         /// </summary>
-        public IEnumerator GetEnumerator()
+        public virtual IEnumerator GetEnumerator()
         {
             // use the AbstractSet#keySet()'s iterator (to not produce endless recursion)
             return map.OriginalKeySet().GetEnumerator();
@@ -274,9 +274,25 @@ namespace Lucene.Net.Analysis.Util
             return sb.Append(']').ToString();
         }
 
-        void ICollection<object>.Add(object item)
+        public bool SetEquals(IEnumerable<object> other)
         {
-            Add(item);
+            var otherSet = other as CharArraySet;
+            if (otherSet == null)
+                return false;
+
+            if (this.Count != otherSet.Count)
+                return false;
+
+            foreach (var kvp in this.map)
+            {
+                if (!otherSet.map.ContainsKey(kvp.Key))
+                    return false;
+
+                if (!otherSet.map[kvp.Key].Equals(kvp.Value))
+                    return false;
+            }
+
+            return true;
         }
 
         #region Not used by the Java implementation anyway
@@ -325,10 +341,6 @@ namespace Lucene.Net.Analysis.Util
             throw new System.NotImplementedException();
         }
 
-        public bool SetEquals(IEnumerable<object> other)
-        {
-            throw new System.NotImplementedException();
-        }
         #endregion
     }
 }

@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
@@ -50,6 +50,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Core\TestAnalyzers.cs" />
+    <Compile Include="Analysis\Core\TestClassicAnalyzer.cs" />
+    <Compile Include="Analysis\Core\TestDuelingAnalyzers.cs" />
+    <Compile Include="Analysis\Core\TestFactories.cs" />
+    <Compile Include="Analysis\Core\TestKeywordAnalyzer.cs" />
+    <Compile Include="Analysis\Core\TestStandardAnalyzer.cs" />
+    <Compile Include="Analysis\Core\TestStopAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Core\TestStopFilter.cs" />
+    <Compile Include="Analysis\Core\TestStopFilterFactory.cs" />
+    <Compile Include="Analysis\Core\TestTypeTokenFilter.cs" />
+    <Compile Include="Analysis\Core\TestTypeTokenFilterFactory.cs" />
+    <Compile Include="Analysis\Core\TestUAX29URLEmailAnalyzer.cs" />
+    <Compile Include="Analysis\Core\TestUAX29URLEmailTokenizer.cs" />
+    <Compile Include="Analysis\Core\WordBreakTestUnicode_6_3_0.cs" />
+    <Compile Include="Analysis\Standard\TestStandardFactories.cs" />
+    <Compile Include="Analysis\Standard\TestUAX29URLEmailTokenizerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Analysis\Util\BaseTokenStreamFactoryTestCase.cs" />
+    <Compile Include="Analysis\Util\StringMockResourceLoader.cs" />
     <Compile Include="Analysis\Util\TestCharacterUtils.cs" />
     <Compile Include="Analysis\Util\TestCharArrayIterator.cs" />
     <Compile Include="Analysis\Util\TestCharArrayMap.cs" />
@@ -57,6 +79,7 @@
     <Compile Include="Analysis\Util\TestCharTokenizers.cs" />
     <Compile Include="Analysis\Util\TestRollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\TestSegmentingTokenizerBase.cs" />
+    <Compile Include="Analysis\Util\TestWordlistLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +143,27 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Core\stop-1.txt" />
+    <EmbeddedResource Include="Analysis\Core\stop-2.txt" />
+    <EmbeddedResource Include="Analysis\Core\stop-snowball.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Core\urls.from.random.text.with.urls.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Core\email.addresses.from.random.text.with.email.addresses.txt" />
+    <EmbeddedResource Include="Analysis\Core\LuceneResourcesWikiPage.html" />
+    <EmbeddedResource Include="Analysis\Core\LuceneResourcesWikiPageURLs.txt" />
+    <EmbeddedResource Include="Analysis\Core\random.text.with.email.addresses.txt" />
+    <EmbeddedResource Include="Analysis\Core\random.text.with.urls.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Core\stoptypes-1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Core\stoptypes-2.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

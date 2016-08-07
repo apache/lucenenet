@@ -1,27 +1,26 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using Lucene.Net.Analysis.Tokenattributes;
+﻿using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.standard;
 using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Standard
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// A grammar-based tokenizer constructed with JFlex
     /// 
@@ -50,7 +49,7 @@ namespace Lucene.Net.Analysis.Standard
     {
         /// <summary>
         /// A private instance of the JFlex-constructed scanner </summary>
-        private StandardTokenizerInterface scanner;
+        private IStandardTokenizerInterface scanner;
 
         public const int ALPHANUM = 0;
         public const int APOSTROPHE = 1;
@@ -117,14 +116,18 @@ namespace Lucene.Net.Analysis.Standard
         private void Init(LuceneVersion matchVersion)
         {
             this.scanner = new ClassicTokenizerImpl(input);
+            this.termAtt = AddAttribute<ICharTermAttribute>();
+            this.offsetAtt = AddAttribute<IOffsetAttribute>();
+            this.posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            this.typeAtt = AddAttribute<ITypeAttribute>();
         }
 
         // this tokenizer generates three attributes:
         // term offset, positionIncrement and type
-        private readonly CharTermAttribute termAtt;
-        private readonly OffsetAttribute offsetAtt;
-        private readonly PositionIncrementAttribute posIncrAtt;
-        private readonly TypeAttribute typeAtt;
+        private ICharTermAttribute termAtt;
+        private IOffsetAttribute offsetAtt;
+        private IPositionIncrementAttribute posIncrAtt;
+        private ITypeAttribute typeAtt;
         /*
          * (non-Javadoc)
          *
@@ -137,19 +140,19 @@ namespace Lucene.Net.Analysis.Standard
 
             while (true)
             {
-                int tokenType = scanner.NextToken;
+                int tokenType = scanner.GetNextToken();
 
                 if (tokenType == StandardTokenizerInterface_Fields.YYEOF)
                 {
                     return false;
                 }
 
-                if (scanner.yylength() <= maxTokenLength)
+                if (scanner.YyLength <= maxTokenLength)
                 {
                     posIncrAtt.PositionIncrement = skippedPositions + 1;
-                    scanner.getText(termAtt);
+                    scanner.GetText(termAtt);
 
-                    int start = scanner.yychar();
+                    int start = scanner.YyChar;
                     offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(start + termAtt.Length));
 
                     if (tokenType == ClassicTokenizer.ACRONYM_DEP)
@@ -176,7 +179,7 @@ namespace Lucene.Net.Analysis.Standard
         {
             base.End();
             // set final offset
-            int finalOffset = CorrectOffset(scanner.yychar() + scanner.yylength());
+            int finalOffset = CorrectOffset(scanner.YyChar + scanner.YyLength);
             offsetAtt.SetOffset(finalOffset, finalOffset);
             // adjust any skipped tokens
             posIncrAtt.PositionIncrement = posIncrAtt.PositionIncrement + skippedPositions;
@@ -185,15 +188,14 @@ namespace Lucene.Net.Analysis.Standard
         public override void Dispose()
         {
             base.Dispose();
-            scanner.yyreset(input);
+            scanner.YyReset(input);
         }
 
         public override void Reset()
         {
             base.Reset();
-            scanner.yyreset(input);
+            scanner.YyReset(input);
             skippedPositions = 0;
         }
     }
-
 }

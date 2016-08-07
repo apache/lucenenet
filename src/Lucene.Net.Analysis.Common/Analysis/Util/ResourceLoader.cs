@@ -3,7 +3,6 @@ using System.IO;
 
 namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,28 +20,25 @@ namespace Lucene.Net.Analysis.Util
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Abstraction for loading resources (streams, files, and classes).
     /// </summary>
-    public interface ResourceLoader
+    public interface IResourceLoader
     {
-
         /// <summary>
         /// Opens a named resource
         /// </summary>
         Stream OpenResource(string resource);
 
-
         /// <summary>
-        /// Finds class of the name and expected type
+        /// Finds class of the name
         /// </summary>
-        Type FindClass<T>(string cname, Type expectedType);
+        Type FindClass(string cname);
 
         /// <summary>
         /// Creates an instance of the name and expected type
         /// </summary>
         // TODO: fix exception handling
-        T NewInstance<T>(string cname, Type expectedType);
+        T NewInstance<T>(string cname);
     }
 }
