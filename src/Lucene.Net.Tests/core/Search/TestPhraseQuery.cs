@@ -380,7 +380,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, hits[1].Doc);
             Assert.AreEqual(0.31, hits[2].Score, 0.01);
             Assert.AreEqual(2, hits[2].Doc);
-            QueryUtils.Check(Random(), query, Searcher, Similarity);
+            QueryUtils.Check(Random(), query, searcher, Similarity);
             reader.Dispose();
             directory.Dispose();
         }
