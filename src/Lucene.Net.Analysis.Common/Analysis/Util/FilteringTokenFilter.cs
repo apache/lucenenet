@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Util
         /// Override this method and return if the current input token should be returned by <seealso cref="#incrementToken"/>. </summary>
         protected internal abstract bool Accept();
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (enablePositionIncrements)
             {
@@ -133,6 +133,10 @@ namespace Lucene.Net.Analysis.Util
             {
                 return enablePositionIncrements;
             }
+            // LUCENENET TODO:
+            // deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4
+            // There doesn't appear to be a way to apply [Obsolete] on a property setter only. The only way
+            // to make it show the obsolete warning is to change this back to separate Get and Set methods.
             set
             {
                 CheckPositionIncrement(version, value);
