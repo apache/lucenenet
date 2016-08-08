@@ -64,7 +64,11 @@ namespace Lucene.Net.Codecs.Lucene3x
         private static IList<Term> SampleTerms;
 
         /// <summary>
-        /// we will manually instantiate preflex-rw here </summary>
+        /// we will manually instantiate preflex-rw here
+        /// 
+        /// LUCENENET specific
+        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
         public void BeforeClass()
         {

@@ -123,6 +123,9 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Checks to see if the hits are what we expected.
+        /// 
+        /// LUCENENET specific
+        /// Is non-static because it depends on the non-static variable, <see cref="LuceneTestCase.Similarity"/>
         /// </summary>
         /// <param name="query"> the query to execute </param>
         /// <param name="description"> the description of the search </param>

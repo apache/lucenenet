@@ -185,6 +185,11 @@ namespace Lucene.Net.Index
             private IndexWriter Writer;
             private readonly Func<string, string, FieldType, Field> _newFieldFunc;
 
+            /// <param name="newFieldFunc">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewField(string, string, FieldType)"/>
+            /// is no longer static. 
+            /// </param>
             public ThreadAnonymousInnerClassHelper(long stopTime, IndexWriter writer, Func<string, string, FieldType, Field> newFieldFunc)
             {
                 this.StopTime = stopTime;

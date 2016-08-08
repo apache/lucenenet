@@ -497,6 +497,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewStringField, NewTextField, NewField methods
+        /// are no longer static.
+        /// </summary>
         internal void AddDocumentWithFields(IndexWriter writer)
         {
             Document doc = new Document();
@@ -510,6 +515,11 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewStringField, NewTextField, NewField methods
+        /// are no longer static.
+        /// </summary>
         internal void AddDocumentWithDifferentFields(IndexWriter writer)
         {
             Document doc = new Document();
@@ -523,6 +533,11 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewTextField, NewField methods are no longer
+        /// static.
+        /// </summary>
         internal void AddDocumentWithTermVectorFields(IndexWriter writer)
         {
             Document doc = new Document();
@@ -547,6 +562,10 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewTextField is no longer static.
+        /// </summary>
         internal void AddDoc(IndexWriter writer, string value)
         {
             Document doc = new Document();

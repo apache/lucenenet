@@ -1131,6 +1131,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Split from <see cref="TestUpdateOldSegments"/> because OLD_FORMAT_IMPERSONATION_IS_ACTIVE
+        /// is no longer static and the existing codecs have to be remade.
+        /// </summary>
         [Test]
         public virtual void TestUpdateOldSegments_OldFormatNotActive()
         {

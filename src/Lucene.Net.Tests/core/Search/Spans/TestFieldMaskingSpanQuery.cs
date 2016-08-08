@@ -54,6 +54,10 @@ namespace Lucene.Net.Search.Spans
         protected internal static Directory Directory;
         protected internal static IndexReader Reader;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
         public void BeforeClass()
         {

@@ -65,6 +65,11 @@ namespace Lucene.Net.Index
             internal bool NoErrors;
             internal volatile int AddCount;
 
+            /// <param name="newField">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewField(string, string, FieldType)"/>
+            /// is no longer static.
+            /// </param>
             public IndexerThread(IndexWriter writer, bool noErrors, Func<string, string, FieldType, Field> newField)
             {
                 this.Writer = writer;
@@ -602,6 +607,11 @@ namespace Lucene.Net.Index
             internal CountdownEvent IwConstructed;
             private readonly LuceneTestCase OuterInstance;
 
+            /// <param name="outerInstance">
+            /// LUCENENET specific
+            /// Passed in because this class acceses non-static methods,
+            /// NewTextField and NewIndexWriterConfig
+            /// </param>
             public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed, LuceneTestCase outerInstance)
             {
                 this.Dir = dir;

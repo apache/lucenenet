@@ -28,6 +28,10 @@ namespace Lucene.Net.Codecs.Lucene42
         private readonly NormsFormat Norms = new Lucene42NormsFormat();
         private readonly FieldInfosFormat fieldInfosFormat;
 
+        /// <param name="oldFormatImpersonationIsActive">
+        /// LUCENENET specific
+        /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
+        /// </param>
         public Lucene42RWCodec(bool oldFormatImpersonationIsActive) : base()
         {
             Dv = new Lucene42RWDocValuesFormat(oldFormatImpersonationIsActive);
@@ -38,6 +42,10 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             private readonly bool _oldFormatImpersonationIsActive;
 
+            /// <param name="oldFormatImpersonationIsActive">
+            /// LUCENENET specific
+            /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
+            /// </param>
             public Lucene42FieldInfosFormatAnonymousInnerClassHelper(bool oldFormatImpersonationIsActive) : base()
             {
                 _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;

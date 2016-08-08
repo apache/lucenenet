@@ -110,6 +110,10 @@ namespace Lucene.Net.Search.Payloads
             return new PayloadNearQuery(clauses, 0, inOrder, function);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
         public void BeforeClass()
         {

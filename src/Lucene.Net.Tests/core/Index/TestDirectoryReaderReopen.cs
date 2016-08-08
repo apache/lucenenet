@@ -559,6 +559,10 @@ namespace Lucene.Net.Index
             }
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         public void CreateIndex(Random random, Directory dir, bool multiSegment)
         {
             IndexWriter.Unlock(dir);

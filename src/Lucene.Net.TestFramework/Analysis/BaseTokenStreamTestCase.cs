@@ -528,22 +528,37 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy </summary>
+        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy
+        ///
+        /// LUCENENET specific
+        /// Non-static to reduce the inter-class dependencies due to use of
+        /// static variables
+        /// </summary>
         public void CheckRandomData(Random random, Analyzer a, int iterations)
         {
             CheckRandomData(random, a, iterations, 20, false, true);
         }
 
         /// <summary>
-        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy </summary>
+        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy
+        ///
+        /// LUCENENET specific
+        /// Non-static to reduce the inter-class dependencies due to use of
+        /// static variables
+        /// </summary>
         public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength)
         {
             CheckRandomData(random, a, iterations, maxWordLength, false, true);
         }
 
         /// <summary>
-        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy </summary>
-        /// <param name="simple"> true if only ascii strings will be used (try to avoid) </param>
+        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy
+        /// 
+        /// LUCENENET specific
+        /// Non-static to reduce the inter-class dependencies due to use of
+        /// static variables
+        /// </summary>
+        /// <param name="simple"> true if only ascii strings will be used (try to avoid)</param>
         public void CheckRandomData(Random random, Analyzer a, int iterations, bool simple)
         {
             CheckRandomData(random, a, iterations, 20, simple, true);
@@ -567,6 +582,11 @@ namespace Lucene.Net.Analysis
             // interact)... so this is just "best effort":
             public bool Failed;
 
+            /// <summary>
+            /// <param name="outerInstance">
+            /// LUCENENET specific
+            /// Added to remove a call to the then-static BaseTokenStreamTestCase methods</param>
+            /// </summary>
             internal AnalysisThread(long seed, /*CountdownEvent latch,*/ Analyzer a, int iterations, int maxWordLength, 
                 bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw, BaseTokenStreamTestCase outerInstance)
             {

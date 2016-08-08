@@ -28,6 +28,10 @@ namespace Lucene.Net.Codecs.Lucene42
     {
         private readonly bool _oldFormatImpersonationIsActive;
 
+        /// <param name="oldFormatImpersonationIsActive">
+        /// LUCENENET specific
+        /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
+        /// </param>
         public Lucene42RWDocValuesFormat(bool oldFormatImpersonationIsActive) : base()
         {
             _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;

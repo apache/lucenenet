@@ -57,6 +57,10 @@ namespace Lucene.Net.Search
         protected internal static Analyzer Analyzer;
         protected internal static string Stopword; // we always pick a character as a stopword
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because ClassEnvRule is no longer static.
+        /// </summary>
         [SetUp]
         public void BeforeClass()
         {

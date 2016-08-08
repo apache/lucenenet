@@ -423,6 +423,9 @@ namespace Lucene.Net.Util
         /// specific tests on demand.
         ///
         /// @lucene.internal
+        /// 
+        /// LUCENENET specific
+        /// Is non-static to remove inter-class dependencies on this variable
         /// </summary>
         public bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE { get; protected set; }
 
@@ -437,16 +440,27 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Class environment setup rule.
+        /// 
+        /// LUCENENET specific
+        /// Is non-static to remove inter-class dependencies on this variable
         /// </summary>
         internal TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; private set; }
 
         /// <summary>
         /// Gets the Similarity from the Class Environment setup rule
+        /// 
+        /// LUCENENET specific
+        /// Exposed because <see cref="TestRuleSetupAndRestoreClassEnv"/> is
+        /// internal and this field is needed by other classes.
         /// </summary>
         public Similarity Similarity { get { return ClassEnvRule.Similarity; } }
 
         /// <summary>
         /// Gets the Timezone from the Class Environment setup rule
+        /// 
+        /// LUCENENET specific
+        /// Exposed because <see cref="TestRuleSetupAndRestoreClassEnv"/> is
+        /// internal and this field is needed by other classes.
         /// </summary>
         public TimeZone TimeZone { get { return ClassEnvRule.TimeZone; } }
 
@@ -851,19 +865,32 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// create a new index writer config with random defaults </summary>
+        /// create a new index writer config with random defaults
+        /// 
+        /// LUCENENET specific
+        /// Non-static so that we do not depend on any hidden static dependencies
+        /// </summary>
         public IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(Random(), v, a);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Non-static so that we do not depend on any hidden static dependencies
+        /// </summary>
         public IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(r, v, a, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
         }
 
         /// <summary>
-        /// create a new index writer config with random defaults using the specified random </summary>
+        /// create a new index writer config with random defaults using the specified random
+        /// 
+        /// LUCENENET specific
+        /// This is the only static ctor for IndexWriterConfig because it removes the dependency
+        /// on ClassEnvRule by using parameters Similarity and TimeZone.
+        /// </summary>
         public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a, Similarity similarity, TimeZone timezone)
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
@@ -963,24 +990,10 @@ namespace Lucene.Net.Util
             return c;
         }
 
-        /// <summary>
-        /// Gets an IndexWriterConfig using the current TEST_LUCENE_VERSION and a MockAnalyzer
-        /// </summary>
-        public IndexWriterConfig NewIndexWriterConfig()
-        {
-            var random = Random();
-
-            return NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random));
-        }
-
-        /// <summary>
-        /// Gets an IndexWriterConfig using the current TEST_LUCENE_VERSION and the given analyzer
-        /// </summary>
-        public IndexWriterConfig NewIndexWriterConfig(Analyzer a)
-        {
-            return NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, a);
-        }
-
+        /// <param name="timezone">
+        /// LUCENENET specific
+        /// Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
+        /// </param>
         public static MergePolicy NewMergePolicy(Random r, TimeZone timezone)
         {
             if (Rarely(r))
@@ -998,6 +1011,10 @@ namespace Lucene.Net.Util
             return NewLogMergePolicy(r);
         }
 
+        /// <param name="timezone">
+        /// LUCENENET specific
+        /// Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
+        /// </param>
         public static MergePolicy NewMergePolicy(TimeZone timezone)
         {
             return NewMergePolicy(Random(), timezone);
@@ -1277,31 +1294,61 @@ namespace Lucene.Net.Util
             }
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
         public Field NewStringField(string name, string value, Field.Store stored)
         {
             return NewField(Random(), name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
         public Field NewTextField(string name, string value, Field.Store stored)
         {
             return NewField(Random(), name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
         public Field NewStringField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is also non-static to reduce hidden dependencies on this variable.
+        /// </summary>
         public Field NewTextField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
         public Field NewField(string name, string value, FieldType type)
         {
             return NewField(Random(), name, value, type);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
+        /// is now non-static.
+        /// </summary>
         public Field NewField(Random random, string name, string value, FieldType type)
         {
             name = new string(name.ToCharArray());
@@ -1577,12 +1624,19 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
+        /// 
+        /// LUCENENET specific
+        /// Is non-static because <see cref="ClassEnvRule"/> is now non-static.
         /// </summary>
         public IndexSearcher NewSearcher(IndexReader r)
         {
             return NewSearcher(r, ClassEnvRule.Similarity);
         }
 
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         public static IndexSearcher NewSearcher(IndexReader r, Similarity similarity)
         {
             return NewSearcher(r, true, similarity);
@@ -1592,6 +1646,10 @@ namespace Lucene.Net.Util
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, Similarity similarity)
         {
             return NewSearcher(r, maybeWrap, true, similarity);
@@ -1609,6 +1667,10 @@ namespace Lucene.Net.Util
         /// <code>wrapWithAssertions</code> is true, this searcher might be an
         /// <seealso cref="AssertingIndexSearcher"/> instance.
         /// </summary>
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions, Similarity similarity)
         {
             Random random = Random();

@@ -231,6 +231,11 @@ namespace Lucene.Net.Index
 
             private readonly Func<string, string, Field.Store, Field> NewStringField;
 
+            /// <param name="newStringField">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
+            /// is no longer static.
+            /// </param>
             public IndexingThread(LineFileDocs docs, IndexWriter writer, int num, Func<string, string, Field.Store, Field> newStringField)
                 : base()
             {

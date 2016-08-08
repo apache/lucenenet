@@ -147,7 +147,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// LUCENENET specific
-        /// 
         /// Changed from internal static method to private to remove
         /// inter-dependencies between TestIndexWriter*.cs, TestAddIndexes.cs
         /// and TestDeletionPolicy.cs tests
@@ -161,7 +160,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// LUCENENET specific
-        /// 
         /// Changed from internal static method to private to remove
         /// inter-dependencies between TestIndexWriter*.cs, TestAddIndexes.cs
         /// and TestDeletionPolicy.cs tests

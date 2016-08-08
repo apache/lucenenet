@@ -46,6 +46,10 @@ namespace Lucene.Net.Search
         private static IndexReader Reader;
         private static IndexSearcher Searcher;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because Similarity and TimeZone are not static.
+        /// </summary>
         [TestFixtureSetUp]
         public void BeforeClass()
         {

@@ -96,6 +96,10 @@ namespace Lucene.Net.Search
             }
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         public Directory GetDirectory(Analyzer analyzer, string[] vals)
         {
             Directory directory = NewDirectory();

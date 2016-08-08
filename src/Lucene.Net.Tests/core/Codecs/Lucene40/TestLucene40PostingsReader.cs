@@ -53,6 +53,10 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
         public void BeforeClass()
         {

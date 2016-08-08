@@ -73,6 +73,11 @@ namespace Lucene.Net.Search
             Directory = null;
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig, NewTextField and
+        /// NewStringField are no longer static.
+        /// </summary>
         [TestFixtureSetUp]
         public void BeforeClassTestExplanations()
         {

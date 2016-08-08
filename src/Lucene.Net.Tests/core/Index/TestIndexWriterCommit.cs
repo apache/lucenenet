@@ -393,6 +393,11 @@ namespace Lucene.Net.Index
             private long EndTime;
             private int FinalI;
 
+            /// <param name="newStringField">
+            /// LUCENENET specific
+            /// This is passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
+            /// is no longer static.
+            /// </param>
             public ThreadAnonymousInnerClassHelper(Directory dir, RandomIndexWriter w, AtomicBoolean failed, long endTime, int finalI, Func<string, string, Field.Store, Field> newStringField)
             {
                 NewStringField = newStringField;
@@ -739,7 +744,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// LUCENENET specific
-        ///
         /// Copied from <see cref="TestIndexWriter.AddDoc(IndexWriter)"/>
         /// to remove inter-class dependency on <see cref="TestIndexWriter"/>
         /// </summary>
@@ -752,7 +756,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// LUCENENET specific
-        ///
         /// Copied from <seealso cref="TestIndexWriter.AddDocWithIndex(IndexWriter, int)"/>
         /// to remove inter-class dependency on <see cref="TestIndexWriter"/>.
         /// </summary>

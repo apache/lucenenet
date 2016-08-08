@@ -110,6 +110,16 @@ namespace Lucene.Net.Index
             private RandomIndexWriter w;
             private long StopTime;
 
+            /// <param name="newStringField">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
+            /// is no longer static
+            /// </param>
+            /// <param name="newTextField">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewTextField(string, string, Field.Store)"/>
+            /// is no longer static
+            /// </param>
             public ThreadAnonymousInnerClassHelper(RandomIndexWriter w, long stopTime, 
                 Func<string, string, Field.Store, Field> newStringField, Func<string, string, Field.Store, Field> newTextField)
             {

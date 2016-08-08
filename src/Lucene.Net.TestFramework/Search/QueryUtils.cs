@@ -118,6 +118,10 @@ namespace Lucene.Net.Search
         /// Various query sanity checks on a searcher, some checks are only done for
         /// instanceof IndexSearcher.
         /// </summary>
+        /// <param name = "similarity" >
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         /// <seealso cref= #check(Query) </seealso>
         /// <seealso cref= #checkFirstSkipTo </seealso>
         /// <seealso cref= #checkSkipTo </seealso>
@@ -128,6 +132,10 @@ namespace Lucene.Net.Search
             Check(random, q1, s, true, similarity);
         }
 
+        /// <param name = "similarity" >
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         public static void Check(Random random, Query q1, IndexSearcher s, bool wrap, Similarity similarity)
         {
             try
@@ -200,6 +208,10 @@ namespace Lucene.Net.Search
         /// behave exactly the same as the original IndexSearcher. </summary>
         /// <param name="s"> the searcher to wrap </param>
         /// <param name="edge"> if negative, s will be the first sub; if 0, s will be in the middle, if positive s will be the last sub </param>
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         public static IndexSearcher WrapUnderlyingReader(Random random, IndexSearcher s, int edge, Similarity similarity)
         {
             IndexReader r = s.IndexReader;
@@ -251,6 +263,10 @@ namespace Lucene.Net.Search
         /// alternate scorer skipTo(),skipTo(),next(),next(),skipTo(),skipTo(), etc
         /// and ensure a hitcollector receives same docs and scores
         /// </summary>
+        /// <param name = "similarity" >
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         public static void CheckSkipTo(Query q, IndexSearcher s, Similarity similarity)
         {
             //System.out.println("Checking "+q);
@@ -412,7 +428,11 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// check that first skip on just created scorers always goes to the right doc </summary>
+        /// check that first skip on just created scorers always goes to the right doc</summary>
+        /// <param name = "similarity" >
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         public static void CheckFirstSkipTo(Query q, IndexSearcher s, Similarity similarity)
         {
             //System.out.println("checkFirstSkipTo: "+q);

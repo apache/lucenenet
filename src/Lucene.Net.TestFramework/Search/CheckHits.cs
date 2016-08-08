@@ -91,7 +91,11 @@ namespace Lucene.Net.Search
         /// <param name="searcher"> the searcher to test the query against </param>
         /// <param name="defaultFieldName"> used for displaying the query in assertion messages </param>
         /// <param name="results"> a list of documentIds that must match the query </param>
-        /// <seealso cref= #checkHits </seealso>
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
+        /// <seealso cref=#checkHits </seealso>
         public static void CheckHitCollector(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Similarity similarity)
         {
             QueryUtils.Check(random, query, searcher, similarity);
@@ -170,6 +174,10 @@ namespace Lucene.Net.Search
         /// <param name="searcher"> the searcher to test the query against </param>
         /// <param name="defaultFieldName"> used for displaing the query in assertion messages </param>
         /// <param name="results"> a list of documentIds that must match the query </param>
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         /// <seealso cref= #checkHitCollector </seealso>
         public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Similarity similarity)
         {

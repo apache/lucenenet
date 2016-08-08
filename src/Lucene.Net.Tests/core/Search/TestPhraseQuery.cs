@@ -255,7 +255,7 @@ namespace Lucene.Net.Search
             query.Add(new Term("field", "words"));
             ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
-            QueryUtils.Check(Random(), query, Searcher, Similarity);
+            QueryUtils.Check(Random(), query, searcher, Similarity);
 
             reader.Dispose();
             directory.Dispose();

@@ -95,6 +95,16 @@ namespace Lucene.Net.Index
             internal IndexWriter Writer;
             internal int NextID;
 
+            /// <param name="newStringField">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewStringField(string, string, Field.Store)"/>
+            /// is no longer static.
+            /// </param>
+            /// <param name="newTextField">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewTextField(string, string, Field.Store)"/>
+            /// is no longer static.
+            /// </param>
             public IndexerThread(IndexWriter writer, TimedThread[] threads,
                 Func<string, string, Field.Store, Field> newStringField,
                 Func<string, string, Field.Store, Field> newTextField)
@@ -132,6 +142,11 @@ namespace Lucene.Net.Index
             internal Directory Directory;
             private readonly LuceneTestCase OuterInstance;
 
+            /// <param name="outerInstance">
+            /// LUCENENET specific
+            /// Passed in because <see cref="LuceneTestCase.NewSearcher(IndexReader)"/>
+            /// is no longer static.
+            /// </param>
             public SearcherThread(Directory directory, TimedThread[] threads, LuceneTestCase outerInstance)
                 : base(threads)
             {

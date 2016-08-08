@@ -33,6 +33,12 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly StoredFieldsFormat StoredFields = new PreFlexRWStoredFieldsFormat();
         private readonly bool _oldFormatImpersonationIsActive;
 
+        /// <summary>
+        /// </summary>
+        /// <param name="oldFormatImpersonationIsActive">
+        /// LUCENENET specific
+        /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
+        /// </param>
         public PreFlexRWCodec(bool oldFormatImpersonationIsActive) : base()
         {
             _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;

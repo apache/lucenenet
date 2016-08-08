@@ -272,6 +272,10 @@ namespace Lucene.Net.Index
             return docs;
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         public void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
         {
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
