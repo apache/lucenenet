@@ -64,8 +64,6 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class CharTokenizer : Tokenizer
     {
-        protected readonly TextReader _input;
-
         /// <summary>
         /// Creates a new <seealso cref="CharTokenizer"/> instance
         /// </summary>
@@ -91,12 +89,11 @@ namespace Lucene.Net.Analysis.Util
         protected CharTokenizer(LuceneVersion matchVersion, AttributeFactory factory, TextReader input)
             : base(factory, input)
         {
-            _input = input;
             Init(matchVersion);
         }
 
         /// <summary>
-        /// Added in the .NET version to assist with setting the attributes
+        /// LUCENENET Added in the .NET version to assist with setting the attributes
         /// from multiple constructors.
         /// </summary>
         /// <param name="matchVersion"></param>
@@ -140,7 +137,7 @@ namespace Lucene.Net.Analysis.Util
             ClearAttributes();
             int length = 0;
             int start = -1; // this variable is always initialized
-            int end_Renamed = -1;
+            int end = -1;
             char[] buffer = termAtt.Buffer();
             while (true)
             {
@@ -175,13 +172,13 @@ namespace Lucene.Net.Analysis.Util
                     {
                         Debug.Assert(start == -1);
                         start = offset + bufferIndex - charCount;
-                        end_Renamed = start;
+                        end = start;
                     } // check if a supplementary could run out of bounds
                     else if (length >= buffer.Length - 1)
                     {
                         buffer = termAtt.ResizeBuffer(2 + length); // make sure a supplementary fits in the buffer
                     }
-                    end_Renamed += charCount;
+                    end += charCount;
                     length += Character.ToChars(Normalize(c), buffer, length); // buffer it, normalized
                     if (length >= MAX_WORD_LEN) // buffer overflow! make sure to check for >= surrogate pair could break == test
                     {
@@ -196,7 +193,7 @@ namespace Lucene.Net.Analysis.Util
 
             termAtt.Length = length;
             Debug.Assert(start != -1);
-            offsetAtt.SetOffset(CorrectOffset(start), finalOffset = CorrectOffset(end_Renamed));
+            offsetAtt.SetOffset(CorrectOffset(start), finalOffset = CorrectOffset(end));
             return true;
         }
 
@@ -214,7 +211,7 @@ namespace Lucene.Net.Analysis.Util
             offset = 0;
             dataLen = 0;
             finalOffset = 0;
-            ioBuffer.reset(); // make sure to reset the IO buffer!!
+            ioBuffer.Reset(); // make sure to reset the IO buffer!!
         }
     }
 }

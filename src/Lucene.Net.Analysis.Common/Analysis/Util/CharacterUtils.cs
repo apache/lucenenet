@@ -438,7 +438,7 @@ namespace Lucene.Net.Analysis.Util
             /// Resets the CharacterBuffer. All internals are reset to its default
             /// values.
             /// </summary>
-            public void reset()
+            public void Reset()
             {
                 offset = 0;
                 length = 0;
