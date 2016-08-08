@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -18,7 +19,6 @@ namespace Lucene.Net.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     /// <summary>
     /// A CharacterIterator used internally for use with <seealso cref="BreakIterator"/>
@@ -71,63 +71,27 @@ namespace Lucene.Net.Analysis.Util
             this.limit = start + length;
         }
 
-        public override char Current()
+        public override char Current
         {
-            return (index == limit) ? DONE : JreBugWorkaround(array[index]);
+            get
+            {
+                return (index == limit) ? DONE : JreBugWorkaround(array[index]);
+            }
         }
 
         protected internal abstract char JreBugWorkaround(char ch);
+ 
 
         public override char First()
         {
             index = start;
-            return Current();
+            return Current;
         }
-
-        public int BeginIndex
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
-        public int EndIndex
-        {
-            get
-            {
-                return length;
-            }
-        }
-
-        public int Index
-        {
-            get
-            {
-                return index - start;
-            }
-        }
-
-        public override int GetBeginIndex()
-        {
-            return 0;
-        }
-
-        public override int GetEndIndex()
-        {
-            return length;
-        }
-
-        public override int GetIndex()
-        {
-            return index - start;
-        }
-
 
         public override char Last()
         {
             index = (limit == start) ? limit : limit - 1;
-            return Current();
+            return Current;
         }
 
         public override char Next()
@@ -139,7 +103,7 @@ namespace Lucene.Net.Analysis.Util
             }
             else
             {
-                return Current();
+                return Current;
             }
         }
 
@@ -152,7 +116,7 @@ namespace Lucene.Net.Analysis.Util
             }
             else
             {
-                return Current();
+                return Current;
             }
         }
 
@@ -163,7 +127,31 @@ namespace Lucene.Net.Analysis.Util
                 throw new ArgumentException("Illegal Position: " + position);
             }
             index = start + position;
-            return Current();
+            return Current;
+        }
+
+        public override int BeginIndex
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public override int EndIndex
+        {
+            get
+            {
+                return length;
+            }
+        }
+
+        public override int Index
+        {
+            get
+            {
+                return index - start;
+            }
         }
 
         public override object Clone()
