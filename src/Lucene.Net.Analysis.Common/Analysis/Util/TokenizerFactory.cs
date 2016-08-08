@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Util
     public abstract class TokenizerFactory : AbstractAnalysisFactory
     {
 
-        private static readonly AnalysisSPILoader<TokenizerFactory> loader = new AnalysisSPILoader<TokenizerFactory>(typeof(TokenizerFactory));
+        private static readonly AnalysisSPILoader<TokenizerFactory> loader = new AnalysisSPILoader<TokenizerFactory>();
 
         /// <summary>
         /// looks up a tokenizer by name from context classpath </summary>

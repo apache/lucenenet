@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Util
     public abstract class CharFilterFactory : AbstractAnalysisFactory
     {
 
-        private static readonly AnalysisSPILoader<CharFilterFactory> loader = new AnalysisSPILoader<CharFilterFactory>(typeof(CharFilterFactory));
+        private static readonly AnalysisSPILoader<CharFilterFactory> loader = new AnalysisSPILoader<CharFilterFactory>();
 
         /// <summary>
         /// looks up a charfilter by name from context classpath </summary>

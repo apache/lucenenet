@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class TokenFilterFactory : AbstractAnalysisFactory
     {
-        private static readonly AnalysisSPILoader<TokenFilterFactory> loader = new AnalysisSPILoader<TokenFilterFactory>(typeof(TokenFilterFactory), new string[] { "TokenFilterFactory", "FilterFactory" });
+        private static readonly AnalysisSPILoader<TokenFilterFactory> loader = new AnalysisSPILoader<TokenFilterFactory>(new string[] { "TokenFilterFactory", "FilterFactory" });
 
         /// <summary>
         /// looks up a tokenfilter by name from context classpath </summary>

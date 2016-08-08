@@ -33,17 +33,16 @@ namespace Lucene.Net.Analysis.Util
     {
 
         private volatile IDictionary<string, Type> services = CollectionsHelper.EmptyMap<string, Type>();
-        private readonly Type clazz;
+        private readonly Type clazz = typeof(S);
         private readonly string[] suffixes;
 
-        public AnalysisSPILoader(Type clazz)
-            : this(clazz, new string[] { clazz.Name })
+        public AnalysisSPILoader()
+            : this(new string[] { typeof(S).Name })
         {
         }
 
-        public AnalysisSPILoader(Type clazz, string[] suffixes)
+        public AnalysisSPILoader(string[] suffixes)
         {
-            this.clazz = clazz;
             this.suffixes = suffixes;
 
             Reload();
