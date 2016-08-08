@@ -3,10 +3,13 @@ using NUnit.Framework;
 using System.Globalization;
 using System.Threading;
 
-namespace Lucene.Net.Core.Util
+namespace Lucene.Net.Core.Support
 {
     /// <summary>
-    /// This test was added for .NET compatibility
+    /// This test was added for .NET compatibility - LUCENENET specific
+    /// 
+    /// It tests the Lucene.Net.Util.ToStringUtils which was untested in the Java counterpart,
+    /// but required some help to ensure .NET compatibility.
     /// </summary>
     public class TestToStringUtils : LuceneTestCase
     {
