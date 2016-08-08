@@ -145,6 +145,13 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// 
+        /// Changed from internal static method to private to remove
+        /// inter-dependencies between TestIndexWriter*.cs, TestAddIndexes.cs
+        /// and TestDeletionPolicy.cs tests
+        /// </summary>
         private void AddDoc(IndexWriter writer)
         {
             Document doc = new Document();
@@ -152,6 +159,13 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// 
+        /// Changed from internal static method to private to remove
+        /// inter-dependencies between TestIndexWriter*.cs, TestAddIndexes.cs
+        /// and TestDeletionPolicy.cs tests
+        /// </summary>
         private void AddDocWithIndex(IndexWriter writer, int index)
         {
             Document doc = new Document();

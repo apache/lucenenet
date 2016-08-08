@@ -236,6 +236,12 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        ///
+        /// Copied from <seealso cref="TestIndexWriter.AddDoc(IndexWriter)"/>
+        /// to remove inter-class dependency on TestIndexWriter.
+        /// </summary>
         private void AddDoc(IndexWriter writer)
         {
             Document doc = new Document();
