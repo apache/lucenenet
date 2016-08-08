@@ -267,16 +267,13 @@ namespace Lucene.Net.Support
 
         public static bool IsLetter(int c)
         {
-            var str = Char.ConvertFromUtf32(c);
-
-            var unicodeCategory = Char.GetUnicodeCategory(str, 0);
+            var unicodeCategory = Char.GetUnicodeCategory((char)c);
 
             return unicodeCategory == UnicodeCategory.LowercaseLetter ||
                    unicodeCategory == UnicodeCategory.UppercaseLetter ||
                    unicodeCategory == UnicodeCategory.TitlecaseLetter ||
                    unicodeCategory == UnicodeCategory.ModifierLetter ||
-                   unicodeCategory== UnicodeCategory.OtherLetter;
-
+                   unicodeCategory == UnicodeCategory.OtherLetter;
         }
     }
 }
