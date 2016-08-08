@@ -280,7 +280,7 @@ namespace Lucene.Net.Search
             bq.Add(query, BooleanClause.Occur.MUST);
             ScoreDoc[] hits = Searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
-            QueryUtils.Check(Random(), Query, Searcher, Similarity);
+            QueryUtils.Check(Random(), query, Searcher, Similarity);
         }
 
         [Test]
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
             bq.Add(query, BooleanClause.Occur.SHOULD);
             ScoreDoc[] hits = Searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
-            QueryUtils.Check(Random(), Query, Searcher, Similarity);
+            QueryUtils.Check(Random(), query, Searcher, Similarity);
         }
 
         // Make sure BooleanQuery, which does out-of-order
@@ -323,7 +323,7 @@ namespace Lucene.Net.Search
             bq.Add(new TermQuery(new Term("field", "two")), BooleanClause.Occur.SHOULD);
             ScoreDoc[] hits = Searcher.Search(query, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
-            QueryUtils.Check(Random(), Query, Searcher, Similarity);
+            QueryUtils.Check(Random(), query, Searcher, Similarity);
         }
 
         [Test]
@@ -340,13 +340,13 @@ namespace Lucene.Net.Search
             Query query = new FilteredQuery(new FilteredQuery(new MatchAllDocsQuery(), new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "three")))), RandomFilterStrategy(Random(), useRandomAccess)), new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "four")))), RandomFilterStrategy(Random(), useRandomAccess));
             ScoreDoc[] hits = Searcher.Search(query, 10).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
-            QueryUtils.Check(Random(), Query, Searcher, Similarity);
+            QueryUtils.Check(Random(), query, Searcher, Similarity);
 
             // one more:
             query = new FilteredQuery(query, new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "five")))), RandomFilterStrategy(Random(), useRandomAccess));
             hits = Searcher.Search(query, 10).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
-            QueryUtils.Check(Random(), Query, Searcher, Similarity);
+            QueryUtils.Check(Random(), query, Searcher, Similarity);
         }
 
         [Test]
