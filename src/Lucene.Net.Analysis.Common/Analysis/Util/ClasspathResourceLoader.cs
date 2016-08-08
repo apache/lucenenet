@@ -29,8 +29,7 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public sealed class ClasspathResourceLoader : IResourceLoader
     {
-        // NOTE: This class was refactored significantly from its Java counterpart.
-        // It is basically just a wrapper around the System.Assembly type.
+        // LUCENENET NOTE: This class was refactored significantly from its Java counterpart.
 
         private readonly Type clazz;
         private readonly string namespaceExcludeRegex;
@@ -97,7 +96,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Added for .NET help in finding the resource name.
+        /// LUCENENET: Added for .NET help in finding the resource name.
         /// </summary>
         /// <param name="resource"></param>
         /// <returns></returns>
@@ -108,11 +107,7 @@ namespace Lucene.Net.Analysis.Util
             if (string.IsNullOrEmpty(this.namespaceExcludeRegex) && (assemblyName.Equals(namespaceName, StringComparison.OrdinalIgnoreCase)))
                 return namespaceName;
 
-            // Get the prefix of the class. We need the assembly name + any folders
-            // that may be in the project, which we get from the class namespace (minus the "Lucene.Net" part).
-            //var namespaceSegment = clazz.Namespace.Replace("Lucene.Net.", "");
-
-            //// Remove the part of the path that matches the Regex.
+            // Remove the part of the path that matches the Regex.
             var namespaceSegment = Regex.Replace(namespaceName, this.namespaceExcludeRegex, string.Empty, RegexOptions.Compiled);
 
             // Qualify by namespace and separate by .
