@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Text;
-using Lucene.Net.Util;
-using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -54,10 +53,18 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> the given <seealso cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetWordSet(TextReader reader, CharArraySet result)
         {
-            string word = null;
-            while ((word = reader.ReadLine()) != null)
+            try
             {
-                result.Add(word.Trim());
+                string word = null;
+                while ((word = reader.ReadLine()) != null)
+                {
+                    result.Add(word.Trim());
+                }
+                
+            }
+            finally
+            {
+                IOUtils.Close(reader);
             }
             return result;
         }
@@ -103,13 +110,20 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> the given <seealso cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetWordSet(TextReader reader, string comment, CharArraySet result)
         {
-            string word = null;
-            while ((word = reader.ReadLine()) != null)
+            try
             {
-                if (word.StartsWith(comment, StringComparison.Ordinal) == false)
+                string word = null;
+                while ((word = reader.ReadLine()) != null)
                 {
-                    result.Add(word.Trim());
+                    if (word.StartsWith(comment, StringComparison.Ordinal) == false)
+                    {
+                        result.Add(word.Trim());
+                    }
                 }
+            }
+            finally
+            {
+                IOUtils.Close(reader);
             }
             return result;
         }
@@ -131,25 +145,30 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> the given <seealso cref="CharArraySet"/> with the reader's words </returns>
         public static CharArraySet GetSnowballWordSet(TextReader reader, CharArraySet result)
         {
-
-            string line = null;
-            while ((line = reader.ReadLine()) != null)
-            {
-                int comment = line.IndexOf('|');
-                if (comment >= 0)
+            try
+            { 
+                string line = null;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    line = line.Substring(0, comment);
-                }
-                string[] words = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(w => w.Trim()).ToArray();
-                foreach (var word in words)
-                {
-                    if (word.Length > 0)
+                    int comment = line.IndexOf('|');
+                    if (comment >= 0)
                     {
-                        result.Add(word);
+                        line = line.Substring(0, comment);
+                    }
+                    string[] words = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(w => w.Trim()).ToArray();
+                    foreach (var word in words)
+                    {
+                        if (word.Length > 0)
+                        {
+                            result.Add(word);
+                        }
                     }
                 }
             }
-
+            finally
+            {
+                IOUtils.Close(reader);
+            }
             return result;
         }
 
@@ -182,14 +201,19 @@ namespace Lucene.Net.Analysis.Util
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static CharArrayMap<string> GetStemDict(TextReader reader, CharArrayMap<string> result)
         {
-
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                string[] wordstem = line.Split(new char[] { '\t' }, 2, StringSplitOptions.RemoveEmptyEntries);
-                result.Put(wordstem[0], wordstem[1]);
+            try
+            { 
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] wordstem = line.Split(new char[] { '\t' }, 2, StringSplitOptions.RemoveEmptyEntries);
+                    result.Put(wordstem[0], wordstem[1]);
+                }
             }
-
+            finally
+            {
+                IOUtils.Close(reader);
+            }
             return result;
         }
 
