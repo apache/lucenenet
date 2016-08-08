@@ -1,12 +1,11 @@
-﻿using System.IO;
-using System.Text;
-using ICU4NET;
+﻿using ICU4NET;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
 {
@@ -109,7 +108,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
             AssertAnalyzesTo(sentence, input, expected);
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestRandomStrings()
         {
             CheckRandomData(Random(), sentence, 10000 * RANDOM_MULTIPLIER);
