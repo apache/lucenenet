@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Util
 
                 int toRead = buffer.Length - Math.Max(count, nextWrite);
                 int readCount = reader.Read(buffer, nextWrite, toRead);
-                if (readCount == -1)
+                if (readCount <= 0)
                 {
                     end = true;
                     return -1;
