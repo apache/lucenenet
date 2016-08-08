@@ -262,8 +262,6 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         [Test]
         public virtual void TestSupplementaryChars()
         {
-            //string missing = "Term %s is missing in the set";
-            //string falsePos = "Term %s is in the set but shouldn't";
             string missing = "Term {0} is missing in the set";
             string falsePos = "Term {0} is in the set but shouldn't";
             // for reference see
@@ -295,8 +293,6 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         [Test]
         public virtual void TestSingleHighSurrogate()
         {
-            //string missing = "Term %s is missing in the set";
-            //string falsePos = "Term %s is in the set but shouldn't";
             string missing = "Term {0} is missing in the set";
             string falsePos = "Term {0} is in the set but shouldn't";
             string[] upperArr = { "ABC\uD800", "ABC\uD800EfG", "\uD800EfG", "\uD800\ud801\udc1cB" };
@@ -330,8 +326,6 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is")]
         public virtual void TestSupplementaryCharsBWCompat()
         {
-            //string missing = "Term %s is missing in the set";
-            //string falsePos = "Term %s is in the set but shouldn't";
             string missing = "Term {0} is missing in the set";
             string falsePos = "Term {0} is in the set but shouldn't";
             // for reference see
@@ -366,8 +360,6 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
         [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is")]
         public virtual void TestSingleHighSurrogateBWComapt()
         {
-            //string missing = "Term %s is missing in the set";
-            //string falsePos = "Term %s is in the set but shouldn't";
             string missing = "Term {0} is missing in the set";
             string falsePos = "Term {0} is in the set but shouldn't";
             string[] upperArr = new string[] { "ABC\uD800", "ABC\uD800EfG", "\uD800EfG", "\uD800\ud801\udc1cB" };

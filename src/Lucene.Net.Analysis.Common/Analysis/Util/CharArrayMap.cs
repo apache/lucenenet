@@ -583,10 +583,13 @@ namespace Lucene.Net.Analysis.Util
             {
                 // prevent adding of entries
 
-                // TODO: Should find a way to pass a direct reference to this object to
+                // LUCENENET TODO: Should find a way to pass a direct reference to this object to
                 // CharArraySet's constructor. The only known side effect this causes is to make
                 // the ToString test fail when calling it on the Keys property after changing
                 // the main set, so perhaps this is not a huge issue.
+
+                // Then again, any derived classes of this one could have serious issues without
+                // the direct reference.
 
                 // A possible solution is to create an interface with no generics that this class 
                 // implements to be passed into the CharArraySet's constructor. Another possible 

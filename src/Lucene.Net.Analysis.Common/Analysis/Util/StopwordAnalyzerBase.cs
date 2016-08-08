@@ -154,7 +154,6 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                // TODO: Should we really close the reader that is passed in?
                 IOUtils.Close(stopwords);
             }
         }
