@@ -136,7 +136,6 @@
     <Compile Include="Analysis\Core\UpperCaseFilter.cs" />
     <Compile Include="Analysis\Core\WhitespaceAnalyzer.cs" />
     <Compile Include="Analysis\Core\WhitespaceTokenizer.cs" />
-    <Compile Include="Analysis\Util\CharacterIterator.cs" />
     <Compile Include="Analysis\Util\CharacterUtils.cs">
       <SubType>Code</SubType>
     </Compile>
