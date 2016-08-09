@@ -115,63 +115,207 @@ namespace Lucene.Net.Analysis
         //     lastStartOffset)
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, int? finalPosInc, bool[] keywordAtts, bool offsetsAreCorrect)
         {
-            Assert.IsNotNull(output);
-            var checkClearAtt = ts.AddAttribute<ICheckClearAttributesAttribute>();
-
-            ICharTermAttribute termAtt = null;
-            if (output.Length > 0)
+            // LUCENENET: Bug fix: NUnit throws an exception when something fails. 
+            // This causes Dispose() to be skipped and it pollutes other tests indicating false negatives.
+            // Added this try-finally block to fix this.
+            try
             {
-                Assert.IsTrue(ts.HasAttribute<ICharTermAttribute>(), "has no CharTermAttribute");
-                termAtt = ts.GetAttribute<ICharTermAttribute>();
-            }
 
-            IOffsetAttribute offsetAtt = null;
-            if (startOffsets != null || endOffsets != null || finalOffset != null)
-            {
-                Assert.IsTrue(ts.HasAttribute<IOffsetAttribute>(), "has no OffsetAttribute");
-                offsetAtt = ts.GetAttribute<IOffsetAttribute>();
-            }
+                Assert.IsNotNull(output);
+                var checkClearAtt = ts.AddAttribute<ICheckClearAttributesAttribute>();
 
-            ITypeAttribute typeAtt = null;
-            if (types != null)
-            {
-                Assert.IsTrue(ts.HasAttribute<ITypeAttribute>(), "has no TypeAttribute");
-                typeAtt = ts.GetAttribute<ITypeAttribute>();
-            }
+                ICharTermAttribute termAtt = null;
+                if (output.Length > 0)
+                {
+                    Assert.IsTrue(ts.HasAttribute<ICharTermAttribute>(), "has no CharTermAttribute");
+                    termAtt = ts.GetAttribute<ICharTermAttribute>();
+                }
 
-            IPositionIncrementAttribute posIncrAtt = null;
-            if (posIncrements != null || finalPosInc != null)
-            {
-                Assert.IsTrue(ts.HasAttribute<IPositionIncrementAttribute>(), "has no PositionIncrementAttribute");
-                posIncrAtt = ts.GetAttribute<IPositionIncrementAttribute>();
-            }
+                IOffsetAttribute offsetAtt = null;
+                if (startOffsets != null || endOffsets != null || finalOffset != null)
+                {
+                    Assert.IsTrue(ts.HasAttribute<IOffsetAttribute>(), "has no OffsetAttribute");
+                    offsetAtt = ts.GetAttribute<IOffsetAttribute>();
+                }
 
-            IPositionLengthAttribute posLengthAtt = null;
-            if (posLengths != null)
-            {
-                Assert.IsTrue(ts.HasAttribute<IPositionLengthAttribute>(), "has no PositionLengthAttribute");
-                posLengthAtt = ts.GetAttribute<IPositionLengthAttribute>();
-            }
+                ITypeAttribute typeAtt = null;
+                if (types != null)
+                {
+                    Assert.IsTrue(ts.HasAttribute<ITypeAttribute>(), "has no TypeAttribute");
+                    typeAtt = ts.GetAttribute<ITypeAttribute>();
+                }
 
-            IKeywordAttribute keywordAtt = null;
-            if (keywordAtts != null)
-            {
-                Assert.IsTrue(ts.HasAttribute<IKeywordAttribute>(), "has no KeywordAttribute");
-                keywordAtt = ts.GetAttribute<IKeywordAttribute>();
-            }
+                IPositionIncrementAttribute posIncrAtt = null;
+                if (posIncrements != null || finalPosInc != null)
+                {
+                    Assert.IsTrue(ts.HasAttribute<IPositionIncrementAttribute>(), "has no PositionIncrementAttribute");
+                    posIncrAtt = ts.GetAttribute<IPositionIncrementAttribute>();
+                }
 
-            // Maps position to the start/end offset:
-            IDictionary<int?, int?> posToStartOffset = new Dictionary<int?, int?>();
-            IDictionary<int?, int?> posToEndOffset = new Dictionary<int?, int?>();
+                IPositionLengthAttribute posLengthAtt = null;
+                if (posLengths != null)
+                {
+                    Assert.IsTrue(ts.HasAttribute<IPositionLengthAttribute>(), "has no PositionLengthAttribute");
+                    posLengthAtt = ts.GetAttribute<IPositionLengthAttribute>();
+                }
 
-            ts.Reset();
-            int pos = -1;
-            int lastStartOffset = 0;
-            for (int i = 0; i < output.Length; i++)
-            {
-                // extra safety to enforce, that the state is not preserved and also assign bogus values
+                IKeywordAttribute keywordAtt = null;
+                if (keywordAtts != null)
+                {
+                    Assert.IsTrue(ts.HasAttribute<IKeywordAttribute>(), "has no KeywordAttribute");
+                    keywordAtt = ts.GetAttribute<IKeywordAttribute>();
+                }
+
+                // Maps position to the start/end offset:
+                IDictionary<int?, int?> posToStartOffset = new Dictionary<int?, int?>();
+                IDictionary<int?, int?> posToEndOffset = new Dictionary<int?, int?>();
+
+                ts.Reset();
+                int pos = -1;
+                int lastStartOffset = 0;
+                for (int i = 0; i < output.Length; i++)
+                {
+                    // extra safety to enforce, that the state is not preserved and also assign bogus values
+                    ts.ClearAttributes();
+                    termAtt.SetEmpty().Append("bogusTerm");
+                    if (offsetAtt != null)
+                    {
+                        offsetAtt.SetOffset(14584724, 24683243);
+                    }
+                    if (typeAtt != null)
+                    {
+                        typeAtt.Type = "bogusType";
+                    }
+                    if (posIncrAtt != null)
+                    {
+                        posIncrAtt.PositionIncrement = 45987657;
+                    }
+                    if (posLengthAtt != null)
+                    {
+                        posLengthAtt.PositionLength = 45987653;
+                    }
+                    if (keywordAtt != null)
+                    {
+                        keywordAtt.Keyword = (i & 1) == 0;
+                    }
+
+                    bool reset = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
+                    Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
+                    Assert.IsTrue(reset, "ClearAttributes() was not called correctly in TokenStream chain");
+
+                    Assert.AreEqual(output[i], termAtt.ToString(), "term " + i + ", output[i] = " + output[i] + ", termAtt = " + termAtt.ToString());
+                    if (startOffsets != null)
+                    {
+                        Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset(), "startOffset " + i);
+                    }
+                    if (endOffsets != null)
+                    {
+                        Assert.AreEqual(endOffsets[i], offsetAtt.EndOffset(), "endOffset " + i);
+                    }
+                    if (types != null)
+                    {
+                        Assert.AreEqual(types[i], typeAtt.Type, "type " + i);
+                    }
+                    if (posIncrements != null)
+                    {
+                        Assert.AreEqual(posIncrements[i], posIncrAtt.PositionIncrement, "posIncrement " + i);
+                    }
+                    if (posLengths != null)
+                    {
+                        Assert.AreEqual(posLengths[i], posLengthAtt.PositionLength, "posLength " + i);
+                    }
+                    if (keywordAtts != null)
+                    {
+                        Assert.AreEqual(keywordAtts[i], keywordAtt.Keyword, "keywordAtt " + i);
+                    }
+
+                    // we can enforce some basic things about a few attributes even if the caller doesn't check:
+                    if (offsetAtt != null)
+                    {
+                        int startOffset = offsetAtt.StartOffset();
+                        int endOffset = offsetAtt.EndOffset();
+                        if (finalOffset != null)
+                        {
+                            Assert.IsTrue(startOffset <= (int)finalOffset, "startOffset must be <= finalOffset");
+                            Assert.IsTrue(endOffset <= (int)finalOffset, "endOffset must be <= finalOffset: got endOffset=" + endOffset + " vs finalOffset=" + (int)finalOffset);
+                        }
+
+                        if (offsetsAreCorrect)
+                        {
+                            Assert.IsTrue(offsetAtt.StartOffset() >= lastStartOffset, "offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset);
+                            lastStartOffset = offsetAtt.StartOffset();
+                        }
+
+                        if (offsetsAreCorrect && posLengthAtt != null && posIncrAtt != null)
+                        {
+                            // Validate offset consistency in the graph, ie
+                            // all tokens leaving from a certain pos have the
+                            // same startOffset, and all tokens arriving to a
+                            // certain pos have the same endOffset:
+                            int posInc = posIncrAtt.PositionIncrement;
+                            pos += posInc;
+
+                            int posLength = posLengthAtt.PositionLength;
+
+                            if (!posToStartOffset.ContainsKey(pos))
+                            {
+                                // First time we've seen a token leaving from this position:
+                                posToStartOffset[pos] = startOffset;
+                                //System.out.println("  + s " + pos + " -> " + startOffset);
+                            }
+                            else
+                            {
+                                // We've seen a token leaving from this position
+                                // before; verify the startOffset is the same:
+                                //System.out.println("  + vs " + pos + " -> " + startOffset);
+                                Assert.AreEqual((int)posToStartOffset[pos], startOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
+                            }
+
+                            int endPos = pos + posLength;
+
+                            if (!posToEndOffset.ContainsKey(endPos))
+                            {
+                                // First time we've seen a token arriving to this position:
+                                posToEndOffset[endPos] = endOffset;
+                                //System.out.println("  + e " + endPos + " -> " + endOffset);
+                            }
+                            else
+                            {
+                                // We've seen a token arriving to this position
+                                // before; verify the endOffset is the same:
+                                //System.out.println("  + ve " + endPos + " -> " + endOffset);
+                                Assert.AreEqual((int)posToEndOffset[endPos], endOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
+                            }
+                        }
+                    }
+                    if (posIncrAtt != null)
+                    {
+                        if (i == 0)
+                        {
+                            Assert.IsTrue(posIncrAtt.PositionIncrement >= 1, "first posIncrement must be >= 1");
+                        }
+                        else
+                        {
+                            Assert.IsTrue(posIncrAtt.PositionIncrement >= 0, "posIncrement must be >= 0");
+                        }
+                    }
+                    if (posLengthAtt != null)
+                    {
+                        Assert.IsTrue(posLengthAtt.PositionLength >= 1, "posLength must be >= 1");
+                    }
+                }
+
+                if (ts.IncrementToken())
+                {
+                    Assert.Fail("TokenStream has more tokens than expected (expected count=" + output.Length + "); extra token=" + termAtt);
+                }
+
+                // repeat our extra safety checks for End()
                 ts.ClearAttributes();
-                termAtt.SetEmpty().Append("bogusTerm");
+                if (termAtt != null)
+                {
+                    termAtt.SetEmpty().Append("bogusTerm");
+                }
                 if (offsetAtt != null)
                 {
                     offsetAtt.SetOffset(14584724, 24683243);
@@ -188,164 +332,29 @@ namespace Lucene.Net.Analysis
                 {
                     posLengthAtt.PositionLength = 45987653;
                 }
-                if (keywordAtt != null)
-                {
-                    keywordAtt.Keyword = (i & 1) == 0;
-                }
 
-                bool reset = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
-                Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
-                Assert.IsTrue(reset, "ClearAttributes() was not called correctly in TokenStream chain");
+                var reset_ = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
 
-                Assert.AreEqual(output[i], termAtt.ToString(), "term " + i + ", output[i] = " + output[i] + ", termAtt = " + termAtt.ToString());
-                if (startOffsets != null)
-                {
-                    Assert.AreEqual(startOffsets[i], offsetAtt.StartOffset(), "startOffset " + i);
-                }
-                if (endOffsets != null)
-                {
-                    Assert.AreEqual(endOffsets[i], offsetAtt.EndOffset(), "endOffset " + i);
-                }
-                if (types != null)
-                {
-                    Assert.AreEqual(types[i], typeAtt.Type, "type " + i);
-                }
-                if (posIncrements != null)
-                {
-                    Assert.AreEqual(posIncrements[i], posIncrAtt.PositionIncrement, "posIncrement " + i);
-                }
-                if (posLengths != null)
-                {
-                    Assert.AreEqual(posLengths[i], posLengthAtt.PositionLength, "posLength " + i);
-                }
-                if (keywordAtts != null)
-                {
-                    Assert.AreEqual(keywordAtts[i], keywordAtt.Keyword, "keywordAtt " + i);
-                }
+                ts.End();
+                Assert.IsTrue(checkClearAtt.AndResetClearCalled, "super.End()/ClearAttributes() was not called correctly in End()");
 
-                // we can enforce some basic things about a few attributes even if the caller doesn't check:
+                if (finalOffset != null)
+                {
+                    Assert.AreEqual((int)finalOffset, offsetAtt.EndOffset(), "finalOffset");
+                }
                 if (offsetAtt != null)
                 {
-                    int startOffset = offsetAtt.StartOffset();
-                    int endOffset = offsetAtt.EndOffset();
-                    if (finalOffset != null)
-                    {
-                        Assert.IsTrue(startOffset <= (int)finalOffset, "startOffset must be <= finalOffset");
-                        Assert.IsTrue(endOffset <= (int)finalOffset, "endOffset must be <= finalOffset: got endOffset=" + endOffset + " vs finalOffset=" + (int)finalOffset);
-                    }
-
-                    if (offsetsAreCorrect)
-                    {
-                        Assert.IsTrue(offsetAtt.StartOffset() >= lastStartOffset, "offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset);
-                        lastStartOffset = offsetAtt.StartOffset();
-                    }
-
-                    if (offsetsAreCorrect && posLengthAtt != null && posIncrAtt != null)
-                    {
-                        // Validate offset consistency in the graph, ie
-                        // all tokens leaving from a certain pos have the
-                        // same startOffset, and all tokens arriving to a
-                        // certain pos have the same endOffset:
-                        int posInc = posIncrAtt.PositionIncrement;
-                        pos += posInc;
-
-                        int posLength = posLengthAtt.PositionLength;
-
-                        if (!posToStartOffset.ContainsKey(pos))
-                        {
-                            // First time we've seen a token leaving from this position:
-                            posToStartOffset[pos] = startOffset;
-                            //System.out.println("  + s " + pos + " -> " + startOffset);
-                        }
-                        else
-                        {
-                            // We've seen a token leaving from this position
-                            // before; verify the startOffset is the same:
-                            //System.out.println("  + vs " + pos + " -> " + startOffset);
-                            Assert.AreEqual((int)posToStartOffset[pos], startOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
-                        }
-
-                        int endPos = pos + posLength;
-
-                        if (!posToEndOffset.ContainsKey(endPos))
-                        {
-                            // First time we've seen a token arriving to this position:
-                            posToEndOffset[endPos] = endOffset;
-                            //System.out.println("  + e " + endPos + " -> " + endOffset);
-                        }
-                        else
-                        {
-                            // We've seen a token arriving to this position
-                            // before; verify the endOffset is the same:
-                            //System.out.println("  + ve " + endPos + " -> " + endOffset);
-                            Assert.AreEqual((int)posToEndOffset[endPos], endOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
-                        }
-                    }
+                    Assert.IsTrue(offsetAtt.EndOffset() >= 0, "finalOffset must be >= 0");
                 }
-                if (posIncrAtt != null)
+                if (finalPosInc != null)
                 {
-                    if (i == 0)
-                    {
-                        Assert.IsTrue(posIncrAtt.PositionIncrement >= 1, "first posIncrement must be >= 1");
-                    }
-                    else
-                    {
-                        Assert.IsTrue(posIncrAtt.PositionIncrement >= 0, "posIncrement must be >= 0");
-                    }
-                }
-                if (posLengthAtt != null)
-                {
-                    Assert.IsTrue(posLengthAtt.PositionLength >= 1, "posLength must be >= 1");
+                    Assert.AreEqual((int)finalPosInc, posIncrAtt.PositionIncrement, "finalPosInc");
                 }
             }
-
-            if (ts.IncrementToken())
+            finally
             {
-                Assert.Fail("TokenStream has more tokens than expected (expected count=" + output.Length + "); extra token=" + termAtt);
+                ts.Dispose();
             }
-
-            // repeat our extra safety checks for End()
-            ts.ClearAttributes();
-            if (termAtt != null)
-            {
-                termAtt.SetEmpty().Append("bogusTerm");
-            }
-            if (offsetAtt != null)
-            {
-                offsetAtt.SetOffset(14584724, 24683243);
-            }
-            if (typeAtt != null)
-            {
-                typeAtt.Type = "bogusType";
-            }
-            if (posIncrAtt != null)
-            {
-                posIncrAtt.PositionIncrement = 45987657;
-            }
-            if (posLengthAtt != null)
-            {
-                posLengthAtt.PositionLength = 45987653;
-            }
-
-            var reset_ = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
-
-            ts.End();
-            Assert.IsTrue(checkClearAtt.AndResetClearCalled, "super.End()/ClearAttributes() was not called correctly in End()");
-
-            if (finalOffset != null)
-            {
-                Assert.AreEqual((int)finalOffset, offsetAtt.EndOffset(), "finalOffset");
-            }
-            if (offsetAtt != null)
-            {
-                Assert.IsTrue(offsetAtt.EndOffset() >= 0, "finalOffset must be >= 0");
-            }
-            if (finalPosInc != null)
-            {
-                Assert.AreEqual((int)finalPosInc, posIncrAtt.PositionIncrement, "finalPosInc");
-            }
-
-            ts.Dispose();
         }
 
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, bool[] keywordAtts, bool offsetsAreCorrect)
@@ -1113,7 +1122,7 @@ namespace Lucene.Net.Analysis
             TokenStream ts = a.TokenStream("field", new StreamReader(inputText));
             ts.Reset();
             (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();
-            w.Close();
+            w.Dispose();
         }
 
         internal static int[] ToIntArray(IList<int> list)
