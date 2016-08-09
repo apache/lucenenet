@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Standard
         }
 
         /// <summary>
-        /// This method was added in .NET to prevent having to repeat code in the constructors.
+        /// LUCENENET: This method was added in .NET to prevent having to repeat code in the constructors.
         /// </summary>
         /// <param name="matchVersion"></param>
         private void Init(LuceneVersion matchVersion)

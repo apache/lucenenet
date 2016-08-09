@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Util
         internal V[] values; // package private because used in CharArraySet's non Set-conform CharArraySetIterator
 
         /// <summary>
-        /// Added in .NET to prevent infinite recursion when accessing the Keys collection
+        /// LUCENENET: Added in .NET to prevent infinite recursion when accessing the Keys collection
         /// </summary>
         private IDictionary<object, V> innerDictionary = new Dictionary<object, V>();
 
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Lucene.NET specific, in order to support the KeySet functionality.
+        /// LUCENENET specific, in order to support the KeySet functionality.
         /// </summary>
         /// <param name="keys"></param>
         private CharArrayMap(char[][] keys, V[] values, bool ignoreCase, int count, CharacterUtils charUtils, LuceneVersion matchVersion, Dictionary<object, V> innerDictionary)
@@ -476,7 +476,7 @@ namespace Lucene.Net.Analysis.Util
             return code;
         }
 
-        #region For .NET Support
+        #region For .NET Support LUCENENET
 
         public virtual bool TryGetValue(object key, out V value)
         {
@@ -722,7 +722,7 @@ namespace Lucene.Net.Analysis.Util
                 throw new NotSupportedException();
             }
 
-            #region Added for better .NET support
+            #region Added for better .NET support LUCENENET
             public virtual void Dispose()
             {
             }
@@ -750,7 +750,7 @@ namespace Lucene.Net.Analysis.Util
             #endregion
         }
 
-        // NOTE: The Java Lucene type MapEntry was removed here because it is not possible 
+        // LUCENENET NOTE: The Java Lucene type MapEntry was removed here because it is not possible 
         // to inherit the value type KeyValuePair in .NET.
 
         /// <summary>
@@ -813,7 +813,7 @@ namespace Lucene.Net.Analysis.Util
                 outerInstance.Clear();
             }
 
-            #region Added for better .NET support
+            #region Added for better .NET support LUCENENET
 
             #region Not implemented members
 
@@ -1048,7 +1048,7 @@ namespace Lucene.Net.Analysis.Util
                 return new EntrySet_(this, false);
             }
 
-            #region Added for better .NET support
+            #region Added for better .NET support LUCENENET
             public override void Add(object key, V value)
             {
                 throw new System.NotSupportedException();

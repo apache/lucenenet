@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Util
         {
         }
 
-        // TODO: Add .NET overloads that accept a file name? Or at least a FileInfo object as was done in 3.0.3?
+        // LUCENENET TODO: Add .NET overloads that accept a file name? Or at least a FileInfo object as was done in 3.0.3?
 
         /// <summary>
         /// Reads lines from a Reader and adds every line as an entry to a CharArraySet (omitting

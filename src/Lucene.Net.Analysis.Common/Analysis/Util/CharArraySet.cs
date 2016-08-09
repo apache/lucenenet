@@ -274,6 +274,7 @@ namespace Lucene.Net.Analysis.Util
             return sb.Append(']').ToString();
         }
 
+        // LUCENENET - Added to ensure equality checking works in tests
         public bool SetEquals(IEnumerable<object> other)
         {
             var otherSet = other as CharArraySet;

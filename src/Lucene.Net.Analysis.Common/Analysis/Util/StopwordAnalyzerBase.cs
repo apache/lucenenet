@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Util
         {
         }
 
-        // TODO: If this works, need to update the documentation for the .NET version of the story.
+        // LUCENENET TODO: If this works, need to update the documentation for the .NET version of the story.
 
         /// <summary>
         /// Creates a CharArraySet from a file resource associated with a class. (See
