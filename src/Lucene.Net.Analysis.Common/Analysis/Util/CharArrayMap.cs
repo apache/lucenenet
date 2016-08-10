@@ -369,7 +369,7 @@ namespace Lucene.Net.Analysis.Util
                 for (int i = 0; i < len;)
                 {
                     var codePointAt = charUtils.CodePointAt(text1, off + i, limit);
-                    if (char.ToLower((char)codePointAt) != charUtils.CodePointAt(text2, i, text2.Length))
+                    if (Character.ToLowerCase(codePointAt) != charUtils.CodePointAt(text2, i, text2.Length))
                     {
                         return false;
                     }
@@ -401,7 +401,7 @@ namespace Lucene.Net.Analysis.Util
                 for (int i = 0; i < len;)
                 {
                     int codePointAt = charUtils.CodePointAt(text1, i);
-                    if (char.ToLower((char)codePointAt) != charUtils.CodePointAt(text2, i, text2.Length))
+                    if (Character.ToLowerCase(codePointAt) != charUtils.CodePointAt(text2, i, text2.Length))
                     {
                         return false;
                     }
@@ -434,7 +434,7 @@ namespace Lucene.Net.Analysis.Util
                 for (int i = offset; i < stop;)
                 {
                     int codePointAt = charUtils.CodePointAt(text, i, stop);
-                    code = code * 31 + char.ToLower((char)codePointAt);
+                    code = code * 31 + Character.ToLowerCase(codePointAt);
                     i += Character.CharCount(codePointAt);
                 }
             }
@@ -462,7 +462,7 @@ namespace Lucene.Net.Analysis.Util
                 for (int i = 0; i < len;)
                 {
                     int codePointAt = charUtils.CodePointAt(text, i);
-                    code = code * 31 + char.ToLower((char)codePointAt);
+                    code = code * 31 + Character.ToLowerCase(codePointAt);
                     i += Character.CharCount(codePointAt);
                 }
             }

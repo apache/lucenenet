@@ -106,11 +106,18 @@ namespace Lucene.Net.Support
 
         public static int ToLowerCase(int codePoint)
         {
-            // LUCENENET TODO do we really need this? what's wrong with char.ToLower() ?
-
             var str = UnicodeUtil.NewString(new[] {codePoint}, 0, 1);
 
-            str = str.ToLower();
+            str = str.ToLowerInvariant();
+
+            return CodePointAt(str, 0);
+        }
+
+        public static int ToUpperCase(int codePoint)
+        {
+            var str = UnicodeUtil.NewString(new[] { codePoint }, 0, 1);
+
+            str = str.ToUpperInvariant();
 
             return CodePointAt(str, 0);
         }

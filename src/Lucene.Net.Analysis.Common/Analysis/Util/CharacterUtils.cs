@@ -136,7 +136,9 @@ namespace Lucene.Net.Analysis.Util
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
             for (int i = offset; i < limit; )
             {
-                i += Character.ToChars(char.ToLower((char)CodePointAt(buffer, i, limit)), buffer, i);
+                i += Character.ToChars(
+                    Character.ToLowerCase(
+                        CodePointAt(buffer, i, limit)), buffer, i);
             }
         }
 
@@ -152,7 +154,9 @@ namespace Lucene.Net.Analysis.Util
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
             for (int i = offset; i < limit; )
             {
-                i += Character.ToChars(char.ToUpper((char)CodePointAt(buffer, i, limit)), buffer, i);
+                i += Character.ToChars(
+                    Character.ToUpperCase(
+                        CodePointAt(buffer, i, limit)), buffer, i);
             }
         }
 
