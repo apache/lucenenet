@@ -70,6 +70,8 @@
     <Compile Include="Analysis\Core\TestUAX29URLEmailAnalyzer.cs" />
     <Compile Include="Analysis\Core\TestUAX29URLEmailTokenizer.cs" />
     <Compile Include="Analysis\Core\WordBreakTestUnicode_6_3_0.cs" />
+    <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
+    <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
     <Compile Include="Analysis\Standard\TestStandardFactories.cs" />
     <Compile Include="Analysis\Standard\TestUAX29URLEmailTokenizerFactory.cs">
       <SubType>Code</SubType>

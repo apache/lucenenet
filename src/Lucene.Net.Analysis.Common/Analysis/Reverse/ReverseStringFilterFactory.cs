@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using org.apache.lucene.analysis.reverse;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Reverse
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,39 +20,35 @@ namespace Lucene.Net.Analysis.Reverse
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="ReverseStringFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_rvsstr" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.ReverseStringFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// 
+    /// @since solr 1.4
+    /// </summary>
+    public class ReverseStringFilterFactory : TokenFilterFactory
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="ReverseStringFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_rvsstr" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.ReverseStringFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// 
-	/// @since solr 1.4
-	/// </summary>
-	public class ReverseStringFilterFactory : TokenFilterFactory
-	{
+        /// <summary>
+        /// Creates a new ReverseStringFilterFactory </summary>
+        public ReverseStringFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            AssureMatchVersion();
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new ReverseStringFilterFactory </summary>
-	  public ReverseStringFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		assureMatchVersion();
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override ReverseStringFilter create(TokenStream @in)
-	  {
-		return new ReverseStringFilter(luceneMatchVersion,@in);
-	  }
-	}
-
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new ReverseStringFilter(luceneMatchVersion, input);
+        }
+    }
 }
