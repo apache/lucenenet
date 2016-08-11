@@ -134,14 +134,14 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
                 offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
-            protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
+            protected internal override void SetNextSentence(int sentenceStart, int sentenceEnd)
             {
                 this.sentenceStart = sentenceStart;
                 this.sentenceEnd = sentenceEnd;
                 hasSentence = true;
             }
 
-            protected override bool IncrementWord()
+            protected internal override bool IncrementWord()
             {
                 if (hasSentence)
                 {
@@ -180,7 +180,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
                 posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
-            protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
+            protected internal override void SetNextSentence(int sentenceStart, int sentenceEnd)
             {
                 this.wordStart = this.wordEnd = this.sentenceStart = sentenceStart;
                 this.sentenceEnd = sentenceEnd;
@@ -193,7 +193,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
                 posBoost = -1;
             }
 
-            protected override bool IncrementWord()
+            protected internal override bool IncrementWord()
             {
                 wordStart = wordEnd;
                 while (wordStart < sentenceEnd)

@@ -350,10 +350,16 @@ namespace Lucene.Net.Analysis
                 {
                     Assert.AreEqual((int)finalPosInc, posIncrAtt.PositionIncrement, "finalPosInc");
                 }
-            }
-            finally
-            {
+
                 ts.Dispose();
+            }
+            catch (Exception)
+            {
+                //ts.Reset();
+                ts.ClearAttributes();
+                ts.End();
+                ts.Dispose();
+                throw;
             }
         }
 

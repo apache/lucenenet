@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,45 +21,45 @@ namespace Lucene.Net.Analysis.CharFilters
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
-	/// Factory for <seealso cref="HTMLStripCharFilter"/>. 
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_html" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;charFilter class="solr.HTMLStripCharFilterFactory" escapedTags="a, title" /&gt;
-	///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class HTMLStripCharFilterFactory : CharFilterFactory
-	{
-	  internal readonly HashSet<string> escapedTags;
-	  internal static readonly Pattern TAG_NAME_PATTERN = Pattern.compile("[^\\s,]+");
+    /// Factory for <seealso cref="HTMLStripCharFilter"/>. 
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_html" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;charFilter class="solr.HTMLStripCharFilterFactory" escapedTags="a, title" /&gt;
+    ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class HTMLStripCharFilterFactory : CharFilterFactory
+    {
+        internal readonly IEnumerable<string> escapedTags;
+        internal static readonly Regex TAG_NAME_PATTERN = new Regex(@"[^\\s,]+", RegexOptions.Compiled);
 
-	  /// <summary>
-	  /// Creates a new HTMLStripCharFilterFactory </summary>
-	  public HTMLStripCharFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		escapedTags = getSet(args, "escapedTags");
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+        /// <summary>
+        /// Creates a new HTMLStripCharFilterFactory </summary>
+        public HTMLStripCharFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            escapedTags = GetSet(args, "escapedTags");
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  public override HTMLStripCharFilter create(TextReader input)
-	  {
-		HTMLStripCharFilter charFilter;
-		if (null == escapedTags)
-		{
-		  charFilter = new HTMLStripCharFilter(input);
-		}
-		else
-		{
-		  charFilter = new HTMLStripCharFilter(input, escapedTags);
-		}
-		return charFilter;
-	  }
-	}
-
+        public override TextReader Create(TextReader input)
+        {
+            HTMLStripCharFilter charFilter;
+            if (null == escapedTags)
+            {
+                charFilter = new HTMLStripCharFilter(input);
+            }
+            else
+            {
+                charFilter = new HTMLStripCharFilter(input, escapedTags);
+            }
+            return charFilter;
+        }
+    }
 }

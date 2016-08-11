@@ -45,6 +45,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analysis\CharFilter\BaseCharFilter.cs" />
+    <Compile Include="Analysis\CharFilter\HTMLStripCharFilter.cs" />
+    <Compile Include="Analysis\CharFilter\HTMLStripCharFilterFactory.cs" />
+    <Compile Include="Analysis\CharFilter\MappingCharFilter.cs" />
+    <Compile Include="Analysis\CharFilter\MappingCharFilterFactory.cs" />
+    <Compile Include="Analysis\CharFilter\NormalizeCharMap.cs" />
     <Compile Include="Analysis\Core\KeywordAnalyzer.cs" />
     <Compile Include="Analysis\Core\KeywordTokenizer.cs" />
     <Compile Include="Analysis\Core\KeywordTokenizerFactory.cs" />
@@ -118,6 +123,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Analysis\Standard\UAX29URLEmailTokenizerImpl.cs" />
+    <Compile Include="Analysis\Util\BufferedCharFilter.cs" />
     <Compile Include="Analysis\Util\AbstractAnalysisFactory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -130,6 +136,7 @@
     <Compile Include="Analysis\Util\ClasspathResourceLoader.cs" />
     <Compile Include="Analysis\Util\FilteringTokenFilter.cs" />
     <Compile Include="Analysis\Util\MultiTermAwareComponent.cs" />
+    <Compile Include="Analysis\Util\OpenStringBuilder.cs" />
     <Compile Include="Analysis\Util\ResourceLoader.cs" />
     <Compile Include="Analysis\Util\ResourceLoaderAware.cs" />
     <Compile Include="Analysis\Util\StemmerUtil.cs" />

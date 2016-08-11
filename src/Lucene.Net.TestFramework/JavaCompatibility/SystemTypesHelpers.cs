@@ -120,5 +120,14 @@ namespace Lucene.Net
             return bytesRead == 0 ? -1 : bytesRead;
         }
 
+        public static string replaceFirst(this string text, string search, string replace)
+        {
+            int pos = text.IndexOf(search);
+            if (pos < 0)
+            {
+                return text;
+            }
+            return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+        }
     }
 }

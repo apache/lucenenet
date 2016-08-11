@@ -248,8 +248,7 @@ namespace Lucene.Net.Analysis.Util
             return defaultVal;
         }
 
-        //private static readonly Pattern ITEM_PATTERN = Pattern.compile("[^,\\s]+");
-        private static readonly Regex ITEM_PATTERN = new Regex(@"[^,\\s]+");
+        private static readonly Regex ITEM_PATTERN = new Regex("[^,\\s]+", RegexOptions.Compiled);
 
         /// <summary>
         /// Returns whitespace- and/or comma-separated set of values, or null if none are found </summary>
@@ -264,10 +263,11 @@ namespace Lucene.Net.Analysis.Util
                 if (matcher.Success)
                 {
                     set = new HashSet<string>();
-                    set.Add(matcher.Groups[0].Value); // LUCENENET TODO: Should this be 0 or 1?
+                    set.Add(matcher.Groups[0].Value);
+                    matcher = matcher.NextMatch();
                     while (matcher.Success)
                     {
-                        set.Add(matcher.Groups[0].Value); // LUCENENET TODO: Should this be 0 or 1?
+                        set.Add(matcher.Groups[0].Value);
                         matcher = matcher.NextMatch();
                     }
                 }

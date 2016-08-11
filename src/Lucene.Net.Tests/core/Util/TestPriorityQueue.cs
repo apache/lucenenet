@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Lucene.Net.JavaCompatibility;
 using NUnit.Framework;
 using System;
 using NUnit.Framework.Constraints;

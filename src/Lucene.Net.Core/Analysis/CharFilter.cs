@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void Close()
         {
-            input.Close();
+            input.Close(); // LUCENENET TODO: Should probably remove this method and make a Dispose() instead.
         }
 
         /// <summary>
@@ -80,5 +81,66 @@ namespace Lucene.Net.Analysis
             int corrected = Correct(currentOff);
             return (input is CharFilter) ? ((CharFilter)input).CorrectOffset(corrected) : corrected;
         }
+
+
+        #region From Reader Class
+
+        /// <summary>
+        /// Skips characters. This method will block until some characters are available, an I/O error occurs, or the end of the stream is reached.
+        /// 
+        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// </summary>
+        /// <param name="n">The number of characters to skip</param>
+        /// <returns>The number of characters actually skipped</returns>
+        public virtual long Skip(int n)
+        {
+            throw new NotSupportedException("Skip() not supported");
+        }
+
+        /// <summary>
+        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// </summary>
+        /// <returns></returns>
+        public virtual void Reset()
+        {
+            throw new NotSupportedException("Reset() not supported");
+        }
+
+        /// <summary>
+        /// Tells whether this stream is ready to be read.
+        /// 
+        /// True if the next read() is guaranteed not to block for input, false otherwise. Note that returning false does not guarantee that the next read will block.
+        /// 
+        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// </summary>
+        public virtual bool Ready()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Tells whether this stream supports the mark() operation. The default implementation always returns false. Subclasses should override this method.
+        /// 
+        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// </summary>
+        /// <returns>true if and only if this stream supports the mark operation.</returns>
+        public virtual bool IsMarkSupported
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Marks the present position in the stream. Subsequent calls to reset() will attempt to reposition the stream to this point. Not all character-input streams support the mark() operation.
+        /// 
+        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// </summary>
+        /// <param name="readAheadLimit">Limit on the number of characters that may be read while still preserving the mark. After 
+        /// reading this many characters, attempting to reset the stream may fail.</param>
+        public virtual void Mark(int readAheadLimit)
+        {
+            throw new IOException("Mark() not supported");
+        }
+
+        #endregion
     }
 }

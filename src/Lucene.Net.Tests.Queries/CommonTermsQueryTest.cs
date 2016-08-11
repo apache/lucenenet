@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.JavaCompatibility;
 using Lucene.Net.Queries;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;

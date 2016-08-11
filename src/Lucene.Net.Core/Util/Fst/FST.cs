@@ -2216,6 +2216,13 @@ namespace Lucene.Net.Util.Fst
         // non-final node w/ no arcs:
         internal const long NON_FINAL_END_NODE = 0;
 
+        // returns true if the node at this address has any
+        // outgoing arcs
+        public static bool TargetHasArcs<T>(Arc<T> arc)
+        {
+            return arc.Target > 0;
+        }
+
         /// <summary>
         /// Reads bytes stored in an FST.
         /// </summary>

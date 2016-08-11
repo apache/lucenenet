@@ -50,6 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\CharFilters\HTMLStripCharFilterTest.cs" />
+    <Compile Include="Analysis\CharFilters\TestHTMLStripCharFilterFactory.cs" />
+    <Compile Include="Analysis\CharFilters\TestMappingCharFilter.cs" />
+    <Compile Include="Analysis\CharFilters\TestMappingCharFilterFactory.cs" />
     <Compile Include="Analysis\Core\TestAnalyzers.cs" />
     <Compile Include="Analysis\Core\TestClassicAnalyzer.cs" />
     <Compile Include="Analysis\Core\TestDuelingAnalyzers.cs" />
@@ -164,6 +168,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Core\stoptypes-2.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\CharFilters\htmlStripReaderTest.html" />
+    <EmbeddedResource Include="Analysis\CharFilters\MS-Word 14 generated.htm" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

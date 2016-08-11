@@ -1,27 +1,27 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System.Diagnostics;
 using System.IO;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// Base utility class for implementing a <seealso cref="CharFilter"/>.
     /// You subclass this, and then record mappings by calling
@@ -106,29 +106,30 @@ namespace Lucene.Net.Analysis.CharFilters
         /// <param name="cumulativeDiff"> The input offset is given by adding this
         ///                       to the output offset </param>
         protected internal virtual void AddOffCorrectMap(int off, int cumulativeDiff)
-	  {
-		if (offsets == null)
-		{
-		  offsets = new int[64];
-		  diffs = new int[64];
-		}
-		else if (size == offsets.Length)
-		{
-		  offsets = ArrayUtil.Grow(offsets);
-		  diffs = ArrayUtil.Grow(diffs);
-		}
+        {
+            if (offsets == null)
+            {
+                offsets = new int[64];
+                diffs = new int[64];
+            }
+            else if (size == offsets.Length)
+            {
+                offsets = ArrayUtil.Grow(offsets);
+                diffs = ArrayUtil.Grow(diffs);
+            }
 
-		Debug.Assert(size == 0 || off >= offsets[size - 1],  "Offset #" + size + "(" + off + ") is less than the last recorded offset " + offsets[size - 1] + "\n" + Arrays.ToString(offsets) + "\n" + Arrays.ToString(diffs));
+            int offset = offsets[(size == 0) ? 0 : size - 1];
+            Debug.Assert(size == 0 || off >= offset, "Offset #" + size + "(" + off + ") is less than the last recorded offset " + offset + "\n" + Arrays.ToString(offsets) + "\n" + Arrays.ToString(diffs));
 
-		if (size == 0 || off != offsets[size - 1])
-		{
-		  offsets[size] = off;
-		  diffs[size++] = cumulativeDiff;
-		} // Overwrite the diff at the last recorded offset
-		else
-		{
-		  diffs[size - 1] = cumulativeDiff;
-		}
-	  }
+            if (size == 0 || off != offsets[size - 1])
+            {
+                offsets[size] = off;
+                diffs[size++] = cumulativeDiff;
+            } // Overwrite the diff at the last recorded offset
+            else
+            {
+                diffs[size - 1] = cumulativeDiff;
+            }
+        }
     }
 }

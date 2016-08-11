@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.JavaCompatibility;
 using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
