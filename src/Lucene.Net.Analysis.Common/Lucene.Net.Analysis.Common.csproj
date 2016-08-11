@@ -50,6 +50,10 @@
     <Compile Include="Analysis\CharFilter\MappingCharFilter.cs" />
     <Compile Include="Analysis\CharFilter\MappingCharFilterFactory.cs" />
     <Compile Include="Analysis\CharFilter\NormalizeCharMap.cs" />
+    <Compile Include="Analysis\CommonGrams\CommonGramsFilter.cs" />
+    <Compile Include="Analysis\CommonGrams\CommonGramsFilterFactory.cs" />
+    <Compile Include="Analysis\CommonGrams\CommonGramsQueryFilter.cs" />
+    <Compile Include="Analysis\CommonGrams\CommonGramsQueryFilterFactory.cs" />
     <Compile Include="Analysis\Core\KeywordAnalyzer.cs" />
     <Compile Include="Analysis\Core\KeywordTokenizer.cs" />
     <Compile Include="Analysis\Core\KeywordTokenizerFactory.cs" />

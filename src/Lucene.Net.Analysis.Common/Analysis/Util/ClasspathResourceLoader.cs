@@ -107,11 +107,15 @@ namespace Lucene.Net.Analysis.Util
             if (string.IsNullOrEmpty(this.namespaceExcludeRegex) && (assemblyName.Equals(namespaceName, StringComparison.OrdinalIgnoreCase)))
                 return namespaceName;
 
-            // Remove the part of the path that matches the Regex.
-            var namespaceSegment = Regex.Replace(namespaceName, this.namespaceExcludeRegex, string.Empty, RegexOptions.Compiled);
+            string namespaceSegment = "";
+            if (!string.IsNullOrEmpty(this.namespaceExcludeRegex))
+            {
+                // Remove the part of the path that matches the Regex.
+                namespaceSegment = Regex.Replace(namespaceName, this.namespaceExcludeRegex, string.Empty, RegexOptions.Compiled);
+            }
 
             // Qualify by namespace and separate by .
-            return string.Concat(assemblyName, ".", namespaceSegment.Trim('.'), ".", resource);
+            return string.Concat(assemblyName, ".", namespaceSegment.Trim('.'), ".", resource).Replace("..", ".");
         }
     }
 }
