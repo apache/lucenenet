@@ -85,6 +85,7 @@
     <Compile Include="Analysis\Miscellaneous\TestLucene47WordDelimiterFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestPerFieldAnalyzerWrapper.cs" />
     <Compile Include="Analysis\Miscellaneous\TestPrefixAndSuffixAwareTokenFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestPrefixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
