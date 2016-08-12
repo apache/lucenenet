@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Analysis.Tokenattributes;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -19,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Marks terms as keywords via the <seealso cref="KeywordAttribute"/>. Each token
     /// that matches the provided pattern is marked as a keyword by setting
@@ -27,7 +28,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
     public sealed class PatternKeywordMarkerFilter : KeywordMarkerFilter
     {
         private readonly ICharTermAttribute termAtt;
-        private readonly Matcher matcher;
+        private Match matcher;
+        private readonly Regex pattern;
 
         /// <summary>
         /// Create a new <seealso cref="PatternKeywordMarkerFilter"/>, that marks the current
@@ -39,20 +41,21 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="pattern">
         ///          the pattern to apply to the incoming term buffer
         ///  </param>
-        public PatternKeywordMarkerFilter(TokenStream @in, Pattern pattern)
+        public PatternKeywordMarkerFilter(TokenStream @in, Regex pattern)
             : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
 
-            this.matcher = pattern.matcher("");
+            this.matcher = pattern.Match("");
+            this.pattern = pattern;
         }
 
         protected internal override bool Keyword
         {
             get
             {
-                matcher.Reset(termAtt);
-                return matcher.matches();
+                matcher = pattern.Match(termAtt.ToString()); 
+                return matcher.Success;
             }
         }
 

@@ -79,6 +79,7 @@
     <Compile Include="Analysis\Miscellaneous\TestASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestEmptyTokenStream.cs" />
     <Compile Include="Analysis\Miscellaneous\TestHyphenatedWordsFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestKeywordMarkerFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
