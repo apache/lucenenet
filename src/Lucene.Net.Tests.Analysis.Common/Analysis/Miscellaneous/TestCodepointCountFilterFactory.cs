@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
+using Reader = System.IO.TextReader;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,56 +22,49 @@
 	 * limitations under the License.
 	 */
 
+    public class TestCodepointCountFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        [Test]
+        public virtual void TestPositionIncrements()
+        {
+            Reader reader = new StringReader("foo foobar super-duper-trooper");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("CodepointCount", "min", "4", "max", "10").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "foobar" }, new int[] { 2 });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("CodepointCount", "min", "4", "max", "5", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
 
-	public class TestCodepointCountFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPositionIncrements() throws Exception
-	  public virtual void testPositionIncrements()
-	  {
-		Reader reader = new StringReader("foo foobar super-duper-trooper");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("CodepointCount", "min", "4", "max", "10").create(stream);
-		assertTokenStreamContents(stream, new string[] {"foobar"}, new int[] {2});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("CodepointCount", "min", "4", "max", "5", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-
-	  /// <summary>
-	  /// Test that invalid arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInvalidArguments() throws Exception
-	  public virtual void testInvalidArguments()
-	  {
-		try
-		{
-		  Reader reader = new StringReader("foo foobar super-duper-trooper");
-		  TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		  tokenFilterFactory("CodepointCount", CodepointCountFilterFactory.MIN_KEY, "5", CodepointCountFilterFactory.MAX_KEY, "4").create(stream);
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("maximum length must not be greater than minimum length"));
-		}
-	  }
-	}
+        /// <summary>
+        /// Test that invalid arguments result in exception </summary>
+        [Test]
+        public virtual void TestInvalidArguments()
+        {
+            try
+            {
+                Reader reader = new StringReader("foo foobar super-duper-trooper");
+                TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenFilterFactory("CodepointCount", CodepointCountFilterFactory.MIN_KEY, "5", CodepointCountFilterFactory.MAX_KEY, "4").Create(stream);
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("maximum length must not be greater than minimum length"));
+            }
+        }
+    }
 }

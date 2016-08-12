@@ -78,6 +78,8 @@
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\CapitalizationFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\CapitalizationFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\CodepointCountFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\CodepointCountFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\EmptyTokenStream.cs" />
     <Compile Include="Analysis\Miscellaneous\HyphenatedWordsFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordMarkerFilter.cs" />

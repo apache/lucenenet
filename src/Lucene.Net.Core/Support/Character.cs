@@ -149,6 +149,33 @@ namespace Lucene.Net.Support
             return n;
         }
 
+        public static int CodePointCount(char[] a, int offset, int count)
+        {
+            if (count > a.Length - offset || offset < 0 || count < 0)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            return CodePointCountImpl(a, offset, count);
+        }
+
+        internal static int CodePointCountImpl(char[] a, int offset, int count)
+        {
+            int endIndex = offset + count;
+            int n = 0;
+            for (int i = offset; i < endIndex;)
+            {
+                n++;
+                if (char.IsHighSurrogate(a[i++]))
+                {
+                    if (i < endIndex && char.IsLowSurrogate(a[i]))
+                    {
+                        i++;
+                    }
+                }
+            }
+            return n;
+        }
+
         public static int CodePointAt(string seq, int index)
         {
             char c1 = seq[index++];
