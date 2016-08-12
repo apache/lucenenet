@@ -1,6 +1,8 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.IO;
+using System.IO.Compression;
+using System.Text;
 
 namespace Lucene.Net.Analysis
 {
@@ -57,29 +59,33 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        /* LUCENE TO-DO Removing until use proven
         /// <summary>
         /// Run a vocabulary test against two data files inside a zip file </summary>
-        public static void AssertVocabulary(Analyzer a, File zipFile, string voc, string @out)
+        public static void AssertVocabulary(Analyzer a, Stream zipFile, string voc, string @out)
         {
-          ZipFile zip = new ZipFile(zipFile);
-          Stream v = zip.getInputStream(zip.getEntry(voc));
-          Stream o = zip.getInputStream(zip.getEntry(@out));
-          AssertVocabulary(a, v, o);
-          v.Close();
-          o.Close();
-          zip.close();
+            using (ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8))
+            {
+                using (Stream v = zip.GetEntry(voc).Open())
+                {
+                    using (Stream o = zip.GetEntry(@out).Open())
+                    {
+                        AssertVocabulary(a, v, o);
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Run a vocabulary test against a tab-separated data file inside a zip file </summary>
-        public static void AssertVocabulary(Analyzer a, File zipFile, string vocOut)
+        public static void AssertVocabulary(Analyzer a, Stream zipFile, string vocOut)
         {
-          ZipFile zip = new ZipFile(zipFile);
-          Stream vo = zip.getInputStream(zip.getEntry(vocOut));
-          AssertVocabulary(a, vo);
-          vo.Close();
-          zip.close();
-        }*/
+            using (ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8))
+            {
+                using (Stream vo = zip.GetEntry(vocOut).Open())
+                {
+                    AssertVocabulary(a, vo);
+                }
+            }
+        }
     }
 }

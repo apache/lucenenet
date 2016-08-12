@@ -17,6 +17,7 @@
 
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized;
@@ -1637,11 +1638,12 @@ namespace Lucene.Net.Util
         /// be used, if a real file is needed. To get a stream, code should prefer
         /// <seealso cref="Class#getResourceAsStream"/> using {@code this.getClass()}.
         /// </summary>
-        protected FileInfo GetDataFile(string name)
+        protected Stream GetDataFile(string name)
         {
             try
             {
-                return new FileInfo(Path.GetFileName(name));
+                var resourceLoader = new ClasspathResourceLoader(this.GetType(), "Lucene.Net");
+                return resourceLoader.OpenResource(name);
             }
             catch (Exception e)
             {

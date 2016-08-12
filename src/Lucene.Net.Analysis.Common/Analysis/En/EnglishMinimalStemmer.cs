@@ -1,7 +1,6 @@
-﻿namespace org.apache.lucene.analysis.en
+﻿namespace Lucene.Net.Analysis.En
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,44 +17,41 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// Minimal plural stemmer for English.
-	/// <para>
-	/// This stemmer implements the "S-Stemmer" from
-	/// <i>How Effective Is Suffixing?</i>
-	/// Donna Harman.
-	/// </para>
-	/// </summary>
-	public class EnglishMinimalStemmer
-	{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("fallthrough") public int stem(char s[] , int len)
-	  public virtual int stem(char[] s, int len)
-	  {
-		if (len < 3 || s[len - 1] != 's')
-		{
-		  return len;
-		}
+    /// <summary>
+    /// Minimal plural stemmer for English.
+    /// <para>
+    /// This stemmer implements the "S-Stemmer" from
+    /// <i>How Effective Is Suffixing?</i>
+    /// Donna Harman.
+    /// </para>
+    /// </summary>
+    public class EnglishMinimalStemmer
+    {
+        public virtual int Stem(char[] s, int len)
+        {
+            if (len < 3 || s[len - 1] != 's')
+            {
+                return len;
+            }
 
-		switch (s[len - 2])
-		{
-		  case 'u':
-		  case 's':
-			  return len;
-		  case 'e':
-			if (len > 3 && s[len - 3] == 'i' && s[len - 4] != 'a' && s[len - 4] != 'e')
-			{
-			  s[len - 3] = 'y';
-			  return len - 2;
-			}
-			if (s[len - 3] == 'i' || s[len - 3] == 'a' || s[len - 3] == 'o' || s[len - 3] == 'e')
-			{
-			  return len; // intentional fallthrough
-			}
-		  default:
-			  return len - 1;
-		}
-	  }
-	}
-
+            switch (s[len - 2])
+            {
+                case 'u':
+                case 's':
+                    return len;
+                case 'e':
+                    if (len > 3 && s[len - 3] == 'i' && s[len - 4] != 'a' && s[len - 4] != 'e')
+                    {
+                        s[len - 3] = 'y';
+                        return len - 2;
+                    }
+                    if (s[len - 3] == 'i' || s[len - 3] == 'a' || s[len - 3] == 'o' || s[len - 3] == 'e')
+                    {
+                        return len; // intentional fallthrough
+                    }
+                    break;
+            }
+            return len - 1;
+        }
+    }
 }
