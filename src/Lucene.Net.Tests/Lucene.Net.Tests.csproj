@@ -59,6 +59,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <Project>{3f79b6d4-4359-4f83-b64f-07f4f6262425}</Project>
+      <Name>Lucene.Net.Codecs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
       <Project>{48f7884a-9454-4e88-8413-9d35992cb440}</Project>
       <Name>Lucene.Net.Facet</Name>
