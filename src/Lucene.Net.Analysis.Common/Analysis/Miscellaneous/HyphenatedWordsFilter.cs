@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 term = termAttribute.ResizeBuffer(length);
             }
 
-            term = hyphenated.ToString().ToCharArray();       
+            hyphenated.CopyTo(0, term, 0, length);
             termAttribute.Length = length;
             offsetAttribute.SetOffset(offsetAttribute.StartOffset(), lastEndOffset);
             hyphenated.Length = 0;
