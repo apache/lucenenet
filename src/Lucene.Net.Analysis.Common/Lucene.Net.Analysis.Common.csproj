@@ -107,6 +107,8 @@
     <Compile Include="Analysis\Miscellaneous\KeywordMarkerFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordRepeatFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordRepeatFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\LengthFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\LengthFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\LimitTokenCountAnalyzer.cs" />
     <Compile Include="Analysis\Miscellaneous\LimitTokenCountFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\LimitTokenPositionFilter.cs" />

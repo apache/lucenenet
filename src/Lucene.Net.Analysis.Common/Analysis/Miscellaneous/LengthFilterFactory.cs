@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="LengthFilter"/>. 
     /// <pre class="prettyprint">
@@ -43,9 +43,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public LengthFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            min = requireInt(args, MIN_KEY);
-            max = requireInt(args, MAX_KEY);
-            enablePositionIncrements = getBoolean(args, "enablePositionIncrements", true);
+            min = RequireInt(args, MIN_KEY);
+            max = RequireInt(args, MAX_KEY);
+            enablePositionIncrements = GetBoolean(args, "enablePositionIncrements", true);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
@@ -58,5 +58,4 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return filter;
         }
     }
-
 }
