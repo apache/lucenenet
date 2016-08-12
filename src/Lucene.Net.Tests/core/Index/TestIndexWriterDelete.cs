@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAllNoDeadLock()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter modifier = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter modifier = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             int numThreads = AtLeast(2);
             ThreadClass[] threads = new ThreadClass[numThreads];
             CountdownEvent latch = new CountdownEvent(1);
@@ -398,9 +398,9 @@ namespace Lucene.Net.Index
                     for (int j = 0; j < 1000; j++)
                     {
                         Document doc = new Document();
-                        doc.Add(NewTextField("content", "aaa", Field.Store.NO));
-                        doc.Add(NewStringField("id", Convert.ToString(id++), Field.Store.YES));
-                        doc.Add(NewStringField("value", Convert.ToString(value), Field.Store.NO));
+                        doc.Add(OuterInstance.NewTextField("content", "aaa", Field.Store.NO));
+                        doc.Add(OuterInstance.NewStringField("id", Convert.ToString(id++), Field.Store.YES));
+                        doc.Add(OuterInstance.NewStringField("value", Convert.ToString(value), Field.Store.NO));
                         if (DefaultCodecSupportsDocValues())
                         {
                             doc.Add(new NumericDocValuesField("dv", value));
@@ -1106,7 +1106,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAllSlowly()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             int NUM_DOCS = AtLeast(1000);
             IList<int?> ids = new List<int?>(NUM_DOCS);
             for (int id = 0; id < NUM_DOCS; id++)

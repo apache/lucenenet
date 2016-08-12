@@ -26,9 +26,20 @@ namespace Lucene.Net.Codecs.Lucene42
     /// </summary>
     public class Lucene42RWDocValuesFormat : Lucene42DocValuesFormat
     {
+        private readonly bool _oldFormatImpersonationIsActive;
+
+        /// <param name="oldFormatImpersonationIsActive">
+        /// LUCENENET specific
+        /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
+        /// </param>
+        public Lucene42RWDocValuesFormat(bool oldFormatImpersonationIsActive) : base()
+        {
+            _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
+        }
+
         public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)
         {
-            if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (!_oldFormatImpersonationIsActive)
             {
                 return base.FieldsConsumer(state);
             }

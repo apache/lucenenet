@@ -47,8 +47,12 @@ namespace Lucene.Net.Search
         private static IndexReader Reader;
         private static Directory Directory;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy()));

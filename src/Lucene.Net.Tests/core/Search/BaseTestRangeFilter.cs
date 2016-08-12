@@ -95,8 +95,13 @@ namespace Lucene.Net.Search
             return b.ToString();
         }
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because <see cref="Build(Random, TestIndex)"/> is no
+        /// longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClassBaseTestRangeFilter()
+        public void BeforeClassBaseTestRangeFilter()
         {
             MaxId = AtLeast(500);
             SignedIndexDir = new TestIndex(Random(), int.MaxValue, int.MinValue, true);
@@ -118,7 +123,12 @@ namespace Lucene.Net.Search
             UnsignedIndexDir = null;
         }
 
-        private static IndexReader Build(Random random, TestIndex index)
+        /// <summary>
+        /// LUCENENET specific
+        /// Passed in because NewStringField and NewIndexWriterConfig are no
+        /// longer static.
+        /// </summary>
+        private IndexReader Build(Random random, TestIndex index)
         {
             /* build an index */
 

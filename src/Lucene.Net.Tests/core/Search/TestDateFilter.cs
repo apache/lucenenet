@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
         {
             // create an index
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore, Similarity, TimeZone);
 
             long now = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
         {
             // create an index
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore, Similarity, TimeZone);
 
             long now = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 

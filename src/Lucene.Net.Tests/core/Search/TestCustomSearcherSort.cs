@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
             base.SetUp();
             INDEX_SIZE = AtLeast(2000);
             Index = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Index);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Index, Similarity, TimeZone);
             RandomGen random = new RandomGen(this, Random());
             for (int i = 0; i < INDEX_SIZE; ++i) // don't decrease; if to low the
             {

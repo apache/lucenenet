@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 
             {
                 dir = NewDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+                RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
                 // w.setDoRandomForceMerge(false);
 
                 // w.w.getConfig().SetMaxBufferedDocs(AtLeast(100));

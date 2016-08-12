@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
         public virtual void TestRollbackIntegrityWithBufferFlush()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter rw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter rw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             for (int i = 0; i < 5; i++)
             {
                 Document doc = new Document();

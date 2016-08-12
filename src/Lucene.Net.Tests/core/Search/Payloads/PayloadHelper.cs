@@ -144,7 +144,7 @@ namespace Lucene.Net.Search.Payloads
             Reader = DirectoryReader.Open(writer, true);
             writer.Dispose();
 
-            IndexSearcher searcher = LuceneTestCase.NewSearcher(Reader);
+            IndexSearcher searcher = LuceneTestCase.NewSearcher(Reader, similarity);
             searcher.Similarity = similarity;
             return searcher;
         }

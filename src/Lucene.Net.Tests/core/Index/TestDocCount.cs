@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
         public virtual void TestSimple()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             int numDocs = AtLeast(100);
             for (int i = 0; i < numDocs; i++)
             {

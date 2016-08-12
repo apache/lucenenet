@@ -321,7 +321,7 @@ namespace Lucene.Net.Tests.Queries.Function
             }
         }
 
-        private static void AssertHits(Query q, float[] scores)
+        private void AssertHits(Query q, float[] scores)
         {
             ScoreDoc[] expected = new ScoreDoc[scores.Length];
             int[] expectedDocs = new int[scores.Length];
@@ -331,7 +331,7 @@ namespace Lucene.Net.Tests.Queries.Function
                 expected[i] = new ScoreDoc(i, scores[i]);
             }
             TopDocs docs = searcher.Search(q, null, documents.Count, new Sort(new SortField("id", SortField.Type_e.STRING)), true, false);
-            CheckHits.DoCheckHits(Random(), q, "", searcher, expectedDocs);
+            CheckHits.DoCheckHits(Random(), q, "", searcher, expectedDocs, Similarity);
             CheckHits.CheckHitsQuery(q, expected, docs.ScoreDocs, expectedDocs);
             CheckHits.CheckExplanations(q, "", searcher);
         }
