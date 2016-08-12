@@ -528,29 +528,45 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy </summary>
-        public static void CheckRandomData(Random random, Analyzer a, int iterations)
+        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy
+        ///
+        /// LUCENENET specific
+        /// Non-static to reduce the inter-class dependencies due to use of
+        /// static variables
+        /// </summary>
+        public void CheckRandomData(Random random, Analyzer a, int iterations)
         {
             CheckRandomData(random, a, iterations, 20, false, true);
         }
 
         /// <summary>
-        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy </summary>
-        public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength)
+        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy
+        ///
+        /// LUCENENET specific
+        /// Non-static to reduce the inter-class dependencies due to use of
+        /// static variables
+        /// </summary>
+        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength)
         {
             CheckRandomData(random, a, iterations, maxWordLength, false, true);
         }
 
         /// <summary>
-        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy </summary>
-        /// <param name="simple"> true if only ascii strings will be used (try to avoid) </param>
-        public static void CheckRandomData(Random random, Analyzer a, int iterations, bool simple)
+        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy
+        /// 
+        /// LUCENENET specific
+        /// Non-static to reduce the inter-class dependencies due to use of
+        /// static variables
+        /// </summary>
+        /// <param name="simple"> true if only ascii strings will be used (try to avoid)</param>
+        public void CheckRandomData(Random random, Analyzer a, int iterations, bool simple)
         {
             CheckRandomData(random, a, iterations, 20, simple, true);
         }
 
         internal class AnalysisThread : ThreadClass
         {
+            private readonly BaseTokenStreamTestCase OuterInstance;
             internal readonly int Iterations;
             internal readonly int MaxWordLength;
             internal readonly long Seed;
@@ -566,7 +582,13 @@ namespace Lucene.Net.Analysis
             // interact)... so this is just "best effort":
             public bool Failed;
 
-            internal AnalysisThread(long seed, /*CountdownEvent latch,*/ Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
+            /// <summary>
+            /// <param name="outerInstance">
+            /// LUCENENET specific
+            /// Added to remove a call to the then-static BaseTokenStreamTestCase methods</param>
+            /// </summary>
+            internal AnalysisThread(long seed, /*CountdownEvent latch,*/ Analyzer a, int iterations, int maxWordLength, 
+                bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw, BaseTokenStreamTestCase outerInstance)
             {
                 this.Seed = seed;
                 this.a = a;
@@ -577,6 +599,7 @@ namespace Lucene.Net.Analysis
                 this.OffsetsAreCorrect = offsetsAreCorrect;
                 this.Iw = iw;
                 this._latch = null;
+                this.OuterInstance = outerInstance;
             }
 
             public override void Run()
@@ -587,7 +610,7 @@ namespace Lucene.Net.Analysis
                     if (_latch != null) _latch.Wait();
                     // see the part in checkRandomData where it replays the same text again
                     // to verify reproducability/reuse: hopefully this would catch thread hazards.
-                    CheckRandomData(new Random((int)Seed), a, Iterations, MaxWordLength, UseCharFilter, Simple, OffsetsAreCorrect, Iw);
+                    OuterInstance.CheckRandomData(new Random((int)Seed), a, Iterations, MaxWordLength, UseCharFilter, Simple, OffsetsAreCorrect, Iw);
                     success = true;
                 }
                 catch (Exception e)
@@ -602,12 +625,12 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple)
+        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple)
         {
             CheckRandomData(random, a, iterations, maxWordLength, simple, true);
         }
 
-        public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple, bool offsetsAreCorrect)
+        public void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple, bool offsetsAreCorrect)
         {
             CheckResetException(a, "best effort");
             long seed = random.Next();
@@ -620,7 +643,7 @@ namespace Lucene.Net.Analysis
             if (Rarely(random) && codecOk)
             {
                 dir = NewFSDirectory(CreateTempDir("bttc"));
-                iw = new RandomIndexWriter(new Random((int)seed), dir, a);
+                iw = new RandomIndexWriter(new Random((int)seed), dir, a, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
             }
 
             bool success = false;
@@ -634,7 +657,7 @@ namespace Lucene.Net.Analysis
                 var threads = new AnalysisThread[numThreads];
                 for (int i = 0; i < threads.Length; i++)
                 {
-                    threads[i] = new AnalysisThread(seed, /*startingGun,*/ a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
+                    threads[i] = new AnalysisThread(seed, /*startingGun,*/ a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw, this);
                 }
                 
                 Array.ForEach(threads, thread => thread.Start());                
@@ -671,7 +694,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
+        private void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
         {
             LineFileDocs docs = new LineFileDocs(random);
             Document doc = null;

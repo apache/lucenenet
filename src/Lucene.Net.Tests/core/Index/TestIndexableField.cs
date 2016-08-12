@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
         public virtual void TestArbitraryFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             int NUM_DOCS = AtLeast(27);
             if (VERBOSE)
@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
                     if (fieldUpto == 0)
                     {
                         fieldUpto = 1;
-                        current = NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
+                        current = OuterTextIndexableField.NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
                     }
                     else
                     {

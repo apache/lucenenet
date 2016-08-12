@@ -90,7 +90,7 @@ namespace Lucene.Net.Search
             }
 
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
             writer.Commit();
             IndexReader ir = writer.Reader;
             writer.Dispose();

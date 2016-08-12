@@ -33,11 +33,15 @@ namespace Lucene.Net.Codecs.Lucene3x
     public class TestSurrogates : LuceneTestCase
     {
         /// <summary>
-        /// we will manually instantiate preflex-rw here </summary>
+        /// we will manually instantiate preflex-rw here
+        /// 
+        /// LUCENENET specific
+        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
-            LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
         }
 
         private static string MakeDifficultRandomUnicodeString(Random r)
@@ -340,7 +344,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual void TestSurrogatesOrder()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(new PreFlexRWCodec()));
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                .SetCodec(new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)));
 
             int numField = TestUtil.NextInt(Random(), 2, 5);
 

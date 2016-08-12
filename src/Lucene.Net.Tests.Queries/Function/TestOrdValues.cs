@@ -49,7 +49,7 @@ namespace Lucene.Net.Tests.Queries.Function
         /// </summary>
         /// <param name="field"></param>
         /// <param name="inOrder"></param>
-        private static void DoTestRank(string field, bool inOrder)
+        private void DoTestRank(string field, bool inOrder)
         {
             IndexReader r = DirectoryReader.Open(dir);
             IndexSearcher s = NewSearcher(r);
@@ -65,7 +65,7 @@ namespace Lucene.Net.Tests.Queries.Function
 
             Query q = new FunctionQuery(vs);
             Log("test: " + q);
-            QueryUtils.Check(Random(), q, s);
+            QueryUtils.Check(Random(), q, s, Similarity);
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
             assertEquals("All docs should be matched!", N_DOCS, h.Length);
             string prevID = inOrder ? "IE" : "IC"; // smaller than all ids of docs in this test ("ID0001", etc.) -  greater than all ids of docs in this test ("ID0001", etc.)

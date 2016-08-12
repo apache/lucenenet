@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
                 Directory dir = NewDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+                RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
                 HashSet<int> aDocs = new HashSet<int>();
                 Documents.Document doc = new Documents.Document();
                 Field f = NewStringField("field", "", Field.Store.NO);
