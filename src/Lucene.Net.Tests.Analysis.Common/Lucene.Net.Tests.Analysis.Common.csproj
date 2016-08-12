@@ -91,6 +91,7 @@
     <Compile Include="Analysis\Miscellaneous\TestEmptyTokenStream.cs" />
     <Compile Include="Analysis\Miscellaneous\TestHyphenatedWordsFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestKeywordMarkerFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestKeywordMarkerFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLimitTokenCountAnalyzer.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLimitTokenCountFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLucene47WordDelimiterFilter.cs" />

@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Lucene.Net.Analysis.Util;
-using Reader = System.IO.TextReader;
-using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +20,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="KeywordMarkerFilter"/>.
     /// <pre class="prettyprint">
@@ -32,14 +31,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</pre>
     /// </summary>
-    public class KeywordMarkerFilterFactory : TokenFilterFactory, ResourceLoaderAware
+    public class KeywordMarkerFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         public const string PROTECTED_TOKENS = "protected";
         public const string PATTERN = "pattern";
         private readonly string wordFiles;
         private readonly string stringPattern;
         private readonly bool ignoreCase;
-        private Pattern pattern;
+        private Regex pattern;
         private CharArraySet protectedWords;
 
         /// <summary>
@@ -47,16 +46,16 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public KeywordMarkerFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            wordFiles = get(args, PROTECTED_TOKENS);
-            stringPattern = get(args, PATTERN);
-            ignoreCase = getBoolean(args, "ignoreCase", false);
+            wordFiles = Get(args, PROTECTED_TOKENS);
+            stringPattern = Get(args, PATTERN);
+            ignoreCase = GetBoolean(args, "ignoreCase", false);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
             }
         }
 
-        public virtual void Inform(ResourceLoader loader)
+        public virtual void Inform(IResourceLoader loader)
         {
             if (wordFiles != null)
             {
@@ -64,7 +63,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             if (stringPattern != null)
             {
-                pattern = ignoreCase ? Pattern.compile(stringPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE) : Pattern.compile(stringPattern);
+                pattern = ignoreCase ?
+                    new Regex(stringPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) :
+                    new Regex(stringPattern, RegexOptions.Compiled | RegexOptions.CultureInvariant);
             }
         }
 

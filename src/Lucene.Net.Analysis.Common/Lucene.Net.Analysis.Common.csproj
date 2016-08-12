@@ -102,8 +102,11 @@
     <Compile Include="Analysis\Miscellaneous\CodepointCountFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\EmptyTokenStream.cs" />
     <Compile Include="Analysis\Miscellaneous\HyphenatedWordsFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\HyphenatedWordsFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordMarkerFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\KeywordMarkerFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordRepeatFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\KeywordRepeatFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\LimitTokenCountAnalyzer.cs" />
     <Compile Include="Analysis\Miscellaneous\LimitTokenCountFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\LimitTokenPositionFilter.cs" />

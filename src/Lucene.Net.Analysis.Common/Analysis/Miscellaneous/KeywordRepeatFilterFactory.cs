@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="KeywordRepeatFilter"/>.
     /// 
@@ -46,5 +46,4 @@ namespace Lucene.Net.Analysis.Miscellaneous
             return new KeywordRepeatFilter(input);
         }
     }
-
 }
