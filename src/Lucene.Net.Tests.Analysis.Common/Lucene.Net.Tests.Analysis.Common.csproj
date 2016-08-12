@@ -73,6 +73,10 @@
     <Compile Include="Analysis\Core\TestUAX29URLEmailAnalyzer.cs" />
     <Compile Include="Analysis\Core\TestUAX29URLEmailTokenizer.cs" />
     <Compile Include="Analysis\Core\WordBreakTestUnicode_6_3_0.cs" />
+    <Compile Include="Analysis\Cz\TestCzechAnalyzer.cs" />
+    <Compile Include="Analysis\Cz\TestCzechStemFilterFactory.cs" />
+    <Compile Include="Analysis\Cz\TestCzechStemmer.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
     <Compile Include="Analysis\Standard\TestStandardFactories.cs" />
@@ -177,6 +181,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Analysis\CharFilters\htmlStripReaderTest.html" />
     <EmbeddedResource Include="Analysis\CharFilters\MS-Word 14 generated.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Cz\customStopWordFile.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

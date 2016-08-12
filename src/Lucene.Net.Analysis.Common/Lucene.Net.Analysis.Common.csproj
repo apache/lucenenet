@@ -70,6 +70,10 @@
     <Compile Include="Analysis\Core\TypeTokenFilter.cs" />
     <Compile Include="Analysis\Core\TypeTokenFilterFactory.cs" />
     <Compile Include="Analysis\Core\WhitespaceTokenizerFactory.cs" />
+    <Compile Include="Analysis\Cz\CzechAnalyzer.cs" />
+    <Compile Include="Analysis\Cz\CzechStemFilter.cs" />
+    <Compile Include="Analysis\Cz\CzechStemFilterFactory.cs" />
+    <Compile Include="Analysis\Cz\CzechStemmer.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\EmptyTokenStream.cs" />
@@ -79,9 +83,15 @@
     <Compile Include="Analysis\Miscellaneous\LimitTokenCountAnalyzer.cs" />
     <Compile Include="Analysis\Miscellaneous\LimitTokenCountFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\LimitTokenPositionFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\Lucene47WordDelimiterFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\PerFieldAnalyzerWrapper.cs" />
     <Compile Include="Analysis\Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\PrefixAwareTokenFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\SetKeywordMarkerFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\SingleTokenTokenStream.cs" />
+    <Compile Include="Analysis\Miscellaneous\WordDelimiterFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\WordDelimiterFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\WordDelimiterIterator.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilterFactory.cs" />
     <Compile Include="Analysis\Standard\ClassicAnalyzer.cs" />
@@ -213,6 +223,9 @@
       <Link>icuuc55.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Cz\stopwords.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

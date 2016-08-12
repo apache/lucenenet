@@ -1,11 +1,8 @@
-﻿namespace org.apache.lucene.analysis.cz
+﻿using Lucene.Net.Analysis.Tokenattributes;
+
+namespace Lucene.Net.Analysis.Cz
 {
-
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter; // for javadoc
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -22,46 +19,44 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that applies <seealso cref="CzechStemmer"/> to stem Czech words.
-	/// <para>
-	/// To prevent terms from being stemmed use an instance of
-	/// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-	/// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
-	/// </para>
-	/// <para><b>NOTE</b>: Input is expected to be in lowercase, 
-	/// but with diacritical marks</para> </summary>
-	/// <seealso cref= SetKeywordMarkerFilter </seealso>
-	public sealed class CzechStemFilter : TokenFilter
-	{
-	  private readonly CzechStemmer stemmer = new CzechStemmer();
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAttr = addAttribute(typeof(KeywordAttribute));
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="CzechStemmer"/> to stem Czech words.
+    /// <para>
+    /// To prevent terms from being stemmed use an instance of
+    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
+    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// </para>
+    /// <para><b>NOTE</b>: Input is expected to be in lowercase, 
+    /// but with diacritical marks</para> </summary>
+    /// <seealso cref= SetKeywordMarkerFilter </seealso>
+    public sealed class CzechStemFilter : TokenFilter
+    {
+        private readonly CzechStemmer stemmer = new CzechStemmer();
+        private readonly ICharTermAttribute termAtt;
+        private readonly IKeywordAttribute keywordAttr;
 
-	  public CzechStemFilter(TokenStream input) : base(input)
-	  {
-	  }
+        public CzechStemFilter(TokenStream input)
+              : base(input)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+            keywordAttr = AddAttribute<IKeywordAttribute>();
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  if (!keywordAttr.Keyword)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newlen = stemmer.stem(termAtt.buffer(), termAtt.length());
-			int newlen = stemmer.stem(termAtt.buffer(), termAtt.length());
-			termAtt.Length = newlen;
-		  }
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
-	}
-
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                if (!keywordAttr.Keyword)
+                {
+                    int newlen = stemmer.Stem(termAtt.Buffer(), termAtt.Length);
+                    termAtt.Length = newlen;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

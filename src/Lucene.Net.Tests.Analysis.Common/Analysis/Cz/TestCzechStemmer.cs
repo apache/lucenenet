@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.cz
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Cz
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,316 +23,300 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the Czech Stemmer.
+    /// 
+    /// Note: its algorithmic, so some stems are nonsense
+    /// 
+    /// </summary>
+    public class TestCzechStemmer : BaseTokenStreamTestCase
+    {
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        /// <summary>
+        /// Test showing how masculine noun forms conflate
+        /// </summary>
+        [Test]
+        public virtual void TestMasculineNouns()
+        {
+            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
 
-	/// <summary>
-	/// Test the Czech Stemmer.
-	/// 
-	/// Note: its algorithmic, so some stems are nonsense
-	/// 
-	/// </summary>
-	public class TestCzechStemmer : BaseTokenStreamTestCase
-	{
+            /* animate ending with a hard consonant */
+            AssertAnalyzesTo(cz, "pán", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "páni", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "pánové", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "pána", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "pánů", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "pánovi", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "pánům", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "pány", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "páne", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "pánech", new string[] { "pán" });
+            AssertAnalyzesTo(cz, "pánem", new string[] { "pán" });
 
-	  /// <summary>
-	  /// Test showing how masculine noun forms conflate
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMasculineNouns() throws java.io.IOException
-	  public virtual void testMasculineNouns()
-	  {
-		CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
+            /* inanimate ending with hard consonant */
+            AssertAnalyzesTo(cz, "hrad", new string[] { "hrad" });
+            AssertAnalyzesTo(cz, "hradu", new string[] { "hrad" });
+            AssertAnalyzesTo(cz, "hrade", new string[] { "hrad" });
+            AssertAnalyzesTo(cz, "hradem", new string[] { "hrad" });
+            AssertAnalyzesTo(cz, "hrady", new string[] { "hrad" });
+            AssertAnalyzesTo(cz, "hradech", new string[] { "hrad" });
+            AssertAnalyzesTo(cz, "hradům", new string[] { "hrad" });
+            AssertAnalyzesTo(cz, "hradů", new string[] { "hrad" });
 
-		/* animate ending with a hard consonant */
-		assertAnalyzesTo(cz, "pán", new string[] {"pán"});
-		assertAnalyzesTo(cz, "páni", new string[] {"pán"});
-		assertAnalyzesTo(cz, "pánové", new string[] {"pán"});
-		assertAnalyzesTo(cz, "pána", new string[] {"pán"});
-		assertAnalyzesTo(cz, "pánů", new string[] {"pán"});
-		assertAnalyzesTo(cz, "pánovi", new string[] {"pán"});
-		assertAnalyzesTo(cz, "pánům", new string[] {"pán"});
-		assertAnalyzesTo(cz, "pány", new string[] {"pán"});
-		assertAnalyzesTo(cz, "páne", new string[] {"pán"});
-		assertAnalyzesTo(cz, "pánech", new string[] {"pán"});
-		assertAnalyzesTo(cz, "pánem", new string[] {"pán"});
+            /* animate ending with a soft consonant */
+            AssertAnalyzesTo(cz, "muž", new string[] { "muh" });
+            AssertAnalyzesTo(cz, "muži", new string[] { "muh" });
+            AssertAnalyzesTo(cz, "muže", new string[] { "muh" });
+            AssertAnalyzesTo(cz, "mužů", new string[] { "muh" });
+            AssertAnalyzesTo(cz, "mužům", new string[] { "muh" });
+            AssertAnalyzesTo(cz, "mužích", new string[] { "muh" });
+            AssertAnalyzesTo(cz, "mužem", new string[] { "muh" });
 
-		/* inanimate ending with hard consonant */
-		assertAnalyzesTo(cz, "hrad", new string[] {"hrad"});
-		assertAnalyzesTo(cz, "hradu", new string[] {"hrad"});
-		assertAnalyzesTo(cz, "hrade", new string[] {"hrad"});
-		assertAnalyzesTo(cz, "hradem", new string[] {"hrad"});
-		assertAnalyzesTo(cz, "hrady", new string[] {"hrad"});
-		assertAnalyzesTo(cz, "hradech", new string[] {"hrad"});
-		assertAnalyzesTo(cz, "hradům", new string[] {"hrad"});
-		assertAnalyzesTo(cz, "hradů", new string[] {"hrad"});
+            /* inanimate ending with a soft consonant */
+            AssertAnalyzesTo(cz, "stroj", new string[] { "stroj" });
+            AssertAnalyzesTo(cz, "stroje", new string[] { "stroj" });
+            AssertAnalyzesTo(cz, "strojů", new string[] { "stroj" });
+            AssertAnalyzesTo(cz, "stroji", new string[] { "stroj" });
+            AssertAnalyzesTo(cz, "strojům", new string[] { "stroj" });
+            AssertAnalyzesTo(cz, "strojích", new string[] { "stroj" });
+            AssertAnalyzesTo(cz, "strojem", new string[] { "stroj" });
 
-		/* animate ending with a soft consonant */
-		assertAnalyzesTo(cz, "muž", new string[] {"muh"});
-		assertAnalyzesTo(cz, "muži", new string[] {"muh"});
-		assertAnalyzesTo(cz, "muže", new string[] {"muh"});
-		assertAnalyzesTo(cz, "mužů", new string[] {"muh"});
-		assertAnalyzesTo(cz, "mužům", new string[] {"muh"});
-		assertAnalyzesTo(cz, "mužích", new string[] {"muh"});
-		assertAnalyzesTo(cz, "mužem", new string[] {"muh"});
+            /* ending with a */
+            AssertAnalyzesTo(cz, "předseda", new string[] { "předsd" });
+            AssertAnalyzesTo(cz, "předsedové", new string[] { "předsd" });
+            AssertAnalyzesTo(cz, "předsedy", new string[] { "předsd" });
+            AssertAnalyzesTo(cz, "předsedů", new string[] { "předsd" });
+            AssertAnalyzesTo(cz, "předsedovi", new string[] { "předsd" });
+            AssertAnalyzesTo(cz, "předsedům", new string[] { "předsd" });
+            AssertAnalyzesTo(cz, "předsedu", new string[] { "předsd" });
+            AssertAnalyzesTo(cz, "předsedo", new string[] { "předsd" });
+            AssertAnalyzesTo(cz, "předsedech", new string[] { "předsd" });
+            AssertAnalyzesTo(cz, "předsedou", new string[] { "předsd" });
 
-		/* inanimate ending with a soft consonant */
-		assertAnalyzesTo(cz, "stroj", new string[] {"stroj"});
-		assertAnalyzesTo(cz, "stroje", new string[] {"stroj"});
-		assertAnalyzesTo(cz, "strojů", new string[] {"stroj"});
-		assertAnalyzesTo(cz, "stroji", new string[] {"stroj"});
-		assertAnalyzesTo(cz, "strojům", new string[] {"stroj"});
-		assertAnalyzesTo(cz, "strojích", new string[] {"stroj"});
-		assertAnalyzesTo(cz, "strojem", new string[] {"stroj"});
+            /* ending with e */
+            AssertAnalyzesTo(cz, "soudce", new string[] { "soudk" });
+            AssertAnalyzesTo(cz, "soudci", new string[] { "soudk" });
+            AssertAnalyzesTo(cz, "soudců", new string[] { "soudk" });
+            AssertAnalyzesTo(cz, "soudcům", new string[] { "soudk" });
+            AssertAnalyzesTo(cz, "soudcích", new string[] { "soudk" });
+            AssertAnalyzesTo(cz, "soudcem", new string[] { "soudk" });
+        }
 
-		/* ending with a */
-		assertAnalyzesTo(cz, "předseda", new string[] {"předsd"});
-		assertAnalyzesTo(cz, "předsedové", new string[] {"předsd"});
-		assertAnalyzesTo(cz, "předsedy", new string[] {"předsd"});
-		assertAnalyzesTo(cz, "předsedů", new string[] {"předsd"});
-		assertAnalyzesTo(cz, "předsedovi", new string[] {"předsd"});
-		assertAnalyzesTo(cz, "předsedům", new string[] {"předsd"});
-		assertAnalyzesTo(cz, "předsedu", new string[] {"předsd"});
-		assertAnalyzesTo(cz, "předsedo", new string[] {"předsd"});
-		assertAnalyzesTo(cz, "předsedech", new string[] {"předsd"});
-		assertAnalyzesTo(cz, "předsedou", new string[] {"předsd"});
+        /// <summary>
+        /// Test showing how feminine noun forms conflate
+        /// </summary>
+        [Test]
+        public virtual void TestFeminineNouns()
+        {
+            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
 
-		/* ending with e */
-		assertAnalyzesTo(cz, "soudce", new string[] {"soudk"});
-		assertAnalyzesTo(cz, "soudci", new string[] {"soudk"});
-		assertAnalyzesTo(cz, "soudců", new string[] {"soudk"});
-		assertAnalyzesTo(cz, "soudcům", new string[] {"soudk"});
-		assertAnalyzesTo(cz, "soudcích", new string[] {"soudk"});
-		assertAnalyzesTo(cz, "soudcem", new string[] {"soudk"});
-	  }
+            /* ending with hard consonant */
+            AssertAnalyzesTo(cz, "kost", new string[] { "kost" });
+            AssertAnalyzesTo(cz, "kosti", new string[] { "kost" });
+            AssertAnalyzesTo(cz, "kostí", new string[] { "kost" });
+            AssertAnalyzesTo(cz, "kostem", new string[] { "kost" });
+            AssertAnalyzesTo(cz, "kostech", new string[] { "kost" });
+            AssertAnalyzesTo(cz, "kostmi", new string[] { "kost" });
 
-	  /// <summary>
-	  /// Test showing how feminine noun forms conflate
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFeminineNouns() throws java.io.IOException
-	  public virtual void testFeminineNouns()
-	  {
-		CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
+            /* ending with a soft consonant */
+            // note: in this example sing nom. and sing acc. don't conflate w/ the rest
+            AssertAnalyzesTo(cz, "píseň", new string[] { "písň" });
+            AssertAnalyzesTo(cz, "písně", new string[] { "písn" });
+            AssertAnalyzesTo(cz, "písni", new string[] { "písn" });
+            AssertAnalyzesTo(cz, "písněmi", new string[] { "písn" });
+            AssertAnalyzesTo(cz, "písních", new string[] { "písn" });
+            AssertAnalyzesTo(cz, "písním", new string[] { "písn" });
 
-		/* ending with hard consonant */
-		assertAnalyzesTo(cz, "kost", new string[] {"kost"});
-		assertAnalyzesTo(cz, "kosti", new string[] {"kost"});
-		assertAnalyzesTo(cz, "kostí", new string[] {"kost"});
-		assertAnalyzesTo(cz, "kostem", new string[] {"kost"});
-		assertAnalyzesTo(cz, "kostech", new string[] {"kost"});
-		assertAnalyzesTo(cz, "kostmi", new string[] {"kost"});
+            /* ending with e */
+            AssertAnalyzesTo(cz, "růže", new string[] { "růh" });
+            AssertAnalyzesTo(cz, "růží", new string[] { "růh" });
+            AssertAnalyzesTo(cz, "růžím", new string[] { "růh" });
+            AssertAnalyzesTo(cz, "růžích", new string[] { "růh" });
+            AssertAnalyzesTo(cz, "růžemi", new string[] { "růh" });
+            AssertAnalyzesTo(cz, "růži", new string[] { "růh" });
 
-		/* ending with a soft consonant */
-		// note: in this example sing nom. and sing acc. don't conflate w/ the rest
-		assertAnalyzesTo(cz, "píseň", new string[] {"písň"});
-		assertAnalyzesTo(cz, "písně", new string[] {"písn"});
-		assertAnalyzesTo(cz, "písni", new string[] {"písn"});
-		assertAnalyzesTo(cz, "písněmi", new string[] {"písn"});
-		assertAnalyzesTo(cz, "písních", new string[] {"písn"});
-		assertAnalyzesTo(cz, "písním", new string[] {"písn"});
+            /* ending with a */
+            AssertAnalyzesTo(cz, "žena", new string[] { "žn" });
+            AssertAnalyzesTo(cz, "ženy", new string[] { "žn" });
+            AssertAnalyzesTo(cz, "žen", new string[] { "žn" });
+            AssertAnalyzesTo(cz, "ženě", new string[] { "žn" });
+            AssertAnalyzesTo(cz, "ženám", new string[] { "žn" });
+            AssertAnalyzesTo(cz, "ženu", new string[] { "žn" });
+            AssertAnalyzesTo(cz, "ženo", new string[] { "žn" });
+            AssertAnalyzesTo(cz, "ženách", new string[] { "žn" });
+            AssertAnalyzesTo(cz, "ženou", new string[] { "žn" });
+            AssertAnalyzesTo(cz, "ženami", new string[] { "žn" });
+        }
 
-		/* ending with e */
-		assertAnalyzesTo(cz, "růže", new string[] {"růh"});
-		assertAnalyzesTo(cz, "růží", new string[] {"růh"});
-		assertAnalyzesTo(cz, "růžím", new string[] {"růh"});
-		assertAnalyzesTo(cz, "růžích", new string[] {"růh"});
-		assertAnalyzesTo(cz, "růžemi", new string[] {"růh"});
-		assertAnalyzesTo(cz, "růži", new string[] {"růh"});
+        /// <summary>
+        /// Test showing how neuter noun forms conflate
+        /// </summary>
+        [Test]
+        public virtual void TestNeuterNouns()
+        {
+            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
 
-		/* ending with a */
-		assertAnalyzesTo(cz, "žena", new string[] {"žn"});
-		assertAnalyzesTo(cz, "ženy", new string[] {"žn"});
-		assertAnalyzesTo(cz, "žen", new string[] {"žn"});
-		assertAnalyzesTo(cz, "ženě", new string[] {"žn"});
-		assertAnalyzesTo(cz, "ženám", new string[] {"žn"});
-		assertAnalyzesTo(cz, "ženu", new string[] {"žn"});
-		assertAnalyzesTo(cz, "ženo", new string[] {"žn"});
-		assertAnalyzesTo(cz, "ženách", new string[] {"žn"});
-		assertAnalyzesTo(cz, "ženou", new string[] {"žn"});
-		assertAnalyzesTo(cz, "ženami", new string[] {"žn"});
-	  }
+            /* ending with o */
+            AssertAnalyzesTo(cz, "město", new string[] { "měst" });
+            AssertAnalyzesTo(cz, "města", new string[] { "měst" });
+            AssertAnalyzesTo(cz, "měst", new string[] { "měst" });
+            AssertAnalyzesTo(cz, "městu", new string[] { "měst" });
+            AssertAnalyzesTo(cz, "městům", new string[] { "měst" });
+            AssertAnalyzesTo(cz, "městě", new string[] { "měst" });
+            AssertAnalyzesTo(cz, "městech", new string[] { "měst" });
+            AssertAnalyzesTo(cz, "městem", new string[] { "měst" });
+            AssertAnalyzesTo(cz, "městy", new string[] { "měst" });
 
-	  /// <summary>
-	  /// Test showing how neuter noun forms conflate
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNeuterNouns() throws java.io.IOException
-	  public virtual void testNeuterNouns()
-	  {
-		CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
+            /* ending with e */
+            AssertAnalyzesTo(cz, "moře", new string[] { "moř" });
+            AssertAnalyzesTo(cz, "moří", new string[] { "moř" });
+            AssertAnalyzesTo(cz, "mořím", new string[] { "moř" });
+            AssertAnalyzesTo(cz, "moři", new string[] { "moř" });
+            AssertAnalyzesTo(cz, "mořích", new string[] { "moř" });
+            AssertAnalyzesTo(cz, "mořem", new string[] { "moř" });
 
-		/* ending with o */
-		assertAnalyzesTo(cz, "město", new string[] {"měst"});
-		assertAnalyzesTo(cz, "města", new string[] {"měst"});
-		assertAnalyzesTo(cz, "měst", new string[] {"měst"});
-		assertAnalyzesTo(cz, "městu", new string[] {"měst"});
-		assertAnalyzesTo(cz, "městům", new string[] {"měst"});
-		assertAnalyzesTo(cz, "městě", new string[] {"měst"});
-		assertAnalyzesTo(cz, "městech", new string[] {"měst"});
-		assertAnalyzesTo(cz, "městem", new string[] {"měst"});
-		assertAnalyzesTo(cz, "městy", new string[] {"měst"});
+            /* ending with ě */
+            AssertAnalyzesTo(cz, "kuře", new string[] { "kuř" });
+            AssertAnalyzesTo(cz, "kuřata", new string[] { "kuř" });
+            AssertAnalyzesTo(cz, "kuřete", new string[] { "kuř" });
+            AssertAnalyzesTo(cz, "kuřat", new string[] { "kuř" });
+            AssertAnalyzesTo(cz, "kuřeti", new string[] { "kuř" });
+            AssertAnalyzesTo(cz, "kuřatům", new string[] { "kuř" });
+            AssertAnalyzesTo(cz, "kuřatech", new string[] { "kuř" });
+            AssertAnalyzesTo(cz, "kuřetem", new string[] { "kuř" });
+            AssertAnalyzesTo(cz, "kuřaty", new string[] { "kuř" });
 
-		/* ending with e */
-		assertAnalyzesTo(cz, "moře", new string[] {"moř"});
-		assertAnalyzesTo(cz, "moří", new string[] {"moř"});
-		assertAnalyzesTo(cz, "mořím", new string[] {"moř"});
-		assertAnalyzesTo(cz, "moři", new string[] {"moř"});
-		assertAnalyzesTo(cz, "mořích", new string[] {"moř"});
-		assertAnalyzesTo(cz, "mořem", new string[] {"moř"});
+            /* ending with í */
+            AssertAnalyzesTo(cz, "stavení", new string[] { "stavn" });
+            AssertAnalyzesTo(cz, "stavením", new string[] { "stavn" });
+            AssertAnalyzesTo(cz, "staveních", new string[] { "stavn" });
+            AssertAnalyzesTo(cz, "staveními", new string[] { "stavn" });
+        }
 
-		/* ending with ě */
-		assertAnalyzesTo(cz, "kuře", new string[] {"kuř"});
-		assertAnalyzesTo(cz, "kuřata", new string[] {"kuř"});
-		assertAnalyzesTo(cz, "kuřete", new string[] {"kuř"});
-		assertAnalyzesTo(cz, "kuřat", new string[] {"kuř"});
-		assertAnalyzesTo(cz, "kuřeti", new string[] {"kuř"});
-		assertAnalyzesTo(cz, "kuřatům", new string[] {"kuř"});
-		assertAnalyzesTo(cz, "kuřatech", new string[] {"kuř"});
-		assertAnalyzesTo(cz, "kuřetem", new string[] {"kuř"});
-		assertAnalyzesTo(cz, "kuřaty", new string[] {"kuř"});
+        /// <summary>
+        /// Test showing how adjectival forms conflate
+        /// </summary>
+        [Test]
+        public virtual void TestAdjectives()
+        {
+            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
 
-		/* ending with í */
-		assertAnalyzesTo(cz, "stavení", new string[] {"stavn"});
-		assertAnalyzesTo(cz, "stavením", new string[] {"stavn"});
-		assertAnalyzesTo(cz, "staveních", new string[] {"stavn"});
-		assertAnalyzesTo(cz, "staveními", new string[] {"stavn"});
-	  }
+            /* ending with ý/á/é */
+            AssertAnalyzesTo(cz, "mladý", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladí", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladého", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladých", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladému", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladým", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladé", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladém", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladými", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladá", new string[] { "mlad" });
+            AssertAnalyzesTo(cz, "mladou", new string[] { "mlad" });
 
-	  /// <summary>
-	  /// Test showing how adjectival forms conflate
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAdjectives() throws java.io.IOException
-	  public virtual void testAdjectives()
-	  {
-		CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
+            /* ending with í */
+            AssertAnalyzesTo(cz, "jarní", new string[] { "jarn" });
+            AssertAnalyzesTo(cz, "jarního", new string[] { "jarn" });
+            AssertAnalyzesTo(cz, "jarních", new string[] { "jarn" });
+            AssertAnalyzesTo(cz, "jarnímu", new string[] { "jarn" });
+            AssertAnalyzesTo(cz, "jarním", new string[] { "jarn" });
+            AssertAnalyzesTo(cz, "jarními", new string[] { "jarn" });
+        }
 
-		/* ending with ý/á/é */
-		assertAnalyzesTo(cz, "mladý", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladí", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladého", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladých", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladému", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladým", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladé", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladém", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladými", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladá", new string[] {"mlad"});
-		assertAnalyzesTo(cz, "mladou", new string[] {"mlad"});
+        /// <summary>
+        /// Test some possessive suffixes
+        /// </summary>
+        [Test]
+        public virtual void TestPossessive()
+        {
+            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(cz, "Karlův", new string[] { "karl" });
+            AssertAnalyzesTo(cz, "jazykový", new string[] { "jazyk" });
+        }
 
-		/* ending with í */
-		assertAnalyzesTo(cz, "jarní", new string[] {"jarn"});
-		assertAnalyzesTo(cz, "jarního", new string[] {"jarn"});
-		assertAnalyzesTo(cz, "jarních", new string[] {"jarn"});
-		assertAnalyzesTo(cz, "jarnímu", new string[] {"jarn"});
-		assertAnalyzesTo(cz, "jarním", new string[] {"jarn"});
-		assertAnalyzesTo(cz, "jarními", new string[] {"jarn"});
-	  }
+        /// <summary>
+        /// Test some exceptional rules, implemented as rewrites.
+        /// </summary>
+        [Test]
+        public virtual void TestExceptions()
+        {
+            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
 
-	  /// <summary>
-	  /// Test some possessive suffixes
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPossessive() throws java.io.IOException
-	  public virtual void testPossessive()
-	  {
-		CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(cz, "Karlův", new string[] {"karl"});
-		assertAnalyzesTo(cz, "jazykový", new string[] {"jazyk"});
-	  }
+            /* rewrite of št -> sk */
+            AssertAnalyzesTo(cz, "český", new string[] { "česk" });
+            AssertAnalyzesTo(cz, "čeští", new string[] { "česk" });
 
-	  /// <summary>
-	  /// Test some exceptional rules, implemented as rewrites.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExceptions() throws java.io.IOException
-	  public virtual void testExceptions()
-	  {
-		CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
+            /* rewrite of čt -> ck */
+            AssertAnalyzesTo(cz, "anglický", new string[] { "anglick" });
+            AssertAnalyzesTo(cz, "angličtí", new string[] { "anglick" });
 
-		/* rewrite of št -> sk */
-		assertAnalyzesTo(cz, "český", new string[] {"česk"});
-		assertAnalyzesTo(cz, "čeští", new string[] {"česk"});
+            /* rewrite of z -> h */
+            AssertAnalyzesTo(cz, "kniha", new string[] { "knih" });
+            AssertAnalyzesTo(cz, "knize", new string[] { "knih" });
 
-		/* rewrite of čt -> ck */
-		assertAnalyzesTo(cz, "anglický", new string[] {"anglick"});
-		assertAnalyzesTo(cz, "angličtí", new string[] {"anglick"});
+            /* rewrite of ž -> h */
+            AssertAnalyzesTo(cz, "mazat", new string[] { "mah" });
+            AssertAnalyzesTo(cz, "mažu", new string[] { "mah" });
 
-		/* rewrite of z -> h */
-		assertAnalyzesTo(cz, "kniha", new string[] {"knih"});
-		assertAnalyzesTo(cz, "knize", new string[] {"knih"});
+            /* rewrite of c -> k */
+            AssertAnalyzesTo(cz, "kluk", new string[] { "kluk" });
+            AssertAnalyzesTo(cz, "kluci", new string[] { "kluk" });
+            AssertAnalyzesTo(cz, "klucích", new string[] { "kluk" });
 
-		/* rewrite of ž -> h */
-		assertAnalyzesTo(cz, "mazat", new string[] {"mah"});
-		assertAnalyzesTo(cz, "mažu", new string[] {"mah"});
+            /* rewrite of č -> k */
+            AssertAnalyzesTo(cz, "hezký", new string[] { "hezk" });
+            AssertAnalyzesTo(cz, "hezčí", new string[] { "hezk" });
 
-		/* rewrite of c -> k */
-		assertAnalyzesTo(cz, "kluk", new string[] {"kluk"});
-		assertAnalyzesTo(cz, "kluci", new string[] {"kluk"});
-		assertAnalyzesTo(cz, "klucích", new string[] {"kluk"});
+            /* rewrite of *ů* -> *o* */
+            AssertAnalyzesTo(cz, "hůl", new string[] { "hol" });
+            AssertAnalyzesTo(cz, "hole", new string[] { "hol" });
 
-		/* rewrite of č -> k */
-		assertAnalyzesTo(cz, "hezký", new string[] {"hezk"});
-		assertAnalyzesTo(cz, "hezčí", new string[] {"hezk"});
+            /* rewrite of e* -> * */
+            AssertAnalyzesTo(cz, "deska", new string[] { "desk" });
+            AssertAnalyzesTo(cz, "desek", new string[] { "desk" });
+        }
 
-		/* rewrite of *ů* -> *o* */
-		assertAnalyzesTo(cz, "hůl", new string[] {"hol"});
-		assertAnalyzesTo(cz, "hole", new string[] {"hol"});
+        /// <summary>
+        /// Test that very short words are not stemmed.
+        /// </summary>
+        [Test]
+        public virtual void TestDontStem()
+        {
+            CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(cz, "e", new string[] { "e" });
+            AssertAnalyzesTo(cz, "zi", new string[] { "zi" });
+        }
 
-		/* rewrite of e* -> * */
-		assertAnalyzesTo(cz, "deska", new string[] {"desk"});
-		assertAnalyzesTo(cz, "desek", new string[] {"desk"});
-	  }
+        [Test]
+        public virtual void TestWithKeywordAttribute()
+        {
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
+            set.add("hole");
+            CzechStemFilter filter = new CzechStemFilter(new SetKeywordMarkerFilter(new MockTokenizer(new StringReader("hole desek"), MockTokenizer.WHITESPACE, false), set));
+            AssertTokenStreamContents(filter, new string[] { "hole", "desk" });
+        }
 
-	  /// <summary>
-	  /// Test that very short words are not stemmed.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDontStem() throws java.io.IOException
-	  public virtual void testDontStem()
-	  {
-		CzechAnalyzer cz = new CzechAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(cz, "e", new string[] {"e"});
-		assertAnalyzesTo(cz, "zi", new string[] {"zi"});
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWithKeywordAttribute() throws java.io.IOException
-	  public virtual void testWithKeywordAttribute()
-	  {
-		CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
-		set.add("hole");
-		CzechStemFilter filter = new CzechStemFilter(new SetKeywordMarkerFilter(new MockTokenizer(new StringReader("hole desek"), MockTokenizer.WHITESPACE, false), set));
-		assertTokenStreamContents(filter, new string[] {"hole", "desk"});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestCzechStemmer outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestCzechStemmer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestCzechStemmer outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestCzechStemmer outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new CzechStemFilter(tokenizer));
-		  }
-	  }
-
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new CzechStemFilter(tokenizer));
+            }
+        }
+    }
 }

@@ -1,28 +1,27 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
+﻿using System;
 using System.Text;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using org.apache.lucene.analysis.miscellaneous;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Old Broken version of <seealso cref="WordDelimiterFilter"/>
@@ -173,7 +172,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             this.flags = configurationFlags;
             this.protWords = protWords;
-            this.iterator = new WordDelimiterIterator(charTypeTable, has(SPLIT_ON_CASE_CHANGE), has(SPLIT_ON_NUMERICS), has(STEM_ENGLISH_POSSESSIVE));
+            this.iterator = new WordDelimiterIterator(charTypeTable, Has(SPLIT_ON_CASE_CHANGE), Has(SPLIT_ON_NUMERICS), Has(STEM_ENGLISH_POSSESSIVE));
         }
 
         /// <summary>
@@ -210,8 +209,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
                     accumPosInc += posIncAttribute.PositionIncrement;
 
-                    iterator.setText(termBuffer, termLength);
-                    iterator.next();
+                    iterator.SetText(termBuffer, termLength);
+                    iterator.Next();
 
                     // word of no delimiters, or protected word: just return it
                     if ((iterator.current == 0 && iterator.end == termLength) || (protWords != null && protWords.Contains(termBuffer, 0, termLength)))
@@ -222,7 +221,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     }
 
                     // word of simply delimiters
-                    if (iterator.end == WordDelimiterIterator.DONE && !has(PRESERVE_ORIGINAL))
+                    if (iterator.end == WordDelimiterIterator.DONE && !Has(PRESERVE_ORIGINAL))
                     {
                         // if the posInc is 1, simply ignore it in the accumulation
                         if (posIncAttribute.PositionIncrement == 1)
@@ -235,10 +234,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     SaveState();
 
                     hasOutputToken = false;
-                    hasOutputFollowingOriginal = !has(PRESERVE_ORIGINAL);
+                    hasOutputFollowingOriginal = !Has(PRESERVE_ORIGINAL);
                     lastConcatCount = 0;
 
-                    if (has(PRESERVE_ORIGINAL))
+                    if (Has(PRESERVE_ORIGINAL))
                     {
                         posIncAttribute.PositionIncrement = accumPosInc;
                         accumPosInc = 0;
@@ -262,10 +261,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
                         // only if we haven't output this same combo above!
                         if (concatAll.subwordCount > lastConcatCount)
                         {
-                            concatAll.writeAndClear();
+                            concatAll.WriteAndClear();
                             return true;
                         }
-                        concatAll.clear();
+                        concatAll.Clear();
                     }
 
                     // no saved concatenations, on to the next input word
@@ -277,11 +276,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 if (iterator.SingleWord)
                 {
                     GeneratePart(true);
-                    iterator.next();
+                    iterator.Next();
                     return true;
                 }
 
-                int wordType = iterator.type();
+                int wordType = iterator.Type;
 
                 // do we already have queued up incompatible concatenations?
                 if (!concat.Empty && (concat.type & wordType) == 0)
@@ -301,24 +300,24 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     {
                         concat.type = wordType;
                     }
-                    concatenate(concat);
+                    Concatenate(concat);
                 }
 
                 // add all subwords (catenateAll)
-                if (has(CATENATE_ALL))
+                if (Has(CATENATE_ALL))
                 {
-                    concatenate(concatAll);
+                    Concatenate(concatAll);
                 }
 
                 // if we should output the word or number part
                 if (ShouldGenerateParts(wordType))
                 {
                     GeneratePart(false);
-                    iterator.next();
+                    iterator.Next();
                     return true;
                 }
 
-                iterator.next();
+                iterator.Next();
             }
         }
 
@@ -329,8 +328,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             base.Reset();
             hasSavedState = false;
-            concat.clear();
-            concatAll.clear();
+            concat.Clear();
+            concatAll.Clear();
             accumPosInc = 0;
         }
 
@@ -369,10 +368,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
             lastConcatCount = concatenation.subwordCount;
             if (concatenation.subwordCount != 1 || !ShouldGenerateParts(concatenation.type))
             {
-                concatenation.writeAndClear();
+                concatenation.WriteAndClear();
                 return true;
             }
-            concatenation.clear();
+            concatenation.Clear();
             return false;
         }
 
@@ -383,7 +382,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> {@code true} if concatenation should occur, {@code false} otherwise </returns>
         private bool ShouldConcatenate(int wordType)
         {
-            return (has(CATENATE_WORDS) && isAlpha(wordType)) || (has(CATENATE_NUMBERS) && isDigit(wordType));
+            return (Has(CATENATE_WORDS) && IsAlpha(wordType)) || (Has(CATENATE_NUMBERS) && IsDigit(wordType));
         }
 
         /// <summary>
@@ -393,20 +392,20 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> {@code true} if a word/number part should be generated, {@code false} otherwise </returns>
         private bool ShouldGenerateParts(int wordType)
         {
-            return (has(GENERATE_WORD_PARTS) && isAlpha(wordType)) || (has(GENERATE_NUMBER_PARTS) && isDigit(wordType));
+            return (Has(GENERATE_WORD_PARTS) && IsAlpha(wordType)) || (Has(GENERATE_NUMBER_PARTS) && IsDigit(wordType));
         }
 
         /// <summary>
         /// Concatenates the saved buffer to the given WordDelimiterConcatenation
         /// </summary>
         /// <param name="concatenation"> WordDelimiterConcatenation to concatenate the buffer to </param>
-        private void concatenate(WordDelimiterConcatenation concatenation)
+        private void Concatenate(WordDelimiterConcatenation concatenation)
         {
             if (concatenation.Empty)
             {
                 concatenation.startOffset = savedStartOffset + iterator.current;
             }
-            concatenation.append(savedBuffer, iterator.current, iterator.end - iterator.current);
+            concatenation.Append(savedBuffer, iterator.current, iterator.end - iterator.current);
             concatenation.endOffset = savedStartOffset + iterator.end;
         }
 
@@ -439,7 +438,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 offsetAttribute.SetOffset(startOffset, endOffset);
             }
-            posIncAttribute.PositionIncrement = position(false);
+            posIncAttribute.PositionIncrement = Position(false);
             typeAttribute.Type = savedType;
         }
 
@@ -448,7 +447,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="inject"> true if this token wants to be injected </param>
         /// <returns> position increment gap </returns>
-        private int position(bool inject)
+        private int Position(bool inject)
         {
             int posInc = accumPosInc;
 
@@ -476,7 +475,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains ALPHA, {@code false} otherwise </returns>
-        internal static bool isAlpha(int type)
+        internal static bool IsAlpha(int type)
         {
             return (type & ALPHA) != 0;
         }
@@ -486,7 +485,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains DIGIT, {@code false} otherwise </returns>
-        internal static bool isDigit(int type)
+        internal static bool IsDigit(int type)
         {
             return (type & DIGIT) != 0;
         }
@@ -496,7 +495,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains SUBWORD_DELIM, {@code false} otherwise </returns>
-        internal static bool isSubwordDelim(int type)
+        internal static bool IsSubwordDelim(int type)
         {
             return (type & SUBWORD_DELIM) != 0;
         }
@@ -506,7 +505,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> {@code true} if the type contains UPPER, {@code false} otherwise </returns>
-        internal static bool isUpper(int type)
+        internal static bool IsUpper(int type)
         {
             return (type & UPPER) != 0;
         }
@@ -516,7 +515,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="flag"> Flag to see if set </param>
         /// <returns> {@code true} if flag is set </returns>
-        private bool has(int flag)
+        private bool Has(int flag)
         {
             return (flags & flag) != 0;
         }
@@ -547,7 +546,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// <param name="text"> Text to append </param>
             /// <param name="offset"> Offset in the concetenation to add the text </param>
             /// <param name="length"> Length of the text to append </param>
-            internal void append(char[] text, int offset, int length)
+            internal void Append(char[] text, int offset, int length)
             {
                 buffer.Append(text, offset, length);
                 subwordCount++;
@@ -558,14 +557,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// </summary>
             private void Write()
             {
-                ClearAttributes();
+                outerInstance.ClearAttributes();
                 if (outerInstance.termAttribute.Length < buffer.Length)
                 {
                     outerInstance.termAttribute.ResizeBuffer(buffer.Length);
                 }
                 var termbuffer = outerInstance.termAttribute.Buffer();
 
-                buffer.GetChars(0, buffer.Length, termbuffer, 0);
+                //buffer.GetChars(0, buffer.Length, termbuffer, 0);
+                buffer.CopyTo(0, termbuffer, 0, buffer.Length);
                 outerInstance.termAttribute.Length = buffer.Length;
 
                 if (outerInstance.hasIllegalOffsets)
@@ -576,7 +576,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 {
                     outerInstance.offsetAttribute.SetOffset(startOffset, endOffset);
                 }
-                outerInstance.posIncAttribute.PositionIncrement = outerInstance.position(true);
+                outerInstance.posIncAttribute.PositionIncrement = outerInstance.Position(true);
                 outerInstance.typeAttribute.Type = outerInstance.savedType;
                 outerInstance.accumPosInc = 0;
             }
@@ -596,7 +596,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// <summary>
             /// Clears the concatenation and resets its state
             /// </summary>
-            internal void clear()
+            internal void Clear()
             {
                 buffer.Length = 0;
                 startOffset = endOffset = type = subwordCount = 0;
@@ -605,10 +605,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// <summary>
             /// Convenience method for the common scenario of having to write the concetenation and then clearing its state
             /// </summary>
-            internal void writeAndClear()
+            internal void WriteAndClear()
             {
                 Write();
-                clear();
+                Clear();
             }
         }
         // questions:

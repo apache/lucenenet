@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -18,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Marks terms as keywords via the <seealso cref="KeywordAttribute"/>. Each token
     /// contained in the provided set is marked as a keyword by setting
@@ -25,7 +27,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// </summary>
     public sealed class SetKeywordMarkerFilter : KeywordMarkerFilter
     {
-        private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        private readonly ICharTermAttribute termAtt;
         private readonly CharArraySet keywordSet;
 
         /// <summary>
@@ -41,6 +43,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             : base(@in)
         {
             this.keywordSet = keywordSet;
+            termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         protected internal override bool Keyword
