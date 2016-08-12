@@ -76,6 +76,7 @@
     <Compile Include="Analysis\Cz\TestCzechAnalyzer.cs" />
     <Compile Include="Analysis\Cz\TestCzechStemFilterFactory.cs" />
     <Compile Include="Analysis\Cz\TestCzechStemmer.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
