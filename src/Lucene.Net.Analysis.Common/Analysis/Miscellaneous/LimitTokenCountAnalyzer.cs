@@ -1,8 +1,5 @@
-﻿using org.apache.lucene.analysis.miscellaneous;
-
-namespace Lucene.Net.Analysis.Miscellaneous
+﻿namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +16,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     /// <summary>
     /// This Analyzer limits the number of tokens while indexing. It is
