@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
-
-
-	using org.apache.lucene.analysis;
-	using SimpleAnalyzer = org.apache.lucene.analysis.core.SimpleAnalyzer;
-	using WhitespaceAnalyzer = org.apache.lucene.analysis.core.WhitespaceAnalyzer;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using IOUtils = org.apache.lucene.util.IOUtils;
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -27,84 +24,81 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * limitations under the License.
 	 */
 
-	public class TestPerFieldAnalyzerWrapper : BaseTokenStreamTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPerField() throws Exception
-	  public virtual void testPerField()
-	  {
-		string text = "Qwerty";
+    public class TestPerFieldAnalyzerWrapper : BaseTokenStreamTestCase
+    {
+        [Test]
+        public virtual void TestPerField()
+        {
+            string text = "Qwerty";
 
-		IDictionary<string, Analyzer> analyzerPerField = new Dictionary<string, Analyzer>();
-		analyzerPerField["special"] = new SimpleAnalyzer(TEST_VERSION_CURRENT);
+            IDictionary<string, Analyzer> analyzerPerField = new Dictionary<string, Analyzer>();
+            analyzerPerField["special"] = new SimpleAnalyzer(TEST_VERSION_CURRENT);
 
-		PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(TEST_VERSION_CURRENT), analyzerPerField);
+            PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(TEST_VERSION_CURRENT), analyzerPerField);
 
-		TokenStream tokenStream = analyzer.tokenStream("field", text);
-		try
-		{
-		  CharTermAttribute termAtt = tokenStream.getAttribute(typeof(CharTermAttribute));
-		  tokenStream.reset();
+            TokenStream tokenStream = analyzer.TokenStream("field", text);
+            try
+            {
+                ICharTermAttribute termAtt = tokenStream.GetAttribute<ICharTermAttribute>();
+                tokenStream.Reset();
 
-		  assertTrue(tokenStream.incrementToken());
-		  assertEquals("WhitespaceAnalyzer does not lowercase", "Qwerty", termAtt.ToString());
-		  assertFalse(tokenStream.incrementToken());
-		  tokenStream.end();
-		}
-		finally
-		{
-		  IOUtils.closeWhileHandlingException(tokenStream);
-		}
+                assertTrue(tokenStream.IncrementToken());
+                assertEquals("WhitespaceAnalyzer does not lowercase", "Qwerty", termAtt.ToString());
+                assertFalse(tokenStream.IncrementToken());
+                tokenStream.End();
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(tokenStream);
+            }
 
-		tokenStream = analyzer.tokenStream("special", text);
-		try
-		{
-		  CharTermAttribute termAtt = tokenStream.getAttribute(typeof(CharTermAttribute));
-		  tokenStream.reset();
+            tokenStream = analyzer.TokenStream("special", text);
+            try
+            {
+                ICharTermAttribute termAtt = tokenStream.GetAttribute<ICharTermAttribute>();
+                tokenStream.Reset();
 
-		  assertTrue(tokenStream.incrementToken());
-		  assertEquals("SimpleAnalyzer lowercases", "qwerty", termAtt.ToString());
-		  assertFalse(tokenStream.incrementToken());
-		  tokenStream.end();
-		}
-		finally
-		{
-		  IOUtils.closeWhileHandlingException(tokenStream);
-		}
-	  }
+                assertTrue(tokenStream.IncrementToken());
+                assertEquals("SimpleAnalyzer lowercases", "qwerty", termAtt.ToString());
+                assertFalse(tokenStream.IncrementToken());
+                tokenStream.End();
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(tokenStream);
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCharFilters() throws Exception
-	  public virtual void testCharFilters()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		assertAnalyzesTo(a, "ab", new string[] {"aab"}, new int[] {0}, new int[] {2});
+        [Test]
+        public virtual void TestCharFilters()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            AssertAnalyzesTo(a, "ab", new string[] { "aab" }, new int[] { 0 }, new int[] { 2 });
 
-		// now wrap in PFAW
-		PerFieldAnalyzerWrapper p = new PerFieldAnalyzerWrapper(a, System.Linq.Enumerable.Empty<string, Analyzer>());
+            // now wrap in PFAW
+            PerFieldAnalyzerWrapper p = new PerFieldAnalyzerWrapper(a, new Dictionary<string, Analyzer>());
 
-		assertAnalyzesTo(p, "ab", new string[] {"aab"}, new int[] {0}, new int[] {2});
-	  }
+            AssertAnalyzesTo(p, "ab", new string[] { "aab" }, new int[] { 0 }, new int[] { 2 });
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestPerFieldAnalyzerWrapper outerInstance;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestPerFieldAnalyzerWrapper outerInstance;
 
-		  public AnalyzerAnonymousInnerClassHelper(TestPerFieldAnalyzerWrapper outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+            public AnalyzerAnonymousInnerClassHelper(TestPerFieldAnalyzerWrapper outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			return new TokenStreamComponents(new MockTokenizer(reader));
-		  }
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                return new TokenStreamComponents(new MockTokenizer(reader));
+            }
 
-		  protected internal override Reader initReader(string fieldName, Reader reader)
-		  {
-			return new MockCharFilter(reader, 7);
-		  }
-	  }
-	}
-
+            public override TextReader InitReader(string fieldName, TextReader reader)
+            {
+                return new MockCharFilter(reader, 7);
+            }
+        }
+    }
 }

@@ -82,7 +82,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         protected override Analyzer GetWrappedAnalyzer(string fieldName)
         {
-            Analyzer analyzer = fieldAnalyzers[fieldName];
+            Analyzer analyzer = fieldAnalyzers.ContainsKey(fieldName) ?
+                fieldAnalyzers[fieldName] :
+                null;
             return analyzer ?? defaultAnalyzer;
         }
 
