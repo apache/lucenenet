@@ -82,6 +82,7 @@
     <Compile Include="Analysis\Miscellaneous\TestKeywordMarkerFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLimitTokenCountAnalyzer.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLimitTokenCountFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestLucene47WordDelimiterFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
