@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
+using Reader = System.IO.TextReader;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,291 +22,264 @@
 	 * limitations under the License.
 	 */
 
+    public class TestCapitalizationFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        [Test]
+        public virtual void TestCapitalization()
+        {
+            Reader reader = new StringReader("kiTTEN");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "Kitten" });
+        }
 
-	public class TestCapitalizationFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+        [Test]
+        public virtual void TestCapitalization2()
+        {
+            Reader reader = new StringReader("and");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "And" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization() throws Exception
-	  public virtual void testCapitalization()
-	  {
-		Reader reader = new StringReader("kiTTEN");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"Kitten"});
-	  }
+        /// <summary>
+        /// first is forced, but it's not a keep word, either </summary>
+        [Test]
+        public virtual void TestCapitalization3()
+        {
+            Reader reader = new StringReader("AnD");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "And" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization2() throws Exception
-	  public virtual void testCapitalization2()
-	  {
-		Reader reader = new StringReader("and");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"And"});
-	  }
+        [Test]
+        public virtual void TestCapitalization4()
+        {
+            Reader reader = new StringReader("AnD");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "false").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "And" });
+        }
 
-	  /// <summary>
-	  /// first is forced, but it's not a keep word, either </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization3() throws Exception
-	  public virtual void testCapitalization3()
-	  {
-		Reader reader = new StringReader("AnD");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"And"});
-	  }
+        [Test]
+        public virtual void TestCapitalization5()
+        {
+            Reader reader = new StringReader("big");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "Big" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization4() throws Exception
-	  public virtual void testCapitalization4()
-	  {
-		Reader reader = new StringReader("AnD");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "false").create(stream);
-		assertTokenStreamContents(stream, new string[] {"And"});
-	  }
+        [Test]
+        public virtual void TestCapitalization6()
+        {
+            Reader reader = new StringReader("BIG");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "BIG" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization5() throws Exception
-	  public virtual void testCapitalization5()
-	  {
-		Reader reader = new StringReader("big");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"Big"});
-	  }
+        [Test]
+        public virtual void TestCapitalization7()
+        {
+            Reader reader = new StringReader("Hello thEre my Name is Ryan");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "Hello there my name is ryan" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization6() throws Exception
-	  public virtual void testCapitalization6()
-	  {
-		Reader reader = new StringReader("BIG");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"BIG"});
-	  }
+        [Test]
+        public virtual void TestCapitalization8()
+        {
+            Reader reader = new StringReader("Hello thEre my Name is Ryan");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "Hello", "There", "My", "Name", "Is", "Ryan" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization7() throws Exception
-	  public virtual void testCapitalization7()
-	  {
-		Reader reader = new StringReader("Hello thEre my Name is Ryan");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "true", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"Hello there my name is ryan"});
-	  }
+        [Test]
+        public virtual void TestCapitalization9()
+        {
+            Reader reader = new StringReader("Hello thEre my Name is Ryan");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "Hello", "There", "my", "Name", "is", "Ryan" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization8() throws Exception
-	  public virtual void testCapitalization8()
-	  {
-		Reader reader = new StringReader("Hello thEre my Name is Ryan");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"Hello", "There", "My", "Name", "Is", "Ryan"});
-	  }
+        [Test]
+        public virtual void TestCapitalization10()
+        {
+            Reader reader = new StringReader("McKinley");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "Mckinley" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization9() throws Exception
-	  public virtual void testCapitalization9()
-	  {
-		Reader reader = new StringReader("Hello thEre my Name is Ryan");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"Hello", "There", "my", "Name", "is", "Ryan"});
-	  }
+        /// <summary>
+        /// using "McK" as okPrefix </summary>
+        [Test]
+        public virtual void TestCapitalization11()
+        {
+            Reader reader = new StringReader("McKinley");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "okPrefix", "McK", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "McKinley" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization10() throws Exception
-	  public virtual void testCapitalization10()
-	  {
-		Reader reader = new StringReader("McKinley");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"Mckinley"});
-	  }
+        /// <summary>
+        /// test with numbers </summary>
+        [Test]
+        public virtual void TestCapitalization12()
+        {
+            Reader reader = new StringReader("1st 2nd third");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "okPrefix", "McK", "forceFirstLetter", "false").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "1st", "2nd", "Third" });
+        }
 
-	  /// <summary>
-	  /// using "McK" as okPrefix </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization11() throws Exception
-	  public virtual void testCapitalization11()
-	  {
-		Reader reader = new StringReader("McKinley");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "okPrefix", "McK", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"McKinley"});
-	  }
+        [Test]
+        public virtual void TestCapitalization13()
+        {
+            Reader reader = new StringReader("the The the");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "okPrefix", "McK", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "The The the" });
+        }
 
-	  /// <summary>
-	  /// test with numbers </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization12() throws Exception
-	  public virtual void testCapitalization12()
-	  {
-		Reader reader = new StringReader("1st 2nd third");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "okPrefix", "McK", "forceFirstLetter", "false").create(stream);
-		assertTokenStreamContents(stream, new string[] {"1st", "2nd", "Third"});
-	  }
+        [Test]
+        public virtual void TestKeepIgnoreCase()
+        {
+            Reader reader = new StringReader("kiTTEN");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "kitten", "keepIgnoreCase", "true", "onlyFirstWord", "true", "forceFirstLetter", "true").Create(stream);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCapitalization13() throws Exception
-	  public virtual void testCapitalization13()
-	  {
-		Reader reader = new StringReader("the The the");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", "minWordLength", "3", "okPrefix", "McK", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"The The the"});
-	  }
+            AssertTokenStreamContents(stream, new string[] { "KiTTEN" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeepIgnoreCase() throws Exception
-	  public virtual void testKeepIgnoreCase()
-	  {
-		Reader reader = new StringReader("kiTTEN");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "kitten", "keepIgnoreCase", "true", "onlyFirstWord", "true", "forceFirstLetter", "true").create(stream);
+        [Test]
+        public virtual void TestKeepIgnoreCase2()
+        {
+            Reader reader = new StringReader("kiTTEN");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "kitten", "keepIgnoreCase", "true", "onlyFirstWord", "true", "forceFirstLetter", "false").Create(stream);
 
-		assertTokenStreamContents(stream, new string[] {"KiTTEN"});
-	  }
+            AssertTokenStreamContents(stream, new string[] { "kiTTEN" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeepIgnoreCase2() throws Exception
-	  public virtual void testKeepIgnoreCase2()
-	  {
-		Reader reader = new StringReader("kiTTEN");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "kitten", "keepIgnoreCase", "true", "onlyFirstWord", "true", "forceFirstLetter", "false").create(stream);
+        [Test]
+        public virtual void TestKeepIgnoreCase3()
+        {
+            Reader reader = new StringReader("kiTTEN");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+            stream = TokenFilterFactory("Capitalization", "keepIgnoreCase", "true", "onlyFirstWord", "true", "forceFirstLetter", "false").Create(stream);
 
-		assertTokenStreamContents(stream, new string[] {"kiTTEN"});
-	  }
+            AssertTokenStreamContents(stream, new string[] { "Kitten" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeepIgnoreCase3() throws Exception
-	  public virtual void testKeepIgnoreCase3()
-	  {
-		Reader reader = new StringReader("kiTTEN");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-		stream = tokenFilterFactory("Capitalization", "keepIgnoreCase", "true", "onlyFirstWord", "true", "forceFirstLetter", "false").create(stream);
+        /// <summary>
+        /// Test CapitalizationFilterFactory's minWordLength option.
+        /// 
+        /// This is very weird when combined with ONLY_FIRST_WORD!!!
+        /// </summary>
+        [Test]
+        public virtual void TestMinWordLength()
+        {
+            Reader reader = new StringReader("helo testing");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "onlyFirstWord", "true", "minWordLength", "5").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "helo", "Testing" });
+        }
 
-		assertTokenStreamContents(stream, new string[] {"Kitten"});
-	  }
+        /// <summary>
+        /// Test CapitalizationFilterFactory's maxWordCount option with only words of 1
+        /// in each token (it should do nothing)
+        /// </summary>
+        [Test]
+        public virtual void TestMaxWordCount()
+        {
+            Reader reader = new StringReader("one two three four");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "maxWordCount", "2").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "One", "Two", "Three", "Four" });
+        }
 
-	  /// <summary>
-	  /// Test CapitalizationFilterFactory's minWordLength option.
-	  /// 
-	  /// This is very weird when combined with ONLY_FIRST_WORD!!!
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMinWordLength() throws Exception
-	  public virtual void testMinWordLength()
-	  {
-		Reader reader = new StringReader("helo testing");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "onlyFirstWord", "true", "minWordLength", "5").create(stream);
-		assertTokenStreamContents(stream, new string[] {"helo", "Testing"});
-	  }
+        /// <summary>
+        /// Test CapitalizationFilterFactory's maxWordCount option when exceeded
+        /// </summary>
+        [Test]
+        public virtual void TestMaxWordCount2()
+        {
+            Reader reader = new StringReader("one two three four");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+            stream = TokenFilterFactory("Capitalization", "maxWordCount", "2").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "one two three four" });
+        }
 
-	  /// <summary>
-	  /// Test CapitalizationFilterFactory's maxWordCount option with only words of 1
-	  /// in each token (it should do nothing)
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMaxWordCount() throws Exception
-	  public virtual void testMaxWordCount()
-	  {
-		Reader reader = new StringReader("one two three four");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "maxWordCount", "2").create(stream);
-		assertTokenStreamContents(stream, new string[] {"One", "Two", "Three", "Four"});
-	  }
+        /// <summary>
+        /// Test CapitalizationFilterFactory's maxTokenLength option when exceeded
+        /// 
+        /// This is weird, it is not really a max, but inclusive (look at 'is')
+        /// </summary>
+        [Test]
+        public virtual void TestMaxTokenLength()
+        {
+            Reader reader = new StringReader("this is a test");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "maxTokenLength", "2").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "this", "is", "A", "test" });
+        }
 
-	  /// <summary>
-	  /// Test CapitalizationFilterFactory's maxWordCount option when exceeded
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMaxWordCount2() throws Exception
-	  public virtual void testMaxWordCount2()
-	  {
-		Reader reader = new StringReader("one two three four");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-		stream = tokenFilterFactory("Capitalization", "maxWordCount", "2").create(stream);
-		assertTokenStreamContents(stream, new string[] {"one two three four"});
-	  }
+        /// <summary>
+        /// Test CapitalizationFilterFactory's forceFirstLetter option
+        /// </summary>
+        [Test]
+        public virtual void TestForceFirstLetterWithKeep()
+        {
+            Reader reader = new StringReader("kitten");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Capitalization", "keep", "kitten", "forceFirstLetter", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "Kitten" });
+        }
 
-	  /// <summary>
-	  /// Test CapitalizationFilterFactory's maxTokenLength option when exceeded
-	  /// 
-	  /// This is weird, it is not really a max, but inclusive (look at 'is')
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMaxTokenLength() throws Exception
-	  public virtual void testMaxTokenLength()
-	  {
-		Reader reader = new StringReader("this is a test");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "maxTokenLength", "2").create(stream);
-		assertTokenStreamContents(stream, new string[] {"this", "is", "A", "test"});
-	  }
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("Capitalization", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
 
-	  /// <summary>
-	  /// Test CapitalizationFilterFactory's forceFirstLetter option
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testForceFirstLetterWithKeep() throws Exception
-	  public virtual void testForceFirstLetterWithKeep()
-	  {
-		Reader reader = new StringReader("kitten");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Capitalization", "keep", "kitten", "forceFirstLetter", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"Kitten"});
-	  }
+        /// <summary>
+        /// Test that invalid arguments result in exception
+        /// </summary>
+        [Test]
+        public virtual void TestInvalidArguments()
+        {
+            foreach (string arg in new string[] { "minWordLength", "maxTokenLength", "maxWordCount" })
+            {
+                try
+                {
+                    Reader reader = new StringReader("foo foobar super-duper-trooper");
+                    TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("Capitalization", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-
-	  /// <summary>
-	  /// Test that invalid arguments result in exception
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInvalidArguments() throws Exception
-	  public virtual void testInvalidArguments()
-	  {
-		foreach (String arg in new String[]{"minWordLength", "maxTokenLength", "maxWordCount"})
-		{
-		  try
-		  {
-			Reader reader = new StringReader("foo foobar super-duper-trooper");
-			TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-
-			tokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", arg, "-3", "okPrefix", "McK", "forceFirstLetter", "true").create(stream);
-			fail();
-		  }
-		  catch (System.ArgumentException expected)
-		  {
-			assertTrue(expected.Message.contains(arg + " must be greater than or equal to zero") || expected.Message.contains(arg + " must be greater than zero"));
-		  }
-		}
-	  }
-	}
-
+                    TokenFilterFactory("Capitalization", "keep", "and the it BIG", "onlyFirstWord", "false", arg, "-3", "okPrefix", "McK", "forceFirstLetter", "true").Create(stream);
+                    fail();
+                }
+                catch (System.ArgumentException expected)
+                {
+                    assertTrue(expected.Message.Contains(arg + " must be greater than or equal to zero") || expected.Message.Contains(arg + " must be greater than zero"));
+                }
+            }
+        }
+    }
 }

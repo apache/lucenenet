@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +22,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// A filter to apply normal capitalization rules to Tokens.  It will make the first letter
     /// capital and the rest lower case.
@@ -55,7 +56,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public CapitalizationFilter(TokenStream @in)
             : this(@in, true, null, true, null, 0, DEFAULT_MAX_WORD_COUNT, DEFAULT_MAX_TOKEN_LENGTH)
         {
-            termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         /// <summary>
@@ -73,6 +73,22 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public CapitalizationFilter(TokenStream @in, bool onlyFirstWord, CharArraySet keep, bool forceFirstLetter, ICollection<char[]> okPrefix, int minWordLength, int maxWordCount, int maxTokenLength)
             : base(@in)
         {
+            // LUCENENET: The guard clauses were copied here from the version of Lucene.
+            // Apparently, the tests were not ported from 4.8.0 because they expected this and the
+            // original tests did not. Adding them anyway because there is no downside to this.
+            if (minWordLength < 0)
+            {
+                throw new ArgumentOutOfRangeException("minWordLength must be greater than or equal to zero");
+            }
+            if (maxWordCount < 1)
+            {
+                throw new ArgumentOutOfRangeException("maxWordCount must be greater than zero");
+            }
+            if (maxTokenLength < 1)
+            {
+                throw new ArgumentOutOfRangeException("maxTokenLength must be greater than zero");
+            }
+
             this.onlyFirstWord = onlyFirstWord;
             this.keep = keep;
             this.forceFirstLetter = forceFirstLetter;
@@ -80,6 +96,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             this.minWordLength = minWordLength;
             this.maxWordCount = maxWordCount;
             this.maxTokenLength = maxTokenLength;
+            termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         public override bool IncrementToken()
@@ -156,7 +173,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 if (wordCount == 0 && forceFirstLetter)
                 {
-                    buffer[offset] = char.ToUpper(buffer[offset]);
+                    buffer[offset] = char.ToUpper(buffer[offset], CultureInfo.InvariantCulture);
                 }
                 return;
             }
@@ -197,10 +214,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             for (int i = 1; i < length; i++)
             {
-                buffer[offset + i] = char.ToLower(buffer[offset + i]);
+                buffer[offset + i] = char.ToLower(buffer[offset + i], CultureInfo.InvariantCulture);
             }
             //return word.toString();
         }
     }
-
 }

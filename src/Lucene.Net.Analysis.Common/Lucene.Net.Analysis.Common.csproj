@@ -76,6 +76,8 @@
     <Compile Include="Analysis\Cz\CzechStemmer.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\CapitalizationFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\CapitalizationFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\EmptyTokenStream.cs" />
     <Compile Include="Analysis\Miscellaneous\HyphenatedWordsFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordMarkerFilter.cs" />
