@@ -388,7 +388,7 @@ namespace Lucene.Net.Store
                     try
                     {
                         reader = DirectoryReader.Open(Dir);
-                        searcher = NewSearcher(reader);
+                        searcher = OuterInstance.NewSearcher(reader);
                     }
                     catch (Exception e)
                     {

@@ -850,7 +850,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             // riw should sometimes create docvalues fields, etc
-            RandomIndexWriter riw = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             // these fields should sometimes get term vectors, etc
             Field idField = NewStringField("id", "", Field.Store.NO);

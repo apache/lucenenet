@@ -81,7 +81,7 @@ namespace Lucene.Net.Facet
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("Publish Date", true);
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(new FacetField("Author", "Bob"));
@@ -252,7 +252,7 @@ namespace Lucene.Net.Facet
         {
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             // Writes facet ords to a separate directory from the
             // main index:
@@ -308,7 +308,7 @@ namespace Lucene.Net.Facet
         {
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             // Writes facet ords to a separate directory from the
             // main index:
@@ -1307,7 +1307,7 @@ namespace Lucene.Net.Facet
             // LUCENE-5045: make sure DrillSideways works with an empty index
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
-            var writer = new RandomIndexWriter(Random(), dir);
+            var writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode_e.CREATE);
             IndexSearcher searcher = NewSearcher(writer.Reader);
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);

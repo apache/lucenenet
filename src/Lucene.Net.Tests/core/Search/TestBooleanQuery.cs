@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullOrSubScorer()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "a b c d", Field.Store.NO));
             w.AddDocument(doc);
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
         public virtual void TestBS2DisjunctionNextVsAdvance()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             int numDocs = AtLeast(300);
             for (int docUpto = 0; docUpto < numDocs; docUpto++)
             {
@@ -369,7 +369,7 @@ namespace Lucene.Net.Search
         public virtual void TestInOrderWithMinShouldMatch()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "some text here", Field.Store.NO));
             w.AddDocument(doc);

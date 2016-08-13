@@ -65,8 +65,11 @@ namespace Lucene.Net.Tests.Queries.Function
             anlzr = null;
         }
 
-        
-        protected internal static void CreateIndex(bool doMultiSegment)
+        /// <summary>
+        /// LUCENENET specific
+        /// Non-static because NewIndexWriterConfig is now non-static
+        /// </summary>
+        protected internal void CreateIndex(bool doMultiSegment)
         {
             if (VERBOSE)
             {
@@ -110,8 +113,12 @@ namespace Lucene.Net.Tests.Queries.Function
                 Console.WriteLine("TEST: setUp done close");
             }
         }
-        
-        private static void AddDoc(RandomIndexWriter iw, int i)
+
+        /// <summary>
+        /// LUCENENET specific
+        /// Non-static because NewField is now non-static
+        /// </summary>
+        private void AddDoc(RandomIndexWriter iw, int i)
         {
             Document d = new Document();
             Field f;

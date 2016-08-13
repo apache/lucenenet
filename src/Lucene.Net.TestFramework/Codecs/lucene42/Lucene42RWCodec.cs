@@ -24,22 +24,38 @@ namespace Lucene.Net.Codecs.Lucene42
     /// </summary>
     public class Lucene42RWCodec : Lucene42Codec
     {
-        private static readonly DocValuesFormat Dv = new Lucene42RWDocValuesFormat();
-        private static readonly NormsFormat Norms = new Lucene42NormsFormat();
+        private readonly DocValuesFormat Dv;
+        private readonly NormsFormat Norms = new Lucene42NormsFormat();
+        private readonly FieldInfosFormat fieldInfosFormat;
 
-        private readonly FieldInfosFormat fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousInnerClassHelper();
+        /// <param name="oldFormatImpersonationIsActive">
+        /// LUCENENET specific
+        /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
+        /// </param>
+        public Lucene42RWCodec(bool oldFormatImpersonationIsActive) : base()
+        {
+            Dv = new Lucene42RWDocValuesFormat(oldFormatImpersonationIsActive);
+            fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousInnerClassHelper(oldFormatImpersonationIsActive);
+        }
 
         private class Lucene42FieldInfosFormatAnonymousInnerClassHelper : Lucene42FieldInfosFormat
         {
-            public Lucene42FieldInfosFormatAnonymousInnerClassHelper()
+            private readonly bool _oldFormatImpersonationIsActive;
+
+            /// <param name="oldFormatImpersonationIsActive">
+            /// LUCENENET specific
+            /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
+            /// </param>
+            public Lucene42FieldInfosFormatAnonymousInnerClassHelper(bool oldFormatImpersonationIsActive) : base()
             {
+                _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
             }
 
             public override FieldInfosWriter FieldInfosWriter
             {
                 get
                 {
-                    if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                    if (!_oldFormatImpersonationIsActive)
                     {
                         return base.FieldInfosWriter;
                     }

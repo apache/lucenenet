@@ -89,7 +89,7 @@ namespace Lucene.Net.Tests.Queries.Function
             }
             */
 
-            CheckHits.DoCheckHits(Random(), q, "", searcher, expectedDocs);
+            CheckHits.DoCheckHits(Random(), q, "", searcher, expectedDocs, Similarity);
             CheckHits.CheckHitsQuery(q, expected, docs.ScoreDocs, expectedDocs);
             CheckHits.CheckExplanations(q, "", searcher);
         }

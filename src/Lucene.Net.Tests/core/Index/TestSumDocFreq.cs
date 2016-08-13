@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(500);
 
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             Document doc = new Document();
             Field id = NewStringField("id", "", Field.Store.NO);
