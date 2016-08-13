@@ -130,7 +130,7 @@ namespace Lucene.Net.Spatial.Vector
         }
 
         //TODO this is basically old code that hasn't been verified well and should probably be removed
-        public Query MakeQueryDistanceScore(SpatialArgs args)
+        public Search.Query MakeQueryDistanceScore(SpatialArgs args)
         {
             // For starters, just limit the bbox
             var shape = args.Shape;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Spatial.Vector
 
             ValueSource valueSource = null;
 
-            Query spatial = null;
+            Search.Query spatial = null;
             SpatialOperation op = args.Operation;
 
             if (SpatialOperation.Is(op,
@@ -190,7 +190,7 @@ namespace Lucene.Net.Spatial.Vector
             {
                 valueSource = MakeDistanceValueSource(shape.GetCenter());
             }
-            Query spatialRankingQuery = new FunctionQuery(valueSource);
+            Search.Query spatialRankingQuery = new FunctionQuery(valueSource);
             var bq = new BooleanQuery();
             bq.Add(spatial, BooleanClause.Occur.MUST);
             bq.Add(spatialRankingQuery, BooleanClause.Occur.MUST);
@@ -213,7 +213,7 @@ namespace Lucene.Net.Spatial.Vector
         /// Constructs a query to retrieve documents that fully contain the input envelope.
         /// </summary>
         /// <param name="bbox"></param>
-        private Query MakeWithin(Rectangle bbox)
+        private Search.Query MakeWithin(Rectangle bbox)
         {
             var bq = new BooleanQuery();
             const BooleanClause.Occur MUST = BooleanClause.Occur.MUST;
@@ -247,12 +247,12 @@ namespace Lucene.Net.Spatial.Vector
         /// Constructs a query to retrieve documents that fully contain the input envelope.
         /// </summary>
         /// <param name="bbox"></param>
-        private Query MakeDisjoint(Rectangle bbox)
+        private Search.Query MakeDisjoint(Rectangle bbox)
         {
             if (bbox.GetCrossesDateLine())
                 throw new InvalidOperationException("MakeDisjoint doesn't handle dateline cross");
-            Query qX = RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX());
-            Query qY = RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY());
+            Search.Query qX = RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX());
+            Search.Query qY = RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY());
             var bq = new BooleanQuery { { qX, BooleanClause.Occur.MUST_NOT }, { qY, BooleanClause.Occur.MUST_NOT } };
             return bq;
         }
