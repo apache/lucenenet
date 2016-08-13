@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,60 +22,53 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * limitations under the License.
 	 */
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+    public class TestLimitTokenCountFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
+        [Test]
+        public virtual void Test()
+        {
+            foreach (bool consumeAll in new bool[] { true, false })
+            {
+                TextReader reader = new StringReader("A1 B2 C3 D4 E5 F6");
+                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                tokenizer.EnableChecks = consumeAll;
+                TokenStream stream = tokenizer;
+                stream = TokenFilterFactory("LimitTokenCount", LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY, "3", LimitTokenCountFilterFactory.CONSUME_ALL_TOKENS_KEY, Convert.ToString(consumeAll)).Create(stream);
+                AssertTokenStreamContents(stream, new string[] { "A1", "B2", "C3" });
+            }
+        }
 
-	public class TestLimitTokenCountFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+        [Test]
+        public virtual void TestRequired()
+        {
+            // param is required
+            try
+            {
+                TokenFilterFactory("LimitTokenCount");
+                fail();
+            }
+            catch (System.ArgumentException e)
+            {
+                assertTrue("exception doesn't mention param: " + e.Message, 0 < e.Message.IndexOf(LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY));
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test() throws Exception
-	  public virtual void test()
-	  {
-		foreach (bool consumeAll in new bool[]{true, false})
-		{
-		  Reader reader = new StringReader("A1 B2 C3 D4 E5 F6");
-		  MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		  tokenizer.EnableChecks = consumeAll;
-		  TokenStream stream = tokenizer;
-		  stream = tokenFilterFactory("LimitTokenCount", LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY, "3", LimitTokenCountFilterFactory.CONSUME_ALL_TOKENS_KEY, Convert.ToString(consumeAll)).create(stream);
-		  assertTokenStreamContents(stream, new string[]{"A1", "B2", "C3"});
-		}
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRequired() throws Exception
-	  public virtual void testRequired()
-	  {
-		// param is required
-		try
-		{
-		  tokenFilterFactory("LimitTokenCount");
-		  fail();
-		}
-		catch (System.ArgumentException e)
-		{
-		  assertTrue("exception doesn't mention param: " + e.Message, 0 < e.Message.indexOf(LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY));
-		}
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("LimitTokenCount", LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY, "3", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception
+        /// </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("LimitTokenCount", LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY, "3", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

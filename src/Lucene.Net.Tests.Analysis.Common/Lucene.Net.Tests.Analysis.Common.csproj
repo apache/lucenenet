@@ -96,6 +96,8 @@
     <Compile Include="Analysis\Miscellaneous\TestLengthFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLimitTokenCountAnalyzer.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLimitTokenCountFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestLimitTokenCountFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestLimitTokenPositionFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLucene47WordDelimiterFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestPerFieldAnalyzerWrapper.cs" />
     <Compile Include="Analysis\Miscellaneous\TestPrefixAndSuffixAwareTokenFilter.cs" />

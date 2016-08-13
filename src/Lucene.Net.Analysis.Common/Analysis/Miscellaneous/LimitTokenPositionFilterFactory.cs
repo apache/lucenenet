@@ -19,6 +19,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="LimitTokenPositionFilter"/>. 
     /// <pre class="prettyprint">
@@ -46,8 +47,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public LimitTokenPositionFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            maxTokenPosition = requireInt(args, MAX_TOKEN_POSITION_KEY);
-            consumeAllTokens = getBoolean(args, CONSUME_ALL_TOKENS_KEY, false);
+            maxTokenPosition = RequireInt(args, MAX_TOKEN_POSITION_KEY);
+            consumeAllTokens = GetBoolean(args, CONSUME_ALL_TOKENS_KEY, false);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
