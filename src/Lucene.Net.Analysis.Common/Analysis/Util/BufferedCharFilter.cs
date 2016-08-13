@@ -493,11 +493,6 @@ namespace Lucene.Net.Analysis.Util
             throw new NotImplementedException();
         }
 
-        protected override int Correct(int currentOff)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
     }
 }
