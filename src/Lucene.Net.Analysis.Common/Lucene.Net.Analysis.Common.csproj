@@ -124,6 +124,9 @@
     <Compile Include="Analysis\Miscellaneous\WordDelimiterIterator.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilterFactory.cs" />
+    <Compile Include="Analysis\Shingle\ShingleAnalyzerWrapper.cs" />
+    <Compile Include="Analysis\Shingle\ShingleFilter.cs" />
+    <Compile Include="Analysis\Shingle\ShingleFilterFactory.cs" />
     <Compile Include="Analysis\Standard\ClassicAnalyzer.cs" />
     <Compile Include="Analysis\Standard\ClassicFilter.cs">
       <SubType>Code</SubType>
