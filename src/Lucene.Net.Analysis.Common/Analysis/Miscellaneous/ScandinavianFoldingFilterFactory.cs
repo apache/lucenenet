@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,33 +20,30 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="ScandinavianFoldingFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_scandfold" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.ScandinavianFoldingFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class ScandinavianFoldingFilterFactory : TokenFilterFactory
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="ScandinavianFoldingFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_scandfold" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.ScandinavianFoldingFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class ScandinavianFoldingFilterFactory : TokenFilterFactory
-	{
+        public ScandinavianFoldingFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  public ScandinavianFoldingFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override ScandinavianFoldingFilter create(TokenStream input)
-	  {
-		return new ScandinavianFoldingFilter(input);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new ScandinavianFoldingFilter(input);
+        }
+    }
 }

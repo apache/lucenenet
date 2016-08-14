@@ -105,6 +105,10 @@
     <Compile Include="Analysis\Miscellaneous\TestPrefixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestRemoveDuplicatesTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestRemoveDuplicatesTokenFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestScandinavianFoldingFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestScandinavianFoldingFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestScandinavianNormalizationFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestScandinavianNormalizationFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
     <Compile Include="Analysis\Ngram\EdgeNGramTokenFilterTest.cs" />
     <Compile Include="Analysis\Ngram\EdgeNGramTokenizerTest.cs" />
