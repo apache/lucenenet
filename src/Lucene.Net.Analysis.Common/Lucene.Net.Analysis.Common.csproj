@@ -156,6 +156,8 @@
     <Compile Include="Analysis\Pattern\PatternReplaceFilterFactory.cs" />
     <Compile Include="Analysis\Pattern\PatternTokenizer.cs" />
     <Compile Include="Analysis\Pattern\PatternTokenizerFactory.cs" />
+    <Compile Include="Analysis\Position\PositionFilter.cs" />
+    <Compile Include="Analysis\Position\PositionFilterFactory.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilterFactory.cs" />
     <Compile Include="Analysis\Shingle\ShingleAnalyzerWrapper.cs" />

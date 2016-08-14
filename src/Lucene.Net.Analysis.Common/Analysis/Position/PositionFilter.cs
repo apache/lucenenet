@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis.Position
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Position
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Set the positionIncrement of all tokens to the "positionIncrement",
     /// except the first return token which retains its original positionIncrement value.
@@ -52,7 +52,6 @@ namespace Lucene.Net.Analysis.Position
         public PositionFilter(TokenStream input)
             : this(input, 0)
         {
-            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
         /// <summary>
@@ -70,6 +69,7 @@ namespace Lucene.Net.Analysis.Position
                 throw new System.ArgumentException("positionIncrement may not be negative");
             }
             this.positionIncrement = positionIncrement;
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
         public override bool IncrementToken()
