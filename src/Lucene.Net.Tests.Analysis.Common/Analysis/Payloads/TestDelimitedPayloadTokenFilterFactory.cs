@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.payloads
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Payloads
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,73 +23,64 @@
 	 * limitations under the License.
 	 */
 
+    public class TestDelimitedPayloadTokenFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
-	using PayloadAttribute = org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        [Test]
+        public virtual void TestEncoder()
+        {
+            TextReader reader = new StringReader("the|0.1 quick|0.1 red|0.1");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("DelimitedPayload", "encoder", "float").Create(stream);
 
-	public class TestDelimitedPayloadTokenFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+            stream.Reset();
+            while (stream.IncrementToken())
+            {
+                IPayloadAttribute payAttr = stream.GetAttribute<IPayloadAttribute>();
+                assertNotNull(payAttr);
+                byte[] payData = payAttr.Payload.Bytes;
+                assertNotNull(payData);
+                float payFloat = PayloadHelper.DecodeFloat(payData);
+                assertEquals(0.1f, payFloat, 0.0f);
+            }
+            stream.End();
+            stream.Dispose();
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEncoder() throws Exception
-	  public virtual void testEncoder()
-	  {
-		Reader reader = new StringReader("the|0.1 quick|0.1 red|0.1");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("DelimitedPayload", "encoder", "float").create(stream);
+        [Test]
+        public virtual void TestDelim()
+        {
+            TextReader reader = new StringReader("the*0.1 quick*0.1 red*0.1");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("DelimitedPayload", "encoder", "float", "delimiter", "*").Create(stream);
+            stream.Reset();
+            while (stream.IncrementToken())
+            {
+                IPayloadAttribute payAttr = stream.GetAttribute<IPayloadAttribute>();
+                assertNotNull(payAttr);
+                byte[] payData = payAttr.Payload.Bytes;
+                assertNotNull(payData);
+                float payFloat = PayloadHelper.DecodeFloat(payData);
+                assertEquals(0.1f, payFloat, 0.0f);
+            }
+            stream.End();
+            stream.Dispose();
+        }
 
-		stream.reset();
-		while (stream.incrementToken())
-		{
-		  PayloadAttribute payAttr = stream.getAttribute(typeof(PayloadAttribute));
-		  assertNotNull(payAttr);
-		  sbyte[] payData = payAttr.Payload.bytes;
-		  assertNotNull(payData);
-		  float payFloat = PayloadHelper.decodeFloat(payData);
-		  assertEquals(0.1f, payFloat, 0.0f);
-		}
-		stream.end();
-		stream.close();
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDelim() throws Exception
-	  public virtual void testDelim()
-	  {
-		Reader reader = new StringReader("the*0.1 quick*0.1 red*0.1");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("DelimitedPayload", "encoder", "float", "delimiter", "*").create(stream);
-		stream.reset();
-		while (stream.incrementToken())
-		{
-		  PayloadAttribute payAttr = stream.getAttribute(typeof(PayloadAttribute));
-		  assertNotNull(payAttr);
-		  sbyte[] payData = payAttr.Payload.bytes;
-		  assertNotNull(payData);
-		  float payFloat = PayloadHelper.decodeFloat(payData);
-		  assertEquals(0.1f, payFloat, 0.0f);
-		}
-		stream.end();
-		stream.close();
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("DelimitedPayload", "encoder", "float", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("DelimitedPayload", "encoder", "float", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

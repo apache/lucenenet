@@ -1,6 +1,9 @@
-﻿namespace org.apache.lucene.analysis.payloads
+﻿using Lucene.Net.Util;
+using System.Text;
+
+namespace Lucene.Net.Analysis.Payloads
 {
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -17,47 +20,27 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    ///  Does nothing other than convert the char array to a byte array using the specified encoding.
+    /// 
+    /// 
+    /// </summary>
+    public class IdentityEncoder : AbstractEncoder, IPayloadEncoder
+    {
+        protected internal Encoding charset = Encoding.UTF8;
 
-	using BytesRef = org.apache.lucene.util.BytesRef;
+        public IdentityEncoder()
+        {
+        }
 
+        public IdentityEncoder(Encoding charset)
+        {
+            this.charset = charset;
+        }
 
-	/// <summary>
-	///  Does nothing other than convert the char array to a byte array using the specified encoding.
-	/// 
-	/// 
-	/// </summary>
-	public class IdentityEncoder : AbstractEncoder, PayloadEncoder
-	{
-	  protected internal Charset charset = StandardCharsets.UTF_8;
-
-	  public IdentityEncoder()
-	  {
-	  }
-
-	  public IdentityEncoder(Charset charset)
-	  {
-		this.charset = charset;
-	  }
-
-	  public override BytesRef encode(char[] buffer, int offset, int length)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ByteBuffer bb = charset.encode(java.nio.CharBuffer.wrap(buffer, offset, length));
-		ByteBuffer bb = charset.encode(CharBuffer.wrap(buffer, offset, length));
-		if (bb.hasArray())
-		{
-		  return new BytesRef(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining());
-		}
-		else
-		{
-		  // normally it should always have an array, but who knows?
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] b = new byte[bb.remaining()];
-		  sbyte[] b = new sbyte[bb.remaining()];
-		  bb.get(b);
-		  return new BytesRef(b);
-		}
-	  }
-	}
-
+        public override BytesRef Encode(char[] buffer, int offset, int length)
+        {
+            return new BytesRef(charset.GetBytes(buffer, offset, length));
+        }
+    }
 }

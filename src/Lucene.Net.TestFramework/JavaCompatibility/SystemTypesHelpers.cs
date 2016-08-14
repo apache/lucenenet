@@ -42,6 +42,11 @@ namespace Lucene.Net
             return (sbyte[])(Array)Encoding.GetEncoding(encoding).GetBytes(str);
         }
 
+        public static byte[] getBytes(this string str, Encoding encoding)
+        {
+            return encoding.GetBytes(str);
+        }
+
         public static int size<T>(this ICollection<T> list)
         {
             return list.Count;

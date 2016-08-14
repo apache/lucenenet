@@ -1,9 +1,8 @@
-﻿namespace org.apache.lucene.analysis.payloads
+﻿using Lucene.Net.Util;
+
+namespace Lucene.Net.Analysis.Payloads
 {
-
-	using BytesRef = org.apache.lucene.util.BytesRef;
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,24 +19,22 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Mainly for use with the DelimitedPayloadTokenFilter, converts char buffers to
+    /// <seealso cref="BytesRef"/>.
+    /// <p/>
+    /// NOTE: This interface is subject to change 
+    /// 
+    /// 
+    /// </summary>
+    public interface IPayloadEncoder
+    {
 
-	/// <summary>
-	/// Mainly for use with the DelimitedPayloadTokenFilter, converts char buffers to
-	/// <seealso cref="BytesRef"/>.
-	/// <p/>
-	/// NOTE: This interface is subject to change 
-	/// 
-	/// 
-	/// </summary>
-	public interface PayloadEncoder
-	{
+        BytesRef encode(char[] buffer);
 
-	  BytesRef encode(char[] buffer);
-
-	  /// <summary>
-	  /// Convert a char array to a <seealso cref="BytesRef"/> </summary>
-	  /// <returns> encoded <seealso cref="BytesRef"/> </returns>
-	  BytesRef encode(char[] buffer, int offset, int length);
-	}
-
+        /// <summary>
+        /// Convert a char array to a <seealso cref="BytesRef"/> </summary>
+        /// <returns> encoded <seealso cref="BytesRef"/> </returns>
+        BytesRef Encode(char[] buffer, int offset, int length);
+    }
 }

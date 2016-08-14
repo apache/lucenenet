@@ -1,9 +1,9 @@
-﻿namespace org.apache.lucene.analysis.payloads
+﻿using Lucene.Net.Util;
+using System;
+
+namespace Lucene.Net.Analysis.Payloads
 {
-
-	using BytesRef = org.apache.lucene.util.BytesRef;
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,22 +20,21 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	///  Encode a character array Float as a <seealso cref="BytesRef"/>.
-	/// <p/> </summary>
-	/// <seealso cref= org.apache.lucene.analysis.payloads.PayloadHelper#encodeFloat(float, byte[], int)
-	/// 
-	///  </seealso>
-	public class FloatEncoder : AbstractEncoder, PayloadEncoder
-	{
+    /// <summary>
+    ///  Encode a character array Float as a <seealso cref="BytesRef"/>.
+    /// <p/> </summary>
+    /// <seealso cref= org.apache.lucene.analysis.payloads.PayloadHelper#encodeFloat(float, byte[], int)
+    /// 
+    ///  </seealso>
+    public class FloatEncoder : AbstractEncoder, IPayloadEncoder
+    {
 
-	  public override BytesRef encode(char[] buffer, int offset, int length)
-	  {
-		float payload = float.Parse(new string(buffer, offset, length)); //TODO: improve this so that we don't have to new Strings
-		sbyte[] bytes = PayloadHelper.encodeFloat(payload);
-		BytesRef result = new BytesRef(bytes);
-		return result;
-	  }
-	}
-
+        public override BytesRef Encode(char[] buffer, int offset, int length)
+        {
+            float payload = float.Parse(new string(buffer, offset, length)); //TODO: improve this so that we don't have to new Strings
+            byte[] bytes = PayloadHelper.EncodeFloat(payload);
+            BytesRef result = new BytesRef(bytes);
+            return result;
+        }
+    }
 }

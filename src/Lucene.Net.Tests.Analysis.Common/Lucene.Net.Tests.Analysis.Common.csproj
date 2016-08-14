@@ -132,6 +132,11 @@
     <Compile Include="Analysis\Pattern\TestPatternReplaceFilterFactory.cs" />
     <Compile Include="Analysis\Pattern\TestPatternTokenizer.cs" />
     <Compile Include="Analysis\Pattern\TestPatternTokenizerFactory.cs" />
+    <Compile Include="Analysis\Payloads\DelimitedPayloadTokenFilterTest.cs" />
+    <Compile Include="Analysis\Payloads\NumericPayloadTokenFilterTest.cs" />
+    <Compile Include="Analysis\Payloads\TestDelimitedPayloadTokenFilterFactory.cs" />
+    <Compile Include="Analysis\Payloads\TokenOffsetPayloadTokenFilterTest.cs" />
+    <Compile Include="Analysis\Payloads\TypeAsPayloadTokenFilterTest.cs" />
     <Compile Include="Analysis\Position\PositionFilterTest.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
