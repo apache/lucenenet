@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Pattern
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,31 +20,31 @@ namespace Lucene.Net.Analysis.Pattern
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
-	/// Factory for <seealso cref="PatternCaptureGroupTokenFilter"/>. 
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_ptncapturegroup" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.PatternCaptureGroupFilterFactory" pattern="([^a-z])" preserve_original="true"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	/// <seealso cref= PatternCaptureGroupTokenFilter </seealso>
-	public class PatternCaptureGroupFilterFactory : TokenFilterFactory
-	{
-	  private Pattern pattern;
-	  private bool preserveOriginal = true;
+    /// Factory for <seealso cref="PatternCaptureGroupTokenFilter"/>. 
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_ptncapturegroup" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.KeywordTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.PatternCaptureGroupFilterFactory" pattern="([^a-z])" preserve_original="true"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    /// <seealso cref= PatternCaptureGroupTokenFilter </seealso>
+    public class PatternCaptureGroupFilterFactory : TokenFilterFactory
+    {
+        private Regex pattern;
+        private bool preserveOriginal = true;
 
-	  public PatternCaptureGroupFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		pattern = getPattern(args, "pattern");
-		preserveOriginal = args.ContainsKey("preserve_original") ? bool.Parse(args["preserve_original"]) : true;
-	  }
-	  public override TokenStream Create(TokenStream input)
-	  {
-		return new PatternCaptureGroupTokenFilter(input, preserveOriginal, pattern);
-	  }
-	}
-
+        public PatternCaptureGroupFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            pattern = GetPattern(args, "pattern");
+            preserveOriginal = args.ContainsKey("preserve_original") ? bool.Parse(args["preserve_original"]) : true;
+        }
+        public override TokenStream Create(TokenStream input)
+        {
+            return new PatternCaptureGroupTokenFilter(input, preserveOriginal, pattern);
+        }
+    }
 }

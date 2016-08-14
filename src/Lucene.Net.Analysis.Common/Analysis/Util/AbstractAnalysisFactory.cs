@@ -117,14 +117,14 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (caseSensitive)
                 {
-                    if (s.Equals(allowedValue))
+                    if (s.Equals(allowedValue, StringComparison.Ordinal))
                     {
                         return s;
                     }
                 }
                 else
                 {
-                    if (s.Equals(allowedValue, StringComparison.CurrentCultureIgnoreCase))
+                    if (s.Equals(allowedValue, StringComparison.OrdinalIgnoreCase))
                     {
                         return s;
                     }
@@ -152,25 +152,25 @@ namespace Lucene.Net.Analysis.Util
         public virtual string Get(IDictionary<string, string> args, string name, IEnumerable<string> allowedValues, string defaultVal, bool caseSensitive)
         {
             string s = null;
-            if (args.TryGetValue(name, out s))
+            if (!args.TryGetValue(name, out s) || s == null)
             {
-                args.Remove(name);
                 return defaultVal;
             }
             else
             {
+                args.Remove(name);
                 foreach (string allowedValue in allowedValues)
                 {
                     if (caseSensitive)
                     {
-                        if (s.Equals(allowedValue))
+                        if (s.Equals(allowedValue, StringComparison.Ordinal))
                         {
                             return s;
                         }
                     }
                     else
                     {
-                        if (s.Equals(allowedValue, StringComparison.CurrentCultureIgnoreCase))
+                        if (s.Equals(allowedValue, StringComparison.OrdinalIgnoreCase))
                         {
                             return s;
                         }

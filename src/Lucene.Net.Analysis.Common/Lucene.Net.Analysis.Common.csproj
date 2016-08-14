@@ -124,6 +124,14 @@
     <Compile Include="Analysis\Miscellaneous\WordDelimiterFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\WordDelimiterFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\WordDelimiterIterator.cs" />
+    <Compile Include="Analysis\Pattern\PatternCaptureGroupFilterFactory.cs" />
+    <Compile Include="Analysis\Pattern\PatternCaptureGroupTokenFilter.cs" />
+    <Compile Include="Analysis\Pattern\PatternReplaceCharFilter.cs" />
+    <Compile Include="Analysis\Pattern\PatternReplaceCharFilterFactory.cs" />
+    <Compile Include="Analysis\Pattern\PatternReplaceFilter.cs" />
+    <Compile Include="Analysis\Pattern\PatternReplaceFilterFactory.cs" />
+    <Compile Include="Analysis\Pattern\PatternTokenizer.cs" />
+    <Compile Include="Analysis\Pattern\PatternTokenizerFactory.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilterFactory.cs" />
     <Compile Include="Analysis\Shingle\ShingleAnalyzerWrapper.cs" />

@@ -103,6 +103,13 @@
     <Compile Include="Analysis\Miscellaneous\TestPrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestPrefixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
+    <Compile Include="Analysis\Pattern\TestPatternCaptureGroupTokenFilter.cs" />
+    <Compile Include="Analysis\Pattern\TestPatternReplaceCharFilter.cs" />
+    <Compile Include="Analysis\Pattern\TestPatternReplaceCharFilterFactory.cs" />
+    <Compile Include="Analysis\Pattern\TestPatternReplaceFilter.cs" />
+    <Compile Include="Analysis\Pattern\TestPatternReplaceFilterFactory.cs" />
+    <Compile Include="Analysis\Pattern\TestPatternTokenizer.cs" />
+    <Compile Include="Analysis\Pattern\TestPatternTokenizerFactory.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
     <Compile Include="Analysis\Shingle\ShingleAnalyzerWrapperTest.cs" />

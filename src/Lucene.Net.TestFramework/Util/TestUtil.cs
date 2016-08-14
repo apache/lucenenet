@@ -15,6 +15,7 @@ namespace Lucene.Net.Util
     //using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
     using NUnit.Framework;
     using System.IO;
+    using System.Text.RegularExpressions;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValuesField = BinaryDocValuesField;
@@ -1151,40 +1152,30 @@ namespace Lucene.Net.Util
         /// Returns a valid (compiling) Pattern instance with random stuff inside. Be careful
         /// when applying random patterns to longer strings as certain types of patterns
         /// may explode into exponential times in backtracking implementations (such as Java's).
-        /// </summary>
-        /* LUCENE TODO: not called as of now
-        public static Pattern RandomPattern(Random random)
+        /// </summary>        
+        public static Regex RandomPattern(Random random)
         {
-          const string nonBmpString = "AB\uD840\uDC00C";
-          while (true)
-          {
-            try
+            const string nonBmpString = "AB\uD840\uDC00C";
+            while (true)
             {
-              Pattern p = Pattern.compile(TestUtil.RandomRegexpishString(random));
-              string replacement = null;
-              // ignore bugs in Sun's regex impl
-              try
-              {
-                replacement = p.matcher(nonBmpString).replaceAll("_");
-              }
-              catch (IndexOutOfRangeException jdkBug)
-              {
-                Console.WriteLine("WARNING: your jdk is buggy!");
-                Console.WriteLine("Pattern.compile(\"" + p.pattern() + "\").matcher(\"AB\\uD840\\uDC00C\").replaceAll(\"_\"); should not throw IndexOutOfBounds!");
-              }
-              // Make sure the result of applying the pattern to a string with extended
-              // unicode characters is a valid utf16 string. See LUCENE-4078 for discussion.
-              if (replacement != null && UnicodeUtil.ValidUTF16String(replacement.ToCharArray()))
-              {
-                return p;
-              }
+                try
+                {
+                    Regex p = new Regex(TestUtil.RandomRegexpishString(random), RegexOptions.Compiled);
+                    string replacement = p.Replace(nonBmpString, "_");
+
+                    // Make sure the result of applying the pattern to a string with extended
+                    // unicode characters is a valid utf16 string. See LUCENE-4078 for discussion.
+                    if (replacement != null && UnicodeUtil.ValidUTF16String(replacement.ToCharArray()))
+                    {
+                        return p;
+                    }
+                }
+                catch (Exception ignored)
+                {
+                    // Loop trying until we hit something that compiles.
+                }
             }
-            catch (PatternSyntaxException ignored)
-            {
-              // Loop trying until we hit something that compiles.
-            }
-          }
-        }*/
+        }
 
         public static FilteredQuery.FilterStrategy RandomFilterStrategy(Random random)
         {

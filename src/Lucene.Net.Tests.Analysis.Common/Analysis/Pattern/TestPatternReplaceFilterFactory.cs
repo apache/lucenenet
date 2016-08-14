@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.pattern
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Pattern
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,42 +21,36 @@
 	 * limitations under the License.
 	 */
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+    /// <summary>
+    /// Simple tests to ensure this factory is working
+    /// </summary>
+    public class TestPatternReplaceFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
+        [Test]
+        public virtual void TestReplaceAll()
+        {
+            TextReader reader = new StringReader("aabfooaabfooabfoob ab caaaaaaaaab");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("PatternReplace", "pattern", "a*b", "replacement", "-").Create(stream);
 
-	/// <summary>
-	/// Simple tests to ensure this factory is working
-	/// </summary>
-	public class TestPatternReplaceFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+            AssertTokenStreamContents(stream, new string[] { "-foo-foo-foo-", "-", "c-" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReplaceAll() throws Exception
-	  public virtual void testReplaceAll()
-	  {
-		Reader reader = new StringReader("aabfooaabfooabfoob ab caaaaaaaaab");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("PatternReplace", "pattern", "a*b", "replacement", "-").create(stream);
-
-		assertTokenStreamContents(stream, new string[] {"-foo-foo-foo-", "-", "c-"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("PatternReplace", "pattern", "something", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("PatternReplace", "pattern", "something", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }
