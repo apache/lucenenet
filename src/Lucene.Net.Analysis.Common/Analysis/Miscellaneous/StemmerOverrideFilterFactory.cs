@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
-using org.apache.lucene.analysis.miscellaneous;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +21,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="StemmerOverrideFilter"/>.
     /// <pre class="prettyprint">
@@ -31,7 +32,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     ///   &lt;/analyzer&gt;
     /// &lt;/fieldType&gt;</pre>
     /// </summary>
-    public class StemmerOverrideFilterFactory : TokenFilterFactory, ResourceLoaderAware
+    public class StemmerOverrideFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         private StemmerOverrideFilter.StemmerOverrideMap dictionary;
         private readonly string dictionaryFiles;
@@ -42,33 +43,33 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public StemmerOverrideFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            dictionaryFiles = get(args, "dictionary");
-            ignoreCase = getBoolean(args, "ignoreCase", false);
+            dictionaryFiles = Get(args, "dictionary");
+            ignoreCase = GetBoolean(args, "ignoreCase", false);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
             }
         }
 
-        public virtual void Inform(ResourceLoader loader)
+        public virtual void Inform(IResourceLoader loader)
         {
             if (dictionaryFiles != null)
             {
-                assureMatchVersion();
-                IList<string> files = splitFileNames(dictionaryFiles);
-                if (files.Count > 0)
+                AssureMatchVersion();
+                IEnumerable<string> files = SplitFileNames(dictionaryFiles);
+                if (files.Count() > 0)
                 {
                     StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(ignoreCase);
                     foreach (string file in files)
                     {
-                        IList<string> list = getLines(loader, file.Trim());
+                        IEnumerable<string> list = GetLines(loader, file.Trim());
                         foreach (string line in list)
                         {
-                            string[] mapping = line.Split("\t", 2);
-                            builder.add(mapping[0], mapping[1]);
+                            string[] mapping = new Regex("\t").Split(line, 2);
+                            builder.Add(mapping[0], mapping[1]);
                         }
                     }
-                    dictionary = builder.build();
+                    dictionary = builder.Build();
                 }
             }
         }

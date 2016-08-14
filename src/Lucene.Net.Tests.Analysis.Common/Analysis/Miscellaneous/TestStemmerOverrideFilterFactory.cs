@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,56 +21,48 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the stemmer override filter factory is working.
+    /// </summary>
+    public class TestStemmerOverrideFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        [Test]
+        public virtual void TestKeywords()
+        {
+            // our stemdict stems dogs to 'cat'
+            TextReader reader = new StringReader("testing dogs");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("StemmerOverride", TEST_VERSION_CURRENT, new StringMockResourceLoader("dogs\tcat"), "dictionary", "stemdict.txt").Create(stream);
+            stream = TokenFilterFactory("PorterStem").Create(stream);
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-	using StringMockResourceLoader = org.apache.lucene.analysis.util.StringMockResourceLoader;
+            AssertTokenStreamContents(stream, new string[] { "test", "cat" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the stemmer override filter factory is working.
-	/// </summary>
-	public class TestStemmerOverrideFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeywords() throws Exception
-	  public virtual void testKeywords()
-	  {
-		// our stemdict stems dogs to 'cat'
-		Reader reader = new StringReader("testing dogs");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("StemmerOverride", TEST_VERSION_CURRENT, new StringMockResourceLoader("dogs\tcat"), "dictionary", "stemdict.txt").create(stream);
-		stream = tokenFilterFactory("PorterStem").create(stream);
+        [Test]
+        public virtual void TestKeywordsCaseInsensitive()
+        {
+            TextReader reader = new StringReader("testing DoGs");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("StemmerOverride", TEST_VERSION_CURRENT, new StringMockResourceLoader("dogs\tcat"), "dictionary", "stemdict.txt", "ignoreCase", "true").Create(stream);
+            stream = TokenFilterFactory("PorterStem").Create(stream);
 
-		assertTokenStreamContents(stream, new string[] {"test", "cat"});
-	  }
+            AssertTokenStreamContents(stream, new string[] { "test", "cat" });
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeywordsCaseInsensitive() throws Exception
-	  public virtual void testKeywordsCaseInsensitive()
-	  {
-		Reader reader = new StringReader("testing DoGs");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("StemmerOverride", TEST_VERSION_CURRENT, new StringMockResourceLoader("dogs\tcat"), "dictionary", "stemdict.txt", "ignoreCase", "true").create(stream);
-		stream = tokenFilterFactory("PorterStem").create(stream);
-
-		assertTokenStreamContents(stream, new string[] {"test", "cat"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("StemmerOverride", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("StemmerOverride", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using TokenFilterFactory = Lucene.Net.Analysis.Util.TokenFilterFactory;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.miscellaneous
+namespace Lucene.Net.Analysis.Miscellaneous
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,46 +20,43 @@ namespace org.apache.lucene.analysis.miscellaneous
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="org.apache.lucene.analysis.miscellaneous.TruncateTokenFilter"/>. The following type is recommended for "<i>diacritics-insensitive search</i>" for Turkish.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_tr_ascii_f5" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.ApostropheFilterFactory"/&gt;
+    ///     &lt;filter class="solr.TurkishLowerCaseFilterFactory"/&gt;
+    ///     &lt;filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="true"/&gt;
+    ///     &lt;filter class="solr.KeywordRepeatFilterFactory"/&gt;
+    ///     &lt;filter class="solr.TruncateTokenFilterFactory" prefixLength="5"/&gt;
+    ///     &lt;filter class="solr.RemoveDuplicatesTokenFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class TruncateTokenFilterFactory : TokenFilterFactory
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="org.apache.lucene.analysis.miscellaneous.TruncateTokenFilter"/>. The following type is recommended for "<i>diacritics-insensitive search</i>" for Turkish.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_tr_ascii_f5" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.ApostropheFilterFactory"/&gt;
-	///     &lt;filter class="solr.TurkishLowerCaseFilterFactory"/&gt;
-	///     &lt;filter class="solr.ASCIIFoldingFilterFactory" preserveOriginal="true"/&gt;
-	///     &lt;filter class="solr.KeywordRepeatFilterFactory"/&gt;
-	///     &lt;filter class="solr.TruncateTokenFilterFactory" prefixLength="5"/&gt;
-	///     &lt;filter class="solr.RemoveDuplicatesTokenFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class TruncateTokenFilterFactory : TokenFilterFactory
-	{
+        public const string PREFIX_LENGTH_KEY = "prefixLength";
+        private readonly sbyte prefixLength;
 
-	  public const string PREFIX_LENGTH_KEY = "prefixLength";
-	  private readonly sbyte prefixLength;
+        public TruncateTokenFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            prefixLength = sbyte.Parse(Get(args, PREFIX_LENGTH_KEY, "5"));
+            if (prefixLength < 1)
+            {
+                throw new System.ArgumentException(PREFIX_LENGTH_KEY + " parameter must be a positive number: " + prefixLength);
+            }
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameter(s): " + args);
+            }
+        }
 
-	  public TruncateTokenFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		prefixLength = sbyte.Parse(get(args, PREFIX_LENGTH_KEY, "5"));
-		if (prefixLength < 1)
-		{
-		  throw new System.ArgumentException(PREFIX_LENGTH_KEY + " parameter must be a positive number: " + prefixLength);
-		}
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameter(s): " + args);
-		}
-	  }
-
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new TruncateTokenFilter(input, prefixLength);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new TruncateTokenFilter(input, prefixLength);
+        }
+    }
 }

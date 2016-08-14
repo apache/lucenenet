@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using NUnit.Framework;
+using System.IO;
+using BaseTokenStreamFactoryTestCase = Lucene.Net.Analysis.Util.BaseTokenStreamFactoryTestCase;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,40 +21,34 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure this factory is working
+    /// </summary>
+    public class TestTrimFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        [Test]
+        public virtual void TestTrimming()
+        {
+            TextReader reader = new StringReader("trim me    ");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+            stream = TokenFilterFactory("Trim").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "trim me" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-	/// <summary>
-	/// Simple tests to ensure this factory is working
-	/// </summary>
-	public class TestTrimFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTrimming() throws Exception
-	  public virtual void testTrimming()
-	  {
-		Reader reader = new StringReader("trim me    ");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-		stream = tokenFilterFactory("Trim").create(stream);
-		assertTokenStreamContents(stream, new string[] {"trim me"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("Trim", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("Trim", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

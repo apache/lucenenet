@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// The contents of the CharsRef. Should never be {@code null}.
         /// </summary>
-        public char[] Chars { get; internal set; }
+        public char[] Chars { get; set; }
 
         /// <summary>
         /// Offset of first valid character. </summary>

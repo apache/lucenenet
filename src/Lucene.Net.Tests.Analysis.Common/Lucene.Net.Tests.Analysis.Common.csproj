@@ -109,6 +109,12 @@
     <Compile Include="Analysis\Miscellaneous\TestScandinavianFoldingFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestScandinavianNormalizationFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestScandinavianNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestStemmerOverrideFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestStemmerOverrideFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestTrimFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestTrimFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestTruncateTokenFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestTruncateTokenFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
     <Compile Include="Analysis\Ngram\EdgeNGramTokenFilterTest.cs" />
     <Compile Include="Analysis\Ngram\EdgeNGramTokenizerTest.cs" />
