@@ -103,6 +103,8 @@
     <Compile Include="Analysis\Miscellaneous\EmptyTokenStream.cs" />
     <Compile Include="Analysis\Miscellaneous\HyphenatedWordsFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\HyphenatedWordsFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\KeepWordFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\KeepWordFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordMarkerFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordMarkerFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\KeywordRepeatFilter.cs" />

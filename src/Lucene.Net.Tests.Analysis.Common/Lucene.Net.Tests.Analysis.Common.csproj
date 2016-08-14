@@ -90,6 +90,8 @@
     <Compile Include="Analysis\Miscellaneous\TestCodepointCountFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestEmptyTokenStream.cs" />
     <Compile Include="Analysis\Miscellaneous\TestHyphenatedWordsFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestKeepFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestKeepWordFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestKeywordMarkerFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestKeywordMarkerFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestLengthFilter.cs" />
@@ -251,6 +253,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Synonym\synonyms-wordnet.txt" />
     <EmbeddedResource Include="Analysis\Synonym\synonyms.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Miscellaneous\keep-1.txt" />
+    <EmbeddedResource Include="Analysis\Miscellaneous\keep-2.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
