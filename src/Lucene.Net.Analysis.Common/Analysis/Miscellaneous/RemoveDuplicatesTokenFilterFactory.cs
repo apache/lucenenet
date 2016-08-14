@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,33 +19,33 @@ namespace Lucene.Net.Analysis.Miscellaneous
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
-	/// Factory for <seealso cref="RemoveDuplicatesTokenFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_rmdup" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.RemoveDuplicatesTokenFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class RemoveDuplicatesTokenFilterFactory : TokenFilterFactory
-	{
+    /// Factory for <seealso cref="RemoveDuplicatesTokenFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_rmdup" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.RemoveDuplicatesTokenFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class RemoveDuplicatesTokenFilterFactory : TokenFilterFactory
+    {
 
-	  /// <summary>
-	  /// Creates a new RemoveDuplicatesTokenFilterFactory </summary>
-	  public RemoveDuplicatesTokenFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+        /// <summary>
+        /// Creates a new RemoveDuplicatesTokenFilterFactory </summary>
+        public RemoveDuplicatesTokenFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  public override RemoveDuplicatesTokenFilter Create(TokenStream input)
-	  {
-		return new RemoveDuplicatesTokenFilter(input);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new RemoveDuplicatesTokenFilter(input);
+        }
+    }
 }

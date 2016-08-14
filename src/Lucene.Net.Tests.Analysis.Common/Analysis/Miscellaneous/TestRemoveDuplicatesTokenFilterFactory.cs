@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.miscellaneous
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.Text.RegularExpressions;
 
-	/*
+namespace Lucene.Net.Analysis.Miscellaneous
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,53 +21,45 @@
 	 * limitations under the License.
 	 */
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+    /// <summary>
+    /// Simple tests to ensure this factory is working </summary>
+    public class TestRemoveDuplicatesTokenFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
-	/// <summary>
-	/// Simple tests to ensure this factory is working </summary>
-	public class TestRemoveDuplicatesTokenFilterFactory : BaseTokenStreamFactoryTestCase
-	{
+        public static Token Tok(int pos, string t, int start, int end)
+        {
+            Token tok = new Token(t, start, end);
+            tok.PositionIncrement = pos;
+            return tok;
+        }
 
-	  public static Token tok(int pos, string t, int start, int end)
-	  {
-		Token tok = new Token(t,start,end);
-		tok.PositionIncrement = pos;
-		return tok;
-	  }
+        public virtual void TestDups(string expected, params Token[] tokens)
+        {
+            TokenStream stream = new CannedTokenStream(tokens);
+            stream = TokenFilterFactory("RemoveDuplicates").Create(stream);
+            AssertTokenStreamContents(stream, Regex.Split(expected, "\\s"));
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDups(final String expected, final org.apache.lucene.analysis.Token... tokens) throws Exception
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-	  public virtual void testDups(string expected, params Token[] tokens)
-	  {
-		TokenStream stream = new CannedTokenStream(tokens);
-		stream = tokenFilterFactory("RemoveDuplicates").create(stream);
-		assertTokenStreamContents(stream, expected.Split("\\s", true));
-	  }
+        [Test]
+        public virtual void TestSimpleDups()
+        {
+            TestDups("A B C D E", Tok(1, "A", 0, 4), Tok(1, "B", 5, 10), Tok(0, "B", 11, 15), Tok(1, "C", 16, 20), Tok(0, "D", 16, 20), Tok(1, "E", 21, 25));
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testSimpleDups() throws Exception
-	  public virtual void testSimpleDups()
-	  {
-		testDups("A B C D E",tok(1,"A", 0, 4),tok(1,"B", 5, 10),tok(0,"B",11, 15),tok(1,"C",16, 20),tok(0,"D",16, 20),tok(1,"E",21, 25));
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("RemoveDuplicates", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("RemoveDuplicates", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

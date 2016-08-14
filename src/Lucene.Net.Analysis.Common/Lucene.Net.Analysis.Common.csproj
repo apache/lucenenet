@@ -119,6 +119,8 @@
     <Compile Include="Analysis\Miscellaneous\PerFieldAnalyzerWrapper.cs" />
     <Compile Include="Analysis\Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\PrefixAwareTokenFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\RemoveDuplicatesTokenFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\RemoveDuplicatesTokenFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\SetKeywordMarkerFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\SingleTokenTokenStream.cs" />
     <Compile Include="Analysis\Miscellaneous\WordDelimiterFilter.cs" />
