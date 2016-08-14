@@ -148,6 +148,9 @@
     <Compile Include="Analysis\Ngram\NGramTokenFilter.cs" />
     <Compile Include="Analysis\Ngram\NGramTokenizer.cs" />
     <Compile Include="Analysis\Ngram\NGramTokenizerFactory.cs" />
+    <Compile Include="Analysis\Path\PathHierarchyTokenizer.cs" />
+    <Compile Include="Analysis\Path\PathHierarchyTokenizerFactory.cs" />
+    <Compile Include="Analysis\Path\ReversePathHierarchyTokenizer.cs" />
     <Compile Include="Analysis\Pattern\PatternCaptureGroupFilterFactory.cs" />
     <Compile Include="Analysis\Pattern\PatternCaptureGroupTokenFilter.cs" />
     <Compile Include="Analysis\Pattern\PatternReplaceCharFilter.cs" />

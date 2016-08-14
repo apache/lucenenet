@@ -1,6 +1,6 @@
-﻿using System.Text;
-using Lucene.Net.Analysis.Tokenattributes;
-using Reader = System.IO.TextReader;
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Analysis.Path
 {
@@ -20,6 +20,7 @@ namespace Lucene.Net.Analysis.Path
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Tokenizer for path-like hierarchies.
     /// <para>
@@ -41,42 +42,42 @@ namespace Lucene.Net.Analysis.Path
     public class PathHierarchyTokenizer : Tokenizer
     {
 
-        public PathHierarchyTokenizer(Reader input)
+        public PathHierarchyTokenizer(TextReader input)
             : this(input, DEFAULT_BUFFER_SIZE, DEFAULT_DELIMITER, DEFAULT_DELIMITER, DEFAULT_SKIP)
         {
         }
 
-        public PathHierarchyTokenizer(Reader input, int skip)
+        public PathHierarchyTokenizer(TextReader input, int skip)
             : this(input, DEFAULT_BUFFER_SIZE, DEFAULT_DELIMITER, DEFAULT_DELIMITER, skip)
         {
         }
 
-        public PathHierarchyTokenizer(Reader input, int bufferSize, char delimiter)
+        public PathHierarchyTokenizer(TextReader input, int bufferSize, char delimiter)
             : this(input, bufferSize, delimiter, delimiter, DEFAULT_SKIP)
         {
         }
 
-        public PathHierarchyTokenizer(Reader input, char delimiter, char replacement)
+        public PathHierarchyTokenizer(TextReader input, char delimiter, char replacement)
             : this(input, DEFAULT_BUFFER_SIZE, delimiter, replacement, DEFAULT_SKIP)
         {
         }
 
-        public PathHierarchyTokenizer(Reader input, char delimiter, char replacement, int skip)
+        public PathHierarchyTokenizer(TextReader input, char delimiter, char replacement, int skip)
             : this(input, DEFAULT_BUFFER_SIZE, delimiter, replacement, skip)
         {
         }
 
-        public PathHierarchyTokenizer(AttributeFactory factory, Reader input, char delimiter, char replacement, int skip)
+        public PathHierarchyTokenizer(AttributeFactory factory, TextReader input, char delimiter, char replacement, int skip)
             : this(factory, input, DEFAULT_BUFFER_SIZE, delimiter, replacement, skip)
         {
         }
 
-        public PathHierarchyTokenizer(Reader input, int bufferSize, char delimiter, char replacement, int skip)
+        public PathHierarchyTokenizer(TextReader input, int bufferSize, char delimiter, char replacement, int skip)
             : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input, bufferSize, delimiter, replacement, skip)
         {
         }
 
-        public PathHierarchyTokenizer(AttributeFactory factory, Reader input, int bufferSize, char delimiter, char replacement, int skip)
+        public PathHierarchyTokenizer(AttributeFactory factory, TextReader input, int bufferSize, char delimiter, char replacement, int skip)
             : base(factory, input)
         {
             if (bufferSize < 0)
@@ -117,7 +118,7 @@ namespace Lucene.Net.Analysis.Path
 
         private int charsRead = 0;
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             ClearAttributes();
             termAtt.Append(resultToken);

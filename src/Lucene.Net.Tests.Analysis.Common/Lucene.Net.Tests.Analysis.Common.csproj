@@ -123,6 +123,8 @@
     <Compile Include="Analysis\Ngram\NGramTokenFilterTest.cs" />
     <Compile Include="Analysis\Ngram\NGramTokenizerTest.cs" />
     <Compile Include="Analysis\Ngram\TestNGramFilters.cs" />
+    <Compile Include="Analysis\Path\TestPathHierarchyTokenizer.cs" />
+    <Compile Include="Analysis\Path\TestReversePathHierarchyTokenizer.cs" />
     <Compile Include="Analysis\Pattern\TestPatternCaptureGroupTokenFilter.cs" />
     <Compile Include="Analysis\Pattern\TestPatternReplaceCharFilter.cs" />
     <Compile Include="Analysis\Pattern\TestPatternReplaceCharFilterFactory.cs" />
