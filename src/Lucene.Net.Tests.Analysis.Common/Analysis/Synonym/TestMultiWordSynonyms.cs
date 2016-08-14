@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.synonym
+namespace Lucene.Net.Analysis.Synonym
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,42 +23,35 @@ namespace org.apache.lucene.analysis.synonym
 	 * limitations under the License.
 	 */
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-	using StringMockResourceLoader = org.apache.lucene.analysis.util.StringMockResourceLoader;
+    /// <summary>
+    /// @since solr 1.4
+    /// </summary>
+    public class TestMultiWordSynonyms_ : BaseTokenStreamFactoryTestCase
+    {
 
+        /// @deprecated Remove this test in 5.0 
+        [Test]
+        [Obsolete("Remove this test in 5.0")]
+        public virtual void TestMultiWordSynonymsOld()
+        {
+            IList<string> rules = new List<string>();
+            rules.Add("a b c,d");
+            SlowSynonymMap synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
 
-	/// <summary>
-	/// @since solr 1.4
-	/// </summary>
-	public class TestMultiWordSynonyms : BaseTokenStreamFactoryTestCase
-	{
+            SlowSynonymFilter ts = new SlowSynonymFilter(new MockTokenizer(new StringReader("a e"), MockTokenizer.WHITESPACE, false), synMap);
+            // This fails because ["e","e"] is the value of the token stream
+            AssertTokenStreamContents(ts, new string[] { "a", "e" });
+        }
 
-	  /// @deprecated Remove this test in 5.0 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Deprecated("Remove this test in 5.0") public void testMultiWordSynonymsOld() throws java.io.IOException
-	  [Obsolete("Remove this test in 5.0")]
-	  public virtual void testMultiWordSynonymsOld()
-	  {
-		IList<string> rules = new List<string>();
-		rules.Add("a b c,d");
-		SlowSynonymMap synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-
-		SlowSynonymFilter ts = new SlowSynonymFilter(new MockTokenizer(new StringReader("a e"), MockTokenizer.WHITESPACE, false), synMap);
-		// This fails because ["e","e"] is the value of the token stream
-		assertTokenStreamContents(ts, new string[] {"a", "e"});
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testMultiWordSynonyms() throws Exception
-	  public virtual void testMultiWordSynonyms()
-	  {
-		Reader reader = new StringReader("a e");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Synonym", TEST_VERSION_CURRENT, new StringMockResourceLoader("a b c,d"), "synonyms", "synonyms.txt").create(stream);
-		// This fails because ["e","e"] is the value of the token stream
-		assertTokenStreamContents(stream, new string[] {"a", "e"});
-	  }
-	}
-
+        [Test]
+        public virtual void TestMultiWordSynonyms()
+        {
+            TextReader reader = new StringReader("a e");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Synonym", TEST_VERSION_CURRENT, new StringMockResourceLoader("a b c,d"), "synonyms", "synonyms.txt").Create(stream);
+            // This fails because ["e","e"] is the value of the token stream
+            AssertTokenStreamContents(stream, new string[] { "a", "e" });
+        }
+    }
 }

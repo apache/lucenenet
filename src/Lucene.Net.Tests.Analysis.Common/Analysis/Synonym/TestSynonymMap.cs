@@ -1,10 +1,15 @@
-﻿using System;
+﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Analysis.Ngram;
 
-namespace org.apache.lucene.analysis.synonym
+namespace Lucene.Net.Analysis.Synonym
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,343 +26,312 @@ namespace org.apache.lucene.analysis.synonym
 	 * limitations under the License.
 	 */
 
+    /// @deprecated Remove this test in Lucene 5.0 
+    [Obsolete("Remove this test in Lucene 5.0")]
+    public class TestSynonymMap : LuceneTestCase
+    {
 
-	using NGramTokenizerFactory = org.apache.lucene.analysis.ngram.NGramTokenizerFactory;
-	using AbstractAnalysisFactory = org.apache.lucene.analysis.util.AbstractAnalysisFactory;
-	using TokenizerFactory = org.apache.lucene.analysis.util.TokenizerFactory;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using ResourceLoader = org.apache.lucene.analysis.util.ResourceLoader;
+        [Test]
+        public virtual void TestInvalidMappingRules()
+        {
+            SlowSynonymMap synMap = new SlowSynonymMap(true);
+            IList<string> rules = new List<string>(1);
+            rules.Add("a=>b=>c");
+            try
+            {
+                SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+                fail("IllegalArgumentException must be thrown.");
+            }
+            catch (System.ArgumentException)
+            {
+            }
+        }
 
-	/// @deprecated Remove this test in Lucene 5.0 
-	[Obsolete("Remove this test in Lucene 5.0")]
-	public class TestSynonymMap : LuceneTestCase
-	{
+        [Test]
+        public virtual void TestReadMappingRules()
+        {
+            SlowSynonymMap synMap;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInvalidMappingRules() throws Exception
-	  public virtual void testInvalidMappingRules()
-	  {
-		SlowSynonymMap synMap = new SlowSynonymMap(true);
-		IList<string> rules = new List<string>(1);
-		rules.Add("a=>b=>c");
-		try
-		{
-			SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-			fail("IllegalArgumentException must be thrown.");
-		}
-		catch (System.ArgumentException)
-		{
-		}
-	  }
+            // (a)->[b]
+            IList<string> rules = new List<string>();
+            rules.Add("a=>b");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(1, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "b");
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReadMappingRules() throws Exception
-	  public virtual void testReadMappingRules()
-	  {
-		SlowSynonymMap synMap;
+            // (a)->[c]
+            // (b)->[c]
+            rules.Clear();
+            rules.Add("a,b=>c");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(2, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "c");
+            AssertTokIncludes(synMap, "b", "c");
 
-		// (a)->[b]
-		IList<string> rules = new List<string>();
-		rules.Add("a=>b");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(1, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "b");
+            // (a)->[b][c]
+            rules.Clear();
+            rules.Add("a=>b,c");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(1, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "b");
+            AssertTokIncludes(synMap, "a", "c");
 
-		// (a)->[c]
-		// (b)->[c]
-		rules.Clear();
-		rules.Add("a,b=>c");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(2, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "c");
-		assertTokIncludes(synMap, "b", "c");
+            // (a)->(b)->[a2]
+            //      [a1]
+            rules.Clear();
+            rules.Add("a=>a1");
+            rules.Add("a b=>a2");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(1, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a1");
+            assertEquals(1, GetSubSynonymMap(synMap, "a").submap.size());
+            AssertTokIncludes(GetSubSynonymMap(synMap, "a"), "b", "a2");
 
-		// (a)->[b][c]
-		rules.Clear();
-		rules.Add("a=>b,c");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(1, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "b");
-		assertTokIncludes(synMap, "a", "c");
+            // (a)->(b)->[a2]
+            //      (c)->[a3]
+            //      [a1]
+            rules.Clear();
+            rules.Add("a=>a1");
+            rules.Add("a b=>a2");
+            rules.Add("a c=>a3");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(1, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a1");
+            assertEquals(2, GetSubSynonymMap(synMap, "a").submap.size());
+            AssertTokIncludes(GetSubSynonymMap(synMap, "a"), "b", "a2");
+            AssertTokIncludes(GetSubSynonymMap(synMap, "a"), "c", "a3");
 
-		// (a)->(b)->[a2]
-		//      [a1]
-		rules.Clear();
-		rules.Add("a=>a1");
-		rules.Add("a b=>a2");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(1, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a1");
-		assertEquals(1, getSubSynonymMap(synMap, "a").submap.size());
-		assertTokIncludes(getSubSynonymMap(synMap, "a"), "b", "a2");
+            // (a)->(b)->[a2]
+            //      [a1]
+            // (b)->(c)->[b2]
+            //      [b1]
+            rules.Clear();
+            rules.Add("a=>a1");
+            rules.Add("a b=>a2");
+            rules.Add("b=>b1");
+            rules.Add("b c=>b2");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(2, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a1");
+            assertEquals(1, GetSubSynonymMap(synMap, "a").submap.size());
+            AssertTokIncludes(GetSubSynonymMap(synMap, "a"), "b", "a2");
+            AssertTokIncludes(synMap, "b", "b1");
+            assertEquals(1, GetSubSynonymMap(synMap, "b").submap.size());
+            AssertTokIncludes(GetSubSynonymMap(synMap, "b"), "c", "b2");
+        }
 
-		// (a)->(b)->[a2]
-		//      (c)->[a3]
-		//      [a1]
-		rules.Clear();
-		rules.Add("a=>a1");
-		rules.Add("a b=>a2");
-		rules.Add("a c=>a3");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(1, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a1");
-		assertEquals(2, getSubSynonymMap(synMap, "a").submap.size());
-		assertTokIncludes(getSubSynonymMap(synMap, "a"), "b", "a2");
-		assertTokIncludes(getSubSynonymMap(synMap, "a"), "c", "a3");
+        [Test]
+        public virtual void TestRead1waySynonymRules()
+        {
+            SlowSynonymMap synMap;
 
-		// (a)->(b)->[a2]
-		//      [a1]
-		// (b)->(c)->[b2]
-		//      [b1]
-		rules.Clear();
-		rules.Add("a=>a1");
-		rules.Add("a b=>a2");
-		rules.Add("b=>b1");
-		rules.Add("b c=>b2");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(2, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a1");
-		assertEquals(1, getSubSynonymMap(synMap, "a").submap.size());
-		assertTokIncludes(getSubSynonymMap(synMap, "a"), "b", "a2");
-		assertTokIncludes(synMap, "b", "b1");
-		assertEquals(1, getSubSynonymMap(synMap, "b").submap.size());
-		assertTokIncludes(getSubSynonymMap(synMap, "b"), "c", "b2");
-	  }
+            // (a)->[a]
+            // (b)->[a]
+            IList<string> rules = new List<string>();
+            rules.Add("a,b");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", false, null);
+            assertEquals(2, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a");
+            AssertTokIncludes(synMap, "b", "a");
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRead1waySynonymRules() throws Exception
-	  public virtual void testRead1waySynonymRules()
-	  {
-		SlowSynonymMap synMap;
+            // (a)->[a]
+            // (b)->[a]
+            // (c)->[a]
+            rules.Clear();
+            rules.Add("a,b,c");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", false, null);
+            assertEquals(3, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a");
+            AssertTokIncludes(synMap, "b", "a");
+            AssertTokIncludes(synMap, "c", "a");
 
-		// (a)->[a]
-		// (b)->[a]
-		IList<string> rules = new List<string>();
-		rules.Add("a,b");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", false, null);
-		assertEquals(2, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a");
-		assertTokIncludes(synMap, "b", "a");
+            // (a)->[a]
+            // (b1)->(b2)->[a]
+            rules.Clear();
+            rules.Add("a,b1 b2");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", false, null);
+            assertEquals(2, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a");
+            assertEquals(1, GetSubSynonymMap(synMap, "b1").submap.size());
+            AssertTokIncludes(GetSubSynonymMap(synMap, "b1"), "b2", "a");
 
-		// (a)->[a]
-		// (b)->[a]
-		// (c)->[a]
-		rules.Clear();
-		rules.Add("a,b,c");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", false, null);
-		assertEquals(3, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a");
-		assertTokIncludes(synMap, "b", "a");
-		assertTokIncludes(synMap, "c", "a");
+            // (a1)->(a2)->[a1][a2]
+            // (b)->[a1][a2]
+            rules.Clear();
+            rules.Add("a1 a2,b");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", false, null);
+            assertEquals(2, synMap.submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "a1").submap.size());
+            AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "a1");
+            AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "a2");
+            AssertTokIncludes(synMap, "b", "a1");
+            AssertTokIncludes(synMap, "b", "a2");
+        }
 
-		// (a)->[a]
-		// (b1)->(b2)->[a]
-		rules.Clear();
-		rules.Add("a,b1 b2");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", false, null);
-		assertEquals(2, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a");
-		assertEquals(1, getSubSynonymMap(synMap, "b1").submap.size());
-		assertTokIncludes(getSubSynonymMap(synMap, "b1"), "b2", "a");
+        [Test]
+        public virtual void TestRead2waySynonymRules()
+        {
+            SlowSynonymMap synMap;
 
-		// (a1)->(a2)->[a1][a2]
-		// (b)->[a1][a2]
-		rules.Clear();
-		rules.Add("a1 a2,b");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", false, null);
-		assertEquals(2, synMap.submap.size());
-		assertEquals(1, getSubSynonymMap(synMap, "a1").submap.size());
-		assertTokIncludes(getSubSynonymMap(synMap, "a1"), "a2", "a1");
-		assertTokIncludes(getSubSynonymMap(synMap, "a1"), "a2", "a2");
-		assertTokIncludes(synMap, "b", "a1");
-		assertTokIncludes(synMap, "b", "a2");
-	  }
+            // (a)->[a][b]
+            // (b)->[a][b]
+            IList<string> rules = new List<string>();
+            rules.Add("a,b");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(2, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a");
+            AssertTokIncludes(synMap, "a", "b");
+            AssertTokIncludes(synMap, "b", "a");
+            AssertTokIncludes(synMap, "b", "b");
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRead2waySynonymRules() throws Exception
-	  public virtual void testRead2waySynonymRules()
-	  {
-		SlowSynonymMap synMap;
+            // (a)->[a][b][c]
+            // (b)->[a][b][c]
+            // (c)->[a][b][c]
+            rules.Clear();
+            rules.Add("a,b,c");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(3, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a");
+            AssertTokIncludes(synMap, "a", "b");
+            AssertTokIncludes(synMap, "a", "c");
+            AssertTokIncludes(synMap, "b", "a");
+            AssertTokIncludes(synMap, "b", "b");
+            AssertTokIncludes(synMap, "b", "c");
+            AssertTokIncludes(synMap, "c", "a");
+            AssertTokIncludes(synMap, "c", "b");
+            AssertTokIncludes(synMap, "c", "c");
 
-		// (a)->[a][b]
-		// (b)->[a][b]
-		IList<string> rules = new List<string>();
-		rules.Add("a,b");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(2, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a");
-		assertTokIncludes(synMap, "a", "b");
-		assertTokIncludes(synMap, "b", "a");
-		assertTokIncludes(synMap, "b", "b");
+            // (a)->[a]
+            //      [b1][b2]
+            // (b1)->(b2)->[a]
+            //             [b1][b2]
+            rules.Clear();
+            rules.Add("a,b1 b2");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(2, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a");
+            AssertTokIncludes(synMap, "a", "b1");
+            AssertTokIncludes(synMap, "a", "b2");
+            assertEquals(1, GetSubSynonymMap(synMap, "b1").submap.size());
+            AssertTokIncludes(GetSubSynonymMap(synMap, "b1"), "b2", "a");
+            AssertTokIncludes(GetSubSynonymMap(synMap, "b1"), "b2", "b1");
+            AssertTokIncludes(GetSubSynonymMap(synMap, "b1"), "b2", "b2");
 
-		// (a)->[a][b][c]
-		// (b)->[a][b][c]
-		// (c)->[a][b][c]
-		rules.Clear();
-		rules.Add("a,b,c");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(3, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a");
-		assertTokIncludes(synMap, "a", "b");
-		assertTokIncludes(synMap, "a", "c");
-		assertTokIncludes(synMap, "b", "a");
-		assertTokIncludes(synMap, "b", "b");
-		assertTokIncludes(synMap, "b", "c");
-		assertTokIncludes(synMap, "c", "a");
-		assertTokIncludes(synMap, "c", "b");
-		assertTokIncludes(synMap, "c", "c");
+            // (a1)->(a2)->[a1][a2]
+            //             [b]
+            // (b)->[a1][a2]
+            //      [b]
+            rules.Clear();
+            rules.Add("a1 a2,b");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
+            assertEquals(2, synMap.submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "a1").submap.size());
+            AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "a1");
+            AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "a2");
+            AssertTokIncludes(GetSubSynonymMap(synMap, "a1"), "a2", "b");
+            AssertTokIncludes(synMap, "b", "a1");
+            AssertTokIncludes(synMap, "b", "a2");
+            AssertTokIncludes(synMap, "b", "b");
+        }
 
-		// (a)->[a]
-		//      [b1][b2]
-		// (b1)->(b2)->[a]
-		//             [b1][b2]
-		rules.Clear();
-		rules.Add("a,b1 b2");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(2, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a");
-		assertTokIncludes(synMap, "a", "b1");
-		assertTokIncludes(synMap, "a", "b2");
-		assertEquals(1, getSubSynonymMap(synMap, "b1").submap.size());
-		assertTokIncludes(getSubSynonymMap(synMap, "b1"), "b2", "a");
-		assertTokIncludes(getSubSynonymMap(synMap, "b1"), "b2", "b1");
-		assertTokIncludes(getSubSynonymMap(synMap, "b1"), "b2", "b2");
+        [Test]
+        public virtual void TestBigramTokenizer()
+        {
+            SlowSynonymMap synMap;
 
-		// (a1)->(a2)->[a1][a2]
-		//             [b]
-		// (b)->[a1][a2]
-		//      [b]
-		rules.Clear();
-		rules.Add("a1 a2,b");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, null);
-		assertEquals(2, synMap.submap.size());
-		assertEquals(1, getSubSynonymMap(synMap, "a1").submap.size());
-		assertTokIncludes(getSubSynonymMap(synMap, "a1"), "a2", "a1");
-		assertTokIncludes(getSubSynonymMap(synMap, "a1"), "a2", "a2");
-		assertTokIncludes(getSubSynonymMap(synMap, "a1"), "a2", "b");
-		assertTokIncludes(synMap, "b", "a1");
-		assertTokIncludes(synMap, "b", "a2");
-		assertTokIncludes(synMap, "b", "b");
-	  }
+            // prepare bi-gram tokenizer factory
+            IDictionary<string, string> args = new Dictionary<string, string>();
+            args[AbstractAnalysisFactory.LUCENE_MATCH_VERSION_PARAM] = "4.4";
+            args["minGramSize"] = "2";
+            args["maxGramSize"] = "2";
+            TokenizerFactory tf = new NGramTokenizerFactory(args);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBigramTokenizer() throws Exception
-	  public virtual void testBigramTokenizer()
-	  {
-		SlowSynonymMap synMap;
-
-		// prepare bi-gram tokenizer factory
-		IDictionary<string, string> args = new Dictionary<string, string>();
-		args[AbstractAnalysisFactory.LUCENE_MATCH_VERSION_PARAM] = "4.4";
-		args["minGramSize"] = "2";
-		args["maxGramSize"] = "2";
-		TokenizerFactory tf = new NGramTokenizerFactory(args);
-
-		// (ab)->(bc)->(cd)->[ef][fg][gh]
-		IList<string> rules = new List<string>();
-		rules.Add("abcd=>efgh");
-		synMap = new SlowSynonymMap(true);
-		SlowSynonymFilterFactory.parseRules(rules, synMap, "=>", ",", true, tf);
-		assertEquals(1, synMap.submap.size());
-		assertEquals(1, getSubSynonymMap(synMap, "ab").submap.size());
-		assertEquals(1, getSubSynonymMap(getSubSynonymMap(synMap, "ab"), "bc").submap.size());
-		assertTokIncludes(getSubSynonymMap(getSubSynonymMap(synMap, "ab"), "bc"), "cd", "ef");
-		assertTokIncludes(getSubSynonymMap(getSubSynonymMap(synMap, "ab"), "bc"), "cd", "fg");
-		assertTokIncludes(getSubSynonymMap(getSubSynonymMap(synMap, "ab"), "bc"), "cd", "gh");
-	  }
+            // (ab)->(bc)->(cd)->[ef][fg][gh]
+            IList<string> rules = new List<string>();
+            rules.Add("abcd=>efgh");
+            synMap = new SlowSynonymMap(true);
+            SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, tf);
+            assertEquals(1, synMap.submap.size());
+            assertEquals(1, GetSubSynonymMap(synMap, "ab").submap.size());
+            assertEquals(1, GetSubSynonymMap(GetSubSynonymMap(synMap, "ab"), "bc").submap.size());
+            AssertTokIncludes(GetSubSynonymMap(GetSubSynonymMap(synMap, "ab"), "bc"), "cd", "ef");
+            AssertTokIncludes(GetSubSynonymMap(GetSubSynonymMap(synMap, "ab"), "bc"), "cd", "fg");
+            AssertTokIncludes(GetSubSynonymMap(GetSubSynonymMap(synMap, "ab"), "bc"), "cd", "gh");
+        }
 
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLoadRules() throws Exception
-	  public virtual void testLoadRules()
-	  {
-		IDictionary<string, string> args = new Dictionary<string, string>();
-		args["synonyms"] = "something.txt";
-		SlowSynonymFilterFactory ff = new SlowSynonymFilterFactory(args);
-		ff.inform(new ResourceLoaderAnonymousInnerClassHelper(this));
+        [Test]
+        public virtual void TestLoadRules()
+        {
+            IDictionary<string, string> args = new Dictionary<string, string>();
+            args["synonyms"] = "something.txt";
+            SlowSynonymFilterFactory ff = new SlowSynonymFilterFactory(args);
+            ff.Inform(new ResourceLoaderAnonymousInnerClassHelper());
 
-		SlowSynonymMap synMap = ff.SynonymMap;
-		assertEquals(2, synMap.submap.size());
-		assertTokIncludes(synMap, "a", "a");
-		assertTokIncludes(synMap, "a", "b");
-		assertTokIncludes(synMap, "b", "a");
-		assertTokIncludes(synMap, "b", "b");
-	  }
+            SlowSynonymMap synMap = ff.SynonymMap;
+            assertEquals(2, synMap.submap.size());
+            AssertTokIncludes(synMap, "a", "a");
+            AssertTokIncludes(synMap, "a", "b");
+            AssertTokIncludes(synMap, "b", "a");
+            AssertTokIncludes(synMap, "b", "b");
+        }
 
-	  private class ResourceLoaderAnonymousInnerClassHelper : ResourceLoader
-	  {
-		  private readonly TestSynonymMap outerInstance;
+        internal sealed class ResourceLoaderAnonymousInnerClassHelper : IResourceLoader
+        {
+            public T NewInstance<T>(string cname)
+            {
+                throw new Exception("stub");
+            }
 
-		  public ResourceLoaderAnonymousInnerClassHelper(TestSynonymMap outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+            public Type FindClass(string cname)
+            {
+                throw new Exception("stub");
+            }
 
+            public Stream OpenResource(string resource)
+            {
+                if (!"something.txt".Equals(resource))
+                {
+                    throw new Exception("should not get a differnt resource");
+                }
+                else
+                {
+                    return new MemoryStream(Encoding.UTF8.GetBytes("a,b"));
+                }
+            }
+        }
 
-		  public override T newInstance<T>(string cname, Type<T> expectedType)
-		  {
-			throw new Exception("stub");
-		  }
+        private void AssertTokIncludes(SlowSynonymMap map, string src, string exp)
+        {
+            Token[] tokens = map.submap.Get(src).synonyms;
+            bool inc = false;
+            foreach (Token token in tokens)
+            {
+                if (exp.Equals(new string(token.Buffer(), 0, token.Length)))
+                {
+                    inc = true;
+                }
+            }
+            assertTrue(inc);
+        }
 
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: @Override public <T> Class<? extends T> findClass(String cname, Class<T> expectedType)
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: @Override public <T> Class<? extends T> findClass(String cname, Class<T> expectedType)
-		  public override Type<?> findClass<T>(string cname, Type<T> expectedType) where ? : T
-		  {
-			throw new Exception("stub");
-		  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public java.io.InputStream openResource(String resource) throws java.io.IOException
-		  public override System.IO.Stream openResource(string resource)
-		  {
-			if (!"something.txt".Equals(resource))
-			{
-			  throw new Exception("should not get a differnt resource");
-			}
-			else
-			{
-			  return new ByteArrayInputStream("a,b".GetBytes("UTF-8"));
-			}
-		  }
-	  }
-
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void assertTokIncludes(SlowSynonymMap map, String src, String exp) throws Exception
-	  private void assertTokIncludes(SlowSynonymMap map, string src, string exp)
-	  {
-		Token[] tokens = map.submap.get(src).synonyms;
-		bool inc = false;
-		foreach (Token token in tokens)
-		{
-		  if (exp.Equals(new string(token.buffer(), 0, token.length())))
-		  {
-			inc = true;
-		  }
-		}
-		assertTrue(inc);
-	  }
-
-	  private SlowSynonymMap getSubSynonymMap(SlowSynonymMap map, string src)
-	  {
-		return map.submap.get(src);
-	  }
-	}
-
+        private SlowSynonymMap GetSubSynonymMap(SlowSynonymMap map, string src)
+        {
+            return map.submap.Get(src);
+        }
+    }
 }

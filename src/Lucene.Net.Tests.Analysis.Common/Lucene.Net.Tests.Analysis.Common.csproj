@@ -124,6 +124,13 @@
     <Compile Include="Analysis\Standard\TestUAX29URLEmailTokenizerFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\Synonym\TestMultiWordSynonyms.cs" />
+    <Compile Include="Analysis\Synonym\TestSlowSynonymFilter.cs" />
+    <Compile Include="Analysis\Synonym\TestSolrSynonymParser.cs" />
+    <Compile Include="Analysis\Synonym\TestSynonymFilterFactory.cs" />
+    <Compile Include="Analysis\Synonym\TestSynonymMap.cs" />
+    <Compile Include="Analysis\Synonym\TestSynonymMapFilter.cs" />
+    <Compile Include="Analysis\Synonym\TestWordnetSynonymParser.cs" />
     <Compile Include="Analysis\Util\BaseTokenStreamFactoryTestCase.cs" />
     <Compile Include="Analysis\Util\StringMockResourceLoader.cs" />
     <Compile Include="Analysis\Util\TestCharacterUtils.cs" />
@@ -227,6 +234,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Cz\customStopWordFile.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Synonym\synonyms-wordnet.txt" />
+    <EmbeddedResource Include="Analysis\Synonym\synonyms.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

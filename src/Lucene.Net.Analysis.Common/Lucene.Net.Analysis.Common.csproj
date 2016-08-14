@@ -191,6 +191,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Analysis\Standard\UAX29URLEmailTokenizerImpl.cs" />
+    <Compile Include="Analysis\Synonym\FSTSynonymFilterFactory.cs" />
+    <Compile Include="Analysis\Synonym\SlowSynonymFilter.cs" />
+    <Compile Include="Analysis\Synonym\SlowSynonymFilterFactory.cs" />
+    <Compile Include="Analysis\Synonym\SlowSynonymMap.cs" />
+    <Compile Include="Analysis\Synonym\SolrSynonymParser.cs" />
+    <Compile Include="Analysis\Synonym\SynonymFilter.cs" />
+    <Compile Include="Analysis\Synonym\SynonymFilterFactory.cs" />
+    <Compile Include="Analysis\Synonym\SynonymMap.cs" />
+    <Compile Include="Analysis\Synonym\WordnetSynonymParser.cs" />
     <Compile Include="Analysis\Util\BufferedCharFilter.cs" />
     <Compile Include="Analysis\Util\AbstractAnalysisFactory.cs">
       <SubType>Code</SubType>
