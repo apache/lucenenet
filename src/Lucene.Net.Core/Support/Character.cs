@@ -249,6 +249,60 @@ namespace Lucene.Net.Support
         /// 
         /// http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b27/java/lang/Character.java
         /// </summary>
+        public static int OffsetByCodePoints(string seq, int index,
+                                         int codePointOffset)
+        {
+            int length = seq.Length;
+            if (index < 0 || index > length)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            int x = index;
+            if (codePointOffset >= 0)
+            {
+                int i;
+                for (i = 0; x < length && i < codePointOffset; i++)
+                {
+                    if (char.IsHighSurrogate(seq[x++]))
+                    {
+                        if (x < length && char.IsLowSurrogate(seq[x]))
+                        {
+                            x++;
+                        }
+                    }
+                }
+                if (i < codePointOffset)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+            }
+            else
+            {
+                int i;
+                for (i = codePointOffset; x > 0 && i < 0; i++)
+                {
+                    if (char.IsLowSurrogate(seq[--x]))
+                    {
+                        if (x > 0 && char.IsHighSurrogate(seq[x - 1]))
+                        {
+                            x--;
+                        }
+                    }
+                }
+                if (i < 0)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+            }
+            return x;
+        }
+
+        /// <summary>
+        /// Copy of the implementation from Character class in Java
+        /// 
+        /// http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b27/java/lang/Character.java
+        /// </summary>
         public static int OffsetByCodePoints(char[] a, int start, int count,
                                          int index, int codePointOffset)
         {

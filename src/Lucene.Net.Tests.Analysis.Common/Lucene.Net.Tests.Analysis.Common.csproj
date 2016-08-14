@@ -103,6 +103,11 @@
     <Compile Include="Analysis\Miscellaneous\TestPrefixAndSuffixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestPrefixAwareTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestWordDelimiterFilter.cs" />
+    <Compile Include="Analysis\Ngram\EdgeNGramTokenFilterTest.cs" />
+    <Compile Include="Analysis\Ngram\EdgeNGramTokenizerTest.cs" />
+    <Compile Include="Analysis\Ngram\NGramTokenFilterTest.cs" />
+    <Compile Include="Analysis\Ngram\NGramTokenizerTest.cs" />
+    <Compile Include="Analysis\Ngram\TestNGramFilters.cs" />
     <Compile Include="Analysis\Pattern\TestPatternCaptureGroupTokenFilter.cs" />
     <Compile Include="Analysis\Pattern\TestPatternReplaceCharFilter.cs" />
     <Compile Include="Analysis\Pattern\TestPatternReplaceCharFilterFactory.cs" />
