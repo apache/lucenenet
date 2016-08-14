@@ -175,6 +175,7 @@
     <Compile Include="Analysis\Payloads\TypeAsPayloadTokenFilterFactory.cs" />
     <Compile Include="Analysis\Position\PositionFilter.cs" />
     <Compile Include="Analysis\Position\PositionFilterFactory.cs" />
+    <Compile Include="Analysis\Query\QueryAutoStopWordAnalyzer.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilterFactory.cs" />
     <Compile Include="Analysis\Shingle\ShingleAnalyzerWrapper.cs" />

@@ -138,6 +138,7 @@
     <Compile Include="Analysis\Payloads\TokenOffsetPayloadTokenFilterTest.cs" />
     <Compile Include="Analysis\Payloads\TypeAsPayloadTokenFilterTest.cs" />
     <Compile Include="Analysis\Position\PositionFilterTest.cs" />
+    <Compile Include="Analysis\Query\QueryAutoStopWordAnalyzerTest.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
     <Compile Include="Analysis\Shingle\ShingleAnalyzerWrapperTest.cs" />
