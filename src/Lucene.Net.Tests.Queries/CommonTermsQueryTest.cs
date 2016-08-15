@@ -20,7 +20,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer, Similarity, TimeZone);
             var docs = new string[]
             {
                 @"this is the end of the world right", @"is this it or maybe not",
@@ -152,7 +152,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer, Similarity, TimeZone);
             string[] docs = new string[]
             {
                 @"this is the end of the world right", @"is this it or maybe not",
@@ -304,7 +304,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer, Similarity, TimeZone);
             var docs = new string[]
             {
                 @"this is the end of the world right", @"is this it or maybe not",

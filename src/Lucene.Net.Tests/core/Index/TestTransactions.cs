@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
 
             public override void DoWork()
             {
-                var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                var config = OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                                 .SetMaxBufferedDocs(3)
                                 .SetMergeScheduler(_scheduler1)
                                 .SetMergePolicy(NewLogMergePolicy(2));
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
 
                 // Intentionally use different params so flush/merge
                 // happen @ different times
-                var config2 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                var config2 = OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                                 .SetMaxBufferedDocs(2)
                                 .SetMergeScheduler(_scheduler2)
                                 .SetMergePolicy(NewLogMergePolicy(3));
@@ -201,8 +201,8 @@ namespace Lucene.Net.Index
                 {
                     Document d = new Document();
                     int n = Random().Next();
-                    d.Add(NewField("id", Convert.ToString(NextID++), customType));
-                    d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+                    d.Add(OuterInstance.NewField("id", Convert.ToString(NextID++), customType));
+                    d.Add(OuterInstance.NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
                     writer.AddDocument(d);
                 }
 

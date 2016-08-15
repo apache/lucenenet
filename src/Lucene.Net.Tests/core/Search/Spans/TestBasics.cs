@@ -93,8 +93,12 @@ namespace Lucene.Net.Search.Spans
 
         internal static Analyzer SimplePayloadAnalyzer;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             SimplePayloadAnalyzer = new AnalyzerAnonymousInnerClassHelper();
 
@@ -606,7 +610,7 @@ namespace Lucene.Net.Search.Spans
 
         private void CheckHits(Query query, int[] results)
         {
-            Search.CheckHits.DoCheckHits(Random(), query, "field", Searcher, results);
+            Search.CheckHits.DoCheckHits(Random(), query, "field", Searcher, results, Similarity);
         }
     }
 }

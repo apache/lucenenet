@@ -1,10 +1,8 @@
-using NUnit.Framework;
+﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Store;
 
-namespace Lucene.Net.Codecs.Lucene3x
+namespace Lucene.Net.Codecs.MockSep
 {
-    using BasePostingsFormatTestCase = Lucene.Net.Index.BasePostingsFormatTestCase;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,25 +20,16 @@ namespace Lucene.Net.Codecs.Lucene3x
      * limitations under the License.
      */
 
-    /// <summary>
-    /// Tests Lucene3x postings format
-    /// </summary>
-    public class TestLucene3xPostingsFormat : BasePostingsFormatTestCase
+    public class MockSingleIntFactory : IntStreamFactory
     {
-        private readonly Codec Codec_Renamed;
-
-        public TestLucene3xPostingsFormat() : base()
+        public override IntIndexInput OpenInput(Directory dir, string fileName, IOContext context)
         {
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
-            Codec_Renamed = new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
+            return new MockSingleIntIndexInput(dir, fileName, context);
         }
 
-        protected override Codec Codec
+        public override IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
         {
-            get
-            {
-                return Codec_Renamed;
-            }
+            return new MockSingleIntIndexOutput(dir, fileName, context);
         }
     }
 }

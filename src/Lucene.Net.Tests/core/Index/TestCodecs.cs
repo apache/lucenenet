@@ -890,7 +890,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDisableImpersonation()
         {
-            Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec() };
+            Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE), new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE), new Lucene42RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE) };
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);

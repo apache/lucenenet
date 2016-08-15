@@ -26,12 +26,17 @@ namespace Lucene.Net.Codecs.Lucene42
     /// </summary>
     public class TestLucene42DocValuesFormat : BaseCompressingDocValuesFormatTestCase
     {
-        private readonly Codec Codec_Renamed = new Lucene42RWCodec();
+        private Codec Codec_Renamed;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
+        /// </summary>
         [TestFixtureSetUp]
-        public static void BeforeClass()
+        public void BeforeClass()
         {
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
+            Codec_Renamed = new Lucene42RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
         }
 
         protected override Codec Codec

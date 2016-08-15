@@ -63,7 +63,6 @@ namespace Lucene.Net.Index
         /// prepare for crashing.
         /// index 1 more document, and upon commit, creation of segments_2 will crash.
         /// </summary>
-        [Test]
         private void IndexAndCrashOnCreateOutputSegments2()
         {
             Directory realDirectory = FSDirectory.Open(Path);

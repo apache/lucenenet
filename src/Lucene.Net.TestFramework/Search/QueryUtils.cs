@@ -43,6 +43,7 @@ namespace Lucene.Net.Search
     using MultiReader = Lucene.Net.Index.MultiReader;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
+    using Similarities;
 
     /// <summary>
     /// Utility class for sanity-checking queries.
@@ -117,30 +118,38 @@ namespace Lucene.Net.Search
         /// Various query sanity checks on a searcher, some checks are only done for
         /// instanceof IndexSearcher.
         /// </summary>
+        /// <param name = "similarity" >
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
         /// <seealso cref= #check(Query) </seealso>
         /// <seealso cref= #checkFirstSkipTo </seealso>
         /// <seealso cref= #checkSkipTo </seealso>
         /// <seealso cref= #checkExplanations </seealso>
         /// <seealso cref= #checkEqual </seealso>
-        public static void Check(Random random, Query q1, IndexSearcher s)
+        public static void Check(Random random, Query q1, IndexSearcher s, Similarity similarity)
         {
-            Check(random, q1, s, true);
+            Check(random, q1, s, true, similarity);
         }
 
-        public static void Check(Random random, Query q1, IndexSearcher s, bool wrap)
+        /// <param name = "similarity" >
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
+        public static void Check(Random random, Query q1, IndexSearcher s, bool wrap, Similarity similarity)
         {
             try
             {
                 Check(q1);
                 if (s != null)
                 {
-                    CheckFirstSkipTo(q1, s);
-                    CheckSkipTo(q1, s);
+                    CheckFirstSkipTo(q1, s, similarity);
+                    CheckSkipTo(q1, s, similarity);
                     if (wrap)
                     {
-                        Check(random, q1, WrapUnderlyingReader(random, s, -1), false);
-                        Check(random, q1, WrapUnderlyingReader(random, s, 0), false);
-                        Check(random, q1, WrapUnderlyingReader(random, s, +1), false);
+                        Check(random, q1, WrapUnderlyingReader(random, s, -1, similarity), false, similarity);
+                        Check(random, q1, WrapUnderlyingReader(random, s, 0, similarity), false, similarity);
+                        Check(random, q1, WrapUnderlyingReader(random, s, +1, similarity), false, similarity);
                     }
                     CheckExplanations(q1, s);
 
@@ -199,7 +208,11 @@ namespace Lucene.Net.Search
         /// behave exactly the same as the original IndexSearcher. </summary>
         /// <param name="s"> the searcher to wrap </param>
         /// <param name="edge"> if negative, s will be the first sub; if 0, s will be in the middle, if positive s will be the last sub </param>
-        public static IndexSearcher WrapUnderlyingReader(Random random, IndexSearcher s, int edge)
+        /// <param name="similarity">
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
+        public static IndexSearcher WrapUnderlyingReader(Random random, IndexSearcher s, int edge, Similarity similarity)
         {
             IndexReader r = s.IndexReader;
 
@@ -207,7 +220,7 @@ namespace Lucene.Net.Search
             // it will throw off the docIds
             IndexReader[] readers = new IndexReader[] { edge < 0 ? r : EmptyReaders[0], EmptyReaders[0], new FCInvisibleMultiReader(edge < 0 ? EmptyReaders[4] : EmptyReaders[0], EmptyReaders[0], 0 == edge ? r : EmptyReaders[0]), 0 < edge ? EmptyReaders[0] : EmptyReaders[7], EmptyReaders[0], new FCInvisibleMultiReader(0 < edge ? EmptyReaders[0] : EmptyReaders[5], EmptyReaders[0], 0 < edge ? r : EmptyReaders[0]) };
 
-            IndexSearcher @out = LuceneTestCase.NewSearcher(new FCInvisibleMultiReader(readers));
+            IndexSearcher @out = LuceneTestCase.NewSearcher(new FCInvisibleMultiReader(readers), similarity);
             @out.Similarity = s.Similarity;
             return @out;
         }
@@ -250,7 +263,11 @@ namespace Lucene.Net.Search
         /// alternate scorer skipTo(),skipTo(),next(),next(),skipTo(),skipTo(), etc
         /// and ensure a hitcollector receives same docs and scores
         /// </summary>
-        public static void CheckSkipTo(Query q, IndexSearcher s)
+        /// <param name = "similarity" >
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
+        public static void CheckSkipTo(Query q, IndexSearcher s, Similarity similarity)
         {
             //System.out.println("Checking "+q);
             IList<AtomicReaderContext> readerContextArray = s.TopReaderContext.Leaves;
@@ -276,14 +293,14 @@ namespace Lucene.Net.Search
                 const float maxDiff = 1e-5f;
                 AtomicReader[] lastReader = new AtomicReader[] { null };
 
-                s.Search(q, new CollectorAnonymousInnerClassHelper(q, s, readerContextArray, skip_op, order, opidx, lastDoc, maxDiff, lastReader));
+                s.Search(q, new CollectorAnonymousInnerClassHelper(q, s, readerContextArray, skip_op, order, opidx, lastDoc, maxDiff, lastReader, similarity));
 
                 if (lastReader[0] != null)
                 {
                     // confirm that skipping beyond the last doc, on the
                     // previous reader, hits NO_MORE_DOCS
                     AtomicReader previousReader = lastReader[0];
-                    IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, false);
+                    IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, false, similarity);
                     indexSearcher.Similarity = s.Similarity;
                     Weight w = indexSearcher.CreateNormalizedWeight(q);
                     AtomicReaderContext ctx = (AtomicReaderContext)previousReader.Context;
@@ -308,8 +325,11 @@ namespace Lucene.Net.Search
             private int[] LastDoc;
             private float MaxDiff;
             private AtomicReader[] LastReader;
+            private readonly Similarity Similarity;
 
-            public CollectorAnonymousInnerClassHelper(Query q, IndexSearcher s, IList<AtomicReaderContext> readerContextArray, int skip_op, int[] order, int[] opidx, int[] lastDoc, float maxDiff, AtomicReader[] lastReader)
+            public CollectorAnonymousInnerClassHelper(Query q, IndexSearcher s, IList<AtomicReaderContext> readerContextArray, 
+                int skip_op, int[] order, int[] opidx, int[] lastDoc, float maxDiff, AtomicReader[] lastReader,
+                Similarity similarity)
             {
                 this.q = q;
                 this.s = s;
@@ -320,6 +340,7 @@ namespace Lucene.Net.Search
                 this.LastDoc = lastDoc;
                 this.MaxDiff = maxDiff;
                 this.LastReader = lastReader;
+                this.Similarity = similarity;
             }
 
             private Scorer sc;
@@ -381,7 +402,7 @@ namespace Lucene.Net.Search
                     if (LastReader[0] != null)
                     {
                         AtomicReader previousReader = LastReader[0];
-                        IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader);
+                        IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, Similarity);
                         indexSearcher.Similarity = s.Similarity;
                         Weight w = indexSearcher.CreateNormalizedWeight(q);
                         AtomicReaderContext ctx = (AtomicReaderContext)indexSearcher.TopReaderContext;
@@ -407,22 +428,26 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// check that first skip on just created scorers always goes to the right doc </summary>
-        public static void CheckFirstSkipTo(Query q, IndexSearcher s)
+        /// check that first skip on just created scorers always goes to the right doc</summary>
+        /// <param name = "similarity" >
+        /// LUCENENET specific
+        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        /// </param>
+        public static void CheckFirstSkipTo(Query q, IndexSearcher s, Similarity similarity)
         {
             //System.out.println("checkFirstSkipTo: "+q);
             const float maxDiff = 1e-3f;
             int[] lastDoc = new int[] { -1 };
             AtomicReader[] lastReader = new AtomicReader[] { null };
             IList<AtomicReaderContext> context = s.TopReaderContext.Leaves;
-            s.Search(q, new CollectorAnonymousInnerClassHelper2(q, s, maxDiff, lastDoc, lastReader, context));
+            s.Search(q, new CollectorAnonymousInnerClassHelper2(q, s, maxDiff, lastDoc, lastReader, context, similarity));
 
             if (lastReader[0] != null)
             {
                 // confirm that skipping beyond the last doc, on the
                 // previous reader, hits NO_MORE_DOCS
                 AtomicReader previousReader = lastReader[0];
-                IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader);
+                IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, similarity);
                 indexSearcher.Similarity = s.Similarity;
                 Weight w = indexSearcher.CreateNormalizedWeight(q);
                 Scorer scorer = w.Scorer((AtomicReaderContext)indexSearcher.TopReaderContext, previousReader.LiveDocs);
@@ -442,8 +467,9 @@ namespace Lucene.Net.Search
             private int[] LastDoc;
             private AtomicReader[] LastReader;
             private IList<AtomicReaderContext> Context;
+            private readonly Similarity Similarity;
 
-            public CollectorAnonymousInnerClassHelper2(Query q, IndexSearcher s, float maxDiff, int[] lastDoc, AtomicReader[] lastReader, IList<AtomicReaderContext> context)
+            public CollectorAnonymousInnerClassHelper2(Query q, IndexSearcher s, float maxDiff, int[] lastDoc, AtomicReader[] lastReader, IList<AtomicReaderContext> context, Similarity similarity)
             {
                 this.q = q;
                 this.s = s;
@@ -451,6 +477,7 @@ namespace Lucene.Net.Search
                 this.LastDoc = lastDoc;
                 this.LastReader = lastReader;
                 this.Context = context;
+                this.Similarity = similarity;
             }
 
             private Scorer scorer;
@@ -505,7 +532,7 @@ namespace Lucene.Net.Search
                     if (LastReader[0] != null)
                     {
                         AtomicReader previousReader = LastReader[0];
-                        IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader);
+                        IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, Similarity);
                         indexSearcher.Similarity = s.Similarity;
                         Weight w = indexSearcher.CreateNormalizedWeight(q);
                         Scorer scorer = w.Scorer((AtomicReaderContext)indexSearcher.TopReaderContext, previousReader.LiveDocs);

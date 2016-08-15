@@ -29,19 +29,42 @@ namespace Lucene.Net.Codecs.Lucene41
     public class Lucene41RWCodec : Lucene41Codec
     {
         private readonly StoredFieldsFormat FieldsFormat = new Lucene41StoredFieldsFormat();
-        private readonly FieldInfosFormat fieldInfos = new Lucene40FieldInfosFormatAnonymousInnerClassHelper();
+        private readonly FieldInfosFormat fieldInfos;
+        private readonly DocValuesFormat DocValues;
+        private readonly NormsFormat Norms;
+        private readonly bool _oldFormatImpersonationIsActive;
+
+        /// <param name="oldFormatImpersonationIsActive">
+        /// LUCENENET specific
+        /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
+        /// </param>
+        public Lucene41RWCodec(bool oldFormatImpersonationIsActive) : base()
+        {
+            _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
+
+            Norms = new Lucene40RWNormsFormat(oldFormatImpersonationIsActive);
+            fieldInfos = new Lucene40FieldInfosFormatAnonymousInnerClassHelper(oldFormatImpersonationIsActive);
+            DocValues = new Lucene40RWDocValuesFormat(oldFormatImpersonationIsActive);
+        }
 
         private class Lucene40FieldInfosFormatAnonymousInnerClassHelper : Lucene40FieldInfosFormat
         {
-            public Lucene40FieldInfosFormatAnonymousInnerClassHelper()
+            private readonly bool _oldFormatImpersonationIsActive;
+
+            /// <param name="oldFormatImpersonationIsActive">
+            /// LUCENENET specific
+            /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
+            /// </param>
+            public Lucene40FieldInfosFormatAnonymousInnerClassHelper(bool oldFormatImpersonationIsActive) : base()
             {
+                _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
             }
 
             public override FieldInfosWriter FieldInfosWriter
             {
                 get
                 {
-                    if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                    if (!_oldFormatImpersonationIsActive)
                     {
                         return base.FieldInfosWriter;
                     }
@@ -52,9 +75,6 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
         }
-
-        private readonly DocValuesFormat DocValues = new Lucene40RWDocValuesFormat();
-        private readonly NormsFormat Norms = new Lucene40RWNormsFormat();
 
         public override FieldInfosFormat FieldInfosFormat()
         {

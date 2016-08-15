@@ -249,6 +249,10 @@
     <Compile Include="Codecs\MissingOrdRemapper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\MockSep\MockSepPostingsFormat.cs" />
+    <Compile Include="Codecs\MockSep\MockSingleIntFactory.cs" />
+    <Compile Include="Codecs\MockSep\MockSingleIntIndexInput.cs" />
+    <Compile Include="Codecs\MockSep\MockSingleIntIndexOutput.cs" />
     <Compile Include="Codecs\ramonly\RAMOnlyPostingsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -472,6 +476,9 @@
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
       <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
       <Name>Lucene.Net.Analysis.Common</Name>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
+      <Project>{3f79b6d4-4359-4f83-b64f-07f4f6262425}</Project>
+      <Name>Lucene.Net.Codecs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>

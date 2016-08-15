@@ -272,9 +272,13 @@ namespace Lucene.Net.Index
             return docs;
         }
 
-        public static void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
+        public void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
         {
-            IndexWriter w = new IndexWriter(dir, LuceneTestCase.NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
 
             // index all docs in a single thread
             IEnumerator<Document> iter = docs.Values.GetEnumerator();
@@ -917,7 +921,7 @@ namespace Lucene.Net.Index
 
                 List<Field> fields = new List<Field>();
                 string idString = IdString;
-                Field idField = NewField("id", idString, customType1);
+                Field idField = OuterInstance.NewField("id", idString, customType1);
                 fields.Add(idField);
 
                 int nFields = NextInt(MaxFields);
@@ -950,13 +954,13 @@ namespace Lucene.Net.Index
                             customType.Stored = true;
                             customType.OmitNorms = true;
                             customType.Indexed = true;
-                            fields.Add(NewField("f" + NextInt(100), GetString(1), customType));
+                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(1), customType));
                             break;
 
                         case 1:
                             customType.Indexed = true;
                             customType.Tokenized = true;
-                            fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
+                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(0), customType));
                             break;
 
                         case 2:
@@ -964,14 +968,14 @@ namespace Lucene.Net.Index
                             customType.StoreTermVectors = false;
                             customType.StoreTermVectorOffsets = false;
                             customType.StoreTermVectorPositions = false;
-                            fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
+                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(0), customType));
                             break;
 
                         case 3:
                             customType.Stored = true;
                             customType.Indexed = true;
                             customType.Tokenized = true;
-                            fields.Add(NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
+                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
                             break;
                     }
                 }

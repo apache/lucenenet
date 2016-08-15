@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
                             refreshed = r;
                         }
 
-                        IndexSearcher searcher = NewSearcher(refreshed);
+                        IndexSearcher searcher = OuterInstance.NewSearcher(refreshed);
                         ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field1", "a" + rnd.Next(refreshed.MaxDoc))), null, 1000).ScoreDocs;
                         if (hits.Length > 0)
                         {
@@ -559,10 +559,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        public static void CreateIndex(Random random, Directory dir, bool multiSegment)
+        /// <summary>
+        /// LUCENENET specific
+        /// Is non-static because NewIndexWriterConfig is no longer static.
+        /// </summary>
+        public void CreateIndex(Random random, Directory dir, bool multiSegment)
         {
             IndexWriter.Unlock(dir);
-            IndexWriter w = new IndexWriter(dir, LuceneTestCase.NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(new LogDocMergePolicy()));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(new LogDocMergePolicy()));
 
             for (int i = 0; i < 100; i++)
             {
