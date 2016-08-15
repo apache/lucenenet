@@ -58,6 +58,7 @@
     <Compile Include="Analysis\CommonGrams\TestCommonGramsFilterFactory.cs" />
     <Compile Include="Analysis\CommonGrams\TestCommonGramsQueryFilterFactory.cs" />
     <Compile Include="Analysis\Core\TestAnalyzers.cs" />
+    <Compile Include="Analysis\Core\TestBugInSomething.cs" />
     <Compile Include="Analysis\Core\TestClassicAnalyzer.cs" />
     <Compile Include="Analysis\Core\TestDuelingAnalyzers.cs" />
     <Compile Include="Analysis\Core\TestFactories.cs" />
