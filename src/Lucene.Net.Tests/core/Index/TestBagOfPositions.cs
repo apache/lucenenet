@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
             }
 
             Field prototype = NewTextField("field", "", Field.Store.NO);
-            FieldType fieldType = new FieldType((FieldType)prototype.FieldType());
+            FieldType fieldType = new FieldType((FieldType)prototype.FieldType);
             if (Random().NextBoolean())
             {
                 fieldType.OmitNorms = true;

@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
 
             foreach (IndexableField field in DocState.Doc)
             {
-                string fieldName = field.Name();
+                string fieldName = field.Name;
 
                 // Make sure we have a PerField allocated
                 int hashPos = fieldName.GetHashCode() & HashMask;
@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
                     // needs to be more "pluggable" such that if I want
                     // to have a new "thing" my Fields can do, I can
                     // easily add it
-                    FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.FieldType());
+                    FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.FieldType);
 
                     fp = new DocFieldProcessorPerField(this, fi);
                     fp.Next = FieldHash[hashPos];
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
                 {
                     // need to addOrUpdate so that FieldInfos can update globalFieldNumbers
                     // with the correct DocValue type (LUCENE-5192)
-                    FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.FieldType());
+                    FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.FieldType);
                     Debug.Assert(fi == fp.FieldInfo, "should only have updated an existing FieldInfo instance");
                 }
 

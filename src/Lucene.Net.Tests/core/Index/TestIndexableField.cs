@@ -152,30 +152,33 @@ namespace Lucene.Net.Index
                 this.Counter = counter;
             }
 
-            public string Name()
+            public string Name
             {
-                return "f" + Counter;
+                get { return "f" + Counter; }
             }
 
-            public float GetBoost()
+            public float Boost
             {
-                return 1.0f + (float)Random().NextDouble();
+                get { return 1.0f + (float)Random().NextDouble(); }
             }
 
-            public BytesRef BinaryValue()
+            public BytesRef BinaryValue
             {
-                if ((Counter % 10) == 3)
+                get
                 {
-                    var bytes = new byte[10];
-                    for (int idx = 0; idx < bytes.Length; idx++)
+                    if ((Counter % 10) == 3)
                     {
-                        bytes[idx] = (byte)(Counter + idx);
+                        var bytes = new byte[10];
+                        for (int idx = 0; idx < bytes.Length; idx++)
+                        {
+                            bytes[idx] = (byte)(Counter + idx);
+                        }
+                        return new BytesRef(bytes, 0, bytes.Length);
                     }
-                    return new BytesRef(bytes, 0, bytes.Length);
-                }
-                else
-                {
-                    return null;
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
 
@@ -215,14 +218,14 @@ namespace Lucene.Net.Index
                 get { return null; }
             }
 
-            public IndexableFieldType FieldType()
+            public IndexableFieldType FieldType
             {
-                return fieldType;
+                get { return fieldType; }
             }
 
             public TokenStream GetTokenStream(Analyzer analyzer)
             {
-                return ReaderValue != null ? analyzer.TokenStream(Name(), ReaderValue) : analyzer.TokenStream(Name(), new StringReader(StringValue));
+                return ReaderValue != null ? analyzer.TokenStream(Name, ReaderValue) : analyzer.TokenStream(Name, new StringReader(StringValue));
             }
         }
 
@@ -302,7 +305,7 @@ namespace Lucene.Net.Index
                         if (binary)
                         {
                             Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
-                            BytesRef b = f.BinaryValue();
+                            BytesRef b = f.BinaryValue;
                             Assert.IsNotNull(b);
                             Assert.AreEqual(10, b.Length);
                             for (int idx = 0; idx < 10; idx++)

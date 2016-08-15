@@ -480,28 +480,23 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public string Name()
+        public string Name
         {
-            return Name_Renamed;
+            get { return Name_Renamed; }
         }
 
         /// <summary>
-        /// {@inheritDoc}
-        /// <p>
-        /// The default value is <code>1.0f</code> (no boost). </summary>
-        /// <seealso> cref= #setBoost(float) </seealso>
-        public float GetBoost()
-        {
-            return Boost_Renamed;
-        }
-
-        /// <summary>
-        /// Sets the boost factor on this field. </summary>
+        /// Gets or sets the boost factor on this field. </summary>
+        /// <remarks>The default value is <code>1.0f</code> (no boost).</remarks>
         /// <exception cref="IllegalArgumentException"> if this field is not indexed,
         ///         or if it omits norms. </exception>
         /// <seealso> cref= #boost() </seealso>
         public virtual float Boost
         {
+            get
+            {
+                return Boost_Renamed;
+            }
             set
             {
                 if (value != 1.0f)
@@ -538,15 +533,18 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public BytesRef BinaryValue()
+        public BytesRef BinaryValue
         {
-            if (FieldsData is BytesRef)
+            get
             {
-                return (BytesRef)FieldsData;
-            }
-            else
-            {
-                return null;
+                if (FieldsData is BytesRef)
+                {
+                    return (BytesRef)FieldsData;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -571,18 +569,18 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns the <seealso cref="FieldType"/> for this field. </summary>
-        public IndexableFieldType FieldType()
+        public IndexableFieldType FieldType
         {
-            return Type;
+            get { return Type; }
         }
 
         public TokenStream GetTokenStream(Analyzer analyzer)
         {
-            if (!((FieldType)FieldType()).Indexed)
+            if (!((FieldType)FieldType).Indexed)
             {
                 return null;
             }
-            FieldType.NumericType? numericType = ((FieldType)FieldType()).NumericTypeValue;
+            FieldType.NumericType? numericType = ((FieldType)FieldType).NumericTypeValue;
             if (numericType != null)
             {
                 if (!(InternalTokenStream is NumericTokenStream))
@@ -618,7 +616,7 @@ namespace Lucene.Net.Documents
                 return InternalTokenStream;
             }
 
-            if (!((FieldType)FieldType()).Tokenized)
+            if (!((FieldType)FieldType).Tokenized)
             {
                 if (StringValue == null)
                 {
@@ -640,12 +638,12 @@ namespace Lucene.Net.Documents
             }
             else if (ReaderValue != null)
             {
-                return analyzer.TokenStream(Name(), ReaderValue);
+                return analyzer.TokenStream(Name, ReaderValue);
             }
             else if (StringValue != null)
             {
                 TextReader sr = new StringReader(StringValue);
-                return analyzer.TokenStream(Name(), sr);
+                return analyzer.TokenStream(Name, sr);
             }
 
             throw new System.ArgumentException("Field must have either TokenStream, String, Reader or Number value; got " + this);

@@ -1520,14 +1520,14 @@ namespace Lucene.Net.Index
             IndexReader ir = DirectoryReader.Open(dir);
             Document doc2 = ir.Document(0);
             IndexableField f3 = doc2.GetField("binary");
-            b = f3.BinaryValue().Bytes;
+            b = f3.BinaryValue.Bytes;
             Assert.IsTrue(b != null);
             Assert.AreEqual(17, b.Length, 17);
             Assert.AreEqual(87, b[0]);
 
-            Assert.IsTrue(ir.Document(0).GetField("binary").BinaryValue() != null);
-            Assert.IsTrue(ir.Document(1).GetField("binary").BinaryValue() != null);
-            Assert.IsTrue(ir.Document(2).GetField("binary").BinaryValue() != null);
+            Assert.IsTrue(ir.Document(0).GetField("binary").BinaryValue != null);
+            Assert.IsTrue(ir.Document(1).GetField("binary").BinaryValue != null);
+            Assert.IsTrue(ir.Document(2).GetField("binary").BinaryValue != null);
 
             Assert.AreEqual("value", ir.Document(0).Get("string"));
             Assert.AreEqual("value", ir.Document(1).Get("string"));
