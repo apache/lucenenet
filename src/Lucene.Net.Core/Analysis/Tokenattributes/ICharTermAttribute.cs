@@ -75,6 +75,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
         ICharTermAttribute SetEmpty();
 
         // the following methods are redefined to get rid of IOException declaration:
+		
+        /// <summary>
+        /// Appends the contents of the {@code ICharSequence} to this character sequence.
+        /// <p>The characters of the {@code ICharSequence} argument are appended, in order, increasing the length of
+        /// this sequence by the length of the argument. If argument is {@code null}, then the four
+        /// characters {@code "null"} are appended.
+        /// </summary>
         ICharTermAttribute Append(ICharSequence csq);
 
         ICharTermAttribute Append(ICharSequence csq, int start, int end);
@@ -106,5 +113,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         /// characters {@code "null"} are appended.
         /// </summary>
         ICharTermAttribute Append(ICharTermAttribute termAtt);
+
+        ICharSequence SubSequence(int start, int end);
     }
 }

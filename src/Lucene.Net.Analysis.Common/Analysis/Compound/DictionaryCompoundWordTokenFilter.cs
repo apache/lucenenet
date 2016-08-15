@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Compound
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Compound
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// A <seealso cref="TokenFilter"/> that decomposes compound words found in many Germanic languages.
     /// <para>
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Compound
             }
         }
 
-        protected internal override void Decompose()
+        protected override void Decompose()
         {
             int len = termAtt.Length;
             for (int i = 0; i <= len - this.minSubwordSize; ++i)

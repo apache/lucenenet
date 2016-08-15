@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.compound
-{
+﻿using Lucene.Net.Analysis.Util;
+using System.IO;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Compound
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,43 +21,37 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Dictionary compound filter factory is working.
+    /// </summary>
+    public class TestDictionaryCompoundWordTokenFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Ensure the filter actually decompounds text.
+        /// </summary>
+        [Test]
+        public virtual void TestDecompounding()
+        {
+            TextReader reader = new StringReader("I like to play softball");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("DictionaryCompoundWord", "dictionary", "compoundDictionary.txt").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "I", "like", "to", "play", "softball", "soft", "ball" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-	/// <summary>
-	/// Simple tests to ensure the Dictionary compound filter factory is working.
-	/// </summary>
-	public class TestDictionaryCompoundWordTokenFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Ensure the filter actually decompounds text.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDecompounding() throws Exception
-	  public virtual void testDecompounding()
-	  {
-		Reader reader = new StringReader("I like to play softball");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("DictionaryCompoundWord", "dictionary", "compoundDictionary.txt").create(stream);
-		assertTokenStreamContents(stream, new string[] {"I", "like", "to", "play", "softball", "soft", "ball"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("DictionaryCompoundWord", "dictionary", "compoundDictionary.txt", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("DictionaryCompoundWord", "dictionary", "compoundDictionary.txt", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

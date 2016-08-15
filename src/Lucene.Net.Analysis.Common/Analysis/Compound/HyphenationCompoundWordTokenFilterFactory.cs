@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Compound.Hyphenation;
+﻿using Lucene.Net.Analysis.Compound.Hyphenation;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Analysis.Compound
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -22,92 +23,96 @@ namespace Lucene.Net.Analysis.Compound
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+
     /// <summary>
-	/// Factory for <seealso cref="HyphenationCompoundWordTokenFilter"/>.
-	/// <para>
-	/// This factory accepts the following parameters:
-	/// <ul>
-	///  <li><code>hyphenator</code> (mandatory): path to the FOP xml hyphenation pattern. 
-	///  See <a href="http://offo.sourceforge.net/hyphenation/">http://offo.sourceforge.net/hyphenation/</a>.
-	///  <li><code>encoding</code> (optional): encoding of the xml hyphenation file. defaults to UTF-8.
-	///  <li><code>dictionary</code> (optional): dictionary of words. defaults to no dictionary.
-	///  <li><code>minWordSize</code> (optional): minimal word length that gets decomposed. defaults to 5.
-	///  <li><code>minSubwordSize</code> (optional): minimum length of subwords. defaults to 2.
-	///  <li><code>maxSubwordSize</code> (optional): maximum length of subwords. defaults to 15.
-	///  <li><code>onlyLongestMatch</code> (optional): if true, adds only the longest matching subword 
-	///    to the stream. defaults to false.
-	/// </ul>
-	/// </para>
-	/// <para>
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_hyphncomp" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.HyphenationCompoundWordTokenFilterFactory" hyphenator="hyphenator.xml" encoding="UTF-8"
-	///         dictionary="dictionary.txt" minWordSize="5" minSubwordSize="2" maxSubwordSize="15" onlyLongestMatch="false"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// 
-	/// </para>
-	/// </summary>
-	/// <seealso cref= HyphenationCompoundWordTokenFilter </seealso>
-	public class HyphenationCompoundWordTokenFilterFactory : TokenFilterFactory, ResourceLoaderAware
-	{
-	  private CharArraySet dictionary;
-	  private HyphenationTree hyphenator;
-	  private readonly string dictFile;
-	  private readonly string hypFile;
-	  private readonly string encoding;
-	  private readonly int minWordSize;
-	  private readonly int minSubwordSize;
-	  private readonly int maxSubwordSize;
-	  private readonly bool onlyLongestMatch;
+    /// Factory for <seealso cref="HyphenationCompoundWordTokenFilter"/>.
+    /// <para>
+    /// This factory accepts the following parameters:
+    /// <ul>
+    ///  <li><code>hyphenator</code> (mandatory): path to the FOP xml hyphenation pattern. 
+    ///  See <a href="http://offo.sourceforge.net/hyphenation/">http://offo.sourceforge.net/hyphenation/</a>.
+    ///  <li><code>encoding</code> (optional): encoding of the xml hyphenation file. defaults to UTF-8.
+    ///  <li><code>dictionary</code> (optional): dictionary of words. defaults to no dictionary.
+    ///  <li><code>minWordSize</code> (optional): minimal word length that gets decomposed. defaults to 5.
+    ///  <li><code>minSubwordSize</code> (optional): minimum length of subwords. defaults to 2.
+    ///  <li><code>maxSubwordSize</code> (optional): maximum length of subwords. defaults to 15.
+    ///  <li><code>onlyLongestMatch</code> (optional): if true, adds only the longest matching subword 
+    ///    to the stream. defaults to false.
+    /// </ul>
+    /// </para>
+    /// <para>
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_hyphncomp" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.WhitespaceTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.HyphenationCompoundWordTokenFilterFactory" hyphenator="hyphenator.xml" encoding="UTF-8"
+    ///         dictionary="dictionary.txt" minWordSize="5" minSubwordSize="2" maxSubwordSize="15" onlyLongestMatch="false"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// 
+    /// </para>
+    /// </summary>
+    /// <seealso cref= HyphenationCompoundWordTokenFilter </seealso>
+    public class HyphenationCompoundWordTokenFilterFactory : TokenFilterFactory, IResourceLoaderAware
+    {
+        private CharArraySet dictionary;
+        private HyphenationTree hyphenator;
+        private readonly string dictFile;
+        private readonly string hypFile;
+        private readonly string encoding;
+        private readonly int minWordSize;
+        private readonly int minSubwordSize;
+        private readonly int maxSubwordSize;
+        private readonly bool onlyLongestMatch;
 
-	  /// <summary>
-	  /// Creates a new HyphenationCompoundWordTokenFilterFactory </summary>
-	  public HyphenationCompoundWordTokenFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		assureMatchVersion();
-		dictFile = get(args, "dictionary");
-		encoding = get(args, "encoding");
-		hypFile = require(args, "hyphenator");
-		minWordSize = getInt(args, "minWordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE);
-		minSubwordSize = getInt(args, "minSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE);
-		maxSubwordSize = getInt(args, "maxSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE);
-		onlyLongestMatch = getBoolean(args, "onlyLongestMatch", false);
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+        /// <summary>
+        /// Creates a new HyphenationCompoundWordTokenFilterFactory </summary>
+        public HyphenationCompoundWordTokenFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            AssureMatchVersion();
+            dictFile = Get(args, "dictionary");
+            encoding = Get(args, "encoding");
+            hypFile = Require(args, "hyphenator"); // LUCENENET TODO: Not sure what to do with this
+            minWordSize = GetInt(args, "minWordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE);
+            minSubwordSize = GetInt(args, "minSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE);
+            maxSubwordSize = GetInt(args, "maxSubwordSize", CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE);
+            onlyLongestMatch = GetBoolean(args, "onlyLongestMatch", false);
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  public virtual void Inform(ResourceLoader loader)
-	  {
-		InputStream stream = null;
-		try
-		{
-		  if (dictFile != null) // the dictionary can be empty.
-		  {
-			dictionary = getWordSet(loader, dictFile, false);
-		  }
-		  // TODO: Broken, because we cannot resolve real system id
-		  // ResourceLoader should also supply method like ClassLoader to get resource URL
-		  stream = loader.openResource(hypFile);
-		  InputSource @is = new InputSource(stream);
-		  @is.Encoding = encoding; // if it's null let xml parser decide
-		  @is.SystemId = hypFile;
-		  hyphenator = HyphenationCompoundWordTokenFilter.getHyphenationTree(@is);
-		}
-		finally
-		{
-		  IOUtils.CloseWhileHandlingException(stream);
-		}
-	  }
+        public virtual void Inform(IResourceLoader loader)
+        {
+            Stream stream = null;
+            try
+            {
+                if (dictFile != null) // the dictionary can be empty.
+                {
+                    dictionary = GetWordSet(loader, dictFile, false);
+                }
+                // TODO: Broken, because we cannot resolve real system id
+                // ResourceLoader should also supply method like ClassLoader to get resource URL
+                stream = loader.OpenResource(hypFile);
+                //InputSource @is = new InputSource(stream);
+                //@is.Encoding = encoding; // if it's null let xml parser decide
+                //@is.SystemId = hypFile;
 
-	  public override TokenStream Create(TokenStream input)
-	  {
-		return new HyphenationCompoundWordTokenFilter(luceneMatchVersion, input, hyphenator, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch);
-	  }
-	}
+                var xmlEncoding = string.IsNullOrEmpty(encoding) ? Encoding.UTF8 : Encoding.GetEncoding(encoding);
 
+                hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(stream, xmlEncoding);
+
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(stream);
+            }
+        }
+
+        public override TokenStream Create(TokenStream input)
+        {
+            return new HyphenationCompoundWordTokenFilter(luceneMatchVersion, input, hyphenator, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch);
+        }
+    }
 }
