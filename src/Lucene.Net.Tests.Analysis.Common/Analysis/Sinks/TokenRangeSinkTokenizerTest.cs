@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.sinks
-{
+﻿using NUnit.Framework;
+using System;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Sinks
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,45 +21,40 @@
 	 * limitations under the License.
 	 */
 
+    public class TokenRangeSinkTokenizerTest : BaseTokenStreamTestCase
+    {
 
-	using Test = org.junit.Test;
+        [Test]
+        public virtual void Test()
+        {
+            TokenRangeSinkFilter sinkFilter = new TokenRangeSinkFilter(2, 4);
+            string test = "The quick red fox jumped over the lazy brown dogs";
+            TeeSinkTokenFilter tee = new TeeSinkTokenFilter(new MockTokenizer(new StringReader(test), MockTokenizer.WHITESPACE, false));
+            TeeSinkTokenFilter.SinkTokenStream rangeToks = tee.NewSinkTokenStream(sinkFilter);
 
-	public class TokenRangeSinkTokenizerTest : BaseTokenStreamTestCase
-	{
+            int count = 0;
+            tee.Reset();
+            while (tee.IncrementToken())
+            {
+                count++;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void test() throws java.io.IOException
-	  public virtual void test()
-	  {
-		TokenRangeSinkFilter sinkFilter = new TokenRangeSinkFilter(2, 4);
-		string test = "The quick red fox jumped over the lazy brown dogs";
-		TeeSinkTokenFilter tee = new TeeSinkTokenFilter(new MockTokenizer(new StringReader(test), MockTokenizer.WHITESPACE, false));
-		TeeSinkTokenFilter.SinkTokenStream rangeToks = tee.newSinkTokenStream(sinkFilter);
+            int sinkCount = 0;
+            rangeToks.Reset();
+            while (rangeToks.IncrementToken())
+            {
+                sinkCount++;
+            }
 
-		int count = 0;
-		tee.reset();
-		while (tee.incrementToken())
-		{
-		  count++;
-		}
+            assertTrue(count + " does not equal: " + 10, count == 10);
+            assertTrue("rangeToks Size: " + sinkCount + " is not: " + 2, sinkCount == 2);
+        }
 
-		int sinkCount = 0;
-		rangeToks.reset();
-		while (rangeToks.incrementToken())
-		{
-		  sinkCount++;
-		}
-
-		assertTrue(count + " does not equal: " + 10, count == 10);
-		assertTrue("rangeToks Size: " + sinkCount + " is not: " + 2, sinkCount == 2);
-	  }
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test(expected = IllegalArgumentException.class) public void testIllegalArguments() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public virtual void testIllegalArguments()
-	  {
-		new TokenRangeSinkFilter(4, 2);
-	  }
-	}
+        [Test]
+        [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
+        public virtual void TestIllegalArguments()
+        {
+            new TokenRangeSinkFilter(4, 2);
+        }
+    }
 }
