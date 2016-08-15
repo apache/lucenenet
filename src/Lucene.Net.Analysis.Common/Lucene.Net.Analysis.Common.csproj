@@ -271,6 +271,9 @@
     <Compile Include="Analysis\Util\TokenFilterFactory.cs" />
     <Compile Include="Analysis\Util\TokenizerFactory.cs" />
     <Compile Include="Analysis\Util\WordlistLoader.cs" />
+    <Compile Include="Analysis\Wikipedia\WikipediaTokenizer.cs" />
+    <Compile Include="Analysis\Wikipedia\WikipediaTokenizerFactory.cs" />
+    <Compile Include="Analysis\Wikipedia\WikipediaTokenizerImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -169,6 +169,8 @@
     <Compile Include="Analysis\Util\TestRollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\TestSegmentingTokenizerBase.cs" />
     <Compile Include="Analysis\Util\TestWordlistLoader.cs" />
+    <Compile Include="Analysis\Wikipedia\TestWikipediaTokenizerFactory.cs" />
+    <Compile Include="Analysis\Wikipedia\WikipediaTokenizerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
