@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Test]
-        public virtual void testBaseDir()
+        public virtual void TestBaseDir()
         {
             DirectoryInfo @base = CreateTempDir("fsResourceLoaderBase");
             try
@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Test]
-        public virtual void testDelegation()
+        public virtual void TestDelegation()
         {
             IResourceLoader rl = new FilesystemResourceLoader(null, new StringMockResourceLoader("foobar\n"));
             assertEquals("foobar", WordlistLoader.GetLines(rl.OpenResource("template.txt"), Encoding.UTF8).First());
