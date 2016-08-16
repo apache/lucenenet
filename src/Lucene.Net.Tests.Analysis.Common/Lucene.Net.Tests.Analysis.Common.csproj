@@ -96,6 +96,9 @@
     <Compile Include="Analysis\En\TestKStemmer.cs" />
     <Compile Include="Analysis\En\TestPorterStemFilter.cs" />
     <Compile Include="Analysis\En\TestPorterStemFilterFactory.cs" />
+    <Compile Include="Analysis\Es\TestSpanishAnalyzer.cs" />
+    <Compile Include="Analysis\Es\TestSpanishLightStemFilter.cs" />
+    <Compile Include="Analysis\Es\TestSpanishLightStemFilterFactory.cs" />
     <Compile Include="Analysis\Fr\TestFrenchAnalyzer.cs" />
     <Compile Include="Analysis\Fr\TestFrenchLightStemFilter.cs" />
     <Compile Include="Analysis\Fr\TestFrenchLightStemFilterFactory.cs" />
@@ -223,6 +226,7 @@
     <EmbeddedResource Include="Analysis\Fr\frminimaltestdata.zip" />
     <EmbeddedResource Include="Analysis\De\delighttestdata.zip" />
     <EmbeddedResource Include="Analysis\De\deminimaltestdata.zip" />
+    <EmbeddedResource Include="Analysis\Es\eslighttestdata.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

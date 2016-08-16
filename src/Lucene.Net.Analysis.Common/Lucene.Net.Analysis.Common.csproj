@@ -111,6 +111,10 @@
     <Compile Include="Analysis\En\PorterStemFilter.cs" />
     <Compile Include="Analysis\En\PorterStemFilterFactory.cs" />
     <Compile Include="Analysis\En\PorterStemmer.cs" />
+    <Compile Include="Analysis\Es\SpanishAnalyzer.cs" />
+    <Compile Include="Analysis\Es\SpanishLightStemFilter.cs" />
+    <Compile Include="Analysis\Es\SpanishLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Es\SpanishLightStemmer.cs" />
     <Compile Include="Analysis\Fr\FrenchAnalyzer.cs" />
     <Compile Include="Analysis\Fr\FrenchLightStemFilter.cs" />
     <Compile Include="Analysis\Fr\FrenchLightStemFilterFactory.cs" />
@@ -399,6 +403,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\german_stop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Snowball\spanish_stop.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

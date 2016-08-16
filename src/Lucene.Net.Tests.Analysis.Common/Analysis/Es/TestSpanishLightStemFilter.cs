@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.es
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Es
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,73 +21,63 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests for <seealso cref="SpanishLightStemFilter"/>
+    /// </summary>
+    public class TestSpanishLightStemFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.*;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(source, new SpanishLightStemFilter(source));
+            }
+        }
 
-	/// <summary>
-	/// Simple tests for <seealso cref="SpanishLightStemFilter"/>
-	/// </summary>
-	public class TestSpanishLightStemFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        /// <summary>
+        /// Test against a vocabulary from the reference impl </summary>
+        [Test]
+        public virtual void TestVocabulary()
+        {
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("eslighttestdata.zip"), "eslight.txt");
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(source, new SpanishLightStemFilter(source));
-		  }
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+            CheckOneTerm(a, "", "");
+        }
 
-	  /// <summary>
-	  /// Test against a vocabulary from the reference impl </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVocabulary() throws java.io.IOException
-	  public virtual void testVocabulary()
-	  {
-		assertVocabulary(analyzer, getDataFile("eslighttestdata.zip"), "eslight.txt");
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestSpanishLightStemFilter outerInstance;
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestSpanishLightStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-		checkOneTerm(a, "", "");
-	  }
-
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestSpanishLightStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper2(TestSpanishLightStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new SpanishLightStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new SpanishLightStemFilter(tokenizer));
+            }
+        }
+    }
 }
