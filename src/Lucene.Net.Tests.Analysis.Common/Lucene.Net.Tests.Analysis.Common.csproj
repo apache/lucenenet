@@ -77,6 +77,15 @@
     <Compile Include="Analysis\Cz\TestCzechAnalyzer.cs" />
     <Compile Include="Analysis\Cz\TestCzechStemFilterFactory.cs" />
     <Compile Include="Analysis\Cz\TestCzechStemmer.cs" />
+    <Compile Include="Analysis\De\TestGermanAnalyzer.cs" />
+    <Compile Include="Analysis\De\TestGermanLightStemFilter.cs" />
+    <Compile Include="Analysis\De\TestGermanLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\De\TestGermanMinimalStemFilter.cs" />
+    <Compile Include="Analysis\De\TestGermanMinimalStemFilterFactory.cs" />
+    <Compile Include="Analysis\De\TestGermanNormalizationFilter.cs" />
+    <Compile Include="Analysis\De\TestGermanNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\De\TestGermanStemFilter.cs" />
+    <Compile Include="Analysis\De\TestGermanStemFilterFactory.cs" />
     <Compile Include="Analysis\En\TestEnglishAnalyzer.cs" />
     <Compile Include="Analysis\En\TestEnglishMinimalStemFilter.cs" />
     <Compile Include="Analysis\En\TestEnglishMinimalStemFilterFactory.cs" />
@@ -209,6 +218,8 @@
     <EmbeddedResource Include="Analysis\Snowball\TestSnowballVocabData.zip" />
     <EmbeddedResource Include="Analysis\Fr\frlighttestdata.zip" />
     <EmbeddedResource Include="Analysis\Fr\frminimaltestdata.zip" />
+    <EmbeddedResource Include="Analysis\De\delighttestdata.zip" />
+    <EmbeddedResource Include="Analysis\De\deminimaltestdata.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -294,6 +305,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Util\frenchArticles.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\De\data.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

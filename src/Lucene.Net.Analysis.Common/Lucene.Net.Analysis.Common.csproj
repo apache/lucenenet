@@ -74,6 +74,18 @@
     <Compile Include="Analysis\Cz\CzechStemFilter.cs" />
     <Compile Include="Analysis\Cz\CzechStemFilterFactory.cs" />
     <Compile Include="Analysis\Cz\CzechStemmer.cs" />
+    <Compile Include="Analysis\De\GermanAnalyzer.cs" />
+    <Compile Include="Analysis\De\GermanLightStemFilter.cs" />
+    <Compile Include="Analysis\De\GermanLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\De\GermanLightStemmer.cs" />
+    <Compile Include="Analysis\De\GermanMinimalStemFilter.cs" />
+    <Compile Include="Analysis\De\GermanMinimalStemFilterFactory.cs" />
+    <Compile Include="Analysis\De\GermanMinimalStemmer.cs" />
+    <Compile Include="Analysis\De\GermanNormalizationFilter.cs" />
+    <Compile Include="Analysis\De\GermanNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\De\GermanStemFilter.cs" />
+    <Compile Include="Analysis\De\GermanStemFilterFactory.cs" />
+    <Compile Include="Analysis\De\GermanStemmer.cs" />
     <Compile Include="Analysis\En\EnglishAnalyzer.cs" />
     <Compile Include="Analysis\En\EnglishMinimalStemFilter.cs" />
     <Compile Include="Analysis\En\EnglishMinimalStemFilterFactory.cs" />
@@ -379,6 +391,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\french_stop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Snowball\german_stop.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
