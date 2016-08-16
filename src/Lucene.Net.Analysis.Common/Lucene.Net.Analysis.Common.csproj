@@ -94,6 +94,15 @@
     <Compile Include="Analysis\En\PorterStemFilter.cs" />
     <Compile Include="Analysis\En\PorterStemFilterFactory.cs" />
     <Compile Include="Analysis\En\PorterStemmer.cs" />
+    <Compile Include="Analysis\Fr\FrenchAnalyzer.cs" />
+    <Compile Include="Analysis\Fr\FrenchLightStemFilter.cs" />
+    <Compile Include="Analysis\Fr\FrenchLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Fr\FrenchLightStemmer.cs" />
+    <Compile Include="Analysis\Fr\FrenchMinimalStemFilter.cs" />
+    <Compile Include="Analysis\Fr\FrenchMinimalStemFilterFactory.cs" />
+    <Compile Include="Analysis\Fr\FrenchMinimalStemmer.cs" />
+    <Compile Include="Analysis\Fr\FrenchStemFilter.cs" />
+    <Compile Include="Analysis\Fr\FrenchStemmer.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\CapitalizationFilter.cs" />
@@ -257,6 +266,8 @@
     <Compile Include="Analysis\Util\CharArraySet.cs" />
     <Compile Include="Analysis\Util\CharFilterFactory.cs" />
     <Compile Include="Analysis\Util\ClasspathResourceLoader.cs" />
+    <Compile Include="Analysis\Util\ElisionFilter.cs" />
+    <Compile Include="Analysis\Util\ElisionFilterFactory.cs" />
     <Compile Include="Analysis\Util\FilteringTokenFilter.cs" />
     <Compile Include="Analysis\Util\MultiTermAwareComponent.cs" />
     <Compile Include="Analysis\Util\OpenStringBuilder.cs" />
@@ -365,6 +376,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Tr\stopwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Snowball\french_stop.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

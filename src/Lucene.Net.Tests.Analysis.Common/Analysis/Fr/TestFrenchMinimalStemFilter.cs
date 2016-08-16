@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.fr
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Fr
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,124 +23,108 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests for <seealso cref="FrenchMinimalStemFilter"/>
+    /// </summary>
+    public class TestFrenchMinimalStemFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.*;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(source, new FrenchMinimalStemFilter(source));
+            }
+        }
 
-	/// <summary>
-	/// Simple tests for <seealso cref="FrenchMinimalStemFilter"/>
-	/// </summary>
-	public class TestFrenchMinimalStemFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        /// <summary>
+        /// Test some examples from the paper </summary>
+        [Test]
+        public virtual void TestExamples()
+        {
+            CheckOneTerm(analyzer, "chevaux", "cheval");
+            CheckOneTerm(analyzer, "hiboux", "hibou");
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+            CheckOneTerm(analyzer, "chantés", "chant");
+            CheckOneTerm(analyzer, "chanter", "chant");
+            CheckOneTerm(analyzer, "chante", "chant");
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(source, new FrenchMinimalStemFilter(source));
-		  }
-	  }
+            CheckOneTerm(analyzer, "baronnes", "baron");
+            CheckOneTerm(analyzer, "barons", "baron");
+            CheckOneTerm(analyzer, "baron", "baron");
+        }
 
-	  /// <summary>
-	  /// Test some examples from the paper </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExamples() throws java.io.IOException
-	  public virtual void testExamples()
-	  {
-		checkOneTerm(analyzer, "chevaux", "cheval");
-		checkOneTerm(analyzer, "hiboux", "hibou");
+        [Test]
+        public virtual void TestKeyword()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("chevaux"), false);
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
+            CheckOneTerm(a, "chevaux", "chevaux");
+        }
 
-		checkOneTerm(analyzer, "chantés", "chant");
-		checkOneTerm(analyzer, "chanter", "chant");
-		checkOneTerm(analyzer, "chante", "chant");
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestFrenchMinimalStemFilter outerInstance;
 
-		checkOneTerm(analyzer, "baronnes", "baron");
-		checkOneTerm(analyzer, "barons", "baron");
-		checkOneTerm(analyzer, "baron", "baron");
-	  }
+            private CharArraySet exclusionSet;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeyword() throws java.io.IOException
-	  public virtual void testKeyword()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.util.CharArraySet exclusionSet = new org.apache.lucene.analysis.util.CharArraySet(TEST_VERSION_CURRENT, asSet("chevaux"), false);
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("chevaux"), false);
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
-		checkOneTerm(a, "chevaux", "chevaux");
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestFrenchMinimalStemFilter outerInstance, CharArraySet exclusionSet)
+            {
+                this.outerInstance = outerInstance;
+                this.exclusionSet = exclusionSet;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestFrenchMinimalStemFilter outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
+                return new TokenStreamComponents(source, new FrenchMinimalStemFilter(sink));
+            }
+        }
 
-		  private CharArraySet exclusionSet;
+        /// <summary>
+        /// Test against a vocabulary from the reference impl </summary>
+        [Test]
+        public virtual void TestVocabulary()
+        {
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("frminimaltestdata.zip"), "frminimal.txt");
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper2(TestFrenchMinimalStemFilter outerInstance, CharArraySet exclusionSet)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.exclusionSet = exclusionSet;
-		  }
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
-			return new TokenStreamComponents(source, new FrenchMinimalStemFilter(sink));
-		  }
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
+            CheckOneTerm(a, "", "");
+        }
 
-	  /// <summary>
-	  /// Test against a vocabulary from the reference impl </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVocabulary() throws java.io.IOException
-	  public virtual void testVocabulary()
-	  {
-		assertVocabulary(analyzer, getDataFile("frminimaltestdata.zip"), "frminimal.txt");
-	  }
+        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            private readonly TestFrenchMinimalStemFilter outerInstance;
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
+            public AnalyzerAnonymousInnerClassHelper3(TestFrenchMinimalStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-		checkOneTerm(a, "", "");
-	  }
-
-	  private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-	  {
-		  private readonly TestFrenchMinimalStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper3(TestFrenchMinimalStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new FrenchMinimalStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new FrenchMinimalStemFilter(tokenizer));
+            }
+        }
+    }
 }

@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.fr
-{
+﻿using Lucene.Net.Analysis.Util;
 
-	/*
+namespace Lucene.Net.Analysis.Fr
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +19,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,305 +54,300 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	using org.apache.lucene.analysis.util;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.util.StemmerUtil.*;
+    /// <summary>
+    /// Light Stemmer for French.
+    /// <para>
+    /// This stemmer implements the "UniNE" algorithm in:
+    /// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
+    /// Jacques Savoy
+    /// </para>
+    /// </summary>
+    public class FrenchLightStemmer
+    {
 
-	/// <summary>
-	/// Light Stemmer for French.
-	/// <para>
-	/// This stemmer implements the "UniNE" algorithm in:
-	/// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
-	/// Jacques Savoy
-	/// </para>
-	/// </summary>
-	public class FrenchLightStemmer
-	{
+        public virtual int Stem(char[] s, int len)
+        {
+            if (len > 5 && s[len - 1] == 'x')
+            {
+                if (s[len - 3] == 'a' && s[len - 2] == 'u' && s[len - 4] != 'e')
+                {
+                    s[len - 2] = 'l';
+                }
+                len--;
+            }
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		if (len > 5 && s[len - 1] == 'x')
-		{
-		  if (s[len - 3] == 'a' && s[len - 2] == 'u' && s[len - 4] != 'e')
-		  {
-			s[len - 2] = 'l';
-		  }
-		  len--;
-		}
+            if (len > 3 && s[len - 1] == 'x')
+            {
+                len--;
+            }
 
-		if (len > 3 && s[len - 1] == 'x')
-		{
-		  len--;
-		}
+            if (len > 3 && s[len - 1] == 's')
+            {
+                len--;
+            }
 
-		if (len > 3 && s[len - 1] == 's')
-		{
-		  len--;
-		}
+            if (len > 9 && StemmerUtil.EndsWith(s, len, "issement"))
+            {
+                len -= 6;
+                s[len - 1] = 'r';
+                return Norm(s, len);
+            }
 
-		if (len > 9 && StemmerUtil.EndsWith(s, len, "issement"))
-		{
-		  len -= 6;
-		  s[len - 1] = 'r';
-		  return norm(s, len);
-		}
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "issant"))
+            {
+                len -= 4;
+                s[len - 1] = 'r';
+                return Norm(s, len);
+            }
 
-		if (len > 8 && StemmerUtil.EndsWith(s, len, "issant"))
-		{
-		  len -= 4;
-		  s[len - 1] = 'r';
-		  return norm(s, len);
-		}
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "ement"))
+            {
+                len -= 4;
+                if (len > 3 && StemmerUtil.EndsWith(s, len, "ive"))
+                {
+                    len--;
+                    s[len - 1] = 'f';
+                }
+                return Norm(s, len);
+            }
 
-		if (len > 6 && StemmerUtil.EndsWith(s, len, "ement"))
-		{
-		  len -= 4;
-		  if (len > 3 && StemmerUtil.EndsWith(s, len, "ive"))
-		  {
-			len--;
-			s[len - 1] = 'f';
-		  }
-		  return norm(s, len);
-		}
+            if (len > 11 && StemmerUtil.EndsWith(s, len, "ficatrice"))
+            {
+                len -= 5;
+                s[len - 2] = 'e';
+                s[len - 1] = 'r';
+                return Norm(s, len);
+            }
 
-		if (len > 11 && StemmerUtil.EndsWith(s, len, "ficatrice"))
-		{
-		  len -= 5;
-		  s[len - 2] = 'e';
-		  s[len - 1] = 'r';
-		  return norm(s, len);
-		}
+            if (len > 10 && StemmerUtil.EndsWith(s, len, "ficateur"))
+            {
+                len -= 4;
+                s[len - 2] = 'e';
+                s[len - 1] = 'r';
+                return Norm(s, len);
+            }
 
-		if (len > 10 && StemmerUtil.EndsWith(s, len, "ficateur"))
-		{
-		  len -= 4;
-		  s[len - 2] = 'e';
-		  s[len - 1] = 'r';
-		  return norm(s, len);
-		}
+            if (len > 9 && StemmerUtil.EndsWith(s, len, "catrice"))
+            {
+                len -= 3;
+                s[len - 4] = 'q';
+                s[len - 3] = 'u';
+                s[len - 2] = 'e';
+                //s[len-1] = 'r' <-- unnecessary, already 'r'.
+                return Norm(s, len);
+            }
 
-		if (len > 9 && StemmerUtil.EndsWith(s, len, "catrice"))
-		{
-		  len -= 3;
-		  s[len - 4] = 'q';
-		  s[len - 3] = 'u';
-		  s[len - 2] = 'e';
-		  //s[len-1] = 'r' <-- unnecessary, already 'r'.
-		  return norm(s, len);
-		}
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "cateur"))
+            {
+                len -= 2;
+                s[len - 4] = 'q';
+                s[len - 3] = 'u';
+                s[len - 2] = 'e';
+                s[len - 1] = 'r';
+                return Norm(s, len);
+            }
 
-		if (len > 8 && StemmerUtil.EndsWith(s, len, "cateur"))
-		{
-		  len -= 2;
-		  s[len - 4] = 'q';
-		  s[len - 3] = 'u';
-		  s[len - 2] = 'e';
-		  s[len - 1] = 'r';
-		  return norm(s, len);
-		}
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "atrice"))
+            {
+                len -= 4;
+                s[len - 2] = 'e';
+                s[len - 1] = 'r';
+                return Norm(s, len);
+            }
 
-		if (len > 8 && StemmerUtil.EndsWith(s, len, "atrice"))
-		{
-		  len -= 4;
-		  s[len - 2] = 'e';
-		  s[len - 1] = 'r';
-		  return norm(s, len);
-		}
+            if (len > 7 && StemmerUtil.EndsWith(s, len, "ateur"))
+            {
+                len -= 3;
+                s[len - 2] = 'e';
+                s[len - 1] = 'r';
+                return Norm(s, len);
+            }
 
-		if (len > 7 && StemmerUtil.EndsWith(s, len, "ateur"))
-		{
-		  len -= 3;
-		  s[len - 2] = 'e';
-		  s[len - 1] = 'r';
-		  return norm(s, len);
-		}
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "trice"))
+            {
+                len--;
+                s[len - 3] = 'e';
+                s[len - 2] = 'u';
+                s[len - 1] = 'r';
+            }
 
-		if (len > 6 && StemmerUtil.EndsWith(s, len, "trice"))
-		{
-		  len--;
-		  s[len - 3] = 'e';
-		  s[len - 2] = 'u';
-		  s[len - 1] = 'r';
-		}
+            if (len > 5 && StemmerUtil.EndsWith(s, len, "ième"))
+            {
+                return Norm(s, len - 4);
+            }
 
-		if (len > 5 && StemmerUtil.EndsWith(s, len, "ième"))
-		{
-		  return norm(s, len - 4);
-		}
+            if (len > 7 && StemmerUtil.EndsWith(s, len, "teuse"))
+            {
+                len -= 2;
+                s[len - 1] = 'r';
+                return Norm(s, len);
+            }
 
-		if (len > 7 && StemmerUtil.EndsWith(s, len, "teuse"))
-		{
-		  len -= 2;
-		  s[len - 1] = 'r';
-		  return norm(s, len);
-		}
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "teur"))
+            {
+                len--;
+                s[len - 1] = 'r';
+                return Norm(s, len);
+            }
 
-		if (len > 6 && StemmerUtil.EndsWith(s, len, "teur"))
-		{
-		  len--;
-		  s[len - 1] = 'r';
-		  return norm(s, len);
-		}
+            if (len > 5 && StemmerUtil.EndsWith(s, len, "euse"))
+            {
+                return Norm(s, len - 2);
+            }
 
-		if (len > 5 && StemmerUtil.EndsWith(s, len, "euse"))
-		{
-		  return norm(s, len - 2);
-		}
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "ère"))
+            {
+                len--;
+                s[len - 2] = 'e';
+                return Norm(s, len);
+            }
 
-		if (len > 8 && StemmerUtil.EndsWith(s, len, "ère"))
-		{
-		  len--;
-		  s[len - 2] = 'e';
-		  return norm(s, len);
-		}
+            if (len > 7 && StemmerUtil.EndsWith(s, len, "ive"))
+            {
+                len--;
+                s[len - 1] = 'f';
+                return Norm(s, len);
+            }
 
-		if (len > 7 && StemmerUtil.EndsWith(s, len, "ive"))
-		{
-		  len--;
-		  s[len - 1] = 'f';
-		  return norm(s, len);
-		}
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "folle") || StemmerUtil.EndsWith(s, len, "molle")))
+            {
+                len -= 2;
+                s[len - 1] = 'u';
+                return Norm(s, len);
+            }
 
-		if (len > 4 && (StemmerUtil.EndsWith(s, len, "folle") || StemmerUtil.EndsWith(s, len, "molle")))
-		{
-		  len -= 2;
-		  s[len - 1] = 'u';
-		  return norm(s, len);
-		}
+            if (len > 9 && StemmerUtil.EndsWith(s, len, "nnelle"))
+            {
+                return Norm(s, len - 5);
+            }
 
-		if (len > 9 && StemmerUtil.EndsWith(s, len, "nnelle"))
-		{
-		  return norm(s, len - 5);
-		}
+            if (len > 9 && StemmerUtil.EndsWith(s, len, "nnel"))
+            {
+                return Norm(s, len - 3);
+            }
 
-		if (len > 9 && StemmerUtil.EndsWith(s, len, "nnel"))
-		{
-		  return norm(s, len - 3);
-		}
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "ète"))
+            {
+                len--;
+                s[len - 2] = 'e';
+            }
 
-		if (len > 4 && StemmerUtil.EndsWith(s, len, "ète"))
-		{
-		  len--;
-		  s[len - 2] = 'e';
-		}
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "ique"))
+            {
+                len -= 4;
+            }
 
-		if (len > 8 && StemmerUtil.EndsWith(s, len, "ique"))
-		{
-		  len -= 4;
-		}
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "esse"))
+            {
+                return Norm(s, len - 3);
+            }
 
-		if (len > 8 && StemmerUtil.EndsWith(s, len, "esse"))
-		{
-		  return norm(s, len - 3);
-		}
+            if (len > 7 && StemmerUtil.EndsWith(s, len, "inage"))
+            {
+                return Norm(s, len - 3);
+            }
 
-		if (len > 7 && StemmerUtil.EndsWith(s, len, "inage"))
-		{
-		  return norm(s, len - 3);
-		}
+            if (len > 9 && StemmerUtil.EndsWith(s, len, "isation"))
+            {
+                len -= 7;
+                if (len > 5 && StemmerUtil.EndsWith(s, len, "ual"))
+                {
+                    s[len - 2] = 'e';
+                }
+                return Norm(s, len);
+            }
 
-		if (len > 9 && StemmerUtil.EndsWith(s, len, "isation"))
-		{
-		  len -= 7;
-		  if (len > 5 && StemmerUtil.EndsWith(s, len, "ual"))
-		  {
-			s[len - 2] = 'e';
-		  }
-		  return norm(s, len);
-		}
+            if (len > 9 && StemmerUtil.EndsWith(s, len, "isateur"))
+            {
+                return Norm(s, len - 7);
+            }
 
-		if (len > 9 && StemmerUtil.EndsWith(s, len, "isateur"))
-		{
-		  return norm(s, len - 7);
-		}
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "ation"))
+            {
+                return Norm(s, len - 5);
+            }
 
-		if (len > 8 && StemmerUtil.EndsWith(s, len, "ation"))
-		{
-		  return norm(s, len - 5);
-		}
+            if (len > 8 && StemmerUtil.EndsWith(s, len, "ition"))
+            {
+                return Norm(s, len - 5);
+            }
 
-		if (len > 8 && StemmerUtil.EndsWith(s, len, "ition"))
-		{
-		  return norm(s, len - 5);
-		}
+            return Norm(s, len);
+        }
 
-		return norm(s, len);
-	  }
+        private int Norm(char[] s, int len)
+        {
+            if (len > 4)
+            {
+                for (int i = 0; i < len; i++)
+                {
+                    switch (s[i])
+                    {
+                        case 'à':
+                        case 'á':
+                        case 'â':
+                            s[i] = 'a';
+                            break;
+                        case 'ô':
+                            s[i] = 'o';
+                            break;
+                        case 'è':
+                        case 'é':
+                        case 'ê':
+                            s[i] = 'e';
+                            break;
+                        case 'ù':
+                        case 'û':
+                            s[i] = 'u';
+                            break;
+                        case 'î':
+                            s[i] = 'i';
+                            break;
+                        case 'ç':
+                            s[i] = 'c';
+                            break;
+                    }
+                }
 
-	  private int norm(char[] s, int len)
-	  {
-		if (len > 4)
-		{
-		  for (int i = 0; i < len; i++)
-		  {
-			switch (s[i])
-			{
-			  case 'à':
-			  case 'á':
-			  case 'â':
-				  s[i] = 'a';
-				  break;
-			  case 'ô':
-				  s[i] = 'o';
-				  break;
-			  case 'è':
-			  case 'é':
-			  case 'ê':
-				  s[i] = 'e';
-				  break;
-			  case 'ù':
-			  case 'û':
-				  s[i] = 'u';
-				  break;
-			  case 'î':
-				  s[i] = 'i';
-				  break;
-			  case 'ç':
-				  s[i] = 'c';
-				  break;
-			}
-		  }
+                char ch = s[0];
+                for (int i = 1; i < len; i++)
+                {
+                    if (s[i] == ch && char.IsLetter(ch))
+                    {
+                        len = StemmerUtil.Delete(s, i--, len);
+                    }
+                    else
+                    {
+                        ch = s[i];
+                    }
+                }
+            }
 
-		  char ch = s[0];
-		  for (int i = 1; i < len; i++)
-		  {
-			if (s[i] == ch && char.IsLetter(ch))
-			{
-			  len = StemmerUtil.delete(s, i--, len);
-			}
-			else
-			{
-			  ch = s[i];
-			}
-		  }
-		}
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "ie"))
+            {
+                len -= 2;
+            }
 
-		if (len > 4 && StemmerUtil.EndsWith(s, len, "ie"))
-		{
-		  len -= 2;
-		}
-
-		if (len > 4)
-		{
-			if (s[len - 1] == 'r')
-			{
-				len--;
-			}
-			if (s[len - 1] == 'e')
-			{
-				len--;
-			}
-			if (s[len - 1] == 'e')
-			{
-				len--;
-			}
-			if (s[len - 1] == s[len - 2] && char.IsLetter(s[len - 1]))
-			{
-				len--;
-			}
-		}
-		return len;
-	  }
-	}
-
+            if (len > 4)
+            {
+                if (s[len - 1] == 'r')
+                {
+                    len--;
+                }
+                if (s[len - 1] == 'e')
+                {
+                    len--;
+                }
+                if (s[len - 1] == 'e')
+                {
+                    len--;
+                }
+                if (s[len - 1] == s[len - 2] && char.IsLetter(s[len - 1]))
+                {
+                    len--;
+                }
+            }
+            return len;
+        }
+    }
 }

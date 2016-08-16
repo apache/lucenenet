@@ -1,7 +1,6 @@
-﻿namespace org.apache.lucene.analysis.fr
+﻿namespace Lucene.Net.Analysis.Fr
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +17,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,54 +52,53 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	/// <summary>
-	/// Light Stemmer for French.
-	/// <para>
-	/// This stemmer implements the following algorithm:
-	/// <i>A Stemming procedure and stopword list for general French corpora.</i>
-	/// Jacques Savoy.
-	/// </para>
-	/// </summary>
-	public class FrenchMinimalStemmer
-	{
-	  public virtual int stem(char[] s, int len)
-	  {
-		if (len < 6)
-		{
-		  return len;
-		}
+    /// <summary>
+    /// Light Stemmer for French.
+    /// <para>
+    /// This stemmer implements the following algorithm:
+    /// <i>A Stemming procedure and stopword list for general French corpora.</i>
+    /// Jacques Savoy.
+    /// </para>
+    /// </summary>
+    public class FrenchMinimalStemmer
+    {
+        public virtual int stem(char[] s, int len)
+        {
+            if (len < 6)
+            {
+                return len;
+            }
 
-		if (s[len - 1] == 'x')
-		{
-		  if (s[len - 3] == 'a' && s[len - 2] == 'u')
-		  {
-			s[len - 2] = 'l';
-		  }
-		  return len - 1;
-		}
+            if (s[len - 1] == 'x')
+            {
+                if (s[len - 3] == 'a' && s[len - 2] == 'u')
+                {
+                    s[len - 2] = 'l';
+                }
+                return len - 1;
+            }
 
-		if (s[len - 1] == 's')
-		{
-			len--;
-		}
-		if (s[len - 1] == 'r')
-		{
-			len--;
-		}
-		if (s[len - 1] == 'e')
-		{
-			len--;
-		}
-		if (s[len - 1] == 'é')
-		{
-			len--;
-		}
-		if (s[len - 1] == s[len - 2])
-		{
-			len--;
-		}
-		return len;
-	  }
-	}
-
+            if (s[len - 1] == 's')
+            {
+                len--;
+            }
+            if (s[len - 1] == 'r')
+            {
+                len--;
+            }
+            if (s[len - 1] == 'e')
+            {
+                len--;
+            }
+            if (s[len - 1] == 'é')
+            {
+                len--;
+            }
+            if (s[len - 1] == s[len - 2])
+            {
+                len--;
+            }
+            return len;
+        }
+    }
 }

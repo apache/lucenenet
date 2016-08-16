@@ -84,6 +84,11 @@
     <Compile Include="Analysis\En\TestKStemmer.cs" />
     <Compile Include="Analysis\En\TestPorterStemFilter.cs" />
     <Compile Include="Analysis\En\TestPorterStemFilterFactory.cs" />
+    <Compile Include="Analysis\Fr\TestFrenchAnalyzer.cs" />
+    <Compile Include="Analysis\Fr\TestFrenchLightStemFilter.cs" />
+    <Compile Include="Analysis\Fr\TestFrenchLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Fr\TestFrenchMinimalStemFilter.cs" />
+    <Compile Include="Analysis\Fr\TestFrenchMinimalStemFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestCapitalizationFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestCapitalizationFilterFactory.cs" />
@@ -175,6 +180,8 @@
     <Compile Include="Analysis\Util\TestCharArrayMap.cs" />
     <Compile Include="Analysis\Util\TestCharArraySet.cs" />
     <Compile Include="Analysis\Util\TestCharTokenizers.cs" />
+    <Compile Include="Analysis\Util\TestElision.cs" />
+    <Compile Include="Analysis\Util\TestElisionFilterFactory.cs" />
     <Compile Include="Analysis\Util\TestRollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\TestSegmentingTokenizerBase.cs" />
     <Compile Include="Analysis\Util\TestWordlistLoader.cs" />
@@ -200,6 +207,8 @@
     <EmbeddedResource Include="Analysis\En\porterTestData.zip" />
     <EmbeddedResource Include="Analysis\En\kstemTestData.zip" />
     <EmbeddedResource Include="Analysis\Snowball\TestSnowballVocabData.zip" />
+    <EmbeddedResource Include="Analysis\Fr\frlighttestdata.zip" />
+    <EmbeddedResource Include="Analysis\Fr\frminimaltestdata.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -282,6 +291,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Miscellaneous\keep-1.txt" />
     <EmbeddedResource Include="Analysis\Miscellaneous\keep-2.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Util\frenchArticles.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

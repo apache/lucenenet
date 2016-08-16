@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.util
-{
+﻿using NUnit.Framework;
+using System.Collections.Generic;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Util
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,68 +21,61 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the French elision filter factory is working.
+    /// </summary>
+    public class TestElisionFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Ensure the filter actually normalizes text.
+        /// </summary>
+        [Test]
+        public virtual void TestElision()
+        {
+            TextReader reader = new StringReader("l'avion");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Elision", "articles", "frenchArticles.txt").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "avion" });
+        }
 
+        /// <summary>
+        /// Test creating an elision filter without specifying any articles
+        /// </summary>
+        [Test]
+        public virtual void TestDefaultArticles()
+        {
+            TextReader reader = new StringReader("l'avion");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Elision").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "avion" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the French elision filter factory is working.
-	/// </summary>
-	public class TestElisionFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Ensure the filter actually normalizes text.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testElision() throws Exception
-	  public virtual void testElision()
-	  {
-		Reader reader = new StringReader("l'avion");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Elision", "articles", "frenchArticles.txt").create(stream);
-		assertTokenStreamContents(stream, new string[] {"avion"});
-	  }
+        /// <summary>
+        /// Test setting ignoreCase=true
+        /// </summary>
+        [Test]
+        public virtual void TestCaseInsensitive()
+        {
+            TextReader reader = new StringReader("L'avion");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Elision", "articles", "frenchArticles.txt", "ignoreCase", "true").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "avion" });
+        }
 
-	  /// <summary>
-	  /// Test creating an elision filter without specifying any articles
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDefaultArticles() throws Exception
-	  public virtual void testDefaultArticles()
-	  {
-		Reader reader = new StringReader("l'avion");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Elision").create(stream);
-		assertTokenStreamContents(stream, new string[] {"avion"});
-	  }
-
-	  /// <summary>
-	  /// Test setting ignoreCase=true
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCaseInsensitive() throws Exception
-	  public virtual void testCaseInsensitive()
-	  {
-		Reader reader = new StringReader("L'avion");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Elision", "articles", "frenchArticles.txt", "ignoreCase", "true").create(stream);
-		assertTokenStreamContents(stream, new string[] {"avion"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("Elision", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("Elision", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }
