@@ -208,6 +208,12 @@
     <Compile Include="Analysis\Query\QueryAutoStopWordAnalyzer.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\ReverseStringFilterFactory.cs" />
+    <Compile Include="Analysis\Ru\RussianAnalyzer.cs" />
+    <Compile Include="Analysis\Ru\RussianLetterTokenizer.cs" />
+    <Compile Include="Analysis\Ru\RussianLetterTokenizerFactory.cs" />
+    <Compile Include="Analysis\Ru\RussianLightStemFilter.cs" />
+    <Compile Include="Analysis\Ru\RussianLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Ru\RussianLightStemmer.cs" />
     <Compile Include="Analysis\Shingle\ShingleAnalyzerWrapper.cs" />
     <Compile Include="Analysis\Shingle\ShingleFilter.cs" />
     <Compile Include="Analysis\Shingle\ShingleFilterFactory.cs" />
@@ -410,6 +416,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\english_stop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Snowball\russian_stop.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

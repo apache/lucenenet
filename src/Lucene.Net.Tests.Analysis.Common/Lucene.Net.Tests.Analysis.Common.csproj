@@ -162,6 +162,11 @@
     <Compile Include="Analysis\Query\QueryAutoStopWordAnalyzerTest.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
+    <Compile Include="Analysis\Ru\TestRussianAnalyzer.cs" />
+    <Compile Include="Analysis\Ru\TestRussianFilters.cs" />
+    <Compile Include="Analysis\Ru\TestRussianLetterTokenizer.cs" />
+    <Compile Include="Analysis\Ru\TestRussianLightStemFilter.cs" />
+    <Compile Include="Analysis\Ru\TestRussianLightStemFilterFactory.cs" />
     <Compile Include="Analysis\Shingle\ShingleAnalyzerWrapperTest.cs" />
     <Compile Include="Analysis\Shingle\ShingleFilterTest.cs" />
     <Compile Include="Analysis\Shingle\TestShingleFilterFactory.cs" />
@@ -228,6 +233,7 @@
     <EmbeddedResource Include="Analysis\De\delighttestdata.zip" />
     <EmbeddedResource Include="Analysis\De\deminimaltestdata.zip" />
     <EmbeddedResource Include="Analysis\Es\eslighttestdata.zip" />
+    <EmbeddedResource Include="Analysis\Ru\rulighttestdata.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

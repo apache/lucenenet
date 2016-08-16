@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.ru
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Ru
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,42 +21,36 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Russian filter factories are working.
+    /// </summary>
+    public class TestRussianFilters : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Test RussianLetterTokenizerFactory
+        /// </summary>
+        [Test]
+        public virtual void TestTokenizer()
+        {
+            TextReader reader = new StringReader("Вместе с тем о силе электромагнитной 100");
+            TokenStream stream = TokenizerFactory("RussianLetter").Create(reader);
+            AssertTokenStreamContents(stream, new string[] { "Вместе", "с", "тем", "о", "силе", "электромагнитной", "100" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-	/// <summary>
-	/// Simple tests to ensure the Russian filter factories are working.
-	/// </summary>
-	public class TestRussianFilters : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Test RussianLetterTokenizerFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTokenizer() throws Exception
-	  public virtual void testTokenizer()
-	  {
-		Reader reader = new StringReader("Вместе с тем о силе электромагнитной 100");
-		TokenStream stream = tokenizerFactory("RussianLetter").create(reader);
-		assertTokenStreamContents(stream, new string[] {"Вместе", "с", "тем", "о", "силе", "электромагнитной", "100"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenizerFactory("RussianLetter", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenizerFactory("RussianLetter", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }
