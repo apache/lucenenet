@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.analysis.cn
-{
+﻿using System;
+using System.IO;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Util;
 
-	/*
+namespace Lucene.Net.Analysis.Cn
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,42 +22,36 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Chinese tokenizer factory is working.
+    /// </summary>
+    public class TestChineseTokenizerFactory : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Ensure the tokenizer actually tokenizes chinese text correctly
+        /// </summary>
+        [Test]
+        public virtual void TestTokenizer()
+        {
+            TextReader reader = new StringReader("我是中国人");
+            TokenStream stream = TokenizerFactory("Chinese").Create(reader);
+            AssertTokenStreamContents(stream, new string[] { "我", "是", "中", "国", "人" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-	/// <summary>
-	/// Simple tests to ensure the Chinese tokenizer factory is working.
-	/// </summary>
-	public class TestChineseTokenizerFactory : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Ensure the tokenizer actually tokenizes chinese text correctly
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTokenizer() throws Exception
-	  public virtual void testTokenizer()
-	  {
-		Reader reader = new StringReader("我是中国人");
-		TokenStream stream = tokenizerFactory("Chinese").create(reader);
-		assertTokenStreamContents(stream, new string[] {"我", "是", "中", "国", "人"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenizerFactory("Chinese", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenizerFactory("Chinese", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

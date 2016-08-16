@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.Globalization;
 
-namespace org.apache.lucene.analysis.cn
+namespace Lucene.Net.Analysis.Cn
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,85 +24,74 @@ namespace org.apache.lucene.analysis.cn
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> with a stop word table.  
+    /// <ul>
+    /// <li>Numeric tokens are removed.
+    /// <li>English tokens must be larger than 1 character.
+    /// <li>One Chinese character as one Chinese word.
+    /// </ul>
+    /// TO DO:
+    /// <ol>
+    /// <li>Add Chinese stop words, such as \ue400
+    /// <li>Dictionary based Chinese word extraction
+    /// <li>Intelligent Chinese word extraction
+    /// </ol>
+    /// </summary>
+    /// @deprecated (3.1) Use <seealso cref="StopFilter"/> instead, which has the same functionality.
+    /// This filter will be removed in Lucene 5.0 
+    [Obsolete("(3.1) Use StopFilter instead, which has the same functionality.")]
+    public sealed class ChineseFilter : TokenFilter
+    {
 
-	using StopFilter = org.apache.lucene.analysis.core.StopFilter;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using Version = org.apache.lucene.util.Version;
-
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> with a stop word table.  
-	/// <ul>
-	/// <li>Numeric tokens are removed.
-	/// <li>English tokens must be larger than 1 character.
-	/// <li>One Chinese character as one Chinese word.
-	/// </ul>
-	/// TO DO:
-	/// <ol>
-	/// <li>Add Chinese stop words, such as \ue400
-	/// <li>Dictionary based Chinese word extraction
-	/// <li>Intelligent Chinese word extraction
-	/// </ol>
-	/// </summary>
-	/// @deprecated (3.1) Use <seealso cref="StopFilter"/> instead, which has the same functionality.
-	/// This filter will be removed in Lucene 5.0 
-	[Obsolete("(3.1) Use <seealso cref="StopFilter"/> instead, which has the same functionality.")]
-	public sealed class ChineseFilter : TokenFilter
-	{
+        // Only English now, Chinese to be added later.
+        public static readonly string[] STOP_WORDS = new string[] { "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with" };
 
 
-		// Only English now, Chinese to be added later.
-		public static readonly string[] STOP_WORDS = new string[] {"and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"};
+        private CharArraySet stopTable;
 
+        private ICharTermAttribute termAtt;
 
-		private CharArraySet stopTable;
+        public ChineseFilter(TokenStream @in)
+            : base(@in)
+        {
 
-		private CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+            stopTable = new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList(STOP_WORDS), false);
+            termAtt = AddAttribute<ICharTermAttribute>();
+        }
+        public override bool IncrementToken()
+        {
 
-		public ChineseFilter(TokenStream @in) : base(@in)
-		{
+            while (input.IncrementToken())
+            {
+                char[] text = termAtt.Buffer();
+                int termLength = termAtt.Length;
 
-			stopTable = new CharArraySet(Version.LUCENE_CURRENT, Arrays.asList(STOP_WORDS), false);
-		}
+                // why not key off token type here assuming ChineseTokenizer comes first?
+                if (!stopTable.Contains(text, 0, termLength))
+                {
+                    switch (char.GetUnicodeCategory(text[0]))
+                    {
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-		public override bool incrementToken()
-		{
+                        case UnicodeCategory.LowercaseLetter:
+                        case UnicodeCategory.UppercaseLetter:
 
-			while (input.incrementToken())
-			{
-				char[] text = termAtt.buffer();
-				int termLength = termAtt.length();
+                            // English word/token should larger than 1 character.
+                            if (termLength > 1)
+                            {
+                                return true;
+                            }
+                            break;
+                        case UnicodeCategory.OtherLetter:
 
-			  // why not key off token type here assuming ChineseTokenizer comes first?
-				if (!stopTable.contains(text, 0, termLength))
-				{
-					switch (char.getType(text[0]))
-					{
+                            // One Chinese character as one Chinese word.
+                            // Chinese word extraction to be added later here.
 
-					case char.LOWERCASE_LETTER:
-					case char.UPPERCASE_LETTER:
-
-						// English word/token should larger than 1 character.
-						if (termLength > 1)
-						{
-							return true;
-						}
-						break;
-					case char.OTHER_LETTER:
-
-						// One Chinese character as one Chinese word.
-						// Chinese word extraction to be added later here.
-
-						return true;
-					}
-
-				}
-
-			}
-			return false;
-		}
-
-	}
+                            return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
 }

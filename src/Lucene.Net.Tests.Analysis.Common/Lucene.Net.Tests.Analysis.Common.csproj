@@ -54,6 +54,9 @@
     <Compile Include="Analysis\CharFilters\TestHTMLStripCharFilterFactory.cs" />
     <Compile Include="Analysis\CharFilters\TestMappingCharFilter.cs" />
     <Compile Include="Analysis\CharFilters\TestMappingCharFilterFactory.cs" />
+    <Compile Include="Analysis\Cn\TestChineseFilterFactory.cs" />
+    <Compile Include="Analysis\Cn\TestChineseTokenizer.cs" />
+    <Compile Include="Analysis\Cn\TestChineseTokenizerFactory.cs" />
     <Compile Include="Analysis\CommonGrams\CommonGramsFilterTest.cs" />
     <Compile Include="Analysis\CommonGrams\TestCommonGramsFilterFactory.cs" />
     <Compile Include="Analysis\CommonGrams\TestCommonGramsQueryFilterFactory.cs" />

@@ -50,6 +50,11 @@
     <Compile Include="Analysis\CharFilter\MappingCharFilter.cs" />
     <Compile Include="Analysis\CharFilter\MappingCharFilterFactory.cs" />
     <Compile Include="Analysis\CharFilter\NormalizeCharMap.cs" />
+    <Compile Include="Analysis\Cn\ChineseAnalyzer.cs" />
+    <Compile Include="Analysis\Cn\ChineseFilter.cs" />
+    <Compile Include="Analysis\Cn\ChineseFilterFactory.cs" />
+    <Compile Include="Analysis\Cn\ChineseTokenizer.cs" />
+    <Compile Include="Analysis\Cn\ChineseTokenizerFactory.cs" />
     <Compile Include="Analysis\CommonGrams\CommonGramsFilter.cs" />
     <Compile Include="Analysis\CommonGrams\CommonGramsFilterFactory.cs" />
     <Compile Include="Analysis\CommonGrams\CommonGramsQueryFilter.cs" />
