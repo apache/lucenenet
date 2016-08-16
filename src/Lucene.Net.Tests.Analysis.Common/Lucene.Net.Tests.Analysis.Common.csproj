@@ -60,6 +60,13 @@
     <Compile Include="Analysis\CharFilters\TestHTMLStripCharFilterFactory.cs" />
     <Compile Include="Analysis\CharFilters\TestMappingCharFilter.cs" />
     <Compile Include="Analysis\CharFilters\TestMappingCharFilterFactory.cs" />
+    <Compile Include="Analysis\Cjk\TestCJKAnalyzer.cs" />
+    <Compile Include="Analysis\Cjk\TestCJKBigramFilter.cs" />
+    <Compile Include="Analysis\Cjk\TestCJKBigramFilterFactory.cs" />
+    <Compile Include="Analysis\Cjk\TestCJKTokenizer.cs" />
+    <Compile Include="Analysis\Cjk\TestCJKTokenizerFactory.cs" />
+    <Compile Include="Analysis\Cjk\TestCJKWidthFilter.cs" />
+    <Compile Include="Analysis\Cjk\TestCJKWidthFilterFactory.cs" />
     <Compile Include="Analysis\Cn\TestChineseFilterFactory.cs" />
     <Compile Include="Analysis\Cn\TestChineseTokenizer.cs" />
     <Compile Include="Analysis\Cn\TestChineseTokenizerFactory.cs" />

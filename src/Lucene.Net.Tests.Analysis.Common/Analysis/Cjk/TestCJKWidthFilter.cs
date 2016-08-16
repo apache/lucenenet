@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.cjk
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Cjk
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,83 +21,75 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Tests for <seealso cref="CJKWidthFilter"/>
+    /// </summary>
+    public class TestCJKWidthFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-	/// <summary>
-	/// Tests for <seealso cref="CJKWidthFilter"/>
-	/// </summary>
-	public class TestCJKWidthFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(source, new CJKWidthFilter(source));
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        /// <summary>
+        /// Full-width ASCII forms normalized to half-width (basic latin)
+        /// </summary>
+        [Test]
+        public virtual void TestFullWidthASCII()
+        {
+            AssertAnalyzesTo(analyzer, "Ｔｅｓｔ １２３４", new string[] { "Test", "1234" }, new int[] { 0, 5 }, new int[] { 4, 9 });
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(source, new CJKWidthFilter(source));
-		  }
-	  }
+        /// <summary>
+        /// Half-width katakana forms normalized to standard katakana.
+        /// A bit trickier in some cases, since half-width forms are decomposed
+        /// and voice marks need to be recombined with a preceding base form. 
+        /// </summary>
+        [Test]
+        public virtual void TestHalfWidthKana()
+        {
+            AssertAnalyzesTo(analyzer, "ｶﾀｶﾅ", new string[] { "カタカナ" });
+            AssertAnalyzesTo(analyzer, "ｳﾞｨｯﾂ", new string[] { "ヴィッツ" });
+            AssertAnalyzesTo(analyzer, "ﾊﾟﾅｿﾆｯｸ", new string[] { "パナソニック" });
+        }
 
-	  /// <summary>
-	  /// Full-width ASCII forms normalized to half-width (basic latin)
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFullWidthASCII() throws java.io.IOException
-	  public virtual void testFullWidthASCII()
-	  {
-		assertAnalyzesTo(analyzer, "Ｔｅｓｔ １２３４", new string[] {"Test", "1234"}, new int[] {0, 5}, new int[] {4, 9});
-	  }
+        [Test]
+        public virtual void TestRandomData()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
 
-	  /// <summary>
-	  /// Half-width katakana forms normalized to standard katakana.
-	  /// A bit trickier in some cases, since half-width forms are decomposed
-	  /// and voice marks need to be recombined with a preceding base form. 
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testHalfWidthKana() throws java.io.IOException
-	  public virtual void testHalfWidthKana()
-	  {
-		assertAnalyzesTo(analyzer, "ｶﾀｶﾅ", new string[] {"カタカナ"});
-		assertAnalyzesTo(analyzer, "ｳﾞｨｯﾂ", new string[] {"ヴィッツ"});
-		assertAnalyzesTo(analyzer, "ﾊﾟﾅｿﾆｯｸ", new string[] {"パナソニック"});
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomData() throws java.io.IOException
-	  public virtual void testRandomData()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestCJKWidthFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestCJKWidthFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestCJKWidthFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper2(TestCJKWidthFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new CJKWidthFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new CJKWidthFilter(tokenizer));
+            }
+        }
+    }
 }

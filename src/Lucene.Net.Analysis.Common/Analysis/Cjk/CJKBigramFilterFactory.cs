@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.cjk
+namespace Lucene.Net.Analysis.Cjk
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,60 +20,58 @@ namespace org.apache.lucene.analysis.cjk
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="CJKBigramFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_cjk" class="solr.TextField"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.CJKWidthFilterFactory"/&gt;
+    ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
+    ///     &lt;filter class="solr.CJKBigramFilterFactory" 
+    ///       han="true" hiragana="true" 
+    ///       katakana="true" hangul="true" outputUnigrams="false" /&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class CJKBigramFilterFactory : TokenFilterFactory
+    {
+        internal readonly int flags;
+        internal readonly bool outputUnigrams;
 
-	/// <summary>
-	/// Factory for <seealso cref="CJKBigramFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_cjk" class="solr.TextField"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.CJKWidthFilterFactory"/&gt;
-	///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
-	///     &lt;filter class="solr.CJKBigramFilterFactory" 
-	///       han="true" hiragana="true" 
-	///       katakana="true" hangul="true" outputUnigrams="false" /&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class CJKBigramFilterFactory : TokenFilterFactory
-	{
-	  internal readonly int flags;
-	  internal readonly bool outputUnigrams;
+        /// <summary>
+        /// Creates a new CJKBigramFilterFactory </summary>
+        public CJKBigramFilterFactory(IDictionary<string, string> args)
+              : base(args)
+        {
+            int flags = 0;
+            if (GetBoolean(args, "han", true))
+            {
+                flags |= CJKBigramFilter.HAN;
+            }
+            if (GetBoolean(args, "hiragana", true))
+            {
+                flags |= CJKBigramFilter.HIRAGANA;
+            }
+            if (GetBoolean(args, "katakana", true))
+            {
+                flags |= CJKBigramFilter.KATAKANA;
+            }
+            if (GetBoolean(args, "hangul", true))
+            {
+                flags |= CJKBigramFilter.HANGUL;
+            }
+            this.flags = flags;
+            this.outputUnigrams = GetBoolean(args, "outputUnigrams", false);
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new CJKBigramFilterFactory </summary>
-	  public CJKBigramFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		int flags = 0;
-		if (getBoolean(args, "han", true))
-		{
-		  flags |= CJKBigramFilter.HAN;
-		}
-		if (getBoolean(args, "hiragana", true))
-		{
-		  flags |= CJKBigramFilter.HIRAGANA;
-		}
-		if (getBoolean(args, "katakana", true))
-		{
-		  flags |= CJKBigramFilter.KATAKANA;
-		}
-		if (getBoolean(args, "hangul", true))
-		{
-		  flags |= CJKBigramFilter.HANGUL;
-		}
-		this.flags = flags;
-		this.outputUnigrams = getBoolean(args, "outputUnigrams", false);
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new CJKBigramFilter(input, flags, outputUnigrams);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new CJKBigramFilter(input, flags, outputUnigrams);
+        }
+    }
 }

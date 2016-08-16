@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.cjk
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using System;
 
-	/*
+namespace Lucene.Net.Analysis.Cjk
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,96 +21,88 @@
 	 * limitations under the License.
 	 */
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using StemmerUtil = org.apache.lucene.analysis.util.StemmerUtil;
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that normalizes CJK width differences:
+    /// <ul>
+    ///   <li>Folds fullwidth ASCII variants into the equivalent basic latin
+    ///   <li>Folds halfwidth Katakana variants into the equivalent kana
+    /// </ul>
+    /// <para>
+    /// NOTE: this filter can be viewed as a (practical) subset of NFKC/NFKD
+    /// Unicode normalization. See the normalization support in the ICU package
+    /// for full normalization.
+    /// </para>
+    /// </summary>
+    public sealed class CJKWidthFilter : TokenFilter
+    {
+        private ICharTermAttribute termAtt;
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that normalizes CJK width differences:
-	/// <ul>
-	///   <li>Folds fullwidth ASCII variants into the equivalent basic latin
-	///   <li>Folds halfwidth Katakana variants into the equivalent kana
-	/// </ul>
-	/// <para>
-	/// NOTE: this filter can be viewed as a (practical) subset of NFKC/NFKD
-	/// Unicode normalization. See the normalization support in the ICU package
-	/// for full normalization.
-	/// </para>
-	/// </summary>
-	public sealed class CJKWidthFilter : TokenFilter
-	{
-	  private CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        /* halfwidth kana mappings: 0xFF65-0xFF9D 
+         *
+         * note: 0xFF9C and 0xFF9D are only mapped to 0x3099 and 0x309A
+         * as a fallback when they cannot properly combine with a preceding 
+         * character into a composed form.
+         */
+        private static readonly char[] KANA_NORM = new char[] { (char)0x30fb, (char)0x30f2, (char)0x30a1, (char)0x30a3, (char)0x30a5, (char)0x30a7, (char)0x30a9, (char)0x30e3, (char)0x30e5, (char)0x30e7, (char)0x30c3, (char)0x30fc, (char)0x30a2, (char)0x30a4, (char)0x30a6, (char)0x30a8, (char)0x30aa, (char)0x30ab, (char)0x30ad, (char)0x30af, (char)0x30b1, (char)0x30b3, (char)0x30b5, (char)0x30b7, (char)0x30b9, (char)0x30bb, (char)0x30bd, (char)0x30bf, (char)0x30c1, (char)0x30c4, (char)0x30c6, (char)0x30c8, (char)0x30ca, (char)0x30cb, (char)0x30cc, (char)0x30cd, (char)0x30ce, (char)0x30cf, (char)0x30d2, (char)0x30d5, (char)0x30d8, (char)0x30db, (char)0x30de, (char)0x30df, (char)0x30e0, (char)0x30e1, (char)0x30e2, (char)0x30e4, (char)0x30e6, (char)0x30e8, (char)0x30e9, (char)0x30ea, (char)0x30eb, (char)0x30ec, (char)0x30ed, (char)0x30ef, (char)0x30f3, (char)0x3099, (char)0x309A };
 
-	  /* halfwidth kana mappings: 0xFF65-0xFF9D 
-	   *
-	   * note: 0xFF9C and 0xFF9D are only mapped to 0x3099 and 0x309A
-	   * as a fallback when they cannot properly combine with a preceding 
-	   * character into a composed form.
-	   */
-	  private static readonly char[] KANA_NORM = new char[] {0x30fb, 0x30f2, 0x30a1, 0x30a3, 0x30a5, 0x30a7, 0x30a9, 0x30e3, 0x30e5, 0x30e7, 0x30c3, 0x30fc, 0x30a2, 0x30a4, 0x30a6, 0x30a8, 0x30aa, 0x30ab, 0x30ad, 0x30af, 0x30b1, 0x30b3, 0x30b5, 0x30b7, 0x30b9, 0x30bb, 0x30bd, 0x30bf, 0x30c1, 0x30c4, 0x30c6, 0x30c8, 0x30ca, 0x30cb, 0x30cc, 0x30cd, 0x30ce, 0x30cf, 0x30d2, 0x30d5, 0x30d8, 0x30db, 0x30de, 0x30df, 0x30e0, 0x30e1, 0x30e2, 0x30e4, 0x30e6, 0x30e8, 0x30e9, 0x30ea, 0x30eb, 0x30ec, 0x30ed, 0x30ef, 0x30f3, 0x3099, 0x309A};
+        public CJKWidthFilter(TokenStream input)
+              : base(input)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+        }
 
-	  public CJKWidthFilter(TokenStream input) : base(input)
-	  {
-	  }
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                char[] text = termAtt.Buffer();
+                int length = termAtt.Length;
+                for (int i = 0; i < length; i++)
+                {
+                    char ch = text[i];
+                    if (ch >= 0xFF01 && ch <= 0xFF5E)
+                    {
+                        // Fullwidth ASCII variants
+                        text[i] = (char)(text[i] - 0xFEE0);
+                    }
+                    else if (ch >= 0xFF65 && ch <= 0xFF9F)
+                    {
+                        // Halfwidth Katakana variants
+                        if ((ch == 0xFF9E || ch == 0xFF9F) && i > 0 && Combine(text, i, ch))
+                        {
+                            length = StemmerUtil.Delete(text, i--, length);
+                        }
+                        else
+                        {
+                            text[i] = KANA_NORM[ch - 0xFF65];
+                        }
+                    }
+                }
+                termAtt.Length = length;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  char[] text = termAtt.buffer();
-		  int length = termAtt.length();
-		  for (int i = 0; i < length; i++)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char ch = text[i];
-			char ch = text[i];
-			if (ch >= 0xFF01 && ch <= 0xFF5E)
-			{
-			  // Fullwidth ASCII variants
-			  text[i] -= 0xFEE0;
-			}
-			else if (ch >= 0xFF65 && ch <= 0xFF9F)
-			{
-			  // Halfwidth Katakana variants
-			  if ((ch == 0xFF9E || ch == 0xFF9F) && i > 0 && combine(text, i, ch))
-			  {
-				length = StemmerUtil.delete(text, i--, length);
-			  }
-			  else
-			  {
-				text[i] = KANA_NORM[ch - 0xFF65];
-			  }
-			}
-		  }
-		  termAtt.Length = length;
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
+        /* kana combining diffs: 0x30A6-0x30FD */
+        private static readonly sbyte[] KANA_COMBINE_VOICED = new sbyte[] { 78, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 
-	  /* kana combining diffs: 0x30A6-0x30FD */
-	  private static readonly sbyte[] KANA_COMBINE_VOICED = new sbyte[] {78, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+        private static readonly sbyte[] KANA_COMBINE_HALF_VOICED = new sbyte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	  private static readonly sbyte[] KANA_COMBINE_HALF_VOICED = new sbyte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-	  /// <summary>
-	  /// returns true if we successfully combined the voice mark </summary>
-	  private static bool combine(char[] text, int pos, char ch)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char prev = text[pos-1];
-		char prev = text[pos - 1];
-		if (prev >= 0x30A6 && prev <= 0x30FD)
-		{
-		  text[pos - 1] += (ch == 0xFF9F) ? KANA_COMBINE_HALF_VOICED[prev - 0x30A6] : KANA_COMBINE_VOICED[prev - 0x30A6];
-		  return text[pos - 1] != prev;
-		}
-		return false;
-	  }
-	}
-
+        /// <summary>
+        /// returns true if we successfully combined the voice mark </summary>
+        private static bool Combine(char[] text, int pos, char ch)
+        {
+            char prev = text[pos - 1];
+            if (prev >= 0x30A6 && prev <= 0x30FD)
+            {
+                text[pos - 1] += (char)((ch == 0xFF9F) ? KANA_COMBINE_HALF_VOICED[prev - 0x30A6] : KANA_COMBINE_VOICED[prev - 0x30A6]);
+                return text[pos - 1] != prev;
+            }
+            return false;
+        }
+    }
 }

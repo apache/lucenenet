@@ -59,6 +59,13 @@
     <Compile Include="Analysis\CharFilter\MappingCharFilter.cs" />
     <Compile Include="Analysis\CharFilter\MappingCharFilterFactory.cs" />
     <Compile Include="Analysis\CharFilter\NormalizeCharMap.cs" />
+    <Compile Include="Analysis\Cjk\CJKAnalyzer.cs" />
+    <Compile Include="Analysis\Cjk\CJKBigramFilter.cs" />
+    <Compile Include="Analysis\Cjk\CJKBigramFilterFactory.cs" />
+    <Compile Include="Analysis\Cjk\CJKTokenizer.cs" />
+    <Compile Include="Analysis\Cjk\CJKTokenizerFactory.cs" />
+    <Compile Include="Analysis\Cjk\CJKWidthFilter.cs" />
+    <Compile Include="Analysis\Cjk\CJKWidthFilterFactory.cs" />
     <Compile Include="Analysis\Cn\ChineseAnalyzer.cs" />
     <Compile Include="Analysis\Cn\ChineseFilter.cs" />
     <Compile Include="Analysis\Cn\ChineseFilterFactory.cs" />
@@ -437,6 +444,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Ca\stopwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Cjk\stopwords.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
