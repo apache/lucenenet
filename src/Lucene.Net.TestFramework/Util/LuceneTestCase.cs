@@ -2313,7 +2313,7 @@ namespace Lucene.Net.Util
                 // in whatever way it wants (e.g. maybe it packs related fields together or something)
                 // To fix this, we sort the fields in both documents by name, but
                 // we still assume that all instances with same name are in order:
-                Comparison<IndexableField> comp = (a, b) => String.Compare(a.Name(), b.Name(), StringComparison.Ordinal);
+                Comparison<IndexableField> comp = (a, b) => String.Compare(a.Name, b.Name, StringComparison.Ordinal);
                 leftDoc.Fields.Sort(comp);
                 rightDoc.Fields.Sort(comp);
 
@@ -2333,8 +2333,8 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AssertStoredFieldEquals(string info, IndexableField leftField, IndexableField rightField)
         {
-            Assert.AreEqual(leftField.Name(), rightField.Name(), info);
-            Assert.AreEqual(leftField.BinaryValue(), rightField.BinaryValue(), info);
+            Assert.AreEqual(leftField.Name, rightField.Name, info);
+            Assert.AreEqual(leftField.BinaryValue, rightField.BinaryValue, info);
             Assert.AreEqual(leftField.StringValue, rightField.StringValue, info);
             Assert.AreEqual(leftField.NumericValue, rightField.NumericValue, info);
             // TODO: should we check the FT at all?
@@ -2833,7 +2833,7 @@ namespace Lucene.Net.Util
 
         public virtual int Compare(object arg0, object arg1)
         {
-            return System.String.Compare(((IndexableField)arg0).Name(), ((IndexableField)arg1).Name(), System.StringComparison.Ordinal);
+            return System.String.Compare(((IndexableField)arg0).Name, ((IndexableField)arg1).Name, System.StringComparison.Ordinal);
         }
     }
 }

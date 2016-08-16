@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
 
             public virtual int Compare(IndexableField o1, IndexableField o2)
             {
-                return o1.Name().CompareTo(o2.Name());
+                return o1.Name.CompareTo(o2.Name);
             }
         }
 
@@ -685,9 +685,9 @@ namespace Lucene.Net.Index
             {
                 IndexableField f1 = ff1[i];
                 IndexableField f2 = ff2[i];
-                if (f1.BinaryValue() != null)
+                if (f1.BinaryValue != null)
                 {
-                    Debug.Assert(f2.BinaryValue() != null);
+                    Debug.Assert(f2.BinaryValue != null);
                 }
                 else
                 {

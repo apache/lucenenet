@@ -80,12 +80,12 @@ namespace Lucene.Net.Index
             IndexableField[] fields = doc.GetFields("textField2");
             Assert.IsTrue(fields != null && fields.Length == 1);
             Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_2_TEXT));
-            Assert.IsTrue(fields[0].FieldType().StoreTermVectors);
+            Assert.IsTrue(fields[0].FieldType.StoreTermVectors);
 
             fields = doc.GetFields("textField1");
             Assert.IsTrue(fields != null && fields.Length == 1);
             Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_1_TEXT));
-            Assert.IsFalse(fields[0].FieldType().StoreTermVectors);
+            Assert.IsFalse(fields[0].FieldType.StoreTermVectors);
 
             fields = doc.GetFields("keyField");
             Assert.IsTrue(fields != null && fields.Length == 1);
