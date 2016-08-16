@@ -55,6 +55,7 @@
     <Compile Include="Analysis\Bg\TestBulgarianStemmer.cs" />
     <Compile Include="Analysis\Br\TestBrazilianStemFilterFactory.cs" />
     <Compile Include="Analysis\Br\TestBrazilianStemmer.cs" />
+    <Compile Include="Analysis\Ca\TestCatalanAnalyzer.cs" />
     <Compile Include="Analysis\CharFilters\HTMLStripCharFilterTest.cs" />
     <Compile Include="Analysis\CharFilters\TestHTMLStripCharFilterFactory.cs" />
     <Compile Include="Analysis\CharFilters\TestMappingCharFilter.cs" />

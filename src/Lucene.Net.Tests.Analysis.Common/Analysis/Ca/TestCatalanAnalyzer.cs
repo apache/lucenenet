@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.ca
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Ca
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,63 +20,57 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestCatalanAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new CatalanAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestCatalanAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new CatalanAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new CatalanAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "llengües", "llengu");
+            CheckOneTerm(a, "llengua", "llengu");
+            // stopword
+            AssertAnalyzesTo(a, "un", new string[] { });
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new CatalanAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "llengües", "llengu");
-		checkOneTerm(a, "llengua", "llengu");
-		// stopword
-		assertAnalyzesTo(a, "un", new string[] { });
-	  }
+        /// <summary>
+        /// test use of elisionfilter </summary>
+        [Test]
+        public virtual void TestContractions()
+        {
+            Analyzer a = new CatalanAnalyzer(TEST_VERSION_CURRENT);
+            AssertAnalyzesTo(a, "Diccionari de l'Institut d'Estudis Catalans", new string[] { "diccion", "inst", "estud", "catalan" });
+        }
 
-	  /// <summary>
-	  /// test use of elisionfilter </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testContractions() throws java.io.IOException
-	  public virtual void testContractions()
-	  {
-		Analyzer a = new CatalanAnalyzer(TEST_VERSION_CURRENT);
-		assertAnalyzesTo(a, "Diccionari de l'Institut d'Estudis Catalans", new string[] {"diccion", "inst", "estud", "catalan"});
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("llengües"), false);
+            Analyzer a = new CatalanAnalyzer(TEST_VERSION_CURRENT, CatalanAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "llengües", "llengües");
+            CheckOneTerm(a, "llengua", "llengu");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("llengües"), false);
-		Analyzer a = new CatalanAnalyzer(TEST_VERSION_CURRENT, CatalanAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "llengües", "llengües");
-		checkOneTerm(a, "llengua", "llengu");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new CatalanAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new CatalanAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }
