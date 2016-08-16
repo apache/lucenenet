@@ -197,6 +197,7 @@
     <Compile Include="Analysis\Util\TestCharTokenizers.cs" />
     <Compile Include="Analysis\Util\TestElision.cs" />
     <Compile Include="Analysis\Util\TestElisionFilterFactory.cs" />
+    <Compile Include="Analysis\Util\TestFilesystemResourceLoader.cs" />
     <Compile Include="Analysis\Util\TestRollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\TestSegmentingTokenizerBase.cs" />
     <Compile Include="Analysis\Util\TestWordlistLoader.cs" />

@@ -289,6 +289,7 @@
     <Compile Include="Analysis\Util\ClasspathResourceLoader.cs" />
     <Compile Include="Analysis\Util\ElisionFilter.cs" />
     <Compile Include="Analysis\Util\ElisionFilterFactory.cs" />
+    <Compile Include="Analysis\Util\FilesystemResourceLoader.cs" />
     <Compile Include="Analysis\Util\FilteringTokenFilter.cs" />
     <Compile Include="Analysis\Util\MultiTermAwareComponent.cs" />
     <Compile Include="Analysis\Util\OpenStringBuilder.cs" />
@@ -406,6 +407,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\spanish_stop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Snowball\english_stop.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
