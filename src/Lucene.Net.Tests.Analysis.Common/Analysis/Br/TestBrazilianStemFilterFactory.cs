@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.br
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Br
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,43 +21,37 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Brazilian stem filter factory is working.
+    /// </summary>
+    public class TestBrazilianStemFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Ensure the filter actually stems and normalizes text.
+        /// </summary>
+        [Test]
+        public virtual void TestStemming()
+        {
+            TextReader reader = new StringReader("Brasília");
+            Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            TokenStream stream = TokenFilterFactory("BrazilianStem").Create(tokenizer);
+            AssertTokenStreamContents(stream, new string[] { "brasil" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-	/// <summary>
-	/// Simple tests to ensure the Brazilian stem filter factory is working.
-	/// </summary>
-	public class TestBrazilianStemFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Ensure the filter actually stems and normalizes text.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemming() throws Exception
-	  public virtual void testStemming()
-	  {
-		Reader reader = new StringReader("Brasília");
-		Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		TokenStream stream = tokenFilterFactory("BrazilianStem").create(tokenizer);
-		assertTokenStreamContents(stream, new string[] {"brasil"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("BrazilianStem", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("BrazilianStem", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.br
+namespace Lucene.Net.Analysis.Br
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,71 +20,58 @@ namespace org.apache.lucene.analysis.br
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="BrazilianStemmer"/>.
+    /// <para>
+    /// To prevent terms from being stemmed use an instance of
+    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
+    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// </para> </summary>
+    /// <seealso cref= SetKeywordMarkerFilter
+    ///  </seealso>
+    public sealed class BrazilianStemFilter : TokenFilter
+    {
 
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
+        /// <summary>
+        /// <seealso cref="BrazilianStemmer"/> in use by this filter.
+        /// </summary>
+        private BrazilianStemmer stemmer = new BrazilianStemmer();
+        private HashSet<string> exclusions = null; // LUCENENET TODO: This is odd. No way to set it at all, so it cannot possibly have any values.
+        private readonly ICharTermAttribute termAtt;
+        private readonly IKeywordAttribute keywordAttr;
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that applies <seealso cref="BrazilianStemmer"/>.
-	/// <para>
-	/// To prevent terms from being stemmed use an instance of
-	/// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-	/// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
-	/// </para> </summary>
-	/// <seealso cref= SetKeywordMarkerFilter
-	///  </seealso>
-	public sealed class BrazilianStemFilter : TokenFilter
-	{
+        /// <summary>
+        /// Creates a new BrazilianStemFilter 
+        /// </summary>
+        /// <param name="in"> the source <seealso cref="TokenStream"/>  </param>
+        public BrazilianStemFilter(TokenStream @in)
+              : base(@in)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+            keywordAttr = AddAttribute<IKeywordAttribute>();
+        }
 
-	  /// <summary>
-	  /// <seealso cref="BrazilianStemmer"/> in use by this filter.
-	  /// </summary>
-	  private BrazilianStemmer stemmer = new BrazilianStemmer();
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private java.util.Set<?> exclusions = null;
-	  private HashSet<?> exclusions = null;
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAttr = addAttribute(typeof(KeywordAttribute));
-
-	  /// <summary>
-	  /// Creates a new BrazilianStemFilter 
-	  /// </summary>
-	  /// <param name="in"> the source <seealso cref="TokenStream"/>  </param>
-	  public BrazilianStemFilter(TokenStream @in) : base(@in)
-	  {
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String term = termAtt.toString();
-		  string term = termAtt.ToString();
-		  // Check the exclusion table.
-		  if (!keywordAttr.Keyword && (exclusions == null || !exclusions.Contains(term)))
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String s = stemmer.stem(term);
-			string s = stemmer.stem(term);
-			// If not stemmed, don't waste the time adjusting the token.
-			if ((s != null) && !s.Equals(term))
-			{
-			  termAtt.setEmpty().append(s);
-			}
-		  }
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
-	}
-
-
-
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                string term = termAtt.ToString();
+                // Check the exclusion table.
+                if (!keywordAttr.Keyword && (exclusions == null || !exclusions.Contains(term)))
+                {
+                    string s = stemmer.Stem(term);
+                    // If not stemmed, don't waste the time adjusting the token.
+                    if ((s != null) && !s.Equals(term))
+                    {
+                        termAtt.SetEmpty().Append(s);
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }
