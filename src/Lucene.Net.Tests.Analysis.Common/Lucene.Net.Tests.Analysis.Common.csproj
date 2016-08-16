@@ -50,6 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Bg\TestBulgarianAnalyzer.cs" />
+    <Compile Include="Analysis\Bg\TestBulgarianStemFilterFactory.cs" />
+    <Compile Include="Analysis\Bg\TestBulgarianStemmer.cs" />
     <Compile Include="Analysis\CharFilters\HTMLStripCharFilterTest.cs" />
     <Compile Include="Analysis\CharFilters\TestHTMLStripCharFilterFactory.cs" />
     <Compile Include="Analysis\CharFilters\TestMappingCharFilter.cs" />
