@@ -185,6 +185,9 @@
     <Compile Include="Analysis\Sinks\TeeSinkTokenFilter.cs" />
     <Compile Include="Analysis\Sinks\TokenRangeSinkFilter.cs" />
     <Compile Include="Analysis\Sinks\TokenTypeSinkFilter.cs" />
+    <Compile Include="Analysis\Snowball\SnowballAnalyzer.cs" />
+    <Compile Include="Analysis\Snowball\SnowballFilter.cs" />
+    <Compile Include="Analysis\Snowball\SnowballPorterFilterFactory.cs" />
     <Compile Include="Analysis\Standard\ClassicAnalyzer.cs" />
     <Compile Include="Analysis\Standard\ClassicFilter.cs">
       <SubType>Code</SubType>
@@ -238,6 +241,11 @@
     <Compile Include="Analysis\Synonym\SynonymFilterFactory.cs" />
     <Compile Include="Analysis\Synonym\SynonymMap.cs" />
     <Compile Include="Analysis\Synonym\WordnetSynonymParser.cs" />
+    <Compile Include="Analysis\Tr\ApostropheFilter.cs" />
+    <Compile Include="Analysis\Tr\ApostropheFilterFactory.cs" />
+    <Compile Include="Analysis\Tr\TurkishAnalyzer.cs" />
+    <Compile Include="Analysis\Tr\TurkishLowerCaseFilter.cs" />
+    <Compile Include="Analysis\Tr\TurkishLowerCaseFilterFactory.cs" />
     <Compile Include="Analysis\Util\BufferedCharFilter.cs" />
     <Compile Include="Analysis\Util\AbstractAnalysisFactory.cs">
       <SubType>Code</SubType>
@@ -275,6 +283,31 @@
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizerFactory.cs" />
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizerImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tartarus\Snowball\Among.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\ArmenianStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\BasqueStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\CatalanStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\DanishStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\DutchStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\EnglishStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\FinnishStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\FrenchStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\German2Stemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\GermanStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\HungarianStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\IrishStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\ItalianStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\KpStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\LovinsStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\NorwegianStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\PorterStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\PortugueseStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\RomanianStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\RussianStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\SpanishStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\SwedishStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\Ext\TurkishStemmer.cs" />
+    <Compile Include="Tartarus\Snowball\SnowballProgram.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
@@ -329,6 +362,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Cz\stopwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Tr\stopwords.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

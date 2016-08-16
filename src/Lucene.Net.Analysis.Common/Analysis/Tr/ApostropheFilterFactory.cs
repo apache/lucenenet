@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.tr
+namespace Lucene.Net.Analysis.Tr
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,33 +20,31 @@ namespace org.apache.lucene.analysis.tr
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="ApostropheFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_tr_lower_apostrophes" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.ApostropheFilterFactory"/&gt;
+    ///     &lt;filter class="solr.TurkishLowerCaseFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class ApostropheFilterFactory : TokenFilterFactory
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="ApostropheFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_tr_lower_apostrophes" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.ApostropheFilterFactory"/&gt;
-	///     &lt;filter class="solr.TurkishLowerCaseFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class ApostropheFilterFactory : TokenFilterFactory
-	{
+        public ApostropheFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameter(s): " + args);
+            }
+        }
 
-	  public ApostropheFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameter(s): " + args);
-		}
-	  }
-
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new ApostropheFilter(input);
-	  }
-	}
+        public override TokenStream Create(TokenStream input)
+        {
+            return new ApostropheFilter(input);
+        }
+    }
 }

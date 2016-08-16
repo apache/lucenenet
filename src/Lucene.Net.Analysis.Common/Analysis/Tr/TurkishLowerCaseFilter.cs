@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Support;
+using System;
+using System.Globalization;
 
-namespace org.apache.lucene.analysis.tr
+namespace Lucene.Net.Analysis.Tr
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,132 +22,131 @@ namespace org.apache.lucene.analysis.tr
 	 * limitations under the License.
 	 */
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+    /// <summary>
+    /// Normalizes Turkish token text to lower case.
+    /// <para>
+    /// Turkish and Azeri have unique casing behavior for some characters. This
+    /// filter applies Turkish lowercase rules. For more information, see <a
+    /// href="http://en.wikipedia.org/wiki/Turkish_dotted_and_dotless_I"
+    /// >http://en.wikipedia.org/wiki/Turkish_dotted_and_dotless_I</a>
+    /// </para>
+    /// </summary>
+    public sealed class TurkishLowerCaseFilter : TokenFilter
+    {
+        private const int LATIN_CAPITAL_LETTER_I = '\u0049';
+        //private const int LATIN_CAPITAL_LETTER_I = '\u0130';
+        private const int LATIN_SMALL_LETTER_I = '\u0069';
+        private const int LATIN_SMALL_LETTER_DOTLESS_I = '\u0131';
+        private const int COMBINING_DOT_ABOVE = '\u0307';
+        private readonly ICharTermAttribute termAtt;
 
-	/// <summary>
-	/// Normalizes Turkish token text to lower case.
-	/// <para>
-	/// Turkish and Azeri have unique casing behavior for some characters. This
-	/// filter applies Turkish lowercase rules. For more information, see <a
-	/// href="http://en.wikipedia.org/wiki/Turkish_dotted_and_dotless_I"
-	/// >http://en.wikipedia.org/wiki/Turkish_dotted_and_dotless_I</a>
-	/// </para>
-	/// </summary>
-	public sealed class TurkishLowerCaseFilter : TokenFilter
-	{
-	  private const int LATIN_CAPITAL_LETTER_I = '\u0049';
-	  private const int LATIN_SMALL_LETTER_I = '\u0069';
-	  private const int LATIN_SMALL_LETTER_DOTLESS_I = '\u0131';
-	  private const int COMBINING_DOT_ABOVE = '\u0307';
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        /// <summary>
+        /// Create a new TurkishLowerCaseFilter, that normalizes Turkish token text 
+        /// to lower case.
+        /// </summary>
+        /// <param name="in"> TokenStream to filter </param>
+        public TurkishLowerCaseFilter(TokenStream @in)
+              : base(@in)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+        }
 
-	  /// <summary>
-	  /// Create a new TurkishLowerCaseFilter, that normalizes Turkish token text 
-	  /// to lower case.
-	  /// </summary>
-	  /// <param name="in"> TokenStream to filter </param>
-	  public TurkishLowerCaseFilter(TokenStream @in) : base(@in)
-	  {
-	  }
+        public override bool IncrementToken()
+        {
+            bool iOrAfter = false;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("tr");
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		bool iOrAfter = false;
+            if (input.IncrementToken())
+            {
+                char[] buffer = termAtt.Buffer();
+                int length = termAtt.Length;
+                for (int i = 0; i < length;)
+                {
 
-		if (input.incrementToken())
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] buffer = termAtt.buffer();
-		  char[] buffer = termAtt.buffer();
-		  int length = termAtt.length();
-		  for (int i = 0; i < length;)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ch = Character.codePointAt(buffer, i, length);
-			int ch = char.codePointAt(buffer, i, length);
+                    // LUCENENET TODO: This line is failing, causing the TestTurkishLowerCaseFilter() test to fail. According to the MSDN documentation
+                    // https://msdn.microsoft.com/en-us/library/system.globalization.unicodecategory(v=vs.110).aspx
+                    // a non-spacing mark is a modifier to a character. This logic is expecting the first codepoint to be an upper case Latin I,
+                    // and the second to be a non-spacing mark, but it is coming back as a single codepoint 304 that doesn't match Latin I.
+                    // Also, char.GetUnicodeCategory((char)304) returns UpperCaseLetter (not sure if that is pertinent).
+                    int ch = Character.CodePointAt(buffer, i, length);
 
-			iOrAfter = (ch == LATIN_CAPITAL_LETTER_I || (iOrAfter && char.getType(ch) == char.NON_SPACING_MARK));
+                    iOrAfter = (ch == LATIN_CAPITAL_LETTER_I || (iOrAfter && char.GetUnicodeCategory((char)ch) == UnicodeCategory.NonSpacingMark));
 
-			if (iOrAfter) // all the special I turkish handling happens here.
-			{
-			  switch (ch)
-			  {
-				// remove COMBINING_DOT_ABOVE to mimic composed lowercase
-				case COMBINING_DOT_ABOVE:
-				  length = delete(buffer, i, length);
-				  continue;
-				// i itself, it depends if it is followed by COMBINING_DOT_ABOVE
-				// if it is, we will make it small i and later remove the dot
-				case LATIN_CAPITAL_LETTER_I:
-				  if (isBeforeDot(buffer, i + 1, length))
-				  {
-					buffer[i] = (char)LATIN_SMALL_LETTER_I;
-				  }
-				  else
-				  {
-					buffer[i] = (char)LATIN_SMALL_LETTER_DOTLESS_I;
-					// below is an optimization. no COMBINING_DOT_ABOVE follows,
-					// so don't waste time calculating Character.getType(), etc
-					iOrAfter = false;
-				  }
-				  i++;
-				  continue;
-			  }
-			}
+                    if (iOrAfter) // all the special I turkish handling happens here.
+                    {
+                        switch (ch)
+                        {
+                            // remove COMBINING_DOT_ABOVE to mimic composed lowercase
+                            case COMBINING_DOT_ABOVE:
+                                length = Delete(buffer, i, length);
+                                continue;
+                            // i itself, it depends if it is followed by COMBINING_DOT_ABOVE
+                            // if it is, we will make it small i and later remove the dot
+                            case LATIN_CAPITAL_LETTER_I:
+                                if (IsBeforeDot(buffer, i + 1, length))
+                                {
+                                    buffer[i] = (char)LATIN_SMALL_LETTER_I;
+                                }
+                                else
+                                {
+                                    buffer[i] = (char)LATIN_SMALL_LETTER_DOTLESS_I;
+                                    // below is an optimization. no COMBINING_DOT_ABOVE follows,
+                                    // so don't waste time calculating Character.getType(), etc
+                                    iOrAfter = false;
+                                }
+                                i++;
+                                continue;
+                        }
+                    }
 
-			i += char.toChars(char.ToLower(ch), buffer, i);
-		  }
+                    i += Character.ToChars(Character.ToLowerCase(ch), buffer, i);
+                }
 
-		  termAtt.Length = length;
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
+                termAtt.Length = length;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
+        /// <summary>
+        /// lookahead for a combining dot above.
+        /// other NSMs may be in between.
+        /// </summary>
+        private bool IsBeforeDot(char[] s, int pos, int len)
+        {
+            for (int i = pos; i < len;)
+            {
+                int ch = Character.CodePointAt(s, i, len);
+                //if (char.getType(ch) != char.NON_SPACING_MARK)
+                if (char.GetUnicodeCategory((char)ch) != UnicodeCategory.NonSpacingMark)
+                {
+                    return false;
+                }
+                if (ch == COMBINING_DOT_ABOVE)
+                {
+                    return true;
+                }
+                i += Character.CharCount(ch);
+            }
 
-	  /// <summary>
-	  /// lookahead for a combining dot above.
-	  /// other NSMs may be in between.
-	  /// </summary>
-	  private bool isBeforeDot(char[] s, int pos, int len)
-	  {
-		for (int i = pos; i < len;)
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ch = Character.codePointAt(s, i, len);
-		  int ch = char.codePointAt(s, i, len);
-		  if (char.getType(ch) != char.NON_SPACING_MARK)
-		  {
-			return false;
-		  }
-		  if (ch == COMBINING_DOT_ABOVE)
-		  {
-			return true;
-		  }
-		  i += char.charCount(ch);
-		}
+            return false;
+        }
 
-		return false;
-	  }
+        /// <summary>
+        /// delete a character in-place.
+        /// rarely happens, only if COMBINING_DOT_ABOVE is found after an i
+        /// </summary>
+        private int Delete(char[] s, int pos, int len)
+        {
+            if (pos < len)
+            {
+                Array.Copy(s, pos + 1, s, pos, len - pos - 1);
+            }
 
-	  /// <summary>
-	  /// delete a character in-place.
-	  /// rarely happens, only if COMBINING_DOT_ABOVE is found after an i
-	  /// </summary>
-	  private int delete(char[] s, int pos, int len)
-	  {
-		if (pos < len)
-		{
-		  Array.Copy(s, pos + 1, s, pos, len - pos - 1);
-		}
-
-		return len - 1;
-	  }
-	}
-
+            return len - 1;
+        }
+    }
 }

@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.tr
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
 
-	/*
+namespace Lucene.Net.Analysis.Tr
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,53 +19,46 @@
 	 * limitations under the License.
 	 */
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+    /// <summary>
+    /// Strips all characters after an apostrophe (including the apostrophe itself).
+    /// <para>
+    /// In Turkish, apostrophe is used to separate suffixes from proper names
+    /// (continent, sea, river, lake, mountain, upland, proper names related to
+    /// religion and mythology). This filter intended to be used before stem filters.
+    /// For more information, see <a href="http://www.ipcsit.com/vol57/015-ICNI2012-M021.pdf">
+    /// Role of Apostrophes in Turkish Information Retrieval</a>
+    /// </para>
+    /// </summary>
+    public sealed class ApostropheFilter : TokenFilter
+    {
 
-	/// <summary>
-	/// Strips all characters after an apostrophe (including the apostrophe itself).
-	/// <para>
-	/// In Turkish, apostrophe is used to separate suffixes from proper names
-	/// (continent, sea, river, lake, mountain, upland, proper names related to
-	/// religion and mythology). This filter intended to be used before stem filters.
-	/// For more information, see <a href="http://www.ipcsit.com/vol57/015-ICNI2012-M021.pdf">
-	/// Role of Apostrophes in Turkish Information Retrieval</a>
-	/// </para>
-	/// </summary>
-	public sealed class ApostropheFilter : TokenFilter
-	{
+        private readonly ICharTermAttribute termAtt;
 
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
+        public ApostropheFilter(TokenStream @in)
+              : base(@in)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+        }
 
-	  public ApostropheFilter(TokenStream @in) : base(@in)
-	  {
-	  }
+        public override bool IncrementToken()
+        {
+            if (!input.IncrementToken())
+            {
+                return false;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public final boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (!input.incrementToken())
-		{
-		  return false;
-		}
+            char[] buffer = termAtt.Buffer();
+            int length = termAtt.Length;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] buffer = termAtt.buffer();
-		char[] buffer = termAtt.buffer();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = termAtt.length();
-		int length = termAtt.length();
-
-		for (int i = 0; i < length; i++)
-		{
-		  if (buffer[i] == '\'' || buffer[i] == '\u2019')
-		  {
-			termAtt.Length = i;
-			return true;
-		  }
-		}
-		return true;
-	  }
-	}
-
+            for (int i = 0; i < length; i++)
+            {
+                if (buffer[i] == '\'' || buffer[i] == '\u2019')
+                {
+                    termAtt.Length = i;
+                    return true;
+                }
+            }
+            return true;
+        }
+    }
 }

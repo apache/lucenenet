@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.tr
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Tr
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,45 +21,38 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the apostrophe filter factory is working.
+    /// </summary>
+    public class TestApostropheFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Ensure the filter actually removes characters after an apostrophe.
+        /// </summary>
+        [Test]
+        public virtual void TestApostrophes()
+        {
+            TextReader reader = new StringReader("Türkiye'de 2003'te Van Gölü'nü gördüm");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("Apostrophe").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "Türkiye", "2003", "Van", "Gölü", "gördüm" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-
-	/// <summary>
-	/// Simple tests to ensure the apostrophe filter factory is working.
-	/// </summary>
-	public class TestApostropheFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Ensure the filter actually removes characters after an apostrophe.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testApostrophes() throws Exception
-	  public virtual void testApostrophes()
-	  {
-		Reader reader = new StringReader("Türkiye'de 2003'te Van Gölü'nü gördüm");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("Apostrophe").create(stream);
-		assertTokenStreamContents(stream, new string[]{"Türkiye", "2003", "Van", "Gölü", "gördüm"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("Apostrophe", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameter(s):"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception
+        /// </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("Apostrophe", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameter(s):"));
+            }
+        }
+    }
 }

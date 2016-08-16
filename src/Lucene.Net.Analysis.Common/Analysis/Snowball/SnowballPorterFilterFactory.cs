@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Tartarus.Snowball;
+using System;
 using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.snowball
+namespace Lucene.Net.Analysis.Snowball
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,81 +23,72 @@ namespace org.apache.lucene.analysis.snowball
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Factory for <seealso cref="SnowballFilter"/>, with configurable language
+    /// <para>
+    /// Note: Use of the "Lovins" stemmer is not recommended, as it is implemented with reflection.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_snowballstem" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
+    ///     &lt;filter class="solr.SnowballPorterFilterFactory" protected="protectedkeyword.txt" language="English"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </para>
+    /// </summary>
+    public class SnowballPorterFilterFactory : TokenFilterFactory, IResourceLoaderAware
+    {
+        public const string PROTECTED_TOKENS = "protected";
 
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-	using ResourceLoader = org.apache.lucene.analysis.util.ResourceLoader;
-	using ResourceLoaderAware = org.apache.lucene.analysis.util.ResourceLoaderAware;
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
-	using SnowballProgram = org.tartarus.snowball.SnowballProgram;
+        private readonly string language;
+        private readonly string wordFiles;
+        private Type stemClass;
+        private CharArraySet protectedWords = null;
 
-	/// <summary>
-	/// Factory for <seealso cref="SnowballFilter"/>, with configurable language
-	/// <para>
-	/// Note: Use of the "Lovins" stemmer is not recommended, as it is implemented with reflection.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_snowballstem" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
-	///     &lt;filter class="solr.SnowballPorterFilterFactory" protected="protectedkeyword.txt" language="English"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </para>
-	/// </summary>
-	public class SnowballPorterFilterFactory : TokenFilterFactory, ResourceLoaderAware
-	{
-	  public const string PROTECTED_TOKENS = "protected";
+        /// <summary>
+        /// Creates a new SnowballPorterFilterFactory </summary>
+        public SnowballPorterFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            language = Get(args, "language", "English");
+            wordFiles = Get(args, PROTECTED_TOKENS);
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  private readonly string language;
-	  private readonly string wordFiles;
-	  private Type stemClass;
-	  private CharArraySet protectedWords = null;
+        public virtual void Inform(IResourceLoader loader)
+        {
+            // LUCENENET TODO: There should probably be a way to make this an extesibility point so
+            // custom extensions can be loaded.
+            string className = typeof(SnowballProgram).Namespace + ".Ext." + 
+                language + "Stemmer, " + this.GetType().Assembly.GetName().Name;
+            stemClass = Type.GetType(className);
 
-	  /// <summary>
-	  /// Creates a new SnowballPorterFilterFactory </summary>
-	  public SnowballPorterFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		language = get(args, "language", "English");
-		wordFiles = get(args, PROTECTED_TOKENS);
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
+            if (wordFiles != null)
+            {
+                protectedWords = GetWordSet(loader, wordFiles, false);
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void inform(org.apache.lucene.analysis.util.ResourceLoader loader) throws java.io.IOException
-	  public virtual void inform(ResourceLoader loader)
-	  {
-		string className = "org.tartarus.snowball.ext." + language + "Stemmer";
-		stemClass = loader.newInstance(className, typeof(SnowballProgram)).GetType();
+        public override TokenStream Create(TokenStream input)
+        {
+            SnowballProgram program;
+            try
+            {
+                program = (SnowballProgram)Activator.CreateInstance(stemClass);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error instantiating stemmer for language " + language + "from class " + stemClass, e);
+            }
 
-		if (wordFiles != null)
-		{
-		  protectedWords = getWordSet(loader, wordFiles, false);
-		}
-	  }
-
-	  public override TokenFilter create(TokenStream input)
-	  {
-		SnowballProgram program;
-		try
-		{
-		  program = stemClass.newInstance();
-		}
-		catch (Exception e)
-		{
-		  throw new Exception("Error instantiating stemmer for language " + language + "from class " + stemClass, e);
-		}
-
-		if (protectedWords != null)
-		{
-		  input = new SetKeywordMarkerFilter(input, protectedWords);
-		}
-		return new SnowballFilter(input, program);
-	  }
-	}
-
-
+            if (protectedWords != null)
+            {
+                input = new SetKeywordMarkerFilter(input, protectedWords);
+            }
+            return new SnowballFilter(input, program);
+        }
+    }
 }

@@ -149,6 +149,9 @@
     <Compile Include="Analysis\Sinks\TestTeeSinkTokenFilter.cs" />
     <Compile Include="Analysis\Sinks\TokenRangeSinkTokenizerTest.cs" />
     <Compile Include="Analysis\Sinks\TokenTypeSinkTokenizerTest.cs" />
+    <Compile Include="Analysis\Snowball\TestSnowball.cs" />
+    <Compile Include="Analysis\Snowball\TestSnowballPorterFilterFactory.cs" />
+    <Compile Include="Analysis\Snowball\TestSnowballVocab.cs" />
     <Compile Include="Analysis\Standard\TestStandardFactories.cs" />
     <Compile Include="Analysis\Standard\TestUAX29URLEmailTokenizerFactory.cs">
       <SubType>Code</SubType>
@@ -160,6 +163,11 @@
     <Compile Include="Analysis\Synonym\TestSynonymMap.cs" />
     <Compile Include="Analysis\Synonym\TestSynonymMapFilter.cs" />
     <Compile Include="Analysis\Synonym\TestWordnetSynonymParser.cs" />
+    <Compile Include="Analysis\Tr\TestApostropheFilter.cs" />
+    <Compile Include="Analysis\Tr\TestApostropheFilterFactory.cs" />
+    <Compile Include="Analysis\Tr\TestTurkishAnalyzer.cs" />
+    <Compile Include="Analysis\Tr\TestTurkishLowerCaseFilter.cs" />
+    <Compile Include="Analysis\Tr\TestTurkishLowerCaseFilterFactory.cs" />
     <Compile Include="Analysis\Util\BaseTokenStreamFactoryTestCase.cs" />
     <Compile Include="Analysis\Util\StringMockResourceLoader.cs" />
     <Compile Include="Analysis\Util\TestCharacterUtils.cs" />
@@ -191,6 +199,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Analysis\En\porterTestData.zip" />
     <EmbeddedResource Include="Analysis\En\kstemTestData.zip" />
+    <EmbeddedResource Include="Analysis\Snowball\TestSnowballVocabData.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

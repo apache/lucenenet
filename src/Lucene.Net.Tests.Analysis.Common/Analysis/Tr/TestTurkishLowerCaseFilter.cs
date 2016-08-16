@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.tr
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Tr
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,85 +21,76 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test the Turkish lowercase filter.
+    /// </summary>
+    public class TestTurkishLowerCaseFilter_ : BaseTokenStreamTestCase
+    {
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        /// <summary>
+        /// Test composed forms
+        /// </summary>
+        [Test]
+        public virtual void TestTurkishLowerCaseFilter()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("\u0130STANBUL \u0130ZM\u0130R ISPARTA"), MockTokenizer.WHITESPACE, false);
+            TurkishLowerCaseFilter filter = new TurkishLowerCaseFilter(stream);
+            AssertTokenStreamContents(filter, new string[] { "istanbul", "izmir", "\u0131sparta" });
+        }
 
-	/// <summary>
-	/// Test the Turkish lowercase filter.
-	/// </summary>
-	public class TestTurkishLowerCaseFilter : BaseTokenStreamTestCase
-	{
+        /// <summary>
+        /// Test decomposed forms
+        /// </summary>
+        [Test]
+        public virtual void TestDecomposed()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("\u0049\u0307STANBUL \u0049\u0307ZM\u0049\u0307R ISPARTA"), MockTokenizer.WHITESPACE, false);
+            TurkishLowerCaseFilter filter = new TurkishLowerCaseFilter(stream);
+            AssertTokenStreamContents(filter, new string[] { "istanbul", "izmir", "\u0131sparta" });
+        }
 
-	  /// <summary>
-	  /// Test composed forms
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testTurkishLowerCaseFilter() throws Exception
-	  public virtual void testTurkishLowerCaseFilter()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("\u0130STANBUL \u0130ZM\u0130R ISPARTA"), MockTokenizer.WHITESPACE, false);
-		TurkishLowerCaseFilter filter = new TurkishLowerCaseFilter(stream);
-		assertTokenStreamContents(filter, new string[] {"istanbul", "izmir", "\u0131sparta"});
-	  }
+        /// <summary>
+        /// Test decomposed forms with additional accents
+        /// In this example, U+0049 + U+0316 + U+0307 is canonically equivalent
+        /// to U+0130 + U+0316, and is lowercased the same way.
+        /// </summary>
+        [Test]
+        public virtual void TestDecomposed2()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("\u0049\u0316\u0307STANBUL \u0049\u0307ZM\u0049\u0307R I\u0316SPARTA"), MockTokenizer.WHITESPACE, false);
+            TurkishLowerCaseFilter filter = new TurkishLowerCaseFilter(stream);
+            AssertTokenStreamContents(filter, new string[] { "i\u0316stanbul", "izmir", "\u0131\u0316sparta" });
+        }
 
-	  /// <summary>
-	  /// Test decomposed forms
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDecomposed() throws Exception
-	  public virtual void testDecomposed()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("\u0049\u0307STANBUL \u0049\u0307ZM\u0049\u0307R ISPARTA"), MockTokenizer.WHITESPACE, false);
-		TurkishLowerCaseFilter filter = new TurkishLowerCaseFilter(stream);
-		assertTokenStreamContents(filter, new string[] {"istanbul", "izmir", "\u0131sparta"});
-	  }
+        [Test]
+        public virtual void TestDecomposed3()
+        {
+            TokenStream stream = new MockTokenizer(new StringReader("\u0049\u0307"), MockTokenizer.WHITESPACE, false);
+            TurkishLowerCaseFilter filter = new TurkishLowerCaseFilter(stream);
+            AssertTokenStreamContents(filter, new string[] { "i" });
+        }
 
-	  /// <summary>
-	  /// Test decomposed forms with additional accents
-	  /// In this example, U+0049 + U+0316 + U+0307 is canonically equivalent
-	  /// to U+0130 + U+0316, and is lowercased the same way.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDecomposed2() throws Exception
-	  public virtual void testDecomposed2()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("\u0049\u0316\u0307STANBUL \u0049\u0307ZM\u0049\u0307R I\u0316SPARTA"), MockTokenizer.WHITESPACE, false);
-		TurkishLowerCaseFilter filter = new TurkishLowerCaseFilter(stream);
-		assertTokenStreamContents(filter, new string[] {"i\u0316stanbul", "izmir", "\u0131\u0316sparta"});
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDecomposed3() throws Exception
-	  public virtual void testDecomposed3()
-	  {
-		TokenStream stream = new MockTokenizer(new StringReader("\u0049\u0307"), MockTokenizer.WHITESPACE, false);
-		TurkishLowerCaseFilter filter = new TurkishLowerCaseFilter(stream);
-		assertTokenStreamContents(filter, new string[] {"i"});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestTurkishLowerCaseFilter_ outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestTurkishLowerCaseFilter_ outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestTurkishLowerCaseFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestTurkishLowerCaseFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new TurkishLowerCaseFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new TurkishLowerCaseFilter(tokenizer));
+            }
+        }
+    }
 }
