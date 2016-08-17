@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using System;
 using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.th
+namespace Lucene.Net.Analysis.Th
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,39 +21,34 @@ namespace org.apache.lucene.analysis.th
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Factory for <seealso cref="ThaiWordFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_thai" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.ThaiWordFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre> </summary>
+    /// @deprecated Use <seealso cref="ThaiTokenizerFactory"/> instead 
+    [Obsolete("Use ThaiTokenizerFactory instead")]
+    public class ThaiWordFilterFactory : TokenFilterFactory
+    {
 
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+        /// <summary>
+        /// Creates a new ThaiWordFilterFactory </summary>
+        public ThaiWordFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            AssureMatchVersion();
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	/// <summary>
-	/// Factory for <seealso cref="ThaiWordFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_thai" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.ThaiWordFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre> </summary>
-	/// @deprecated Use <seealso cref="ThaiTokenizerFactory"/> instead 
-	[Obsolete("Use <seealso cref="ThaiTokenizerFactory"/> instead")]
-	public class ThaiWordFilterFactory : TokenFilterFactory
-	{
-
-	  /// <summary>
-	  /// Creates a new ThaiWordFilterFactory </summary>
-	  public ThaiWordFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		assureMatchVersion();
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override ThaiWordFilter create(TokenStream input)
-	  {
-		return new ThaiWordFilter(luceneMatchVersion, input);
-	  }
-	}
-
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new ThaiWordFilter(luceneMatchVersion, input);
+        }
+    }
 }

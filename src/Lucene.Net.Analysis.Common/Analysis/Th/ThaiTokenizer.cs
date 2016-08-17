@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.th
-{
+﻿using ICU4NET;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Th
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,99 +23,97 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Tokenizer that use <seealso cref="BreakIterator"/> to tokenize Thai text.
+    /// <para>WARNING: this tokenizer may not be supported by all JREs.
+    ///    It is known to work with Sun/Oracle and Harmony JREs.
+    ///    If your application needs to be fully portable, consider using ICUTokenizer instead,
+    ///    which uses an ICU Thai BreakIterator that will always be available.
+    /// </para>
+    /// </summary>
+    public class ThaiTokenizer : SegmentingTokenizerBase
+    {
+        /// <summary>
+        /// True if the JRE supports a working dictionary-based breakiterator for Thai.
+        /// If this is false, this tokenizer will not work at all!
+        /// </summary>
+        public static readonly bool DBBI_AVAILABLE;
+        private static readonly BreakIterator proto = BreakIterator.CreateWordInstance(Locale.GetUS());   //GetWordInstance(new Locale("th"));
+        static ThaiTokenizer()
+        {
+            // check that we have a working dictionary-based break iterator for thai
+            proto.SetText("ภาษาไทย");
+            DBBI_AVAILABLE = proto.IsBoundary(4);
+        }
+        
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using OffsetAttribute = org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-	using CharArrayIterator = org.apache.lucene.analysis.util.CharArrayIterator;
-	using SegmentingTokenizerBase = org.apache.lucene.analysis.util.SegmentingTokenizerBase;
+        /// <summary>
+        /// used for breaking the text into sentences </summary>
+        private static readonly BreakIterator sentenceProto = BreakIterator.CreateSentenceInstance(Locale.GetUS());    //GetSentenceInstance(Locale.ROOT);
 
-	/// <summary>
-	/// Tokenizer that use <seealso cref="BreakIterator"/> to tokenize Thai text.
-	/// <para>WARNING: this tokenizer may not be supported by all JREs.
-	///    It is known to work with Sun/Oracle and Harmony JREs.
-	///    If your application needs to be fully portable, consider using ICUTokenizer instead,
-	///    which uses an ICU Thai BreakIterator that will always be available.
-	/// </para>
-	/// </summary>
-	public class ThaiTokenizer : SegmentingTokenizerBase
-	{
-	  /// <summary>
-	  /// True if the JRE supports a working dictionary-based breakiterator for Thai.
-	  /// If this is false, this tokenizer will not work at all!
-	  /// </summary>
-	  public static readonly bool DBBI_AVAILABLE;
-	  private static readonly BreakIterator proto = BreakIterator.getWordInstance(new Locale("th"));
-	  static ThaiTokenizer()
-	  {
-		// check that we have a working dictionary-based break iterator for thai
-		proto.Text = "ภาษาไทย";
-		DBBI_AVAILABLE = proto.isBoundary(4);
-	  }
+        private readonly BreakIterator wordBreaker;
+        private readonly CharArrayIterator wrapper = CharArrayIterator.NewWordInstance();
 
-	  /// <summary>
-	  /// used for breaking the text into sentences </summary>
-	  private static readonly BreakIterator sentenceProto = BreakIterator.getSentenceInstance(Locale.ROOT);
+        internal int sentenceStart;
+        internal int sentenceEnd;
 
-	  private readonly BreakIterator wordBreaker;
-	  private readonly CharArrayIterator wrapper = CharArrayIterator.newWordInstance();
+        private readonly ICharTermAttribute termAtt;
+        private readonly IOffsetAttribute offsetAtt;
 
-	  internal int sentenceStart;
-	  internal int sentenceEnd;
+        /// <summary>
+        /// Creates a new ThaiTokenizer </summary>
+        public ThaiTokenizer(TextReader reader)
+              : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader)
+        {
+        }
 
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly OffsetAttribute offsetAtt = addAttribute(typeof(OffsetAttribute));
+        /// <summary>
+        /// Creates a new ThaiTokenizer, supplying the AttributeFactory </summary>
+        public ThaiTokenizer(AttributeFactory factory, TextReader reader)
+              : base(factory, reader, (BreakIterator)sentenceProto.Clone())
+        {
+            if (!DBBI_AVAILABLE)
+            {
+                throw new System.NotSupportedException("This JRE does not have support for Thai segmentation");
+            }
+            wordBreaker = (BreakIterator)proto.Clone();
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+        }
 
-	  /// <summary>
-	  /// Creates a new ThaiTokenizer </summary>
-	  public ThaiTokenizer(Reader reader) : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader)
-	  {
-	  }
+        protected internal override void SetNextSentence(int sentenceStart, int sentenceEnd)
+        {
+            this.sentenceStart = sentenceStart;
+            this.sentenceEnd = sentenceEnd;
+            wrapper.SetText(buffer, sentenceStart, sentenceEnd - sentenceStart);
+            wordBreaker.SetText(new string(wrapper.Text));
+        }
 
-	  /// <summary>
-	  /// Creates a new ThaiTokenizer, supplying the AttributeFactory </summary>
-	  public ThaiTokenizer(AttributeFactory factory, Reader reader) : base(factory, reader, (BreakIterator)sentenceProto.clone())
-	  {
-		if (!DBBI_AVAILABLE)
-		{
-		  throw new System.NotSupportedException("This JRE does not have support for Thai segmentation");
-		}
-		wordBreaker = (BreakIterator)proto.clone();
-	  }
+        protected internal override bool IncrementWord()
+        {
+            int start = wordBreaker.Current();
+            if (start == BreakIterator.DONE)
+            {
+                return false; // BreakIterator exhausted
+            }
 
-	  protected internal override void setNextSentence(int sentenceStart, int sentenceEnd)
-	  {
-		this.sentenceStart = sentenceStart;
-		this.sentenceEnd = sentenceEnd;
-		wrapper.setText(buffer, sentenceStart, sentenceEnd - sentenceStart);
-		wordBreaker.Text = wrapper;
-	  }
+            // find the next set of boundaries, skipping over non-tokens
+            int end = wordBreaker.Next();
+            while (end != BreakIterator.DONE && !char.IsLetterOrDigit((char)Character.CodePointAt(buffer, sentenceStart + start, sentenceEnd)))
+            {
+                start = end;
+                end = wordBreaker.Next();
+            }
 
-	  protected internal override bool incrementWord()
-	  {
-		int start = wordBreaker.current();
-		if (start == BreakIterator.DONE)
-		{
-		  return false; // BreakIterator exhausted
-		}
+            if (end == BreakIterator.DONE)
+            {
+                return false; // BreakIterator exhausted
+            }
 
-		// find the next set of boundaries, skipping over non-tokens
-		int end_Renamed = wordBreaker.next();
-		while (end_Renamed != BreakIterator.DONE && !char.IsLetterOrDigit(char.codePointAt(buffer, sentenceStart + start, sentenceEnd)))
-		{
-		  start = end_Renamed;
-		  end_Renamed = wordBreaker.next();
-		}
-
-		if (end_Renamed == BreakIterator.DONE)
-		{
-		  return false; // BreakIterator exhausted
-		}
-
-		clearAttributes();
-		termAtt.copyBuffer(buffer, sentenceStart + start, end_Renamed - start);
-		offsetAtt.setOffset(correctOffset(offset + sentenceStart + start), correctOffset(offset + sentenceStart + end_Renamed));
-		return true;
-	  }
-	}
-
+            ClearAttributes();
+            termAtt.CopyBuffer(buffer, sentenceStart + start, end - start);
+            offsetAtt.SetOffset(CorrectOffset(offset + sentenceStart + start), CorrectOffset(offset + sentenceStart + end));
+            return true;
+        }
+    }
 }

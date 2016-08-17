@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Util
             this.iterator = iterator;
         }
 
-        public override bool IncrementToken()
+        public override sealed bool IncrementToken()
         {
             if (length == 0 || !IncrementWord())
             {
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Util
         {
             base.Reset();
             wrapper.SetText(buffer, 0, 0);
-            iterator.SetText(new string(buffer, 0, 0));
+            iterator.SetText(new string(wrapper.Text));
             length = usableLength = offset = 0;
         }
 

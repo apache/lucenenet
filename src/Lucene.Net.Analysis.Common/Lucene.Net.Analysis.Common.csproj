@@ -327,6 +327,11 @@
     <Compile Include="Analysis\Synonym\SynonymFilterFactory.cs" />
     <Compile Include="Analysis\Synonym\SynonymMap.cs" />
     <Compile Include="Analysis\Synonym\WordnetSynonymParser.cs" />
+    <Compile Include="Analysis\Th\ThaiAnalyzer.cs" />
+    <Compile Include="Analysis\Th\ThaiTokenizer.cs" />
+    <Compile Include="Analysis\Th\ThaiTokenizerFactory.cs" />
+    <Compile Include="Analysis\Th\ThaiWordFilter.cs" />
+    <Compile Include="Analysis\Th\ThaiWordFilterFactory.cs" />
     <Compile Include="Analysis\Tr\ApostropheFilter.cs" />
     <Compile Include="Analysis\Tr\ApostropheFilterFactory.cs" />
     <Compile Include="Analysis\Tr\TurkishAnalyzer.cs" />
@@ -500,6 +505,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\finnish_stop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Th\stopwords.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

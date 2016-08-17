@@ -224,6 +224,9 @@
     <Compile Include="Analysis\Synonym\TestSynonymMap.cs" />
     <Compile Include="Analysis\Synonym\TestSynonymMapFilter.cs" />
     <Compile Include="Analysis\Synonym\TestWordnetSynonymParser.cs" />
+    <Compile Include="Analysis\Th\TestThaiAnalyzer.cs" />
+    <Compile Include="Analysis\Th\TestThaiTokenizerFactory.cs" />
+    <Compile Include="Analysis\Th\TestThaiWordFilterFactory.cs" />
     <Compile Include="Analysis\Tr\TestApostropheFilter.cs" />
     <Compile Include="Analysis\Tr\TestApostropheFilterFactory.cs" />
     <Compile Include="Analysis\Tr\TestTurkishAnalyzer.cs" />

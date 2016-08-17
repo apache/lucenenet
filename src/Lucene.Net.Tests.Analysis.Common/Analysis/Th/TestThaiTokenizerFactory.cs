@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.th
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Th
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,42 +21,37 @@
 	 * limitations under the License.
 	 */
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+    /// <summary>
+    /// Simple tests to ensure the Thai word filter factory is working.
+    /// </summary>
+    public class TestThaiTokenizerFactory : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Ensure the filter actually decomposes text.
+        /// </summary>
+        [Test]
+        public virtual void TestWordBreak()
+        {
+            AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
+            Tokenizer tokenizer = TokenizerFactory("Thai").Create(new StringReader("การที่ได้ต้องแสดงว่างานดี"));
+            AssertTokenStreamContents(tokenizer, new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the Thai word filter factory is working.
-	/// </summary>
-	public class TestThaiTokenizerFactory : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Ensure the filter actually decomposes text.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testWordBreak() throws Exception
-	  public virtual void testWordBreak()
-	  {
-		assumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
-		Tokenizer tokenizer = tokenizerFactory("Thai").create(new StringReader("การที่ได้ต้องแสดงว่างานดี"));
-		assertTokenStreamContents(tokenizer, new string[] {"การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		assumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
-		try
-		{
-		  tokenizerFactory("Thai", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
+            try
+            {
+                TokenizerFactory("Thai", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }
