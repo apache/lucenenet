@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.ckb
-{
+﻿using Lucene.Net.Analysis.Util;
 
-	/*
+namespace Lucene.Net.Analysis.Ckb
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,122 +19,118 @@
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.util.StemmerUtil.endsWith;
+    /// <summary>
+    /// Light stemmer for Sorani
+    /// </summary>
+    public class SoraniStemmer
+    {
 
-	/// <summary>
-	/// Light stemmer for Sorani
-	/// </summary>
-	public class SoraniStemmer
-	{
+        /// <summary>
+        /// Stem an input buffer of Sorani text.
+        /// </summary>
+        /// <param name="s"> input buffer </param>
+        /// <param name="len"> length of input buffer </param>
+        /// <returns> length of input buffer after normalization </returns>
+        public virtual int stem(char[] s, int len)
+        {
+            // postposition
+            if (len > 5 && StemmerUtil.EndsWith(s, len, "دا"))
+            {
+                len -= 2;
+            }
+            else if (len > 4 && StemmerUtil.EndsWith(s, len, "نا"))
+            {
+                len--;
+            }
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "ەوە"))
+            {
+                len -= 3;
+            }
 
-	  /// <summary>
-	  /// Stem an input buffer of Sorani text.
-	  /// </summary>
-	  /// <param name="s"> input buffer </param>
-	  /// <param name="len"> length of input buffer </param>
-	  /// <returns> length of input buffer after normalization </returns>
-	  public virtual int stem(char[] s, int len)
-	  {
-		// postposition
-		if (len > 5 && endsWith(s, len, "دا"))
-		{
-		  len -= 2;
-		}
-		else if (len > 4 && endsWith(s, len, "نا"))
-		{
-		  len--;
-		}
-		else if (len > 6 && endsWith(s, len, "ەوە"))
-		{
-		  len -= 3;
-		}
+            // possessive pronoun
+            if (len > 6 && (StemmerUtil.EndsWith(s, len, "مان") || StemmerUtil.EndsWith(s, len, "یان") || StemmerUtil.EndsWith(s, len, "تان")))
+            {
+                len -= 3;
+            }
 
-		// possessive pronoun
-		if (len > 6 && (endsWith(s, len, "مان") || endsWith(s, len, "یان") || endsWith(s, len, "تان")))
-		{
-		  len -= 3;
-		}
-
-		// indefinite singular ezafe
-		if (len > 6 && endsWith(s, len, "ێکی"))
-		{
-		  return len - 3;
-		}
-		else if (len > 7 && endsWith(s, len, "یەکی"))
-		{
-		  return len - 4;
-		}
-		// indefinite singular
-		if (len > 5 && endsWith(s, len, "ێک"))
-		{
-		  return len - 2;
-		}
-		else if (len > 6 && endsWith(s, len, "یەک"))
-		{
-		  return len - 3;
-		}
-		// definite singular
-		else if (len > 6 && endsWith(s, len, "ەکە"))
-		{
-		  return len - 3;
-		}
-		else if (len > 5 && endsWith(s, len, "کە"))
-		{
-		  return len - 2;
-		}
-		// definite plural
-		else if (len > 7 && endsWith(s, len, "ەکان"))
-		{
-		  return len - 4;
-		}
-		else if (len > 6 && endsWith(s, len, "کان"))
-		{
-		  return len - 3;
-		}
-		// indefinite plural ezafe
-		else if (len > 7 && endsWith(s, len, "یانی"))
-		{
-		  return len - 4;
-		}
-		else if (len > 6 && endsWith(s, len, "انی"))
-		{
-		  return len - 3;
-		}
-		// indefinite plural
-		else if (len > 6 && endsWith(s, len, "یان"))
-		{
-		  return len - 3;
-		}
-		else if (len > 5 && endsWith(s, len, "ان"))
-		{
-		  return len - 2;
-		}
-		// demonstrative plural
-		else if (len > 7 && endsWith(s, len, "یانە"))
-		{
-		  return len - 4;
-		}
-		else if (len > 6 && endsWith(s, len, "انە"))
-		{
-		  return len - 3;
-		}
-		// demonstrative singular
-		else if (len > 5 && (endsWith(s, len, "ایە") || endsWith(s, len, "ەیە")))
-		{
-		  return len - 2;
-		}
-		else if (len > 4 && endsWith(s, len, "ە"))
-		{
-		  return len - 1;
-		}
-		// absolute singular ezafe
-		else if (len > 4 && endsWith(s, len, "ی"))
-		{
-		  return len - 1;
-		}
-		return len;
-	  }
-	}
-
+            // indefinite singular ezafe
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "ێکی"))
+            {
+                return len - 3;
+            }
+            else if (len > 7 && StemmerUtil.EndsWith(s, len, "یەکی"))
+            {
+                return len - 4;
+            }
+            // indefinite singular
+            if (len > 5 && StemmerUtil.EndsWith(s, len, "ێک"))
+            {
+                return len - 2;
+            }
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "یەک"))
+            {
+                return len - 3;
+            }
+            // definite singular
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "ەکە"))
+            {
+                return len - 3;
+            }
+            else if (len > 5 && StemmerUtil.EndsWith(s, len, "کە"))
+            {
+                return len - 2;
+            }
+            // definite plural
+            else if (len > 7 && StemmerUtil.EndsWith(s, len, "ەکان"))
+            {
+                return len - 4;
+            }
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "کان"))
+            {
+                return len - 3;
+            }
+            // indefinite plural ezafe
+            else if (len > 7 && StemmerUtil.EndsWith(s, len, "یانی"))
+            {
+                return len - 4;
+            }
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "انی"))
+            {
+                return len - 3;
+            }
+            // indefinite plural
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "یان"))
+            {
+                return len - 3;
+            }
+            else if (len > 5 && StemmerUtil.EndsWith(s, len, "ان"))
+            {
+                return len - 2;
+            }
+            // demonstrative plural
+            else if (len > 7 && StemmerUtil.EndsWith(s, len, "یانە"))
+            {
+                return len - 4;
+            }
+            else if (len > 6 && StemmerUtil.EndsWith(s, len, "انە"))
+            {
+                return len - 3;
+            }
+            // demonstrative singular
+            else if (len > 5 && (StemmerUtil.EndsWith(s, len, "ایە") || StemmerUtil.EndsWith(s, len, "ەیە")))
+            {
+                return len - 2;
+            }
+            else if (len > 4 && StemmerUtil.EndsWith(s, len, "ە"))
+            {
+                return len - 1;
+            }
+            // absolute singular ezafe
+            else if (len > 4 && StemmerUtil.EndsWith(s, len, "ی"))
+            {
+                return len - 1;
+            }
+            return len;
+        }
+    }
 }

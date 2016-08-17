@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.ckb
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Ckb
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,41 +21,35 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Sorani normalization factory is working.
+    /// </summary>
+    public class TestSoraniNormalizationFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        [Test]
+        public virtual void TestNormalization()
+        {
+            TextReader reader = new StringReader("پیــــاوەکان");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("SoraniNormalization").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "پیاوەکان" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the Sorani normalization factory is working.
-	/// </summary>
-	public class TestSoraniNormalizationFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNormalization() throws Exception
-	  public virtual void testNormalization()
-	  {
-		Reader reader = new StringReader("پیــــاوەکان");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("SoraniNormalization").create(stream);
-		assertTokenStreamContents(stream, new string[] {"پیاوەکان"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("SoraniNormalization", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("SoraniNormalization", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

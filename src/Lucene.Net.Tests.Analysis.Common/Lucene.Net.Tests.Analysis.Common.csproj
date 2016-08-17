@@ -67,6 +67,11 @@
     <Compile Include="Analysis\Cjk\TestCJKTokenizerFactory.cs" />
     <Compile Include="Analysis\Cjk\TestCJKWidthFilter.cs" />
     <Compile Include="Analysis\Cjk\TestCJKWidthFilterFactory.cs" />
+    <Compile Include="Analysis\Ckb\TestSoraniAnalyzer.cs" />
+    <Compile Include="Analysis\Ckb\TestSoraniNormalizationFilter.cs" />
+    <Compile Include="Analysis\Ckb\TestSoraniNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\Ckb\TestSoraniStemFilter.cs" />
+    <Compile Include="Analysis\Ckb\TestSoraniStemFilterFactory.cs" />
     <Compile Include="Analysis\Cn\TestChineseFilterFactory.cs" />
     <Compile Include="Analysis\Cn\TestChineseTokenizer.cs" />
     <Compile Include="Analysis\Cn\TestChineseTokenizerFactory.cs" />
@@ -247,6 +252,7 @@
     <EmbeddedResource Include="Analysis\De\deminimaltestdata.zip" />
     <EmbeddedResource Include="Analysis\Es\eslighttestdata.zip" />
     <EmbeddedResource Include="Analysis\Ru\rulighttestdata.zip" />
+    <EmbeddedResource Include="Analysis\Ckb\ckbtestdata.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

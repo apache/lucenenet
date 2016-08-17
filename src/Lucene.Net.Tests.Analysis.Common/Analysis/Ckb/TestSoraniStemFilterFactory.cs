@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.ckb
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Ckb
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,41 +21,35 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Sorani stem factory is working.
+    /// </summary>
+    public class TestSoraniStemFilterFactory : BaseTokenStreamFactoryTestCase
+    {
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        [Test]
+        public virtual void TestStemming()
+        {
+            TextReader reader = new StringReader("پیاوەکان");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("SoraniStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "پیاو" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the Sorani stem factory is working.
-	/// </summary>
-	public class TestSoraniStemFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemming() throws Exception
-	  public virtual void testStemming()
-	  {
-		Reader reader = new StringReader("پیاوەکان");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("SoraniStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"پیاو"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("SoraniStem", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("SoraniStem", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

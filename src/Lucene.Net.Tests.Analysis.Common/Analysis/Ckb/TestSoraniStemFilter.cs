@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.ckb
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Ckb
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,127 +21,109 @@
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.assertVocabulary;
+    /// <summary>
+    /// Test the Sorani Stemmer.
+    /// </summary>
+    public class TestSoraniStemFilter : BaseTokenStreamTestCase
+    {
+        internal SoraniAnalyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT);
 
+        [Test]
+        public virtual void TestIndefiniteSingular()
+        {
+            CheckOneTerm(a, "پیاوێک", "پیاو"); // -ek
+            CheckOneTerm(a, "دەرگایەک", "دەرگا"); // -yek
+        }
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        [Test]
+        public virtual void TestDefiniteSingular()
+        {
+            CheckOneTerm(a, "پیاوەكە", "پیاو"); // -aka
+            CheckOneTerm(a, "دەرگاكە", "دەرگا"); // -ka
+        }
 
-	/// <summary>
-	/// Test the Sorani Stemmer.
-	/// </summary>
-	public class TestSoraniStemFilter : BaseTokenStreamTestCase
-	{
-	  internal SoraniAnalyzer a = new SoraniAnalyzer(TEST_VERSION_CURRENT);
+        [Test]
+        public virtual void TestDemonstrativeSingular()
+        {
+            CheckOneTerm(a, "کتاویە", "کتاوی"); // -a
+            CheckOneTerm(a, "دەرگایە", "دەرگا"); // -ya
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testIndefiniteSingular() throws Exception
-	  public virtual void testIndefiniteSingular()
-	  {
-		checkOneTerm(a, "پیاوێک", "پیاو"); // -ek
-		checkOneTerm(a, "دەرگایەک", "دەرگا"); // -yek
-	  }
+        [Test]
+        public virtual void TestIndefinitePlural()
+        {
+            CheckOneTerm(a, "پیاوان", "پیاو"); // -An
+            CheckOneTerm(a, "دەرگایان", "دەرگا"); // -yAn
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDefiniteSingular() throws Exception
-	  public virtual void testDefiniteSingular()
-	  {
-		checkOneTerm(a, "پیاوەكە", "پیاو"); // -aka
-		checkOneTerm(a, "دەرگاكە", "دەرگا"); // -ka
-	  }
+        [Test]
+        public virtual void TestDefinitePlural()
+        {
+            CheckOneTerm(a, "پیاوەکان", "پیاو"); // -akAn
+            CheckOneTerm(a, "دەرگاکان", "دەرگا"); // -kAn
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDemonstrativeSingular() throws Exception
-	  public virtual void testDemonstrativeSingular()
-	  {
-		checkOneTerm(a, "کتاویە", "کتاوی"); // -a
-		checkOneTerm(a, "دەرگایە", "دەرگا"); // -ya
-	  }
+        [Test]
+        public virtual void TestDemonstrativePlural()
+        {
+            CheckOneTerm(a, "پیاوانە", "پیاو"); // -Ana
+            CheckOneTerm(a, "دەرگایانە", "دەرگا"); // -yAna
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testIndefinitePlural() throws Exception
-	  public virtual void testIndefinitePlural()
-	  {
-		checkOneTerm(a, "پیاوان", "پیاو"); // -An
-		checkOneTerm(a, "دەرگایان", "دەرگا"); // -yAn
-	  }
+        [Test]
+        public virtual void TestEzafe()
+        {
+            CheckOneTerm(a, "هۆتیلی", "هۆتیل"); // singular
+            CheckOneTerm(a, "هۆتیلێکی", "هۆتیل"); // indefinite
+            CheckOneTerm(a, "هۆتیلانی", "هۆتیل"); // plural
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDefinitePlural() throws Exception
-	  public virtual void testDefinitePlural()
-	  {
-		checkOneTerm(a, "پیاوەکان", "پیاو"); // -akAn
-		checkOneTerm(a, "دەرگاکان", "دەرگا"); // -kAn
-	  }
+        [Test]
+        public virtual void TestPostpositions()
+        {
+            CheckOneTerm(a, "دوورەوە", "دوور"); // -awa
+            CheckOneTerm(a, "نیوەشەودا", "نیوەشەو"); // -dA
+            CheckOneTerm(a, "سۆرانا", "سۆران"); // -A
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testDemonstrativePlural() throws Exception
-	  public virtual void testDemonstrativePlural()
-	  {
-		checkOneTerm(a, "پیاوانە", "پیاو"); // -Ana
-		checkOneTerm(a, "دەرگایانە", "دەرگا"); // -yAna
-	  }
+        [Test]
+        public virtual void TestPossessives()
+        {
+            CheckOneTerm(a, "پارەمان", "پارە"); // -mAn
+            CheckOneTerm(a, "پارەتان", "پارە"); // -tAn
+            CheckOneTerm(a, "پارەیان", "پارە"); // -yAn
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEzafe() throws Exception
-	  public virtual void testEzafe()
-	  {
-		checkOneTerm(a, "هۆتیلی", "هۆتیل"); // singular
-		checkOneTerm(a, "هۆتیلێکی", "هۆتیل"); // indefinite
-		checkOneTerm(a, "هۆتیلانی", "هۆتیل"); // plural
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPostpositions() throws Exception
-	  public virtual void testPostpositions()
-	  {
-		checkOneTerm(a, "دوورەوە", "دوور"); // -awa
-		checkOneTerm(a, "نیوەشەودا", "نیوەشەو"); // -dA
-		checkOneTerm(a, "سۆرانا", "سۆران"); // -A
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestSoraniStemFilter outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPossessives() throws Exception
-	  public virtual void testPossessives()
-	  {
-		checkOneTerm(a, "پارەمان", "پارە"); // -mAn
-		checkOneTerm(a, "پارەتان", "پارە"); // -tAn
-		checkOneTerm(a, "پارەیان", "پارە"); // -yAn
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestSoraniStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new SoraniStemFilter(tokenizer));
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestSoraniStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestSoraniStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new SoraniStemFilter(tokenizer));
-		  }
-	  }
-
-	  /// <summary>
-	  /// test against a basic vocabulary file </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVocabulary() throws Exception
-	  public virtual void testVocabulary()
-	  {
-		// top 8k words or so: freq > 1000
-		assertVocabulary(a, getDataFile("ckbtestdata.zip"), "testdata.txt");
-	  }
-	}
-
+        /// <summary>
+        /// test against a basic vocabulary file </summary>
+        [Test]
+        public virtual void TestVocabulary()
+        {
+            // top 8k words or so: freq > 1000
+            VocabularyAssert.AssertVocabulary(a, GetDataFile("ckbtestdata.zip"), "testdata.txt");
+        }
+    }
 }
