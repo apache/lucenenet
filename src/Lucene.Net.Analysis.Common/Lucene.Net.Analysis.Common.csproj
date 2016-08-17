@@ -53,6 +53,15 @@
     <Compile Include="Analysis\Br\BrazilianStemFilterFactory.cs" />
     <Compile Include="Analysis\Br\BrazilianStemmer.cs" />
     <Compile Include="Analysis\Ca\CatalanAnalyzer.cs" />
+    <Compile Include="Analysis\Ar\ArabicAnalyzer.cs" />
+    <Compile Include="Analysis\Ar\ArabicLetterTokenizer.cs" />
+    <Compile Include="Analysis\Ar\ArabicLetterTokenizerFactory.cs" />
+    <Compile Include="Analysis\Ar\ArabicNormalizationFilter.cs" />
+    <Compile Include="Analysis\Ar\ArabicNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\Ar\ArabicNormalizer.cs" />
+    <Compile Include="Analysis\Ar\ArabicStemFilter.cs" />
+    <Compile Include="Analysis\Ar\ArabicStemFilterFactory.cs" />
+    <Compile Include="Analysis\Ar\ArabicStemmer.cs" />
     <Compile Include="Analysis\CharFilter\BaseCharFilter.cs" />
     <Compile Include="Analysis\CharFilter\HTMLStripCharFilter.cs" />
     <Compile Include="Analysis\CharFilter\HTMLStripCharFilterFactory.cs" />
@@ -146,6 +155,12 @@
     <Compile Include="Analysis\Es\SpanishLightStemFilterFactory.cs" />
     <Compile Include="Analysis\Es\SpanishLightStemmer.cs" />
     <Compile Include="Analysis\Eu\BasqueAnalyzer.cs" />
+    <Compile Include="Analysis\Fa\PersianAnalyzer.cs" />
+    <Compile Include="Analysis\Fa\PersianCharFilter.cs" />
+    <Compile Include="Analysis\Fa\PersianCharFilterFactory.cs" />
+    <Compile Include="Analysis\Fa\PersianNormalizationFilter.cs" />
+    <Compile Include="Analysis\Fa\PersianNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\Fa\PersianNormalizer.cs" />
     <Compile Include="Analysis\Fr\FrenchAnalyzer.cs" />
     <Compile Include="Analysis\Fr\FrenchLightStemFilter.cs" />
     <Compile Include="Analysis\Fr\FrenchLightStemFilterFactory.cs" />
@@ -474,6 +489,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Eu\stopwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Fa\stopwords.txt" />
+    <EmbeddedResource Include="Analysis\Ar\stopwords.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

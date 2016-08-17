@@ -56,6 +56,11 @@
     <Compile Include="Analysis\Br\TestBrazilianStemFilterFactory.cs" />
     <Compile Include="Analysis\Br\TestBrazilianStemmer.cs" />
     <Compile Include="Analysis\Ca\TestCatalanAnalyzer.cs" />
+    <Compile Include="Analysis\Ar\TestArabicAnalyzer.cs" />
+    <Compile Include="Analysis\Ar\TestArabicFilters.cs" />
+    <Compile Include="Analysis\Ar\TestArabicLetterTokenizer.cs" />
+    <Compile Include="Analysis\Ar\TestArabicNormalizationFilter.cs" />
+    <Compile Include="Analysis\Ar\TestArabicStemFilter.cs" />
     <Compile Include="Analysis\CharFilters\HTMLStripCharFilterTest.cs" />
     <Compile Include="Analysis\CharFilters\TestHTMLStripCharFilterFactory.cs" />
     <Compile Include="Analysis\CharFilters\TestMappingCharFilter.cs" />
@@ -123,6 +128,10 @@
     <Compile Include="Analysis\Es\TestSpanishLightStemFilter.cs" />
     <Compile Include="Analysis\Es\TestSpanishLightStemFilterFactory.cs" />
     <Compile Include="Analysis\Eu\TestBasqueAnalyzer.cs" />
+    <Compile Include="Analysis\Fa\TestPersianAnalyzer.cs" />
+    <Compile Include="Analysis\Fa\TestPersianCharFilter.cs" />
+    <Compile Include="Analysis\Fa\TestPersianNormalizationFilter.cs" />
+    <Compile Include="Analysis\Fa\TestPersianNormalizationFilterFactory.cs" />
     <Compile Include="Analysis\Fr\TestFrenchAnalyzer.cs" />
     <Compile Include="Analysis\Fr\TestFrenchLightStemFilter.cs" />
     <Compile Include="Analysis\Fr\TestFrenchLightStemFilterFactory.cs" />
@@ -348,6 +357,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Analysis\De\data.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

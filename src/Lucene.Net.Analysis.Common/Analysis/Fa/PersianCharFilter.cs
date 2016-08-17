@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.fa
-{
+﻿using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Fa
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,62 +19,51 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// CharFilter that replaces instances of Zero-width non-joiner with an
+    /// ordinary space.
+    /// </summary>
+    public class PersianCharFilter : CharFilter
+    {
+        public PersianCharFilter(TextReader @in)
+              : base(@in)
+        {
+        }
 
-	/// <summary>
-	/// CharFilter that replaces instances of Zero-width non-joiner with an
-	/// ordinary space.
-	/// </summary>
-	public class PersianCharFilter : CharFilter
-	{
+        public override int Read(char[] cbuf, int off, int len)
+        {
+            int charsRead = input.Read(cbuf, off, len);
+            if (charsRead > 0)
+            {
+                int end = off + charsRead;
+                while (off < end)
+                {
+                    if (cbuf[off] == '\u200C')
+                    {
+                        cbuf[off] = ' ';
+                    }
+                    off++;
+                }
+            }
+            return charsRead;
+        }
 
-	  public PersianCharFilter(Reader @in) : base(@in)
-	  {
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int read(char[] cbuf, int off, int len) throws java.io.IOException
-	  public override int read(char[] cbuf, int off, int len)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int charsRead = input.read(cbuf, off, len);
-		int charsRead = input.read(cbuf, off, len);
-		if (charsRead > 0)
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = off + charsRead;
-		  int end = off + charsRead;
-		  while (off < end)
-		  {
-			if (cbuf[off] == '\u200C')
-			{
-			  cbuf[off] = ' ';
-			}
-			off++;
-		  }
-		}
-		return charsRead;
-	  }
-
-	  // optimized impl: some other charfilters consume with read()
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public int read() throws java.io.IOException
-	  public override int read()
-	  {
-		int ch = input.read();
-		if (ch == '\u200C')
-		{
-		  return ' ';
-		}
-		else
-		{
-		  return ch;
-		}
-	  }
-
-	  protected internal override int correct(int currentOff)
-	  {
-		return currentOff; // we don't change the length of the string
-	  }
-	}
-
+        // optimized impl: some other charfilters consume with read()
+        public override int Read()
+        {
+            int ch = input.Read();
+            if (ch == '\u200C')
+            {
+                return ' ';
+            }
+            else
+            {
+                return ch;
+            }
+        }
+        protected override int Correct(int currentOff)
+        {
+            return currentOff; // we don't change the length of the string
+        }
+    }
 }

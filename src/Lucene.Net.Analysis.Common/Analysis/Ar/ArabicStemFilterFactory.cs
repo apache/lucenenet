@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.ar
+namespace Lucene.Net.Analysis.Ar
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,36 +20,34 @@ namespace org.apache.lucene.analysis.ar
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="ArabicStemFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_arstem" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.ArabicNormalizationFilterFactory"/&gt;
+    ///     &lt;filter class="solr.ArabicStemFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class ArabicStemFilterFactory : TokenFilterFactory
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="ArabicStemFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_arstem" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.ArabicNormalizationFilterFactory"/&gt;
-	///     &lt;filter class="solr.ArabicStemFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class ArabicStemFilterFactory : TokenFilterFactory
-	{
+        /// <summary>
+        /// Creates a new ArabicStemFilterFactory </summary>
+        public ArabicStemFilterFactory(IDictionary<string, string> args)
+              : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new ArabicStemFilterFactory </summary>
-	  public ArabicStemFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override ArabicStemFilter create(TokenStream input)
-	  {
-		return new ArabicStemFilter(input);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new ArabicStemFilter(input);
+        }
+    }
 }

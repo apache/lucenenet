@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.fa
+namespace Lucene.Net.Analysis.Fa
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,46 +21,40 @@ namespace org.apache.lucene.analysis.fa
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Factory for <seealso cref="PersianCharFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_fa" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;charFilter class="solr.PersianCharFilterFactory"/&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class PersianCharFilterFactory : CharFilterFactory, IMultiTermAwareComponent
+    {
 
-	using AbstractAnalysisFactory = org.apache.lucene.analysis.util.AbstractAnalysisFactory;
-	using CharFilterFactory = org.apache.lucene.analysis.util.CharFilterFactory;
-	using MultiTermAwareComponent = org.apache.lucene.analysis.util.MultiTermAwareComponent;
+        /// <summary>
+        /// Creates a new PersianCharFilterFactory </summary>
+        public PersianCharFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	/// <summary>
-	/// Factory for <seealso cref="PersianCharFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_fa" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;charFilter class="solr.PersianCharFilterFactory"/&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class PersianCharFilterFactory : CharFilterFactory, MultiTermAwareComponent
-	{
+        public override TextReader Create(TextReader input)
+        {
+            return new PersianCharFilter(input);
+        }
 
-	  /// <summary>
-	  /// Creates a new PersianCharFilterFactory </summary>
-	  public PersianCharFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override CharFilter create(Reader input)
-	  {
-		return new PersianCharFilter(input);
-	  }
-
-	  public virtual AbstractAnalysisFactory MultiTermComponent
-	  {
-		  get
-		  {
-			return this;
-		  }
-	  }
-	}
-
+        public virtual AbstractAnalysisFactory MultiTermComponent
+        {
+            get
+            {
+                return this;
+            }
+        }
+    }
 }

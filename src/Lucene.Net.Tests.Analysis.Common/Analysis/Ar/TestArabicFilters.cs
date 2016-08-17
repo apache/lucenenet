@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
 
-namespace org.apache.lucene.analysis.ar
+namespace Lucene.Net.Analysis.Ar
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,112 +22,103 @@ namespace org.apache.lucene.analysis.ar
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Arabic filter Factories are working.
+    /// </summary>
+    public class TestArabicFilters : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Test ArabicLetterTokenizerFactory </summary>
+        /// @deprecated (3.1) Remove in Lucene 5.0 
+        [Test]
+        [Obsolete("(3.1) Remove in Lucene 5.0")]
+        public virtual void TestTokenizer()
+        {
+            TextReader reader = new StringReader("الذين مَلكت أيمانكم");
+            TokenStream stream = TokenizerFactory("ArabicLetter").Create(reader);
+            AssertTokenStreamContents(stream, new string[] { "الذين", "مَلكت", "أيمانكم" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
+        /// <summary>
+        /// Test ArabicNormalizationFilterFactory
+        /// </summary>
+        [Test]
+        public virtual void TestNormalizer()
+        {
+            TextReader reader = new StringReader("الذين مَلكت أيمانكم");
+            Tokenizer tokenizer = TokenizerFactory("Standard").Create(reader);
+            TokenStream stream = TokenFilterFactory("ArabicNormalization").Create(tokenizer);
+            AssertTokenStreamContents(stream, new string[] { "الذين", "ملكت", "ايمانكم" });
+        }
 
-	/// <summary>
-	/// Simple tests to ensure the Arabic filter Factories are working.
-	/// </summary>
-	public class TestArabicFilters : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Test ArabicLetterTokenizerFactory </summary>
-	  /// @deprecated (3.1) Remove in Lucene 5.0 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Deprecated("(3.1) Remove in Lucene 5.0") public void testTokenizer() throws Exception
-	  [Obsolete("(3.1) Remove in Lucene 5.0")]
-	  public virtual void testTokenizer()
-	  {
-		Reader reader = new StringReader("الذين مَلكت أيمانكم");
-		TokenStream stream = tokenizerFactory("ArabicLetter").create(reader);
-		assertTokenStreamContents(stream, new string[] {"الذين", "مَلكت", "أيمانكم"});
-	  }
+        /// <summary>
+        /// Test ArabicStemFilterFactory
+        /// </summary>
+        [Test]
+        public virtual void TestStemmer()
+        {
+            TextReader reader = new StringReader("الذين مَلكت أيمانكم");
+            Tokenizer tokenizer = TokenizerFactory("Standard").Create(reader);
+            TokenStream stream = TokenFilterFactory("ArabicNormalization").Create(tokenizer);
+            stream = TokenFilterFactory("ArabicStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "ذين", "ملكت", "ايمانكم" });
+        }
 
-	  /// <summary>
-	  /// Test ArabicNormalizationFilterFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNormalizer() throws Exception
-	  public virtual void testNormalizer()
-	  {
-		Reader reader = new StringReader("الذين مَلكت أيمانكم");
-		Tokenizer tokenizer = tokenizerFactory("Standard").create(reader);
-		TokenStream stream = tokenFilterFactory("ArabicNormalization").create(tokenizer);
-		assertTokenStreamContents(stream, new string[] {"الذين", "ملكت", "ايمانكم"});
-	  }
+        /// <summary>
+        /// Test PersianCharFilterFactory
+        /// </summary>
+        [Test]
+        public virtual void TestPersianCharFilter()
+        {
+            TextReader reader = CharFilterFactory("Persian").Create(new StringReader("می‌خورد"));
+            Tokenizer tokenizer = TokenizerFactory("Standard").Create(reader);
+            AssertTokenStreamContents(tokenizer, new string[] { "می", "خورد" });
+        }
 
-	  /// <summary>
-	  /// Test ArabicStemFilterFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemmer() throws Exception
-	  public virtual void testStemmer()
-	  {
-		Reader reader = new StringReader("الذين مَلكت أيمانكم");
-		Tokenizer tokenizer = tokenizerFactory("Standard").create(reader);
-		TokenStream stream = tokenFilterFactory("ArabicNormalization").create(tokenizer);
-		stream = tokenFilterFactory("ArabicStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"ذين", "ملكت", "ايمانكم"});
-	  }
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("ArabicNormalization", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
 
-	  /// <summary>
-	  /// Test PersianCharFilterFactory
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPersianCharFilter() throws Exception
-	  public virtual void testPersianCharFilter()
-	  {
-		Reader reader = charFilterFactory("Persian").create(new StringReader("می‌خورد"));
-		Tokenizer tokenizer = tokenizerFactory("Standard").create(reader);
-		assertTokenStreamContents(tokenizer, new string[] {"می", "خورد"});
-	  }
+            try
+            {
+                TokenFilterFactory("Arabicstem", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
 
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("ArabicNormalization", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
+            try
+            {
+                CharFilterFactory("Persian", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
 
-		try
-		{
-		  tokenFilterFactory("Arabicstem", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-
-		try
-		{
-		  charFilterFactory("Persian", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-
-		try
-		{
-		  tokenizerFactory("ArabicLetter", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+            try
+            {
+                TokenizerFactory("ArabicLetter", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

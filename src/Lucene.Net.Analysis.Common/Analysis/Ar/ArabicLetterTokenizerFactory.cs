@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.ar
+namespace Lucene.Net.Analysis.Ar
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,34 +23,29 @@ namespace org.apache.lucene.analysis.ar
 	 * limitations under the License.
 	 */
 
-	using TokenizerFactory = org.apache.lucene.analysis.util.TokenizerFactory;
-	using AttributeFactory = org.apache.lucene.util.AttributeSource.AttributeFactory;
-
-
-
-	/// <summary>
-	/// Factory for <seealso cref="ArabicLetterTokenizer"/> </summary>
-	/// @deprecated (3.1) Use StandardTokenizerFactory instead.
-	///  
-	[Obsolete("(3.1) Use StandardTokenizerFactory instead.")]
+    /// <summary>
+    /// Factory for <seealso cref="ArabicLetterTokenizer"/> </summary>
+    /// @deprecated (3.1) Use StandardTokenizerFactory instead.
+    ///  
+    [Obsolete("(3.1) Use StandardTokenizerFactory instead.")]
 	public class ArabicLetterTokenizerFactory : TokenizerFactory
 	{
 
 	  /// <summary>
 	  /// Creates a new ArabicNormalizationFilterFactory </summary>
-	  public ArabicLetterTokenizerFactory(IDictionary<string, string> args) : base(args)
+	  public ArabicLetterTokenizerFactory(IDictionary<string, string> args) 
+            : base(args)
 	  {
-		assureMatchVersion();
+		AssureMatchVersion();
 		if (args.Count > 0)
 		{
 		  throw new System.ArgumentException("Unknown parameters: " + args);
 		}
 	  }
 
-	  public override ArabicLetterTokenizer create(AttributeFactory factory, Reader input)
-	  {
-		return new ArabicLetterTokenizer(luceneMatchVersion, factory, input);
-	  }
-	}
-
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
+        {
+            return new ArabicLetterTokenizer(luceneMatchVersion, factory, input);
+        }
+    }
 }

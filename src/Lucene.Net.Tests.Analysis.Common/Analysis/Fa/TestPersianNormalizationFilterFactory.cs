@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.fa
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Fa
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,43 +21,37 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Persian normalization factory is working.
+    /// </summary>
+    public class TestPersianNormalizationFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Ensure the filter actually normalizes persian text.
+        /// </summary>
+        [Test]
+        public virtual void TestNormalization()
+        {
+            TextReader reader = new StringReader("های");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("PersianNormalization").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "هاي" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-	/// <summary>
-	/// Simple tests to ensure the Persian normalization factory is working.
-	/// </summary>
-	public class TestPersianNormalizationFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-	  /// <summary>
-	  /// Ensure the filter actually normalizes persian text.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNormalization() throws Exception
-	  public virtual void testNormalization()
-	  {
-		Reader reader = new StringReader("های");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("PersianNormalization").create(stream);
-		assertTokenStreamContents(stream, new string[] {"هاي"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("PersianNormalization", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("PersianNormalization", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

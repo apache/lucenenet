@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.fa
-{
+﻿using Lucene.Net.Analysis.Util;
+using System;
 
-	/*
+namespace Lucene.Net.Analysis.Fa
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,80 +20,75 @@
 	 * limitations under the License.
 	 */
 
-	using org.apache.lucene.analysis.util;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.util.StemmerUtil.*;
+    /// <summary>
+    /// Normalizer for Persian.
+    /// <para>
+    /// Normalization is done in-place for efficiency, operating on a termbuffer.
+    /// </para>
+    /// <para>
+    /// Normalization is defined as:
+    /// <ul>
+    /// <li>Normalization of various heh + hamza forms and heh goal to heh.
+    /// <li>Normalization of farsi yeh and yeh barree to arabic yeh
+    /// <li>Normalization of persian keheh to arabic kaf
+    /// </ul>
+    /// 
+    /// </para>
+    /// </summary>
+    public class PersianNormalizer
+    {
+        public const char YEH = '\u064A';
 
-	/// <summary>
-	/// Normalizer for Persian.
-	/// <para>
-	/// Normalization is done in-place for efficiency, operating on a termbuffer.
-	/// </para>
-	/// <para>
-	/// Normalization is defined as:
-	/// <ul>
-	/// <li>Normalization of various heh + hamza forms and heh goal to heh.
-	/// <li>Normalization of farsi yeh and yeh barree to arabic yeh
-	/// <li>Normalization of persian keheh to arabic kaf
-	/// </ul>
-	/// 
-	/// </para>
-	/// </summary>
-	public class PersianNormalizer
-	{
-	  public const char YEH = '\u064A';
+        public const char FARSI_YEH = '\u06CC';
 
-	  public const char FARSI_YEH = '\u06CC';
+        public const char YEH_BARREE = '\u06D2';
 
-	  public const char YEH_BARREE = '\u06D2';
+        public const char KEHEH = '\u06A9';
 
-	  public const char KEHEH = '\u06A9';
+        public const char KAF = '\u0643';
 
-	  public const char KAF = '\u0643';
+        public const char HAMZA_ABOVE = '\u0654';
 
-	  public const char HAMZA_ABOVE = '\u0654';
+        public const char HEH_YEH = '\u06C0';
 
-	  public const char HEH_YEH = '\u06C0';
+        public const char HEH_GOAL = '\u06C1';
 
-	  public const char HEH_GOAL = '\u06C1';
+        public const char HEH = '\u0647';
 
-	  public const char HEH = '\u0647';
+        /// <summary>
+        /// Normalize an input buffer of Persian text
+        /// </summary>
+        /// <param name="s"> input buffer </param>
+        /// <param name="len"> length of input buffer </param>
+        /// <returns> length of input buffer after normalization </returns>
+        public virtual int Normalize(char[] s, int len)
+        {
 
-	  /// <summary>
-	  /// Normalize an input buffer of Persian text
-	  /// </summary>
-	  /// <param name="s"> input buffer </param>
-	  /// <param name="len"> length of input buffer </param>
-	  /// <returns> length of input buffer after normalization </returns>
-	  public virtual int normalize(char[] s, int len)
-	  {
+            for (int i = 0; i < len; i++)
+            {
+                switch (s[i])
+                {
+                    case FARSI_YEH:
+                    case YEH_BARREE:
+                        s[i] = YEH;
+                        break;
+                    case KEHEH:
+                        s[i] = KAF;
+                        break;
+                    case HEH_YEH:
+                    case HEH_GOAL:
+                        s[i] = HEH;
+                        break;
+                    case HAMZA_ABOVE: // necessary for HEH + HAMZA
+                        len = StemmerUtil.Delete(s, i, len);
+                        i--;
+                        break;
+                    default:
+                        break;
+                }
+            }
 
-		for (int i = 0; i < len; i++)
-		{
-		  switch (s[i])
-		  {
-		  case FARSI_YEH:
-		  case YEH_BARREE:
-			s[i] = YEH;
-			break;
-		  case KEHEH:
-			s[i] = KAF;
-			break;
-		  case HEH_YEH:
-		  case HEH_GOAL:
-			s[i] = HEH;
-			break;
-		  case HAMZA_ABOVE: // necessary for HEH + HAMZA
-			len = StemmerUtil.delete(s, i, len);
-			i--;
-			break;
-		  default:
-			break;
-		  }
-		}
-
-		return len;
-	  }
-	}
-
+            return len;
+        }
+    }
 }
