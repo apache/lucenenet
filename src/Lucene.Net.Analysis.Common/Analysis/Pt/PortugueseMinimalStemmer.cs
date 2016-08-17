@@ -1,7 +1,6 @@
-﻿namespace org.apache.lucene.analysis.pt
+﻿namespace Lucene.Net.Analysis.Pt
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,27 +17,26 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// Minimal Stemmer for Portuguese
-	/// <para>
-	/// This follows the "RSLP-S" algorithm presented in:
-	/// <i>A study on the Use of Stemming for Monolingual Ad-Hoc Portuguese
-	/// Information Retrieval</i> (Orengo, et al)
-	/// which is just the plural reduction step of the RSLP
-	/// algorithm from <i>A Stemming Algorithm for the Portuguese Language</i>,
-	/// Orengo et al.
-	/// </para>
-	/// </summary>
-	/// <seealso cref= RSLPStemmerBase </seealso>
-	public class PortugueseMinimalStemmer : RSLPStemmerBase
-	{
+    /// <summary>
+    /// Minimal Stemmer for Portuguese
+    /// <para>
+    /// This follows the "RSLP-S" algorithm presented in:
+    /// <i>A study on the Use of Stemming for Monolingual Ad-Hoc Portuguese
+    /// Information Retrieval</i> (Orengo, et al)
+    /// which is just the plural reduction step of the RSLP
+    /// algorithm from <i>A Stemming Algorithm for the Portuguese Language</i>,
+    /// Orengo et al.
+    /// </para>
+    /// </summary>
+    /// <seealso cref= RSLPStemmerBase </seealso>
+    public class PortugueseMinimalStemmer : RSLPStemmerBase
+    {
 
-	  private static readonly Step pluralStep = parse(typeof(PortugueseMinimalStemmer), "portuguese.rslp")["Plural"];
+        private static readonly Step pluralStep = Parse(typeof(PortugueseMinimalStemmer), "portuguese.rslp")["Plural"];
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		return pluralStep.apply(s, len);
-	  }
-	}
-
+        public virtual int Stem(char[] s, int len)
+        {
+            return pluralStep.Apply(s, len);
+        }
+    }
 }

@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.analysis.gl
-{
+﻿using System.IO;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis.Core;
 
-	/*
+namespace Lucene.Net.Analysis.Gl
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,68 +22,57 @@
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.assertVocabulary;
+    /// <summary>
+    /// Simple tests for <seealso cref="GalicianStemFilter"/>
+    /// </summary>
+    public class TestGalicianStemFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
+
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
+                TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
+                return new TokenStreamComponents(source, new GalicianStemFilter(result));
+            }
+        }
 
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using LowerCaseFilter = org.apache.lucene.analysis.core.LowerCaseFilter;
-	using StandardTokenizer = org.apache.lucene.analysis.standard.StandardTokenizer;
+        /// <summary>
+        /// Test against a vocabulary from the reference impl </summary>
+        [Test]
+        public virtual void TestVocabulary()
+        {
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("gltestdata.zip"), "gl.txt");
+        }
 
-	/// <summary>
-	/// Simple tests for <seealso cref="GalicianStemFilter"/>
-	/// </summary>
-	public class TestGalicianStemFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+            CheckOneTerm(a, "", "");
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestGalicianStemFilter outerInstance;
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-			TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
-			return new TokenStreamComponents(source, new GalicianStemFilter(result));
-		  }
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestGalicianStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-
-	  /// <summary>
-	  /// Test against a vocabulary from the reference impl </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVocabulary() throws java.io.IOException
-	  public virtual void testVocabulary()
-	  {
-		assertVocabulary(analyzer, getDataFile("gltestdata.zip"), "gl.txt");
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-		checkOneTerm(a, "", "");
-	  }
-
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestGalicianStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper2(TestGalicianStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new GalicianStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new GalicianStemFilter(tokenizer));
+            }
+        }
+    }
 }

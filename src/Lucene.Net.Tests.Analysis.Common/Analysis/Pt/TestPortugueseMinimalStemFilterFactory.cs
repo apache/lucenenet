@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.pt
-{
+﻿using System.IO;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Util;
 
-	/*
+namespace Lucene.Net.Analysis.Pt
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,40 +21,34 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Portuguese Minimal stem factory is working.
+    /// </summary>
+    public class TestPortugueseMinimalStemFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        [Test]
+        public virtual void TestStemming()
+        {
+            TextReader reader = new StringReader("questões");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("PortugueseMinimalStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "questão" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-	/// <summary>
-	/// Simple tests to ensure the Portuguese Minimal stem factory is working.
-	/// </summary>
-	public class TestPortugueseMinimalStemFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemming() throws Exception
-	  public virtual void testStemming()
-	  {
-		Reader reader = new StringReader("questões");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("PortugueseMinimalStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"questão"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("PortugueseMinimalStem", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("PortugueseMinimalStem", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

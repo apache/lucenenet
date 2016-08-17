@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.pt
-{
+﻿using Lucene.Net.Analysis.Util;
 
-	/*
+namespace Lucene.Net.Analysis.Pt
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +19,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,200 +54,195 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	using org.apache.lucene.analysis.util;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.util.StemmerUtil.*;
+    /// <summary>
+    /// Light Stemmer for Portuguese
+    /// <para>
+    /// This stemmer implements the "UniNE" algorithm in:
+    /// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
+    /// Jacques Savoy
+    /// </para>
+    /// </summary>
+    public class PortugueseLightStemmer
+    {
 
-	/// <summary>
-	/// Light Stemmer for Portuguese
-	/// <para>
-	/// This stemmer implements the "UniNE" algorithm in:
-	/// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
-	/// Jacques Savoy
-	/// </para>
-	/// </summary>
-	public class PortugueseLightStemmer
-	{
+        public virtual int Stem(char[] s, int len)
+        {
+            if (len < 4)
+            {
+                return len;
+            }
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		if (len < 4)
-		{
-		  return len;
-		}
+            len = RemoveSuffix(s, len);
 
-		len = removeSuffix(s, len);
+            if (len > 3 && s[len - 1] == 'a')
+            {
+                len = NormFeminine(s, len);
+            }
 
-		if (len > 3 && s[len - 1] == 'a')
-		{
-		  len = normFeminine(s, len);
-		}
+            if (len > 4)
+            {
+                switch (s[len - 1])
+                {
+                    case 'e':
+                    case 'a':
+                    case 'o':
+                        len--;
+                        break;
+                }
+            }
 
-		if (len > 4)
-		{
-		  switch (s[len - 1])
-		  {
-			case 'e':
-			case 'a':
-			case 'o':
-				len--;
-				break;
-		  }
-		}
+            for (int i = 0; i < len; i++)
+            {
+                switch (s[i])
+                {
+                    case 'à':
+                    case 'á':
+                    case 'â':
+                    case 'ä':
+                    case 'ã':
+                        s[i] = 'a';
+                        break;
+                    case 'ò':
+                    case 'ó':
+                    case 'ô':
+                    case 'ö':
+                    case 'õ':
+                        s[i] = 'o';
+                        break;
+                    case 'è':
+                    case 'é':
+                    case 'ê':
+                    case 'ë':
+                        s[i] = 'e';
+                        break;
+                    case 'ù':
+                    case 'ú':
+                    case 'û':
+                    case 'ü':
+                        s[i] = 'u';
+                        break;
+                    case 'ì':
+                    case 'í':
+                    case 'î':
+                    case 'ï':
+                        s[i] = 'i';
+                        break;
+                    case 'ç':
+                        s[i] = 'c';
+                        break;
+                }
+            }
 
-		for (int i = 0; i < len; i++)
-		{
-		  switch (s[i])
-		  {
-			case 'à':
-			case 'á':
-			case 'â':
-			case 'ä':
-			case 'ã':
-				s[i] = 'a';
-				break;
-			case 'ò':
-			case 'ó':
-			case 'ô':
-			case 'ö':
-			case 'õ':
-				s[i] = 'o';
-				break;
-			case 'è':
-			case 'é':
-			case 'ê':
-			case 'ë':
-				s[i] = 'e';
-				break;
-			case 'ù':
-			case 'ú':
-			case 'û':
-			case 'ü':
-				s[i] = 'u';
-				break;
-			case 'ì':
-			case 'í':
-			case 'î':
-			case 'ï':
-				s[i] = 'i';
-				break;
-			case 'ç':
-				s[i] = 'c';
-				break;
-		  }
-		}
+            return len;
+        }
 
-		return len;
-	  }
+        private int RemoveSuffix(char[] s, int len)
+        {
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "es"))
+            {
+                switch (s[len - 3])
+                {
+                    case 'r':
+                    case 's':
+                    case 'l':
+                    case 'z':
+                        return len - 2;
+                }
+            }
 
-	  private int removeSuffix(char[] s, int len)
-	  {
-		if (len > 4 && StemmerUtil.EndsWith(s, len, "es"))
-		{
-		  switch (s[len - 3])
-		  {
-			case 'r':
-			case 's':
-			case 'l':
-			case 'z':
-				return len - 2;
-		  }
-		}
+            if (len > 3 && StemmerUtil.EndsWith(s, len, "ns"))
+            {
+                s[len - 2] = 'm';
+                return len - 1;
+            }
 
-		if (len > 3 && StemmerUtil.EndsWith(s, len, "ns"))
-		{
-		  s[len - 2] = 'm';
-		  return len - 1;
-		}
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "eis") || StemmerUtil.EndsWith(s, len, "éis")))
+            {
+                s[len - 3] = 'e';
+                s[len - 2] = 'l';
+                return len - 1;
+            }
 
-		if (len > 4 && (StemmerUtil.EndsWith(s, len, "eis") || StemmerUtil.EndsWith(s, len, "éis")))
-		{
-		  s[len - 3] = 'e';
-		  s[len - 2] = 'l';
-		  return len - 1;
-		}
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "ais"))
+            {
+                s[len - 2] = 'l';
+                return len - 1;
+            }
 
-		if (len > 4 && StemmerUtil.EndsWith(s, len, "ais"))
-		{
-		  s[len - 2] = 'l';
-		  return len - 1;
-		}
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "óis"))
+            {
+                s[len - 3] = 'o';
+                s[len - 2] = 'l';
+                return len - 1;
+            }
 
-		if (len > 4 && StemmerUtil.EndsWith(s, len, "óis"))
-		{
-		  s[len - 3] = 'o';
-		  s[len - 2] = 'l';
-		  return len - 1;
-		}
+            if (len > 4 && StemmerUtil.EndsWith(s, len, "is"))
+            {
+                s[len - 1] = 'l';
+                return len;
+            }
 
-		if (len > 4 && StemmerUtil.EndsWith(s, len, "is"))
-		{
-		  s[len - 1] = 'l';
-		  return len;
-		}
+            if (len > 3 && (StemmerUtil.EndsWith(s, len, "ões") || StemmerUtil.EndsWith(s, len, "ães")))
+            {
+                len--;
+                s[len - 2] = 'ã';
+                s[len - 1] = 'o';
+                return len;
+            }
 
-		if (len > 3 && (StemmerUtil.EndsWith(s, len, "ões") || StemmerUtil.EndsWith(s, len, "ães")))
-		{
-		  len--;
-		  s[len - 2] = 'ã';
-		  s[len - 1] = 'o';
-		  return len;
-		}
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "mente"))
+            {
+                return len - 5;
+            }
 
-		if (len > 6 && StemmerUtil.EndsWith(s, len, "mente"))
-		{
-		  return len - 5;
-		}
+            if (len > 3 && s[len - 1] == 's')
+            {
+                return len - 1;
+            }
+            return len;
+        }
 
-		if (len > 3 && s[len - 1] == 's')
-		{
-		  return len - 1;
-		}
-		return len;
-	  }
+        private int NormFeminine(char[] s, int len)
+        {
+            if (len > 7 && (StemmerUtil.EndsWith(s, len, "inha") || StemmerUtil.EndsWith(s, len, "iaca") || StemmerUtil.EndsWith(s, len, "eira")))
+            {
+                s[len - 1] = 'o';
+                return len;
+            }
 
-	  private int normFeminine(char[] s, int len)
-	  {
-		if (len > 7 && (StemmerUtil.EndsWith(s, len, "inha") || StemmerUtil.EndsWith(s, len, "iaca") || StemmerUtil.EndsWith(s, len, "eira")))
-		{
-		  s[len - 1] = 'o';
-		  return len;
-		}
+            if (len > 6)
+            {
+                if (StemmerUtil.EndsWith(s, len, "osa") || StemmerUtil.EndsWith(s, len, "ica") || StemmerUtil.EndsWith(s, len, "ida") || StemmerUtil.EndsWith(s, len, "ada") || StemmerUtil.EndsWith(s, len, "iva") || StemmerUtil.EndsWith(s, len, "ama"))
+                {
+                    s[len - 1] = 'o';
+                    return len;
+                }
 
-		if (len > 6)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "osa") || StemmerUtil.EndsWith(s, len, "ica") || StemmerUtil.EndsWith(s, len, "ida") || StemmerUtil.EndsWith(s, len, "ada") || StemmerUtil.EndsWith(s, len, "iva") || StemmerUtil.EndsWith(s, len, "ama"))
-		  {
-			s[len - 1] = 'o';
-			return len;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "ona"))
+                {
+                    s[len - 3] = 'ã';
+                    s[len - 2] = 'o';
+                    return len - 1;
+                }
 
-		  if (StemmerUtil.EndsWith(s, len, "ona"))
-		  {
-			s[len - 3] = 'ã';
-			s[len - 2] = 'o';
-			return len - 1;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "ora"))
+                {
+                    return len - 1;
+                }
 
-		  if (StemmerUtil.EndsWith(s, len, "ora"))
-		  {
-			return len - 1;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "esa"))
+                {
+                    s[len - 3] = 'ê';
+                    return len - 1;
+                }
 
-		  if (StemmerUtil.EndsWith(s, len, "esa"))
-		  {
-			s[len - 3] = 'ê';
-			return len - 1;
-		  }
-
-		  if (StemmerUtil.EndsWith(s, len, "na"))
-		  {
-			s[len - 1] = 'o';
-			return len;
-		  }
-		}
-		return len;
-	  }
-	}
-
+                if (StemmerUtil.EndsWith(s, len, "na"))
+                {
+                    s[len - 1] = 'o';
+                    return len;
+                }
+            }
+            return len;
+        }
+    }
 }

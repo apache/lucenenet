@@ -140,6 +140,14 @@
     <Compile Include="Analysis\Fr\TestFrenchLightStemFilterFactory.cs" />
     <Compile Include="Analysis\Fr\TestFrenchMinimalStemFilter.cs" />
     <Compile Include="Analysis\Fr\TestFrenchMinimalStemFilterFactory.cs" />
+    <Compile Include="Analysis\Ga\TestIrishAnalyzer.cs" />
+    <Compile Include="Analysis\Ga\TestIrishLowerCaseFilter.cs" />
+    <Compile Include="Analysis\Ga\TestIrishLowerCaseFilterFactory.cs" />
+    <Compile Include="Analysis\Gl\TestGalicianAnalyzer.cs" />
+    <Compile Include="Analysis\Gl\TestGalicianMinimalStemFilter.cs" />
+    <Compile Include="Analysis\Gl\TestGalicianMinimalStemFilterFactory.cs" />
+    <Compile Include="Analysis\Gl\TestGalicianStemFilter.cs" />
+    <Compile Include="Analysis\Gl\TestGalicianStemFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestCapitalizationFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestCapitalizationFilterFactory.cs" />
@@ -195,6 +203,13 @@
     <Compile Include="Analysis\Payloads\TokenOffsetPayloadTokenFilterTest.cs" />
     <Compile Include="Analysis\Payloads\TypeAsPayloadTokenFilterTest.cs" />
     <Compile Include="Analysis\Position\PositionFilterTest.cs" />
+    <Compile Include="Analysis\Pt\TestPortugueseAnalyzer.cs" />
+    <Compile Include="Analysis\Pt\TestPortugueseLightStemFilter.cs" />
+    <Compile Include="Analysis\Pt\TestPortugueseLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Pt\TestPortugueseMinimalStemFilter.cs" />
+    <Compile Include="Analysis\Pt\TestPortugueseMinimalStemFilterFactory.cs" />
+    <Compile Include="Analysis\Pt\TestPortugueseStemFilter.cs" />
+    <Compile Include="Analysis\Pt\TestPortugueseStemFilterFactory.cs" />
     <Compile Include="Analysis\Query\QueryAutoStopWordAnalyzerTest.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
@@ -275,6 +290,10 @@
     <EmbeddedResource Include="Analysis\Ru\rulighttestdata.zip" />
     <EmbeddedResource Include="Analysis\Ckb\ckbtestdata.zip" />
     <EmbeddedResource Include="Analysis\Fi\filighttestdata.zip" />
+    <EmbeddedResource Include="Analysis\Gl\gltestdata.zip" />
+    <EmbeddedResource Include="Analysis\Pt\ptlighttestdata.zip" />
+    <EmbeddedResource Include="Analysis\Pt\ptminimaltestdata.zip" />
+    <EmbeddedResource Include="Analysis\Pt\ptrslptestdata.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
