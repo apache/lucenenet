@@ -122,6 +122,7 @@
     <Compile Include="Analysis\Es\TestSpanishAnalyzer.cs" />
     <Compile Include="Analysis\Es\TestSpanishLightStemFilter.cs" />
     <Compile Include="Analysis\Es\TestSpanishLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Eu\TestBasqueAnalyzer.cs" />
     <Compile Include="Analysis\Fr\TestFrenchAnalyzer.cs" />
     <Compile Include="Analysis\Fr\TestFrenchLightStemFilter.cs" />
     <Compile Include="Analysis\Fr\TestFrenchLightStemFilterFactory.cs" />

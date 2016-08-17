@@ -1,7 +1,11 @@
-﻿namespace org.apache.lucene.analysis.eu
-{
+﻿using System;
+using System.IO;
+using NUnit.Framework;
+using Lucene.Net.Analysis.Util;
 
-	/*
+namespace Lucene.Net.Analysis.Eu
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,53 +22,48 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestBasqueAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new BasqueAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestBasqueAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new BasqueAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new BasqueAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "zaldi", "zaldi");
+            CheckOneTerm(a, "zaldiak", "zaldi");
+            // stopword
+            AssertAnalyzesTo(a, "izan", new string[] { });
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new BasqueAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "zaldi", "zaldi");
-		checkOneTerm(a, "zaldiak", "zaldi");
-		// stopword
-		assertAnalyzesTo(a, "izan", new string[] { });
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("zaldiak"), false);
+            Analyzer a = new BasqueAnalyzer(TEST_VERSION_CURRENT, BasqueAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "zaldiak", "zaldiak");
+            CheckOneTerm(a, "mendiari", "mendi");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("zaldiak"), false);
-		Analyzer a = new BasqueAnalyzer(TEST_VERSION_CURRENT, BasqueAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "zaldiak", "zaldiak");
-		checkOneTerm(a, "mendiari", "mendi");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new BasqueAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new BasqueAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

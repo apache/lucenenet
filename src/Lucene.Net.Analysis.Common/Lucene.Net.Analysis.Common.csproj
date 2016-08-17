@@ -145,6 +145,7 @@
     <Compile Include="Analysis\Es\SpanishLightStemFilter.cs" />
     <Compile Include="Analysis\Es\SpanishLightStemFilterFactory.cs" />
     <Compile Include="Analysis\Es\SpanishLightStemmer.cs" />
+    <Compile Include="Analysis\Eu\BasqueAnalyzer.cs" />
     <Compile Include="Analysis\Fr\FrenchAnalyzer.cs" />
     <Compile Include="Analysis\Fr\FrenchLightStemFilter.cs" />
     <Compile Include="Analysis\Fr\FrenchLightStemFilterFactory.cs" />
@@ -470,6 +471,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\El\stopwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Eu\stopwords.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
