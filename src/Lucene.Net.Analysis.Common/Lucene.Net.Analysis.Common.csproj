@@ -184,6 +184,26 @@
     <Compile Include="Analysis\Gl\GalicianStemFilter.cs" />
     <Compile Include="Analysis\Gl\GalicianStemFilterFactory.cs" />
     <Compile Include="Analysis\Gl\GalicianStemmer.cs" />
+    <Compile Include="Analysis\Hi\HindiAnalyzer.cs" />
+    <Compile Include="Analysis\Hi\HindiNormalizationFilter.cs" />
+    <Compile Include="Analysis\Hi\HindiNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\Hi\HindiNormalizer.cs" />
+    <Compile Include="Analysis\Hi\HindiStemFilter.cs" />
+    <Compile Include="Analysis\Hi\HindiStemFilterFactory.cs" />
+    <Compile Include="Analysis\Hi\HindiStemmer.cs" />
+    <Compile Include="Analysis\Hu\HungarianAnalyzer.cs" />
+    <Compile Include="Analysis\Hu\HungarianLightStemFilter.cs" />
+    <Compile Include="Analysis\Hu\HungarianLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Hu\HungarianLightStemmer.cs" />
+    <Compile Include="Analysis\Hy\ArmenianAnalyzer.cs" />
+    <Compile Include="Analysis\Id\IndonesianAnalyzer.cs" />
+    <Compile Include="Analysis\Id\IndonesianStemFilter.cs" />
+    <Compile Include="Analysis\Id\IndonesianStemFilterFactory.cs" />
+    <Compile Include="Analysis\Id\IndonesianStemmer.cs" />
+    <Compile Include="Analysis\In\IndicNormalizationFilter.cs" />
+    <Compile Include="Analysis\In\IndicNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\In\IndicNormalizer.cs" />
+    <Compile Include="Analysis\In\IndicTokenizer.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\ASCIIFoldingFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\CapitalizationFilter.cs" />
@@ -538,6 +558,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\portuguese_stop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Hi\stopwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Snowball\hungarian_stop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Hy\stopwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Id\stopwords.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

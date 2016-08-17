@@ -363,5 +363,24 @@ namespace Lucene.Net.Support
                    unicodeCategory == UnicodeCategory.ModifierLetter ||
                    unicodeCategory == UnicodeCategory.OtherLetter;
         }
+
+        /// <summary>
+        /// LUCENENET safe way to get unicode category. The .NET <seealso cref="char.ConvertFromUtf32(int)"/>
+        /// method should be used first to be safe for surrogate pairs. However, if the value falls between
+        /// 0x00d800 and 0x00dfff, that method throws an exception. So this is a wrapper that converts the
+        /// codepoint to a char in those cases.
+        /// 
+        /// This mimics the behavior of the Java Character.GetType class, but returns the .NET UnicodeCategory
+        /// enumeration for easy consumption.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static UnicodeCategory GetType(int codePoint)
+        {
+            if ((codePoint >= 0x00d800) && (codePoint <= 0x00dfff))
+                return char.GetUnicodeCategory((char)codePoint);
+            else
+                return char.GetUnicodeCategory(char.ConvertFromUtf32(codePoint), 0);
+        }
     }
 }

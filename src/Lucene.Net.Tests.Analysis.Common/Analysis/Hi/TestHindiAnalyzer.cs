@@ -1,9 +1,10 @@
-﻿namespace org.apache.lucene.analysis.hi
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
+
+namespace Lucene.Net.Analysis.Hi
 {
-
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,47 +21,43 @@
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// Tests the HindiAnalyzer
-	/// </summary>
-	public class TestHindiAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new HindiAnalyzer(TEST_VERSION_CURRENT);
-	  }
+    /// <summary>
+    /// Tests the HindiAnalyzer
+    /// </summary>
+    public class TestHindiAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        public virtual void TestResourcesAvailable()
+        {
+            new HindiAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws Exception
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new HindiAnalyzer(TEST_VERSION_CURRENT);
-		// two ways to write 'hindi' itself.
-		checkOneTerm(a, "हिन्दी", "हिंद");
-		checkOneTerm(a, "हिंदी", "हिंद");
-	  }
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new HindiAnalyzer(TEST_VERSION_CURRENT);
+            // two ways to write 'hindi' itself.
+            CheckOneTerm(a, "हिन्दी", "हिंद");
+            CheckOneTerm(a, "हिंदी", "हिंद");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclusionSet() throws Exception
-	  public virtual void testExclusionSet()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("हिंदी"), false);
-		Analyzer a = new HindiAnalyzer(TEST_VERSION_CURRENT, HindiAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "हिंदी", "हिंदी");
-	  }
+        [Test]
+        public virtual void TestExclusionSet()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("हिंदी"), false);
+            Analyzer a = new HindiAnalyzer(TEST_VERSION_CURRENT, HindiAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "हिंदी", "हिंदी");
+        }
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new HindiAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new HindiAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

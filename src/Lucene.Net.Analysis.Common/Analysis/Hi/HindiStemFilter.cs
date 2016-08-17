@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.hi
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Hi
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,39 +20,36 @@
 	 * limitations under the License.
 	 */
 
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="HindiStemmer"/> to stem Hindi words.
+    /// </summary>
+    public sealed class HindiStemFilter : TokenFilter
+    {
+        private readonly ICharTermAttribute termAtt;
+        private readonly IKeywordAttribute keywordAtt;
+        private readonly HindiStemmer stemmer = new HindiStemmer();
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that applies <seealso cref="HindiStemmer"/> to stem Hindi words.
-	/// </summary>
-	public sealed class HindiStemFilter : TokenFilter
-	{
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAtt = addAttribute(typeof(KeywordAttribute));
-	  private readonly HindiStemmer stemmer = new HindiStemmer();
+        public HindiStemFilter(TokenStream input)
+              : base(input)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+            keywordAtt = AddAttribute<IKeywordAttribute>();
+        }
 
-	  public HindiStemFilter(TokenStream input) : base(input)
-	  {
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  if (!keywordAtt.Keyword)
-		  {
-			termAtt.Length = stemmer.stem(termAtt.buffer(), termAtt.length());
-		  }
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
-	}
-
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                if (!keywordAtt.Keyword)
+                {
+                    termAtt.Length = stemmer.stem(termAtt.Buffer(), termAtt.Length);
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

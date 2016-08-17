@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.id
+namespace Lucene.Net.Analysis.Id
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,38 +21,36 @@ namespace org.apache.lucene.analysis.id
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="IndonesianStemFilter"/>. 
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_idstem" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
+    ///     &lt;filter class="solr.IndonesianStemFilterFactory" stemDerivational="true"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class IndonesianStemFilterFactory : TokenFilterFactory
+    {
+        private readonly bool stemDerivational;
 
-	/// <summary>
-	/// Factory for <seealso cref="IndonesianStemFilter"/>. 
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_idstem" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
-	///     &lt;filter class="solr.IndonesianStemFilterFactory" stemDerivational="true"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class IndonesianStemFilterFactory : TokenFilterFactory
-	{
-	  private readonly bool stemDerivational;
+        /// <summary>
+        /// Creates a new IndonesianStemFilterFactory </summary>
+        public IndonesianStemFilterFactory(IDictionary<string, string> args)
+              : base(args)
+        {
+            stemDerivational = GetBoolean(args, "stemDerivational", true);
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new IndonesianStemFilterFactory </summary>
-	  public IndonesianStemFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		stemDerivational = getBoolean(args, "stemDerivational", true);
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new IndonesianStemFilter(input, stemDerivational);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new IndonesianStemFilter(input, stemDerivational);
+        }
+    }
 }

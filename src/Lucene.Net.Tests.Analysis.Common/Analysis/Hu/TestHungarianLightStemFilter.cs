@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.hu
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Hu
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,97 +23,83 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests for <seealso cref="HungarianLightStemFilter"/>
+    /// </summary>
+    public class TestHungarianLightStemFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.*;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(source, new HungarianLightStemFilter(source));
+            }
+        }
 
-	/// <summary>
-	/// Simple tests for <seealso cref="HungarianLightStemFilter"/>
-	/// </summary>
-	public class TestHungarianLightStemFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        /// <summary>
+        /// Test against a vocabulary from the reference impl </summary>
+        [Test]
+        public virtual void TestVocabulary()
+        {
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("hulighttestdata.zip"), "hulight.txt");
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        [Test]
+        public virtual void TestKeyword()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("babakocsi"), false);
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
+            CheckOneTerm(a, "babakocsi", "babakocsi");
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(source, new HungarianLightStemFilter(source));
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestHungarianLightStemFilter outerInstance;
 
-	  /// <summary>
-	  /// Test against a vocabulary from the reference impl </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVocabulary() throws java.io.IOException
-	  public virtual void testVocabulary()
-	  {
-		assertVocabulary(analyzer, getDataFile("hulighttestdata.zip"), "hulight.txt");
-	  }
+            private CharArraySet exclusionSet;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeyword() throws java.io.IOException
-	  public virtual void testKeyword()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.util.CharArraySet exclusionSet = new org.apache.lucene.analysis.util.CharArraySet(TEST_VERSION_CURRENT, asSet("babakocsi"), false);
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("babakocsi"), false);
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
-		checkOneTerm(a, "babakocsi", "babakocsi");
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestHungarianLightStemFilter outerInstance, CharArraySet exclusionSet)
+            {
+                this.outerInstance = outerInstance;
+                this.exclusionSet = exclusionSet;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestHungarianLightStemFilter outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
+                return new TokenStreamComponents(source, new HungarianLightStemFilter(sink));
+            }
+        }
 
-		  private CharArraySet exclusionSet;
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
+            CheckOneTerm(a, "", "");
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper2(TestHungarianLightStemFilter outerInstance, CharArraySet exclusionSet)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.exclusionSet = exclusionSet;
-		  }
+        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            private readonly TestHungarianLightStemFilter outerInstance;
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
-			return new TokenStreamComponents(source, new HungarianLightStemFilter(sink));
-		  }
-	  }
+            public AnalyzerAnonymousInnerClassHelper3(TestHungarianLightStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-		checkOneTerm(a, "", "");
-	  }
-
-	  private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-	  {
-		  private readonly TestHungarianLightStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper3(TestHungarianLightStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new HungarianLightStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new HungarianLightStemFilter(tokenizer));
+            }
+        }
+    }
 }

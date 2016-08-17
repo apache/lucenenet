@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.hi
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Hi
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,45 +20,41 @@
 	 * limitations under the License.
 	 */
 
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter; // javadoc @link
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="HindiNormalizer"/> to normalize the
+    /// orthography.
+    /// <para>
+    /// In some cases the normalization may cause unrelated terms to conflate, so
+    /// to prevent terms from being normalized use an instance of
+    /// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
+    /// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
+    /// </para> </summary>
+    /// <seealso cref= HindiNormalizer </seealso>
+    public sealed class HindiNormalizationFilter : TokenFilter
+    {
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that applies <seealso cref="HindiNormalizer"/> to normalize the
-	/// orthography.
-	/// <para>
-	/// In some cases the normalization may cause unrelated terms to conflate, so
-	/// to prevent terms from being normalized use an instance of
-	/// <seealso cref="SetKeywordMarkerFilter"/> or a custom <seealso cref="TokenFilter"/> that sets
-	/// the <seealso cref="KeywordAttribute"/> before this <seealso cref="TokenStream"/>.
-	/// </para> </summary>
-	/// <seealso cref= HindiNormalizer </seealso>
-	public sealed class HindiNormalizationFilter : TokenFilter
-	{
+        private readonly HindiNormalizer normalizer = new HindiNormalizer();
+        private readonly ICharTermAttribute termAtt;
+        private readonly IKeywordAttribute keywordAtt;
 
-	  private readonly HindiNormalizer normalizer = new HindiNormalizer();
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAtt = addAttribute(typeof(KeywordAttribute));
+        public HindiNormalizationFilter(TokenStream input)
+              : base(input)
+        {
+            termAtt = AddAttribute<ICharTermAttribute>();
+            keywordAtt = AddAttribute<IKeywordAttribute>();
+        }
 
-	  public HindiNormalizationFilter(TokenStream input) : base(input)
-	  {
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  if (!keywordAtt.Keyword)
-		  {
-			termAtt.Length = normalizer.normalize(termAtt.buffer(), termAtt.length());
-		  }
-		  return true;
-		}
-		return false;
-	  }
-	}
-
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                if (!keywordAtt.Keyword)
+                {
+                    termAtt.Length = normalizer.normalize(termAtt.Buffer(), termAtt.Length);
+                }
+                return true;
+            }
+            return false;
+        }
+    }
 }

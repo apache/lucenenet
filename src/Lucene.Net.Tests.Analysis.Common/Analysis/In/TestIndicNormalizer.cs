@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.@in
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.In
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,63 +21,55 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Test IndicNormalizer
+    /// </summary>
+    public class TestIndicNormalizer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// Test some basic normalization
+        /// </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            check("अाॅअाॅ", "ऑऑ");
+            check("अाॆअाॆ", "ऒऒ");
+            check("अाेअाे", "ओओ");
+            check("अाैअाै", "औऔ");
+            check("अाअा", "आआ");
+            check("अाैर", "और");
+            // khanda-ta
+            check("ত্‍", "ৎ");
+        }
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        private void check(string input, string output)
+        {
+            Tokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);
+            TokenFilter tf = new IndicNormalizationFilter(tokenizer);
+            AssertTokenStreamContents(tf, new string[] { output });
+        }
 
-	/// <summary>
-	/// Test IndicNormalizer
-	/// </summary>
-	public class TestIndicNormalizer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// Test some basic normalization
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		check("अाॅअाॅ", "ऑऑ");
-		check("अाॆअाॆ", "ऒऒ");
-		check("अाेअाे", "ओओ");
-		check("अाैअाै", "औऔ");
-		check("अाअा", "आआ");
-		check("अाैर", "और");
-		// khanda-ta
-		check("ত্‍", "ৎ");
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            CheckOneTerm(a, "", "");
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void check(String input, String output) throws java.io.IOException
-	  private void check(string input, string output)
-	  {
-		Tokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);
-		TokenFilter tf = new IndicNormalizationFilter(tokenizer);
-		assertTokenStreamContents(tf, new string[] {output});
-	  }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            private readonly TestIndicNormalizer outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper(TestIndicNormalizer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  private readonly TestIndicNormalizer outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper(TestIndicNormalizer outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new IndicNormalizationFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new IndicNormalizationFilter(tokenizer));
+            }
+        }
+    }
 }

@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.hu
-{
+﻿using Lucene.Net.Analysis.Util;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Hu
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +20,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,240 +55,235 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	using org.apache.lucene.analysis.util;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.util.StemmerUtil.*;
+    /// <summary>
+    /// Light Stemmer for Hungarian.
+    /// <para>
+    /// This stemmer implements the "UniNE" algorithm in:
+    /// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
+    /// Jacques Savoy
+    /// </para>
+    /// </summary>
+    public class HungarianLightStemmer
+    {
+        public virtual int stem(char[] s, int len)
+        {
+            for (int i = 0; i < len; i++)
+            {
+                switch (s[i])
+                {
+                    case 'á':
+                        s[i] = 'a';
+                        break;
+                    case 'ë':
+                    case 'é':
+                        s[i] = 'e';
+                        break;
+                    case 'í':
+                        s[i] = 'i';
+                        break;
+                    case 'ó':
+                    case 'ő':
+                    case 'õ':
+                    case 'ö':
+                        s[i] = 'o';
+                        break;
+                    case 'ú':
+                    case 'ű':
+                    case 'ũ':
+                    case 'û':
+                    case 'ü':
+                        s[i] = 'u';
+                        break;
+                }
+            }
 
-	/// <summary>
-	/// Light Stemmer for Hungarian.
-	/// <para>
-	/// This stemmer implements the "UniNE" algorithm in:
-	/// <i>Light Stemming Approaches for the French, Portuguese, German and Hungarian Languages</i>
-	/// Jacques Savoy
-	/// </para>
-	/// </summary>
-	public class HungarianLightStemmer
-	{
-	  public virtual int stem(char[] s, int len)
-	  {
-		for (int i = 0; i < len; i++)
-		{
-		  switch (s[i])
-		  {
-			case 'á':
-				s[i] = 'a';
-				break;
-			case 'ë':
-			case 'é':
-				s[i] = 'e';
-				break;
-			case 'í':
-				s[i] = 'i';
-				break;
-			case 'ó':
-			case 'ő':
-			case 'õ':
-			case 'ö':
-				s[i] = 'o';
-				break;
-			case 'ú':
-			case 'ű':
-			case 'ũ':
-			case 'û':
-			case 'ü':
-				s[i] = 'u';
-				break;
-		  }
-		}
+            len = removeCase(s, len);
+            len = removePossessive(s, len);
+            len = removePlural(s, len);
+            return normalize(s, len);
+        }
 
-		len = removeCase(s, len);
-		len = removePossessive(s, len);
-		len = removePlural(s, len);
-		return normalize(s, len);
-	  }
+        private int removeCase(char[] s, int len)
+        {
+            if (len > 6 && StemmerUtil.EndsWith(s, len, "kent"))
+            {
+                return len - 4;
+            }
 
-	  private int removeCase(char[] s, int len)
-	  {
-		if (len > 6 && StemmerUtil.EndsWith(s, len, "kent"))
-		{
-		  return len - 4;
-		}
+            if (len > 5)
+            {
+                if (StemmerUtil.EndsWith(s, len, "nak") || StemmerUtil.EndsWith(s, len, "nek") || StemmerUtil.EndsWith(s, len, "val") || StemmerUtil.EndsWith(s, len, "vel") || StemmerUtil.EndsWith(s, len, "ert") || StemmerUtil.EndsWith(s, len, "rol") || StemmerUtil.EndsWith(s, len, "ban") || StemmerUtil.EndsWith(s, len, "ben") || StemmerUtil.EndsWith(s, len, "bol") || StemmerUtil.EndsWith(s, len, "nal") || StemmerUtil.EndsWith(s, len, "nel") || StemmerUtil.EndsWith(s, len, "hoz") || StemmerUtil.EndsWith(s, len, "hez") || StemmerUtil.EndsWith(s, len, "tol"))
+                {
+                    return len - 3;
+                }
 
-		if (len > 5)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "nak") || StemmerUtil.EndsWith(s, len, "nek") || StemmerUtil.EndsWith(s, len, "val") || StemmerUtil.EndsWith(s, len, "vel") || StemmerUtil.EndsWith(s, len, "ert") || StemmerUtil.EndsWith(s, len, "rol") || StemmerUtil.EndsWith(s, len, "ban") || StemmerUtil.EndsWith(s, len, "ben") || StemmerUtil.EndsWith(s, len, "bol") || StemmerUtil.EndsWith(s, len, "nal") || StemmerUtil.EndsWith(s, len, "nel") || StemmerUtil.EndsWith(s, len, "hoz") || StemmerUtil.EndsWith(s, len, "hez") || StemmerUtil.EndsWith(s, len, "tol"))
-		  {
-			return len - 3;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "al") || StemmerUtil.EndsWith(s, len, "el"))
+                {
+                    if (!isVowel(s[len - 3]) && s[len - 3] == s[len - 4])
+                    {
+                        return len - 3;
+                    }
+                }
+            }
 
-		  if (StemmerUtil.EndsWith(s, len, "al") || StemmerUtil.EndsWith(s, len, "el"))
-		  {
-			if (!isVowel(s[len - 3]) && s[len - 3] == s[len - 4])
-			{
-			  return len - 3;
-			}
-		  }
-		}
+            if (len > 4)
+            {
+                if (StemmerUtil.EndsWith(s, len, "at") || StemmerUtil.EndsWith(s, len, "et") || StemmerUtil.EndsWith(s, len, "ot") || StemmerUtil.EndsWith(s, len, "va") || StemmerUtil.EndsWith(s, len, "ve") || StemmerUtil.EndsWith(s, len, "ra") || StemmerUtil.EndsWith(s, len, "re") || StemmerUtil.EndsWith(s, len, "ba") || StemmerUtil.EndsWith(s, len, "be") || StemmerUtil.EndsWith(s, len, "ul") || StemmerUtil.EndsWith(s, len, "ig"))
+                {
+                    return len - 2;
+                }
 
-		if (len > 4)
-		{
-		  if (StemmerUtil.EndsWith(s, len, "at") || StemmerUtil.EndsWith(s, len, "et") || StemmerUtil.EndsWith(s, len, "ot") || StemmerUtil.EndsWith(s, len, "va") || StemmerUtil.EndsWith(s, len, "ve") || StemmerUtil.EndsWith(s, len, "ra") || StemmerUtil.EndsWith(s, len, "re") || StemmerUtil.EndsWith(s, len, "ba") || StemmerUtil.EndsWith(s, len, "be") || StemmerUtil.EndsWith(s, len, "ul") || StemmerUtil.EndsWith(s, len, "ig"))
-		  {
-			return len - 2;
-		  }
+                if ((StemmerUtil.EndsWith(s, len, "on") || StemmerUtil.EndsWith(s, len, "en")) && !isVowel(s[len - 3]))
+                {
+                    return len - 2;
+                }
 
-		  if ((StemmerUtil.EndsWith(s, len, "on") || StemmerUtil.EndsWith(s, len, "en")) && !isVowel(s[len - 3]))
-		  {
-			  return len - 2;
-		  }
+                switch (s[len - 1])
+                {
+                    case 't':
+                    case 'n':
+                        return len - 1;
+                    case 'a':
+                    case 'e':
+                        if (s[len - 2] == s[len - 3] && !isVowel(s[len - 2]))
+                        {
+                            return len - 2;
+                        }
+                        break;
+                }
+            }
 
-		  switch (s[len - 1])
-		  {
-			case 't':
-			case 'n':
-				return len - 1;
-			case 'a':
-			case 'e':
-				if (s[len - 2] == s[len - 3] && !isVowel(s[len - 2]))
-				{
-					return len - 2;
-				}
-		  }
-		}
+            return len;
+        }
 
-		return len;
-	  }
+        private int removePossessive(char[] s, int len)
+        {
+            if (len > 6)
+            {
+                if (!isVowel(s[len - 5]) && (StemmerUtil.EndsWith(s, len, "atok") || StemmerUtil.EndsWith(s, len, "otok") || StemmerUtil.EndsWith(s, len, "etek")))
+                {
+                    return len - 4;
+                }
 
-	  private int removePossessive(char[] s, int len)
-	  {
-		if (len > 6)
-		{
-		  if (!isVowel(s[len - 5]) && (StemmerUtil.EndsWith(s, len, "atok") || StemmerUtil.EndsWith(s, len, "otok") || StemmerUtil.EndsWith(s, len, "etek")))
-		  {
-			return len - 4;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "itek") || StemmerUtil.EndsWith(s, len, "itok"))
+                {
+                    return len - 4;
+                }
+            }
 
-		  if (StemmerUtil.EndsWith(s, len, "itek") || StemmerUtil.EndsWith(s, len, "itok"))
-		  {
-			return len - 4;
-		  }
-		}
+            if (len > 5)
+            {
+                if (!isVowel(s[len - 4]) && (StemmerUtil.EndsWith(s, len, "unk") || StemmerUtil.EndsWith(s, len, "tok") || StemmerUtil.EndsWith(s, len, "tek")))
+                {
+                    return len - 3;
+                }
 
-		if (len > 5)
-		{
-		  if (!isVowel(s[len - 4]) && (StemmerUtil.EndsWith(s, len, "unk") || StemmerUtil.EndsWith(s, len, "tok") || StemmerUtil.EndsWith(s, len, "tek")))
-		  {
-			return len - 3;
-		  }
+                if (isVowel(s[len - 4]) && StemmerUtil.EndsWith(s, len, "juk"))
+                {
+                    return len - 3;
+                }
 
-		  if (isVowel(s[len - 4]) && StemmerUtil.EndsWith(s, len, "juk"))
-		  {
-			return len - 3;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "ink"))
+                {
+                    return len - 3;
+                }
+            }
 
-		  if (StemmerUtil.EndsWith(s, len, "ink"))
-		  {
-			return len - 3;
-		  }
-		}
+            if (len > 4)
+            {
+                if (!isVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "am") || StemmerUtil.EndsWith(s, len, "em") || StemmerUtil.EndsWith(s, len, "om") || StemmerUtil.EndsWith(s, len, "ad") || StemmerUtil.EndsWith(s, len, "ed") || StemmerUtil.EndsWith(s, len, "od") || StemmerUtil.EndsWith(s, len, "uk")))
+                {
+                    return len - 2;
+                }
 
-		if (len > 4)
-		{
-		  if (!isVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "am") || StemmerUtil.EndsWith(s, len, "em") || StemmerUtil.EndsWith(s, len, "om") || StemmerUtil.EndsWith(s, len, "ad") || StemmerUtil.EndsWith(s, len, "ed") || StemmerUtil.EndsWith(s, len, "od") || StemmerUtil.EndsWith(s, len, "uk")))
-		  {
-			return len - 2;
-		  }
+                if (isVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "nk") || StemmerUtil.EndsWith(s, len, "ja") || StemmerUtil.EndsWith(s, len, "je")))
+                {
+                    return len - 2;
+                }
 
-		  if (isVowel(s[len - 3]) && (StemmerUtil.EndsWith(s, len, "nk") || StemmerUtil.EndsWith(s, len, "ja") || StemmerUtil.EndsWith(s, len, "je")))
-		  {
-			return len - 2;
-		  }
+                if (StemmerUtil.EndsWith(s, len, "im") || StemmerUtil.EndsWith(s, len, "id") || StemmerUtil.EndsWith(s, len, "ik"))
+                {
+                    return len - 2;
+                }
+            }
 
-		  if (StemmerUtil.EndsWith(s, len, "im") || StemmerUtil.EndsWith(s, len, "id") || StemmerUtil.EndsWith(s, len, "ik"))
-		  {
-			return len - 2;
-		  }
-		}
+            if (len > 3)
+            {
+                switch (s[len - 1])
+                {
+                    case 'a':
+                    case 'e':
+                        if (!isVowel(s[len - 2]))
+                        {
+                            return len - 1;
+                        }
+                        break;
+                    case 'm':
+                    case 'd':
+                        if (isVowel(s[len - 2]))
+                        {
+                            return len - 1;
+                        }
+                        break;
+                    case 'i':
+                        return len - 1;
+                }
+            }
 
-		if (len > 3)
-		{
-		  switch (s[len - 1])
-		  {
-			case 'a':
-			case 'e':
-				if (!isVowel(s[len - 2]))
-				{
-					return len - 1;
-				}
-				break;
-			case 'm':
-			case 'd':
-				if (isVowel(s[len - 2]))
-				{
-					return len - 1;
-				}
-				break;
-			case 'i':
-				return len - 1;
-		  }
-		}
+            return len;
+        }
 
-		return len;
-	  }
+        private int removePlural(char[] s, int len)
+        {
+            if (len > 3 && s[len - 1] == 'k')
+            {
+                switch (s[len - 2])
+                {
+                    case 'a':
+                    case 'o':
+                    case 'e': // intentional fallthru
+                        if (len > 4)
+                        {
+                            return len - 2;
+                        }
+                        return len - 1;// LUCENENET NOTE: Cannot fall through, so need to return the same value as default
+                    default:
+                        return len - 1;
+                }
+            }
+            return len;
+        }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("fallthrough") private int removePlural(char s[] , int len)
-	  private int removePlural(char[] s, int len)
-	  {
-		if (len > 3 && s[len - 1] == 'k')
-		{
-		  switch (s[len - 2])
-		  {
-			case 'a':
-			case 'o':
-			case 'e': // intentional fallthru
-				if (len > 4)
-				{
-					return len - 2;
-				}
-			default:
-				return len - 1;
-		  }
-		}
-		return len;
-	  }
+        private int normalize(char[] s, int len)
+        {
+            if (len > 3)
+            {
+                switch (s[len - 1])
+                {
+                    case 'a':
+                    case 'e':
+                    case 'i':
+                    case 'o':
+                        return len - 1;
+                }
+            }
+            return len;
+        }
 
-	  private int normalize(char[] s, int len)
-	  {
-		if (len > 3)
-		{
-		  switch (s[len - 1])
-		  {
-			case 'a':
-			case 'e':
-			case 'i':
-			case 'o':
-				return len - 1;
-		  }
-		}
-		return len;
-	  }
-
-	  private bool isVowel(char ch)
-	  {
-		switch (ch)
-		{
-		  case 'a':
-		  case 'e':
-		  case 'i':
-		  case 'o':
-		  case 'u':
-		  case 'y':
-			  return true;
-		  default:
-			  return false;
-		}
-	  }
-	}
-
+        private bool isVowel(char ch)
+        {
+            switch (ch)
+            {
+                case 'a':
+                case 'e':
+                case 'i':
+                case 'o':
+                case 'u':
+                case 'y':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
 }

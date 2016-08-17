@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.id
-{
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Id
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,58 +20,54 @@
 	 * limitations under the License.
 	 */
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
+    /// <summary>
+    /// A <seealso cref="TokenFilter"/> that applies <seealso cref="IndonesianStemmer"/> to stem Indonesian words.
+    /// </summary>
+    public sealed class IndonesianStemFilter : TokenFilter
+    {
+        private readonly ICharTermAttribute termAtt;
+        private readonly IKeywordAttribute keywordAtt;
+        private readonly IndonesianStemmer stemmer = new IndonesianStemmer();
+        private readonly bool stemDerivational;
 
-	/// <summary>
-	/// A <seealso cref="TokenFilter"/> that applies <seealso cref="IndonesianStemmer"/> to stem Indonesian words.
-	/// </summary>
-	public sealed class IndonesianStemFilter : TokenFilter
-	{
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly KeywordAttribute keywordAtt = addAttribute(typeof(KeywordAttribute));
-	  private readonly IndonesianStemmer stemmer = new IndonesianStemmer();
-	  private readonly bool stemDerivational;
+        /// <summary>
+        /// Calls <seealso cref="#IndonesianStemFilter(TokenStream, boolean) IndonesianStemFilter(input, true)"/>
+        /// </summary>
+        public IndonesianStemFilter(TokenStream input)
+              : this(input, true)
+        {
+        }
 
-	  /// <summary>
-	  /// Calls <seealso cref="#IndonesianStemFilter(TokenStream, boolean) IndonesianStemFilter(input, true)"/>
-	  /// </summary>
-	  public IndonesianStemFilter(TokenStream input) : this(input, true)
-	  {
-	  }
+        /// <summary>
+        /// Create a new IndonesianStemFilter.
+        /// <para>
+        /// If <code>stemDerivational</code> is false, 
+        /// only inflectional suffixes (particles and possessive pronouns) are stemmed.
+        /// </para>
+        /// </summary>
+        public IndonesianStemFilter(TokenStream input, bool stemDerivational)
+              : base(input)
+        {
+            this.stemDerivational = stemDerivational;
+            termAtt = AddAttribute<ICharTermAttribute>();
+            keywordAtt = AddAttribute<IKeywordAttribute>();
+        }
 
-	  /// <summary>
-	  /// Create a new IndonesianStemFilter.
-	  /// <para>
-	  /// If <code>stemDerivational</code> is false, 
-	  /// only inflectional suffixes (particles and possessive pronouns) are stemmed.
-	  /// </para>
-	  /// </summary>
-	  public IndonesianStemFilter(TokenStream input, bool stemDerivational) : base(input)
-	  {
-		this.stemDerivational = stemDerivational;
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (input.incrementToken())
-		{
-		  if (!keywordAtt.Keyword)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newlen = stemmer.stem(termAtt.buffer(), termAtt.length(), stemDerivational);
-			int newlen = stemmer.stem(termAtt.buffer(), termAtt.length(), stemDerivational);
-			termAtt.Length = newlen;
-		  }
-		  return true;
-		}
-		else
-		{
-		  return false;
-		}
-	  }
-	}
-
+        public override bool IncrementToken()
+        {
+            if (input.IncrementToken())
+            {
+                if (!keywordAtt.Keyword)
+                {
+                    int newlen = stemmer.stem(termAtt.Buffer(), termAtt.Length, stemDerivational);
+                    termAtt.Length = newlen;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }

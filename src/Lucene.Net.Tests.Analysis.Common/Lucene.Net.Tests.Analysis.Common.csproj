@@ -148,6 +148,18 @@
     <Compile Include="Analysis\Gl\TestGalicianMinimalStemFilterFactory.cs" />
     <Compile Include="Analysis\Gl\TestGalicianStemFilter.cs" />
     <Compile Include="Analysis\Gl\TestGalicianStemFilterFactory.cs" />
+    <Compile Include="Analysis\Hi\TestHindiAnalyzer.cs" />
+    <Compile Include="Analysis\Hi\TestHindiFilters.cs" />
+    <Compile Include="Analysis\Hi\TestHindiNormalizer.cs" />
+    <Compile Include="Analysis\Hi\TestHindiStemmer.cs" />
+    <Compile Include="Analysis\Hu\TestHungarianAnalyzer.cs" />
+    <Compile Include="Analysis\Hu\TestHungarianLightStemFilter.cs" />
+    <Compile Include="Analysis\Hu\TestHungarianLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Hy\TestArmenianAnalyzer.cs" />
+    <Compile Include="Analysis\Id\TestIndonesianAnalyzer.cs" />
+    <Compile Include="Analysis\Id\TestIndonesianStemFilterFactory.cs" />
+    <Compile Include="Analysis\Id\TestIndonesianStemmer.cs" />
+    <Compile Include="Analysis\In\TestIndicNormalizer.cs" />
     <Compile Include="Analysis\Miscellaneous\TestASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestCapitalizationFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestCapitalizationFilterFactory.cs" />
@@ -294,6 +306,7 @@
     <EmbeddedResource Include="Analysis\Pt\ptlighttestdata.zip" />
     <EmbeddedResource Include="Analysis\Pt\ptminimaltestdata.zip" />
     <EmbeddedResource Include="Analysis\Pt\ptrslptestdata.zip" />
+    <EmbeddedResource Include="Analysis\Hu\hulighttestdata.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
