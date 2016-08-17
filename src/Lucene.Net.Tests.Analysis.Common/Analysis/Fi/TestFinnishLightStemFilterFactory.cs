@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.fi
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Fi
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,40 +21,34 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests to ensure the Finnish light stem factory is working.
+    /// </summary>
+    public class TestFinnishLightStemFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        [Test]
+        public virtual void TestStemming()
+        {
+            TextReader reader = new StringReader("aseistettujen");
+            TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            stream = TokenFilterFactory("FinnishLightStem").Create(stream);
+            AssertTokenStreamContents(stream, new string[] { "aseistet" });
+        }
 
-	using BaseTokenStreamFactoryTestCase = org.apache.lucene.analysis.util.BaseTokenStreamFactoryTestCase;
-
-	/// <summary>
-	/// Simple tests to ensure the Finnish light stem factory is working.
-	/// </summary>
-	public class TestFinnishLightStemFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testStemming() throws Exception
-	  public virtual void testStemming()
-	  {
-		Reader reader = new StringReader("aseistettujen");
-		TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-		stream = tokenFilterFactory("FinnishLightStem").create(stream);
-		assertTokenStreamContents(stream, new string[] {"aseistet"});
-	  }
-
-	  /// <summary>
-	  /// Test that bogus arguments result in exception </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBogusArguments() throws Exception
-	  public virtual void testBogusArguments()
-	  {
-		try
-		{
-		  tokenFilterFactory("FinnishLightStem", "bogusArg", "bogusValue");
-		  fail();
-		}
-		catch (System.ArgumentException expected)
-		{
-		  assertTrue(expected.Message.contains("Unknown parameters"));
-		}
-	  }
-	}
-
+        /// <summary>
+        /// Test that bogus arguments result in exception </summary>
+        [Test]
+        public virtual void TestBogusArguments()
+        {
+            try
+            {
+                TokenFilterFactory("FinnishLightStem", "bogusArg", "bogusValue");
+                fail();
+            }
+            catch (System.ArgumentException expected)
+            {
+                assertTrue(expected.Message.Contains("Unknown parameters"));
+            }
+        }
+    }
 }

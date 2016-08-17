@@ -161,6 +161,10 @@
     <Compile Include="Analysis\Fa\PersianNormalizationFilter.cs" />
     <Compile Include="Analysis\Fa\PersianNormalizationFilterFactory.cs" />
     <Compile Include="Analysis\Fa\PersianNormalizer.cs" />
+    <Compile Include="Analysis\Fi\FinnishAnalyzer.cs" />
+    <Compile Include="Analysis\Fi\FinnishLightStemFilter.cs" />
+    <Compile Include="Analysis\Fi\FinnishLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Fi\FinnishLightStemmer.cs" />
     <Compile Include="Analysis\Fr\FrenchAnalyzer.cs" />
     <Compile Include="Analysis\Fr\FrenchLightStemFilter.cs" />
     <Compile Include="Analysis\Fr\FrenchLightStemFilterFactory.cs" />
@@ -493,6 +497,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Fa\stopwords.txt" />
     <EmbeddedResource Include="Analysis\Ar\stopwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\Snowball\finnish_stop.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

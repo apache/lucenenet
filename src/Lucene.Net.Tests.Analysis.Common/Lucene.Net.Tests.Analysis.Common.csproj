@@ -132,6 +132,9 @@
     <Compile Include="Analysis\Fa\TestPersianCharFilter.cs" />
     <Compile Include="Analysis\Fa\TestPersianNormalizationFilter.cs" />
     <Compile Include="Analysis\Fa\TestPersianNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\Fi\TestFinnishAnalyzer.cs" />
+    <Compile Include="Analysis\Fi\TestFinnishLightStemFilter.cs" />
+    <Compile Include="Analysis\Fi\TestFinnishLightStemFilterFactory.cs" />
     <Compile Include="Analysis\Fr\TestFrenchAnalyzer.cs" />
     <Compile Include="Analysis\Fr\TestFrenchLightStemFilter.cs" />
     <Compile Include="Analysis\Fr\TestFrenchLightStemFilterFactory.cs" />
@@ -268,6 +271,7 @@
     <EmbeddedResource Include="Analysis\Es\eslighttestdata.zip" />
     <EmbeddedResource Include="Analysis\Ru\rulighttestdata.zip" />
     <EmbeddedResource Include="Analysis\Ckb\ckbtestdata.zip" />
+    <EmbeddedResource Include="Analysis\Fi\filighttestdata.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
