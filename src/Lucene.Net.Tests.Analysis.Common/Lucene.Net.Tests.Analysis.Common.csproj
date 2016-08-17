@@ -108,6 +108,10 @@
     <Compile Include="Analysis\De\TestGermanNormalizationFilterFactory.cs" />
     <Compile Include="Analysis\De\TestGermanStemFilter.cs" />
     <Compile Include="Analysis\De\TestGermanStemFilterFactory.cs" />
+    <Compile Include="Analysis\El\GreekAnalyzerTest.cs" />
+    <Compile Include="Analysis\El\TestGreekLowerCaseFilterFactory.cs" />
+    <Compile Include="Analysis\El\TestGreekStemFilterFactory.cs" />
+    <Compile Include="Analysis\El\TestGreekStemmer.cs" />
     <Compile Include="Analysis\En\TestEnglishAnalyzer.cs" />
     <Compile Include="Analysis\En\TestEnglishMinimalStemFilter.cs" />
     <Compile Include="Analysis\En\TestEnglishMinimalStemFilterFactory.cs" />

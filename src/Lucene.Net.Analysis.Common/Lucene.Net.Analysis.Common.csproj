@@ -115,6 +115,12 @@
     <Compile Include="Analysis\De\GermanStemFilter.cs" />
     <Compile Include="Analysis\De\GermanStemFilterFactory.cs" />
     <Compile Include="Analysis\De\GermanStemmer.cs" />
+    <Compile Include="Analysis\El\GreekAnalyzer.cs" />
+    <Compile Include="Analysis\El\GreekLowerCaseFilter.cs" />
+    <Compile Include="Analysis\El\GreekLowerCaseFilterFactory.cs" />
+    <Compile Include="Analysis\El\GreekStemFilter.cs" />
+    <Compile Include="Analysis\El\GreekStemFilterFactory.cs" />
+    <Compile Include="Analysis\El\GreekStemmer.cs" />
     <Compile Include="Analysis\En\EnglishAnalyzer.cs" />
     <Compile Include="Analysis\En\EnglishMinimalStemFilter.cs" />
     <Compile Include="Analysis\En\EnglishMinimalStemFilterFactory.cs" />
@@ -461,6 +467,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Analysis\Snowball\danish_stop.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\El\stopwords.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
