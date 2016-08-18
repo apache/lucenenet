@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.lv
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Lv
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,53 +20,48 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestLatvianAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new LatvianAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestLatvianAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new LatvianAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new LatvianAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "tirgiem", "tirg");
+            CheckOneTerm(a, "tirgus", "tirg");
+            // stopword
+            AssertAnalyzesTo(a, "un", new string[] { });
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new LatvianAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "tirgiem", "tirg");
-		checkOneTerm(a, "tirgus", "tirg");
-		// stopword
-		assertAnalyzesTo(a, "un", new string[] {});
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("tirgiem"), false);
+            Analyzer a = new LatvianAnalyzer(TEST_VERSION_CURRENT, LatvianAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "tirgiem", "tirgiem");
+            CheckOneTerm(a, "tirgus", "tirg");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("tirgiem"), false);
-		Analyzer a = new LatvianAnalyzer(TEST_VERSION_CURRENT, LatvianAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "tirgiem", "tirgiem");
-		checkOneTerm(a, "tirgus", "tirg");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new LatvianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new LatvianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

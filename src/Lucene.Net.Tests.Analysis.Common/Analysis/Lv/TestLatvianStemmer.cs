@@ -1,7 +1,10 @@
-﻿namespace org.apache.lucene.analysis.lv
-{
+﻿using Lucene.Net.Analysis.Core;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Lv
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,311 +21,297 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Basic tests for <seealso cref="LatvianStemmer"/>
+    /// </summary>
+    public class TestLatvianStemmer : BaseTokenStreamTestCase
+    {
+        private Analyzer a = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-	/// <summary>
-	/// Basic tests for <seealso cref="LatvianStemmer"/>
-	/// </summary>
-	public class TestLatvianStemmer : BaseTokenStreamTestCase
-	{
-	  private Analyzer a = new AnalyzerAnonymousInnerClassHelper();
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new LatvianStemFilter(tokenizer));
+            }
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        [Test]
+        public virtual void TestNouns1()
+        {
+            // decl. I
+            CheckOneTerm(a, "tēvs", "tēv"); // nom. sing.
+            CheckOneTerm(a, "tēvi", "tēv"); // nom. pl.
+            CheckOneTerm(a, "tēva", "tēv"); // gen. sing.
+            CheckOneTerm(a, "tēvu", "tēv"); // gen. pl.
+            CheckOneTerm(a, "tēvam", "tēv"); // dat. sing.
+            CheckOneTerm(a, "tēviem", "tēv"); // dat. pl.
+            CheckOneTerm(a, "tēvu", "tēv"); // acc. sing.
+            CheckOneTerm(a, "tēvus", "tēv"); // acc. pl.
+            CheckOneTerm(a, "tēvā", "tēv"); // loc. sing.
+            CheckOneTerm(a, "tēvos", "tēv"); // loc. pl.
+            CheckOneTerm(a, "tēvs", "tēv"); // voc. sing.
+            CheckOneTerm(a, "tēvi", "tēv"); // voc. pl.
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(tokenizer, new LatvianStemFilter(tokenizer));
-		  }
-	  }
+        /// <summary>
+        /// decl II nouns with (s,t) -> š and (d,z) -> ž
+        /// palatalization will generally conflate to two stems
+        /// due to the ambiguity (plural and singular).
+        /// </summary>
+        [Test]
+        public virtual void TestNouns2()
+        {
+            // decl. II
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNouns1() throws java.io.IOException
-	  public virtual void testNouns1()
-	  {
-		// decl. I
-		checkOneTerm(a, "tēvs", "tēv"); // nom. sing.
-		checkOneTerm(a, "tēvi", "tēv"); // nom. pl.
-		checkOneTerm(a, "tēva", "tēv"); // gen. sing.
-		checkOneTerm(a, "tēvu", "tēv"); // gen. pl.
-		checkOneTerm(a, "tēvam", "tēv"); // dat. sing.
-		checkOneTerm(a, "tēviem", "tēv"); // dat. pl.
-		checkOneTerm(a, "tēvu", "tēv"); // acc. sing.
-		checkOneTerm(a, "tēvus", "tēv"); // acc. pl.
-		checkOneTerm(a, "tēvā", "tēv"); // loc. sing.
-		checkOneTerm(a, "tēvos", "tēv"); // loc. pl.
-		checkOneTerm(a, "tēvs", "tēv"); // voc. sing.
-		checkOneTerm(a, "tēvi", "tēv"); // voc. pl.
-	  }
+            // c -> č palatalization
+            CheckOneTerm(a, "lācis", "lāc"); // nom. sing.
+            CheckOneTerm(a, "lāči", "lāc"); // nom. pl.
+            CheckOneTerm(a, "lāča", "lāc"); // gen. sing.
+            CheckOneTerm(a, "lāču", "lāc"); // gen. pl.
+            CheckOneTerm(a, "lācim", "lāc"); // dat. sing.
+            CheckOneTerm(a, "lāčiem", "lāc"); // dat. pl.
+            CheckOneTerm(a, "lāci", "lāc"); // acc. sing.
+            CheckOneTerm(a, "lāčus", "lāc"); // acc. pl.
+            CheckOneTerm(a, "lācī", "lāc"); // loc. sing.
+            CheckOneTerm(a, "lāčos", "lāc"); // loc. pl.
+            CheckOneTerm(a, "lāci", "lāc"); // voc. sing.
+            CheckOneTerm(a, "lāči", "lāc"); // voc. pl.
 
-	  /// <summary>
-	  /// decl II nouns with (s,t) -> š and (d,z) -> ž
-	  /// palatalization will generally conflate to two stems
-	  /// due to the ambiguity (plural and singular).
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNouns2() throws java.io.IOException
-	  public virtual void testNouns2()
-	  {
-		// decl. II
+            // n -> ņ palatalization
+            CheckOneTerm(a, "akmens", "akmen"); // nom. sing.
+            CheckOneTerm(a, "akmeņi", "akmen"); // nom. pl.
+            CheckOneTerm(a, "akmens", "akmen"); // gen. sing.
+            CheckOneTerm(a, "akmeņu", "akmen"); // gen. pl.
+            CheckOneTerm(a, "akmenim", "akmen"); // dat. sing.
+            CheckOneTerm(a, "akmeņiem", "akmen"); // dat. pl.
+            CheckOneTerm(a, "akmeni", "akmen"); // acc. sing.
+            CheckOneTerm(a, "akmeņus", "akmen"); // acc. pl.
+            CheckOneTerm(a, "akmenī", "akmen"); // loc. sing.
+            CheckOneTerm(a, "akmeņos", "akmen"); // loc. pl.
+            CheckOneTerm(a, "akmens", "akmen"); // voc. sing.
+            CheckOneTerm(a, "akmeņi", "akmen"); // voc. pl.
 
-		// c -> č palatalization
-		checkOneTerm(a, "lācis", "lāc"); // nom. sing.
-		checkOneTerm(a, "lāči", "lāc"); // nom. pl.
-		checkOneTerm(a, "lāča", "lāc"); // gen. sing.
-		checkOneTerm(a, "lāču", "lāc"); // gen. pl.
-		checkOneTerm(a, "lācim", "lāc"); // dat. sing.
-		checkOneTerm(a, "lāčiem", "lāc"); // dat. pl.
-		checkOneTerm(a, "lāci", "lāc"); // acc. sing.
-		checkOneTerm(a, "lāčus", "lāc"); // acc. pl.
-		checkOneTerm(a, "lācī", "lāc"); // loc. sing.
-		checkOneTerm(a, "lāčos", "lāc"); // loc. pl.
-		checkOneTerm(a, "lāci", "lāc"); // voc. sing.
-		checkOneTerm(a, "lāči", "lāc"); // voc. pl.
+            // no palatalization
+            CheckOneTerm(a, "kurmis", "kurm"); // nom. sing.
+            CheckOneTerm(a, "kurmji", "kurm"); // nom. pl.
+            CheckOneTerm(a, "kurmja", "kurm"); // gen. sing.
+            CheckOneTerm(a, "kurmju", "kurm"); // gen. pl.
+            CheckOneTerm(a, "kurmim", "kurm"); // dat. sing.
+            CheckOneTerm(a, "kurmjiem", "kurm"); // dat. pl.
+            CheckOneTerm(a, "kurmi", "kurm"); // acc. sing.
+            CheckOneTerm(a, "kurmjus", "kurm"); // acc. pl.
+            CheckOneTerm(a, "kurmī", "kurm"); // loc. sing.
+            CheckOneTerm(a, "kurmjos", "kurm"); // loc. pl.
+            CheckOneTerm(a, "kurmi", "kurm"); // voc. sing.
+            CheckOneTerm(a, "kurmji", "kurm"); // voc. pl.
+        }
 
-		// n -> ņ palatalization
-		checkOneTerm(a, "akmens", "akmen"); // nom. sing.
-		checkOneTerm(a, "akmeņi", "akmen"); // nom. pl.
-		checkOneTerm(a, "akmens", "akmen"); // gen. sing.
-		checkOneTerm(a, "akmeņu", "akmen"); // gen. pl.
-		checkOneTerm(a, "akmenim", "akmen"); // dat. sing.
-		checkOneTerm(a, "akmeņiem", "akmen"); // dat. pl.
-		checkOneTerm(a, "akmeni", "akmen"); // acc. sing.
-		checkOneTerm(a, "akmeņus", "akmen"); // acc. pl.
-		checkOneTerm(a, "akmenī", "akmen"); // loc. sing.
-		checkOneTerm(a, "akmeņos", "akmen"); // loc. pl.
-		checkOneTerm(a, "akmens", "akmen"); // voc. sing.
-		checkOneTerm(a, "akmeņi", "akmen"); // voc. pl.
+        [Test]
+        public virtual void TestNouns3()
+        {
+            // decl III
+            CheckOneTerm(a, "lietus", "liet"); // nom. sing.
+            CheckOneTerm(a, "lieti", "liet"); // nom. pl.
+            CheckOneTerm(a, "lietus", "liet"); // gen. sing.
+            CheckOneTerm(a, "lietu", "liet"); // gen. pl.
+            CheckOneTerm(a, "lietum", "liet"); // dat. sing.
+            CheckOneTerm(a, "lietiem", "liet"); // dat. pl.
+            CheckOneTerm(a, "lietu", "liet"); // acc. sing.
+            CheckOneTerm(a, "lietus", "liet"); // acc. pl.
+            CheckOneTerm(a, "lietū", "liet"); // loc. sing.
+            CheckOneTerm(a, "lietos", "liet"); // loc. pl.
+            CheckOneTerm(a, "lietus", "liet"); // voc. sing.
+            CheckOneTerm(a, "lieti", "liet"); // voc. pl.
+        }
 
-		// no palatalization
-		checkOneTerm(a, "kurmis", "kurm"); // nom. sing.
-		checkOneTerm(a, "kurmji", "kurm"); // nom. pl.
-		checkOneTerm(a, "kurmja", "kurm"); // gen. sing.
-		checkOneTerm(a, "kurmju", "kurm"); // gen. pl.
-		checkOneTerm(a, "kurmim", "kurm"); // dat. sing.
-		checkOneTerm(a, "kurmjiem", "kurm"); // dat. pl.
-		checkOneTerm(a, "kurmi", "kurm"); // acc. sing.
-		checkOneTerm(a, "kurmjus", "kurm"); // acc. pl.
-		checkOneTerm(a, "kurmī", "kurm"); // loc. sing.
-		checkOneTerm(a, "kurmjos", "kurm"); // loc. pl.
-		checkOneTerm(a, "kurmi", "kurm"); // voc. sing.
-		checkOneTerm(a, "kurmji", "kurm"); // voc. pl.
-	  }
+        [Test]
+        public virtual void TestNouns4()
+        {
+            // decl IV
+            CheckOneTerm(a, "lapa", "lap"); // nom. sing.
+            CheckOneTerm(a, "lapas", "lap"); // nom. pl.
+            CheckOneTerm(a, "lapas", "lap"); // gen. sing.
+            CheckOneTerm(a, "lapu", "lap"); // gen. pl.
+            CheckOneTerm(a, "lapai", "lap"); // dat. sing.
+            CheckOneTerm(a, "lapām", "lap"); // dat. pl.
+            CheckOneTerm(a, "lapu", "lap"); // acc. sing.
+            CheckOneTerm(a, "lapas", "lap"); // acc. pl.
+            CheckOneTerm(a, "lapā", "lap"); // loc. sing.
+            CheckOneTerm(a, "lapās", "lap"); // loc. pl.
+            CheckOneTerm(a, "lapa", "lap"); // voc. sing.
+            CheckOneTerm(a, "lapas", "lap"); // voc. pl.
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNouns3() throws java.io.IOException
-	  public virtual void testNouns3()
-	  {
-		// decl III
-		checkOneTerm(a, "lietus", "liet"); // nom. sing.
-		checkOneTerm(a, "lieti", "liet"); // nom. pl.
-		checkOneTerm(a, "lietus", "liet"); // gen. sing.
-		checkOneTerm(a, "lietu", "liet"); // gen. pl.
-		checkOneTerm(a, "lietum", "liet"); // dat. sing.
-		checkOneTerm(a, "lietiem", "liet"); // dat. pl.
-		checkOneTerm(a, "lietu", "liet"); // acc. sing.
-		checkOneTerm(a, "lietus", "liet"); // acc. pl.
-		checkOneTerm(a, "lietū", "liet"); // loc. sing.
-		checkOneTerm(a, "lietos", "liet"); // loc. pl.
-		checkOneTerm(a, "lietus", "liet"); // voc. sing.
-		checkOneTerm(a, "lieti", "liet"); // voc. pl.
-	  }
+            CheckOneTerm(a, "puika", "puik"); // nom. sing.
+            CheckOneTerm(a, "puikas", "puik"); // nom. pl.
+            CheckOneTerm(a, "puikas", "puik"); // gen. sing.
+            CheckOneTerm(a, "puiku", "puik"); // gen. pl.
+            CheckOneTerm(a, "puikam", "puik"); // dat. sing.
+            CheckOneTerm(a, "puikām", "puik"); // dat. pl.
+            CheckOneTerm(a, "puiku", "puik"); // acc. sing.
+            CheckOneTerm(a, "puikas", "puik"); // acc. pl.
+            CheckOneTerm(a, "puikā", "puik"); // loc. sing.
+            CheckOneTerm(a, "puikās", "puik"); // loc. pl.
+            CheckOneTerm(a, "puika", "puik"); // voc. sing.
+            CheckOneTerm(a, "puikas", "puik"); // voc. pl.
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNouns4() throws java.io.IOException
-	  public virtual void testNouns4()
-	  {
-		// decl IV
-		checkOneTerm(a, "lapa", "lap"); // nom. sing.
-		checkOneTerm(a, "lapas", "lap"); // nom. pl.
-		checkOneTerm(a, "lapas", "lap"); // gen. sing.
-		checkOneTerm(a, "lapu", "lap"); // gen. pl.
-		checkOneTerm(a, "lapai", "lap"); // dat. sing.
-		checkOneTerm(a, "lapām", "lap"); // dat. pl.
-		checkOneTerm(a, "lapu", "lap"); // acc. sing.
-		checkOneTerm(a, "lapas", "lap"); // acc. pl.
-		checkOneTerm(a, "lapā", "lap"); // loc. sing.
-		checkOneTerm(a, "lapās", "lap"); // loc. pl.
-		checkOneTerm(a, "lapa", "lap"); // voc. sing.
-		checkOneTerm(a, "lapas", "lap"); // voc. pl.
+        /// <summary>
+        /// Genitive plural forms with (s,t) -> š and (d,z) -> ž
+        /// will not conflate due to ambiguity.
+        /// </summary>
+        [Test]
+        public virtual void TestNouns5()
+        {
+            // decl V
+            // l -> ļ palatalization
+            CheckOneTerm(a, "egle", "egl"); // nom. sing.
+            CheckOneTerm(a, "egles", "egl"); // nom. pl.
+            CheckOneTerm(a, "egles", "egl"); // gen. sing.
+            CheckOneTerm(a, "egļu", "egl"); // gen. pl.
+            CheckOneTerm(a, "eglei", "egl"); // dat. sing.
+            CheckOneTerm(a, "eglēm", "egl"); // dat. pl.
+            CheckOneTerm(a, "egli", "egl"); // acc. sing.
+            CheckOneTerm(a, "egles", "egl"); // acc. pl.
+            CheckOneTerm(a, "eglē", "egl"); // loc. sing.
+            CheckOneTerm(a, "eglēs", "egl"); // loc. pl.
+            CheckOneTerm(a, "egle", "egl"); // voc. sing.
+            CheckOneTerm(a, "egles", "egl"); // voc. pl.
+        }
 
-		checkOneTerm(a, "puika", "puik"); // nom. sing.
-		checkOneTerm(a, "puikas", "puik"); // nom. pl.
-		checkOneTerm(a, "puikas", "puik"); // gen. sing.
-		checkOneTerm(a, "puiku", "puik"); // gen. pl.
-		checkOneTerm(a, "puikam", "puik"); // dat. sing.
-		checkOneTerm(a, "puikām", "puik"); // dat. pl.
-		checkOneTerm(a, "puiku", "puik"); // acc. sing.
-		checkOneTerm(a, "puikas", "puik"); // acc. pl.
-		checkOneTerm(a, "puikā", "puik"); // loc. sing.
-		checkOneTerm(a, "puikās", "puik"); // loc. pl.
-		checkOneTerm(a, "puika", "puik"); // voc. sing.
-		checkOneTerm(a, "puikas", "puik"); // voc. pl.
-	  }
+        [Test]
+        public virtual void TestNouns6()
+        {
+            // decl VI
 
-	  /// <summary>
-	  /// Genitive plural forms with (s,t) -> š and (d,z) -> ž
-	  /// will not conflate due to ambiguity.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNouns5() throws java.io.IOException
-	  public virtual void testNouns5()
-	  {
-		// decl V
-		// l -> ļ palatalization
-		checkOneTerm(a, "egle", "egl"); // nom. sing.
-		checkOneTerm(a, "egles", "egl"); // nom. pl.
-		checkOneTerm(a, "egles", "egl"); // gen. sing.
-		checkOneTerm(a, "egļu", "egl"); // gen. pl.
-		checkOneTerm(a, "eglei", "egl"); // dat. sing.
-		checkOneTerm(a, "eglēm", "egl"); // dat. pl.
-		checkOneTerm(a, "egli", "egl"); // acc. sing.
-		checkOneTerm(a, "egles", "egl"); // acc. pl.
-		checkOneTerm(a, "eglē", "egl"); // loc. sing.
-		checkOneTerm(a, "eglēs", "egl"); // loc. pl.
-		checkOneTerm(a, "egle", "egl"); // voc. sing.
-		checkOneTerm(a, "egles", "egl"); // voc. pl.
-	  }
+            // no palatalization
+            CheckOneTerm(a, "govs", "gov"); // nom. sing.
+            CheckOneTerm(a, "govis", "gov"); // nom. pl.
+            CheckOneTerm(a, "govs", "gov"); // gen. sing.
+            CheckOneTerm(a, "govju", "gov"); // gen. pl.
+            CheckOneTerm(a, "govij", "gov"); // dat. sing.
+            CheckOneTerm(a, "govīm", "gov"); // dat. pl.
+            CheckOneTerm(a, "govi ", "gov"); // acc. sing.
+            CheckOneTerm(a, "govis", "gov"); // acc. pl.
+            CheckOneTerm(a, "govi ", "gov"); // inst. sing.
+            CheckOneTerm(a, "govīm", "gov"); // inst. pl.
+            CheckOneTerm(a, "govī", "gov"); // loc. sing.
+            CheckOneTerm(a, "govīs", "gov"); // loc. pl.
+            CheckOneTerm(a, "govs", "gov"); // voc. sing.
+            CheckOneTerm(a, "govis", "gov"); // voc. pl.
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testNouns6() throws java.io.IOException
-	  public virtual void testNouns6()
-	  {
-		// decl VI
+        [Test]
+        public virtual void TestAdjectives()
+        {
+            CheckOneTerm(a, "zils", "zil"); // indef. nom. masc. sing.
+            CheckOneTerm(a, "zilais", "zil"); // def. nom. masc. sing.
+            CheckOneTerm(a, "zili", "zil"); // indef. nom. masc. pl.
+            CheckOneTerm(a, "zilie", "zil"); // def. nom. masc. pl.
+            CheckOneTerm(a, "zila", "zil"); // indef. nom. fem. sing.
+            CheckOneTerm(a, "zilā", "zil"); // def. nom. fem. sing.
+            CheckOneTerm(a, "zilas", "zil"); // indef. nom. fem. pl.
+            CheckOneTerm(a, "zilās", "zil"); // def. nom. fem. pl.
+            CheckOneTerm(a, "zila", "zil"); // indef. gen. masc. sing.
+            CheckOneTerm(a, "zilā", "zil"); // def. gen. masc. sing.
+            CheckOneTerm(a, "zilu", "zil"); // indef. gen. masc. pl.
+            CheckOneTerm(a, "zilo", "zil"); // def. gen. masc. pl.
+            CheckOneTerm(a, "zilas", "zil"); // indef. gen. fem. sing.
+            CheckOneTerm(a, "zilās", "zil"); // def. gen. fem. sing.
+            CheckOneTerm(a, "zilu", "zil"); // indef. gen. fem. pl.
+            CheckOneTerm(a, "zilo", "zil"); // def. gen. fem. pl.
+            CheckOneTerm(a, "zilam", "zil"); // indef. dat. masc. sing.
+            CheckOneTerm(a, "zilajam", "zil"); // def. dat. masc. sing.
+            CheckOneTerm(a, "ziliem", "zil"); // indef. dat. masc. pl.
+            CheckOneTerm(a, "zilajiem", "zil"); // def. dat. masc. pl.
+            CheckOneTerm(a, "zilai", "zil"); // indef. dat. fem. sing.
+            CheckOneTerm(a, "zilajai", "zil"); // def. dat. fem. sing.
+            CheckOneTerm(a, "zilām", "zil"); // indef. dat. fem. pl.
+            CheckOneTerm(a, "zilajām", "zil"); // def. dat. fem. pl.
+            CheckOneTerm(a, "zilu", "zil"); // indef. acc. masc. sing.
+            CheckOneTerm(a, "zilo", "zil"); // def. acc. masc. sing.
+            CheckOneTerm(a, "zilus", "zil"); // indef. acc. masc. pl.
+            CheckOneTerm(a, "zilos", "zil"); // def. acc. masc. pl.
+            CheckOneTerm(a, "zilu", "zil"); // indef. acc. fem. sing.
+            CheckOneTerm(a, "zilo", "zil"); // def. acc. fem. sing.
+            CheckOneTerm(a, "zilās", "zil"); // indef. acc. fem. pl.
+            CheckOneTerm(a, "zilās", "zil"); // def. acc. fem. pl.
+            CheckOneTerm(a, "zilā", "zil"); // indef. loc. masc. sing.
+            CheckOneTerm(a, "zilajā", "zil"); // def. loc. masc. sing.
+            CheckOneTerm(a, "zilos", "zil"); // indef. loc. masc. pl.
+            CheckOneTerm(a, "zilajos", "zil"); // def. loc. masc. pl.
+            CheckOneTerm(a, "zilā", "zil"); // indef. loc. fem. sing.
+            CheckOneTerm(a, "zilajā", "zil"); // def. loc. fem. sing.
+            CheckOneTerm(a, "zilās", "zil"); // indef. loc. fem. pl.
+            CheckOneTerm(a, "zilajās", "zil"); // def. loc. fem. pl.
+            CheckOneTerm(a, "zilais", "zil"); // voc. masc. sing.
+            CheckOneTerm(a, "zilie", "zil"); // voc. masc. pl.
+            CheckOneTerm(a, "zilā", "zil"); // voc. fem. sing.
+            CheckOneTerm(a, "zilās", "zil"); // voc. fem. pl.
+        }
 
-		// no palatalization
-		checkOneTerm(a, "govs", "gov"); // nom. sing.
-		checkOneTerm(a, "govis", "gov"); // nom. pl.
-		checkOneTerm(a, "govs", "gov"); // gen. sing.
-		checkOneTerm(a, "govju", "gov"); // gen. pl.
-		checkOneTerm(a, "govij", "gov"); // dat. sing.
-		checkOneTerm(a, "govīm", "gov"); // dat. pl.
-		checkOneTerm(a, "govi ", "gov"); // acc. sing.
-		checkOneTerm(a, "govis", "gov"); // acc. pl.
-		checkOneTerm(a, "govi ", "gov"); // inst. sing.
-		checkOneTerm(a, "govīm", "gov"); // inst. pl.
-		checkOneTerm(a, "govī", "gov"); // loc. sing.
-		checkOneTerm(a, "govīs", "gov"); // loc. pl.
-		checkOneTerm(a, "govs", "gov"); // voc. sing.
-		checkOneTerm(a, "govis", "gov"); // voc. pl.
-	  }
+        /// <summary>
+        /// Note: we intentionally don't handle the ambiguous
+        /// (s,t) -> š and (d,z) -> ž
+        /// </summary>
+        [Test]
+        public virtual void TestPalatalization()
+        {
+            CheckOneTerm(a, "krāsns", "krāsn"); // nom. sing.
+            CheckOneTerm(a, "krāšņu", "krāsn"); // gen. pl.
+            CheckOneTerm(a, "zvaigzne", "zvaigzn"); // nom. sing.
+            CheckOneTerm(a, "zvaigžņu", "zvaigzn"); // gen. pl.
+            CheckOneTerm(a, "kāpslis", "kāpsl"); // nom. sing.
+            CheckOneTerm(a, "kāpšļu", "kāpsl"); // gen. pl.
+            CheckOneTerm(a, "zizlis", "zizl"); // nom. sing.
+            CheckOneTerm(a, "zižļu", "zizl"); // gen. pl.
+            CheckOneTerm(a, "vilnis", "viln"); // nom. sing.
+            CheckOneTerm(a, "viļņu", "viln"); // gen. pl.
+            CheckOneTerm(a, "lelle", "lell"); // nom. sing.
+            CheckOneTerm(a, "leļļu", "lell"); // gen. pl.
+            CheckOneTerm(a, "pinne", "pinn"); // nom. sing.
+            CheckOneTerm(a, "piņņu", "pinn"); // gen. pl.
+            CheckOneTerm(a, "rīkste", "rīkst"); // nom. sing.
+            CheckOneTerm(a, "rīkšu", "rīkst"); // gen. pl.
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testAdjectives() throws java.io.IOException
-	  public virtual void testAdjectives()
-	  {
-		checkOneTerm(a, "zils", "zil"); // indef. nom. masc. sing.
-		checkOneTerm(a, "zilais", "zil"); // def. nom. masc. sing.
-		checkOneTerm(a, "zili", "zil"); // indef. nom. masc. pl.
-		checkOneTerm(a, "zilie", "zil"); // def. nom. masc. pl.
-		checkOneTerm(a, "zila", "zil"); // indef. nom. fem. sing.
-		checkOneTerm(a, "zilā", "zil"); // def. nom. fem. sing.
-		checkOneTerm(a, "zilas", "zil"); // indef. nom. fem. pl.
-		checkOneTerm(a, "zilās", "zil"); // def. nom. fem. pl.
-		checkOneTerm(a, "zila", "zil"); // indef. gen. masc. sing.
-		checkOneTerm(a, "zilā", "zil"); // def. gen. masc. sing.
-		checkOneTerm(a, "zilu", "zil"); // indef. gen. masc. pl.
-		checkOneTerm(a, "zilo", "zil"); // def. gen. masc. pl.
-		checkOneTerm(a, "zilas", "zil"); // indef. gen. fem. sing.
-		checkOneTerm(a, "zilās", "zil"); // def. gen. fem. sing.
-		checkOneTerm(a, "zilu", "zil"); // indef. gen. fem. pl.
-		checkOneTerm(a, "zilo", "zil"); // def. gen. fem. pl.
-		checkOneTerm(a, "zilam", "zil"); // indef. dat. masc. sing.
-		checkOneTerm(a, "zilajam", "zil"); // def. dat. masc. sing.
-		checkOneTerm(a, "ziliem", "zil"); // indef. dat. masc. pl.
-		checkOneTerm(a, "zilajiem", "zil"); // def. dat. masc. pl.
-		checkOneTerm(a, "zilai", "zil"); // indef. dat. fem. sing.
-		checkOneTerm(a, "zilajai", "zil"); // def. dat. fem. sing.
-		checkOneTerm(a, "zilām", "zil"); // indef. dat. fem. pl.
-		checkOneTerm(a, "zilajām", "zil"); // def. dat. fem. pl.
-		checkOneTerm(a, "zilu", "zil"); // indef. acc. masc. sing.
-		checkOneTerm(a, "zilo", "zil"); // def. acc. masc. sing.
-		checkOneTerm(a, "zilus", "zil"); // indef. acc. masc. pl.
-		checkOneTerm(a, "zilos", "zil"); // def. acc. masc. pl.
-		checkOneTerm(a, "zilu", "zil"); // indef. acc. fem. sing.
-		checkOneTerm(a, "zilo", "zil"); // def. acc. fem. sing.
-		checkOneTerm(a, "zilās", "zil"); // indef. acc. fem. pl.
-		checkOneTerm(a, "zilās", "zil"); // def. acc. fem. pl.
-		checkOneTerm(a, "zilā", "zil"); // indef. loc. masc. sing.
-		checkOneTerm(a, "zilajā", "zil"); // def. loc. masc. sing.
-		checkOneTerm(a, "zilos", "zil"); // indef. loc. masc. pl.
-		checkOneTerm(a, "zilajos", "zil"); // def. loc. masc. pl.
-		checkOneTerm(a, "zilā", "zil"); // indef. loc. fem. sing.
-		checkOneTerm(a, "zilajā", "zil"); // def. loc. fem. sing.
-		checkOneTerm(a, "zilās", "zil"); // indef. loc. fem. pl.
-		checkOneTerm(a, "zilajās", "zil"); // def. loc. fem. pl.
-		checkOneTerm(a, "zilais", "zil"); // voc. masc. sing.
-		checkOneTerm(a, "zilie", "zil"); // voc. masc. pl.
-		checkOneTerm(a, "zilā", "zil"); // voc. fem. sing.
-		checkOneTerm(a, "zilās", "zil"); // voc. fem. pl.
-	  }
+        /// <summary>
+        /// Test some length restrictions, we require a 3+ char stem,
+        /// with at least one vowel.
+        /// </summary>
+        [Test]
+        public virtual void TestLength()
+        {
+            CheckOneTerm(a, "usa", "usa"); // length
+            CheckOneTerm(a, "60ms", "60ms"); // vowel count
+        }
 
-	  /// <summary>
-	  /// Note: we intentionally don't handle the ambiguous
-	  /// (s,t) -> š and (d,z) -> ž
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testPalatalization() throws java.io.IOException
-	  public virtual void testPalatalization()
-	  {
-		checkOneTerm(a, "krāsns", "krāsn"); // nom. sing.
-		checkOneTerm(a, "krāšņu", "krāsn"); // gen. pl.
-		checkOneTerm(a, "zvaigzne", "zvaigzn"); // nom. sing.
-		checkOneTerm(a, "zvaigžņu", "zvaigzn"); // gen. pl.
-		checkOneTerm(a, "kāpslis", "kāpsl"); // nom. sing.
-		checkOneTerm(a, "kāpšļu", "kāpsl"); // gen. pl.
-		checkOneTerm(a, "zizlis", "zizl"); // nom. sing.
-		checkOneTerm(a, "zižļu", "zizl"); // gen. pl.
-		checkOneTerm(a, "vilnis", "viln"); // nom. sing.
-		checkOneTerm(a, "viļņu", "viln"); // gen. pl.
-		checkOneTerm(a, "lelle", "lell"); // nom. sing.
-		checkOneTerm(a, "leļļu", "lell"); // gen. pl.
-		checkOneTerm(a, "pinne", "pinn"); // nom. sing.
-		checkOneTerm(a, "piņņu", "pinn"); // gen. pl.
-		checkOneTerm(a, "rīkste", "rīkst"); // nom. sing.
-		checkOneTerm(a, "rīkšu", "rīkst"); // gen. pl.
-	  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+            CheckOneTerm(a, "", "");
+        }
 
-	  /// <summary>
-	  /// Test some length restrictions, we require a 3+ char stem,
-	  /// with at least one vowel.
-	  /// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testLength() throws java.io.IOException
-	  public virtual void testLength()
-	  {
-		checkOneTerm(a, "usa", "usa"); // length
-		checkOneTerm(a, "60ms", "60ms"); // vowel count
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestLatvianStemmer outerInstance;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-		checkOneTerm(a, "", "");
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestLatvianStemmer outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestLatvianStemmer outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper2(TestLatvianStemmer outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new LatvianStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new LatvianStemFilter(tokenizer));
+            }
+        }
+    }
 }

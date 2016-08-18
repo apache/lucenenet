@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.no
-{
+﻿using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.No
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,53 +20,48 @@
 	 * limitations under the License.
 	 */
 
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+    public class TestNorwegianAnalyzer : BaseTokenStreamTestCase
+    {
+        /// <summary>
+        /// This test fails with NPE when the 
+        /// stopwords file is missing in classpath 
+        /// </summary>
+        [Test]
+        public virtual void TestResourcesAvailable()
+        {
+            new NorwegianAnalyzer(TEST_VERSION_CURRENT);
+        }
 
-	public class TestNorwegianAnalyzer : BaseTokenStreamTestCase
-	{
-	  /// <summary>
-	  /// This test fails with NPE when the 
-	  /// stopwords file is missing in classpath 
-	  /// </summary>
-	  public virtual void testResourcesAvailable()
-	  {
-		new NorwegianAnalyzer(TEST_VERSION_CURRENT);
-	  }
+        /// <summary>
+        /// test stopwords and stemming </summary>
+        [Test]
+        public virtual void TestBasics()
+        {
+            Analyzer a = new NorwegianAnalyzer(TEST_VERSION_CURRENT);
+            // stemming
+            CheckOneTerm(a, "havnedistriktene", "havnedistrikt");
+            CheckOneTerm(a, "havnedistrikter", "havnedistrikt");
+            // stopword
+            AssertAnalyzesTo(a, "det", new string[] { });
+        }
 
-	  /// <summary>
-	  /// test stopwords and stemming </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testBasics() throws java.io.IOException
-	  public virtual void testBasics()
-	  {
-		Analyzer a = new NorwegianAnalyzer(TEST_VERSION_CURRENT);
-		// stemming
-		checkOneTerm(a, "havnedistriktene", "havnedistrikt");
-		checkOneTerm(a, "havnedistrikter", "havnedistrikt");
-		// stopword
-		assertAnalyzesTo(a, "det", new string[] {});
-	  }
+        /// <summary>
+        /// test use of exclusion set </summary>
+        [Test]
+        public virtual void TestExclude()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("havnedistriktene"), false);
+            Analyzer a = new NorwegianAnalyzer(TEST_VERSION_CURRENT, NorwegianAnalyzer.DefaultStopSet, exclusionSet);
+            CheckOneTerm(a, "havnedistriktene", "havnedistriktene");
+            CheckOneTerm(a, "havnedistrikter", "havnedistrikt");
+        }
 
-	  /// <summary>
-	  /// test use of exclusion set </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testExclude() throws java.io.IOException
-	  public virtual void testExclude()
-	  {
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("havnedistriktene"), false);
-		Analyzer a = new NorwegianAnalyzer(TEST_VERSION_CURRENT, NorwegianAnalyzer.DefaultStopSet, exclusionSet);
-		checkOneTerm(a, "havnedistriktene", "havnedistriktene");
-		checkOneTerm(a, "havnedistrikter", "havnedistrikt");
-	  }
-
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), new NorwegianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-	  }
-	}
-
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), new NorwegianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+        }
+    }
 }

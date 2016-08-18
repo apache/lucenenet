@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.it
-{
+﻿using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.It
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +19,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,103 +54,102 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	/// <summary>
-	/// Light Stemmer for Italian.
-	/// <para>
-	/// This stemmer implements the algorithm described in:
-	/// <i>Report on CLEF-2001 Experiments</i>
-	/// Jacques Savoy
-	/// </para>
-	/// </summary>
-	public class ItalianLightStemmer
-	{
+    /// <summary>
+    /// Light Stemmer for Italian.
+    /// <para>
+    /// This stemmer implements the algorithm described in:
+    /// <i>Report on CLEF-2001 Experiments</i>
+    /// Jacques Savoy
+    /// </para>
+    /// </summary>
+    public class ItalianLightStemmer
+    {
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		if (len < 6)
-		{
-		  return len;
-		}
+        public virtual int Stem(char[] s, int len)
+        {
+            if (len < 6)
+            {
+                return len;
+            }
 
-		for (int i = 0; i < len; i++)
-		{
-		  switch (s[i])
-		  {
-			case 'à':
-			case 'á':
-			case 'â':
-			case 'ä':
-				s[i] = 'a';
-				break;
-			case 'ò':
-			case 'ó':
-			case 'ô':
-			case 'ö':
-				s[i] = 'o';
-				break;
-			case 'è':
-			case 'é':
-			case 'ê':
-			case 'ë':
-				s[i] = 'e';
-				break;
-			case 'ù':
-			case 'ú':
-			case 'û':
-			case 'ü':
-				s[i] = 'u';
-				break;
-			case 'ì':
-			case 'í':
-			case 'î':
-			case 'ï':
-				s[i] = 'i';
-				break;
-		  }
-		}
+            for (int i = 0; i < len; i++)
+            {
+                switch (s[i])
+                {
+                    case 'à':
+                    case 'á':
+                    case 'â':
+                    case 'ä':
+                        s[i] = 'a';
+                        break;
+                    case 'ò':
+                    case 'ó':
+                    case 'ô':
+                    case 'ö':
+                        s[i] = 'o';
+                        break;
+                    case 'è':
+                    case 'é':
+                    case 'ê':
+                    case 'ë':
+                        s[i] = 'e';
+                        break;
+                    case 'ù':
+                    case 'ú':
+                    case 'û':
+                    case 'ü':
+                        s[i] = 'u';
+                        break;
+                    case 'ì':
+                    case 'í':
+                    case 'î':
+                    case 'ï':
+                        s[i] = 'i';
+                        break;
+                }
+            }
 
-		switch (s[len - 1])
-		{
-		  case 'e':
-			if (s[len - 2] == 'i' || s[len - 2] == 'h')
-			{
-			  return len - 2;
-			}
-			else
-			{
-			  return len - 1;
-			}
-		  case 'i':
-			if (s[len - 2] == 'h' || s[len - 2] == 'i')
-			{
-			  return len - 2;
-			}
-			else
-			{
-			  return len - 1;
-			}
-		  case 'a':
-			if (s[len - 2] == 'i')
-			{
-			  return len - 2;
-			}
-			else
-			{
-			  return len - 1;
-			}
-		  case 'o':
-			if (s[len - 2] == 'i')
-			{
-			  return len - 2;
-			}
-			else
-			{
-			  return len - 1;
-			}
-		}
+            switch (s[len - 1])
+            {
+                case 'e':
+                    if (s[len - 2] == 'i' || s[len - 2] == 'h')
+                    {
+                        return len - 2;
+                    }
+                    else
+                    {
+                        return len - 1;
+                    }
+                case 'i':
+                    if (s[len - 2] == 'h' || s[len - 2] == 'i')
+                    {
+                        return len - 2;
+                    }
+                    else
+                    {
+                        return len - 1;
+                    }
+                case 'a':
+                    if (s[len - 2] == 'i')
+                    {
+                        return len - 2;
+                    }
+                    else
+                    {
+                        return len - 1;
+                    }
+                case 'o':
+                    if (s[len - 2] == 'i')
+                    {
+                        return len - 2;
+                    }
+                    else
+                    {
+                        return len - 1;
+                    }
+            }
 
-		return len;
-	  }
-	}
-
+            return len;
+        }
+    }
 }

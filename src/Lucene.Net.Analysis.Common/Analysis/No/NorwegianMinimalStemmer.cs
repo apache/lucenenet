@@ -1,7 +1,9 @@
-﻿namespace org.apache.lucene.analysis.no
-{
+﻿using Lucene.Net.Analysis.Util;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.No
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,14 +20,14 @@
 	 * limitations under the License.
 	 */
 
-	/* 
+    /* 
 	 * This algorithm is updated based on code located at:
 	 * http://members.unine.ch/jacques.savoy/clef/
 	 * 
 	 * Full copyright for that code follows:
 	 */
 
-	/*
+    /*
 	 * Copyright (c) 2005, Jacques Savoy
 	 * All rights reserved.
 	 *
@@ -53,69 +55,60 @@
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
-	using org.apache.lucene.analysis.util;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.util.StemmerUtil.*;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.no.NorwegianLightStemmer.BOKMAAL;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.no.NorwegianLightStemmer.NYNORSK;
+    /// <summary>
+    /// Minimal Stemmer for Norwegian Bokmål (no-nb) and Nynorsk (no-nn)
+    /// <para>
+    /// Stems known plural forms for Norwegian nouns only, together with genitiv -s
+    /// </para>
+    /// </summary>
+    public class NorwegianMinimalStemmer
+    {
+        internal readonly bool useBokmaal;
+        internal readonly bool useNynorsk;
 
-	/// <summary>
-	/// Minimal Stemmer for Norwegian Bokmål (no-nb) and Nynorsk (no-nn)
-	/// <para>
-	/// Stems known plural forms for Norwegian nouns only, together with genitiv -s
-	/// </para>
-	/// </summary>
-	public class NorwegianMinimalStemmer
-	{
-	  internal readonly bool useBokmaal;
-	  internal readonly bool useNynorsk;
+        /// <summary>
+        /// Creates a new NorwegianMinimalStemmer </summary>
+        /// <param name="flags"> set to <seealso cref="NorwegianLightStemmer#BOKMAAL"/>, 
+        ///                     <seealso cref="NorwegianLightStemmer#NYNORSK"/>, or both. </param>
+        public NorwegianMinimalStemmer(int flags)
+        {
+            if (flags <= 0 || flags > NorwegianLightStemmer.BOKMAAL + NorwegianLightStemmer.NYNORSK)
+            {
+                throw new System.ArgumentException("invalid flags");
+            }
+            useBokmaal = (flags & NorwegianLightStemmer.BOKMAAL) != 0;
+            useNynorsk = (flags & NorwegianLightStemmer.NYNORSK) != 0;
+        }
 
-	  /// <summary>
-	  /// Creates a new NorwegianMinimalStemmer </summary>
-	  /// <param name="flags"> set to <seealso cref="NorwegianLightStemmer#BOKMAAL"/>, 
-	  ///                     <seealso cref="NorwegianLightStemmer#NYNORSK"/>, or both. </param>
-	  public NorwegianMinimalStemmer(int flags)
-	  {
-		if (flags <= 0 || flags > BOKMAAL + NYNORSK)
-		{
-		  throw new System.ArgumentException("invalid flags");
-		}
-		useBokmaal = (flags & BOKMAAL) != 0;
-		useNynorsk = (flags & NYNORSK) != 0;
-	  }
+        public virtual int Stem(char[] s, int len)
+        {
+            // Remove genitiv s
+            if (len > 4 && s[len - 1] == 's')
+            {
+                len--;
+            }
 
-	  public virtual int stem(char[] s, int len)
-	  {
-		// Remove genitiv s
-		if (len > 4 && s[len - 1] == 's')
-		{
-		  len--;
-		}
+            if (len > 5 && (StemmerUtil.EndsWith(s, len, "ene") || (StemmerUtil.EndsWith(s, len, "ane") && useNynorsk))) // masc pl definite (gut-ane) -  masc/fem/neutr pl definite (hus-ene)
+            {
+                return len - 3;
+            }
 
-		if (len > 5 && (StemmerUtil.EndsWith(s, len, "ene") || (StemmerUtil.EndsWith(s, len, "ane") && useNynorsk))) // masc pl definite (gut-ane) -  masc/fem/neutr pl definite (hus-ene)
-		{
-		  return len - 3;
-		}
+            if (len > 4 && (StemmerUtil.EndsWith(s, len, "er") || StemmerUtil.EndsWith(s, len, "en") || StemmerUtil.EndsWith(s, len, "et") || (StemmerUtil.EndsWith(s, len, "ar") && useNynorsk))) // masc pl indefinite -  neutr definite -  masc/fem definite -  masc/fem indefinite
+            {
+                return len - 2;
+            }
 
-		if (len > 4 && (StemmerUtil.EndsWith(s, len, "er") || StemmerUtil.EndsWith(s, len, "en") || StemmerUtil.EndsWith(s, len, "et") || (StemmerUtil.EndsWith(s, len, "ar") && useNynorsk))) // masc pl indefinite -  neutr definite -  masc/fem definite -  masc/fem indefinite
-		{
-		  return len - 2;
-		}
+            if (len > 3)
+            {
+                switch (s[len - 1])
+                {
+                    case 'a': // fem definite
+                    case 'e': // to get correct stem for nouns ending in -e (kake -> kak, kaker -> kak)
+                        return len - 1;
+                }
+            }
 
-		if (len > 3)
-		{
-		  switch (s[len - 1])
-		  {
-			case 'a': // fem definite
-			case 'e': // to get correct stem for nouns ending in -e (kake -> kak, kaker -> kak)
-			  return len - 1;
-		  }
-		}
-
-		return len;
-	  }
-	}
-
+            return len;
+        }
+    }
 }

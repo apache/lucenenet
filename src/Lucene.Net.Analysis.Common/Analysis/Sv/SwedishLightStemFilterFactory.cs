@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.sv
+namespace Lucene.Net.Analysis.Sv
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,36 +21,33 @@ namespace org.apache.lucene.analysis.sv
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="SwedishLightStemFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_svlgtstem" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
+    ///     &lt;filter class="solr.SwedishLightStemFilterFactory"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class SwedishLightStemFilterFactory : TokenFilterFactory
+    {
 
-	/// <summary>
-	/// Factory for <seealso cref="SwedishLightStemFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_svlgtstem" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
-	///     &lt;filter class="solr.SwedishLightStemFilterFactory"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class SwedishLightStemFilterFactory : TokenFilterFactory
-	{
+        /// <summary>
+        /// Creates a new SwedishLightStemFilterFactory </summary>
+        public SwedishLightStemFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  /// <summary>
-	  /// Creates a new SwedishLightStemFilterFactory </summary>
-	  public SwedishLightStemFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new SwedishLightStemFilter(input);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new SwedishLightStemFilter(input);
+        }
+    }
 }

@@ -160,6 +160,12 @@
     <Compile Include="Analysis\Id\TestIndonesianStemFilterFactory.cs" />
     <Compile Include="Analysis\Id\TestIndonesianStemmer.cs" />
     <Compile Include="Analysis\In\TestIndicNormalizer.cs" />
+    <Compile Include="Analysis\It\TestItalianAnalyzer.cs" />
+    <Compile Include="Analysis\It\TestItalianLightStemFilter.cs" />
+    <Compile Include="Analysis\It\TestItalianLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\Lv\TestLatvianAnalyzer.cs" />
+    <Compile Include="Analysis\Lv\TestLatvianStemFilterFactory.cs" />
+    <Compile Include="Analysis\Lv\TestLatvianStemmer.cs" />
     <Compile Include="Analysis\Miscellaneous\TestASCIIFoldingFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestCapitalizationFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestCapitalizationFilterFactory.cs" />
@@ -200,6 +206,12 @@
     <Compile Include="Analysis\Ngram\NGramTokenFilterTest.cs" />
     <Compile Include="Analysis\Ngram\NGramTokenizerTest.cs" />
     <Compile Include="Analysis\Ngram\TestNGramFilters.cs" />
+    <Compile Include="Analysis\Nl\TestDutchStemmer.cs" />
+    <Compile Include="Analysis\No\TestNorwegianAnalyzer.cs" />
+    <Compile Include="Analysis\No\TestNorwegianLightStemFilter.cs" />
+    <Compile Include="Analysis\No\TestNorwegianLightStemFilterFactory.cs" />
+    <Compile Include="Analysis\No\TestNorwegianMinimalStemFilter.cs" />
+    <Compile Include="Analysis\No\TestNorwegianMinimalStemFilterFactory.cs" />
     <Compile Include="Analysis\Path\TestPathHierarchyTokenizer.cs" />
     <Compile Include="Analysis\Path\TestReversePathHierarchyTokenizer.cs" />
     <Compile Include="Analysis\Pattern\TestPatternCaptureGroupTokenFilter.cs" />
@@ -225,6 +237,7 @@
     <Compile Include="Analysis\Query\QueryAutoStopWordAnalyzerTest.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilter.cs" />
     <Compile Include="Analysis\Reverse\TestReverseStringFilterFactory.cs" />
+    <Compile Include="Analysis\Ro\TestRomanianAnalyzer.cs" />
     <Compile Include="Analysis\Ru\TestRussianAnalyzer.cs" />
     <Compile Include="Analysis\Ru\TestRussianFilters.cs" />
     <Compile Include="Analysis\Ru\TestRussianLetterTokenizer.cs" />
@@ -244,6 +257,9 @@
     <Compile Include="Analysis\Standard\TestUAX29URLEmailTokenizerFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Analysis\Sv\TestSwedishAnalyzer.cs" />
+    <Compile Include="Analysis\Sv\TestSwedishLightStemFilter.cs" />
+    <Compile Include="Analysis\Sv\TestSwedishLightStemFilterFactory.cs" />
     <Compile Include="Analysis\Synonym\TestMultiWordSynonyms.cs" />
     <Compile Include="Analysis\Synonym\TestSlowSynonymFilter.cs" />
     <Compile Include="Analysis\Synonym\TestSolrSynonymParser.cs" />
@@ -307,6 +323,8 @@
     <EmbeddedResource Include="Analysis\Pt\ptminimaltestdata.zip" />
     <EmbeddedResource Include="Analysis\Pt\ptrslptestdata.zip" />
     <EmbeddedResource Include="Analysis\Hu\hulighttestdata.zip" />
+    <EmbeddedResource Include="Analysis\It\itlighttestdata.zip" />
+    <EmbeddedResource Include="Analysis\Sv\svlighttestdata.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -396,7 +414,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Analysis\De\data.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Analysis\No\nb_light.txt" />
+    <EmbeddedResource Include="Analysis\No\nb_minimal.txt" />
+    <EmbeddedResource Include="Analysis\No\nn_light.txt" />
+    <EmbeddedResource Include="Analysis\No\nn_minimal.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

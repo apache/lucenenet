@@ -1,7 +1,12 @@
-﻿namespace org.apache.lucene.analysis.sv
-{
+﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Miscellaneous;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System.IO;
 
-	/*
+namespace Lucene.Net.Analysis.Sv
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,106 +23,91 @@
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Simple tests for <seealso cref="SwedishLightStemFilter"/>
+    /// </summary>
+    public class TestSwedishLightStemFilter : BaseTokenStreamTestCase
+    {
+        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-	using KeywordTokenizer = org.apache.lucene.analysis.core.KeywordTokenizer;
-	using SetKeywordMarkerFilter = org.apache.lucene.analysis.miscellaneous.SetKeywordMarkerFilter;
-	using CharArraySet = org.apache.lucene.analysis.util.CharArraySet;
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.VocabularyAssert.*;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(source, new SwedishLightStemFilter(source));
+            }
+        }
 
-	/// <summary>
-	/// Simple tests for <seealso cref="SwedishLightStemFilter"/>
-	/// </summary>
-	public class TestSwedishLightStemFilter : BaseTokenStreamTestCase
-	{
-	  private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
+        /// <summary>
+        /// Test against a vocabulary from the reference impl </summary>
+        [Test]
+        public virtual void TestVocabulary()
+        {
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("svlighttestdata.zip"), "svlight.txt");
+        }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	  {
-		  public AnalyzerAnonymousInnerClassHelper()
-		  {
-		  }
+        [Test]
+        public virtual void TestKeyword()
+        {
+            CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("jaktkarlens"), false);
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
+            CheckOneTerm(a, "jaktkarlens", "jaktkarlens");
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			return new TokenStreamComponents(source, new SwedishLightStemFilter(source));
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        {
+            private readonly TestSwedishLightStemFilter outerInstance;
 
-	  /// <summary>
-	  /// Test against a vocabulary from the reference impl </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testVocabulary() throws java.io.IOException
-	  public virtual void testVocabulary()
-	  {
-		assertVocabulary(analyzer, getDataFile("svlighttestdata.zip"), "svlight.txt");
-	  }
+            private CharArraySet exclusionSet;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testKeyword() throws java.io.IOException
-	  public virtual void testKeyword()
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.analysis.util.CharArraySet exclusionSet = new org.apache.lucene.analysis.util.CharArraySet(TEST_VERSION_CURRENT, asSet("jaktkarlens"), false);
-		CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, asSet("jaktkarlens"), false);
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
-		checkOneTerm(a, "jaktkarlens", "jaktkarlens");
-	  }
+            public AnalyzerAnonymousInnerClassHelper2(TestSwedishLightStemFilter outerInstance, CharArraySet exclusionSet)
+            {
+                this.outerInstance = outerInstance;
+                this.exclusionSet = exclusionSet;
+            }
 
-	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-	  {
-		  private readonly TestSwedishLightStemFilter outerInstance;
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
+                return new TokenStreamComponents(source, new SwedishLightStemFilter(sink));
+            }
+        }
 
-		  private CharArraySet exclusionSet;
+        /// <summary>
+        /// blast some random strings through the analyzer </summary>
+        [Test]
+        public virtual void TestRandomStrings()
+        {
+            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+        }
 
-		  public AnalyzerAnonymousInnerClassHelper2(TestSwedishLightStemFilter outerInstance, CharArraySet exclusionSet)
-		  {
-			  this.outerInstance = outerInstance;
-			  this.exclusionSet = exclusionSet;
-		  }
+        [Test]
+        public virtual void TestEmptyTerm()
+        {
+            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
+            CheckOneTerm(a, "", "");
+        }
 
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-			TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
-			return new TokenStreamComponents(source, new SwedishLightStemFilter(sink));
-		  }
-	  }
+        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            private readonly TestSwedishLightStemFilter outerInstance;
 
-	  /// <summary>
-	  /// blast some random strings through the analyzer </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testRandomStrings() throws Exception
-	  public virtual void testRandomStrings()
-	  {
-		checkRandomData(random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-	  }
+            public AnalyzerAnonymousInnerClassHelper3(TestSwedishLightStemFilter outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testEmptyTerm() throws java.io.IOException
-	  public virtual void testEmptyTerm()
-	  {
-		Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-		checkOneTerm(a, "", "");
-	  }
-
-	  private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-	  {
-		  private readonly TestSwedishLightStemFilter outerInstance;
-
-		  public AnalyzerAnonymousInnerClassHelper3(TestSwedishLightStemFilter outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
-
-		  protected internal override TokenStreamComponents createComponents(string fieldName, Reader reader)
-		  {
-			Tokenizer tokenizer = new KeywordTokenizer(reader);
-			return new TokenStreamComponents(tokenizer, new SwedishLightStemFilter(tokenizer));
-		  }
-	  }
-	}
-
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new SwedishLightStemFilter(tokenizer));
+            }
+        }
+    }
 }

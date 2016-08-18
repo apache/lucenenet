@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.no
+namespace Lucene.Net.Analysis.No
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,60 +21,53 @@ namespace org.apache.lucene.analysis.no
 	 * limitations under the License.
 	 */
 
-	using TokenFilterFactory = org.apache.lucene.analysis.util.TokenFilterFactory;
+    /// <summary>
+    /// Factory for <seealso cref="NorwegianLightStemFilter"/>.
+    /// <pre class="prettyprint">
+    /// &lt;fieldType name="text_svlgtstem" class="solr.TextField" positionIncrementGap="100"&gt;
+    ///   &lt;analyzer&gt;
+    ///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
+    ///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
+    ///     &lt;filter class="solr.NorwegianLightStemFilterFactory" variant="nb"/&gt;
+    ///   &lt;/analyzer&gt;
+    /// &lt;/fieldType&gt;</pre>
+    /// </summary>
+    public class NorwegianLightStemFilterFactory : TokenFilterFactory
+    {
 
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.no.NorwegianLightStemmer.BOKMAAL;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.apache.lucene.analysis.no.NorwegianLightStemmer.NYNORSK;
+        private readonly int flags;
 
-	/// <summary>
-	/// Factory for <seealso cref="NorwegianLightStemFilter"/>.
-	/// <pre class="prettyprint">
-	/// &lt;fieldType name="text_svlgtstem" class="solr.TextField" positionIncrementGap="100"&gt;
-	///   &lt;analyzer&gt;
-	///     &lt;tokenizer class="solr.StandardTokenizerFactory"/&gt;
-	///     &lt;filter class="solr.LowerCaseFilterFactory"/&gt;
-	///     &lt;filter class="solr.NorwegianLightStemFilterFactory" variant="nb"/&gt;
-	///   &lt;/analyzer&gt;
-	/// &lt;/fieldType&gt;</pre>
-	/// </summary>
-	public class NorwegianLightStemFilterFactory : TokenFilterFactory
-	{
+        /// <summary>
+        /// Creates a new NorwegianLightStemFilterFactory </summary>
+        public NorwegianLightStemFilterFactory(IDictionary<string, string> args)
+              : base(args)
+        {
+            string variant = Get(args, "variant");
+            if (variant == null || "nb".Equals(variant))
+            {
+                flags = NorwegianLightStemmer.BOKMAAL;
+            }
+            else if ("nn".Equals(variant))
+            {
+                flags = NorwegianLightStemmer.NYNORSK;
+            }
+            else if ("no".Equals(variant))
+            {
+                flags = NorwegianLightStemmer.BOKMAAL | NorwegianLightStemmer.NYNORSK;
+            }
+            else
+            {
+                throw new System.ArgumentException("invalid variant: " + variant);
+            }
+            if (args.Count > 0)
+            {
+                throw new System.ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-	  private readonly int flags;
-
-	  /// <summary>
-	  /// Creates a new NorwegianLightStemFilterFactory </summary>
-	  public NorwegianLightStemFilterFactory(IDictionary<string, string> args) : base(args)
-	  {
-		string variant = get(args, "variant");
-		if (variant == null || "nb".Equals(variant))
-		{
-		  flags = BOKMAAL;
-		}
-		else if ("nn".Equals(variant))
-		{
-		  flags = NYNORSK;
-		}
-		else if ("no".Equals(variant))
-		{
-		  flags = BOKMAAL | NYNORSK;
-		}
-		else
-		{
-		  throw new System.ArgumentException("invalid variant: " + variant);
-		}
-		if (args.Count > 0)
-		{
-		  throw new System.ArgumentException("Unknown parameters: " + args);
-		}
-	  }
-
-	  public override TokenStream create(TokenStream input)
-	  {
-		return new NorwegianLightStemFilter(input, flags);
-	  }
-	}
-
+        public override TokenStream Create(TokenStream input)
+        {
+            return new NorwegianLightStemFilter(input, flags);
+        }
+    }
 }
