@@ -618,6 +618,7 @@
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Arrays.cs" />
     <Compile Include="Support\CharacterIterator.cs" />
+    <Compile Include="Support\Compatibility\BinaryReaderDataInput.cs" />
     <Compile Include="Support\Compatibility\BinaryWriterDataOutput.cs" />
     <Compile Include="Support\Compatibility\Collections.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
