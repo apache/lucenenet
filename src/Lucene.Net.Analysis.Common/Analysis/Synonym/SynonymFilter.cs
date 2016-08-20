@@ -179,8 +179,6 @@ namespace Lucene.Net.Analysis.Synonym
                 Debug.Assert(upto < count);
                 lastEndOffset = endOffsets[upto];
                 lastPosLength = posLengths[upto];
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final org.apache.lucene.util.CharsRef result = outputs[upto++];
                 CharsRef result = outputs[upto++];
                 posIncr = 0;
                 if (upto == count)
@@ -468,7 +466,6 @@ namespace Lucene.Net.Analysis.Synonym
                 }
 
                 curNextRead = rollIncr(curNextRead);
-                //byTokenContinue:;
             }
             byTokenBreak:
 

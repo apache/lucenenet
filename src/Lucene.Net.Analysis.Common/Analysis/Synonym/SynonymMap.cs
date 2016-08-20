@@ -254,7 +254,6 @@ namespace Lucene.Net.Analysis.Synonym
 
                 IEnumerable<CharsRef> keys = workingSet.Keys;
                 CharsRef[] sortedKeys = keys.ToArray();
-                //Arrays.Sort(sortedKeys, CharsRef.UTF16SortedAsUTF8Comparer);
                 System.Array.Sort(sortedKeys, CharsRef.UTF16SortedAsUTF8Comparer);
 
 
