@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
-namespace org.apache.lucene.analysis.hunspell
+namespace Lucene.Net.Analysis.Hunspell
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,76 +24,68 @@ namespace org.apache.lucene.analysis.hunspell
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// base class for hunspell stemmer tests </summary>
+    public abstract class StemmerTestBase : LuceneTestCase
+    {
+        private static Stemmer stemmer;
 
-	using CharsRef = org.apache.lucene.util.CharsRef;
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
+        internal static void Init(string affix, string dictionary)
+        {
+            Init(false, affix, dictionary);
+        }
 
-	/// <summary>
-	/// base class for hunspell stemmer tests </summary>
-	internal abstract class StemmerTestBase : LuceneTestCase
-	{
-	  private static Stemmer stemmer;
+        internal static void Init(bool ignoreCase, string affix, params string[] dictionaries)
+        {
+            if (dictionaries.Length == 0)
+            {
+                throw new System.ArgumentException("there must be at least one dictionary");
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: static void init(String affix, String dictionary) throws java.io.IOException, java.text.ParseException
-	  internal static void init(string affix, string dictionary)
-	  {
-		init(false, affix, dictionary);
-	  }
+            System.IO.Stream affixStream = typeof(StemmerTestBase).getResourceAsStream(affix);
+            if (affixStream == null)
+            {
+                throw new FileNotFoundException("file not found: " + affix);
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: static void init(boolean ignoreCase, String affix, String... dictionaries) throws java.io.IOException, java.text.ParseException
-	  internal static void init(bool ignoreCase, string affix, params string[] dictionaries)
-	  {
-		if (dictionaries.Length == 0)
-		{
-		  throw new System.ArgumentException("there must be at least one dictionary");
-		}
+            System.IO.Stream[] dictStreams = new System.IO.Stream[dictionaries.Length];
+            for (int i = 0; i < dictionaries.Length; i++)
+            {
+                dictStreams[i] = typeof(StemmerTestBase).getResourceAsStream(dictionaries[i]);
+                if (dictStreams[i] == null)
+                {
+                    throw new FileNotFoundException("file not found: " + dictStreams[i]);
+                }
+            }
 
-		System.IO.Stream affixStream = typeof(StemmerTestBase).getResourceAsStream(affix);
-		if (affixStream == null)
-		{
-		  throw new FileNotFoundException("file not found: " + affix);
-		}
+            try
+            {
+                Dictionary dictionary = new Dictionary(affixStream, Arrays.AsList(dictStreams), ignoreCase);
+                stemmer = new Stemmer(dictionary);
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(affixStream);
+                IOUtils.CloseWhileHandlingException(null, dictStreams);
+            }
+        }
 
-		System.IO.Stream[] dictStreams = new System.IO.Stream[dictionaries.Length];
-		for (int i = 0; i < dictionaries.Length; i++)
-		{
-		  dictStreams[i] = typeof(StemmerTestBase).getResourceAsStream(dictionaries[i]);
-		  if (dictStreams[i] == null)
-		  {
-			throw new FileNotFoundException("file not found: " + dictStreams[i]);
-		  }
-		}
+        internal static void AssertStemsTo(string s, params string[] expected)
+        {
+            assertNotNull(stemmer);
+            Array.Sort(expected);
 
-		try
-		{
-		  Dictionary dictionary = new Dictionary(affixStream, Arrays.asList(dictStreams), ignoreCase);
-		  stemmer = new Stemmer(dictionary);
-		}
-		finally
-		{
-		  IOUtils.closeWhileHandlingException(affixStream);
-		  IOUtils.closeWhileHandlingException(dictStreams);
-		}
-	  }
+            IList<CharsRef> stems = stemmer.Stem(s);
+            string[] actual = new string[stems.Count];
+            for (int i = 0; i < actual.Length; i++)
+            {
+                actual[i] = stems[i].ToString();
+            }
+            Array.Sort(actual);
 
-	  internal static void assertStemsTo(string s, params string[] expected)
-	  {
-		assertNotNull(stemmer);
-		Arrays.sort(expected);
-
-		IList<CharsRef> stems = stemmer.stem(s);
-		string[] actual = new string[stems.Count];
-		for (int i = 0; i < actual.Length; i++)
-		{
-		  actual[i] = stems[i].ToString();
-		}
-		Arrays.sort(actual);
-
-		assertArrayEquals("expected=" + Arrays.ToString(expected) + ",actual=" + Arrays.ToString(actual), expected, actual);
-	  }
-	}
-
+            // LUCENENET: Originally, the code was as follows, but it failed to properly compare the arrays.
+            //assertArrayEquals("expected=" + Arrays.ToString(expected) + ",actual=" + Arrays.ToString(actual), expected, actual);
+            Assert.AreEqual(expected, actual, "expected=" + Arrays.ToString(expected) + ",actual=" + Arrays.ToString(actual));
+        }
+    }
 }

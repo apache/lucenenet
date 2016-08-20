@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.hunspell
-{
+﻿using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Hunspell
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,29 +19,24 @@
 	 * limitations under the License.
 	 */
 
-	using BeforeClass = org.junit.BeforeClass;
+    public class TestCircumfix_ : StemmerTestBase
+    {
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            Init("circumfix.aff", "circumfix.dic");
+        }
 
-	public class TestCircumfix : StemmerTestBase
-	{
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public static void beforeClass()
-	  {
-		init("circumfix.aff", "circumfix.dic");
-	  }
-
-	  public virtual void testCircumfix()
-	  {
-		assertStemsTo("nagy", "nagy");
-		assertStemsTo("nagyobb", "nagy");
-		assertStemsTo("legnagyobb", "nagy");
-		assertStemsTo("legeslegnagyobb", "nagy");
-		assertStemsTo("nagyobbobb");
-		assertStemsTo("legnagy");
-		assertStemsTo("legeslegnagy");
-	  }
-	}
-
+        [Test]
+        public virtual void TestCircumfix()
+        {
+            AssertStemsTo("nagy", "nagy");
+            AssertStemsTo("nagyobb", "nagy");
+            AssertStemsTo("legnagyobb", "nagy");
+            AssertStemsTo("legeslegnagyobb", "nagy");
+            AssertStemsTo("nagyobbobb");
+            AssertStemsTo("legnagy");
+            AssertStemsTo("legeslegnagy");
+        }
+    }
 }

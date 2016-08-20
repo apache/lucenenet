@@ -191,6 +191,11 @@
     <Compile Include="Analysis\Hi\HindiStemFilter.cs" />
     <Compile Include="Analysis\Hi\HindiStemFilterFactory.cs" />
     <Compile Include="Analysis\Hi\HindiStemmer.cs" />
+    <Compile Include="Analysis\Hunspell\Dictionary.cs" />
+    <Compile Include="Analysis\Hunspell\HunspellStemFilter.cs" />
+    <Compile Include="Analysis\Hunspell\HunspellStemFilterFactory.cs" />
+    <Compile Include="Analysis\Hunspell\ISO8859_14Decoder.cs" />
+    <Compile Include="Analysis\Hunspell\Stemmer.cs" />
     <Compile Include="Analysis\Hu\HungarianAnalyzer.cs" />
     <Compile Include="Analysis\Hu\HungarianLightStemFilter.cs" />
     <Compile Include="Analysis\Hu\HungarianLightStemFilterFactory.cs" />

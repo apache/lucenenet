@@ -47,6 +47,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +153,26 @@
     <Compile Include="Analysis\Hi\TestHindiFilters.cs" />
     <Compile Include="Analysis\Hi\TestHindiNormalizer.cs" />
     <Compile Include="Analysis\Hi\TestHindiStemmer.cs" />
+    <Compile Include="Analysis\Hunspell\StemmerTestBase.cs" />
+    <Compile Include="Analysis\Hunspell\TestCaseInsensitive.cs" />
+    <Compile Include="Analysis\Hunspell\TestCircumfix.cs" />
+    <Compile Include="Analysis\Hunspell\TestComplexPrefix.cs" />
+    <Compile Include="Analysis\Hunspell\TestCondition.cs" />
+    <Compile Include="Analysis\Hunspell\TestConv.cs" />
+    <Compile Include="Analysis\Hunspell\TestDependencies.cs" />
+    <Compile Include="Analysis\Hunspell\TestDictionary.cs" />
+    <Compile Include="Analysis\Hunspell\TestEscaped.cs" />
+    <Compile Include="Analysis\Hunspell\TestFlagLong.cs" />
+    <Compile Include="Analysis\Hunspell\TestFlagNum.cs" />
+    <Compile Include="Analysis\Hunspell\TestHomonyms.cs" />
+    <Compile Include="Analysis\Hunspell\TestHunspellStemFilter.cs" />
+    <Compile Include="Analysis\Hunspell\TestHunspellStemFilterFactory.cs" />
+    <Compile Include="Analysis\Hunspell\TestIgnore.cs" />
+    <Compile Include="Analysis\Hunspell\TestMorph.cs" />
+    <Compile Include="Analysis\Hunspell\TestOptionalCondition.cs" />
+    <Compile Include="Analysis\Hunspell\TestStemmer.cs" />
+    <Compile Include="Analysis\Hunspell\TestTwoFold.cs" />
+    <Compile Include="Analysis\Hunspell\TestTwoSuffixes.cs" />
     <Compile Include="Analysis\Hu\TestHungarianAnalyzer.cs" />
     <Compile Include="Analysis\Hu\TestHungarianLightStemFilter.cs" />
     <Compile Include="Analysis\Hu\TestHungarianLightStemFilterFactory.cs" />
@@ -325,6 +346,41 @@
     <EmbeddedResource Include="Analysis\Hu\hulighttestdata.zip" />
     <EmbeddedResource Include="Analysis\It\itlighttestdata.zip" />
     <EmbeddedResource Include="Analysis\Sv\svlighttestdata.zip" />
+    <EmbeddedResource Include="Analysis\Hunspell\broken-flags.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\broken.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\circumfix.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\circumfix.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\complexprefix.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\complexprefix.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\compressed-before-set.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\compressed-empty-alias.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\compressed.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\compressed.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\condition.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\condition.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\conv.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\conv.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\dependencies.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\dependencies.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\escaped.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\escaped.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\flaglong.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\flaglong.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\flagnum.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\flagnum.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\homonyms.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\homonyms.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\ignore.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\ignore.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\mixedcase.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\morph.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\morph.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\optional-condition.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\simple.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\simple.dic" />
+    <EmbeddedResource Include="Analysis\Hunspell\twofold.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\twosuffixes.aff" />
+    <EmbeddedResource Include="Analysis\Hunspell\twosuffixes.dic" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -420,6 +476,7 @@
     <EmbeddedResource Include="Analysis\No\nn_light.txt" />
     <EmbeddedResource Include="Analysis\No\nn_minimal.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

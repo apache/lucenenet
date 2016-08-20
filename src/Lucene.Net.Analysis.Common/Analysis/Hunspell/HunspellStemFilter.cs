@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Util;
+using System.Collections.Generic;
 
-namespace org.apache.lucene.analysis.hunspell
+namespace Lucene.Net.Analysis.Hunspell
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,152 +21,149 @@ namespace org.apache.lucene.analysis.hunspell
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// TokenFilter that uses hunspell affix rules and words to stem tokens.  Since hunspell supports a word having multiple
+    /// stems, this filter can emit multiple tokens for each consumed token
+    /// 
+    /// <para>
+    /// Note: This filter is aware of the <seealso cref="KeywordAttribute"/>. To prevent
+    /// certain terms from being passed to the stemmer
+    /// <seealso cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
+    /// in a previous <seealso cref="TokenStream"/>.
+    /// 
+    /// Note: For including the original term as well as the stemmed version, see
+    /// <seealso cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
+    /// </para>
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    public sealed class HunspellStemFilter : TokenFilter
+    {
 
-	using CharTermAttribute = org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-	using KeywordAttribute = org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
-	using PositionIncrementAttribute = org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-	using CharsRef = org.apache.lucene.util.CharsRef;
+        private readonly ICharTermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncAtt;
+        private readonly IKeywordAttribute keywordAtt;
+        private readonly Stemmer stemmer;
 
-	/// <summary>
-	/// TokenFilter that uses hunspell affix rules and words to stem tokens.  Since hunspell supports a word having multiple
-	/// stems, this filter can emit multiple tokens for each consumed token
-	/// 
-	/// <para>
-	/// Note: This filter is aware of the <seealso cref="KeywordAttribute"/>. To prevent
-	/// certain terms from being passed to the stemmer
-	/// <seealso cref="KeywordAttribute#isKeyword()"/> should be set to <code>true</code>
-	/// in a previous <seealso cref="TokenStream"/>.
-	/// 
-	/// Note: For including the original term as well as the stemmed version, see
-	/// <seealso cref="org.apache.lucene.analysis.miscellaneous.KeywordRepeatFilterFactory"/>
-	/// </para>
-	/// 
-	/// @lucene.experimental
-	/// </summary>
-	public sealed class HunspellStemFilter : TokenFilter
-	{
+        private List<CharsRef> buffer;
+        private State savedState;
 
-	  private readonly CharTermAttribute termAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly PositionIncrementAttribute posIncAtt = addAttribute(typeof(PositionIncrementAttribute));
-	  private readonly KeywordAttribute keywordAtt = addAttribute(typeof(KeywordAttribute));
-	  private readonly Stemmer stemmer;
+        private readonly bool dedup;
+        private readonly bool longestOnly;
 
-	  private IList<CharsRef> buffer;
-	  private State savedState;
+        /// <summary>
+        /// Create a <seealso cref="HunspellStemFilter"/> outputting all possible stems. </summary>
+        ///  <seealso cref= #HunspellStemFilter(TokenStream, Dictionary, boolean)  </seealso>
+        public HunspellStemFilter(TokenStream input, Dictionary dictionary)
+              : this(input, dictionary, true)
+        {
+        }
 
-	  private readonly bool dedup;
-	  private readonly bool longestOnly;
+        /// <summary>
+        /// Create a <seealso cref="HunspellStemFilter"/> outputting all possible stems. </summary>
+        ///  <seealso cref= #HunspellStemFilter(TokenStream, Dictionary, boolean, boolean)  </seealso>
+        public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup)
+              : this(input, dictionary, dedup, false)
+        {
+        }
 
-	  /// <summary>
-	  /// Create a <seealso cref="HunspellStemFilter"/> outputting all possible stems. </summary>
-	  ///  <seealso cref= #HunspellStemFilter(TokenStream, Dictionary, boolean)  </seealso>
-	  public HunspellStemFilter(TokenStream input, Dictionary dictionary) : this(input, dictionary, true)
-	  {
-	  }
+        /// <summary>
+        /// Creates a new HunspellStemFilter that will stem tokens from the given TokenStream using affix rules in the provided
+        /// Dictionary
+        /// </summary>
+        /// <param name="input"> TokenStream whose tokens will be stemmed </param>
+        /// <param name="dictionary"> HunspellDictionary containing the affix rules and words that will be used to stem the tokens </param>
+        /// <param name="longestOnly"> true if only the longest term should be output. </param>
+        public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup, bool longestOnly) :
+              base(input)
+        {
+            this.dedup = dedup && longestOnly == false; // don't waste time deduping if longestOnly is set
+            this.stemmer = new Stemmer(dictionary);
+            this.longestOnly = longestOnly;
+            termAtt = AddAttribute<ICharTermAttribute>();
+            posIncAtt = AddAttribute<IPositionIncrementAttribute>();
+            keywordAtt = AddAttribute<IKeywordAttribute>();
+        }
 
-	  /// <summary>
-	  /// Create a <seealso cref="HunspellStemFilter"/> outputting all possible stems. </summary>
-	  ///  <seealso cref= #HunspellStemFilter(TokenStream, Dictionary, boolean, boolean)  </seealso>
-	  public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup) : this(input, dictionary, dedup, false)
-	  {
-	  }
+        public override bool IncrementToken()
+        {
+            if (buffer != null && buffer.Count > 0)
+            {
+                CharsRef nextStem = buffer[0];
+                buffer.RemoveAt(0);
+                RestoreState(savedState);
+                posIncAtt.PositionIncrement = 0;
+                termAtt.SetEmpty().Append(nextStem);
+                return true;
+            }
 
-	  /// <summary>
-	  /// Creates a new HunspellStemFilter that will stem tokens from the given TokenStream using affix rules in the provided
-	  /// Dictionary
-	  /// </summary>
-	  /// <param name="input"> TokenStream whose tokens will be stemmed </param>
-	  /// <param name="dictionary"> HunspellDictionary containing the affix rules and words that will be used to stem the tokens </param>
-	  /// <param name="longestOnly"> true if only the longest term should be output. </param>
-	  public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup, bool longestOnly) : base(input)
-	  {
-		this.dedup = dedup && longestOnly == false; // don't waste time deduping if longestOnly is set
-		this.stemmer = new Stemmer(dictionary);
-		this.longestOnly = longestOnly;
-	  }
+            if (!input.IncrementToken())
+            {
+                return false;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean incrementToken() throws java.io.IOException
-	  public override bool incrementToken()
-	  {
-		if (buffer != null && buffer.Count > 0)
-		{
-		  CharsRef nextStem = buffer.Remove(0);
-		  restoreState(savedState);
-		  posIncAtt.PositionIncrement = 0;
-		  termAtt.setEmpty().append(nextStem);
-		  return true;
-		}
+            if (keywordAtt.Keyword)
+            {
+                return true;
+            }
 
-		if (!input.incrementToken())
-		{
-		  return false;
-		}
+            buffer = new List<CharsRef>(dedup ? stemmer.UniqueStems(termAtt.Buffer(), termAtt.Length) : stemmer.Stem(termAtt.Buffer(), termAtt.Length));
 
-		if (keywordAtt.Keyword)
-		{
-		  return true;
-		}
+            if (buffer.Count == 0) // we do not know this word, return it unchanged
+            {
+                return true;
+            }
 
-		buffer = dedup ? stemmer.uniqueStems(termAtt.buffer(), termAtt.length()) : stemmer.stem(termAtt.buffer(), termAtt.length());
+            if (longestOnly && buffer.Count > 1)
+            {
+                buffer.Sort(lengthComparator);
+            }
 
-		if (buffer.Count == 0) // we do not know this word, return it unchanged
-		{
-		  return true;
-		}
+            CharsRef stem = buffer[0];
+            buffer.RemoveAt(0);
+            termAtt.SetEmpty().Append(stem);
 
-		if (longestOnly && buffer.Count > 1)
-		{
-		  buffer.Sort(lengthComparator);
-		}
+            if (longestOnly)
+            {
+                buffer.Clear();
+            }
+            else
+            {
+                if (buffer.Count > 0)
+                {
+                    savedState = CaptureState();
+                }
+            }
 
-		CharsRef stem = buffer.Remove(0);
-		termAtt.setEmpty().append(stem);
+            return true;
+        }
 
-		if (longestOnly)
-		{
-		  buffer.Clear();
-		}
-		else
-		{
-		  if (buffer.Count > 0)
-		  {
-			savedState = captureState();
-		  }
-		}
+        public override void Reset()
+        {
+            base.Reset();
+            buffer = null;
+        }
 
-		return true;
-	  }
+        internal static readonly IComparer<CharsRef> lengthComparator = new ComparatorAnonymousInnerClassHelper();
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void reset() throws java.io.IOException
-	  public override void reset()
-	  {
-		base.reset();
-		buffer = null;
-	  }
+        private class ComparatorAnonymousInnerClassHelper : IComparer<CharsRef>
+        {
+            public ComparatorAnonymousInnerClassHelper()
+            {
+            }
 
-	  internal static readonly IComparer<CharsRef> lengthComparator = new ComparatorAnonymousInnerClassHelper();
-
-	  private class ComparatorAnonymousInnerClassHelper : IComparer<CharsRef>
-	  {
-		  public ComparatorAnonymousInnerClassHelper()
-		  {
-		  }
-
-		  public virtual int Compare(CharsRef o1, CharsRef o2)
-		  {
-			if (o2.length == o1.length)
-			{
-			  // tie break on text
-			  return o2.compareTo(o1);
-			}
-			else
-			{
-			  return o2.length < o1.length ? - 1 : 1;
-			}
-		  }
-	  }
-	}
-
+            public virtual int Compare(CharsRef o1, CharsRef o2)
+            {
+                if (o2.Length == o1.Length)
+                {
+                    // tie break on text
+                    return o2.CompareTo(o1);
+                }
+                else
+                {
+                    return o2.Length < o1.Length ? -1 : 1;
+                }
+            }
+        }
+    }
 }

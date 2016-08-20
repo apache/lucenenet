@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.hunspell
-{
+﻿using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Hunspell
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,30 +19,26 @@
 	 * limitations under the License.
 	 */
 
-	using BeforeClass = org.junit.BeforeClass;
+    public class TestComplexPrefix : StemmerTestBase
+    {
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            Init("complexprefix.aff", "complexprefix.dic");
+        }
 
-	public class TestComplexPrefix : StemmerTestBase
-	{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public static void beforeClass()
-	  {
-		init("complexprefix.aff", "complexprefix.dic");
-	  }
-
-	  public virtual void testPrefixes()
-	  {
-		assertStemsTo("ptwofoo", "foo");
-		assertStemsTo("poneptwofoo", "foo");
-		assertStemsTo("foosuf", "foo");
-		assertStemsTo("ptwofoosuf", "foo");
-		assertStemsTo("poneptwofoosuf", "foo");
-		assertStemsTo("ponefoo");
-		assertStemsTo("ponefoosuf");
-		assertStemsTo("ptwoponefoo");
-		assertStemsTo("ptwoponefoosuf");
-	  }
-	}
-
+        [Test]
+        public virtual void TestPrefixes()
+        {
+            AssertStemsTo("ptwofoo", "foo");
+            AssertStemsTo("poneptwofoo", "foo");
+            AssertStemsTo("foosuf", "foo");
+            AssertStemsTo("ptwofoosuf", "foo");
+            AssertStemsTo("poneptwofoosuf", "foo");
+            AssertStemsTo("ponefoo");
+            AssertStemsTo("ponefoosuf");
+            AssertStemsTo("ptwoponefoo");
+            AssertStemsTo("ptwoponefoosuf");
+        }
+    }
 }

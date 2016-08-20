@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.hunspell
-{
+﻿using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Hunspell
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,27 +19,22 @@
 	 * limitations under the License.
 	 */
 
-	using BeforeClass = org.junit.BeforeClass;
+    public class TestTwoSuffixes : StemmerTestBase
+    {
 
-	public class TestTwoSuffixes : StemmerTestBase
-	{
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public static void beforeClass()
-	  {
-		init("twosuffixes.aff", "twosuffixes.dic");
-	  }
-
-	  public virtual void testExamples()
-	  {
-		assertStemsTo("drink", "drink");
-		assertStemsTo("drinkable", "drink");
-		assertStemsTo("drinks", "drink");
-		assertStemsTo("drinkableable");
-		assertStemsTo("drinkss");
-	  }
-	}
-
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            Init("twosuffixes.aff", "twosuffixes.dic");
+        }
+        [Test]
+        public virtual void TestExamples()
+        {
+            AssertStemsTo("drink", "drink");
+            AssertStemsTo("drinkable", "drink");
+            AssertStemsTo("drinks", "drink");
+            AssertStemsTo("drinkableable");
+            AssertStemsTo("drinkss");
+        }
+    }
 }

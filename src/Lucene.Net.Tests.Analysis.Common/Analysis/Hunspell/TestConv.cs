@@ -1,9 +1,8 @@
-﻿namespace org.apache.lucene.analysis.hunspell
+﻿using NUnit.Framework;
+
+namespace Lucene.Net.Analysis.Hunspell
 {
-
-	using BeforeClass = org.junit.BeforeClass;
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -20,25 +19,21 @@
 	 * limitations under the License.
 	 */
 
-	public class TestConv : StemmerTestBase
-	{
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public static void beforeClass()
-	  {
-		init("conv.aff", "conv.dic");
-	  }
-
-	  public virtual void testConversion()
-	  {
-		assertStemsTo("drink", "drInk");
-		assertStemsTo("drInk", "drInk");
-		assertStemsTo("drInkAble", "drInk");
-		assertStemsTo("drInkABle", "drInk");
-		assertStemsTo("drinkABle", "drInk");
-	  }
-	}
-
+    public class TestConv : StemmerTestBase
+    {
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            Init("conv.aff", "conv.dic");
+        }
+        [Test]
+        public virtual void TestConversion()
+        {
+            AssertStemsTo("drink", "drInk");
+            AssertStemsTo("drInk", "drInk");
+            AssertStemsTo("drInkAble", "drInk");
+            AssertStemsTo("drInkABle", "drInk");
+            AssertStemsTo("drinkABle", "drInk");
+        }
+    }
 }

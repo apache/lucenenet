@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Util
     ///   TokenStream stream = tokenizerFactory("standard").create(reader);
     ///   stream = tokenFilterFactory("lowercase").create(stream);
     ///   stream = tokenFilterFactory("asciifolding").create(stream);
-    ///   assertTokenStreamContents(stream, new String[] { "some", "text", "to", "analyze" });
+    ///   AssertTokenStreamContents(stream, new String[] { "some", "text", "to", "analyze" });
     /// </pre></code>
     /// </para>
     /// </summary>

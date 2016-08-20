@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using NUnit.Framework;
 
-namespace org.apache.lucene.analysis.hunspell
+namespace Lucene.Net.Analysis.Hunspell
 {
 
 	/*

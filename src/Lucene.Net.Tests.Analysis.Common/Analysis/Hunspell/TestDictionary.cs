@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Text;
+using NUnit.Framework;
+using Lucene.Net.Util;
+using System.IO;
+using Lucene.Net.Util.Fst;
+using Lucene.Net.Support;
 
-namespace org.apache.lucene.analysis.hunspell
+namespace Lucene.Net.Analysis.Hunspell
 {
 
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,273 +26,328 @@ namespace org.apache.lucene.analysis.hunspell
 	 * limitations under the License.
 	 */
 
+    public class TestDictionary : LuceneTestCase
+    {
 
-	using BytesRef = org.apache.lucene.util.BytesRef;
-	using CharsRef = org.apache.lucene.util.CharsRef;
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using IntsRef = org.apache.lucene.util.IntsRef;
-	using LuceneTestCase = org.apache.lucene.util.LuceneTestCase;
-	using Builder = org.apache.lucene.util.fst.Builder;
-	using CharSequenceOutputs = org.apache.lucene.util.fst.CharSequenceOutputs;
-	using FST = org.apache.lucene.util.fst.FST;
-	using Outputs = org.apache.lucene.util.fst.Outputs;
-	using Util = org.apache.lucene.util.fst.Util;
+        [Test]
+        public virtual void TestSimpleDictionary()
+        {
+            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("simple.aff"))
+            {
+                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("simple.dic"))
+                {
 
-	public class TestDictionary : LuceneTestCase
-	{
+                    Dictionary dictionary = new Dictionary(affixStream, dictStream);
+                    assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
+                    assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
+                    IntsRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+                    assertNotNull(ordList);
+                    assertEquals(1, ordList.Length);
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testSimpleDictionary() throws Exception
-	  public virtual void testSimpleDictionary()
-	  {
-		System.IO.Stream affixStream = this.GetType().getResourceAsStream("simple.aff");
-		System.IO.Stream dictStream = this.GetType().getResourceAsStream("simple.dic");
+                    BytesRef @ref = new BytesRef();
+                    dictionary.flagLookup.Get(ordList.Ints[0], @ref);
+                    char[] flags = Dictionary.DecodeFlags(@ref);
+                    assertEquals(1, flags.Length);
 
-		Dictionary dictionary = new Dictionary(affixStream, dictStream);
-		assertEquals(3, dictionary.lookupSuffix(new char[]{'e'}, 0, 1).length);
-		assertEquals(1, dictionary.lookupPrefix(new char[]{'s'}, 0, 1).length);
-		IntsRef ordList = dictionary.lookupWord(new char[]{'o', 'l', 'r'}, 0, 3);
-		assertNotNull(ordList);
-		assertEquals(1, ordList.length);
+                    ordList = dictionary.LookupWord(new char[] { 'l', 'u', 'c', 'e', 'n' }, 0, 5);
+                    assertNotNull(ordList);
+                    assertEquals(1, ordList.Length);
+                    dictionary.flagLookup.Get(ordList.Ints[0], @ref);
+                    flags = Dictionary.DecodeFlags(@ref);
+                    assertEquals(1, flags.Length);
+                }
+            }
+        }
 
-		BytesRef @ref = new BytesRef();
-		dictionary.flagLookup.get(ordList.ints[0], @ref);
-		char[] flags = Dictionary.decodeFlags(@ref);
-		assertEquals(1, flags.Length);
+        [Test]
+        public virtual void TestCompressedDictionary()
+        {
+            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("compressed.aff"))
+            {
+                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("compressed.dic"))
+                {
 
-		ordList = dictionary.lookupWord(new char[]{'l', 'u', 'c', 'e', 'n'}, 0, 5);
-		assertNotNull(ordList);
-		assertEquals(1, ordList.length);
-		dictionary.flagLookup.get(ordList.ints[0], @ref);
-		flags = Dictionary.decodeFlags(@ref);
-		assertEquals(1, flags.Length);
+                    Dictionary dictionary = new Dictionary(affixStream, dictStream);
+                    assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
+                    assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
+                    IntsRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+                    BytesRef @ref = new BytesRef();
+                    dictionary.flagLookup.Get(ordList.Ints[0], @ref);
+                    char[] flags = Dictionary.DecodeFlags(@ref);
+                    assertEquals(1, flags.Length);
+                }
+            }
+        }
 
-		affixStream.Close();
-		dictStream.Close();
-	  }
+        [Test]
+        public virtual void TestCompressedBeforeSetDictionary()
+        {
+            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("compressed-before-set.aff"))
+            {
+                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("compressed.dic"))
+                {
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCompressedDictionary() throws Exception
-	  public virtual void testCompressedDictionary()
-	  {
-		System.IO.Stream affixStream = this.GetType().getResourceAsStream("compressed.aff");
-		System.IO.Stream dictStream = this.GetType().getResourceAsStream("compressed.dic");
+                    Dictionary dictionary = new Dictionary(affixStream, dictStream);
+                    assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
+                    assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
+                    IntsRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+                    BytesRef @ref = new BytesRef();
+                    dictionary.flagLookup.Get(ordList.Ints[0], @ref);
+                    char[] flags = Dictionary.DecodeFlags(@ref);
+                    assertEquals(1, flags.Length);
+                }
+            }
+        }
 
-		Dictionary dictionary = new Dictionary(affixStream, dictStream);
-		assertEquals(3, dictionary.lookupSuffix(new char[]{'e'}, 0, 1).length);
-		assertEquals(1, dictionary.lookupPrefix(new char[]{'s'}, 0, 1).length);
-		IntsRef ordList = dictionary.lookupWord(new char[]{'o', 'l', 'r'}, 0, 3);
-		BytesRef @ref = new BytesRef();
-		dictionary.flagLookup.get(ordList.ints[0], @ref);
-		char[] flags = Dictionary.decodeFlags(@ref);
-		assertEquals(1, flags.Length);
+        [Test]
+        public virtual void TestCompressedEmptyAliasDictionary()
+        {
+            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("compressed-empty-alias.aff"))
+            {
+                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("compressed.dic"))
+                {
+                    Dictionary dictionary = new Dictionary(affixStream, dictStream);
+                    assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
+                    assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
+                    IntsRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+                    BytesRef @ref = new BytesRef();
+                    dictionary.flagLookup.Get(ordList.Ints[0], @ref);
+                    char[] flags = Dictionary.DecodeFlags(@ref);
+                    assertEquals(1, flags.Length);
+                }
+            }
+        }
 
-		affixStream.Close();
-		dictStream.Close();
-	  }
+        // malformed rule causes ParseException
+        [Test]
+        public virtual void TestInvalidData()
+        {
+            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("broken.aff"))
+            {
+                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("simple.dic"))
+                {
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCompressedBeforeSetDictionary() throws Exception
-	  public virtual void testCompressedBeforeSetDictionary()
-	  {
-		System.IO.Stream affixStream = this.GetType().getResourceAsStream("compressed-before-set.aff");
-		System.IO.Stream dictStream = this.GetType().getResourceAsStream("compressed.dic");
+                    try
+                    {
+                        new Dictionary(affixStream, dictStream);
+                        fail("didn't get expected exception");
+                    }
+                    catch (Exception expected)
+                    {
+                        assertTrue(expected.Message.StartsWith("The affix file contains a rule with less than four elements"));
+                        //assertEquals(24, expected.ErrorOffset); // No parse exception in LUCENENET
+                    }
+                }
+            }
+        }
 
-		Dictionary dictionary = new Dictionary(affixStream, dictStream);
-		assertEquals(3, dictionary.lookupSuffix(new char[]{'e'}, 0, 1).length);
-		assertEquals(1, dictionary.lookupPrefix(new char[]{'s'}, 0, 1).length);
-		IntsRef ordList = dictionary.lookupWord(new char[]{'o', 'l', 'r'}, 0, 3);
-		BytesRef @ref = new BytesRef();
-		dictionary.flagLookup.get(ordList.ints[0], @ref);
-		char[] flags = Dictionary.decodeFlags(@ref);
-		assertEquals(1, flags.Length);
+        // malformed flags causes ParseException
+        [Test]
+        public virtual void TestInvalidFlags()
+        {
+            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("broken-flags.aff"))
+            {
+                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("simple.dic"))
+                {
+                    try
+                    {
+                        new Dictionary(affixStream, dictStream);
+                        fail("didn't get expected exception");
+                    }
+                    catch (Exception expected)
+                    {
+                        assertTrue(expected.Message.StartsWith("expected only one flag"));
+                    }
+                }
+            }
+        }
 
-		affixStream.Close();
-		dictStream.Close();
-	  }
+        private class CloseCheckInputStream : Stream, IDisposable
+        {
+            private readonly TestDictionary outerInstance;
+            private readonly Stream @delegate;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testCompressedEmptyAliasDictionary() throws Exception
-	  public virtual void testCompressedEmptyAliasDictionary()
-	  {
-		System.IO.Stream affixStream = this.GetType().getResourceAsStream("compressed-empty-alias.aff");
-		System.IO.Stream dictStream = this.GetType().getResourceAsStream("compressed.dic");
+            internal bool disposed = false;
 
-		Dictionary dictionary = new Dictionary(affixStream, dictStream);
-		assertEquals(3, dictionary.lookupSuffix(new char[]{'e'}, 0, 1).length);
-		assertEquals(1, dictionary.lookupPrefix(new char[]{'s'}, 0, 1).length);
-		IntsRef ordList = dictionary.lookupWord(new char[]{'o', 'l', 'r'}, 0, 3);
-		BytesRef @ref = new BytesRef();
-		dictionary.flagLookup.get(ordList.ints[0], @ref);
-		char[] flags = Dictionary.decodeFlags(@ref);
-		assertEquals(1, flags.Length);
+            public override bool CanRead
+            {
+                get
+                {
+                    return @delegate.CanRead;
+                }
+            }
 
-		affixStream.Close();
-		dictStream.Close();
-	  }
+            public override bool CanSeek
+            {
+                get
+                {
+                    return @delegate.CanSeek;
+                }
+            }
 
-	  // malformed rule causes ParseException
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInvalidData() throws Exception
-	  public virtual void testInvalidData()
-	  {
-		System.IO.Stream affixStream = this.GetType().getResourceAsStream("broken.aff");
-		System.IO.Stream dictStream = this.GetType().getResourceAsStream("simple.dic");
+            public override bool CanWrite
+            {
+                get
+                {
+                    return @delegate.CanWrite;
+                }
+            }
 
-		try
-		{
-		  new Dictionary(affixStream, dictStream);
-		  fail("didn't get expected exception");
-		}
-		catch (ParseException expected)
-		{
-		  assertTrue(expected.Message.startsWith("The affix file contains a rule with less than four elements"));
-		  assertEquals(24, expected.ErrorOffset);
-		}
+            public override long Length
+            {
+                get
+                {
+                    return @delegate.Length;
+                }
+            }
 
-		affixStream.Close();
-		dictStream.Close();
-	  }
+            public override long Position
+            {
+                get
+                {
+                    return @delegate.Position;
+                }
 
-	  // malformed flags causes ParseException
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testInvalidFlags() throws Exception
-	  public virtual void testInvalidFlags()
-	  {
-		System.IO.Stream affixStream = this.GetType().getResourceAsStream("broken-flags.aff");
-		System.IO.Stream dictStream = this.GetType().getResourceAsStream("simple.dic");
+                set
+                {
+                    @delegate.Position = value;
+                }
+            }
 
-		try
-		{
-		  new Dictionary(affixStream, dictStream);
-		  fail("didn't get expected exception");
-		}
-		catch (Exception expected)
-		{
-		  assertTrue(expected.Message.startsWith("expected only one flag"));
-		}
+            public CloseCheckInputStream(TestDictionary outerInstance, System.IO.Stream @delegate) 
+            {
+                this.@delegate = @delegate;
+                this.outerInstance = outerInstance;
+            }
 
-		affixStream.Close();
-		dictStream.Close();
-	  }
-
-	  private class CloseCheckInputStream : FilterInputStream
-	  {
-		  private readonly TestDictionary outerInstance;
-
-		internal bool closed = false;
-
-		public CloseCheckInputStream(TestDictionary outerInstance, System.IO.Stream @delegate) : base(@delegate)
-		{
-			this.outerInstance = outerInstance;
-		}
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void close() throws java.io.IOException
-		public override void close()
-		{
-		  this.closed = true;
-		  base.close();
-		}
-
-		public virtual bool Closed
-		{
-			get
-			{
-			  return this.closed;
-			}
-		}
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testResourceCleanup() throws Exception
-	  public virtual void testResourceCleanup()
-	  {
-		CloseCheckInputStream affixStream = new CloseCheckInputStream(this, this.GetType().getResourceAsStream("compressed.aff"));
-		CloseCheckInputStream dictStream = new CloseCheckInputStream(this, this.GetType().getResourceAsStream("compressed.dic"));
-
-		new Dictionary(affixStream, dictStream);
-
-		assertFalse(affixStream.Closed);
-		assertFalse(dictStream.Closed);
-
-		affixStream.close();
-		dictStream.close();
-
-		assertTrue(affixStream.Closed);
-		assertTrue(dictStream.Closed);
-	  }
-
+            public override void Close()
+            {
+                @delegate.Close();
+            }
 
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testReplacements() throws Exception
-	  public virtual void testReplacements()
-	  {
-		Outputs<CharsRef> outputs = CharSequenceOutputs.Singleton;
-		Builder<CharsRef> builder = new Builder<CharsRef>(FST.INPUT_TYPE.BYTE2, outputs);
-		IntsRef scratchInts = new IntsRef();
+            new public void Dispose()
+            {
+                this.disposed = true;
+                base.Dispose();
+            }
+            
 
-		// a -> b
-		Util.toUTF16("a", scratchInts);
-		builder.add(scratchInts, new CharsRef("b"));
+            public virtual bool Disposed
+            {
+                get { return this.disposed; }
+            }
 
-		// ab -> c
-		Util.toUTF16("ab", scratchInts);
-		builder.add(scratchInts, new CharsRef("c"));
+            public override void Flush()
+            {
+                @delegate.Flush();
+            }
 
-		// c -> de
-		Util.toUTF16("c", scratchInts);
-		builder.add(scratchInts, new CharsRef("de"));
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                return @delegate.Seek(offset, origin);
+            }
 
-		// def -> gh
-		Util.toUTF16("def", scratchInts);
-		builder.add(scratchInts, new CharsRef("gh"));
+            public override void SetLength(long value)
+            {
+                @delegate.SetLength(value);
+            }
 
-		FST<CharsRef> fst = builder.finish();
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                return @delegate.Read(buffer, offset, count);
+            }
 
-		StringBuilder sb = new StringBuilder("atestanother");
-		Dictionary.applyMappings(fst, sb);
-		assertEquals("btestbnother", sb.ToString());
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                @delegate.Write(buffer, offset, count);
+            }
+        }
 
-		sb = new StringBuilder("abtestanother");
-		Dictionary.applyMappings(fst, sb);
-		assertEquals("ctestbnother", sb.ToString());
+        [Test]
+        public virtual void TestResourceCleanup()
+        {
+            CloseCheckInputStream affixStream = new CloseCheckInputStream(this, this.GetType().getResourceAsStream("compressed.aff"));
+            CloseCheckInputStream dictStream = new CloseCheckInputStream(this, this.GetType().getResourceAsStream("compressed.dic"));
 
-		sb = new StringBuilder("atestabnother");
-		Dictionary.applyMappings(fst, sb);
-		assertEquals("btestcnother", sb.ToString());
+            new Dictionary(affixStream, dictStream);
 
-		sb = new StringBuilder("abtestabnother");
-		Dictionary.applyMappings(fst, sb);
-		assertEquals("ctestcnother", sb.ToString());
+            assertFalse(affixStream.Disposed);
+            assertFalse(dictStream.Disposed);
 
-		sb = new StringBuilder("abtestabcnother");
-		Dictionary.applyMappings(fst, sb);
-		assertEquals("ctestcdenother", sb.ToString());
+            affixStream.Dispose();
+            dictStream.Dispose();
 
-		sb = new StringBuilder("defdefdefc");
-		Dictionary.applyMappings(fst, sb);
-		assertEquals("ghghghde", sb.ToString());
-	  }
+            assertTrue(affixStream.Disposed);
+            assertTrue(dictStream.Disposed);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testSetWithCrazyWhitespaceAndBOMs() throws Exception
-	  public virtual void testSetWithCrazyWhitespaceAndBOMs()
-	  {
-		assertEquals("UTF-8", Dictionary.getDictionaryEncoding(new ByteArrayInputStream("SET\tUTF-8\n".GetBytes(StandardCharsets.UTF_8))));
-		assertEquals("UTF-8", Dictionary.getDictionaryEncoding(new ByteArrayInputStream("SET\t UTF-8\n".GetBytes(StandardCharsets.UTF_8))));
-		assertEquals("UTF-8", Dictionary.getDictionaryEncoding(new ByteArrayInputStream("\uFEFFSET\tUTF-8\n".GetBytes(StandardCharsets.UTF_8))));
-		assertEquals("UTF-8", Dictionary.getDictionaryEncoding(new ByteArrayInputStream("\uFEFFSET\tUTF-8\r\n".GetBytes(StandardCharsets.UTF_8))));
-	  }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void testFlagWithCrazyWhitespace() throws Exception
-	  public virtual void testFlagWithCrazyWhitespace()
-	  {
-		assertNotNull(Dictionary.getFlagParsingStrategy("FLAG\tUTF-8"));
-		assertNotNull(Dictionary.getFlagParsingStrategy("FLAG    UTF-8"));
-	  }
-	}
 
+        [Test]
+        public virtual void TestReplacements()
+        {
+            Outputs<CharsRef> outputs = CharSequenceOutputs.Singleton;
+            Builder<CharsRef> builder = new Builder<CharsRef>(FST.INPUT_TYPE.BYTE2, outputs);
+            IntsRef scratchInts = new IntsRef();
+
+            // a -> b
+            Lucene.Net.Util.Fst.Util.ToUTF16("a", scratchInts);
+            builder.Add(scratchInts, new CharsRef("b"));
+
+            // ab -> c
+            Lucene.Net.Util.Fst.Util.ToUTF16("ab", scratchInts);
+            builder.Add(scratchInts, new CharsRef("c"));
+
+            // c -> de
+            Lucene.Net.Util.Fst.Util.ToUTF16("c", scratchInts);
+            builder.Add(scratchInts, new CharsRef("de"));
+
+            // def -> gh
+            Lucene.Net.Util.Fst.Util.ToUTF16("def", scratchInts);
+            builder.Add(scratchInts, new CharsRef("gh"));
+
+            FST<CharsRef> fst = builder.Finish();
+
+            StringBuilder sb = new StringBuilder("atestanother");
+            Dictionary.ApplyMappings(fst, sb);
+            assertEquals("btestbnother", sb.ToString());
+
+            sb = new StringBuilder("abtestanother");
+            Dictionary.ApplyMappings(fst, sb);
+            assertEquals("ctestbnother", sb.ToString());
+
+            sb = new StringBuilder("atestabnother");
+            Dictionary.ApplyMappings(fst, sb);
+            assertEquals("btestcnother", sb.ToString());
+
+            sb = new StringBuilder("abtestabnother");
+            Dictionary.ApplyMappings(fst, sb);
+            assertEquals("ctestcnother", sb.ToString());
+
+            sb = new StringBuilder("abtestabcnother");
+            Dictionary.ApplyMappings(fst, sb);
+            assertEquals("ctestcdenother", sb.ToString());
+
+            sb = new StringBuilder("defdefdefc");
+            Dictionary.ApplyMappings(fst, sb);
+            assertEquals("ghghghde", sb.ToString());
+        }
+
+        [Test]
+        public virtual void TestSetWithCrazyWhitespaceAndBOMs()
+        {
+            assertEquals("UTF-8", Dictionary.GetDictionaryEncoding(new MemoryStream("SET\tUTF-8\n".GetBytes(Encoding.UTF8))));
+            assertEquals("UTF-8", Dictionary.GetDictionaryEncoding(new MemoryStream("SET\t UTF-8\n".GetBytes(Encoding.UTF8))));
+            assertEquals("UTF-8", Dictionary.GetDictionaryEncoding(new MemoryStream("\uFEFFSET\tUTF-8\n".GetBytes(Encoding.UTF8))));
+            assertEquals("UTF-8", Dictionary.GetDictionaryEncoding(new MemoryStream("\uFEFFSET\tUTF-8\r\n".GetBytes(Encoding.UTF8))));
+        }
+
+        [Test]
+        public virtual void TestFlagWithCrazyWhitespace()
+        {
+            assertNotNull(Dictionary.GetFlagParsingStrategy("FLAG\tUTF-8"));
+            assertNotNull(Dictionary.GetFlagParsingStrategy("FLAG    UTF-8"));
+        }
+    }
 }

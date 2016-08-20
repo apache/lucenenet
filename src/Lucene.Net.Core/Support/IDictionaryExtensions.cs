@@ -27,7 +27,7 @@ namespace Lucene.Net.Support
             if (dict == null)
                 return default(TValue);
 
-            var oldValue = dict[key];
+            var oldValue = dict.ContainsKey(key) ? dict[key] : default(TValue);
             dict[key] = value;
             return oldValue;
         }

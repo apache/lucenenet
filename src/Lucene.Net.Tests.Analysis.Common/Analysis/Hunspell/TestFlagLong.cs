@@ -1,7 +1,8 @@
-﻿namespace org.apache.lucene.analysis.hunspell
-{
+﻿using NUnit.Framework;
 
-	/*
+namespace Lucene.Net.Analysis.Hunspell
+{
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -18,24 +19,19 @@
 	 * limitations under the License.
 	 */
 
-	using BeforeClass = org.junit.BeforeClass;
-
-	public class TestFlagLong : StemmerTestBase
-	{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-	  public static void beforeClass()
-	  {
-		init("flaglong.aff", "flaglong.dic");
-	  }
-
-	  public virtual void testLongFlags()
-	  {
-		assertStemsTo("foo", "foo");
-		assertStemsTo("foos", "foo");
-		assertStemsTo("fooss");
-	  }
-	}
-
+    public class TestFlagLong : StemmerTestBase
+    {
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            Init("flaglong.aff", "flaglong.dic");
+        }
+        [Test]
+        public virtual void TestLongFlags()
+        {
+            AssertStemsTo("foo", "foo");
+            AssertStemsTo("foos", "foo");
+            AssertStemsTo("fooss");
+        }
+    }
 }
