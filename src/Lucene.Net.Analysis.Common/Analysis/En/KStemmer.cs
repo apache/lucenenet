@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 
@@ -78,208 +79,257 @@ namespace Lucene.Net.Analysis.En
     {
         private const int MaxWordLen = 50;
 
-        private static readonly string[] exceptionWords = new string[] { "aide", "bathe", "caste", "cute", "dame", "dime", "doge", "done", "dune", "envelope", "gage", "grille", "grippe", "lobe", "mane", "mare", "nape", "node", "pane", "pate", "plane", "pope", "programme", "quite", "ripe", "rote", "rune", "sage", "severe", "shoppe", "sine", "slime", "snipe", "steppe", "suite", "swinge", "tare", "tine", "tope", "tripe", "twine" };
+        private static readonly string[] exceptionWords = new string[] { "aide", "bathe", "caste",
+            "cute", "dame", "dime", "doge", "done", "dune", "envelope", "gage",
+            "grille", "grippe", "lobe", "mane", "mare", "nape", "node", "pane",
+            "pate", "plane", "pope", "programme", "quite", "ripe", "rote", "rune",
+            "sage", "severe", "shoppe", "sine", "slime", "snipe", "steppe", "suite",
+            "swinge", "tare", "tine", "tope", "tripe", "twine"
+        };
 
         private static readonly string[][] directConflations = new string[][]
         {
-          new string[] {"aging", "age"},
-          new string[] {"going", "go"},
-          new string[] {"goes", "go"},
-          new string[] {"lying", "lie"},
-          new string[] {"using", "use"},
-          new string[] {"owing", "owe"},
-          new string[] {"suing", "sue"},
-          new string[] {"dying", "die"},
-          new string[] {"tying", "tie"},
-          new string[] {"vying", "vie"},
-          new string[] {"aged", "age"},
-          new string[] {"used", "use"},
-          new string[] {"vied", "vie"},
-          new string[] {"cued", "cue"},
-          new string[] {"died", "die"},
-          new string[] {"eyed", "eye"},
-          new string[] {"hued", "hue"},
-          new string[] {"iced", "ice"},
-          new string[] {"lied", "lie"},
-          new string[] {"owed", "owe"},
-          new string[] {"sued", "sue"},
-          new string[] {"toed", "toe"},
-          new string[] {"tied", "tie"},
-          new string[] {"does", "do"},
-          new string[] {"doing", "do"},
-          new string[] {"aeronautical", "aeronautics"},
-          new string[] {"mathematical", "mathematics"},
-          new string[] {"political", "politics"},
-          new string[] {"metaphysical", "metaphysics"},
-          new string[] {"cylindrical", "cylinder"},
-          new string[] {"nazism", "nazi"},
-          new string[] {"ambiguity", "ambiguous"},
-          new string[] {"barbarity", "barbarous"},
-          new string[] {"credulity", "credulous"},
-          new string[] {"generosity", "generous"},
-          new string[] {"spontaneity", "spontaneous"},
-          new string[] {"unanimity", "unanimous"},
-          new string[] {"voracity", "voracious"},
-          new string[] {"fled", "flee"},
-          new string[] {"miscarriage", "miscarry"}
+            new string[] {"aging", "age"},
+            new string[] {"going", "go"},
+            new string[] {"goes", "go"},
+            new string[] {"lying", "lie"},
+            new string[] {"using", "use"},
+            new string[] {"owing", "owe"},
+            new string[] {"suing", "sue"},
+            new string[] {"dying", "die"},
+            new string[] {"tying", "tie"},
+            new string[] {"vying", "vie"},
+            new string[] {"aged", "age"},
+            new string[] {"used", "use"},
+            new string[] {"vied", "vie"},
+            new string[] {"cued", "cue"},
+            new string[] {"died", "die"},
+            new string[] {"eyed", "eye"},
+            new string[] {"hued", "hue"},
+            new string[] {"iced", "ice"},
+            new string[] {"lied", "lie"},
+            new string[] {"owed", "owe"},
+            new string[] {"sued", "sue"},
+            new string[] {"toed", "toe"},
+            new string[] {"tied", "tie"},
+            new string[] {"does", "do"},
+            new string[] {"doing", "do"},
+            new string[] {"aeronautical", "aeronautics"},
+            new string[] {"mathematical", "mathematics"},
+            new string[] {"political", "politics"},
+            new string[] {"metaphysical", "metaphysics"},
+            new string[] {"cylindrical", "cylinder"},
+            new string[] {"nazism", "nazi"},
+            new string[] {"ambiguity", "ambiguous"},
+            new string[] {"barbarity", "barbarous"},
+            new string[] {"credulity", "credulous"},
+            new string[] {"generosity", "generous"},
+            new string[] {"spontaneity", "spontaneous"},
+            new string[] {"unanimity", "unanimous"},
+            new string[] {"voracity", "voracious"},
+            new string[] {"fled", "flee"},
+            new string[] {"miscarriage", "miscarry"}
         };
 
         private static readonly string[][] countryNationality = new string[][]
         {
-          new string[] {"afghan", "afghanistan"},
-          new string[] {"african", "africa"},
-          new string[] {"albanian", "albania"},
-          new string[] {"algerian", "algeria"},
-          new string[] {"american", "america"},
-          new string[] {"andorran", "andorra"},
-          new string[] {"angolan", "angola"},
-          new string[] {"arabian", "arabia"},
-          new string[] {"argentine", "argentina"},
-          new string[] {"armenian", "armenia"},
-          new string[] {"asian", "asia"},
-          new string[] {"australian", "australia"},
-          new string[] {"austrian", "austria"},
-          new string[] {"azerbaijani", "azerbaijan"},
-          new string[] {"azeri", "azerbaijan"},
-          new string[] {"bangladeshi", "bangladesh"},
-          new string[] {"belgian", "belgium"},
-          new string[] {"bermudan", "bermuda"},
-          new string[] {"bolivian", "bolivia"},
-          new string[] {"bosnian", "bosnia"},
-          new string[] {"botswanan", "botswana"},
-          new string[] {"brazilian", "brazil"},
-          new string[] {"british", "britain"},
-          new string[] {"bulgarian", "bulgaria"},
-          new string[] {"burmese", "burma"},
-          new string[] {"californian", "california"},
-          new string[] {"cambodian", "cambodia"},
-          new string[] {"canadian", "canada"},
-          new string[] {"chadian", "chad"},
-          new string[] {"chilean", "chile"},
-          new string[] {"chinese", "china"},
-          new string[] {"colombian", "colombia"},
-          new string[] {"croat", "croatia"},
-          new string[] {"croatian", "croatia"},
-          new string[] {"cuban", "cuba"},
-          new string[] {"cypriot", "cyprus"},
-          new string[] {"czechoslovakian", "czechoslovakia"},
-          new string[] {"danish", "denmark"},
-          new string[] {"egyptian", "egypt"},
-          new string[] {"equadorian", "equador"},
-          new string[] {"eritrean", "eritrea"},
-          new string[] {"estonian", "estonia"},
-          new string[] {"ethiopian", "ethiopia"},
-          new string[] {"european", "europe"},
-          new string[] {"fijian", "fiji"},
-          new string[] {"filipino", "philippines"},
-          new string[] {"finnish", "finland"},
-          new string[] {"french", "france"},
-          new string[] {"gambian", "gambia"},
-          new string[] {"georgian", "georgia"},
-          new string[] {"german", "germany"},
-          new string[] {"ghanian", "ghana"},
-          new string[] {"greek", "greece"},
-          new string[] {"grenadan", "grenada"},
-          new string[] {"guamian", "guam"},
-          new string[] {"guatemalan", "guatemala"},
-          new string[] {"guinean", "guinea"},
-          new string[] {"guyanan", "guyana"},
-          new string[] {"haitian", "haiti"},
-          new string[] {"hawaiian", "hawaii"},
-          new string[] {"holland", "dutch"},
-          new string[] {"honduran", "honduras"},
-          new string[] {"hungarian", "hungary"},
-          new string[] {"icelandic", "iceland"},
-          new string[] {"indonesian", "indonesia"},
-          new string[] {"iranian", "iran"},
-          new string[] {"iraqi", "iraq"},
-          new string[] {"iraqui", "iraq"},
-          new string[] {"irish", "ireland"},
-          new string[] {"israeli", "israel"},
-          new string[] {"italian", "italy"},
-          new string[] {"jamaican", "jamaica"},
-          new string[] {"japanese", "japan"},
-          new string[] {"jordanian", "jordan"},
-          new string[] {"kampuchean", "cambodia"},
-          new string[] {"kenyan", "kenya"},
-          new string[] {"korean", "korea"},
-          new string[] {"kuwaiti", "kuwait"},
-          new string[] {"lankan", "lanka"},
-          new string[] {"laotian", "laos"},
-          new string[] {"latvian", "latvia"},
-          new string[] {"lebanese", "lebanon"},
-          new string[] {"liberian", "liberia"},
-          new string[] {"libyan", "libya"},
-          new string[] {"lithuanian", "lithuania"},
-          new string[] {"macedonian", "macedonia"},
-          new string[] {"madagascan", "madagascar"},
-          new string[] {"malaysian", "malaysia"},
-          new string[] {"maltese", "malta"},
-          new string[] {"mauritanian", "mauritania"},
-          new string[] {"mexican", "mexico"},
-          new string[] {"micronesian", "micronesia"},
-          new string[] {"moldovan", "moldova"},
-          new string[] {"monacan", "monaco"},
-          new string[] {"mongolian", "mongolia"},
-          new string[] {"montenegran", "montenegro"},
-          new string[] {"moroccan", "morocco"},
-          new string[] {"myanmar", "burma"},
-          new string[] {"namibian", "namibia"},
-          new string[] {"nepalese", "nepal"},
-          new string[] {"nicaraguan", "nicaragua"},
-          new string[] {"nigerian", "nigeria"},
-          new string[] {"norwegian", "norway"},
-          new string[] {"omani", "oman"},
-          new string[] {"pakistani", "pakistan"},
-          new string[] {"panamanian", "panama"},
-          new string[] {"papuan", "papua"},
-          new string[] {"paraguayan", "paraguay"},
-          new string[] {"peruvian", "peru"},
-          new string[] {"portuguese", "portugal"},
-          new string[] {"romanian", "romania"},
-          new string[] {"rumania", "romania"},
-          new string[] {"rumanian", "romania"},
-          new string[] {"russian", "russia"},
-          new string[] {"rwandan", "rwanda"},
-          new string[] {"samoan", "samoa"},
-          new string[] {"scottish", "scotland"},
-          new string[] {"serb", "serbia"},
-          new string[] {"serbian", "serbia"},
-          new string[] {"siam", "thailand"},
-          new string[] {"siamese", "thailand"},
-          new string[] {"slovakia", "slovak"},
-          new string[] {"slovakian", "slovak"},
-          new string[] {"slovenian", "slovenia"},
-          new string[] {"somali", "somalia"},
-          new string[] {"somalian", "somalia"},
-          new string[] {"spanish", "spain"},
-          new string[] {"swedish", "sweden"},
-          new string[] {"swiss", "switzerland"},
-          new string[] {"syrian", "syria"},
-          new string[] {"taiwanese", "taiwan"},
-          new string[] {"tanzanian", "tanzania"},
-          new string[] {"texan", "texas"},
-          new string[] {"thai", "thailand"},
-          new string[] {"tunisian", "tunisia"},
-          new string[] {"turkish", "turkey"},
-          new string[] {"ugandan", "uganda"},
-          new string[] {"ukrainian", "ukraine"},
-          new string[] {"uruguayan", "uruguay"},
-          new string[] {"uzbek", "uzbekistan"},
-          new string[] {"venezuelan", "venezuela"},
-          new string[] {"vietnamese", "viet"},
-          new string[] {"virginian", "virginia"},
-          new string[] {"yemeni", "yemen"},
-          new string[] {"yugoslav", "yugoslavia"},
-          new string[] {"yugoslavian", "yugoslavia"},
-          new string[] {"zambian", "zambia"},
-          new string[] {"zealander", "zealand"},
-          new string[] {"zimbabwean", "zimbabwe"}
+            new string[] {"afghan", "afghanistan"},
+            new string[] {"african", "africa"},
+            new string[] {"albanian", "albania"},
+            new string[] {"algerian", "algeria"},
+            new string[] {"american", "america"},
+            new string[] {"andorran", "andorra"},
+            new string[] {"angolan", "angola"},
+            new string[] {"arabian", "arabia"},
+            new string[] {"argentine", "argentina"},
+            new string[] {"armenian", "armenia"},
+            new string[] {"asian", "asia"},
+            new string[] {"australian", "australia"},
+            new string[] {"austrian", "austria"},
+            new string[] {"azerbaijani", "azerbaijan"},
+            new string[] {"azeri", "azerbaijan"},
+            new string[] {"bangladeshi", "bangladesh"},
+            new string[] {"belgian", "belgium"},
+            new string[] {"bermudan", "bermuda"},
+            new string[] {"bolivian", "bolivia"},
+            new string[] {"bosnian", "bosnia"},
+            new string[] {"botswanan", "botswana"},
+            new string[] {"brazilian", "brazil"},
+            new string[] {"british", "britain"},
+            new string[] {"bulgarian", "bulgaria"},
+            new string[] {"burmese", "burma"},
+            new string[] {"californian", "california"},
+            new string[] {"cambodian", "cambodia"},
+            new string[] {"canadian", "canada"},
+            new string[] {"chadian", "chad"},
+            new string[] {"chilean", "chile"},
+            new string[] {"chinese", "china"},
+            new string[] {"colombian", "colombia"},
+            new string[] {"croat", "croatia"},
+            new string[] {"croatian", "croatia"},
+            new string[] {"cuban", "cuba"},
+            new string[] {"cypriot", "cyprus"},
+            new string[] {"czechoslovakian", "czechoslovakia"},
+            new string[] {"danish", "denmark"},
+            new string[] {"egyptian", "egypt"},
+            new string[] {"equadorian", "equador"},
+            new string[] {"eritrean", "eritrea"},
+            new string[] {"estonian", "estonia"},
+            new string[] {"ethiopian", "ethiopia"},
+            new string[] {"european", "europe"},
+            new string[] {"fijian", "fiji"},
+            new string[] {"filipino", "philippines"},
+            new string[] {"finnish", "finland"},
+            new string[] {"french", "france"},
+            new string[] {"gambian", "gambia"},
+            new string[] {"georgian", "georgia"},
+            new string[] {"german", "germany"},
+            new string[] {"ghanian", "ghana"},
+            new string[] {"greek", "greece"},
+            new string[] {"grenadan", "grenada"},
+            new string[] {"guamian", "guam"},
+            new string[] {"guatemalan", "guatemala"},
+            new string[] {"guinean", "guinea"},
+            new string[] {"guyanan", "guyana"},
+            new string[] {"haitian", "haiti"},
+            new string[] {"hawaiian", "hawaii"},
+            new string[] {"holland", "dutch"},
+            new string[] {"honduran", "honduras"},
+            new string[] {"hungarian", "hungary"},
+            new string[] {"icelandic", "iceland"},
+            new string[] {"indonesian", "indonesia"},
+            new string[] {"iranian", "iran"},
+            new string[] {"iraqi", "iraq"},
+            new string[] {"iraqui", "iraq"},
+            new string[] {"irish", "ireland"},
+            new string[] {"israeli", "israel"},
+            new string[] {"italian", "italy"},
+            new string[] {"jamaican", "jamaica"},
+            new string[] {"japanese", "japan"},
+            new string[] {"jordanian", "jordan"},
+            new string[] {"kampuchean", "cambodia"},
+            new string[] {"kenyan", "kenya"},
+            new string[] {"korean", "korea"},
+            new string[] {"kuwaiti", "kuwait"},
+            new string[] {"lankan", "lanka"},
+            new string[] {"laotian", "laos"},
+            new string[] {"latvian", "latvia"},
+            new string[] {"lebanese", "lebanon"},
+            new string[] {"liberian", "liberia"},
+            new string[] {"libyan", "libya"},
+            new string[] {"lithuanian", "lithuania"},
+            new string[] {"macedonian", "macedonia"},
+            new string[] {"madagascan", "madagascar"},
+            new string[] {"malaysian", "malaysia"},
+            new string[] {"maltese", "malta"},
+            new string[] {"mauritanian", "mauritania"},
+            new string[] {"mexican", "mexico"},
+            new string[] {"micronesian", "micronesia"},
+            new string[] {"moldovan", "moldova"},
+            new string[] {"monacan", "monaco"},
+            new string[] {"mongolian", "mongolia"},
+            new string[] {"montenegran", "montenegro"},
+            new string[] {"moroccan", "morocco"},
+            new string[] {"myanmar", "burma"},
+            new string[] {"namibian", "namibia"},
+            new string[] {"nepalese", "nepal"},
+            new string[] {"nicaraguan", "nicaragua"},
+            new string[] {"nigerian", "nigeria"},
+            new string[] {"norwegian", "norway"},
+            new string[] {"omani", "oman"},
+            new string[] {"pakistani", "pakistan"},
+            new string[] {"panamanian", "panama"},
+            new string[] {"papuan", "papua"},
+            new string[] {"paraguayan", "paraguay"},
+            new string[] {"peruvian", "peru"},
+            new string[] {"portuguese", "portugal"},
+            new string[] {"romanian", "romania"},
+            new string[] {"rumania", "romania"},
+            new string[] {"rumanian", "romania"},
+            new string[] {"russian", "russia"},
+            new string[] {"rwandan", "rwanda"},
+            new string[] {"samoan", "samoa"},
+            new string[] {"scottish", "scotland"},
+            new string[] {"serb", "serbia"},
+            new string[] {"serbian", "serbia"},
+            new string[] {"siam", "thailand"},
+            new string[] {"siamese", "thailand"},
+            new string[] {"slovakia", "slovak"},
+            new string[] {"slovakian", "slovak"},
+            new string[] {"slovenian", "slovenia"},
+            new string[] {"somali", "somalia"},
+            new string[] {"somalian", "somalia"},
+            new string[] {"spanish", "spain"},
+            new string[] {"swedish", "sweden"},
+            new string[] {"swiss", "switzerland"},
+            new string[] {"syrian", "syria"},
+            new string[] {"taiwanese", "taiwan"},
+            new string[] {"tanzanian", "tanzania"},
+            new string[] {"texan", "texas"},
+            new string[] {"thai", "thailand"},
+            new string[] {"tunisian", "tunisia"},
+            new string[] {"turkish", "turkey"},
+            new string[] {"ugandan", "uganda"},
+            new string[] {"ukrainian", "ukraine"},
+            new string[] {"uruguayan", "uruguay"},
+            new string[] {"uzbek", "uzbekistan"},
+            new string[] {"venezuelan", "venezuela"},
+            new string[] {"vietnamese", "viet"},
+            new string[] {"virginian", "virginia"},
+            new string[] {"yemeni", "yemen"},
+            new string[] {"yugoslav", "yugoslavia"},
+            new string[] {"yugoslavian", "yugoslavia"},
+            new string[] {"zambian", "zambia"},
+            new string[] {"zealander", "zealand"},
+            new string[] {"zimbabwean", "zimbabwe"}
         };
 
-        private static readonly string[] supplementDict = new string[] { "aids", "applicator", "capacitor", "digitize", "electromagnet", "ellipsoid", "exosphere", "extensible", "ferromagnet", "graphics", "hydromagnet", "polygraph", "toroid", "superconduct", "backscatter", "connectionism" };
+        private static readonly string[] supplementDict = new string[] { "aids", "applicator",
+            "capacitor", "digitize", "electromagnet", "ellipsoid", "exosphere",
+            "extensible", "ferromagnet", "graphics", "hydromagnet", "polygraph",
+            "toroid", "superconduct", "backscatter", "connectionism"};
 
-        private static readonly string[] properNouns = new string[] { "abrams", "achilles", "acropolis", "adams", "agnes", "aires", "alexander", "alexis", "alfred", "algiers", "alps", "amadeus", "ames", "amos", "andes", "angeles", "annapolis", "antilles", "aquarius", "archimedes", "arkansas", "asher", "ashly", "athens", "atkins", "atlantis", "avis", "bahamas", "bangor", "barbados", "barger", "bering", "brahms", "brandeis", "brussels", "bruxelles", "cairns", "camoros", "camus", "carlos", "celts", "chalker", "charles", "cheops", "ching", "christmas", "cocos", "collins", "columbus", "confucius", "conners", "connolly", "copernicus", "cramer", "cyclops", "cygnus", "cyprus", "dallas", "damascus", "daniels", "davies", "davis", "decker", "denning", "dennis", "descartes", "dickens", "doris", "douglas", "downs", "dreyfus", "dukakis", "dulles", "dumfries", "ecclesiastes", "edwards", "emily", "erasmus", "euphrates", "evans", "everglades", "fairbanks", "federales", "fisher", "fitzsimmons", "fleming", "forbes", "fowler", "france", "francis", "goering", "goodling", "goths", "grenadines", "guiness", "hades", "harding", "harris", "hastings", "hawkes", "hawking", "hayes", "heights", "hercules", "himalayas", "hippocrates", "hobbs", "holmes", "honduras", "hopkins", "hughes", "humphreys", "illinois", "indianapolis", "inverness", "iris", "iroquois", "irving", "isaacs", "italy", "james", "jarvis", "jeffreys", "jesus", "jones", "josephus", "judas", "julius", "kansas", "keynes", "kipling", "kiwanis", "lansing", "laos", "leeds", "levis", "leviticus", "lewis", "louis", "maccabees", "madras", "maimonides", "maldive", "massachusetts", "matthews", "mauritius", "memphis", "mercedes", "midas", "mingus", "minneapolis", "mohammed", "moines", "morris", "moses", "myers", "myknos", "nablus", "nanjing", "nantes", "naples", "neal", "netherlands", "nevis", "nostradamus", "oedipus", "olympus", "orleans", "orly", "papas", "paris", "parker", "pauling", "peking", "pershing", "peter", "peters", "philippines", "phineas", "pisces", "pryor", "pythagoras", "queens", "rabelais", "ramses", "reynolds", "rhesus", "rhodes", "richards", "robins", "rodgers", "rogers", "rubens", "sagittarius", "seychelles", "socrates", "texas", "thames", "thomas", "tiberias", "tunis", "venus", "vilnius", "wales", "warner", "wilkins", "williams", "wyoming", "xmas", "yonkers", "zeus", "frances", "aarhus", "adonis", "andrews", "angus", "antares", "aquinas", "arcturus", "ares", "artemis", "augustus", "ayers", "barnabas", "barnes", "becker", "bejing", "biggs", "billings", "boeing", "boris", "borroughs", "briggs", "buenos", "calais", "caracas", "cassius", "cerberus", "ceres", "cervantes", "chantilly", "chartres", "chester", "connally", "conner", "coors", "cummings", "curtis", "daedalus", "dionysus", "dobbs", "dolores", "edmonds" };
+        private static readonly string[] properNouns = new string[] { "abrams", "achilles",
+            "acropolis", "adams", "agnes", "aires", "alexander", "alexis", "alfred",
+            "algiers", "alps", "amadeus", "ames", "amos", "andes", "angeles",
+            "annapolis", "antilles", "aquarius", "archimedes", "arkansas", "asher",
+            "ashly", "athens", "atkins", "atlantis", "avis", "bahamas", "bangor",
+            "barbados", "barger", "bering", "brahms", "brandeis", "brussels",
+            "bruxelles", "cairns", "camoros", "camus", "carlos", "celts", "chalker",
+            "charles", "cheops", "ching", "christmas", "cocos", "collins",
+            "columbus", "confucius", "conners", "connolly", "copernicus", "cramer",
+            "cyclops", "cygnus", "cyprus", "dallas", "damascus", "daniels", "davies",
+            "davis", "decker", "denning", "dennis", "descartes", "dickens", "doris",
+            "douglas", "downs", "dreyfus", "dukakis", "dulles", "dumfries",
+            "ecclesiastes", "edwards", "emily", "erasmus", "euphrates", "evans",
+            "everglades", "fairbanks", "federales", "fisher", "fitzsimmons",
+            "fleming", "forbes", "fowler", "france", "francis", "goering",
+            "goodling", "goths", "grenadines", "guiness", "hades", "harding",
+            "harris", "hastings", "hawkes", "hawking", "hayes", "heights",
+            "hercules", "himalayas", "hippocrates", "hobbs", "holmes", "honduras",
+            "hopkins", "hughes", "humphreys", "illinois", "indianapolis",
+            "inverness", "iris", "iroquois", "irving", "isaacs", "italy", "james",
+            "jarvis", "jeffreys", "jesus", "jones", "josephus", "judas", "julius",
+            "kansas", "keynes", "kipling", "kiwanis", "lansing", "laos", "leeds",
+            "levis", "leviticus", "lewis", "louis", "maccabees", "madras",
+            "maimonides", "maldive", "massachusetts", "matthews", "mauritius",
+            "memphis", "mercedes", "midas", "mingus", "minneapolis", "mohammed",
+            "moines", "morris", "moses", "myers", "myknos", "nablus", "nanjing",
+            "nantes", "naples", "neal", "netherlands", "nevis", "nostradamus",
+            "oedipus", "olympus", "orleans", "orly", "papas", "paris", "parker",
+            "pauling", "peking", "pershing", "peter", "peters", "philippines",
+            "phineas", "pisces", "pryor", "pythagoras", "queens", "rabelais",
+            "ramses", "reynolds", "rhesus", "rhodes", "richards", "robins",
+            "rodgers", "rogers", "rubens", "sagittarius", "seychelles", "socrates",
+            "texas", "thames", "thomas", "tiberias", "tunis", "venus", "vilnius",
+            "wales", "warner", "wilkins", "williams", "wyoming", "xmas", "yonkers",
+            "zeus", "frances", "aarhus", "adonis", "andrews", "angus", "antares",
+            "aquinas", "arcturus", "ares", "artemis", "augustus", "ayers",
+            "barnabas", "barnes", "becker", "bejing", "biggs", "billings", "boeing",
+            "boris", "borroughs", "briggs", "buenos", "calais", "caracas", "cassius",
+            "cerberus", "ceres", "cervantes", "chantilly", "chartres", "chester",
+            "connally", "conner", "coors", "cummings", "curtis", "daedalus",
+            "dionysus", "dobbs", "dolores", "edmonds"};
 
         internal class DictEntry
         {
@@ -787,71 +837,70 @@ namespace Lucene.Net.Analysis.En
                 k = j + 1;
 
                 DictEntry entry = WordInDict();
-                if (entry != null) /*
-		  {
-			  if (!entry.exception)
-	                                                * if it's in the dictionary and
-	                                                * not an exception
-	                                                */
-                {
-                    return;
+                if (entry != null) 
+		        {
+			        if (!entry.exception) 
+                    {
+                        // if it's in the dictionary and
+                        // not an exception
+                        return;
+                    }
                 }
-            }
 
-            /* try removing the "ed" */
-            word.Length = j + 1;
-            k = j;
-            if (Lookup())
-            {
-                return;
-            }
-
-            /*
-             * try removing a doubled consonant. if the root isn't found in the
-             * dictionary, the default is to leave it doubled. This will correctly
-             * capture `backfilled' -> `backfill' instead of `backfill' ->
-             * `backfille', and seems correct most of the time
-             */
-
-            if (DoubleC(k))
-            {
-                word.Length = k;
-                k--;
+                /* try removing the "ed" */
+                word.Length = j + 1;
+                k = j;
                 if (Lookup())
                 {
                     return;
                 }
-                word.UnsafeWrite(word.CharAt(k));
-                k++;
-                Lookup();
-                return;
-            }
 
-            /* if we have a `un-' prefix, then leave the word alone */
-            /* (this will sometimes screw up with `under-', but we */
-            /* will take care of that later) */
+                /*
+                 * try removing a doubled consonant. if the root isn't found in the
+                 * dictionary, the default is to leave it doubled. This will correctly
+                 * capture `backfilled' -> `backfill' instead of `backfill' ->
+                 * `backfille', and seems correct most of the time
+                 */
 
-            if ((word.CharAt(0) == 'u') && (word.CharAt(1) == 'n'))
-            {
+                if (DoubleC(k))
+                {
+                    word.Length = k;
+                    k--;
+                    if (Lookup())
+                    {
+                        return;
+                    }
+                    word.UnsafeWrite(word.CharAt(k));
+                    k++;
+                    Lookup();
+                    return;
+                }
+
+                /* if we have a `un-' prefix, then leave the word alone */
+                /* (this will sometimes screw up with `under-', but we */
+                /* will take care of that later) */
+
+                if ((word.CharAt(0) == 'u') && (word.CharAt(1) == 'n'))
+                {
+                    word.UnsafeWrite('e');
+                    word.UnsafeWrite('d');
+                    k = k + 2;
+                    // nolookup()
+                    return;
+                }
+
+                /*
+                 * it wasn't found by just removing the `d' or the `ed', so prefer to end
+                 * with an `e' (e.g., `microcoded' -> `microcode').
+                 */
+
+                word.Length = j + 1;
                 word.UnsafeWrite('e');
-                word.UnsafeWrite('d');
-                k = k + 2;
-                // nolookup()
+                k = j + 1;
+                // nolookup() - we already tried the "e" ending
                 return;
             }
-
-            /*
-             * it wasn't found by just removing the `d' or the `ed', so prefer to end
-             * with an `e' (e.g., `microcoded' -> `microcode').
-             */
-
-            word.Length = j + 1;
-            word.UnsafeWrite('e');
-            k = j + 1;
-            // nolookup() - we already tried the "e" ending
-            return;
         }
-        //}
 
         /* return TRUE if word ends with a double consonant */
         private bool DoubleC(int i)
@@ -1825,11 +1874,10 @@ namespace Lucene.Net.Analysis.En
         //    return word.ToString();
         //}
 
-        //// LUCENENET: Do we need this?
-        //internal virtual ICharSequence asCharSequence()
-        //{
-        //    return result != null ? result : word;
-        //}
+        internal virtual ICharSequence AsCharSequence()
+        {
+            return result != null ? (ICharSequence)new CharsRef(result) : word;
+        }
 
         internal virtual string String
         {
