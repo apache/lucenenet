@@ -81,19 +81,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.terms = terms;
                 this.similarity = similarity;
                 lastDocRequested = -1;
+                Reset();
             }
 
             private DocsEnum docs;
             private int atDoc;
             private int lastDocRequested;
 
-            //JAVA TO C# CONVERTER TODO TASK: Initialization blocks declared within anonymous inner classes are not converted:
-            //	  {
-            //		  reset();
-            //	  }
-
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: public void reset() throws java.io.IOException
             public virtual void Reset()
             {
                 // no one should call us for deleted docs?
