@@ -892,7 +892,7 @@ namespace Lucene.Net.Tests.Join
             private readonly IDictionary<int, JoinScore> _docToJoinScore;
 
             private SortedSetDocValues docTermOrds;
-            private readonly BytesRef scratch;
+            private readonly BytesRef scratch = new BytesRef();
             private int docBase;
 
             public CollectorAnonymousInnerClassHelper5(TestJoinUtil testJoinUtil, IndexIterationContext context, 
@@ -958,7 +958,7 @@ namespace Lucene.Net.Tests.Join
 
             private BinaryDocValues terms;
             private int docBase;
-            private readonly BytesRef spare;
+            private readonly BytesRef spare = new BytesRef();
 
             public CollectorAnonymousInnerClassHelper6(TestJoinUtil testJoinUtil, 
                 IndexIterationContext context, string toField, 
@@ -974,7 +974,7 @@ namespace Lucene.Net.Tests.Join
             public override void Collect(int doc)
             {
                 terms.Get(doc, spare);
-                JoinScore joinScore = JoinValueToJoinScores[spare];
+                JoinScore joinScore = JoinValueToJoinScores.ContainsKey(spare) ? JoinValueToJoinScores[spare] : null;
                 if (joinScore == null)
                 {
                     return;
