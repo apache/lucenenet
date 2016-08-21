@@ -1063,7 +1063,7 @@ namespace Lucene.Net.Tests.Join
             }
 
             FixedBitSet expectedResult = new FixedBitSet(topLevelReader.MaxDoc);
-            IList<RandomDoc> matchingDocs = randomValueDocs[queryValue];
+            IList<RandomDoc> matchingDocs = randomValueDocs.ContainsKey(queryValue) ? randomValueDocs[queryValue] : null;
             if (matchingDocs == null)
             {
                 return new FixedBitSet(topLevelReader.MaxDoc);
