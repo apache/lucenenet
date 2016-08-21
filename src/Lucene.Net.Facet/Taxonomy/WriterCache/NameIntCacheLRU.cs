@@ -75,7 +75,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual int? Get(FacetLabel name)
         {
-            int? res = cache[Key(name)];
+            object key = Key(name);
+            int? res = cache.ContainsKey(key) ? cache[key] : null;
             if (res == null)
             {
                 nMisses++;
