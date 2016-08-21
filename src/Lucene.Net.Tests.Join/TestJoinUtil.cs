@@ -1073,7 +1073,7 @@ namespace Lucene.Net.Tests.Join
             {
                 foreach (string linkValue in matchingDoc.LinkValues)
                 {
-                    IList<RandomDoc> otherMatchingDocs = linkValueDocuments[linkValue];
+                    IList<RandomDoc> otherMatchingDocs = linkValueDocuments.ContainsKey(linkValue) ? linkValueDocuments[linkValue] : null;
                     if (otherMatchingDocs == null)
                     {
                         continue;
