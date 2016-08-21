@@ -193,7 +193,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             dir.Dispose();
         }
 
-        [Test]
         private void TouchTaxo(DirectoryTaxonomyWriter taxoWriter, FacetLabel cp)
         {
             taxoWriter.AddCategory(cp);
