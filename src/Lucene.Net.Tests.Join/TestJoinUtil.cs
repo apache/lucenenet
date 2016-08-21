@@ -796,7 +796,7 @@ namespace Lucene.Net.Tests.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, joinValue);
-                    var joinScore = JoinValueToJoinScores[joinValue];
+                    var joinScore = JoinValueToJoinScores.ContainsKey(joinValue) ? JoinValueToJoinScores[joinValue] : null;
                     if (joinScore == null)
                     {
                         JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
@@ -855,7 +855,7 @@ namespace Lucene.Net.Tests.Join
                     return;
                 }
 
-                var joinScore = JoinValueToJoinScores[joinValue];
+                var joinScore = JoinValueToJoinScores.ContainsKey(joinValue) ? JoinValueToJoinScores[joinValue] : null;
                 if (joinScore == null)
                 {
                     JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
@@ -912,7 +912,7 @@ namespace Lucene.Net.Tests.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, scratch);
-                    JoinScore joinScore = _joinValueToJoinScores[scratch];
+                    JoinScore joinScore = _joinValueToJoinScores.ContainsKey(scratch) ? _joinValueToJoinScores[scratch] : null;
                     if (joinScore == null)
                     {
                         continue;
