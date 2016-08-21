@@ -349,7 +349,7 @@ namespace Lucene.Net.Join
 
         internal class SVInOrderScorer : Scorer
         {
-            private readonly TermsIncludingScoreQuery outerInstance;
+            protected readonly TermsIncludingScoreQuery outerInstance;
 
 
             internal readonly DocIdSetIterator matchingDocsIterator;
@@ -427,14 +427,10 @@ namespace Lucene.Net.Join
         // This scorer deals with the fact that a document can have more than one score from multiple related documents.
         internal class MVInOrderScorer : SVInOrderScorer
         {
-            private readonly TermsIncludingScoreQuery outerInstance;
-
-            
             internal MVInOrderScorer(TermsIncludingScoreQuery outerInstance, Weight weight, Bits acceptDocs,
                 TermsEnum termsEnum, int maxDoc, long cost)
                 : base(outerInstance, weight, acceptDocs, termsEnum, maxDoc, cost)
             {
-                this.outerInstance = outerInstance;
             }
             
             protected override void FillDocsAndScores(FixedBitSet matchingDocs, Bits acceptDocs,
