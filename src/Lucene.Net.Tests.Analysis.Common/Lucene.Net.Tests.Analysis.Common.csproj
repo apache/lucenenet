@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Core\TestStopAnalyzer.cs" />
+    <Compile Include="Analysis\Core\TestStopFilter.cs" />
     <Compile Include="Analysis\Util\TestCharacterUtils.cs" />
     <Compile Include="Analysis\Util\TestCharArrayIterator.cs" />
     <Compile Include="Analysis\Util\TestCharArrayMap.cs" />
@@ -57,6 +59,7 @@
     <Compile Include="Analysis\Util\TestCharTokenizers.cs" />
     <Compile Include="Analysis\Util\TestRollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\TestSegmentingTokenizerBase.cs" />
+    <Compile Include="Analysis\Util\TestWordlistLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
