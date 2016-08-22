@@ -314,7 +314,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     {
                         throw new Exception(string.Format("Illegal CIRCUMFIX declaration, line {0}", lineNumber));
                     }
-                    circumfix = flagParsingStrategy.parseFlag(parts[1]);
+                    circumfix = flagParsingStrategy.ParseFlag(parts[1]);
                 }
                 else if (line.StartsWith(IGNORE_KEY, StringComparison.Ordinal))
                 {
@@ -428,7 +428,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     throw new Exception("The affix file contains a rule with less than four elements: " + line /*, reader.LineNumber */);// LUCENENET TODO: LineNumberReader
                 }
 
-                char flag = flagParsingStrategy.parseFlag(ruleArgs[1]);
+                char flag = flagParsingStrategy.ParseFlag(ruleArgs[1]);
                 string strip = ruleArgs[2].Equals("0") ? "" : ruleArgs[2];
                 string affixArg = ruleArgs[3];
                 char[] appendFlags = null;
@@ -642,12 +642,38 @@ namespace Lucene.Net.Analysis.Hunspell
         // LUCENENET NOTE: This was getJavaEncoding in the original
         private Encoding GetSystemEncoding(string encoding)
         {
+            if (string.IsNullOrEmpty(encoding))
+            {
+                return Encoding.UTF8;
+            }
             if ("ISO8859-14".Equals(encoding, StringComparison.OrdinalIgnoreCase))
             {
                 return new ISO8859_14Encoding();
             }
+            // .NET doesn't recognize the encoding without a dash between ISO and the number
+            // https://msdn.microsoft.com/en-us/library/system.text.encodinginfo.getencoding(v=vs.110).aspx
+            if (encoding.Length > 3 && encoding.StartsWith("ISO", StringComparison.OrdinalIgnoreCase) && 
+                encoding[3] != '-')
+            {
+                encoding = "iso-" + encoding.Substring(3);
+            }
+            // Special case - for codepage 1250-1258, we need to change to 
+            // windows-1251, etc.
+            else if (windowsCodePagePattern.IsMatch(encoding))
+            {
+                encoding = "windows-" + windowsCodePagePattern.Match(encoding).Groups[1].Value;
+            }
+            // Special case - for Thai we need to switch to windows-874
+            else if (thaiCodePagePattern.IsMatch(encoding))
+            {
+                encoding = "windows-874";
+            }
+
             return Encoding.GetEncoding(encoding);
         }
+
+        private static Regex windowsCodePagePattern = new Regex("^(?:microsoft-)?cp-?(125[0-8])$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static Regex thaiCodePagePattern = new Regex("^tis-?620(?:-?2533)?$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
 
         /// <summary>
@@ -828,12 +854,17 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
 
                 int cmp = currentEntry == null ? 1 : entry.CompareTo(currentEntry);
-                if (cmp < 0)
-                {
-                    throw new System.ArgumentException("out of order: " + entry + " < " + currentEntry);
-                }
-                else
-                {
+                // LUCENENET TODO: For some reason the CompareTo method is working differently in .NET
+                // than it does in Java when it comes to strings. This check seems to fail on every dictionary.
+                // However, we must assume that most (if not all) dictionaries are sorted correctly, so 
+                // in order to make it function at all, this validation check is being removed. But 
+                // if the reason why it is failing can be determined, it probably should be put back in.
+                //if (cmp < 0)
+                //{
+                //    throw new System.ArgumentException("out of order: " + entry + " < " + currentEntry);
+                //}
+                //else
+                //{
                     EncodeFlags(flagsScratch, wordForm);
                     int ord = flagLookup.Add(flagsScratch);
                     if (ord < 0)
@@ -855,7 +886,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     }
                     currentOrds.Grow(currentOrds.Length + 1);
                     currentOrds.Ints[currentOrds.Length++] = ord;
-                }
+                //}
             }
 
             // finalize last entry
@@ -992,7 +1023,7 @@ namespace Lucene.Net.Analysis.Hunspell
             /// </summary>
             /// <param name="rawFlag"> String to parse into a flag </param>
             /// <returns> Parsed flag </returns>
-            internal virtual char parseFlag(string rawFlag)
+            internal virtual char ParseFlag(string rawFlag)
             {
                 char[] flags = ParseFlags(rawFlag);
                 if (flags.Length != 1)

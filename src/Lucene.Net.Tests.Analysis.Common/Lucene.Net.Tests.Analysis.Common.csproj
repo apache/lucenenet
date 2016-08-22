@@ -157,6 +157,8 @@
     <Compile Include="Analysis\Hi\TestHindiNormalizer.cs" />
     <Compile Include="Analysis\Hi\TestHindiStemmer.cs" />
     <Compile Include="Analysis\Hunspell\StemmerTestBase.cs" />
+    <Compile Include="Analysis\Hunspell\TestAllDictionaries.cs" />
+    <Compile Include="Analysis\Hunspell\TestAllDictionaries2.cs" />
     <Compile Include="Analysis\Hunspell\TestCaseInsensitive.cs" />
     <Compile Include="Analysis\Hunspell\TestCircumfix.cs" />
     <Compile Include="Analysis\Hunspell\TestComplexPrefix.cs" />
