@@ -575,7 +575,10 @@ namespace Lucene.Net.Analysis.Util
 
             public IEnumerator<object> GetEnumerator()
             {
-                return new CustomEnumerator((EntryIterator)map.entrySet.GetEnumerator());
+	            var enumerator = this.map.GetEntrySet().GetEnumerator();
+	            var iterator = (EntryIterator) enumerator;
+
+				return new CustomEnumerator(iterator);
             }
 
             IEnumerator IEnumerable.GetEnumerator()

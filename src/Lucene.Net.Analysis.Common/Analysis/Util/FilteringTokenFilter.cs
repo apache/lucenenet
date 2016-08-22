@@ -69,8 +69,9 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="in">      the <seealso cref="TokenStream"/> to consume </param>
         public FilteringTokenFilter(LuceneVersion version, TokenStream @in)
             : base(@in)
-        {
-            this.version = version;
+		{
+			posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+			this.version = version;
             this.enablePositionIncrements = true;
         }
 

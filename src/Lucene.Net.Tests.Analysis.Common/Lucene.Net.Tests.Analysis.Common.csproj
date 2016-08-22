@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\Core\TestStopAnalyzer.cs" />
+    <Compile Include="Analysis\Core\TestStopFilter.cs" />
     <Compile Include="Analysis\Util\TestCharacterUtils.cs" />
     <Compile Include="Analysis\Util\TestCharArrayIterator.cs" />
     <Compile Include="Analysis\Util\TestCharArrayMap.cs" />
