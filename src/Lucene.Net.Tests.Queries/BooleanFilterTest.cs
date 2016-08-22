@@ -139,7 +139,6 @@ namespace Lucene.Net.Tests.Queries
             }
         }
 
-        [Test]
         private void TstFilterCard(string mes, int expected, Filter filt)
         {
             DocIdSet docIdSet = filt.GetDocIdSet(reader.AtomicContext, reader.LiveDocs);

@@ -228,6 +228,7 @@
     <Compile Include="Codecs\lucene40\Lucene40SkipListWriter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\Lucene41Ords\Lucene41WithOrds.cs" />
     <Compile Include="Codecs\lucene41\Lucene41RWCodec.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -791,7 +791,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 var expectedCounts = new List<Dictionary<string, int?>>();
                 for (int i = 0; i < numDims; i++)
                 {
-                    expectedCounts[i] = new Dictionary<string, int?>();
+                    expectedCounts.Add(new Dictionary<string, int?>());
                 }
 
                 foreach (TestDoc doc in testDocs)
@@ -802,7 +802,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         {
                             if (doc.dims[j] != null)
                             {
-                                int? v = expectedCounts[j][doc.dims[j]];
+                                int? v = expectedCounts[j].ContainsKey(doc.dims[j]) ? expectedCounts[j][doc.dims[j]] : null;
                                 if (v == null)
                                 {
                                     expectedCounts[j][doc.dims[j]] = 1;

@@ -541,10 +541,10 @@ namespace Lucene.Net.Facet.Taxonomy
                 Facets facets = new TaxonomyFacetSumValueSource(tr, config, fc, values);
 
                 // Slow, yet hopefully bug-free, faceting:
-                var expectedValues = new List<Dictionary<string, float?>>();
+                var expectedValues = new List<Dictionary<string, float?>>(numDims);
                 for (int i = 0; i < numDims; i++)
                 {
-                    expectedValues[i] = new Dictionary<string, float?>();
+                    expectedValues.Add(new Dictionary<string, float?>());
                 }
 
                 foreach (TestDoc doc in testDocs)
@@ -555,7 +555,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         {
                             if (doc.dims[j] != null)
                             {
-                                float? v = expectedValues[j][doc.dims[j]];
+                                float? v = expectedValues[j].ContainsKey(doc.dims[j]) ? expectedValues[j][doc.dims[j]] : null;
                                 if (v == null)
                                 {
                                     expectedValues[j][doc.dims[j]] = doc.value;
