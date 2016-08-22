@@ -732,8 +732,8 @@ namespace Lucene.Net.Analysis.Util
             {
                 this.outerInstance = outerInstance;
                 this.allowModify = allowModify;
-                GoNext();
-            }
+				GoNext();
+			}
 
             internal bool GoNext()
             {
@@ -744,7 +744,7 @@ namespace Lucene.Net.Analysis.Util
                     pos++;
                 }
 
-                if (pos == outerInstance.keys.Length)
+                if (lastPos == outerInstance.keys.Length)
                     return false;
 
                 return true;
@@ -821,9 +821,21 @@ namespace Lucene.Net.Analysis.Util
                 GoNext();
             }
 
-            public KeyValuePair<object, V> Current { get { return new KeyValuePair<object, V>(outerInstance.keys[lastPos], outerInstance.values[lastPos]); } private set { } }
+	        public KeyValuePair<object, V> Current
+	        {
+		        get
+		        {
+					return new KeyValuePair<object, V>(
+						outerInstance.keys[lastPos],
+						outerInstance.values.Length > lastPos ? outerInstance.values[lastPos] : default(V)
+					);
+		        }
+		        private set
+		        {
+		        }
+	        }
 
-            object IEnumerator.Current
+	        object IEnumerator.Current
             {
                 get { return CurrentValue(); }
             }
