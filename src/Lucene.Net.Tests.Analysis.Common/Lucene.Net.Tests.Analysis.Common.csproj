@@ -57,6 +57,7 @@
     <Compile Include="Analysis\Util\TestCharTokenizers.cs" />
     <Compile Include="Analysis\Util\TestRollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\TestSegmentingTokenizerBase.cs" />
+    <Compile Include="Analysis\Util\TestWordlistLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

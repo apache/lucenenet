@@ -81,6 +81,7 @@
     <Compile Include="Analysis\Util\ICharacterIterator.cs" />
     <Compile Include="Analysis\Util\RollingCharBuffer.cs" />
     <Compile Include="Analysis\Util\SegmentingTokenizerBase.cs" />
+    <Compile Include="Analysis\Util\WordlistLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
