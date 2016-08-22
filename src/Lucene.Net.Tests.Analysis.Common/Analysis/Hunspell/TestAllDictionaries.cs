@@ -1,7 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Lucene.Net.Util;
 using NUnit.Framework;
-using Lucene.Net.Util;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -29,6 +29,14 @@ namespace Lucene.Net.Analysis.Hunspell
     /// Can be retrieved via:
     /// wget --mirror -np http://archive.services.openoffice.org/pub/mirror/OpenOffice.org/contrib/dictionaries/
     /// Note some of the files differ only in case. This may be a problem on your operating system!
+    /// 
+    /// LUCENENET NOTE: The above URL is no longer valid. These dictionaries can be retreived via FTP at one of these URLs
+    /// ftp://ftp.us.horde.org/pub/software/openoffice/contrib/dictionaries/
+    /// ftp://mirror.nl.leaseweb.net/openoffice/contrib/dictionaries/
+    /// ftp://mirror.aptus.co.tz/openoffice/contrib/dictionaries/
+    /// 
+    /// Or you can search by file name at:
+    /// http://www.filewatcher.com/
     /// </summary>
 
     [Ignore("Enable manually")]
@@ -189,7 +197,7 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         [Test]
-        public virtual void testOneDictionary()
+        public virtual void TestOneDictionary()
         {
             string toTest = "hu_HU.zip";
             for (int i = 0; i < tests.Length; i++)

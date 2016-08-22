@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Hunspell
             int writeCount = 0;
             int charPointer = charIndex;
 
-            for (int i = byteIndex; i <= (byteIndex + byteCount); i++)
+            for (int i = byteIndex; i < (byteIndex + byteCount); i++)
             {
                 // Decode the value
                 char ch = (char)(bytesIn[i] & 0xff);
