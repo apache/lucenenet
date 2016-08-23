@@ -100,15 +100,15 @@ namespace Lucene.Net.Analysis.De
             {
                 if ((buffer.Length + substCount > 5) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("nd"))
                 {
-                    buffer.Remove(buffer.Length - 2, buffer.Length - buffer.Length - 2);
+                    buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
                 }
                 else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("em"))
                 {
-                    buffer.Remove(buffer.Length - 2, buffer.Length - buffer.Length - 2);
+                    buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
                 }
                 else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("er"))
                 {
-                    buffer.Remove(buffer.Length - 2, buffer.Length - buffer.Length - 2);
+                    buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
                 }
                 else if (buffer[buffer.Length - 1] == 'e')
                 {
@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis.De
                 {
                     if (buffer.ToString(c, 4).Equals("gege"))
                     {
-                        buffer.Remove(c, c + 2 - c);
+                        buffer.Remove(c, (c + 2) - c);
                         return;
                     }
                 }
@@ -219,7 +219,7 @@ namespace Lucene.Net.Analysis.De
                     if ((c < buffer.Length - 2) && buffer[c] == 's' && buffer[c + 1] == 'c' && buffer[c + 2] == 'h')
                     {
                         buffer[c] = '$';
-                        buffer.Remove(c + 1, c + 3 - c + 1);
+                        buffer.Remove(c + 1, (c + 3) - (c + 1));
                         substCount = +2;
                     }
                     else if (buffer[c] == 'c' && buffer[c + 1] == 'h')
