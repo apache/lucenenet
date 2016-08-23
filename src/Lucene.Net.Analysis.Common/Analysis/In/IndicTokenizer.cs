@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.In
         {
         }
 
-        protected override bool IsTokenChar(char c) // LUCENENET TODO: Change parameter back to int (for codepoint) rather than a single char since this could contain surrogate pairs
+        protected override bool IsTokenChar(int c)
         {
             UnicodeCategory category = Character.GetType(c);
 

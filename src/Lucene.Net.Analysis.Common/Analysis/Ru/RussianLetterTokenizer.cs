@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -73,9 +74,9 @@ namespace Lucene.Net.Analysis.Ru
         /// Collects only characters which satisfy
         /// <seealso cref="Character#isLetter(int)"/>.
         /// </summary>
-        protected override bool IsTokenChar(char c)
+        protected override bool IsTokenChar(int c)
         {
-            return char.IsLetter(c) || (c >= DIGIT_0 && c <= DIGIT_9);
+            return Character.IsLetter(c) || (c >= DIGIT_0 && c <= DIGIT_9);
         }
     }
 }

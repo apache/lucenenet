@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
@@ -74,9 +75,9 @@ namespace Lucene.Net.Analysis.Ar
 	  /// <summary>
 	  /// Allows for Letter category or NonspacingMark category </summary>
 	  /// <seealso cref= org.apache.lucene.analysis.core.LetterTokenizer#isTokenChar(int) </seealso>
-	  protected override bool IsTokenChar(char c)
+	  protected override bool IsTokenChar(int c)
 	  {
-            return base.IsTokenChar(c) || char.GetUnicodeCategory((char)c) == UnicodeCategory.NonSpacingMark;
+            return base.IsTokenChar(c) || Character.GetType(c) == UnicodeCategory.NonSpacingMark;
         }
     }
 }

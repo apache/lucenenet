@@ -69,9 +69,9 @@ namespace Lucene.Net.Analysis.Core
         /// Collects only characters which do not satisfy
         /// <seealso cref="Character#isWhitespace(int)"/>.
         /// </summary>
-        protected override bool IsTokenChar(char c)
+        protected override bool IsTokenChar(int c)
         {
-            return !char.IsWhiteSpace(c);
+            return !char.IsWhiteSpace((char)c);
         }
     }
 }

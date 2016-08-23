@@ -273,7 +273,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
                 {
                 }
 
-                protected override bool IsTokenChar(char c)
+                protected override bool IsTokenChar(int c)
                 {
                     if (char.IsNumber((char)c))
                     {

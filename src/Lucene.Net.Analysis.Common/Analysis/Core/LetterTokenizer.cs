@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Core
         /// Collects only characters which satisfy
         /// <seealso cref="Character#isLetter(int)"/>.
         /// </summary>
-        protected override bool IsTokenChar(char c)
+        protected override bool IsTokenChar(int c)
         {
             return Character.IsLetter(c);
         }

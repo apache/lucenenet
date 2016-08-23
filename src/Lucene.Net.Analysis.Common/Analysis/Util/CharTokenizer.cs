@@ -120,7 +120,7 @@ namespace Lucene.Net.Analysis.Util
         /// predicate. Codepoints for which this is false are used to define token
         /// boundaries and are not included in tokens.
         /// </summary>
-        protected abstract bool IsTokenChar(char c);
+        protected abstract bool IsTokenChar(int c);
 
         /// <summary>
         /// Called on each token character to normalize it before it is added to the
@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.Util
                 int charCount = Character.CharCount(c);
                 bufferIndex += charCount;
 
-                if (IsTokenChar((char)c)) // if it's a token char
+                if (IsTokenChar(c)) // if it's a token char
                 {
                     if (length == 0) // start of token
                     {
