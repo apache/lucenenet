@@ -240,6 +240,50 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
                 }
             }
         }
-    }
 
+        /// <summary>
+        /// LUCENENET: Added this test as proof that making the IsTokenChar parameter a char
+        /// is not going to work 100% of the time because of surrogate pairs.
+        /// </summary>
+
+        [Test]
+        public virtual void TestSurrogates()
+        {
+            var analyzer = new AnalyzerAnonymousInnerClassHelper3();
+
+            AssertAnalyzesTo(analyzer, "bar 123" + (char)55404 + (char)56321 + "34 5te 987", new string[] { "123𫀁34", "5", "987" });
+            AssertAnalyzesTo(analyzer, "787 " + (char)55297 + (char)56388 + "6" + (char)55404 + (char)56321 + " art true 734", new string[] { "787", "𐑄6𫀁", "734" });
+        }
+
+        private sealed class AnalyzerAnonymousInnerClassHelper3 : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper3()
+            { }
+
+            public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new NumberAndSurrogatePairTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+
+            private sealed class NumberAndSurrogatePairTokenizer : CharTokenizer
+            {
+                public NumberAndSurrogatePairTokenizer(LuceneVersion matchVersion, TextReader reader)
+                    : base(matchVersion, reader)
+                {
+                }
+
+                protected override bool IsTokenChar(char c)
+                {
+                    if (char.IsNumber((char)c))
+                    {
+                        return true;
+                    }
+
+                    string character = char.ConvertFromUtf32(c);
+                    return char.IsSurrogatePair(character, 0);
+                }
+            }
+        }
+    }
 }
