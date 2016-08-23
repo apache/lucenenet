@@ -852,19 +852,15 @@ namespace Lucene.Net.Analysis.Hunspell
                     Array.Sort(wordForm);
                     entry = line2.Substring(0, flagSep - 0);
                 }
-
-                int cmp = currentEntry == null ? 1 : entry.CompareTo(currentEntry);
-                // LUCENENET TODO: For some reason the CompareTo method is working differently in .NET
-                // than it does in Java when it comes to strings. This check seems to fail on every dictionary.
-                // However, we must assume that most (if not all) dictionaries are sorted correctly, so 
-                // in order to make it function at all, this validation check is being removed. But 
-                // if the reason why it is failing can be determined, it probably should be put back in.
-                //if (cmp < 0)
-                //{
-                //    throw new System.ArgumentException("out of order: " + entry + " < " + currentEntry);
-                //}
-                //else
-                //{
+                // LUCENENET NOTE: CompareToOrdinal is an extension method that works similarly to
+                // Java's String.compareTo method.
+                int cmp = currentEntry == null ? 1 : entry.CompareToOrdinal(currentEntry);
+                if (cmp < 0)
+                {
+                    throw new System.ArgumentException("out of order: " + entry + " < " + currentEntry);
+                }
+                else
+                {
                     EncodeFlags(flagsScratch, wordForm);
                     int ord = flagLookup.Add(flagsScratch);
                     if (ord < 0)
@@ -886,7 +882,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     }
                     currentOrds.Grow(currentOrds.Length + 1);
                     currentOrds.Ints[currentOrds.Length++] = ord;
-                //}
+                }
             }
 
             // finalize last entry
