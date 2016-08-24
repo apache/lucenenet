@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,6 +19,7 @@ namespace Lucene.Net.Analysis.Core
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Factory for <seealso cref="UpperCaseFilter"/>. 
     /// <pre class="prettyprint">
@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Core
     /// general search matching
     /// </para>
     /// </summary>
-    public class UpperCaseFilterFactory : TokenFilterFactory, MultiTermAwareComponent
+    public class UpperCaseFilterFactory : TokenFilterFactory, IMultiTermAwareComponent
     {
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Core
         public UpperCaseFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            assureMatchVersion();
+            AssureMatchVersion();
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

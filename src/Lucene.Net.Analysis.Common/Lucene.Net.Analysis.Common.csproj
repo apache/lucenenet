@@ -121,6 +121,7 @@
     <Compile Include="Analysis\Core\StopFilterFactory.cs" />
     <Compile Include="Analysis\Core\TypeTokenFilter.cs" />
     <Compile Include="Analysis\Core\TypeTokenFilterFactory.cs" />
+    <Compile Include="Analysis\Core\UpperCaseFilterFactory.cs" />
     <Compile Include="Analysis\Core\WhitespaceTokenizerFactory.cs" />
     <Compile Include="Analysis\Cz\CzechAnalyzer.cs" />
     <Compile Include="Analysis\Cz\CzechStemFilter.cs" />
