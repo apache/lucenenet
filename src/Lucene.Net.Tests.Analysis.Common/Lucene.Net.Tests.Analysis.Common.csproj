@@ -303,6 +303,7 @@
     <Compile Include="Analysis\Tr\TestTurkishLowerCaseFilterFactory.cs" />
     <Compile Include="Analysis\Util\BaseTokenStreamFactoryTestCase.cs" />
     <Compile Include="Analysis\Util\StringMockResourceLoader.cs" />
+    <Compile Include="Analysis\Util\TestAnalysisSPILoader.cs" />
     <Compile Include="Analysis\Util\TestCharacterUtils.cs" />
     <Compile Include="Analysis\Util\TestCharArrayIterator.cs" />
     <Compile Include="Analysis\Util\TestCharArrayMap.cs" />
