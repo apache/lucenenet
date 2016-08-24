@@ -220,6 +220,7 @@
     <Compile Include="Analysis\Miscellaneous\TestScandinavianFoldingFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestScandinavianNormalizationFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestScandinavianNormalizationFilterFactory.cs" />
+    <Compile Include="Analysis\Miscellaneous\TestSingleTokenTokenFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestStemmerOverrideFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\TestStemmerOverrideFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\TestTrimFilter.cs" />
