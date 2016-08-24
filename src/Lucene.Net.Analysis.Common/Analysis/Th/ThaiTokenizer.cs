@@ -1,4 +1,5 @@
 ﻿using ICU4NET;
+using ICU4NETExtension;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -38,18 +39,13 @@ namespace Lucene.Net.Analysis.Th
         /// If this is false, this tokenizer will not work at all!
         /// </summary>
         public static readonly bool DBBI_AVAILABLE;
-        private static readonly BreakIterator proto = BreakIterator.CreateWordInstance(Locale.GetUS());   //GetWordInstance(new Locale("th"));
+        private static readonly BreakIterator proto = BreakIterator.CreateWordInstance(Locale.GetUS());
         static ThaiTokenizer()
         {
             // check that we have a working dictionary-based break iterator for thai
             proto.SetText("ภาษาไทย");
             DBBI_AVAILABLE = proto.IsBoundary(4);
         }
-        
-
-        /// <summary>
-        /// used for breaking the text into sentences </summary>
-        private static readonly BreakIterator sentenceProto = BreakIterator.CreateSentenceInstance(Locale.GetUS());    //GetSentenceInstance(Locale.ROOT);
 
         private readonly BreakIterator wordBreaker;
         private readonly CharArrayIterator wrapper = CharArrayIterator.NewWordInstance();
@@ -70,13 +66,13 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// Creates a new ThaiTokenizer, supplying the AttributeFactory </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
-              : base(factory, reader, (BreakIterator)sentenceProto.Clone())
+              : base(factory, reader, BreakIterator.CreateSentenceInstance(Locale.GetUS()))
         {
             if (!DBBI_AVAILABLE)
             {
                 throw new System.NotSupportedException("This JRE does not have support for Thai segmentation");
             }
-            wordBreaker = (BreakIterator)proto.Clone();
+            wordBreaker = BreakIterator.CreateWordInstance(Locale.GetUS());
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
@@ -86,7 +82,7 @@ namespace Lucene.Net.Analysis.Th
             this.sentenceStart = sentenceStart;
             this.sentenceEnd = sentenceEnd;
             wrapper.SetText(buffer, sentenceStart, sentenceEnd - sentenceStart);
-            wordBreaker.SetText(new string(wrapper.Text));
+            wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
         }
 
         protected internal override bool IncrementWord()

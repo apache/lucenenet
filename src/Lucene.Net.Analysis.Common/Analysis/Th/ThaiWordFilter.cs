@@ -1,9 +1,10 @@
 ﻿using ICU4NET;
-using System;
-using Lucene.Net.Analysis.Util;
-using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Util;
+using ICU4NETExtension;
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.Tokenattributes;
+using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System;
 using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Th
@@ -48,8 +49,7 @@ namespace Lucene.Net.Analysis.Th
         /// If this is false, this filter will not work at all!
         /// </summary>
         public static readonly bool DBBI_AVAILABLE = ThaiTokenizer.DBBI_AVAILABLE;
-        private static readonly BreakIterator proto = BreakIterator.CreateWordInstance(new Locale());    //.getWordInstance(new Locale("th"));
-        private readonly BreakIterator breaker = (BreakIterator)proto.Clone();
+        private readonly BreakIterator breaker = BreakIterator.CreateWordInstance(new Locale());
         private readonly CharArrayIterator charIterator = CharArrayIterator.NewWordInstance();
 
         private readonly bool handlePosIncr;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Th
                 return false;
             }
 
-            if (termAtt.Length == 0 || Regex.IsMatch(termAtt.ToString().Substring(0, 1), @"\p{IsThai}"))
+            if (termAtt.Length == 0 || !Regex.IsMatch(termAtt.ToString().Substring(0, 1), @"\p{IsThai}"))
             {
                 return true;
             }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.Th
 
             // reinit CharacterIterator
             charIterator.SetText(clonedTermAtt.Buffer(), 0, clonedTermAtt.Length);
-            breaker.SetText(new string(charIterator.Text));
+            breaker.SetText(new string(charIterator.Text, charIterator.Start, charIterator.Length));
             int end2 = breaker.Next();
             if (end2 != BreakIterator.DONE)
             {
