@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Core
 
             public override void Mark(int readAheadLimit)
             {
-                throw new System.NotSupportedException("mark(int)");
+                throw new System.NotSupportedException("Mark(int)");
             }
 
             public override bool IsMarkSupported
@@ -103,47 +103,48 @@ namespace Lucene.Net.Analysis.Core
 
             public override int Read()
             {
-                throw new System.NotSupportedException("read()");
+                throw new System.NotSupportedException("Read()");
             }
 
+            // LUCENENET: We don't support these overloads in .NET
             // public override int Read(char[] cbuf)
             // {
-            //throw new System.NotSupportedException("read(char[])");
+            //throw new System.NotSupportedException("Read(char[])");
             // }
 
             //public override int read(CharBuffer target)
             //{
-            //    throw new System.NotSupportedException("read(CharBuffer)");
+            //    throw new System.NotSupportedException("Read(CharBuffer)");
             //}
 
             public override bool Ready()
             {
-                throw new System.NotSupportedException("ready()");
+                throw new System.NotSupportedException("Ready()");
             }
 
             public override void Reset()
             {
-                throw new System.NotSupportedException("reset()");
+                throw new System.NotSupportedException("Reset()");
             }
 
             public override long Skip(int n)
             {
-                throw new System.NotSupportedException("skip(long)");
+                throw new System.NotSupportedException("Skip(long)");
             }
 
             protected override int Correct(int currentOff)
             {
-                throw new System.NotSupportedException("correct(int)");
+                throw new System.NotSupportedException("Correct(int)");
             }
 
             public override void Close()
             {
-                throw new System.NotSupportedException("close()");
+                throw new System.NotSupportedException("Close()");
             }
 
             public override int Read(char[] arg0, int arg1, int arg2)
             {
-                throw new System.NotSupportedException("read(char[], int, int)");
+                throw new System.NotSupportedException("Read(char[], int, int)");
             }
         }
 
@@ -158,7 +159,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e)
             {
-                assertEquals("mark(int)", e.Message);
+                assertEquals("Mark(int)", e.Message);
             }
 
             try
@@ -168,7 +169,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e)
             {
-                assertEquals("markSupported()", e.Message);
+                assertEquals("IsMarkSupported", e.Message);
             }
 
             try
@@ -178,7 +179,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e)
             {
-                assertEquals("read()", e.Message);
+                assertEquals("Read()", e.Message);
             }
 
             try
@@ -188,18 +189,24 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e)
             {
-                assertEquals("read(char[])", e.Message);
+                // LUCENENET NOTE: TextReader doesn't support an overload that doesn't supply
+                // index and count. We have an extension method that does in test environment,
+                // but the error will be for the cascaded overload
+                //assertEquals("Read(char[])", e.Message);
+                assertEquals("Read(char[], int, int)", e.Message);
             }
 
-            try
-            {
-                cs.read(new char[0]);
-                fail();
-            }
-            catch (Exception e)
-            {
-                assertEquals("read(CharBuffer)", e.Message);
-            }
+            // LUCENENET NOTE: We don't have a CharBuffer type in Lucene.Net,
+            // nor do we have an overload that accepts it.
+            //try
+            //{
+            //    cs.read(CharBuffer.wrap(new char[0]));
+            //    fail();
+            //}
+            //catch (Exception e)
+            //{
+            //    assertEquals("Read(CharBuffer)", e.Message);
+            //}
 
             try
             {
@@ -208,7 +215,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e)
             {
-                assertEquals("reset()", e.Message);
+                assertEquals("Reset()", e.Message);
             }
 
             try
@@ -218,7 +225,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e)
             {
-                assertEquals("skip(long)", e.Message);
+                assertEquals("Skip(long)", e.Message);
             }
 
             try
@@ -228,7 +235,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e)
             {
-                assertEquals("correct(int)", e.Message);
+                assertEquals("Correct(int)", e.Message);
             }
 
             try
@@ -238,7 +245,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e)
             {
-                assertEquals("close()", e.Message);
+                assertEquals("Close()", e.Message);
             }
 
             try
@@ -248,7 +255,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (Exception e)
             {
-                assertEquals("read(char[], int, int)", e.Message);
+                assertEquals("Read(char[], int, int)", e.Message);
             }
         }
 
@@ -365,24 +372,12 @@ namespace Lucene.Net.Analysis.Core
             bool readSomething;
 
             public CheckThatYouDidntReadAnythingReaderWrapper(TextReader @in)
-                : base(GetBufferedReader(@in))
+                : base(@in)
             { }
 
-            /// <summary>
-            /// LUCENENET: Copied this method from the WordlistLoader class - this class requires readers
-            /// with a Reset() method (which .NET readers don't support). So, we use the Java BufferedReader
-            /// as a wrapper for whatever reader the user passes (unless it is already a BufferedReader).
-            /// </summary>
-            /// <param name="reader"></param>
-            /// <returns></returns>
-            private static BufferedCharFilter GetBufferedReader(TextReader reader)
+            private CharFilter Input
             {
-                return (reader is BufferedCharFilter) ? (BufferedCharFilter)reader : new BufferedCharFilter(reader);
-            }
-
-            private BufferedCharFilter Input
-            {
-                get { return (BufferedCharFilter)this.input; }
+                get { return (CharFilter)this.input; }
             }
 
             protected override int Correct(int currentOff)
@@ -402,11 +397,12 @@ namespace Lucene.Net.Analysis.Core
                 return input.Read();
             }
 
-            public int read(char[] cbuf)
-            {
-                readSomething = true;
-                return input.read(cbuf);
-            }
+            // LUCENENET: TextReader dosn't support this overload 
+            //public int read(char[] cbuf)
+            //{
+            //    readSomething = true;
+            //    return input.read(cbuf);
+            //}
 
             public override long Skip(int n)
             {
@@ -432,7 +428,7 @@ namespace Lucene.Net.Analysis.Core
                 return Input.Ready();
             }
 
-            public void reset()
+            public override void Reset()
             {
                 Input.Reset();
             }
