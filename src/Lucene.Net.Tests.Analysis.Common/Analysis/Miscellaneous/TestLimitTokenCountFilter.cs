@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     {
 
         [Test]
-        public virtual void test()
+        public virtual void Test()
         {
             foreach (bool consumeAll in new bool[] { true, false })
             {
@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         [Test]
         [ExpectedException(ExpectedException = typeof(ArgumentOutOfRangeException))]
-        public virtual void testIllegalArguments()
+        public virtual void TestIllegalArguments()
         {
             new LimitTokenCountFilter(new MockTokenizer(new StringReader("A1 B2 C3 D4 E5 F6"), MockTokenizer.WHITESPACE, false), -1);
         }
