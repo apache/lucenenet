@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using static Lucene.Net.Util.AttributeSource;
 
 namespace Lucene.Net.Analysis.Ru
 {
@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Ru
             }
         }
 
-        public override Tokenizer Create(AttributeFactory factory, TextReader input)
+        public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
             return new RussianLetterTokenizer(luceneMatchVersion, factory, input);
         }

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.En;
+using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -7,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using static Lucene.Net.Analysis.Miscellaneous.StemmerOverrideFilter;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 builder.Add(entry.Key, entry.Value);
             }
-            StemmerOverrideMap build = builder.Build();
+            StemmerOverrideFilter.StemmerOverrideMap build = builder.Build();
             foreach (KeyValuePair<string, string> entry in entrySet)
             {
                 if (Random().nextBoolean())

@@ -7,7 +7,6 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Text;
-using static Lucene.Net.Analysis.Miscellaneous.StemmerOverrideFilter;
 
 namespace Lucene.Net.Analysis.Nl
 {
@@ -113,7 +112,7 @@ namespace Lucene.Net.Analysis.Nl
         /// </summary>
         private CharArraySet excltable = CharArraySet.EMPTY_SET;
 
-        private readonly StemmerOverrideMap stemdict;
+        private readonly StemmerOverrideFilter.StemmerOverrideMap stemdict;
 
         // null if on 3.1 or later - only for bw compat
         private readonly CharArrayMap<string> origStemdict;
