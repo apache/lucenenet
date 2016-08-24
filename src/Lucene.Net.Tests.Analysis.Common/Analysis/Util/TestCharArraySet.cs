@@ -7,9 +7,8 @@ using System.Collections.Generic;
 using System.Text;
 using Version = Lucene.Net.Util.LuceneVersion;
 
-namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
+namespace Lucene.Net.Analysis.Util
 {
-
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with

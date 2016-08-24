@@ -7,9 +7,8 @@ using NUnit.Framework;
 using System.IO;
 using System.Text;
 
-namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
+namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,6 +25,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Basic tests for <seealso cref="SegmentingTokenizerBase"/> </summary>
     [TestFixture]

@@ -9,9 +9,8 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
+namespace Lucene.Net.Analysis.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -28,6 +27,7 @@ namespace Lucene.Net.Tests.Analysis.Common.Analysis.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Testcase for <seealso cref="CharTokenizer"/> subclasses
     /// </summary>
