@@ -168,13 +168,13 @@ namespace Lucene.Net.Analysis.Synonym
                 posLengths = new int[1];
             }
 
-            public virtual void reset()
+            public virtual void Reset()
             {
                 upto = count = 0;
                 posIncr = 1;
             }
 
-            public virtual CharsRef pullNext()
+            public virtual CharsRef PullNext()
             {
                 Debug.Assert(upto < count);
                 lastEndOffset = endOffsets[upto];
@@ -183,7 +183,7 @@ namespace Lucene.Net.Analysis.Synonym
                 posIncr = 0;
                 if (upto == count)
                 {
-                    reset();
+                    Reset();
                 }
                 return result;
             }
@@ -204,7 +204,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
             }
 
-            public virtual void add(char[] output, int offset, int len, int endOffset, int posLength)
+            public virtual void Add(char[] output, int offset, int len, int endOffset, int posLength)
             {
                 if (count == outputs.Length)
                 {
@@ -303,7 +303,7 @@ namespace Lucene.Net.Analysis.Synonym
             scratchArc = new FST.Arc<BytesRef>();
         }
 
-        private void capture()
+        private void Capture()
         {
             captureCount++;
             //System.out.println("  capture slot=" + nextWrite);
@@ -313,7 +313,7 @@ namespace Lucene.Net.Analysis.Synonym
             input.consumed = false;
             input.term.CopyChars(termAtt.Buffer(), 0, termAtt.Length);
 
-            nextWrite = rollIncr(nextWrite);
+            nextWrite = RollIncr(nextWrite);
 
             // Buffer head should never catch up to tail:
             Debug.Assert(nextWrite != nextRead);
@@ -390,7 +390,7 @@ namespace Lucene.Net.Analysis.Synonym
                             //System.out.println("  new token=" + new String(buffer, 0, bufferLen));
                             if (nextRead != nextWrite)
                             {
-                                capture();
+                                Capture();
                             }
                             else
                             {
@@ -461,18 +461,18 @@ namespace Lucene.Net.Analysis.Synonym
                     pendingOutput = fst.Outputs.Add(pendingOutput, scratchArc.Output);
                     if (nextRead == nextWrite)
                     {
-                        capture();
+                        Capture();
                     }
                 }
 
-                curNextRead = rollIncr(curNextRead);
+                curNextRead = RollIncr(curNextRead);
             }
             byTokenBreak:
 
             if (nextRead == nextWrite && !finished)
             {
                 //System.out.println("  skip write slot=" + nextWrite);
-                nextWrite = rollIncr(nextWrite);
+                nextWrite = RollIncr(nextWrite);
             }
 
             if (matchOutput != null)
@@ -541,11 +541,11 @@ namespace Lucene.Net.Analysis.Synonym
                             endOffset = -1;
                             posLen = 1;
                         }
-                        futureOutputs[outputUpto].add(scratchChars.Chars, lastStart, outputLen, endOffset, posLen);
+                        futureOutputs[outputUpto].Add(scratchChars.Chars, lastStart, outputLen, endOffset, posLen);
                         //System.out.println("      " + new String(scratchChars.chars, lastStart, outputLen) + " outputUpto=" + outputUpto);
                         lastStart = 1 + chIDX;
                         //System.out.println("  slot=" + outputUpto + " keepOrig=" + keepOrig);
-                        outputUpto = rollIncr(outputUpto);
+                        outputUpto = RollIncr(outputUpto);
                         Debug.Assert(futureOutputs[outputUpto].posIncr == 1, "outputUpto=" + outputUpto + " vs nextWrite=" + nextWrite);
                     }
                 }
@@ -556,12 +556,12 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 futureInputs[upto].keepOrig |= keepOrig;
                 futureInputs[upto].matched = true;
-                upto = rollIncr(upto);
+                upto = RollIncr(upto);
             }
         }
 
         // ++ mod rollBufferSize
-        private int rollIncr(int count)
+        private int RollIncr(int count)
         {
             count++;
             if (count == rollBufferSize)
@@ -627,7 +627,7 @@ namespace Lucene.Net.Analysis.Synonym
                         }
                         else
                         {
-                            nextRead = rollIncr(nextRead);
+                            nextRead = RollIncr(nextRead);
                             inputSkipCount--;
                         }
                         //System.out.println("  return token=" + termAtt.toString());
@@ -639,7 +639,7 @@ namespace Lucene.Net.Analysis.Synonym
                         // position
                         input.Reset();
                         int posIncr = outputs.posIncr;
-                        CharsRef output = outputs.pullNext();
+                        CharsRef output = outputs.PullNext();
                         ClearAttributes();
                         termAtt.CopyBuffer(output.Chars, output.Offset, output.Length);
                         typeAtt.Type = TYPE_SYNONYM;
@@ -655,7 +655,7 @@ namespace Lucene.Net.Analysis.Synonym
                         {
                             // Done with the buffered input and all outputs at
                             // this position
-                            nextRead = rollIncr(nextRead);
+                            nextRead = RollIncr(nextRead);
                             inputSkipCount--;
                         }
                         //System.out.println("  return token=" + termAtt.toString());
@@ -666,7 +666,7 @@ namespace Lucene.Net.Analysis.Synonym
                         // Done with the buffered input and all outputs at
                         // this position
                         input.Reset();
-                        nextRead = rollIncr(nextRead);
+                        nextRead = RollIncr(nextRead);
                         inputSkipCount--;
                     }
                 }
@@ -679,11 +679,11 @@ namespace Lucene.Net.Analysis.Synonym
                     if (outputs.upto < outputs.count)
                     {
                         int posIncr = outputs.posIncr;
-                        CharsRef output = outputs.pullNext();
+                        CharsRef output = outputs.PullNext();
                         futureInputs[nextRead].Reset();
                         if (outputs.count == 0)
                         {
-                            nextWrite = nextRead = rollIncr(nextRead);
+                            nextWrite = nextRead = RollIncr(nextRead);
                         }
                         ClearAttributes();
                         // Keep offset from last input token:
@@ -725,7 +725,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             foreach (PendingOutputs output in futureOutputs)
             {
-                output.reset();
+                output.Reset();
             }
         }
     }
