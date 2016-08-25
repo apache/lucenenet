@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Synonym
                     int expectedPosLen;
                     if (colonIndex != -1)
                     {
-                        expectedToken = expectedAtPos[atPos].Substring(0, colonIndex);
+                        expectedToken = expectedAtPos[atPos].Substring(0, colonIndex - 0);
                         if (underbarIndex != -1)
                         {
                             expectedEndOffset = int.Parse(expectedAtPos[atPos].Substring(1 + colonIndex, underbarIndex - (1 + colonIndex)));
@@ -157,7 +157,14 @@ namespace Lucene.Net.Analysis.Synonym
             SynonymMap map = b.Build();
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, map);
 
-            AssertAnalyzesTo(analyzer, "a b c", new string[] { "foo", "c" }, new int[] { 0, 4 }, new int[] { 3, 5 }, null, new int[] { 1, 1 }, new int[] { 1, 1 }, true);
+            AssertAnalyzesTo(analyzer, "a b c", 
+                            new string[] { "foo", "c" }, 
+                            new int[] { 0, 4 }, 
+                            new int[] { 3, 5 }, 
+                            null, 
+                            new int[] { 1, 1 }, 
+                            new int[] { 1, 1 }, 
+                            true);
             CheckAnalysisConsistency(Random(), analyzer, false, "a b c");
         }
 
@@ -190,7 +197,14 @@ namespace Lucene.Net.Analysis.Synonym
 
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this, map);
 
-            AssertAnalyzesTo(analyzer, "a b c", new string[] { "a", "foo", "b", "c" }, new int[] { 0, 0, 2, 4 }, new int[] { 1, 3, 3, 5 }, null, new int[] { 1, 0, 1, 1 }, new int[] { 1, 2, 1, 1 }, true);
+            AssertAnalyzesTo(analyzer, "a b c", 
+                            new string[] { "a", "foo", "b", "c" }, 
+                            new int[] { 0, 0, 2, 4 }, 
+                            new int[] { 1, 3, 3, 5 }, 
+                            null, 
+                            new int[] { 1, 0, 1, 1 }, 
+                            new int[] { 1, 2, 1, 1 }, 
+                            true);
             CheckAnalysisConsistency(Random(), analyzer, false, "a b c");
         }
 
