@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Th
         /// If this is false, this filter will not work at all!
         /// </summary>
         public static readonly bool DBBI_AVAILABLE = ThaiTokenizer.DBBI_AVAILABLE;
-        private readonly BreakIterator breaker = BreakIterator.CreateWordInstance(new Locale());
+        private readonly ThaiWordBreaker breaker = new ThaiWordBreaker(BreakIterator.CreateWordInstance(new Locale()));
         private readonly CharArrayIterator charIterator = CharArrayIterator.NewWordInstance();
 
         private readonly bool handlePosIncr;

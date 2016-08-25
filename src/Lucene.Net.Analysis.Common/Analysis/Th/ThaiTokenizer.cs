@@ -3,7 +3,11 @@ using ICU4NETExtension;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Th
 {
@@ -47,7 +51,7 @@ namespace Lucene.Net.Analysis.Th
             DBBI_AVAILABLE = proto.IsBoundary(4);
         }
 
-        private readonly BreakIterator wordBreaker;
+        private readonly ThaiWordBreaker wordBreaker;
         private readonly CharArrayIterator wrapper = CharArrayIterator.NewWordInstance();
 
         internal int sentenceStart;
@@ -72,7 +76,7 @@ namespace Lucene.Net.Analysis.Th
             {
                 throw new System.NotSupportedException("This JRE does not have support for Thai segmentation");
             }
-            wordBreaker = BreakIterator.CreateWordInstance(Locale.GetUS());
+            wordBreaker = new ThaiWordBreaker(BreakIterator.CreateWordInstance(Locale.GetUS()));
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
@@ -110,6 +114,101 @@ namespace Lucene.Net.Analysis.Th
             termAtt.CopyBuffer(buffer, sentenceStart + start, end - start);
             offsetAtt.SetOffset(CorrectOffset(offset + sentenceStart + start), CorrectOffset(offset + sentenceStart + end));
             return true;
+        }
+    }
+
+    /// <summary>
+    /// LUCENENET specific class to patch the behavior of the ICU BreakIterator.
+    /// Corrects the breaking of words by finding transitions between Thai and non-Thai
+    /// characters.
+    /// 
+    /// This logic assumes that the Java BreakIterator also breaks up Thai numerals from
+    /// Arabic numerals (1, 2, 3, etc.). That is, it assumes the first test below passes
+    /// and the second test fails in Lucene (not attempted).
+    /// 
+    /// ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
+    /// AssertAnalyzesTo(analyzer, "๑๒๓456", new string[] { "๑๒๓", "456" });
+    /// AssertAnalyzesTo(analyzer, "๑๒๓456", new string[] { "๑๒๓456" });
+    /// </summary>
+    internal class ThaiWordBreaker
+    {
+        private readonly BreakIterator wordBreaker;
+        private string text;
+        private readonly IList<int> transitions = new List<int>();
+        private readonly static Regex thaiPattern = new Regex(@"\p{IsThai}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+        public ThaiWordBreaker(BreakIterator wordBreaker) 
+        {
+            if (wordBreaker == null)
+            {
+                throw new ArgumentNullException("wordBreaker");
+            }
+            this.wordBreaker = wordBreaker;
+        }
+
+        public void SetText(string text)
+        {
+            this.text = text;
+            wordBreaker.SetText(text);
+        }
+
+        public int Current()
+        {
+            if (transitions.Any())
+            {
+                return transitions.First();
+            }
+            return wordBreaker.Current();
+        }
+
+        public int Next()
+        {
+            if (transitions.Any())
+            {
+                transitions.RemoveAt(0);
+            }
+            if (transitions.Any())
+            {
+                return transitions.First();
+            }
+            return GetNext();
+        }
+
+        private int GetNext()
+        {
+            bool isThai = false, isNonThai = false;
+            bool prevWasThai = false, prevWasNonThai = false;
+            int prev = wordBreaker.Current();
+            int current = wordBreaker.Next();
+
+            if (current != BreakIterator.DONE && current - prev > 0)
+            {
+                // Find all of the transitions between Thai and non-Thai characters and digits
+                for (int i = prev; i < current; i++)
+                {
+                    char c = text[i];
+                    isThai = thaiPattern.IsMatch(c.ToString());
+                    isNonThai = char.IsLetterOrDigit(c) && !isThai;
+
+                    if ((prevWasThai && isNonThai) ||
+                        (prevWasNonThai && isThai))
+                    {
+                        transitions.Add(i);
+                    }
+
+                    // record the values for comparison with the next loop
+                    prevWasThai = isThai;
+                    prevWasNonThai = isNonThai;
+                }
+
+                if (transitions.Any())
+                {
+                    transitions.Add(current);
+                    return transitions.First();
+                }
+            }
+
+            return current;
         }
     }
 }
