@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using Lucene.Net.Store;
 using Lucene.Net.Support.Compatibility;
+using System.Linq;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -267,7 +269,9 @@ namespace Lucene.Net.Util
         {
             sortInfo = new SortInfo(this) { TotalTime = DateTime.Now.Millisecond };
 
-            output.Delete();
+            // LUCENENET NOTE: Can't do this because another thread could recreate the file before we are done here.
+            // and cause this to bomb. We use the existence of the file as an indicator that we are done using it.
+            //output.Delete(); 
 
             var merges = new List<FileInfo>();
             bool success2 = false;
@@ -369,7 +373,13 @@ namespace Lucene.Net.Util
         /// </summary>
         private static void Copy(FileInfo file, FileInfo output)
         {
-            File.Copy(file.FullName, output.FullName);
+            using (Stream inputStream = file.OpenRead())
+            {
+                using (Stream outputStream = output.OpenWrite())
+                {
+                    inputStream.CopyTo(outputStream);
+                }
+            }
         }
 
         /// <summary>
@@ -377,53 +387,45 @@ namespace Lucene.Net.Util
         internal FileInfo SortPartition(int len)
         {
             var data = this.Buffer;
-            var tempFile = new FileInfo(Path.GetTempFileName());
-            //var tempFile1 = File.Create(new ());
-            //FileInfo tempFile = FileInfo.createTempFile("sort", "partition", TempDirectory);
+            FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", DefaultTempDir());
 
             long start = DateTime.Now.Millisecond;
             sortInfo.SortTime += (DateTime.Now.Millisecond - start);
 
-            var @out = new ByteSequencesWriter(tempFile);
-            BytesRef spare;
-            try
+            using (var @out = new ByteSequencesWriter(tempFile))
             {
+                BytesRef spare;
+
                 BytesRefIterator iter = Buffer.Iterator(comparator);
                 while ((spare = iter.Next()) != null)
                 {
                     Debug.Assert(spare.Length <= short.MaxValue);
                     @out.Write(spare);
                 }
-
-                @out.Dispose();
-
-                // Clean up the buffer for the next partition.
-                data.Clear();
-                return tempFile;
             }
-            finally
-            {
-                IOUtils.Close(@out);
-            }
+
+            // Clean up the buffer for the next partition.
+            data.Clear();
+            return tempFile;
         }
 
         /// <summary>
         /// Merge a list of sorted temporary files (partitions) into an output file </summary>
-        internal void MergePartitions(IList<FileInfo> merges, FileInfo outputFile)
+        internal void MergePartitions(IEnumerable<FileInfo> merges, FileInfo outputFile)
         {
             long start = DateTime.Now.Millisecond;
 
             var @out = new ByteSequencesWriter(outputFile);
 
-            PriorityQueue<FileAndTop> queue = new PriorityQueueAnonymousInnerClassHelper(this, merges.Count);
+            PriorityQueue<FileAndTop> queue = new PriorityQueueAnonymousInnerClassHelper(this, merges.Count());
 
-            var streams = new ByteSequencesReader[merges.Count];
+            var streams = new ByteSequencesReader[merges.Count()];
             try
             {
                 // Open streams and read the top for each file
-                for (int i = 0; i < merges.Count; i++)
+                for (int i = 0; i < merges.Count(); i++)
                 {
-                    streams[i] = new ByteSequencesReader(merges[i]);
+                    streams[i] = new ByteSequencesReader(merges.ElementAt(i));
                     byte[] line = streams[i].Read();
                     if (line != null)
                     {
@@ -528,7 +530,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Constructs a ByteSequencesWriter to the provided File </summary>
             public ByteSequencesWriter(FileInfo file)
-                : this(new BinaryWriterDataOutput(new BinaryWriter(new FileStream(file.FullName, FileMode.OpenOrCreate))))
+                : this(new BinaryWriterDataOutput(new BinaryWriter(new FileStream(file.FullName, FileMode.Open))))
             {
             }
 

@@ -134,43 +134,41 @@ namespace Lucene.Net.Analysis.Hunspell
             this.needsOutputCleaning = false; // set if we have an OCONV
             flagLookup.Add(new BytesRef()); // no flags -> ord 0
 
-            FileInfo aff = new FileInfo(System.IO.Path.Combine(tempDir.FullName, "affix.aff"));
-            using (Stream @out = aff.Create())
+            FileInfo aff = FileSupport.CreateTempFile("affix", "aff", tempDir);
+            using (Stream @out = aff.Open(FileMode.Open, FileAccess.ReadWrite))
             {
-                Stream aff1 = null;
-                Stream aff2 = null;
-                try
-                {
-                    // copy contents of affix stream to temp file
-                    byte[] buffer = new byte[1024 * 8];
-                    int len;
-                    while ((len = affix.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        @out.Write(buffer, 0, len);
-                    }
-                    @out.Close(); // LUCENENET: Release the file handle - we dispose @out later
+                // copy contents of affix stream to temp file
+                affix.CopyTo(@out);
+            }
 
-                    // pass 1: get encoding
-                    aff1 = File.OpenRead(aff.FullName);
-                    string encoding = GetDictionaryEncoding(aff1);
+            // pass 1: get encoding
+            string encoding;
+            using (Stream aff1 = aff.Open(FileMode.Open, FileAccess.Read))
+            {
+                encoding = GetDictionaryEncoding(aff1);
+            }
 
-                    // pass 2: parse affixes
-                    Encoding decoder = GetSystemEncoding(encoding);
-                    aff2 = File.OpenRead(aff.FullName);
-                    ReadAffixFile(aff2, decoder);
+            // pass 2: parse affixes
+            Encoding decoder = GetSystemEncoding(encoding);
+            using (Stream aff2 = aff.Open(FileMode.Open, FileAccess.Read))
+            {
+                ReadAffixFile(aff2, decoder);
+            }
 
-                    // read dictionary entries
-                    IntSequenceOutputs o = IntSequenceOutputs.Singleton;
-                    Builder<IntsRef> b = new Builder<IntsRef>(FST.INPUT_TYPE.BYTE4, o);
-                    ReadDictionaryFiles(dictionaries, decoder, b);
-                    words = b.Finish();
-                    aliases = null; // no longer needed
-                }
-                finally
-                {
-                    IOUtils.CloseWhileHandlingException(aff1, aff2);
-                    aff.Delete();
-                }
+            // read dictionary entries
+            IntSequenceOutputs o = IntSequenceOutputs.Singleton;
+            Builder<IntsRef> b = new Builder<IntsRef>(FST.INPUT_TYPE.BYTE4, o);
+            ReadDictionaryFiles(dictionaries, decoder, b);
+            words = b.Finish();
+            aliases = null; // no longer needed
+
+            try
+            {
+                aff.Delete();
+            }
+            catch
+            {
+                // ignore
             }
         }
 
@@ -744,10 +742,8 @@ namespace Lucene.Net.Analysis.Hunspell
 
             StringBuilder sb = new StringBuilder();
 
-            FileInfo unsorted = new FileInfo(System.IO.Path.Combine(tempDir.FullName, "unsorted.dat"));
-            OfflineSorter.ByteSequencesWriter writer = new OfflineSorter.ByteSequencesWriter(unsorted);
-            bool success = false;
-            try
+            FileInfo unsorted = FileSupport.CreateTempFile("unsorted", "dat", tempDir);
+            using (OfflineSorter.ByteSequencesWriter writer = new OfflineSorter.ByteSequencesWriter(unsorted))
             {
                 foreach (Stream dictionary in dictionaries)
                 {
@@ -784,113 +780,115 @@ namespace Lucene.Net.Analysis.Hunspell
                         }
                     }
                 }
-                success = true;
             }
-            finally
-            {
-                if (success)
-                {
-                    IOUtils.Close(writer);
-                }
-                else
-                {
-                    IOUtils.CloseWhileHandlingException(writer);
-                }
-            }
-            FileInfo sorted = new FileInfo(System.IO.Path.Combine(tempDir.FullName, "sorted.dat"));
-            using (var temp = sorted.Create()) { }
+
+            FileInfo sorted = FileSupport.CreateTempFile("sorted", "dat", tempDir);
 
             OfflineSorter sorter = new OfflineSorter(new ComparatorAnonymousInnerClassHelper(this));
             sorter.Sort(unsorted, sorted);
-            unsorted.Delete();
-
-            OfflineSorter.ByteSequencesReader reader = new OfflineSorter.ByteSequencesReader(sorted);
-            BytesRef scratchLine = new BytesRef();
-
-            // TODO: the flags themselves can be double-chars (long) or also numeric
-            // either way the trick is to encode them as char... but they must be parsed differently
-
-            string currentEntry = null;
-            IntsRef currentOrds = new IntsRef();
-
-            string line2;
-            while (reader.Read(scratchLine))
+            try
             {
-                line2 = scratchLine.Utf8ToString();
-                string entry;
-                char[] wordForm;
-
-                int flagSep = line2.LastIndexOf(FLAG_SEPARATOR);
-                if (flagSep == -1)
-                {
-                    wordForm = NOFLAGS;
-                    entry = line2;
-                }
-                else
-                {
-                    // note, there can be comments (morph description) after a flag.
-                    // we should really look for any whitespace: currently just tab and space
-                    int end = line2.IndexOf('\t', flagSep);
-                    if (end == -1)
-                    {
-                        end = line2.Length;
-                    }
-                    int end2 = line2.IndexOf(' ', flagSep);
-                    if (end2 == -1)
-                    {
-                        end2 = line2.Length;
-                    }
-                    end = Math.Min(end, end2);
-
-                    string flagPart = line2.Substring(flagSep + 1, end - (flagSep + 1));
-                    if (aliasCount > 0)
-                    {
-                        flagPart = GetAliasValue(int.Parse(flagPart, CultureInfo.InvariantCulture));
-                    }
-
-                    wordForm = flagParsingStrategy.ParseFlags(flagPart);
-                    Array.Sort(wordForm);
-                    entry = line2.Substring(0, flagSep - 0);
-                }
-                // LUCENENET NOTE: CompareToOrdinal is an extension method that works similarly to
-                // Java's String.compareTo method.
-                int cmp = currentEntry == null ? 1 : entry.CompareToOrdinal(currentEntry);
-                if (cmp < 0)
-                {
-                    throw new System.ArgumentException("out of order: " + entry + " < " + currentEntry);
-                }
-                else
-                {
-                    EncodeFlags(flagsScratch, wordForm);
-                    int ord = flagLookup.Add(flagsScratch);
-                    if (ord < 0)
-                    {
-                        // already exists in our hash
-                        ord = (-ord) - 1;
-                    }
-                    // finalize current entry, and switch "current" if necessary
-                    if (cmp > 0 && currentEntry != null)
-                    {
-                        Lucene.Net.Util.Fst.Util.ToUTF32(currentEntry, scratchInts);
-                        words.Add(scratchInts, currentOrds);
-                    }
-                    // swap current
-                    if (cmp > 0 || currentEntry == null)
-                    {
-                        currentEntry = entry;
-                        currentOrds = new IntsRef(); // must be this way
-                    }
-                    currentOrds.Grow(currentOrds.Length + 1);
-                    currentOrds.Ints[currentOrds.Length++] = ord;
-                }
+                unsorted.Delete();
+            }
+            catch
+            {
+                // ignore
             }
 
-            // finalize last entry
-            Lucene.Net.Util.Fst.Util.ToUTF32(currentEntry, scratchInts);
-            words.Add(scratchInts, currentOrds);
+            using (OfflineSorter.ByteSequencesReader reader = new OfflineSorter.ByteSequencesReader(sorted))
+            {
+                BytesRef scratchLine = new BytesRef();
 
-            reader.Dispose();
-            sorted.Delete();
+                // TODO: the flags themselves can be double-chars (long) or also numeric
+                // either way the trick is to encode them as char... but they must be parsed differently
+
+                string currentEntry = null;
+                IntsRef currentOrds = new IntsRef();
+
+                string line2;
+                while (reader.Read(scratchLine))
+                {
+                    line2 = scratchLine.Utf8ToString();
+                    string entry;
+                    char[] wordForm;
+
+                    int flagSep = line2.LastIndexOf(FLAG_SEPARATOR);
+                    if (flagSep == -1)
+                    {
+                        wordForm = NOFLAGS;
+                        entry = line2;
+                    }
+                    else
+                    {
+                        // note, there can be comments (morph description) after a flag.
+                        // we should really look for any whitespace: currently just tab and space
+                        int end = line2.IndexOf('\t', flagSep);
+                        if (end == -1)
+                        {
+                            end = line2.Length;
+                        }
+                        int end2 = line2.IndexOf(' ', flagSep);
+                        if (end2 == -1)
+                        {
+                            end2 = line2.Length;
+                        }
+                        end = Math.Min(end, end2);
+
+                        string flagPart = line2.Substring(flagSep + 1, end - (flagSep + 1));
+                        if (aliasCount > 0)
+                        {
+                            flagPart = GetAliasValue(int.Parse(flagPart, CultureInfo.InvariantCulture));
+                        }
+
+                        wordForm = flagParsingStrategy.ParseFlags(flagPart);
+                        Array.Sort(wordForm);
+                        entry = line2.Substring(0, flagSep - 0);
+                    }
+                    // LUCENENET NOTE: CompareToOrdinal is an extension method that works similarly to
+                    // Java's String.compareTo method.
+                    int cmp = currentEntry == null ? 1 : entry.CompareToOrdinal(currentEntry);
+                    if (cmp < 0)
+                    {
+                        throw new System.ArgumentException("out of order: " + entry + " < " + currentEntry);
+                    }
+                    else
+                    {
+                        EncodeFlags(flagsScratch, wordForm);
+                        int ord = flagLookup.Add(flagsScratch);
+                        if (ord < 0)
+                        {
+                            // already exists in our hash
+                            ord = (-ord) - 1;
+                        }
+                        // finalize current entry, and switch "current" if necessary
+                        if (cmp > 0 && currentEntry != null)
+                        {
+                            Lucene.Net.Util.Fst.Util.ToUTF32(currentEntry, scratchInts);
+                            words.Add(scratchInts, currentOrds);
+                        }
+                        // swap current
+                        if (cmp > 0 || currentEntry == null)
+                        {
+                            currentEntry = entry;
+                            currentOrds = new IntsRef(); // must be this way
+                        }
+                        currentOrds.Grow(currentOrds.Length + 1);
+                        currentOrds.Ints[currentOrds.Length++] = ord;
+                    }
+                }
+
+                // finalize last entry
+                Lucene.Net.Util.Fst.Util.ToUTF32(currentEntry, scratchInts);
+                words.Add(scratchInts, currentOrds);
+            }
+            try
+            {
+                sorted.Delete();
+            }
+            catch
+            {
+                // ignore
+            }
         }
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<BytesRef>
