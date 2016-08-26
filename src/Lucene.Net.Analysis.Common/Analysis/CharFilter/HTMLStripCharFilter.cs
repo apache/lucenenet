@@ -30879,7 +30879,7 @@ namespace Lucene.Net.Analysis.CharFilters
             for (; i < len; ++i)
             {
                 int ch = Read();
-                if (ch <= 0) break;
+                if (ch == -1) break;
                 cbuf[off++] = (char)ch;
             }
             return i > 0 ? i : (len == 0 ? 0 : -1);
@@ -31006,7 +31006,7 @@ namespace Lucene.Net.Analysis.CharFilters
             if (numRead == 0)
             {
                 int c = zzReader.Read();
-                if (c <= 0)
+                if (c == -1)
                 {
                     return true;
                 }
