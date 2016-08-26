@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Pattern
             this.patterns = patterns;
             for (int i = 0; i < patterns.Length; i++)
             {
-                this.groupCounts[i] = patterns[0].GetGroupNumbers().Length;
+                this.groupCounts[i] = patterns[i].GetGroupNumbers().Length;
                 this.currentGroup[i] = -1;
                 this.matchers[i] = null; // Reset to null so we can tell we are at the head of the chain
             }
@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Pattern
                 if (currentGroup[i] == -1)
                 {
                     if (matchers[i] == null)
-                        matchers[i] = patterns[i].Match(new string(spare.Chars)); 
+                        matchers[i] = patterns[i].Match(new string(spare.Chars, spare.Offset, spare.Length)); 
                     else
                         matchers[i] = matchers[i].NextMatch();
                     currentGroup[i] = matchers[i].Success ? 1 : 0;
