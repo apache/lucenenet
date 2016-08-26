@@ -874,7 +874,7 @@ namespace Lucene.Net.Analysis
                 {
                     // TODO: we can make ascii easier to read if we
                     // don't escape...
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, "\\u%04x", c));
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "\\u{0:x4}", c);
                 }
                 charUpto++;
             }
