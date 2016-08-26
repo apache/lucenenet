@@ -34,10 +34,11 @@ namespace Lucene.Net.Analysis.Tr
     public sealed class TurkishLowerCaseFilter : TokenFilter
     {
         private const int LATIN_CAPITAL_LETTER_I = '\u0049';
-        //private const int LATIN_CAPITAL_LETTER_I = '\u0130';
+        private const int LATIN_CAPITAL_LETTER_DOTTED_I = '\u0130';
         private const int LATIN_SMALL_LETTER_I = '\u0069';
         private const int LATIN_SMALL_LETTER_DOTLESS_I = '\u0131';
         private const int COMBINING_DOT_ABOVE = '\u0307';
+
         private readonly ICharTermAttribute termAtt;
 
         /// <summary>
@@ -62,12 +63,6 @@ namespace Lucene.Net.Analysis.Tr
                 int length = termAtt.Length;
                 for (int i = 0; i < length;)
                 {
-
-                    // LUCENENET TODO: This line is failing, causing the TestTurkishLowerCaseFilter() test to fail. According to the MSDN documentation
-                    // https://msdn.microsoft.com/en-us/library/system.globalization.unicodecategory(v=vs.110).aspx
-                    // a non-spacing mark is a modifier to a character. This logic is expecting the first codepoint to be an upper case Latin I,
-                    // and the second to be a non-spacing mark, but it is coming back as a single codepoint 304 that doesn't match Latin I.
-                    // Also, char.GetUnicodeCategory((char)304) returns UpperCaseLetter (not sure if that is pertinent).
                     int ch = Character.CodePointAt(buffer, i, length);
 
                     iOrAfter = (ch == LATIN_CAPITAL_LETTER_I || (iOrAfter && char.GetUnicodeCategory((char)ch) == UnicodeCategory.NonSpacingMark));
@@ -95,6 +90,31 @@ namespace Lucene.Net.Analysis.Tr
                                     iOrAfter = false;
                                 }
                                 i++;
+                                continue;
+                        }
+                    }
+
+                    using (var culture = new CultureContext("tr-TR"))
+                    {
+                        switch (ch)
+                        {
+                            // LUCENENET: The .NET char.ToLower() function works correctly in 
+                            // Turkish as long as the current thread is set to tr-TR (well, technically the 
+                            // culture change is only required for the LATIN_CAPITAL_LETTER_I case). .NET does 
+                            // not split these characters into separate letter/non-spacing mark characters,
+                            // but the user might still input them that way so we still need the above
+                            // block to handle that case.
+                            //
+                            // LUCENENET TODO: Oddly, the Character.ToLowerCase() function below does not work right
+                            // for Turkish. Which begs the question, should this special case be there so Turkish works
+                            // everywhere? Or should we leave it a special case here because that is the way it works in Java?
+                            //
+                            // References:
+                            // http://haacked.com/archive/2012/07/05/turkish-i-problem-and-why-you-should-care.aspx/
+                            // http://www.i18nguy.com/unicode/turkish-i18n.html
+                            case LATIN_CAPITAL_LETTER_I:
+                            case LATIN_CAPITAL_LETTER_DOTTED_I:
+                                i += Character.ToChars(char.ToLower((char)ch), buffer, i);
                                 continue;
                         }
                     }
