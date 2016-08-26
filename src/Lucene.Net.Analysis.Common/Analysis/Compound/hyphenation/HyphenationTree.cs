@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -40,7 +41,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <summary>
         /// This map stores hyphenation exceptions
         /// </summary>
-        protected internal Dictionary<string, List<object>> stoplist;
+        protected internal IDictionary<string, IList<object>> stoplist;
 
         /// <summary>
         /// This map stores the character classes
@@ -55,7 +56,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public HyphenationTree()
         {
-            stoplist = new Dictionary<string, List<object>>(23); // usually a small table
+            stoplist = new HashMap<string, IList<object>>(23); // usually a small table
             classmap = new TernaryTree();
             vspace = new ByteVector();
             vspace.Alloc(1); // this reserves index 0, which we don't use
@@ -234,7 +235,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             sbyte v = vspace[k++];
             while (v != 0)
             {
-                char c = (char)(((int)((uint)v >> 4)) - 1);
+                char c = (char)((((int)((uint)v >> 4))) - 1);
                 buf.Append(c);
                 c = (char)(v & 0x0f);
                 if (c == 0)
@@ -453,7 +454,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no =
                 // null)
-                List<object> hw = stoplist[sw];
+                IList<object> hw = stoplist[sw];
                 int j = 0;
                 for (i = 0; i < hw.Count; i++)
                 {

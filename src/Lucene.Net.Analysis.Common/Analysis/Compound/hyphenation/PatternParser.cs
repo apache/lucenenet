@@ -237,7 +237,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     break;
                 }
             }
-            token.Append(chars.ToString(0, i));
+            token.Append(chars.ToString(0, i - 0));
             // chars.delete(0,i);
             for (int countr = i; countr < chars.Length; countr++)
             {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 token.Length = 0;
                 return word;
             }
-            token.Append(chars);
+            token.Append(chars.ToString());
             return null;
         }
 
@@ -360,7 +360,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
             {
                 string dtdFilename = "hyphenation.dtd";
-                if (dtdFilename.Equals(absoluteUri.Segments.LastOrDefault()))
+                if (dtdFilename.Equals(absoluteUri.Segments.LastOrDefault(), StringComparison.OrdinalIgnoreCase))
                 {
                     var qualifedDtdFilename = string.Concat(GetType().Namespace, ".", dtdFilename);
                     return GetType().Assembly.GetManifestResourceStream(qualifedDtdFilename);
@@ -415,7 +415,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         ///      java.lang.String, java.lang.String) </seealso>
         public void EndElement(string uri, string local, string raw)
         {
-
             if (token.Length > 0)
             {
                 string word = token.ToString();
@@ -449,7 +448,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             {
                 currElement = 0;
             }
-
         }
 
         /// <seealso cref= org.xml.sax.ContentHandler#characters(char[], int, int) </seealso>
@@ -458,7 +456,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             StringBuilder chars = new StringBuilder(length);
             chars.Append(ch, start, length);
             string word = ReadToken(chars);
-            while (!string.IsNullOrEmpty(word))
+            while (word != null)
             {
                 // System.out.println("\"" + word + "\"");
                 switch (currElement)
