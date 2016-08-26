@@ -93,6 +93,7 @@
     <Compile Include="Analysis\Core\TestDuelingAnalyzers.cs" />
     <Compile Include="Analysis\Core\TestFactories.cs" />
     <Compile Include="Analysis\Core\TestKeywordAnalyzer.cs" />
+    <Compile Include="Analysis\Core\TestRandomChains.cs" />
     <Compile Include="Analysis\Core\TestStandardAnalyzer.cs" />
     <Compile Include="Analysis\Core\TestStopAnalyzer.cs">
       <SubType>Code</SubType>

@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Core
 
             public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                Tokenizer t = new MockTokenizer(new /* TestRandomChains. */ CheckThatYouDidntReadAnythingReaderWrapper(reader), MockTokenFilter.ENGLISH_STOPSET, false, -65);
+                Tokenizer t = new MockTokenizer(new TestRandomChains.CheckThatYouDidntReadAnythingReaderWrapper(reader), MockTokenFilter.ENGLISH_STOPSET, false, -65);
                 TokenFilter f = new CommonGramsFilter(TEST_VERSION_CURRENT, t, cas);
                 return new TokenStreamComponents(t, f);
             }
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestWrapping()
         {
-            CharFilter cs = new /* TestRandomChains. */ CheckThatYouDidntReadAnythingReaderWrapper(wrappedStream);
+            CharFilter cs = new TestRandomChains.CheckThatYouDidntReadAnythingReaderWrapper(wrappedStream);
             try
             {
                 cs.Mark(1);
@@ -359,78 +359,6 @@ namespace Lucene.Net.Analysis.Core
                 stream = new WordDelimiterFilter(TEST_VERSION_CURRENT, stream, table, -50, protWords);
                 stream = new SopTokenFilter(stream);
                 return new TokenStreamComponents(tokenizer, stream);
-            }
-        }
-
-
-
-        // LUCENENET NOTE: Borrowed this class from the TestRandomChains class. It was in a commented section
-        // that said "ignore". But it is required for this test. If/when TestRandomChains is ported, we can
-        // use it there.
-        private class CheckThatYouDidntReadAnythingReaderWrapper : CharFilter
-        {
-            bool readSomething;
-
-            public CheckThatYouDidntReadAnythingReaderWrapper(TextReader @in)
-                : base(@in)
-            { }
-
-            private CharFilter Input
-            {
-                get { return (CharFilter)this.input; }
-            }
-
-            protected override int Correct(int currentOff)
-            {
-                return currentOff; // we don't change any offsets
-            }
-
-            public override int Read(char[] cbuf, int off, int len)
-            {
-                readSomething = true;
-                return input.Read(cbuf, off, len);
-            }
-
-            public override int Read()
-            {
-                readSomething = true;
-                return input.Read();
-            }
-
-            // LUCENENET: TextReader dosn't support this overload 
-            //public int read(char[] cbuf)
-            //{
-            //    readSomething = true;
-            //    return input.read(cbuf);
-            //}
-
-            public override long Skip(int n)
-            {
-                readSomething = true;
-                return Input.Skip(n);
-            }
-
-            public override void Mark(int readAheadLimit)
-            {
-                Input.Mark(readAheadLimit);
-            }
-
-            public override bool IsMarkSupported
-            {
-                get
-                {
-                    return Input.IsMarkSupported;
-                }
-            }
-
-            public override bool Ready()
-            {
-                return Input.Ready();
-            }
-
-            public override void Reset()
-            {
-                Input.Reset();
             }
         }
     }
