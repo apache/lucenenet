@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis
     /// <summary>
     /// base test class for testing Unicode collation.
     /// </summary>
-    public abstract class CollationTestbase : LuceneTestCase
+    public abstract class CollationTestBase : LuceneTestCase
     {
         protected internal string FirstRangeBeginningOriginal = "\u062F";
         protected internal string FirstRangeEndOriginal = "\u0698";
@@ -306,12 +306,12 @@ namespace Lucene.Net.Analysis
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly CollationTestbase OuterInstance;
+            private readonly CollationTestBase OuterInstance;
 
             private Analyzer Analyzer;
             private Dictionary<string, BytesRef> Map;
 
-            public ThreadAnonymousInnerClassHelper(CollationTestbase outerInstance, Analyzer analyzer, Dictionary<string, BytesRef> map)
+            public ThreadAnonymousInnerClassHelper(CollationTestBase outerInstance, Analyzer analyzer, Dictionary<string, BytesRef> map)
             {
                 this.OuterInstance = outerInstance;
                 this.Analyzer = analyzer;

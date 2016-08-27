@@ -1,35 +1,33 @@
-﻿using System;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 using Lucene.Net.Util;
-using org.apache.lucene.collation.tokenattributes;
 
-namespace Lucene.Net.Collation
+namespace Lucene.Net.Analysis.Collation
 {
-
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-    /// <summary>
+	/// <summary>
 	/// <para>
-	///   Converts each token into its <seealso cref="java.text.CollationKey"/>, and then
+	///   Converts each token into its <seealso cref="CollationKey"/>, and then
 	///   encodes the bytes as an index term.
 	/// </para>
 	/// <para>
 	///   <strong>WARNING:</strong> Make sure you use exactly the same Collator at
 	///   index and query time -- CollationKeys are only comparable when produced by
-	///   the same Collator.  Since <seealso cref="java.text.RuleBasedCollator"/>s are not
+	///   the same Collator.  Since <seealso cref="RuleBasedCollator"/>s are not
 	///   independently versioned, it is unsafe to search against stored
 	///   CollationKeys unless the following are exactly the same (best practice is
 	///   to store this information with the index and check that they remain the
@@ -41,7 +39,7 @@ namespace Lucene.Net.Collation
 	///   <li>
 	///     The language (and country and variant, if specified) of the Locale
 	///     used when constructing the collator via
-	///     <seealso cref="Collator#getInstance(java.util.Locale)"/>.
+	///     <seealso cref="Collator#getInstance(Locale)"/>.
 	///   </li>
 	///   <li>
 	///     The collation strength used - see <seealso cref="Collator#setStrength(int)"/>
@@ -67,33 +65,34 @@ namespace Lucene.Net.Collation
 	/// </summary>
 	public class CollationAttributeFactory : AttributeSource.AttributeFactory
 	{
-	  private readonly Collator collator;
-	  private readonly AttributeSource.AttributeFactory @delegate;
+		private readonly Collator collator;
+		private readonly AttributeSource.AttributeFactory @delegate;
 
-	  /// <summary>
-	  /// Create a CollationAttributeFactory, using 
-	  /// <seealso cref="org.apache.lucene.util.AttributeSource.AttributeFactory#DEFAULT_ATTRIBUTE_FACTORY"/> as the
-	  /// factory for all other attributes. </summary>
-	  /// <param name="collator"> CollationKey generator </param>
-	  public CollationAttributeFactory(Collator collator) : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, collator)
-	  {
-	  }
+		/// <summary>
+		/// Create a CollationAttributeFactory, using 
+		/// <seealso cref="AttributeSource.AttributeFactory#DEFAULT_ATTRIBUTE_FACTORY"/> as the
+		/// factory for all other attributes. </summary>
+		/// <param name="collator"> CollationKey generator </param>
+		public CollationAttributeFactory(Collator collator) : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, collator)
+		{
+		}
 
-	  /// <summary>
-	  /// Create a CollationAttributeFactory, using the supplied Attribute Factory 
-	  /// as the factory for all other attributes. </summary>
-	  /// <param name="delegate"> Attribute Factory </param>
-	  /// <param name="collator"> CollationKey generator </param>
-	  public CollationAttributeFactory(AttributeSource.AttributeFactory @delegate, Collator collator)
-	  {
-		this.@delegate = @delegate;
-		this.collator = collator;
-	  }
+		/// <summary>
+		/// Create a CollationAttributeFactory, using the supplied Attribute Factory 
+		/// as the factory for all other attributes. </summary>
+		/// <param name="delegate"> Attribute Factory </param>
+		/// <param name="collator"> CollationKey generator </param>
+		public CollationAttributeFactory(AttributeSource.AttributeFactory @delegate, Collator collator)
+		{
+			this.@delegate = @delegate;
+			this.collator = collator;
+		}
 
-	  public override AttributeImpl CreateAttributeInstance(Type attClass)
-	  {
-		return typeof(CollatedTermAttributeImpl).IsSubclassOf(attClass) ? new CollatedTermAttributeImpl(collator) : @delegate.createAttributeInstance(attClass);
-	  }
+		public override Attribute CreateAttributeInstance<T>()
+		{
+			return typeof(CollatedTermAttributeImpl).IsSubclassOf(typeof(T))
+				? new CollatedTermAttributeImpl(this.collator)
+				: this.@delegate.CreateAttributeInstance<T>();
+		}
 	}
-
 }

@@ -1,40 +1,36 @@
-﻿using System;
+﻿/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System;
 using System.IO;
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Collation;
+using Lucene.Net.Util;
 
-namespace Lucene.Net.Collation
+namespace Lucene.Net.Analysis.Collation
 {
-
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-
-
-    // javadoc @link
-
-
-    /// <summary>
+	/// <summary>
 	/// <para>
 	///   Configures <seealso cref="KeywordTokenizer"/> with <seealso cref="CollationAttributeFactory"/>.
 	/// </para>
 	/// <para>
 	///   Converts the token into its <seealso cref="java.text.CollationKey"/>, and then
 	///   encodes the CollationKey either directly or with 
-	///   <seealso cref="Util.IndexableBinaryStringTools"/> (see <a href="#version">below</a>), to allow 
+	///   <seealso cref="IndexableBinaryStringTools"/> (see <a href="#version">below</a>), to allow 
 	///   it to be stored as an index term.
 	/// </para>
 	/// <para>
@@ -86,42 +82,39 @@ namespace Lucene.Net.Collation
 	/// </summary>
 	public sealed class CollationKeyAnalyzer : Analyzer
 	{
-	  private readonly Collator collator;
-	  private readonly CollationAttributeFactory factory;
-	  private readonly Version matchVersion;
+		private readonly Collator collator;
+		private readonly CollationAttributeFactory factory;
+		private readonly LuceneVersion matchVersion;
 
-	  /// <summary>
-	  /// Create a new CollationKeyAnalyzer, using the specified collator.
-	  /// </summary>
-	  /// <param name="matchVersion"> See <a href="#version">above</a> </param>
-	  /// <param name="collator"> CollationKey generator </param>
-	  public CollationKeyAnalyzer(Version matchVersion, Collator collator)
-	  {
-		this.matchVersion = matchVersion;
-		this.collator = collator;
-		this.factory = new CollationAttributeFactory(collator);
-	  }
-
-	  /// @deprecated Use <seealso cref="CollationKeyAnalyzer#CollationKeyAnalyzer(Version, Collator)"/>
-	  ///   and specify a version instead. This ctor will be removed in Lucene 5.0 
-	  [Obsolete("Use <seealso cref=\"CollationKeyAnalyzer#CollationKeyAnalyzer(org.apache.lucene.util.Version, java.text.Collator)\"/>")]
-	  public CollationKeyAnalyzer(Collator collator) : this(Version.LUCENE_31, collator)
-	  {
-	  }
-
-        public override Analyzer.TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-	  {
-		if (matchVersion.OnOrAfter(Version.LUCENE_40))
+		/// <summary>
+		/// Create a new CollationKeyAnalyzer, using the specified collator.
+		/// </summary>
+		/// <param name="matchVersion"> See <a href="#version">above</a> </param>
+		/// <param name="collator"> CollationKey generator </param>
+		public CollationKeyAnalyzer(LuceneVersion matchVersion, Collator collator)
 		{
-		  KeywordTokenizer tokenizer = new KeywordTokenizer(factory, reader, KeywordTokenizer.DEFAULT_BUFFER_SIZE);
-		  return new TokenStreamComponents(tokenizer, tokenizer);
+			this.matchVersion = matchVersion;
+			this.collator = collator;
+			this.factory = new CollationAttributeFactory(collator);
 		}
-		else
+		
+		[Obsolete("Use <seealso cref=\"CollationKeyAnalyzer#CollationKeyAnalyzer(LuceneVersion, Collator)\"/> and specify a version instead. This ctor will be removed in Lucene 5.0")]
+		public CollationKeyAnalyzer(Collator collator) : this(LuceneVersion.LUCENE_31, collator)
 		{
-		  KeywordTokenizer tokenizer = new KeywordTokenizer(reader);
-		  return new TokenStreamComponents(tokenizer, new CollationKeyFilter(tokenizer, collator));
 		}
-	  }
+
+		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		{
+			if (this.matchVersion.OnOrAfter(LuceneVersion.LUCENE_40))
+			{
+				var tokenizer = new KeywordTokenizer(this.factory, reader, KeywordTokenizer.DEFAULT_BUFFER_SIZE);
+				return new TokenStreamComponents(tokenizer, tokenizer);
+			}
+			else
+			{
+				var tokenizer = new KeywordTokenizer(reader);
+				return new TokenStreamComponents(tokenizer, new CollationKeyFilter(tokenizer, this.collator));
+			}
+		}
 	}
-
 }
