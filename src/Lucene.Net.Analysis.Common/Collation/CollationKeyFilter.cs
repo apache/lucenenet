@@ -17,6 +17,7 @@
 
 using System;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Collation;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 
@@ -43,7 +44,7 @@ namespace Lucene.Net.Collation
 	///   <li>
 	///     The language (and country and variant, if specified) of the Locale
 	///     used when constructing the collator via
-	///     <seealso cref="Collator#getInstance(java.util.Locale)"/>.
+	///     <seealso cref="Collator#getInstance(CultureInfo)"/>.
 	///   </li>
 	///   <li>
 	///     The collation strength used - see <seealso cref="Collator#setStrength(int)"/>
@@ -78,9 +79,7 @@ namespace Lucene.Net.Collation
 		/// <param name="collator"> CollationKey generator </param>
 		public CollationKeyFilter(TokenStream input, Collator collator) : base(input)
 		{
-			// clone in case JRE doesnt properly sync,
-			// or to reduce contention in case they do
-			this.collator = (Collator)collator.clone();
+			this.collator = collator;
 			this.termAtt = this.AddAttribute<ICharTermAttribute>();
 		}
 
@@ -88,7 +87,7 @@ namespace Lucene.Net.Collation
 		{
 			if (this.input.IncrementToken())
 			{
-				var collationKey = this.collator.GetCollationKey(this.termAtt.ToString()).toByteArray();
+				var collationKey = this.collator.GetCollationKey(this.termAtt.ToString()).KeyData.ToSByteArray();
 				var encodedLength = IndexableBinaryStringTools.GetEncodedLength(collationKey, 0, collationKey.Length);
 				this.termAtt.ResizeBuffer(encodedLength);
 				this.termAtt.Length = encodedLength;
@@ -103,4 +102,20 @@ namespace Lucene.Net.Collation
 		}
 	}
 
+	internal static class ByteArrayExtentions
+	{
+		internal static byte[] ToByteArray(this sbyte[] arr)
+		{
+			var unsigned = new byte[arr.Length];
+			System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
+			return unsigned;
+		}
+
+		internal static sbyte[] ToSByteArray(this byte[] arr)
+		{
+			var unsigned = new sbyte[arr.Length];
+			System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
+			return unsigned;
+		}
+	}
 }

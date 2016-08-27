@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Collation
 
 		public override Attribute CreateAttributeInstance<T>()
 		{
-			return typeof(CollatedTermAttributeImpl).IsSubclassOf(typeof(T))
+			return typeof(T).IsAssignableFrom(typeof(CollatedTermAttributeImpl))
 				? new CollatedTermAttributeImpl(this.collator)
 				: this.@delegate.CreateAttributeInstance<T>();
 		}

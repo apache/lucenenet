@@ -34,13 +34,15 @@ namespace Lucene.Net.Analysis.Collation
 		{
 			// clone in case JRE doesn't properly sync,
 			// or to reduce contention in case they do
-			this.collator = (Collator)collator.clone();
+			this.collator = collator;
 		}
 
 		public override void FillBytesRef()
 		{
 			var bytes = this.BytesRef;
-			bytes.Bytes = this.collator.getCollationKey(this.ToString()).toByteArray();
+
+			//TODO: Verify that this is correct. Java's byte[] is signed and Big Endian, .NET's is unsigned and Little Endian.
+			bytes.Bytes = this.collator.GetCollationKey(this.ToString()).KeyData;
 			bytes.Offset = 0;
 			bytes.Length = bytes.Bytes.Length;
 		}

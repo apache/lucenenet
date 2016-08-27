@@ -17,10 +17,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
-using ICU4NET;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Collation;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 
@@ -64,7 +65,7 @@ namespace Lucene.Net.Collation
 	/// </para>
 	/// </summary>
 	/// <seealso cref="Collator"></seealso>
-	/// <seealso cref="Locale"></seealso>
+	/// <seealso cref="CultureInfo"></seealso>
 	/// <seealso cref="RuleBasedCollator">
 	/// @since solr 3.1 </seealso>
 	/// @deprecated use <seealso cref="CollationKeyAnalyzer"/> instead. 
@@ -72,12 +73,13 @@ namespace Lucene.Net.Collation
 	public class CollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
 	{
 		private Collator collator;
-		private readonly string custom;
-		private readonly string language;
-		private readonly string country;
-		private readonly string variant;
-		private readonly string strength;
-		private readonly string decomposition;
+		private readonly String custom;
+		private readonly String language;
+		private readonly String country;
+		private readonly String culture;
+		private readonly String variant;
+		private readonly String strength;
+		private readonly String decomposition;
 
 		public CollationKeyFilterFactory(IDictionary<string, string> args) : base(args)
 		{
@@ -109,12 +111,12 @@ namespace Lucene.Net.Collation
 			if (this.language != null)
 			{
 				// create from a system collator, based on Locale.
-				this.collator = this.CreateFromLocale(this.language, this.country, this.variant);
+				this.collator = this.CreateFromLocale(this.culture);
 			}
 			else
 			{
 				// create from a custom ruleset
-				this.collator = this.CreateFromRules(this.custom, loader);
+				//this.collator = this.CreateFromRules(this.custom, loader);
 			}
 
 			// set the strength flag, otherwise it will be the default.
@@ -122,19 +124,19 @@ namespace Lucene.Net.Collation
 			{
 				if (this.strength.Equals("primary", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Strength = Collator.PRIMARY;
+					this.collator.Strength = Collator.Primary;
 				}
 				else if (this.strength.Equals("secondary", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Strength = Collator.SECONDARY;
+					this.collator.Strength = Collator.Secondary;
 				}
 				else if (this.strength.Equals("tertiary", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Strength = Collator.TERTIARY;
+					this.collator.Strength = Collator.Tertiary;
 				}
 				else if (this.strength.Equals("identical", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Strength = Collator.IDENTICAL;
+					this.collator.Strength = Collator.Identical;
 				}
 				else
 				{
@@ -147,15 +149,15 @@ namespace Lucene.Net.Collation
 			{
 				if (this.decomposition.Equals("no", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Decomposition = Collator.NO_DECOMPOSITION;
+					this.collator.Decomposition = Collator.NoDecomposition;
 				}
 				else if (this.decomposition.Equals("canonical", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Decomposition = Collator.CANONICAL_DECOMPOSITION;
+					this.collator.Decomposition = Collator.CannonicalDecomposition;
 				}
 				else if (this.decomposition.Equals("full", StringComparison.CurrentCultureIgnoreCase))
 				{
-					this.collator.Decomposition = Collator.FULL_DECOMPOSITION;
+					this.collator.Decomposition = Collator.FullDecomposition;
 				}
 				else
 				{
@@ -173,53 +175,36 @@ namespace Lucene.Net.Collation
 		/// Create a locale from language, with optional country and variant.
 		/// Then return the appropriate collator for the locale.
 		/// </summary>
-		private Collator CreateFromLocale(string language, string country, string variant)
+		private Collator CreateFromLocale(string name)
 		{
-			Locale locale;
+			var locale = CultureInfo.GetCultureInfo(name);
 
-			if (language != null && country == null && variant != null)
-			{
-				throw new ArgumentException("To specify variant, country is required");
-			}
-			else if (language != null && country != null && variant != null)
-			{
-				locale = new Locale(language, country, variant);
-			}
-			else if (language != null && country != null)
-			{
-				locale = new Locale(language, country);
-			}
-			else
-			{
-				locale = new Locale(language);
-			}
-
-			return Collator.getInstance(locale);
+			return Collator.GetInstance(locale);
 		}
 
 		/// <summary>
 		/// Read custom rules from a file, and create a RuleBasedCollator
 		/// The file cannot support comments, as # might be in the rules!
 		/// </summary>
-		private Collator CreateFromRules(string fileName, IResourceLoader loader)
-		{
-			Stream input = null;
-			try
-			{
-				input = loader.OpenResource(fileName);
-				var rules = ToUTF8String(input);
-				return new RuleBasedCollator(rules);
-			}
-			catch (ParseException e)
-			{
-				// invalid rules
-				throw new IOException("ParseException thrown while parsing rules", e);
-			}
-			finally
-			{
-				IOUtils.CloseWhileHandlingException(input);
-			}
-		}
+		//private Collator CreateFromRules(string fileName, IResourceLoader loader)
+		//{
+		//	Stream input = null;
+		//	try
+		//	{
+		//		input = loader.OpenResource(fileName);
+		//		var rules = ToUTF8String(input);
+		//		return new RuleBasedCollator(rules);
+		//	}
+		//	catch (ParseException e)
+		//	{
+		//		// invalid rules
+		//		throw new IOException("ParseException thrown while parsing rules", e);
+		//	}
+		//	finally
+		//	{
+		//		IOUtils.CloseWhileHandlingException(input);
+		//	}
+		//}
 
 		public virtual AbstractAnalysisFactory MultiTermComponent
 		{
@@ -231,17 +216,17 @@ namespace Lucene.Net.Collation
 
 		private static string ToUTF8String(Stream @in)
 		{
-			var sb = new StringBuilder();
+			var builder = new StringBuilder();
 			var buffer = new char[1024];
-			var r = IOUtils.GetDecodingReader(@in, Encoding.UTF8);
-			var len = 0;
-			
-			while ((len = r.Read(buffer)) > 0)
+			var reader = IOUtils.GetDecodingReader(@in, Encoding.UTF8);
+
+			var index = 0;
+			while ((index = reader.Read(buffer, index, 1)) > 0)
 			{
-				sb.Append(buffer, 0, len);
+				builder.Append(buffer, 0, index);
 			}
 
-			return sb.ToString();
+			return builder.ToString();
 		}
 	}
 

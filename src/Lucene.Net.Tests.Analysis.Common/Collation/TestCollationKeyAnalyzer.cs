@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using ICU4NET;
+using System.Globalization;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
@@ -38,10 +38,10 @@ namespace Lucene.Net.Analysis.Collation
 		private void InitializeInstanceFields()
 		{
 			this.analyzer = new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, this.collator);
-			this.firstRangeBeginning = new BytesRef(this.collator.GetCollationKey(this.FirstRangeBeginningOriginal).ToByteArray());
-			this.firstRangeEnd = new BytesRef(this.collator.GetCollationKey(this.FirstRangeEndOriginal).ToByteArray());
-			this.secondRangeBeginning = new BytesRef(this.collator.GetCollationKey(this.SecondRangeBeginningOriginal).ToByteArray());
-			this.secondRangeEnd = new BytesRef(this.collator.GetCollationKey(this.SecondRangeEndOriginal).ToByteArray());
+			this.firstRangeBeginning = new BytesRef(this.collator.GetCollationKey(this.FirstRangeBeginningOriginal).KeyData);
+			this.firstRangeEnd = new BytesRef(this.collator.GetCollationKey(this.FirstRangeEndOriginal).KeyData);
+			this.secondRangeBeginning = new BytesRef(this.collator.GetCollationKey(this.SecondRangeBeginningOriginal).KeyData);
+			this.secondRangeEnd = new BytesRef(this.collator.GetCollationKey(this.SecondRangeEndOriginal).KeyData);
 		}
 
 		/// <summary>
@@ -49,14 +49,14 @@ namespace Lucene.Net.Analysis.Collation
 		/// for the inherited root locale: Ø's order isnt specified in Locale.US since 
 		/// its not used in english.
 		/// </summary>
-		private readonly bool oStrokeFirst = Collator.GetInstance(new Locale("")).compare("Ø", "U") < 0;
+		private readonly bool oStrokeFirst = Collator.GetInstance(CultureInfo.GetCultureInfo("")).Compare("Ø", "U") < 0;
 
 		/// <summary>
 		/// Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
 		/// RuleBasedCollator.  However, the Arabic Locale seems to order the Farsi
 		/// characters properly.
 		/// </summary>
-		private readonly Collator collator = Collator.GetInstance(new Locale("ar"));
+		private readonly Collator collator = Collator.GetInstance(CultureInfo.GetCultureInfo("ar"));
 		private Analyzer analyzer;
 
 		private BytesRef firstRangeBeginning;
@@ -67,9 +67,9 @@ namespace Lucene.Net.Analysis.Collation
 		[Test]
 		public virtual void TestInitVars()
 		{
-			CollationKey sortKey = this.collator.GetCollationKey(this.FirstRangeBeginningOriginal);
-			sbyte[] data = sortKey.ToByteArray();
-			var r = new BytesRef(data);
+			var sortKey = this.collator.GetCollationKey(this.FirstRangeBeginningOriginal);
+			
+			var r = new BytesRef(sortKey.KeyData);
 		}
 
 		[Test]
@@ -93,10 +93,10 @@ namespace Lucene.Net.Analysis.Collation
 		[Test]
 		public virtual void TestCollationKeySort()
 		{
-			Analyzer usAnalyzer = new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, Collator.getInstance(Locale.US));
-			Analyzer franceAnalyzer = new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, Collator.getInstance(Locale.FRANCE));
-			Analyzer swedenAnalyzer = new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, Collator.getInstance(new Locale("sv", "se")));
-			Analyzer denmarkAnalyzer = new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, Collator.getInstance(new Locale("da", "dk")));
+			Analyzer usAnalyzer = new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, Collator.GetInstance(CultureInfo.GetCultureInfo("us")));
+			Analyzer franceAnalyzer = new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, Collator.GetInstance(CultureInfo.GetCultureInfo("fr")));
+			Analyzer swedenAnalyzer = new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, Collator.GetInstance(CultureInfo.GetCultureInfo("sv-SE")));
+			Analyzer denmarkAnalyzer = new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, Collator.GetInstance(CultureInfo.GetCultureInfo("da-DK")));
 
 			// The ICU Collator and Sun java.text.Collator implementations differ in their
 			// orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.
@@ -109,11 +109,10 @@ namespace Lucene.Net.Analysis.Collation
 			var iters = 20 * LuceneTestCase.RANDOM_MULTIPLIER;
 			for (var i = 0; i < iters; i++)
 			{
-				Collator collator = Collator.getInstance(Locale.GERMAN);
-				collator.Strength = Collator.PRIMARY;
+				var collator = Collator.GetInstance(CultureInfo.GetCultureInfo("de"));
+				collator.Strength = Collator.Primary;
 				this.AssertThreadSafe(new CollationKeyAnalyzer(LuceneTestCase.TEST_VERSION_CURRENT, collator));
 			}
 		}
 	}
-
 }

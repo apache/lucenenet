@@ -16,8 +16,8 @@
  */
 
 using System;
+using System.Globalization;
 using System.IO;
-using ICU4NET;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Collation;
 using Lucene.Net.Util;
@@ -43,29 +43,28 @@ namespace Lucene.Net.Analysis.Collation
 		private void InitializeInstanceFields()
 		{
 			this.analyzer = new TestAnalyzer(this, this.collator);
-			this.firstRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.FirstRangeBeginningOriginal).ToByteArray()));
-			this.firstRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.FirstRangeEndOriginal).ToByteArray()));
-			this.secondRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.SecondRangeBeginningOriginal).ToByteArray()));
-			this.secondRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.SecondRangeEndOriginal).ToByteArray()));
+			this.firstRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.FirstRangeBeginningOriginal).KeyData.ToSByteArray()));
+			this.firstRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.FirstRangeEndOriginal).KeyData.ToSByteArray()));
+			this.secondRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.SecondRangeBeginningOriginal).KeyData.ToSByteArray()));
+			this.secondRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetCollationKey(this.SecondRangeEndOriginal).KeyData.ToSByteArray()));
 		}
 
 		// the sort order of Ø versus U depends on the version of the rules being used
 		// for the inherited root locale: Ø's order isnt specified in Locale.US since 
 		// its not used in english.
-		internal bool oStrokeFirst = Collator.getInstance(new Locale("")).compare("Ø", "U") < 0;
+		internal bool oStrokeFirst = Collator.GetInstance(CultureInfo.GetCultureInfo("")).Compare("Ø", "U") < 0;
 
 		// Neither Java 1.4.2 nor 1.5.0 has Farsi Locale collation available in
 		// RuleBasedCollator.  However, the Arabic Locale seems to order the Farsi
 		// characters properly.
-		private readonly Collator collator = Collator.getInstance(new Locale("ar"));
+		private readonly Collator collator = Collator.GetInstance(CultureInfo.GetCultureInfo("ar"));
 		private Analyzer analyzer;
 
 		private BytesRef firstRangeBeginning;
 		private BytesRef firstRangeEnd;
 		private BytesRef secondRangeBeginning;
 		private BytesRef secondRangeEnd;
-
-
+		
 		public sealed class TestAnalyzer : Analyzer
 		{
 			private readonly TestCollationKeyFilter outerInstance;
@@ -106,10 +105,10 @@ namespace Lucene.Net.Analysis.Collation
 		[Test]
 		public virtual void TestCollationKeySort()
 		{
-			var usAnalyzer = new TestAnalyzer(this, Collator.getInstance(Locale.US));
-			var franceAnalyzer = new TestAnalyzer(this, Collator.getInstance(Locale.FRANCE));
-			var swedenAnalyzer = new TestAnalyzer(this, Collator.getInstance(new Locale("sv", "se")));
-			var denmarkAnalyzer = new TestAnalyzer(this, Collator.getInstance(new Locale("da", "dk")));
+			var usAnalyzer = new TestAnalyzer(this, Collator.GetInstance(CultureInfo.GetCultureInfo("us")));
+			var franceAnalyzer = new TestAnalyzer(this, Collator.GetInstance(CultureInfo.GetCultureInfo("fr")));
+			var swedenAnalyzer = new TestAnalyzer(this, Collator.GetInstance(CultureInfo.GetCultureInfo("sv-SE")));
+			var denmarkAnalyzer = new TestAnalyzer(this, Collator.GetInstance(CultureInfo.GetCultureInfo("da-DK")));
 
 			// The ICU Collator and Sun java.text.Collator implementations differ in their
 			// orderings - "BFJDH" is the ordering for java.text.Collator for Locale.US.

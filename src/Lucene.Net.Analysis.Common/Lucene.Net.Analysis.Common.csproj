@@ -464,6 +464,11 @@
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizer.cs" />
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizerFactory.cs" />
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizerImpl.cs" />
+    <Compile Include="Collation\CollationAttributeFactory.cs" />
+    <Compile Include="Collation\CollationKeyAnalyzer.cs" />
+    <Compile Include="Collation\CollationKeyFilter.cs" />
+    <Compile Include="Collation\Collator.cs" />
+    <Compile Include="Collation\TokenAttributes\CollatedTermAttributeImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tartarus\Snowball\Among.cs" />
     <Compile Include="Tartarus\Snowball\Ext\ArmenianStemmer.cs" />
