@@ -256,6 +256,7 @@
     <Compile Include="Analysis\Miscellaneous\LimitTokenPositionFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\LimitTokenPositionFilterFactory.cs" />
     <Compile Include="Analysis\Miscellaneous\Lucene47WordDelimiterFilter.cs" />
+    <Compile Include="Analysis\Miscellaneous\PatternAnalyzer.cs" />
     <Compile Include="Analysis\Miscellaneous\PatternKeywordMarkerFilter.cs" />
     <Compile Include="Analysis\Miscellaneous\PerFieldAnalyzerWrapper.cs" />
     <Compile Include="Analysis\Miscellaneous\PrefixAndSuffixAwareTokenFilter.cs" />
