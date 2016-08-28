@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.Perfield
             reader.Dispose();
         }
 
-        public class MockCodec : Lucene46Codec
+        private class MockCodec : Lucene46Codec
         {
             internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
             internal readonly PostingsFormat SimpleText = new SimpleTextPostingsFormat();
@@ -220,7 +220,7 @@ namespace Lucene.Net.Codecs.Perfield
             }
         }
 
-        public class MockCodec2 : Lucene46Codec
+        private class MockCodec2 : Lucene46Codec
         {
             internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
             internal readonly PostingsFormat SimpleText = new SimpleTextPostingsFormat();
