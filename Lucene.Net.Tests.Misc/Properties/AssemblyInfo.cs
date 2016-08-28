@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Lucene.Net.Misc")]
-[assembly: AssemblyDescription("Index tools and other miscellaneous code")]
+[assembly: AssemblyTitle("Lucene.Net.Tests.Misc")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Lucene.Net.Misc")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyProduct("Lucene.Net.Tests.Misc")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,10 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b2a3a8e1-a92a-4bd6-9f87-7747470615c3")]
-
-// for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc")]
+[assembly: Guid("7895e023-eb91-401c-b2b3-754eec42134b")]
 
 // Version information for an assembly consists of the following four values:
 //

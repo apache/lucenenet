@@ -1,10 +1,15 @@
-﻿using System.Diagnostics;
+﻿using Lucene.Net.Search;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Packed;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
-namespace org.apache.lucene.index.sorter
+namespace Lucene.Net.Index.Sorter
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,289 +26,258 @@ namespace org.apache.lucene.index.sorter
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// A <seealso cref="MergePolicy"/> that reorders documents according to a <seealso cref="Sort"/>
+    ///  before merging them. As a consequence, all segments resulting from a merge
+    ///  will be sorted while segments resulting from a flush will be in the order
+    ///  in which documents have been added.
+    ///  <para><b>NOTE</b>: Never use this policy if you rely on
+    ///  <seealso cref="IndexWriter#addDocuments(Iterable, Analyzer) IndexWriter.addDocuments"/>
+    ///  to have sequentially-assigned doc IDs, this policy will scatter doc IDs.
+    /// </para>
+    ///  <para><b>NOTE</b>: This policy should only be used with idempotent {@code Sort}s 
+    ///  so that the order of segments is predictable. For example, using 
+    ///  <seealso cref="Sort#INDEXORDER"/> in reverse (which is not idempotent) will make 
+    ///  the order of documents in a segment depend on the number of times the segment 
+    ///  has been merged.
+    ///  @lucene.experimental 
+    /// </para>
+    /// </summary>
+    public sealed class SortingMergePolicy : MergePolicy
+    {
 
-	using Analyzer = org.apache.lucene.analysis.Analyzer; // javadocs
-	using Sort = org.apache.lucene.search.Sort;
-	using Directory = org.apache.lucene.store.Directory;
-	using Bits = org.apache.lucene.util.Bits;
-	using MonotonicAppendingLongBuffer = org.apache.lucene.util.packed.MonotonicAppendingLongBuffer;
+        /// <summary>
+        /// Put in the <seealso cref="SegmentInfo#getDiagnostics() diagnostics"/> to denote that
+        /// this segment is sorted.
+        /// </summary>
+        public const string SORTER_ID_PROP = "sorter";
 
-	/// <summary>
-	/// A <seealso cref="MergePolicy"/> that reorders documents according to a <seealso cref="Sort"/>
-	///  before merging them. As a consequence, all segments resulting from a merge
-	///  will be sorted while segments resulting from a flush will be in the order
-	///  in which documents have been added.
-	///  <para><b>NOTE</b>: Never use this policy if you rely on
-	///  <seealso cref="IndexWriter#addDocuments(Iterable, Analyzer) IndexWriter.addDocuments"/>
-	///  to have sequentially-assigned doc IDs, this policy will scatter doc IDs.
-	/// </para>
-	///  <para><b>NOTE</b>: This policy should only be used with idempotent {@code Sort}s 
-	///  so that the order of segments is predictable. For example, using 
-	///  <seealso cref="Sort#INDEXORDER"/> in reverse (which is not idempotent) will make 
-	///  the order of documents in a segment depend on the number of times the segment 
-	///  has been merged.
-	///  @lucene.experimental 
-	/// </para>
-	/// </summary>
-	public sealed class SortingMergePolicy : MergePolicy
-	{
-
-	  /// <summary>
-	  /// Put in the <seealso cref="SegmentInfo#getDiagnostics() diagnostics"/> to denote that
-	  /// this segment is sorted.
-	  /// </summary>
-	  public const string SORTER_ID_PROP = "sorter";
-
-	  internal class SortingOneMerge : OneMerge
-	  {
-		  private readonly SortingMergePolicy outerInstance;
+        internal class SortingOneMerge : OneMerge
+        {
+            private readonly SortingMergePolicy outerInstance;
 
 
-		internal IList<AtomicReader> unsortedReaders;
-		internal Sorter.DocMap docMap;
-		internal AtomicReader sortedView;
+            internal IList<AtomicReader> unsortedReaders;
+            internal Sorter.DocMap docMap;
+            internal AtomicReader sortedView;
 
-		internal SortingOneMerge(SortingMergePolicy outerInstance, IList<SegmentCommitInfo> segments) : base(segments)
-		{
-			this.outerInstance = outerInstance;
-		}
+            internal SortingOneMerge(SortingMergePolicy outerInstance, IList<SegmentCommitInfo> segments)
+                    : base(segments)
+            {
+                this.outerInstance = outerInstance;
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public java.util.List<org.apache.lucene.index.AtomicReader> getMergeReaders() throws java.io.IOException
-		public override IList<AtomicReader> MergeReaders
-		{
-			get
-			{
-			  if (unsortedReaders == null)
-			  {
-				unsortedReaders = base.MergeReaders;
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final org.apache.lucene.index.AtomicReader atomicView;
-				AtomicReader atomicView;
-				if (unsortedReaders.Count == 1)
-				{
-				  atomicView = unsortedReaders[0];
-				}
-				else
-				{
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final org.apache.lucene.index.IndexReader multiReader = new org.apache.lucene.index.MultiReader(unsortedReaders.toArray(new org.apache.lucene.index.AtomicReader[unsortedReaders.size()]));
-				  IndexReader multiReader = new MultiReader(unsortedReaders.ToArray());
-				  atomicView = SlowCompositeReaderWrapper.wrap(multiReader);
-				}
-				docMap = outerInstance.sorter.sort(atomicView);
-				sortedView = SortingAtomicReader.wrap(atomicView, docMap);
-			  }
-			  // a null doc map means that the readers are already sorted
-			  return docMap == null ? unsortedReaders : Collections.singletonList(sortedView);
-			}
-		}
+            public override IList<AtomicReader> MergeReaders
+            {
+                get
+                {
+                    if (unsortedReaders == null)
+                    {
+                        unsortedReaders = base.MergeReaders;
+                        AtomicReader atomicView;
+                        if (unsortedReaders.Count == 1)
+                        {
+                            atomicView = unsortedReaders[0];
+                        }
+                        else
+                        {
+                            IndexReader multiReader = new MultiReader(unsortedReaders.ToArray());
+                            atomicView = SlowCompositeReaderWrapper.Wrap(multiReader);
+                        }
+                        docMap = outerInstance.sorter.Sort(atomicView);
+                        sortedView = SortingAtomicReader.Wrap(atomicView, docMap);
+                    }
+                    // a null doc map means that the readers are already sorted
+                    return docMap == null ? unsortedReaders : new List<AtomicReader>(new AtomicReader[] { sortedView });
+                }
+            }
 
-		public override SegmentCommitInfo Info
-		{
-			set
-			{
-			  IDictionary<string, string> diagnostics = value.info.Diagnostics;
-			  diagnostics[SORTER_ID_PROP] = outerInstance.sorter.ID;
-			  base.Info = value;
-			}
-		}
+            public override SegmentCommitInfo Info
+            {
+                set
+                {
+                    IDictionary<string, string> diagnostics = value.Info.Diagnostics;
+                    diagnostics[SORTER_ID_PROP] = outerInstance.sorter.ID;
+                    base.Info = value;
+                }
+            }
 
-		internal virtual MonotonicAppendingLongBuffer getDeletes(IList<AtomicReader> readers)
-		{
-		  MonotonicAppendingLongBuffer deletes = new MonotonicAppendingLongBuffer();
-		  int deleteCount = 0;
-		  foreach (AtomicReader reader in readers)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
-			int maxDoc = reader.maxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.Bits liveDocs = reader.getLiveDocs();
-			Bits liveDocs = reader.LiveDocs;
-			for (int i = 0; i < maxDoc; ++i)
-			{
-			  if (liveDocs != null && !liveDocs.get(i))
-			  {
-				++deleteCount;
-			  }
-			  else
-			  {
-				deletes.add(deleteCount);
-			  }
-			}
-		  }
-		  deletes.freeze();
-		  return deletes;
-		}
+            internal virtual MonotonicAppendingLongBuffer GetDeletes(IList<AtomicReader> readers)
+            {
+                MonotonicAppendingLongBuffer deletes = new MonotonicAppendingLongBuffer();
+                int deleteCount = 0;
+                foreach (AtomicReader reader in readers)
+                {
+                    int maxDoc = reader.MaxDoc;
+                    Bits liveDocs = reader.LiveDocs;
+                    for (int i = 0; i < maxDoc; ++i)
+                    {
+                        if (liveDocs != null && !liveDocs.Get(i))
+                        {
+                            ++deleteCount;
+                        }
+                        else
+                        {
+                            deletes.Add(deleteCount);
+                        }
+                    }
+                }
+                deletes.Freeze();
+                return deletes;
+            }
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: @Override public org.apache.lucene.index.MergePolicy.DocMap getDocMap(final org.apache.lucene.index.MergeState mergeState)
-		public override MergePolicy.DocMap getDocMap(MergeState mergeState)
-		{
-		  if (unsortedReaders == null)
-		  {
-			throw new IllegalStateException();
-		  }
-		  if (docMap == null)
-		  {
-			return base.getDocMap(mergeState);
-		  }
-		  Debug.Assert(mergeState.docMaps.length == 1); // we returned a singleton reader
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.packed.MonotonicAppendingLongBuffer deletes = getDeletes(unsortedReaders);
-		  MonotonicAppendingLongBuffer deletes = getDeletes(unsortedReaders);
-		  return new DocMapAnonymousInnerClassHelper(this, mergeState, deletes);
-		}
+            public override MergePolicy.DocMap GetDocMap(MergeState mergeState)
+            {
+                if (unsortedReaders == null)
+                {
+                    throw new InvalidOperationException("Invalid state");
+                }
+                if (docMap == null)
+                {
+                    return base.GetDocMap(mergeState);
+                }
+                Debug.Assert(mergeState.DocMaps.Length == 1); // we returned a singleton reader
+                MonotonicAppendingLongBuffer deletes = GetDeletes(unsortedReaders);
+                return new DocMapAnonymousInnerClassHelper(this, mergeState, deletes);
+            }
 
-		private class DocMapAnonymousInnerClassHelper : MergePolicy.DocMap
-		{
-			private readonly SortingOneMerge outerInstance;
+            private class DocMapAnonymousInnerClassHelper : MergePolicy.DocMap
+            {
+                private readonly SortingOneMerge outerInstance;
 
-			private MergeState mergeState;
-			private MonotonicAppendingLongBuffer deletes;
+                private MergeState mergeState;
+                private MonotonicAppendingLongBuffer deletes;
 
-			public DocMapAnonymousInnerClassHelper(SortingOneMerge outerInstance, MergeState mergeState, MonotonicAppendingLongBuffer deletes)
-			{
-				this.outerInstance = outerInstance;
-				this.mergeState = mergeState;
-				this.deletes = deletes;
-			}
+                public DocMapAnonymousInnerClassHelper(SortingOneMerge outerInstance, MergeState mergeState, MonotonicAppendingLongBuffer deletes)
+                {
+                    this.outerInstance = outerInstance;
+                    this.mergeState = mergeState;
+                    this.deletes = deletes;
+                }
 
-			public override int map(int old)
-			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int oldWithDeletes = old + (int) deletes.get(old);
-			  int oldWithDeletes = old + (int) deletes.get(old);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newWithDeletes = docMap.oldToNew(oldWithDeletes);
-			  int newWithDeletes = outerInstance.docMap.oldToNew(oldWithDeletes);
-			  return mergeState.docMaps[0].get(newWithDeletes);
-			}
-		}
+                public override int Map(int old)
+                {
+                    int oldWithDeletes = old + (int)deletes.Get(old);
+                    int newWithDeletes = outerInstance.docMap.OldToNew(oldWithDeletes);
+                    return mergeState.DocMaps[0].Get(newWithDeletes);
+                }
+            }
 
-	  }
+        }
 
-	  internal class SortingMergeSpecification : MergeSpecification
-	  {
-		  private readonly SortingMergePolicy outerInstance;
+        internal class SortingMergeSpecification : MergeSpecification
+        {
+            private readonly SortingMergePolicy outerInstance;
 
-		  public SortingMergeSpecification(SortingMergePolicy outerInstance)
-		  {
-			  this.outerInstance = outerInstance;
-		  }
+            public SortingMergeSpecification(SortingMergePolicy outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
 
 
-		public override void add(OneMerge merge)
-		{
-		  base.add(new SortingOneMerge(outerInstance, merge.segments));
-		}
+            public override void Add(OneMerge merge)
+            {
+                base.Add(new SortingOneMerge(outerInstance, merge.Segments));
+            }
 
-		public override string segString(Directory dir)
-		{
-		  return "SortingMergeSpec(" + base.segString(dir) + ", sorter=" + outerInstance.sorter + ")";
-		}
+            public override string SegString(Directory dir)
+            {
+                return "SortingMergeSpec(" + base.SegString(dir) + ", sorter=" + outerInstance.sorter + ")";
+            }
 
-	  }
+        }
 
-	  /// <summary>
-	  /// Returns {@code true} if the given {@code reader} is sorted by the specified {@code sort}. </summary>
-	  public static bool isSorted(AtomicReader reader, Sort sort)
-	  {
-		if (reader is SegmentReader)
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.index.SegmentReader segReader = (org.apache.lucene.index.SegmentReader) reader;
-		  SegmentReader segReader = (SegmentReader) reader;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String, String> diagnostics = segReader.getSegmentInfo().info.getDiagnostics();
-		  IDictionary<string, string> diagnostics = segReader.SegmentInfo.info.Diagnostics;
-		  if (diagnostics != null && sort.ToString().Equals(diagnostics[SORTER_ID_PROP]))
-		  {
-			return true;
-		  }
-		}
-		return false;
-	  }
+        /// <summary>
+        /// Returns {@code true} if the given {@code reader} is sorted by the specified {@code sort}. </summary>
+        public static bool IsSorted(AtomicReader reader, Sort sort)
+        {
+            if (reader is SegmentReader)
+            {
+                SegmentReader segReader = (SegmentReader)reader;
+                IDictionary<string, string> diagnostics = segReader.SegmentInfo.Info.Diagnostics;
+                if (diagnostics != null && sort.ToString().Equals(diagnostics[SORTER_ID_PROP]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-	  private MergeSpecification sortedMergeSpecification(MergeSpecification specification)
-	  {
-		if (specification == null)
-		{
-		  return null;
-		}
-		MergeSpecification sortingSpec = new SortingMergeSpecification(this);
-		foreach (OneMerge merge in specification.merges)
-		{
-		  sortingSpec.add(merge);
-		}
-		return sortingSpec;
-	  }
+        private MergeSpecification SortedMergeSpecification(MergeSpecification specification)
+        {
+            if (specification == null)
+            {
+                return null;
+            }
+            MergeSpecification sortingSpec = new SortingMergeSpecification(this);
+            foreach (OneMerge merge in specification.Merges)
+            {
+                sortingSpec.Add(merge);
+            }
+            return sortingSpec;
+        }
 
-	  internal readonly MergePolicy @in;
-	  internal readonly Sorter sorter;
-	  internal readonly Sort sort;
+        internal readonly MergePolicy @in;
+        internal readonly Sorter sorter;
+        internal readonly Sort sort;
 
-	  /// <summary>
-	  /// Create a new {@code MergePolicy} that sorts documents with the given {@code sort}. </summary>
-	  public SortingMergePolicy(MergePolicy @in, Sort sort)
-	  {
-		this.@in = @in;
-		this.sorter = new Sorter(sort);
-		this.sort = sort;
-	  }
+        /// <summary>
+        /// Create a new {@code MergePolicy} that sorts documents with the given {@code sort}. </summary>
+        public SortingMergePolicy(MergePolicy @in, Sort sort)
+        {
+            this.@in = @in;
+            this.sorter = new Sorter(sort);
+            this.sort = sort;
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public MergeSpecification findMerges(org.apache.lucene.index.MergeTrigger mergeTrigger, org.apache.lucene.index.SegmentInfos segmentInfos) throws java.io.IOException
-	  public override MergeSpecification findMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
-	  {
-		return sortedMergeSpecification(@in.findMerges(mergeTrigger, segmentInfos));
-	  }
+        // LUCENENET TODO: Try to find a way to make MergeTrigger enumeration non-nullable (in core)
+        public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
+        {
+            return SortedMergeSpecification(@in.FindMerges(mergeTrigger, segmentInfos));
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public MergeSpecification findForcedMerges(org.apache.lucene.index.SegmentInfos segmentInfos, int maxSegmentCount, java.util.Map<org.apache.lucene.index.SegmentCommitInfo,Boolean> segmentsToMerge) throws java.io.IOException
-	  public override MergeSpecification findForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
-	  {
-		return sortedMergeSpecification(@in.findForcedMerges(segmentInfos, maxSegmentCount, segmentsToMerge));
-	  }
+        public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
+        {
+            return SortedMergeSpecification(@in.FindForcedMerges(segmentInfos, maxSegmentCount, segmentsToMerge));
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public MergeSpecification findForcedDeletesMerges(org.apache.lucene.index.SegmentInfos segmentInfos) throws java.io.IOException
-	  public override MergeSpecification findForcedDeletesMerges(SegmentInfos segmentInfos)
-	  {
-		return sortedMergeSpecification(@in.findForcedDeletesMerges(segmentInfos));
-	  }
+        public override MergeSpecification FindForcedDeletesMerges(SegmentInfos segmentInfos)
+        {
+            return SortedMergeSpecification(@in.FindForcedDeletesMerges(segmentInfos));
+        }
 
-	  public override MergePolicy clone()
-	  {
-		return new SortingMergePolicy(@in.clone(), sort);
-	  }
+        public override object Clone()
+        {
+            return new SortingMergePolicy((MergePolicy)@in.Clone(), sort);
+        }
 
-	  public override void close()
-	  {
-		@in.close();
-	  }
+        public override void Dispose()
+        {
+            @in.Dispose();
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public boolean useCompoundFile(org.apache.lucene.index.SegmentInfos segments, org.apache.lucene.index.SegmentCommitInfo newSegment) throws java.io.IOException
-	  public override bool useCompoundFile(SegmentInfos segments, SegmentCommitInfo newSegment)
-	  {
-		return @in.useCompoundFile(segments, newSegment);
-	  }
+        // LUCENENET TODO: Do we need this?
+        //public override void close()
+        //{
+        //    @in.close();
+        //}
 
-	  public override IndexWriter IndexWriter
-	  {
-		  set
-		  {
-			@in.IndexWriter = value;
-		  }
-	  }
+        public override bool UseCompoundFile(SegmentInfos segments, SegmentCommitInfo newSegment)
+        {
+            return @in.UseCompoundFile(segments, newSegment);
+        }
 
-	  public override string ToString()
-	  {
-		return "SortingMergePolicy(" + @in + ", sorter=" + sorter + ")";
-	  }
+        public override IndexWriter IndexWriter
+        {
+            set
+            {
+                @in.IndexWriter = value;
+            }
+        }
 
-	}
-
+        public override string ToString()
+        {
+            return "SortingMergePolicy(" + @in + ", sorter=" + sorter + ")";
+        }
+    }
 }
