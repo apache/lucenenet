@@ -37,5 +37,11 @@ namespace Lucene.Net.Support
         {
             return string.CompareOrdinal(str, value);
         }
+
+
+        public static int CodePointCount(this string str, int beginIndex, int endIndex)
+        {
+            return Character.CodePointCount(str, beginIndex, endIndex);
+        }
     }
 }
