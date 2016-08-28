@@ -25,6 +25,18 @@ namespace Lucene.Net.Codecs.Lucene40
     {
         private readonly FieldInfosFormat fieldInfos;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Creates the codec with OldFormatImpersonationIsActive = true.
+        /// </summary>
+        /// <remarks>
+        /// Added so that SPIClassIterator can locate this Codec.  The iterator
+        /// only recognises classes that have empty constructors.
+        /// </remarks>
+        public Lucene40RWCodec()
+            : this(true)
+        { }
+
         /// <param name="oldFormatImpersonationIsActive">
         /// LUCENENET specific
         /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
@@ -34,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene40
             fieldInfos = new Lucene40FieldInfosFormatAnonymousInnerClassHelper(oldFormatImpersonationIsActive);
             DocValues = new Lucene40RWDocValuesFormat(oldFormatImpersonationIsActive);
             Norms = new Lucene40RWNormsFormat(oldFormatImpersonationIsActive);
-    }
+        }
 
         private class Lucene40FieldInfosFormatAnonymousInnerClassHelper : Lucene40FieldInfosFormat
         {

@@ -28,6 +28,18 @@ namespace Lucene.Net.Codecs.Lucene42
     {
         private readonly bool _oldFormatImpersonationIsActive;
 
+        /// <summary>
+        /// LUCENENET specific
+        /// Creates the codec with OldFormatImpersonationIsActive = true.
+        /// </summary>
+        /// <remarks>
+        /// Added so that SPIClassIterator can locate this Codec.  The iterator
+        /// only recognises classes that have empty constructors.
+        /// </remarks>
+        public Lucene42RWDocValuesFormat()
+            : this(true)
+        { }
+
         /// <param name="oldFormatImpersonationIsActive">
         /// LUCENENET specific
         /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
