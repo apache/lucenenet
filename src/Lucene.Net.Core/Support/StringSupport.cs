@@ -43,5 +43,11 @@ namespace Lucene.Net.Support
         {
             return Character.CodePointCount(str, beginIndex, endIndex);
         }
+
+        public static int OffsetByCodePoints(this string seq, int index,
+                                         int codePointOffset)
+        {
+            return Character.OffsetByCodePoints(seq, index, codePointOffset);
+        }
     }
 }
