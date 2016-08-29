@@ -92,31 +92,6 @@ namespace Lucene.Net.Util
                 {
                     // swallow
                 }
-
-                foreach (var assemblyName in loadedAssembly.GetReferencedAssemblies())
-                {
-                    try
-                    {
-                        var assembly = Assembly.Load(assemblyName);
-
-                        foreach (var type in assembly.GetTypes())
-                        {
-                            try
-                            {
-                                if (IsInvokableSubclassOf<S>(type))
-                                    types.Add(type);
-                            }
-                            catch
-                            {
-                                // swallow
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // swallow
-                    }
-                }
             }
         }
 
