@@ -31,7 +31,7 @@ namespace Lucene.Net.Index.Sorter
      * limitations under the License.
      */
 
-    public class SorterTestBase : LuceneTestCase
+    public abstract class SorterTestBase : LuceneTestCase
     {
         internal class NormsSimilarity : Similarity
         {
@@ -230,8 +230,7 @@ namespace Lucene.Net.Index.Sorter
             dir.Dispose();
         }
 
-        [Test]
-        public void TestBinaryDocValuesField()
+        public virtual void TestBinaryDocValuesField()
         {
             BinaryDocValues dv = reader.GetBinaryDocValues(BINARY_DV_FIELD);
             BytesRef bytes = new BytesRef();
@@ -242,8 +241,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
-        public void TestDocsAndPositionsEnum()
+        public virtual void TestDocsAndPositionsEnum()
         {
             TermsEnum termsEnum = reader.Terms(DOC_POSITIONS_FIELD).Iterator(null);
             assertEquals(TermsEnum.SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef(DOC_POSITIONS_TERM)));
@@ -322,8 +320,7 @@ namespace Lucene.Net.Index.Sorter
             return bits;
         }
 
-        [Test]
-        public void TestDocsEnum()
+        public virtual void TestDocsEnum()
         {
             Bits mappedLiveDocs = RandomLiveDocs(reader.MaxDoc);
             TermsEnum termsEnum = reader.Terms(DOCS_ENUM_FIELD).Iterator(null);
@@ -369,8 +366,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
-        public void TestNormValues()
+        public virtual void TestNormValues()
         {
             NumericDocValues dv = reader.GetNormValues(NORMS_FIELD);
             int maxDoc = reader.MaxDoc;
@@ -380,8 +376,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
-        public void TestNumericDocValuesField()
+        public virtual void TestNumericDocValuesField()
         {
             NumericDocValues dv = reader.GetNumericDocValues(NUMERIC_DV_FIELD);
             int maxDoc = reader.MaxDoc;
@@ -391,8 +386,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
-        public void TestSortedDocValuesField()
+        public virtual void TestSortedDocValuesField()
         {
             SortedDocValues dv = reader.GetSortedDocValues(SORTED_DV_FIELD);
             int maxDoc = reader.MaxDoc;
@@ -404,8 +398,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
-        public void TestSortedSetDocValuesField()
+        public virtual void TestSortedSetDocValuesField()
         {
             AssumeTrue("default codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
             SortedSetDocValues dv = reader.GetSortedSetDocValues(SORTED_SET_DV_FIELD);
@@ -423,8 +416,7 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-        [Test]
-        public void TestTermVectors()
+        public virtual void TestTermVectors()
         {
             int maxDoc = reader.MaxDoc;
             for (int i = 0; i < maxDoc; i++)
