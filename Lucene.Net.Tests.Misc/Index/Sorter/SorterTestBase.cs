@@ -178,7 +178,8 @@ namespace Lucene.Net.Index.Sorter
                 ids.Add(i * 10);
             }
             // shuffle them for indexing
-            CollectionsHelper.Shuffle(ids);
+            // LUCENENET NOTE: Using LINQ, so we need to reassign the variable with the result
+            ids = CollectionsHelper.Shuffle(ids);
 
             if (VERBOSE)
             {
