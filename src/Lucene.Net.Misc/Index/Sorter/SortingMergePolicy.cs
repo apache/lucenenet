@@ -195,7 +195,8 @@ namespace Lucene.Net.Index.Sorter
             {
                 SegmentReader segReader = (SegmentReader)reader;
                 IDictionary<string, string> diagnostics = segReader.SegmentInfo.Info.Diagnostics;
-                if (diagnostics != null && sort.ToString().Equals(diagnostics[SORTER_ID_PROP]))
+                var diagnosticsSort = diagnostics.ContainsKey(SORTER_ID_PROP) ? diagnostics[SORTER_ID_PROP] : null;
+                if (diagnostics != null && sort.ToString().Equals(diagnosticsSort))
                 {
                     return true;
                 }
