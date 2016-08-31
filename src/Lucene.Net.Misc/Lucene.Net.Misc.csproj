@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Index\CompoundFileExtractor.cs" />
     <Compile Include="Index\Sorter\BlockJoinComparatorSource.cs" />
     <Compile Include="Index\Sorter\EarlyTerminatingSortingCollector.cs" />
     <Compile Include="Index\Sorter\Sorter.cs" />
