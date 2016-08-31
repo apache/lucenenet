@@ -44,6 +44,7 @@
     <Compile Include="Index\Sorter\IndexSortingTest.cs" />
     <Compile Include="Index\Sorter\SorterTestBase.cs" />
     <Compile Include="Index\Sorter\SortingAtomicReaderTest.cs" />
+    <Compile Include="Index\Sorter\TestBlockJoinSorter.cs" />
     <Compile Include="Index\Sorter\TestEarlyTermination.cs" />
     <Compile Include="Index\Sorter\TestSortingMergePolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
