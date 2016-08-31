@@ -1,200 +1,183 @@
-﻿using System;
+﻿using Lucene.Net.Store;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-namespace org.apache.lucene.index
+namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    /// <summary>
+    /// Command-line tool that enables listing segments in an
+    /// index, copying specific segments to another index, and
+    /// deleting segments from an index.
+    /// 
+    /// <para>This tool does file-level copying of segments files.
+    /// This means it's unable to split apart a single segment
+    /// into multiple segments.  For example if your index is a
+    /// single segment, this tool won't help.  Also, it does basic
+    /// file-level copying (using simple
+    /// File{In,Out}putStream) so it will not work with non
+    /// FSDirectory Directory impls.</para>
+    /// 
+    /// @lucene.experimental You can easily
+    /// accidentally remove segments from your index so be
+    /// careful!
+    /// </summary>
+    public class IndexSplitter
+    {
+        public SegmentInfos infos;
 
-	using FSDirectory = org.apache.lucene.store.FSDirectory;
+        internal FSDirectory fsDir;
 
-	/// <summary>
-	/// Command-line tool that enables listing segments in an
-	/// index, copying specific segments to another index, and
-	/// deleting segments from an index.
-	/// 
-	/// <para>This tool does file-level copying of segments files.
-	/// This means it's unable to split apart a single segment
-	/// into multiple segments.  For example if your index is a
-	/// single segment, this tool won't help.  Also, it does basic
-	/// file-level copying (using simple
-	/// File{In,Out}putStream) so it will not work with non
-	/// FSDirectory Directory impls.</para>
-	/// 
-	/// @lucene.experimental You can easily
-	/// accidentally remove segments from your index so be
-	/// careful!
-	/// </summary>
-	public class IndexSplitter
-	{
-	  public SegmentInfos infos;
+        internal DirectoryInfo dir;
 
-	  internal FSDirectory fsDir;
+        public static void Main(string[] args)
+        {
+            if (args.Length < 2)
+            {
+                Console.Error.WriteLine("Usage: IndexSplitter <srcDir> -l (list the segments and their sizes)");
+                Console.Error.WriteLine("IndexSplitter <srcDir> <destDir> <segments>+");
+                Console.Error.WriteLine("IndexSplitter <srcDir> -d (delete the following segments)");
+                return;
+            }
+            DirectoryInfo srcDir = new DirectoryInfo(args[0]);
+            IndexSplitter @is = new IndexSplitter(srcDir);
+            if (!srcDir.Exists)
+            {
+                throw new Exception("srcdir:" + srcDir.FullName + " doesn't exist");
+            }
+            if (args[1].Equals("-l"))
+            {
+                @is.ListSegments();
+            }
+            else if (args[1].Equals("-d"))
+            {
+                IList<string> segs = new List<string>();
+                for (int x = 2; x < args.Length; x++)
+                {
+                    segs.Add(args[x]);
+                }
+                @is.Remove(segs.ToArray());
+            }
+            else
+            {
+                DirectoryInfo targetDir = new DirectoryInfo(args[1]);
+                IList<string> segs = new List<string>();
+                for (int x = 2; x < args.Length; x++)
+                {
+                    segs.Add(args[x]);
+                }
+                @is.Split(targetDir, segs.ToArray());
+            }
+        }
 
-	  internal File dir;
+        public IndexSplitter(DirectoryInfo dir)
+        {
+            this.dir = dir;
+            fsDir = FSDirectory.Open(dir);
+            infos = new SegmentInfos();
+            infos.Read(fsDir);
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public static void main(String[] args) throws Exception
-	  public static void Main(string[] args)
-	  {
-		if (args.Length < 2)
-		{
-		  Console.Error.WriteLine("Usage: IndexSplitter <srcDir> -l (list the segments and their sizes)");
-		  Console.Error.WriteLine("IndexSplitter <srcDir> <destDir> <segments>+");
-		  Console.Error.WriteLine("IndexSplitter <srcDir> -d (delete the following segments)");
-		  return;
-		}
-		File srcDir = new File(args[0]);
-		IndexSplitter @is = new IndexSplitter(srcDir);
-		if (!srcDir.exists())
-		{
-		  throw new Exception("srcdir:" + srcDir.AbsolutePath + " doesn't exist");
-		}
-		if (args[1].Equals("-l"))
-		{
-		  @is.listSegments();
-		}
-		else if (args[1].Equals("-d"))
-		{
-		  IList<string> segs = new List<string>();
-		  for (int x = 2; x < args.Length; x++)
-		  {
-			segs.Add(args[x]);
-		  }
-		  @is.remove(segs.ToArray());
-		}
-		else
-		{
-		  File targetDir = new File(args[1]);
-		  IList<string> segs = new List<string>();
-		  for (int x = 2; x < args.Length; x++)
-		  {
-			segs.Add(args[x]);
-		  }
-		  @is.Split(targetDir, segs.ToArray());
-		}
-	  }
+        public virtual void ListSegments()
+        {
+            for (int x = 0; x < infos.Size(); x++)
+            {
+                SegmentCommitInfo info = infos.Info(x);
+                string sizeStr = string.Format(CultureInfo.InvariantCulture, "{0:###,###.###}", info.SizeInBytes());
+                Console.WriteLine(info.Info.Name + " " + sizeStr);
+            }
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public IndexSplitter(java.io.File dir) throws java.io.IOException
-	  public IndexSplitter(File dir)
-	  {
-		this.dir = dir;
-		fsDir = FSDirectory.open(dir);
-		infos = new SegmentInfos();
-		infos.read(fsDir);
-	  }
+        private int GetIdx(string name)
+        {
+            for (int x = 0; x < infos.Size(); x++)
+            {
+                if (name.Equals(infos.Info(x).Info.Name))
+                {
+                    return x;
+                }
+            }
+            return -1;
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void listSegments() throws java.io.IOException
-	  public virtual void listSegments()
-	  {
-		DecimalFormat formatter = new DecimalFormat("###,###.###", DecimalFormatSymbols.getInstance(Locale.ROOT));
-		for (int x = 0; x < infos.size(); x++)
-		{
-		  SegmentCommitInfo info = infos.info(x);
-		  string sizeStr = formatter.format(info.sizeInBytes());
-		  Console.WriteLine(info.info.name + " " + sizeStr);
-		}
-	  }
+        private SegmentCommitInfo GetInfo(string name)
+        {
+            for (int x = 0; x < infos.Size(); x++)
+            {
+                if (name.Equals(infos.Info(x).Info.Name))
+                {
+                    return infos.Info(x);
+                }
+            }
+            return null;
+        }
 
-	  private int getIdx(string name)
-	  {
-		for (int x = 0; x < infos.size(); x++)
-		{
-		  if (name.Equals(infos.info(x).info.name))
-		  {
-			return x;
-		  }
-		}
-		return -1;
-	  }
+        public virtual void Remove(string[] segs)
+        {
+            foreach (string n in segs)
+            {
+                int idx = GetIdx(n);
+                infos.Remove(idx);
+            }
+            infos.Changed();
+            infos.Commit(fsDir);
+        }
 
-	  private SegmentCommitInfo getInfo(string name)
-	  {
-		for (int x = 0; x < infos.size(); x++)
-		{
-		  if (name.Equals(infos.info(x).info.name))
-		  {
-			return infos.info(x);
-		  }
-		}
-		return null;
-	  }
+        public virtual void Split(DirectoryInfo destDir, string[] segs)
+        {
+            destDir.Create();
+            FSDirectory destFSDir = FSDirectory.Open(destDir);
+            SegmentInfos destInfos = new SegmentInfos();
+            destInfos.Counter = infos.Counter;
+            foreach (string n in segs)
+            {
+                SegmentCommitInfo infoPerCommit = GetInfo(n);
+                SegmentInfo info = infoPerCommit.Info;
+                // Same info just changing the dir:
+                SegmentInfo newInfo = new SegmentInfo(destFSDir, info.Version, info.Name, info.DocCount, info.UseCompoundFile, info.Codec, info.Diagnostics);
+                destInfos.Add(new SegmentCommitInfo(newInfo, infoPerCommit.DelCount, infoPerCommit.DelGen, infoPerCommit.FieldInfosGen));
+                // now copy files over
+                ICollection<string> files = infoPerCommit.Files();
+                foreach (string srcName in files)
+                {
+                    FileInfo srcFile = new FileInfo(Path.Combine(dir.FullName, srcName));
+                    FileInfo destFile = new FileInfo(Path.Combine(destDir.FullName, srcName));
+                    CopyFile(srcFile, destFile);
+                }
+            }
+            destInfos.Changed();
+            destInfos.Commit(destFSDir);
+            // Console.WriteLine("destDir:"+destDir.getAbsolutePath());
+        }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void remove(String[] segs) throws java.io.IOException
-	  public virtual void remove(string[] segs)
-	  {
-		foreach (string n in segs)
-		{
-		  int idx = getIdx(n);
-		  infos.remove(idx);
-		}
-		infos.changed();
-		infos.commit(fsDir);
-	  }
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void split(java.io.File destDir, String[] segs) throws java.io.IOException
-	  public virtual void Split(File destDir, string[] segs)
-	  {
-		destDir.mkdirs();
-		FSDirectory destFSDir = FSDirectory.open(destDir);
-		SegmentInfos destInfos = new SegmentInfos();
-		destInfos.counter = infos.counter;
-		foreach (string n in segs)
-		{
-		  SegmentCommitInfo infoPerCommit = getInfo(n);
-		  SegmentInfo info = infoPerCommit.info;
-		  // Same info just changing the dir:
-		  SegmentInfo newInfo = new SegmentInfo(destFSDir, info.Version, info.name, info.DocCount, info.UseCompoundFile, info.Codec, info.Diagnostics);
-		  destInfos.add(new SegmentCommitInfo(newInfo, infoPerCommit.DelCount, infoPerCommit.DelGen, infoPerCommit.FieldInfosGen));
-		  // now copy files over
-		  ICollection<string> files = infoPerCommit.files();
-		  foreach (String srcName in files)
-		  {
-			File srcFile = new File(dir, srcName);
-			File destFile = new File(destDir, srcName);
-			copyFile(srcFile, destFile);
-		  }
-		}
-		destInfos.changed();
-		destInfos.commit(destFSDir);
-		// System.out.println("destDir:"+destDir.getAbsolutePath());
-	  }
-
-	  private static readonly sbyte[] copyBuffer = new sbyte[32 * 1024];
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private static void copyFile(java.io.File src, java.io.File dst) throws java.io.IOException
-	  private static void copyFile(File src, File dst)
-	  {
-		InputStream @in = new FileInputStream(src);
-		OutputStream @out = new FileOutputStream(dst);
-		int len;
-		while ((len = @in.read(copyBuffer)) > 0)
-		{
-		  @out.write(copyBuffer, 0, len);
-		}
-		@in.close();
-		@out.close();
-	  }
-	}
-
+        private static void CopyFile(FileInfo src, FileInfo dst)
+        {
+            using (Stream @in = new FileStream(src.FullName, FileMode.Open, FileAccess.Read))
+            {
+                using (Stream @out = new FileStream(dst.FullName, FileMode.OpenOrCreate, FileAccess.Write))
+                {
+                    @in.CopyTo(@out);
+                }
+            }
+        }
+    }
 }
