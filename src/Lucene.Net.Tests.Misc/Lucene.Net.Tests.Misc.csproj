@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -50,24 +50,24 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\src\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\Lucene.Net.Misc\Lucene.Net.Misc.csproj">
+    <ProjectReference Include="..\Lucene.Net.Misc\Lucene.Net.Misc.csproj">
       <Project>{a3a0d943-b91a-4b7a-9fcb-6160ea575d95}</Project>
       <Name>Lucene.Net.Misc</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
       <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
       <Name>Lucene.Net.TestFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
