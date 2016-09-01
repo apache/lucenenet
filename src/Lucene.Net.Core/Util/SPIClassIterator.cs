@@ -79,7 +79,30 @@ namespace Lucene.Net.Util
                     {
                         try
                         {
-                            if (IsInvokableSubclassOf<S>(type))
+                            if (!IsInvokableSubclassOf<S>(type))
+                            {
+                                continue;
+                            }
+
+                            // We are looking for types with a default ctor
+                            // (which is used in NamedSPILoader) or has a single parameter
+                            // of type IDictionary<string, string> (for AnalysisSPILoader)
+                            var matchingCtors = type.GetConstructors().Where(ctor =>
+                            {
+                                var parameters = ctor.GetParameters();
+
+                                switch (parameters.Length)
+                                {
+                                    case 0: // default ctor
+                                        return true;
+                                    case 1:
+                                        return typeof(IDictionary<string, string>).IsAssignableFrom(parameters[0].ParameterType);
+                                    default:
+                                        return false;
+                                }
+                            });
+
+                            if (matchingCtors.Any())
                             {
                                 types.Add(type);
                             }
@@ -101,7 +124,6 @@ namespace Lucene.Net.Util
         {
             return typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface;
         }
-
 
         public static SPIClassIterator<S> Get()
         {
