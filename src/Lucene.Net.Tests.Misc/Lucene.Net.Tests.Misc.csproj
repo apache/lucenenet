@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Document\TestLazyDocument.cs" />
     <Compile Include="Index\Sorter\IndexSortingTest.cs" />
     <Compile Include="Index\Sorter\SorterTestBase.cs" />
     <Compile Include="Index\Sorter\SortingAtomicReaderTest.cs" />
