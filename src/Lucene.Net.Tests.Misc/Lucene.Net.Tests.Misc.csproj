@@ -48,6 +48,7 @@
     <Compile Include="Index\Sorter\TestEarlyTermination.cs" />
     <Compile Include="Index\Sorter\TestSortingMergePolicy.cs" />
     <Compile Include="Index\TestIndexSplitter.cs" />
+    <Compile Include="Index\TestMultiPassIndexSplitter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
