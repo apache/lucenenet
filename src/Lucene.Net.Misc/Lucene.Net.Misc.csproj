@@ -52,6 +52,11 @@
     <Compile Include="Index\Sorter\Sorter.cs" />
     <Compile Include="Index\Sorter\SortingAtomicReader.cs" />
     <Compile Include="Index\Sorter\SortingMergePolicy.cs" />
+    <Compile Include="Misc\GetTermInfo.cs" />
+    <Compile Include="Misc\HighFreqTerms.cs" />
+    <Compile Include="Misc\IndexMergeTool.cs" />
+    <Compile Include="Misc\SweetSpotSimilarity.cs" />
+    <Compile Include="Misc\TermStats.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
