@@ -1,10 +1,12 @@
-﻿using System.Diagnostics;
+﻿using Lucene.Net.Search;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
 using System.Collections.Generic;
+using System.Diagnostics;
 
-namespace org.apache.lucene.index
+namespace Lucene.Net.Index
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -21,200 +23,166 @@ namespace org.apache.lucene.index
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// Split an index based on a <seealso cref="Filter"/>.
+    /// </summary>
+    public class PKIndexSplitter
+    {
+        private readonly Filter docsInFirstIndex;
+        private readonly Directory input;
+        private readonly Directory dir1;
+        private readonly Directory dir2;
+        private readonly IndexWriterConfig config1;
+        private readonly IndexWriterConfig config2;
 
-	using OpenMode = org.apache.lucene.index.IndexWriterConfig.OpenMode;
-	using DocIdSet = org.apache.lucene.search.DocIdSet;
-	using DocIdSetIterator = org.apache.lucene.search.DocIdSetIterator;
-	using Filter = org.apache.lucene.search.Filter;
-	using TermRangeFilter = org.apache.lucene.search.TermRangeFilter;
-	using Directory = org.apache.lucene.store.Directory;
-	using Bits = org.apache.lucene.util.Bits;
-	using FixedBitSet = org.apache.lucene.util.FixedBitSet;
-	using IOUtils = org.apache.lucene.util.IOUtils;
-	using Version = org.apache.lucene.util.Version;
+        /// <summary>
+        /// Split an index based on a <seealso cref="Filter"/>. All documents that match the filter
+        /// are sent to dir1, remaining ones to dir2.
+        /// </summary>
+        public PKIndexSplitter(LuceneVersion version, Directory input, Directory dir1, Directory dir2, Filter docsInFirstIndex)
+              : this(input, dir1, dir2, docsInFirstIndex, NewDefaultConfig(version), NewDefaultConfig(version))
+        {
+        }
 
-	/// <summary>
-	/// Split an index based on a <seealso cref="Filter"/>.
-	/// </summary>
+        private static IndexWriterConfig NewDefaultConfig(LuceneVersion version)
+        {
+            return (new IndexWriterConfig(version, null)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
+        }
 
-	public class PKIndexSplitter
-	{
-	  private readonly Filter docsInFirstIndex;
-	  private readonly Directory input;
-	  private readonly Directory dir1;
-	  private readonly Directory dir2;
-	  private readonly IndexWriterConfig config1;
-	  private readonly IndexWriterConfig config2;
+        public PKIndexSplitter(Directory input, Directory dir1, Directory dir2, Filter docsInFirstIndex, IndexWriterConfig config1, IndexWriterConfig config2)
+        {
+            this.input = input;
+            this.dir1 = dir1;
+            this.dir2 = dir2;
+            this.docsInFirstIndex = docsInFirstIndex;
+            this.config1 = config1;
+            this.config2 = config2;
+        }
 
-	  /// <summary>
-	  /// Split an index based on a <seealso cref="Filter"/>. All documents that match the filter
-	  /// are sent to dir1, remaining ones to dir2.
-	  /// </summary>
-	  public PKIndexSplitter(Version version, Directory input, Directory dir1, Directory dir2, Filter docsInFirstIndex) : this(input, dir1, dir2, docsInFirstIndex, newDefaultConfig(version), newDefaultConfig(version))
-	  {
-	  }
+        /// <summary>
+        /// Split an index based on a  given primary key term 
+        /// and a 'middle' term.  If the middle term is present, it's
+        /// sent to dir2.
+        /// </summary>
+        public PKIndexSplitter(LuceneVersion version, Directory input, Directory dir1, Directory dir2, Term midTerm)
+              : this(version, input, dir1, dir2, new TermRangeFilter(midTerm.Field, null, midTerm.Bytes, true, false))
+        {
+        }
 
-	  private static IndexWriterConfig newDefaultConfig(Version version)
-	  {
-		return (new IndexWriterConfig(version, null)).setOpenMode(OpenMode.CREATE);
-	  }
+        public PKIndexSplitter(Directory input, Directory dir1, Directory dir2, Term midTerm, IndexWriterConfig config1, IndexWriterConfig config2)
+              : this(input, dir1, dir2, new TermRangeFilter(midTerm.Field, null, midTerm.Bytes, true, false), config1, config2)
+        {
+        }
 
-	  public PKIndexSplitter(Directory input, Directory dir1, Directory dir2, Filter docsInFirstIndex, IndexWriterConfig config1, IndexWriterConfig config2)
-	  {
-		this.input = input;
-		this.dir1 = dir1;
-		this.dir2 = dir2;
-		this.docsInFirstIndex = docsInFirstIndex;
-		this.config1 = config1;
-		this.config2 = config2;
-	  }
+        public virtual void Split()
+        {
+            bool success = false;
+            DirectoryReader reader = DirectoryReader.Open(input);
+            try
+            {
+                // pass an individual config in here since one config can not be reused!
+                CreateIndex(config1, dir1, reader, docsInFirstIndex, false);
+                CreateIndex(config2, dir2, reader, docsInFirstIndex, true);
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Close(reader);
+                }
+                else
+                {
+                    IOUtils.CloseWhileHandlingException(reader);
+                }
+            }
+        }
 
-	  /// <summary>
-	  /// Split an index based on a  given primary key term 
-	  /// and a 'middle' term.  If the middle term is present, it's
-	  /// sent to dir2.
-	  /// </summary>
-	  public PKIndexSplitter(Version version, Directory input, Directory dir1, Directory dir2, Term midTerm) : this(version, input, dir1, dir2, new TermRangeFilter(midTerm.field(), null, midTerm.bytes(), true, false))
-	  {
-	  }
+        private void CreateIndex(IndexWriterConfig config, Directory target, IndexReader reader, Filter preserveFilter, bool negateFilter)
+        {
+            bool success = false;
+            IndexWriter w = new IndexWriter(target, config);
+            try
+            {
+                IList<AtomicReaderContext> leaves = reader.Leaves;
+                IndexReader[] subReaders = new IndexReader[leaves.Count];
+                int i = 0;
+                foreach (AtomicReaderContext ctx in leaves)
+                {
+                    subReaders[i++] = new DocumentFilteredAtomicIndexReader(ctx, preserveFilter, negateFilter);
+                }
+                w.AddIndexes(subReaders);
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Close(w);
+                }
+                else
+                {
+                    IOUtils.CloseWhileHandlingException(w);
+                }
+            }
+        }
 
-	  public PKIndexSplitter(Directory input, Directory dir1, Directory dir2, Term midTerm, IndexWriterConfig config1, IndexWriterConfig config2) : this(input, dir1, dir2, new TermRangeFilter(midTerm.field(), null, midTerm.bytes(), true, false), config1, config2)
-	  {
-	  }
+        private class DocumentFilteredAtomicIndexReader : FilterAtomicReader
+        {
+            internal readonly Bits liveDocs;
+            internal readonly int numDocs_Renamed;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void split() throws java.io.IOException
-	  public virtual void Split()
-	  {
-		bool success = false;
-		DirectoryReader reader = DirectoryReader.open(input);
-		try
-		{
-		  // pass an individual config in here since one config can not be reused!
-		  createIndex(config1, dir1, reader, docsInFirstIndex, false);
-		  createIndex(config2, dir2, reader, docsInFirstIndex, true);
-		  success = true;
-		}
-		finally
-		{
-		  if (success)
-		  {
-			IOUtils.close(reader);
-		  }
-		  else
-		  {
-			IOUtils.closeWhileHandlingException(reader);
-		  }
-		}
-	  }
+            public DocumentFilteredAtomicIndexReader(AtomicReaderContext context, Filter preserveFilter, bool negateFilter)
+                    : base(context.AtomicReader)
+            {
+                int maxDoc = @in.MaxDoc;
+                FixedBitSet bits = new FixedBitSet(maxDoc);
+                // ignore livedocs here, as we filter them later:
+                DocIdSet docs = preserveFilter.GetDocIdSet(context, null);
+                if (docs != null)
+                {
+                    DocIdSetIterator it = docs.GetIterator();
+                    if (it != null)
+                    {
+                        bits.Or(it);
+                    }
+                }
+                if (negateFilter)
+                {
+                    bits.Flip(0, maxDoc);
+                }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void createIndex(IndexWriterConfig config, org.apache.lucene.store.Directory target, IndexReader reader, org.apache.lucene.search.Filter preserveFilter, boolean negateFilter) throws java.io.IOException
-	  private void createIndex(IndexWriterConfig config, Directory target, IndexReader reader, Filter preserveFilter, bool negateFilter)
-	  {
-		bool success = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexWriter w = new IndexWriter(target, config);
-		IndexWriter w = new IndexWriter(target, config);
-		try
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<AtomicReaderContext> leaves = reader.leaves();
-		  IList<AtomicReaderContext> leaves = reader.leaves();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexReader[] subReaders = new IndexReader[leaves.size()];
-		  IndexReader[] subReaders = new IndexReader[leaves.Count];
-		  int i = 0;
-		  foreach (AtomicReaderContext ctx in leaves)
-		  {
-			subReaders[i++] = new DocumentFilteredAtomicIndexReader(ctx, preserveFilter, negateFilter);
-		  }
-		  w.addIndexes(subReaders);
-		  success = true;
-		}
-		finally
-		{
-		  if (success)
-		  {
-			IOUtils.close(w);
-		  }
-		  else
-		  {
-			IOUtils.closeWhileHandlingException(w);
-		  }
-		}
-	  }
+                if (@in.HasDeletions)
+                {
+                    Bits oldLiveDocs = @in.LiveDocs;
+                    Debug.Assert(oldLiveDocs != null);
+                    DocIdSetIterator it = bits.GetIterator();
+                    for (int i = it.NextDoc(); i < maxDoc; i = it.NextDoc())
+                    {
+                        if (!oldLiveDocs.Get(i))
+                        {
+                            // we can safely modify the current bit, as the iterator already stepped over it:
+                            bits.Clear(i);
+                        }
+                    }
+                }
 
-	  private class DocumentFilteredAtomicIndexReader : FilterAtomicReader
-	  {
-		internal readonly Bits liveDocs;
-		internal readonly int numDocs_Renamed;
+                this.liveDocs = bits;
+                this.numDocs_Renamed = bits.Cardinality();
+            }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public DocumentFilteredAtomicIndexReader(AtomicReaderContext context, org.apache.lucene.search.Filter preserveFilter, boolean negateFilter) throws java.io.IOException
-		public DocumentFilteredAtomicIndexReader(AtomicReaderContext context, Filter preserveFilter, bool negateFilter) : base(context.reader())
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = in.maxDoc();
-		  int maxDoc = @in.maxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.FixedBitSet bits = new org.apache.lucene.util.FixedBitSet(maxDoc);
-		  FixedBitSet bits = new FixedBitSet(maxDoc);
-		  // ignore livedocs here, as we filter them later:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.search.DocIdSet docs = preserveFilter.getDocIdSet(context, null);
-		  DocIdSet docs = preserveFilter.getDocIdSet(context, null);
-		  if (docs != null)
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.search.DocIdSetIterator it = docs.iterator();
-			DocIdSetIterator it = docs.GetEnumerator();
-			if (it != null)
-			{
-			  bits.or(it);
-			}
-		  }
-		  if (negateFilter)
-		  {
-			bits.flip(0, maxDoc);
-		  }
+            public override int NumDocs
+            {
+                get { return numDocs_Renamed; }
+            }
 
-		  if (@in.hasDeletions())
-		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.util.Bits oldLiveDocs = in.getLiveDocs();
-			Bits oldLiveDocs = @in.LiveDocs;
-			Debug.Assert(oldLiveDocs != null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final org.apache.lucene.search.DocIdSetIterator it = bits.iterator();
-			DocIdSetIterator it = bits.GetEnumerator();
-			for (int i = it.nextDoc(); i < maxDoc; i = it.nextDoc())
-			{
-			  if (!oldLiveDocs.get(i))
-			  {
-				// we can safely modify the current bit, as the iterator already stepped over it:
-				bits.clear(i);
-			  }
-			}
-		  }
-
-		  this.liveDocs = bits;
-		  this.numDocs_Renamed = bits.cardinality();
-		}
-
-		public override int numDocs()
-		{
-		  return numDocs_Renamed;
-		}
-
-		public override Bits LiveDocs
-		{
-			get
-			{
-			  return liveDocs;
-			}
-		}
-	  }
-	}
-
+            public override Bits LiveDocs
+            {
+                get
+                {
+                    return liveDocs;
+                }
+            }
+        }
+    }
 }
