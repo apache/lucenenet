@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.QueryParser.Surround.Query;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.QueryParser.Surround.Parser
@@ -114,7 +115,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
             /* W, 2W, 3W etc -> 1, 2 3, etc. Same for N, 2N ... */
             return distanceOp.Length == 1
               ? 1
-              : int.Parse(distanceOp.Substring(0, distanceOp.Length - 1));
+              : int.Parse(distanceOp.Substring(0, distanceOp.Length - 1)); // LUCENENET TODO: Culture from current thread?
         }
 
         protected static void CheckDistanceSubQueries(DistanceQuery distq, string opName)
@@ -499,7 +500,6 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                     break;
                 case RegexpToken.QUOTED:
                     term = Jj_consume_token(RegexpToken.QUOTED);
-                    // TODO: Substring fix
                     { if (true) return GetTermQuery(term.image.Substring(1, (term.image.Length - 1) - 1), true /* quoted */); }
                     break;
                 case RegexpToken.SUFFIXTERM:
@@ -509,7 +509,6 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                     {
                         { if (true) throw new ParseException(truncationErrorMessage + term.image); }
                     }
-                    // TODO: Substring fix
                     { if (true) return GetPrefixQuery(term.image.Substring(0, term.image.Length - 1), false /* not quoted */); }
                     break;
                 case RegexpToken.TRUNCTERM:
@@ -528,7 +527,6 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                     {
                         { if (true) throw new ParseException(truncationErrorMessage + term.image); }
                     }
-                    // TODO: Substring fix
                     { if (true) return GetPrefixQuery(term.image.Substring(1, (term.image.Length - 2) - 1), true /* quoted */); }
                     break;
                 default:
@@ -559,7 +557,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                 float f;
                 try
                 {
-                    // TODO: Test parsing float in various cultures (.NET)
+                    // LUCENENET TODO: Test parsing float in various cultures (.NET)
                     f = float.Parse(weight.image);
                 }
                 catch (Exception floatExc)
