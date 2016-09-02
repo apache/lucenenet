@@ -794,13 +794,15 @@ namespace Lucene.Net.QueryParser.Classic
                         {
                             if (oldentry[i] != jj_expentry[i])
                             {
-                                continue;
+                                goto jj_entries_loop_continue;
                             }
                         }
                         jj_expentries.Add(jj_expentry);
-                        break;
+                        goto jj_entries_loop_break;
                     }
+                jj_entries_loop_continue: ;
                 }
+            jj_entries_loop_break:
                 if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
             }
         }
