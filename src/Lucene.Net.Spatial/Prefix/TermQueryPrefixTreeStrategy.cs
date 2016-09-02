@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 using System.Collections.Generic;
+using Lucene.Net.Queries;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Query;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
 
@@ -31,7 +32,7 @@ namespace Lucene.Net.Spatial.Prefix
     /// 	</see>
     /// of all the cells from
     /// <see cref="Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetCells(Shape, int, bool, bool)
-    /// 	">Lucene.Net.Spatial.Prefix.Tree.SpatialPrefixTree.GetCells(Shape, int, bool, bool)
+    /// 	"SpatialPrefixTree.GetCells(Shape, int, bool, bool)
     /// 	</see>
     /// . It only supports the search of indexed Point shapes.
     /// <p/>
@@ -64,7 +65,7 @@ namespace Lucene.Net.Spatial.Prefix
             int i = 0;
             foreach (Cell cell in cells)
             {
-                terms[i++] = new BytesRef(cell.TokenString);
+                terms[i++] = new BytesRef(cell.TokenString);//TODO use cell.getTokenBytes()
             }
             return new TermsFilter(FieldName, terms);
         }

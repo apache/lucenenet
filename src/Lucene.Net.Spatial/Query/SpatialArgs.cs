@@ -16,24 +16,10 @@
  */
 
 using System;
-using System.Text;
 using Spatial4n.Core.Context;
-using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 
-namespace Spatial4n.Core.Exceptions
-{
-    [Serializable]
-    public class InvalidSpatialArgument : ArgumentException
-    {
-        public InvalidSpatialArgument(String reason)
-            : base(reason)
-        {
-        }
-    }
-}
-
-namespace Lucene.Net.Spatial.Queries
+namespace Lucene.Net.Spatial.Query
 {
     public class SpatialArgs
     {
@@ -69,11 +55,14 @@ namespace Lucene.Net.Spatial.Queries
                 return 0;
             }
             Rectangle bbox = shape.GetBoundingBox();
-            //The diagonal distance should be the same computed from any opposite corner,
-            // and this is the longest distance that might be occurring within the shape.
-            double diagonalDist = ctx.GetDistCalc().Distance(
-                ctx.MakePoint(bbox.GetMinX(), bbox.GetMinY()), bbox.GetMaxX(), bbox.GetMaxY());
-            return diagonalDist * 0.5 * distErrPct;
+
+            //Compute the distance from the center to a corner.  Because the distance
+            // to a bottom corner vs a top corner can vary in a geospatial scenario,
+            // take the closest one (greater precision).
+            Point ctr = bbox.GetCenter();
+            double y = (ctr.GetY() >= 0 ? bbox.GetMaxY() : bbox.GetMinY());
+            double diagonalDist = ctx.GetDistCalc().Distance(ctr, bbox.GetMaxX(), y);
+            return diagonalDist * distErrPct;
         }
 
         /// <summary>
@@ -88,8 +77,8 @@ namespace Lucene.Net.Spatial.Queries
         {
             if (DistErr != null)
                 return DistErr.Value;
-            double? distErrPct = (this.distErrPct ?? defaultDistErrPct);
-            return CalcDistanceFromErrPct(Shape, distErrPct.Value, ctx);
+            double distErrPct = (this.distErrPct ?? defaultDistErrPct);
+            return CalcDistanceFromErrPct(Shape, distErrPct, ctx);
         }
 
         /// <summary>
@@ -100,6 +89,11 @@ namespace Lucene.Net.Spatial.Queries
             if (Operation.IsTargetNeedsArea() && !Shape.HasArea())
             {
                 throw new ArgumentException(Operation + " only supports geometry with area");
+            }
+
+            if (DistErr != null && DistErrPct != null)
+            {
+                throw new ArgumentException("Only DistErr or DistErrPct can be specified.");
             }
         }
 

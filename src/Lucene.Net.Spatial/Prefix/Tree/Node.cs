@@ -65,7 +65,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         private void b_fixLeaf()
         {
-            if (GetLevel() == spatialPrefixTree.GetMaxLevels())
+            if (GetLevel() == spatialPrefixTree.MaxLevels)
             {
                 SetLeaf();
             }

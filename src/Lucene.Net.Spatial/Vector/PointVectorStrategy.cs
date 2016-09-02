@@ -17,9 +17,9 @@
 
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Function;
-using Lucene.Net.Spatial.Queries;
+using Lucene.Net.Spatial.Query;
 using Lucene.Net.Spatial.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
@@ -96,9 +96,9 @@ namespace Lucene.Net.Spatial.Vector
             return f;
         }
 
-        public override ValueSource MakeDistanceValueSource(Point queryPoint)
+        public override ValueSource MakeDistanceValueSource(Point queryPoint, double multiplier)
         {
-            return new DistanceValueSource(this, queryPoint);
+            return new DistanceValueSource(this, queryPoint, multiplier);
         }
 
         public override ConstantScoreQuery MakeQuery(SpatialArgs args)
@@ -130,7 +130,7 @@ namespace Lucene.Net.Spatial.Vector
         }
 
         //TODO this is basically old code that hasn't been verified well and should probably be removed
-        public Query MakeQueryDistanceScore(SpatialArgs args)
+        public Search.Query MakeQueryDistanceScore(SpatialArgs args)
         {
             // For starters, just limit the bbox
             var shape = args.Shape;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Spatial.Vector
 
             ValueSource valueSource = null;
 
-            Query spatial = null;
+            Search.Query spatial = null;
             SpatialOperation op = args.Operation;
 
             if (SpatialOperation.Is(op,
@@ -190,10 +190,10 @@ namespace Lucene.Net.Spatial.Vector
             {
                 valueSource = MakeDistanceValueSource(shape.GetCenter());
             }
-            Query spatialRankingQuery = new FunctionQuery(valueSource);
+            Search.Query spatialRankingQuery = new FunctionQuery(valueSource);
             var bq = new BooleanQuery();
-            bq.Add(spatial, Occur.MUST);
-            bq.Add(spatialRankingQuery, Occur.MUST);
+            bq.Add(spatial, BooleanClause.Occur.MUST);
+            bq.Add(spatialRankingQuery, BooleanClause.Occur.MUST);
             return bq;
 
         }
@@ -213,15 +213,15 @@ namespace Lucene.Net.Spatial.Vector
         /// Constructs a query to retrieve documents that fully contain the input envelope.
         /// </summary>
         /// <param name="bbox"></param>
-        private Query MakeWithin(Rectangle bbox)
+        private Search.Query MakeWithin(Rectangle bbox)
         {
             var bq = new BooleanQuery();
-            const Occur MUST = Occur.MUST;
+            const BooleanClause.Occur MUST = BooleanClause.Occur.MUST;
             if (bbox.GetCrossesDateLine())
             {
                 //use null as performance trick since no data will be beyond the world bounds
-                bq.Add(RangeQuery(fieldNameX, null /*-180*/, bbox.GetMaxX()), Occur.SHOULD);
-                bq.Add(RangeQuery(fieldNameX, bbox.GetMinX(), null /*+180*/), Occur.SHOULD);
+                bq.Add(RangeQuery(fieldNameX, null /*-180*/, bbox.GetMaxX()), BooleanClause.Occur.SHOULD);
+                bq.Add(RangeQuery(fieldNameX, bbox.GetMinX(), null /*+180*/), BooleanClause.Occur.SHOULD);
                 bq.MinimumNumberShouldMatch = 1; //must match at least one of the SHOULD
             }
             else
@@ -247,13 +247,13 @@ namespace Lucene.Net.Spatial.Vector
         /// Constructs a query to retrieve documents that fully contain the input envelope.
         /// </summary>
         /// <param name="bbox"></param>
-        private Query MakeDisjoint(Rectangle bbox)
+        private Search.Query MakeDisjoint(Rectangle bbox)
         {
             if (bbox.GetCrossesDateLine())
                 throw new InvalidOperationException("MakeDisjoint doesn't handle dateline cross");
-            Query qX = RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX());
-            Query qY = RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY());
-            var bq = new BooleanQuery { { qX, Occur.MUST_NOT }, { qY, Occur.MUST_NOT } };
+            Search.Query qX = RangeQuery(fieldNameX, bbox.GetMinX(), bbox.GetMaxX());
+            Search.Query qY = RangeQuery(fieldNameY, bbox.GetMinY(), bbox.GetMaxY());
+            var bq = new BooleanQuery { { qX, BooleanClause.Occur.MUST_NOT }, { qY, BooleanClause.Occur.MUST_NOT } };
             return bq;
         }
     }

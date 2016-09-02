@@ -15,21 +15,28 @@
  * limitations under the License.
  */
 
+using System.Collections;
 using System.Collections.Generic;
 using Lucene.Net.Index;
-using Lucene.Net.Search.Function;
+using Lucene.Net.Queries.Function;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Spatial.Util
 {
+    /// <summary>
+    /// Caches the doubleVal of another value source in a HashMap
+    /// so that it is computed only once.
+    /// @lucene.internal
+    /// </summary>
     public class CachingDoubleValueSource : ValueSource
     {
-        protected readonly Dictionary<int, double> cache;
+        protected readonly IDictionary<int, double> cache;
         protected readonly ValueSource source;
 
         public CachingDoubleValueSource(ValueSource source)
         {
             this.source = source;
-            cache = new Dictionary<int, double>();
+            cache = new HashMap<int, double>();
         }
 
         public override string Description
@@ -37,9 +44,9 @@ namespace Lucene.Net.Spatial.Util
             get { return "Cached[" + source.Description + "]"; }
         }
 
-        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            int @base = readerContext.docBase;
+            int @base = readerContext.DocBase;
             FunctionValues vals = source.GetValues(context, readerContext);
             return new CachingDoubleFunctionValue(@base, vals, cache);
         }
@@ -65,11 +72,11 @@ namespace Lucene.Net.Spatial.Util
 
         public class CachingDoubleFunctionValue : FunctionValues
         {
-            private readonly Dictionary<int, double> cache;
+            private readonly IDictionary<int, double> cache;
             private readonly int docBase;
             private readonly FunctionValues values;
 
-            public CachingDoubleFunctionValue(int docBase, FunctionValues vals, Dictionary<int, double> cache)
+            public CachingDoubleFunctionValue(int docBase, FunctionValues vals, IDictionary<int, double> cache)
             {
                 this.docBase = docBase;
                 values = vals;

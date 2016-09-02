@@ -16,9 +16,10 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Lucene.Net.Index;
-using Lucene.Net.Search.Function;
+using Lucene.Net.Queries.Function;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
@@ -33,12 +34,15 @@ namespace Lucene.Net.Spatial.Util
         private readonly ShapeFieldCacheProvider<Point> provider;
         private readonly SpatialContext ctx;
         private readonly Point from;
+        private readonly double multiplier;
 
-        public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, ShapeFieldCacheProvider<Point> provider, Point from)
+        public ShapeFieldCacheDistanceValueSource(SpatialContext ctx, 
+            ShapeFieldCacheProvider<Point> provider, Point from, double multiplier)
         {
             this.ctx = ctx;
             this.from = from;
             this.provider = provider;
+            this.multiplier = multiplier;
         }
 
         public class CachedDistanceFunctionValue : FunctionValues
@@ -56,7 +60,7 @@ namespace Lucene.Net.Spatial.Util
 
                 from = enclosingInstance.from;
                 calculator = enclosingInstance.ctx.GetDistCalc();
-                nullValue = (enclosingInstance.ctx.IsGeo() ? 180 : double.MaxValue);
+                nullValue = (enclosingInstance.ctx.IsGeo() ? 180 * enclosingInstance.multiplier : double.MaxValue);
             }
 
             public override float FloatVal(int doc)
@@ -74,7 +78,7 @@ namespace Lucene.Net.Spatial.Util
                     {
                         v = Math.Min(v, calculator.Distance(from, vals[i]));
                     }
-                    return v;
+                    return v * enclosingInstance.multiplier;
                 }
                 return nullValue;
             }
@@ -93,7 +97,7 @@ namespace Lucene.Net.Spatial.Util
             }
         }
 
-        public override FunctionValues GetValues(IDictionary<object, object> context, AtomicReaderContext readerContext)
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             return new CachedDistanceFunctionValue(readerContext.AtomicReader, this);
         }
