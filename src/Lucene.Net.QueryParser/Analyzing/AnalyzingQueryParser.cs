@@ -68,12 +68,12 @@ namespace Lucene.Net.QueryParser.Analyzing
             if (termStr == null)
             {
                 //can't imagine this would ever happen
-                throw new ParseException("Passed null value as term to getWildcardQuery");
+                throw new ParseException("Passed null value as term to GetWildcardQuery");
             }
             if (!AllowLeadingWildcard && (termStr.StartsWith("*") || termStr.StartsWith("?")))
             {
                 throw new ParseException("'*' or '?' not allowed as first character in WildcardQuery"
-                                        + " unless getAllowLeadingWildcard() returns true");
+                                        + " unless AllowLeadingWildcard returns true");
             }
 
             Match wildcardMatcher = wildcardPattern.Match(termStr);
@@ -172,7 +172,7 @@ namespace Lucene.Net.QueryParser.Analyzing
                     if (null != multipleOutputs)
                     {
                         throw new ParseException(
-                            string.Format(Locale, "Analyzer created multiple terms for \"%s\": %s", chunk, multipleOutputs.ToString()));
+                            string.Format(Locale, @"Analyzer created multiple terms for ""{0}"": {1}", chunk, multipleOutputs.ToString()));
                     }
                 }
                 else
@@ -180,13 +180,13 @@ namespace Lucene.Net.QueryParser.Analyzing
                     // nothing returned by analyzer.  Was it a stop word and the user accidentally
                     // used an analyzer with stop words?
                     stream.End();
-                    throw new ParseException(string.Format(Locale, "Analyzer returned nothing for \"%s\"", chunk));
+                    throw new ParseException(string.Format(Locale, @"Analyzer returned nothing for ""{0}""", chunk));
                 }
             }
             catch (System.IO.IOException e)
             {
                 throw new ParseException(
-                    string.Format(Locale, "IO error while trying to analyze single term: \"%s\"", termStr));
+                    string.Format(Locale, @"IO error while trying to analyze single term: ""{0}""", termStr));
             }
             finally
             {
