@@ -542,7 +542,7 @@ namespace Lucene.Net.QueryParser.Surround.Parser
         public void OptionalWeights(SrndQuery q)
         {
             Token weight = null;
-        
+
             while (true)
             {
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
@@ -797,13 +797,15 @@ namespace Lucene.Net.QueryParser.Surround.Parser
                         {
                             if (oldentry[i] != jj_expentry[i])
                             {
-                                continue;
+                                goto jj_entries_loop_continue;
                             }
                         }
                         jj_expentries.Add(jj_expentry);
-                        break;
+                        goto jj_entries_loop_break;
                     }
+                jj_entries_loop_continue: ;
                 }
+            jj_entries_loop_break:
                 if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
             }
         }
