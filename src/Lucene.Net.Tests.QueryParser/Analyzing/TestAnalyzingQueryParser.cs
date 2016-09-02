@@ -310,7 +310,9 @@ namespace Lucene.Net.QueryParser.Analyzing
             int hits;
             using (Directory ramDir = NewDirectory())
             {
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random(), ramDir, analyzer))
+                // LUCENENET TODO: It seems the overload this test depends on has been removed from the RandomIndexWriter
+                //using (RandomIndexWriter writer = new RandomIndexWriter(Random(), ramDir, analyzer))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random(), ramDir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, analyzer)))
                 {
                     Document doc = new Document();
                     FieldType fieldType = new FieldType();
