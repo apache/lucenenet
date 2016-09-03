@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Collation;
@@ -76,20 +77,19 @@ namespace Lucene.Net.Collation
 		private readonly String custom;
 		private readonly String language;
 		private readonly String country;
-		private readonly String culture;
 		private readonly String variant;
 		private readonly String strength;
 		private readonly String decomposition;
 
 		public CollationKeyFilterFactory(IDictionary<string, string> args) : base(args)
 		{
-			args.TryGetValue("custom", out this.custom);
-			args.TryGetValue("language", out this.language);
-			args.TryGetValue("country", out this.country);
-			args.TryGetValue("variant", out this.variant);
-			args.TryGetValue("strength", out this.strength);
-			args.TryGetValue("decomposition", out this.decomposition);
-
+			this.custom = this.RemoveFromDictionary(args, "custom");
+			this.language = this.RemoveFromDictionary(args, "language");
+			this.country = this.RemoveFromDictionary(args, "country");
+			this.variant = this.RemoveFromDictionary(args, "variant");
+			this.strength = this.RemoveFromDictionary(args, "strength");
+			this.decomposition = this.RemoveFromDictionary(args, "decomposition");
+			
 			if (this.custom == null && this.language == null)
 			{
 				throw new ArgumentException("Either custom or language is required.");
@@ -111,7 +111,7 @@ namespace Lucene.Net.Collation
 			if (this.language != null)
 			{
 				// create from a system collator, based on Locale.
-				this.collator = this.CreateFromLocale(this.culture);
+				this.collator = this.CreateFromLocale(this.language, this.country, this.variant);
 			}
 			else
 			{
@@ -175,11 +175,57 @@ namespace Lucene.Net.Collation
 		/// Create a locale from language, with optional country and variant.
 		/// Then return the appropriate collator for the locale.
 		/// </summary>
-		private Collator CreateFromLocale(string name)
+		private Collator CreateFromLocale(string language, string country, string variant)
 		{
-			var locale = CultureInfo.GetCultureInfo(name);
+			CultureInfo cultureInfo;
 
-			return Collator.GetInstance(locale);
+			if (language == null)
+			{
+				throw new System.ArgumentException("Language is required");
+			}
+
+			if (language != null && country == null && variant != null)
+			{
+				throw new System.ArgumentException("To specify variant, country is required");
+			}
+
+			if (country != null && variant != null)
+			{
+				cultureInfo = CultureInfo.GetCultures(CultureTypes.SpecificCultures).Single(x =>
+				{
+					if (!x.TwoLetterISOLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase) &&
+						!x.ThreeLetterISOLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase) &&
+						!x.ThreeLetterWindowsLanguageName.Equals(language, StringComparison.OrdinalIgnoreCase))
+					{
+						return false;
+					}
+
+					var region = new RegionInfo(x.Name);
+
+					if (!region.TwoLetterISORegionName.Equals(country, StringComparison.OrdinalIgnoreCase) &&
+						!region.ThreeLetterISORegionName.Equals(country, StringComparison.OrdinalIgnoreCase) &&
+						!region.ThreeLetterWindowsRegionName.Equals(country, StringComparison.OrdinalIgnoreCase))
+					{
+						return false;
+					}
+
+					return x.Name
+						.Replace(x.TwoLetterISOLanguageName, String.Empty)
+						.Replace(region.TwoLetterISORegionName, String.Empty)
+						.Replace("-", String.Empty)
+						.Equals(variant, StringComparison.OrdinalIgnoreCase);
+				});
+			}
+			else if (country != null)
+			{
+				cultureInfo = CultureInfo.GetCultureInfo(String.Concat(language, "-", country));
+			}
+			else
+			{
+				cultureInfo = CultureInfo.GetCultureInfo(language);
+			}
+
+			return Collator.GetInstance(cultureInfo);
 		}
 
 		/// <summary>
@@ -228,6 +274,21 @@ namespace Lucene.Net.Collation
 
 			return builder.ToString();
 		}
-	}
 
+		/// <summary>
+		/// Trys to gets the value of a key from a dictionary and removes the value after.
+		/// This is to mimic java's Dictionary.Remove method.
+		/// </summary>
+		/// <returns>The value for the given key; otherwise null.</returns>
+		private string RemoveFromDictionary(IDictionary<string, string> args, string key)
+		{
+			string value = null;
+			if (args.TryGetValue(key, out value))
+			{
+				args.Remove(key);
+			}
+
+			return value;
+		}
+	}
 }

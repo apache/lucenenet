@@ -467,6 +467,7 @@
     <Compile Include="Collation\CollationAttributeFactory.cs" />
     <Compile Include="Collation\CollationKeyAnalyzer.cs" />
     <Compile Include="Collation\CollationKeyFilter.cs" />
+    <Compile Include="Collation\CollationKeyFilterFactory.cs" />
     <Compile Include="Collation\Collator.cs" />
     <Compile Include="Collation\TokenAttributes\CollatedTermAttributeImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
