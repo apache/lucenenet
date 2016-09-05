@@ -6,6 +6,7 @@ using System.Text;
 namespace Lucene.Net.Util.Fst
 {
     using Lucene.Net.Util;
+    using System.Collections;
     using System.IO;
     using ByteArrayDataOutput = Lucene.Net.Store.ByteArrayDataOutput;
 
@@ -439,7 +440,22 @@ namespace Lucene.Net.Util.Fst
                     Debug.Assert(root.Flags == asserting.Flags);
                     Debug.Assert(root.Label == asserting.Label);
                     Debug.Assert(root.NextArc == asserting.NextArc);
-                    Debug.Assert(root.NextFinalOutput.Equals(asserting.NextFinalOutput));
+                    // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
+                    // because it checks for reference equality, not that the list contents
+                    // are the same.
+                    if (root.NextFinalOutput is IEnumerable && asserting.NextFinalOutput is IEnumerable)
+                    {
+                        var iter = (asserting.NextFinalOutput as IEnumerable).GetEnumerator();
+                        foreach (object value in root.NextFinalOutput as IEnumerable)
+                        {
+                            iter.MoveNext();
+                            Debug.Assert(object.Equals(value, iter.Current));
+                        }
+                    }
+                    else
+                    {
+                        Debug.Assert(root.NextFinalOutput.Equals(asserting.NextFinalOutput));
+                    }
                     Debug.Assert(root.Node == asserting.Node);
                     Debug.Assert(root.NumArcs == asserting.NumArcs);
                     Debug.Assert(root.Output.Equals(asserting.Output));

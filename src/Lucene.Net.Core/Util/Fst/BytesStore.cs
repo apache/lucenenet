@@ -375,7 +375,7 @@ namespace Lucene.Net.Util.Fst
                 blockIndex--;
                 NextWrite = BlockSize;
             }
-            Blocks.GetRange(blockIndex + 1, Blocks.Count).Clear();
+            Blocks.RemoveRange(blockIndex + 1, Blocks.Count - (blockIndex + 1));
             if (newLen == 0)
             {
                 Current = null;
@@ -430,7 +430,7 @@ namespace Lucene.Net.Util.Fst
                 nextRead = outerInstance.BlockSize;
             }
 
-            private sbyte[] Current;
+            private byte[] Current;
             private int nextBuffer;
             private int nextRead;
 
@@ -438,15 +438,15 @@ namespace Lucene.Net.Util.Fst
             {
                 if (nextRead == OuterInstance.BlockSize)
                 {
-                    OuterInstance.Current = OuterInstance.Blocks[nextBuffer++];
+                    Current = OuterInstance.Blocks[nextBuffer++];
                     nextRead = 0;
                 }
-                return OuterInstance.Current[nextRead++];
+                return Current[nextRead++];
             }
 
             public override void SkipBytes(int count)
             {
-                Position = OuterInstance.Position + count;
+                Position = Position + count;
             }
 
             public override void ReadBytes(byte[] b, int offset, int len)
@@ -456,7 +456,7 @@ namespace Lucene.Net.Util.Fst
                     int chunkLeft = OuterInstance.BlockSize - nextRead;
                     if (len <= chunkLeft)
                     {
-                        Array.Copy(OuterInstance.Current, nextRead, b, offset, len);
+                        Array.Copy(Current, nextRead, b, offset, len);
                         nextRead += len;
                         break;
                     }
@@ -464,11 +464,11 @@ namespace Lucene.Net.Util.Fst
                     {
                         if (chunkLeft > 0)
                         {
-                            Array.Copy(OuterInstance.Current, nextRead, b, offset, chunkLeft);
+                            Array.Copy(Current, nextRead, b, offset, chunkLeft);
                             offset += chunkLeft;
                             len -= chunkLeft;
                         }
-                        OuterInstance.Current = OuterInstance.Blocks[nextBuffer++];
+                        Current = OuterInstance.Blocks[nextBuffer++];
                         nextRead = 0;
                     }
                 }
@@ -484,7 +484,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     int bufferIndex = (int)(value >> OuterInstance.blockBits);
                     nextBuffer = bufferIndex + 1;
-                    OuterInstance.Current = OuterInstance.Blocks[bufferIndex];
+                    Current = OuterInstance.Blocks[bufferIndex];
                     nextRead = (int)(value & OuterInstance.BlockMask);
                     Debug.Assert(this.Position == value, "pos=" + value + " getPos()=" + this.Position);
                 }

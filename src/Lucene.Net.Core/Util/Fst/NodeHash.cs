@@ -2,22 +2,23 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
 {
+    using System.Collections;
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using PagedGrowableWriter = Lucene.Net.Util.Packed.PagedGrowableWriter;
@@ -87,7 +88,29 @@ namespace Lucene.Net.Util.Fst
                 long n = ((Builder<T>.CompiledNode)arc.Target).Node;
                 h = PRIME * h + (int)(n ^ (n >> 32));
                 h = PRIME * h + arc.Output.GetHashCode();
-                h = PRIME * h + arc.NextFinalOutput.GetHashCode();
+
+                // LUCENENET: Since lists do not compare values by default in .NET,
+                // we need this workaround to get the hashcode of the type + all of the
+                // values.
+                if (arc.NextFinalOutput is IEnumerable)
+                {
+                    h = PRIME * h + arc.NextFinalOutput.GetType().GetHashCode();
+                    foreach (object value in arc.NextFinalOutput as IEnumerable)
+                    {
+                        if (value != null)
+                        {
+                            h = PRIME * h + value.GetHashCode();
+                        }
+                        else
+                        {
+                            h = PRIME * h + 0; // 0 for null
+                        }
+                    }
+                }
+                else
+                {
+                    h = PRIME * h + arc.NextFinalOutput.GetHashCode();
+                }
                 if (arc.IsFinal)
                 {
                     h += 17;
@@ -110,7 +133,30 @@ namespace Lucene.Net.Util.Fst
                 h = PRIME * h + ScratchArc.Label;
                 h = PRIME * h + (int)(ScratchArc.Target ^ (ScratchArc.Target >> 32));
                 h = PRIME * h + ScratchArc.Output.GetHashCode();
-                h = PRIME * h + ScratchArc.NextFinalOutput.GetHashCode();
+
+                // LUCENENET: Since lists do not compare values by default in .NET,
+                // we need this workaround to get the hashcode of the type + all of the
+                // values.
+                if (ScratchArc.NextFinalOutput is IEnumerable)
+                {
+                    h = PRIME * h + ScratchArc.NextFinalOutput.GetType().GetHashCode();
+                    foreach (object value in ScratchArc.NextFinalOutput as IEnumerable)
+                    {
+                        if (value != null)
+                        {
+                            h = PRIME * h + value.GetHashCode();
+                        }
+                        else
+                        {
+                            h = PRIME * h + 0; // 0 for null
+                        }
+                    }
+                }
+                else
+                {
+                    h = PRIME * h + ScratchArc.NextFinalOutput.GetHashCode();
+                }
+
                 if (ScratchArc.Final)
                 {
                     h += 17;

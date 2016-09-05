@@ -327,11 +327,11 @@ namespace Lucene.Net.Util.Fst
 
             foreach (InputOutput<T> pair in Pairs)
             {
-                if (pair.Output is IList)
+                if (pair.Output is IEnumerable)
                 {
-                    IList<long> longValues = (IList<long>)pair.Output;
                     Builder<object> builderObject = builder as Builder<object>;
-                    foreach (long value in longValues)
+                    var values = pair.Output as IEnumerable;
+                    foreach (object value in values)
                     {
                         builderObject.Add(pair.Input, value);
                     }
@@ -395,6 +395,24 @@ namespace Lucene.Net.Util.Fst
 
         protected internal virtual bool OutputsEqual(T a, T b)
         {
+            // LUCENENET: In .NET, lists do not automatically test to ensure
+            // their values are equal, so we need to do that manually.
+            // Note that we are testing the values without regard to whether
+            // the enumerable type is nullable.
+            if (a is IEnumerable && b is IEnumerable)
+            {
+                var iter = (b as IEnumerable).GetEnumerator();
+                foreach (object value in a as IEnumerable)
+                {
+                    iter.MoveNext();
+                    if (!object.Equals(value, iter.Current))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
             return a.Equals(b);
         }
 
