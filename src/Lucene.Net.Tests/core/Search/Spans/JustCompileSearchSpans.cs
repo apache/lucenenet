@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Spans
             {
             }
 
-            protected override bool SetFreqCurrentDoc()
+            protected internal override bool SetFreqCurrentDoc()
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

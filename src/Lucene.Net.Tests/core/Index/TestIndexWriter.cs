@@ -957,12 +957,12 @@ namespace Lucene.Net.Index
             internal bool AfterWasCalled;
             internal bool BeforeWasCalled;
 
-            protected override void DoAfterFlush()
+            protected internal override void DoAfterFlush()
             {
                 AfterWasCalled = true;
             }
 
-            protected override void DoBeforeFlush()
+            protected internal override void DoBeforeFlush()
             {
                 BeforeWasCalled = true;
             }

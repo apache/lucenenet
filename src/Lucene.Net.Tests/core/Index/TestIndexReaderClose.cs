@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
                 this.ThrowOnClose = throwOnClose;
             }
 
-            protected override void DoClose()
+            protected internal override void DoClose()
             {
                 base.DoClose();
                 if (ThrowOnClose)
