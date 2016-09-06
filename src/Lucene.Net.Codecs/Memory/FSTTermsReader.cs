@@ -762,7 +762,7 @@ namespace Lucene.Net.Codecs.Memory
                 internal Frame LoadCeilFrame(int label, Frame top, Frame frame)
                 {
                     FST.Arc<FSTTermOutputs.TermData> arc = frame.fstArc;
-                    arc = Util.readCeilArc(label, fst, top.fstArc, arc, fstReader);
+                    arc = Util.ReadCeilArc(label, fst, top.fstArc, arc, fstReader);
                     if (arc == null)
                     {
                         return null;

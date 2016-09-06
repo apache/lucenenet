@@ -848,7 +848,7 @@ namespace Lucene.Net.Codecs.Memory
                 private Frame LoadCeilFrame(int label, Frame top, Frame frame)
                 {
                     var arc = frame.arc;
-                    arc = Util.readCeilArc(label, fst, top.arc, arc, fstReader);
+                    arc = Util.ReadCeilArc(label, fst, top.arc, arc, fstReader);
                     if (arc == null)
                     {
                         return null;

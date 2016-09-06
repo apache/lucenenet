@@ -678,7 +678,7 @@ namespace Lucene.Net.Util.Fst
         /// Starting from node, find the top N min cost
         ///  completions to a final node.
         /// </summary>
-        public static TopResults<T> shortestPaths<T>(FST<T> fst, FST<T>.Arc<T> fromNode, T startOutput, IComparer<T> comparator, int topN, bool allowEmptyString)
+        public static TopResults<T> ShortestPaths<T>(FST<T> fst, FST<T>.Arc<T> fromNode, T startOutput, IComparer<T> comparator, int topN, bool allowEmptyString)
         {
             // All paths are kept, so we can pass topN for
             // maxQueueDepth and the pruning is admissible:
@@ -721,7 +721,7 @@ namespace Lucene.Net.Util.Fst
         ///          binary format. Expands the graph considerably.
         /// </param>
         /// <seealso cref= "http://www.graphviz.org/" </seealso>
-        public static void toDot<T>(FST<T> fst, TextWriter @out, bool sameRank, bool labelStates)
+        public static void ToDot<T>(FST<T> fst, TextWriter @out, bool sameRank, bool labelStates)
         {
             const string expandedNodeColor = "blue";
 
@@ -1066,7 +1066,7 @@ namespace Lucene.Net.Util.Fst
         /// <param name="follow"> the arc to follow reading the label from </param>
         /// <param name="arc"> the arc to read into in place </param>
         /// <param name="in"> the fst's <seealso cref="BytesReader"/> </param>
-        public static FST<T>.Arc<T> readCeilArc<T>(int label, FST<T> fst, FST<T>.Arc<T> follow, FST<T>.Arc<T> arc, FST<T>.BytesReader @in)
+        public static FST<T>.Arc<T> ReadCeilArc<T>(int label, FST<T> fst, FST<T>.Arc<T> follow, FST<T>.Arc<T> arc, FST<T>.BytesReader @in)
         {
             // TODO maybe this is a useful in the FST class - we could simplify some other code like FSTEnum?
             if (label == FST<T>.END_LABEL)
