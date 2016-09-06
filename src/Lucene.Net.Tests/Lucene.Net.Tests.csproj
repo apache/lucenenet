@@ -462,6 +462,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Util\Fst\TestBytesStore.cs" />
+    <Compile Include="core\Util\Fst\TestFSTs.cs" />
     <Compile Include="core\Util\Packed\TestEliasFanoDocIdSet.cs">
       <SubType>Code</SubType>
     </Compile>

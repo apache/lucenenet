@@ -346,9 +346,10 @@ namespace Lucene.Net.Util.Fst
             if (Random.NextBoolean() && fst != null && !willRewrite)
             {
                 IOContext context = LuceneTestCase.NewIOContext(Random);
-                IndexOutput @out = Dir.CreateOutput("fst.bin", context);
-                fst.Save(@out);
-                @out.Dispose();
+                using (IndexOutput @out = Dir.CreateOutput("fst.bin", context))
+                {
+                    fst.Save(@out);
+                }
                 IndexInput @in = Dir.OpenInput("fst.bin", context);
                 try
                 {
@@ -363,9 +364,10 @@ namespace Lucene.Net.Util.Fst
 
             if (LuceneTestCase.VERBOSE && Pairs.Count <= 20 && fst != null)
             {
-                TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.Open), IOUtils.CHARSET_UTF_8);
-                Util.ToDot(fst, w, false, false);
-                w.Close();
+                using (TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.OpenOrCreate), IOUtils.CHARSET_UTF_8))
+                {
+                    Util.ToDot(fst, w, false, false);
+                }
                 Console.WriteLine("SAVED out.dot");
             }
 
@@ -829,7 +831,7 @@ namespace Lucene.Net.Util.Fst
                 for (int idx = 0; idx <= pair.Input.Length; idx++)
                 {
                     scratch.Length = idx;
-                    CountMinOutput<T> cmo = prefixes[scratch];
+                    CountMinOutput<T> cmo = prefixes.ContainsKey(scratch) ? prefixes[scratch] : null;
                     if (cmo == null)
                     {
                         cmo = new CountMinOutput<T>();

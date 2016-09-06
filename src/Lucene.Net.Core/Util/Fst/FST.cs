@@ -902,16 +902,16 @@ namespace Lucene.Net.Util.Fst
         {
             if (emptyOutput != null)
             {
-                arc.Flags = (sbyte)(BIT_FINAL_ARC | BIT_LAST_ARC);
+                arc.Flags = BIT_FINAL_ARC | BIT_LAST_ARC;
                 arc.NextFinalOutput = emptyOutput;
                 if (!emptyOutput.Equals(NO_OUTPUT))
                 {
-                    arc.Flags |= (sbyte)BIT_ARC_HAS_FINAL_OUTPUT;
+                    arc.Flags |= BIT_ARC_HAS_FINAL_OUTPUT;
                 }
             }
             else
             {
-                arc.Flags = (sbyte)BIT_LAST_ARC;
+                arc.Flags = BIT_LAST_ARC;
                 arc.NextFinalOutput = NO_OUTPUT;
             }
             arc.Output = NO_OUTPUT;
