@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestTieredMergePolicy : BaseMergePolicyTestCase
     {
-        protected override MergePolicy MergePolicy()
+        protected internal override MergePolicy MergePolicy()
         {
             return NewTieredMergePolicy();
         }
