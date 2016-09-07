@@ -233,7 +233,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         output = fst.Outputs.Add(output, arc.Output);
                     }
                 }
-                if (fst.FindTargetArc(FST<IntsRef>.END_LABEL, arc, arc, bytesReader) == null)
+                if (fst.FindTargetArc(FST.END_LABEL, arc, arc, bytesReader) == null)
                 {
                     return null;
                 }

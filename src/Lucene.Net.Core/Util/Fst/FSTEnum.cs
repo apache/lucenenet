@@ -30,14 +30,14 @@ namespace Lucene.Net.Util.Fst
     {
         protected internal readonly FST<T> fst;
 
-        protected internal FST<T>.Arc<T>[] arcs = new FST<T>.Arc<T>[10];
+        protected internal FST.Arc<T>[] arcs = new FST.Arc<T>[10];
 
         // outputs are cumulative
         protected internal T[] output = new T[10];
 
         protected internal readonly T NO_OUTPUT;
-        protected internal readonly FST<T>.BytesReader fstReader;
-        protected internal readonly FST<T>.Arc<T> scratchArc = new FST<T>.Arc<T>();
+        protected internal readonly FST.BytesReader fstReader;
+        protected internal readonly FST.Arc<T> scratchArc = new FST.Arc<T>();
 
         protected internal int upto;
         protected internal int targetLength;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util.Fst
                 else if (cmp > 0)
                 {
                     // seek backwards -- reset this arc to the first arc
-                    FST<T>.Arc<T> arc = GetArc(upto);
+                    FST.Arc<T> arc = GetArc(upto);
                     fst.ReadFirstTargetArc(GetArc(upto - 1), arc, fstReader);
                     //System.out.println("    seek first arc");
                     break;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util.Fst
             RewindPrefix();
             //System.out.println("  after rewind upto=" + upto);
 
-            FST<T>.Arc<T> arc = GetArc(upto);
+            FST.Arc<T> arc = GetArc(upto);
             int targetLabel = TargetLabel;
             //System.out.println("  init targetLabel=" + targetLabel);
 
@@ -164,7 +164,7 @@ namespace Lucene.Net.Util.Fst
                     // Arcs are fixed array -- use binary search to find
                     // the target.
 
-                    FST<T>.BytesReader @in = fst.BytesReader;
+                    FST.BytesReader @in = fst.BytesReader;
                     int low = arc.ArcIdx;
                     int high = arc.NumArcs - 1;
                     int mid = 0;
@@ -203,7 +203,7 @@ namespace Lucene.Net.Util.Fst
                         Debug.Assert(arc.ArcIdx == mid);
                         Debug.Assert(arc.Label == targetLabel, "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel + " mid=" + mid);
                         output[upto] = fst.Outputs.Add(output[upto - 1], arc.Output);
-                        if (targetLabel == FST<T>.END_LABEL)
+                        if (targetLabel == FST.END_LABEL)
                         {
                             return;
                         }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 return;
                             }
-                            FST<T>.Arc<T> prevArc = GetArc(upto);
+                            FST.Arc<T> prevArc = GetArc(upto);
                             //System.out.println("  rollback upto=" + upto + " arc.label=" + prevArc.label + " isLast?=" + prevArc.isLast());
                             if (!prevArc.IsLast)
                             {
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         // recurse
                         output[upto] = fst.Outputs.Add(output[upto - 1], arc.Output);
-                        if (targetLabel == FST<T>.END_LABEL)
+                        if (targetLabel == FST.END_LABEL)
                         {
                             return;
                         }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 return;
                             }
-                            FST<T>.Arc<T> prevArc = GetArc(upto);
+                            FST.Arc<T> prevArc = GetArc(upto);
                             //System.out.println("  rollback upto=" + upto + " arc.label=" + prevArc.label + " isLast?=" + prevArc.isLast());
                             if (!prevArc.IsLast)
                             {
@@ -319,7 +319,7 @@ namespace Lucene.Net.Util.Fst
 
             //System.out.println("FE: after rewind upto=" + upto);
 
-            FST<T>.Arc<T> arc = GetArc(upto);
+            FST.Arc<T> arc = GetArc(upto);
             int targetLabel = TargetLabel;
 
             //System.out.println("FE: init targetLabel=" + targetLabel);
@@ -329,12 +329,12 @@ namespace Lucene.Net.Util.Fst
             {
                 //System.out.println("  cycle upto=" + upto + " arc.label=" + arc.label + " (" + (char) arc.label + ") targetLabel=" + targetLabel + " isLast?=" + arc.isLast() + " bba=" + arc.bytesPerArc);
 
-                if (arc.BytesPerArc != 0 && arc.Label != FST<T>.END_LABEL)
+                if (arc.BytesPerArc != 0 && arc.Label != FST.END_LABEL)
                 {
                     // Arcs are fixed array -- use binary search to find
                     // the target.
 
-                    FST<T>.BytesReader @in = fst.BytesReader;
+                    FST.BytesReader @in = fst.BytesReader;
                     int low = arc.ArcIdx;
                     int high = arc.NumArcs - 1;
                     int mid = 0;
@@ -374,7 +374,7 @@ namespace Lucene.Net.Util.Fst
                         Debug.Assert(arc.ArcIdx == mid);
                         Debug.Assert(arc.Label == targetLabel, "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel + " mid=" + mid);
                         output[upto] = fst.Outputs.Add(output[upto - 1], arc.Output);
-                        if (targetLabel == FST<T>.END_LABEL)
+                        if (targetLabel == FST.END_LABEL)
                         {
                             return;
                         }
@@ -435,7 +435,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         // Match -- recurse
                         output[upto] = fst.Outputs.Add(output[upto - 1], arc.Output);
-                        if (targetLabel == FST<T>.END_LABEL)
+                        if (targetLabel == FST.END_LABEL)
                         {
                             return;
                         }
@@ -514,15 +514,15 @@ namespace Lucene.Net.Util.Fst
             RewindPrefix();
 
             //System.out.println("FE: after rewind upto=" + upto);
-            FST<T>.Arc<T> arc = GetArc(upto - 1);
+            FST.Arc<T> arc = GetArc(upto - 1);
             int targetLabel = TargetLabel;
 
-            FST<T>.BytesReader fstReader = fst.BytesReader;
+            FST.BytesReader fstReader = fst.BytesReader;
 
             while (true)
             {
                 //System.out.println("  cycle target=" + (targetLabel == -1 ? "-1" : (char) targetLabel));
-                FST<T>.Arc<T> nextArc = fst.FindTargetArc(targetLabel, arc, GetArc(upto), fstReader);
+                FST.Arc<T> nextArc = fst.FindTargetArc(targetLabel, arc, GetArc(upto), fstReader);
                 if (nextArc == null)
                 {
                     // short circuit
@@ -534,7 +534,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 // Match -- recurse:
                 output[upto] = fst.Outputs.Add(output[upto - 1], nextArc.Output);
-                if (targetLabel == FST<T>.END_LABEL)
+                if (targetLabel == FST.END_LABEL)
                 {
                     //System.out.println("  return found; upto=" + upto + " output=" + output[upto] + " nextArc=" + nextArc.isLast());
                     return true;
@@ -552,7 +552,7 @@ namespace Lucene.Net.Util.Fst
             Grow();
             if (arcs.Length <= upto)
             {
-                FST<T>.Arc<T>[] newArcs = new FST<T>.Arc<T>[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                FST.Arc<T>[] newArcs = new FST.Arc<T>[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                 Array.Copy(arcs, 0, newArcs, 0, arcs.Length);
                 arcs = newArcs;
             }
@@ -568,13 +568,13 @@ namespace Lucene.Net.Util.Fst
         // appending first arc all the way to the final node
         private void PushFirst()
         {
-            FST<T>.Arc<T> arc = arcs[upto];
+            FST.Arc<T> arc = arcs[upto];
             Debug.Assert(arc != null);
 
             while (true)
             {
                 output[upto] = fst.Outputs.Add(output[upto - 1], arc.Output);
-                if (arc.Label == FST<T>.END_LABEL)
+                if (arc.Label == FST.END_LABEL)
                 {
                     // Final node
                     break;
@@ -583,7 +583,7 @@ namespace Lucene.Net.Util.Fst
                 CurrentLabel = arc.Label;
                 Incr();
 
-                FST<T>.Arc<T> nextArc = GetArc(upto);
+                FST.Arc<T> nextArc = GetArc(upto);
                 fst.ReadFirstTargetArc(arc, nextArc, fstReader);
                 arc = nextArc;
             }
@@ -593,14 +593,14 @@ namespace Lucene.Net.Util.Fst
         // way to the first final node
         private void PushLast()
         {
-            FST<T>.Arc<T> arc = arcs[upto];
+            FST.Arc<T> arc = arcs[upto];
             Debug.Assert(arc != null);
 
             while (true)
             {
                 CurrentLabel = arc.Label;
                 output[upto] = fst.Outputs.Add(output[upto - 1], arc.Output);
-                if (arc.Label == FST<T>.END_LABEL)
+                if (arc.Label == FST.END_LABEL)
                 {
                     // Final node
                     break;
@@ -611,11 +611,11 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private FST<T>.Arc<T> GetArc(int idx)
+        private FST.Arc<T> GetArc(int idx)
         {
             if (arcs[idx] == null)
             {
-                arcs[idx] = new FST<T>.Arc<T>();
+                arcs[idx] = new FST.Arc<T>();
             }
             return arcs[idx];
         }

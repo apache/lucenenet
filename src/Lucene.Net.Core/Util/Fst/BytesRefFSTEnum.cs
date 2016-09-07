@@ -105,7 +105,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (upto - 1 == target.Length)
                 {
-                    return FST<T>.END_LABEL;
+                    return FST.END_LABEL;
                 }
                 else
                 {

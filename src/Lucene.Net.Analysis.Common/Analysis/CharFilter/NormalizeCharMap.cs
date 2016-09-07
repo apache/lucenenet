@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         map.ReadFirstRealTargetArc(scratchArc.Target, scratchArc, fstReader);
                         while (true)
                         {
-                            Debug.Assert(scratchArc.Label != FST<CharsRef>.END_LABEL); // LUCENENET TODO END_LABEL shouldn't be under generic?
+                            Debug.Assert(scratchArc.Label != FST.END_LABEL);
                             cachedRootArcs[Convert.ToChar((char)scratchArc.Label)] = (new FST.Arc<CharsRef>()).CopyFrom(scratchArc);
                             if (scratchArc.IsLast)
                             {

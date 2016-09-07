@@ -30,7 +30,7 @@ namespace Lucene.Net.Util.Fst
         private long count;
         private long mask;
         private readonly FST<T> fst;
-        private readonly FST<T>.Arc<T> scratchArc = new FST<T>.Arc<T>();
+        private readonly FST.Arc<T> scratchArc = new FST.Arc<T>();
         private readonly FST.BytesReader input;
 
         public NodeHash(FST<T> fst, FST.BytesReader input)

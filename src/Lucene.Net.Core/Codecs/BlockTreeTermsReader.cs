@@ -705,7 +705,7 @@ namespace Lucene.Net.Codecs
 
                 private Frame[] Stack;
 
-                internal FST<BytesRef>.Arc<BytesRef>[] Arcs = new FST<BytesRef>.Arc<BytesRef>[5];
+                internal FST.Arc<BytesRef>[] Arcs = new FST.Arc<BytesRef>[5];
 
                 internal readonly RunAutomaton runAutomaton;
                 internal readonly CompiledAutomaton CompiledAutomaton;
@@ -714,7 +714,7 @@ namespace Lucene.Net.Codecs
 
                 internal readonly BytesRef Term_Renamed = new BytesRef();
 
-                internal readonly FST<BytesRef>.BytesReader FstReader;
+                internal readonly FST.BytesReader FstReader;
 
                 // TODO: can we share this with the frame in STE?
                 private sealed class Frame
@@ -764,7 +764,7 @@ namespace Lucene.Net.Codecs
                     internal int CurTransitionMax;
                     internal int TransitionIndex;
 
-                    internal FST<BytesRef>.Arc<BytesRef> Arc;
+                    internal FST.Arc<BytesRef> Arc;
 
                     internal readonly BlockTermState TermState;
 
@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Codecs
                     }
                     for (int arcIdx = 0; arcIdx < Arcs.Length; arcIdx++)
                     {
-                        Arcs[arcIdx] = new FST<BytesRef>.Arc<BytesRef>();
+                        Arcs[arcIdx] = new FST.Arc<BytesRef>();
                     }
 
                     if (outerInstance.Index == null)
@@ -1071,7 +1071,7 @@ namespace Lucene.Net.Codecs
                     // Else the seek cost of loading the frames will be
                     // too costly.
 
-                    FST<BytesRef>.Arc<BytesRef> arc = outerInstance.Index.GetFirstArc(Arcs[0]);
+                    FST.Arc<BytesRef> arc = outerInstance.Index.GetFirstArc(Arcs[0]);
                     // Empty string prefix must have an output in the index!
                     Debug.Assert(arc.IsFinal);
 
@@ -1123,15 +1123,15 @@ namespace Lucene.Net.Codecs
                     return Stack[ord];
                 }
 
-                internal FST<BytesRef>.Arc<BytesRef> GetArc(int ord)
+                internal FST.Arc<BytesRef> GetArc(int ord)
                 {
                     if (ord >= Arcs.Length)
                     {
-                        FST<BytesRef>.Arc<BytesRef>[] next = new FST<BytesRef>.Arc<BytesRef>[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                        FST.Arc<BytesRef>[] next = new FST.Arc<BytesRef>[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                         Array.Copy(Arcs, 0, next, 0, Arcs.Length);
                         for (int arcOrd = Arcs.Length; arcOrd < next.Length; arcOrd++)
                         {
-                            next[arcOrd] = new FST<BytesRef>.Arc<BytesRef>();
+                            next[arcOrd] = new FST.Arc<BytesRef>();
                         }
                         Arcs = next;
                     }
@@ -1151,7 +1151,7 @@ namespace Lucene.Net.Codecs
                     // "bother" with this so we can get the floor data
                     // from the index and skip floor blocks when
                     // possible:
-                    FST<BytesRef>.Arc<BytesRef> arc = CurrentFrame.Arc;
+                    FST.Arc<BytesRef> arc = CurrentFrame.Arc;
                     int idx = CurrentFrame.Prefix;
                     Debug.Assert(CurrentFrame.Suffix > 0);
                     BytesRef output = CurrentFrame.OutputPrefix;
@@ -1223,7 +1223,7 @@ namespace Lucene.Net.Codecs
                     {
                         Term_Renamed.Bytes = ArrayUtil.Grow(Term_Renamed.Bytes, target.Length);
                     }
-                    FST<BytesRef>.Arc<BytesRef> arc = Arcs[0];
+                    FST.Arc<BytesRef> arc = Arcs[0];
                     Debug.Assert(arc == CurrentFrame.Arc);
 
                     for (int idx = 0; idx <= target.Length; idx++)
@@ -1543,9 +1543,9 @@ namespace Lucene.Net.Codecs
                 internal bool Eof;
 
                 internal readonly BytesRef Term_Renamed = new BytesRef();
-                internal readonly FST<BytesRef>.BytesReader FstReader;
+                internal readonly FST.BytesReader FstReader;
 
-                internal FST<BytesRef>.Arc<BytesRef>[] Arcs = new FST<BytesRef>.Arc<BytesRef>[1];
+                internal FST.Arc<BytesRef>[] Arcs = new FST.Arc<BytesRef>[1];
 
                 public SegmentTermsEnum(BlockTreeTermsReader.FieldReader outerInstance)
                 {
@@ -1569,11 +1569,11 @@ namespace Lucene.Net.Codecs
                     // not (and need not) have been loaded
                     for (int arcIdx = 0; arcIdx < Arcs.Length; arcIdx++)
                     {
-                        Arcs[arcIdx] = new FST<BytesRef>.Arc<BytesRef>();
+                        Arcs[arcIdx] = new FST.Arc<BytesRef>();
                     }
 
                     CurrentFrame = StaticFrame;
-                    FST<BytesRef>.Arc<BytesRef> arc;
+                    FST.Arc<BytesRef> arc;
                     if (outerInstance.Index != null)
                     {
                         arc = outerInstance.Index.GetFirstArc(Arcs[0]);
@@ -1621,7 +1621,7 @@ namespace Lucene.Net.Codecs
                     }
 
                     CurrentFrame = StaticFrame;
-                    FST<BytesRef>.Arc<BytesRef> arc;
+                    FST.Arc<BytesRef> arc;
                     if (OuterInstance.Index != null)
                     {
                         arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
@@ -1732,15 +1732,15 @@ namespace Lucene.Net.Codecs
                     return Stack[ord];
                 }
 
-                internal FST<BytesRef>.Arc<BytesRef> GetArc(int ord)
+                internal FST.Arc<BytesRef> GetArc(int ord)
                 {
                     if (ord >= Arcs.Length)
                     {
-                        FST<BytesRef>.Arc<BytesRef>[] next = new FST<BytesRef>.Arc<BytesRef>[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                        FST.Arc<BytesRef>[] next = new FST.Arc<BytesRef>[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                         Array.Copy(Arcs, 0, next, 0, Arcs.Length);
                         for (int arcOrd = Arcs.Length; arcOrd < next.Length; arcOrd++)
                         {
-                            next[arcOrd] = new FST<BytesRef>.Arc<BytesRef>();
+                            next[arcOrd] = new FST.Arc<BytesRef>();
                         }
                         Arcs = next;
                     }
@@ -1756,7 +1756,7 @@ namespace Lucene.Net.Codecs
                 }
 
                 // Pushes a frame we seek'd to
-                internal Frame PushFrame(FST<BytesRef>.Arc<BytesRef> arc, BytesRef frameData, int length)
+                internal Frame PushFrame(FST.Arc<BytesRef> arc, BytesRef frameData, int length)
                 {
                     ScratchReader.Reset((byte[])(Array)frameData.Bytes, frameData.Offset, frameData.Length);
                     long code = ScratchReader.ReadVLong();
@@ -1776,7 +1776,7 @@ namespace Lucene.Net.Codecs
 
                 // Pushes next'd frame or seek'd frame; we later
                 // lazy-load the frame only when needed
-                internal Frame PushFrame(FST<BytesRef>.Arc<BytesRef> arc, long fp, int length)
+                internal Frame PushFrame(FST.Arc<BytesRef> arc, long fp, int length)
                 {
                     Frame f = GetFrame(1 + CurrentFrame.Ord);
                     f.Arc = arc;
@@ -1841,7 +1841,7 @@ namespace Lucene.Net.Codecs
 
                     Debug.Assert(ClearEOF());
 
-                    FST<BytesRef>.Arc<BytesRef> arc;
+                    FST.Arc<BytesRef> arc;
                     int targetUpto;
                     BytesRef output;
 
@@ -2006,7 +2006,7 @@ namespace Lucene.Net.Codecs
                     {
                         int targetLabel = target.Bytes[target.Offset + targetUpto] & 0xFF;
 
-                        FST<BytesRef>.Arc<BytesRef> nextArc = OuterInstance.Index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
+                        FST.Arc<BytesRef> nextArc = OuterInstance.Index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
 
                         if (nextArc == null)
                         {
@@ -2130,7 +2130,7 @@ namespace Lucene.Net.Codecs
                     //printSeekState();
                     //}
 
-                    FST<BytesRef>.Arc<BytesRef> arc;
+                    FST.Arc<BytesRef> arc;
                     int targetUpto;
                     BytesRef output;
 
@@ -2291,7 +2291,7 @@ namespace Lucene.Net.Codecs
                     {
                         int targetLabel = target.Bytes[target.Offset + targetUpto] & 0xFF;
 
-                        FST<BytesRef>.Arc<BytesRef> nextArc = OuterInstance.Index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
+                        FST.Arc<BytesRef> nextArc = OuterInstance.Index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
 
                         if (nextArc == null)
                         {
@@ -2469,7 +2469,7 @@ namespace Lucene.Net.Codecs
                     if (@in == null)
                     {
                         // Fresh TermsEnum; seek to first term:
-                        FST<BytesRef>.Arc<BytesRef> arc;
+                        FST.Arc<BytesRef> arc;
                         if (OuterInstance.Index != null)
                         {
                             arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
@@ -2672,7 +2672,7 @@ namespace Lucene.Net.Codecs
                     internal bool HasTermsOrig;
                     internal bool IsFloor;
 
-                    internal FST<BytesRef>.Arc<BytesRef> Arc;
+                    internal FST.Arc<BytesRef> Arc;
 
                     // File pointer where this block was loaded from
                     internal long Fp;

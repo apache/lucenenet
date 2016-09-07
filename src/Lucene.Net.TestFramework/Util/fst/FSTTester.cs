@@ -217,7 +217,7 @@ namespace Lucene.Net.Util.Fst
         private T Run(FST<T> fst, IntsRef term, int[] prefixLength)
         {
             Debug.Assert(prefixLength == null || prefixLength.Length == 1);
-            FST<T>.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
+            FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
             T NO_OUTPUT = fst.Outputs.NoOutput;
             T output = NO_OUTPUT;
             FST.BytesReader fstReader = fst.BytesReader;
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util.Fst
                 int label;
                 if (i == term.Length)
                 {
-                    label = FST<T>.END_LABEL;
+                    label = FST.END_LABEL;
                 }
                 else
                 {
@@ -288,7 +288,7 @@ namespace Lucene.Net.Util.Fst
                 output = fst.Outputs.Add(output, arc.Output);
 
                 // append label
-                if (arc.Label == FST<T>.END_LABEL)
+                if (arc.Label == FST.END_LABEL)
                 {
                     break;
                 }

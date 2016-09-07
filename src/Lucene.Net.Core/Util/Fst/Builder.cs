@@ -97,7 +97,7 @@ namespace Lucene.Net.Util.Fst
         /// boolean, int, Outputs, FreezeTail, boolean, float,
         /// boolean, int)} with pruning options turned off.
         /// </summary>
-        public Builder(FST<T>.INPUT_TYPE inputType, Outputs<T> outputs)
+        public Builder(FST.INPUT_TYPE inputType, Outputs<T> outputs)
             : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
         {
         }
@@ -152,7 +152,10 @@ namespace Lucene.Net.Util.Fst
         ///    byte[] block in the BytesStore; if you know the FST
         ///    will be large then make this larger.  For example 15
         ///    bits = 32768 byte pages. </param>
-        public Builder(FST<T>.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix, bool doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs, FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio, bool allowArrayArcs, int bytesPageBits)
+        public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix, 
+            bool doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs, 
+            FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio, bool allowArrayArcs, 
+            int bytesPageBits)
         {
             this.minSuffixCount1 = minSuffixCount1;
             this.minSuffixCount2 = minSuffixCount2;
