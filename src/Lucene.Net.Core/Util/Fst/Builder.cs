@@ -573,7 +573,7 @@ namespace Lucene.Net.Util.Fst
         public class Arc<S>
         {
             public int Label; // really an "unsigned" byte
-            public Node Target;
+            public INode Target;
             public bool IsFinal;
             public S Output;
             public S NextFinalOutput;
@@ -583,7 +583,7 @@ namespace Lucene.Net.Util.Fst
         // memory while the FST is being built; it's only the
         // current "frontier":
 
-        public interface Node
+        public interface INode
         {
             bool IsCompiled { get; }
         }
@@ -593,7 +593,7 @@ namespace Lucene.Net.Util.Fst
             return fst.SizeInBytes();
         }
 
-        public sealed class CompiledNode : Node
+        public sealed class CompiledNode : INode
         {
             public long Node;
 
@@ -608,7 +608,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Expert: holds a pending (seen but not yet serialized) Node. </summary>
-        public sealed class UnCompiledNode<S> : Node
+        public sealed class UnCompiledNode<S> : INode
         {
             internal readonly Builder<S> Owner;
             public int NumArcs;
@@ -666,7 +666,7 @@ namespace Lucene.Net.Util.Fst
                 return Arcs[NumArcs - 1].Output;
             }
 
-            public void AddArc(int label, Node target)
+            public void AddArc(int label, INode target)
             {
                 Debug.Assert(label >= 0);
                 // LUCENENET: Commented this because it makes testing difficult in Visual Studio.
@@ -691,7 +691,7 @@ namespace Lucene.Net.Util.Fst
                 arc.IsFinal = false;
             }
 
-            public void ReplaceLast(int labelToMatch, Node target, S nextFinalOutput, bool isFinal)
+            public void ReplaceLast(int labelToMatch, INode target, S nextFinalOutput, bool isFinal)
             {
                 Debug.Assert(NumArcs > 0);
                 Arc<S> arc = Arcs[NumArcs - 1];
@@ -702,7 +702,7 @@ namespace Lucene.Net.Util.Fst
                 arc.IsFinal = isFinal;
             }
 
-            public void DeleteLast(int label, Node target)
+            public void DeleteLast(int label, INode target)
             {
                 Debug.Assert(NumArcs > 0);
                 Debug.Assert(label == Arcs[NumArcs - 1].Label);
