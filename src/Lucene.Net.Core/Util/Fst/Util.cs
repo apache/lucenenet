@@ -363,6 +363,8 @@ namespace Lucene.Net.Util.Fst
 
             internal SortedSet<FSTPath<T>> Queue = null;
 
+            private object syncLock = new object();
+
             /// <summary>
             /// Creates an unbounded TopNSearcher </summary>
             /// <param name="fst"> the <seealso cref="Lucene.Net.Util.Fst.FST"/> to search on </param>
@@ -433,7 +435,14 @@ namespace Lucene.Net.Util.Fst
 
                 if (Queue.Count == maxQueueDepth + 1)
                 {
-                    Queue.Last();
+                    // LUCENENET NOTE: SortedSet doesn't have atomic operations,
+                    // so we need to add some thread safety just in case.
+                    // Perhaps it might make sense to wrap SortedSet into a type
+                    // that provides thread safety.
+                    lock (syncLock)
+                    {
+                        Queue.Remove(Queue.Max);
+                    }
                 }
             }
 
@@ -502,7 +511,19 @@ namespace Lucene.Net.Util.Fst
 
                     // Remove top path since we are now going to
                     // pursue it:
-                    path = Queue.First();
+
+                    // LUCENENET NOTE: SortedSet doesn't have atomic operations,
+                    // so we need to add some thread safety just in case.
+                    // Perhaps it might make sense to wrap SortedSet into a type
+                    // that provides thread safety.
+                    lock (syncLock)
+                    {
+                        path = Queue.Min;
+                        if (path != null)
+                        {
+                            Queue.Remove(path);
+                        }
+                    }
 
                     if (path == null)
                     {
