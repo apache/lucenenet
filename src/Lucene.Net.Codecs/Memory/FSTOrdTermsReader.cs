@@ -531,7 +531,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 // Update current enum according to FSTEnum
-                private void UpdateEnum(BytesRefFSTEnum<long?>.InputOutput<long?> pair)
+                private void UpdateEnum(BytesRefFSTEnum.InputOutput<long?> pair)
                 {
                     if (pair == null)
                     {

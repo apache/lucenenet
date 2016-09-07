@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     var fstEnum = new BytesRefFSTEnum<long?>(Fst);
                     var count = _vgtir._indexDivisor;
                         
-                    BytesRefFSTEnum<long?>.InputOutput<long?> result;
+                    BytesRefFSTEnum.InputOutput<long?> result;
                     while ((result = fstEnum.Next()) != null)
                     {
                         if (count == _vgtir._indexDivisor)
@@ -226,7 +226,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         protected class IndexEnum : FieldIndexEnum
         {
             private readonly BytesRefFSTEnum<long?> _fstEnum;
-            private BytesRefFSTEnum<long?>.InputOutput<long?> _current;
+            private BytesRefFSTEnum.InputOutput<long?> _current;
 
             public IndexEnum(FST<long?> fst)
             {

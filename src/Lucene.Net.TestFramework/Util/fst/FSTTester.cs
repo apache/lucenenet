@@ -486,7 +486,7 @@ namespace Lucene.Net.Util.Fst
                     Assert.IsTrue(OutputsEqual(pair.Output, output));
 
                     // verify enum's next
-                    IntsRefFSTEnum<T>.InputOutput<T> t = fstEnum.Next();
+                    IntsRefFSTEnum.InputOutput<T> t = fstEnum.Next();
                     Assert.IsNotNull(t);
                     Assert.AreEqual(term, t.Input, "expected input=" + InputToString(inputMode, term) + " but fstEnum returned " + InputToString(inputMode, t.Input));
                     Assert.IsTrue(OutputsEqual(pair.Output, t.Output));
@@ -564,7 +564,7 @@ namespace Lucene.Net.Util.Fst
                             pos = -(pos + 1);
                             // ok doesn't exist
                             //System.out.println("  seek " + inputToString(inputMode, term));
-                            IntsRefFSTEnum<T>.InputOutput<T> seekResult;
+                            IntsRefFSTEnum.InputOutput<T> seekResult;
                             if (Random.Next(3) == 0)
                             {
                                 if (LuceneTestCase.VERBOSE)
@@ -622,7 +622,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     // seek to term that does exist:
                     InputOutput<T> pair = Pairs[Random.Next(Pairs.Count)];
-                    IntsRefFSTEnum<T>.InputOutput<T> seekResult;
+                    IntsRefFSTEnum.InputOutput<T> seekResult;
                     if (Random.Next(3) == 2)
                     {
                         if (LuceneTestCase.VERBOSE)
@@ -960,7 +960,7 @@ namespace Lucene.Net.Util.Fst
                 Console.WriteLine("TEST: check pruned enum");
             }
             IntsRefFSTEnum<T> fstEnum = new IntsRefFSTEnum<T>(fst);
-            IntsRefFSTEnum<T>.InputOutput<T> current;
+            IntsRefFSTEnum.InputOutput<T> current;
             while ((current = fstEnum.Next()) != null)
             {
                 if (LuceneTestCase.VERBOSE)

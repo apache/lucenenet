@@ -438,7 +438,7 @@ namespace Lucene.Net.Util.Fst
                         }
 
                         TermsEnum.SeekStatus seekResult = termsEnum.SeekCeil(randomTerm);
-                        BytesRefFSTEnum<long?>.InputOutput<long?> fstSeekResult = fstEnum.SeekCeil(randomTerm);
+                        BytesRefFSTEnum.InputOutput<long?> fstSeekResult = fstEnum.SeekCeil(randomTerm);
 
                         if (seekResult == TermsEnum.SeekStatus.END)
                         {
@@ -472,7 +472,7 @@ namespace Lucene.Net.Util.Fst
                                     {
                                         Console.WriteLine("  end!");
                                     }
-                                    BytesRefFSTEnum<long?>.InputOutput<long?> nextResult = fstEnum.Next();
+                                    BytesRefFSTEnum.InputOutput<long?> nextResult = fstEnum.Next();
                                     if (nextResult != null)
                                     {
                                         Console.WriteLine("expected null but got: input=" + nextResult.Input.Utf8ToString() + " output=" + outputs.OutputToString(nextResult.Output));
@@ -985,7 +985,7 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(17, Util.Get(fst, a));
 
             BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
-            BytesRefFSTEnum<long?>.InputOutput<long?> seekResult;
+            BytesRefFSTEnum.InputOutput<long?> seekResult;
             seekResult = fstEnum.SeekFloor(a);
             Assert.IsNotNull(seekResult);
             Assert.AreEqual(17, seekResult.Output);

@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs
             internal void Append(Builder<BytesRef> builder, FST<BytesRef> subIndex)
             {
                 BytesRefFSTEnum<BytesRef> subIndexEnum = new BytesRefFSTEnum<BytesRef>(subIndex);
-                BytesRefFSTEnum<BytesRef>.InputOutput<BytesRef> indexEnt;
+                BytesRefFSTEnum.InputOutput<BytesRef> indexEnt;
                 while ((indexEnt = subIndexEnum.Next()) != null)
                 {
                     //if (DEBUG) {

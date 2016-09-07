@@ -489,7 +489,7 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 try
                 {
-                    BytesRefFSTEnum<long?>.InputOutput<long?> o = FstEnum.SeekCeil(key);
+                    BytesRefFSTEnum.InputOutput<long?> o = FstEnum.SeekCeil(key);
                     if (o == null)
                     {
                         return -ValueCount - 1;
