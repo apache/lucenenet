@@ -1561,17 +1561,6 @@ namespace Lucene.Net.Util.Fst
                 public abstract void SkipBytes(int count);
               }*/
 
-        private class ArcAndState<T>
-        {
-            internal readonly Arc<T> Arc;
-            internal readonly IntsRef Chain;
-
-            public ArcAndState(Arc<T> arc, IntsRef chain)
-            {
-                this.Arc = arc;
-                this.Chain = chain;
-            }
-        }
 
         /*
         public void countSingleChains() throws IOException {
@@ -2108,50 +2097,6 @@ namespace Lucene.Net.Util.Fst
 
             return fst;
         }
-
-        private class NodeAndInCount : IComparable<NodeAndInCount>
-        {
-            internal readonly int Node;
-            internal readonly int Count;
-
-            public NodeAndInCount(int node, int count)
-            {
-                this.Node = node;
-                this.Count = count;
-            }
-
-            public virtual int CompareTo(NodeAndInCount other)
-            {
-                if (Count > other.Count)
-                {
-                    return 1;
-                }
-                else if (Count < other.Count)
-                {
-                    return -1;
-                }
-                else
-                {
-                    // Tie-break: smaller node compares as greater than
-                    return other.Node - Node;
-                }
-            }
-        }
-
-        private class NodeQueue : PriorityQueue<NodeAndInCount>
-        {
-            public NodeQueue(int topN)
-                : base(topN, false)
-            {
-            }
-
-            public override bool LessThan(NodeAndInCount a, NodeAndInCount b)
-            {
-                int cmp = a.CompareTo(b);
-                Debug.Assert(cmp != 0);
-                return cmp < 0;
-            }
-        }
     }
 
     /// <summary>
@@ -2360,47 +2305,43 @@ namespace Lucene.Net.Util.Fst
         }
 
         internal class ArcAndState<T>
-            where T : class
         {
-            private readonly Arc<T> _arc;
-
-            public Arc<T> Arc { get { return _arc; } }
-
-            private readonly IntsRef _chain;
-
-            public IntsRef Chain { get { return _chain; } }
+            internal readonly Arc<T> Arc;
+            internal readonly IntsRef Chain;
 
             public ArcAndState(Arc<T> arc, IntsRef chain)
             {
-                _arc = arc;
-                _chain = chain;
+                this.Arc = arc;
+                this.Chain = chain;
             }
         }
 
         internal class NodeAndInCount : IComparable<NodeAndInCount>
         {
-            private readonly int _node;
-
-            public int Node { get { return _node; } }
-
-            private readonly int _count;
-
-            public int Count { get { return _count; } }
+            internal readonly int Node;
+            internal readonly int Count;
 
             public NodeAndInCount(int node, int count)
             {
-                _node = node;
-                _count = count;
+                this.Node = node;
+                this.Count = count;
             }
 
-            public int CompareTo(NodeAndInCount other)
+            public virtual int CompareTo(NodeAndInCount other)
             {
                 if (Count > other.Count)
+                {
                     return 1;
-                if (Count < other.Count)
+                }
+                else if (Count < other.Count)
+                {
                     return -1;
-                // Tie-break: smaller node compares as greater than
-                return other.Node - Node;
+                }
+                else
+                {
+                    // Tie-break: smaller node compares as greater than
+                    return other.Node - Node;
+                }
             }
         }
 
@@ -2413,8 +2354,8 @@ namespace Lucene.Net.Util.Fst
 
             public override bool LessThan(NodeAndInCount a, NodeAndInCount b)
             {
-                var cmp = a.CompareTo(b);
-                // assert cmp != 0;
+                int cmp = a.CompareTo(b);
+                Debug.Assert(cmp != 0);
                 return cmp < 0;
             }
         }
