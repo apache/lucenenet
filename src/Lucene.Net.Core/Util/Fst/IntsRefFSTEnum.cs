@@ -28,9 +28,9 @@ namespace Lucene.Net.Util.Fst
 
     public sealed class IntsRefFSTEnum<T> : FSTEnum<T>
     {
-        private readonly IntsRef Current_Renamed = new IntsRef(10);
-        private readonly InputOutput<T> Result = new InputOutput<T>();
-        private IntsRef Target;
+        private readonly IntsRef current = new IntsRef(10);
+        private readonly InputOutput<T> result = new InputOutput<T>();
+        private IntsRef target;
 
         /// <summary>
         /// Holds a single input (IntsRef) + output pair. </summary>
@@ -48,13 +48,13 @@ namespace Lucene.Net.Util.Fst
         public IntsRefFSTEnum(FST<T> fst)
             : base(fst)
         {
-            Result.Input = Current_Renamed;
-            Current_Renamed.Offset = 1;
+            result.Input = current;
+            current.Offset = 1;
         }
 
         public InputOutput<T> Current()
         {
-            return Result;
+            return result;
         }
 
         public InputOutput<T> Next()
@@ -68,8 +68,8 @@ namespace Lucene.Net.Util.Fst
         /// Seeks to smallest term that's >= target. </summary>
         public InputOutput<T> SeekCeil(IntsRef target)
         {
-            this.Target = target;
-            TargetLength = target.Length;
+            this.target = target;
+            targetLength = target.Length;
             base.DoSeekCeil();
             return SetResult();
         }
@@ -78,8 +78,8 @@ namespace Lucene.Net.Util.Fst
         /// Seeks to biggest term that's <= target. </summary>
         public InputOutput<T> SeekFloor(IntsRef target)
         {
-            this.Target = target;
-            TargetLength = target.Length;
+            this.target = target;
+            targetLength = target.Length;
             base.DoSeekFloor();
             return SetResult();
         }
@@ -92,11 +92,11 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public InputOutput<T> SeekExact(IntsRef target)
         {
-            this.Target = target;
-            TargetLength = target.Length;
+            this.target = target;
+            targetLength = target.Length;
             if (base.DoSeekExact())
             {
-                Debug.Assert(Upto == 1 + target.Length);
+                Debug.Assert(upto == 1 + target.Length);
                 return SetResult();
             }
             else
@@ -109,13 +109,13 @@ namespace Lucene.Net.Util.Fst
         {
             get
             {
-                if (Upto - 1 == Target.Length)
+                if (upto - 1 == target.Length)
                 {
                     return FST<T>.END_LABEL;
                 }
                 else
                 {
-                    return Target.Ints[Target.Offset + Upto - 1];
+                    return target.Ints[target.Offset + upto - 1];
                 }
             }
         }
@@ -125,30 +125,30 @@ namespace Lucene.Net.Util.Fst
             get
             {
                 // current.offset fixed at 1
-                return Current_Renamed.Ints[Upto];
+                return current.Ints[upto];
             }
             set
             {
-                Current_Renamed.Ints[Upto] = value;
+                current.Ints[upto] = value;
             }
         }
 
         protected internal override void Grow()
         {
-            Current_Renamed.Ints = ArrayUtil.Grow(Current_Renamed.Ints, Upto + 1);
+            current.Ints = ArrayUtil.Grow(current.Ints, upto + 1);
         }
 
         private InputOutput<T> SetResult()
         {
-            if (Upto == 0)
+            if (upto == 0)
             {
                 return null;
             }
             else
             {
-                Current_Renamed.Length = Upto - 1;
-                Result.Output = Output[Upto];
-                return Result;
+                current.Length = upto - 1;
+                result.Output = output[upto];
+                return result;
             }
         }
     }

@@ -26,37 +26,37 @@ namespace Lucene.Net.Util.Fst
     // Used to dedup states (lookup already-frozen states)
     internal sealed class NodeHash<T>
     {
-        private PagedGrowableWriter Table;
-        private long Count;
-        private long Mask;
-        private readonly FST<T> Fst;
-        private readonly FST<T>.Arc<T> ScratchArc = new FST<T>.Arc<T>();
-        private readonly FST.BytesReader @in;
+        private PagedGrowableWriter table;
+        private long count;
+        private long mask;
+        private readonly FST<T> fst;
+        private readonly FST<T>.Arc<T> scratchArc = new FST<T>.Arc<T>();
+        private readonly FST.BytesReader input;
 
-        public NodeHash(FST<T> fst, FST.BytesReader @in)
+        public NodeHash(FST<T> fst, FST.BytesReader input)
         {
-            Table = new PagedGrowableWriter(16, 1 << 30, 8, PackedInts.COMPACT);
-            Mask = 15;
-            this.Fst = fst;
-            this.@in = @in;
+            table = new PagedGrowableWriter(16, 1 << 30, 8, PackedInts.COMPACT);
+            mask = 15;
+            this.fst = fst;
+            this.input = input;
         }
 
         private bool NodesEqual(Builder<T>.UnCompiledNode<T> node, long address)
         {
-            Fst.ReadFirstRealTargetArc(address, ScratchArc, @in);
-            if (ScratchArc.BytesPerArc != 0 && node.NumArcs != ScratchArc.NumArcs)
+            fst.ReadFirstRealTargetArc(address, scratchArc, input);
+            if (scratchArc.BytesPerArc != 0 && node.NumArcs != scratchArc.NumArcs)
             {
                 return false;
             }
             for (int arcUpto = 0; arcUpto < node.NumArcs; arcUpto++)
             {
                 Builder<T>.Arc<T> arc = node.Arcs[arcUpto];
-                if (arc.Label != ScratchArc.Label || !arc.Output.Equals(ScratchArc.Output) || ((Builder<T>.CompiledNode)arc.Target).Node != ScratchArc.Target || !arc.NextFinalOutput.Equals(ScratchArc.NextFinalOutput) || arc.IsFinal != ScratchArc.IsFinal)
+                if (arc.Label != scratchArc.Label || !arc.Output.Equals(scratchArc.Output) || ((Builder<T>.CompiledNode)arc.Target).Node != scratchArc.Target || !arc.NextFinalOutput.Equals(scratchArc.NextFinalOutput) || arc.IsFinal != scratchArc.IsFinal)
                 {
                     return false;
                 }
 
-                if (ScratchArc.IsLast)
+                if (scratchArc.IsLast)
                 {
                     if (arcUpto == node.NumArcs - 1)
                     {
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util.Fst
                         return false;
                     }
                 }
-                Fst.ReadNextRealArc(ScratchArc, @in);
+                fst.ReadNextRealArc(scratchArc, input);
             }
 
             return false;
@@ -126,21 +126,21 @@ namespace Lucene.Net.Util.Fst
             const int PRIME = 31;
             //System.out.println("hash frozen node=" + node);
             long h = 0;
-            Fst.ReadFirstRealTargetArc(node, ScratchArc, @in);
+            fst.ReadFirstRealTargetArc(node, scratchArc, input);
             while (true)
             {
                 //System.out.println("  label=" + scratchArc.label + " target=" + scratchArc.target + " h=" + h + " output=" + fst.outputs.outputToString(scratchArc.output) + " next?=" + scratchArc.flag(4) + " final?=" + scratchArc.isFinal() + " pos=" + in.getPosition());
-                h = PRIME * h + ScratchArc.Label;
-                h = PRIME * h + (int)(ScratchArc.Target ^ (ScratchArc.Target >> 32));
-                h = PRIME * h + ScratchArc.Output.GetHashCode();
+                h = PRIME * h + scratchArc.Label;
+                h = PRIME * h + (int)(scratchArc.Target ^ (scratchArc.Target >> 32));
+                h = PRIME * h + scratchArc.Output.GetHashCode();
 
                 // LUCENENET: Since lists do not compare values by default in .NET,
                 // we need this workaround to get the hashcode of the type + all of the
                 // values.
-                if (ScratchArc.NextFinalOutput is IEnumerable)
+                if (scratchArc.NextFinalOutput is IEnumerable)
                 {
-                    h = PRIME * h + ScratchArc.NextFinalOutput.GetType().GetHashCode();
-                    foreach (object value in ScratchArc.NextFinalOutput as IEnumerable)
+                    h = PRIME * h + scratchArc.NextFinalOutput.GetType().GetHashCode();
+                    foreach (object value in scratchArc.NextFinalOutput as IEnumerable)
                     {
                         if (value != null)
                         {
@@ -154,18 +154,18 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    h = PRIME * h + ScratchArc.NextFinalOutput.GetHashCode();
+                    h = PRIME * h + scratchArc.NextFinalOutput.GetHashCode();
                 }
 
-                if (ScratchArc.IsFinal)
+                if (scratchArc.IsFinal)
                 {
                     h += 17;
                 }
-                if (ScratchArc.IsLast)
+                if (scratchArc.IsLast)
                 {
                     break;
                 }
-                Fst.ReadNextRealArc(ScratchArc, @in);
+                fst.ReadNextRealArc(scratchArc, input);
             }
             //System.out.println("  ret " + (h&Integer.MAX_VALUE));
             return h & long.MaxValue;
@@ -175,22 +175,22 @@ namespace Lucene.Net.Util.Fst
         {
             //System.out.println("hash: add count=" + count + " vs " + table.size() + " mask=" + mask);
             long h = Hash(nodeIn);
-            long pos = h & Mask;
+            long pos = h & mask;
             int c = 0;
             while (true)
             {
-                long v = Table.Get(pos);
+                long v = table.Get(pos);
                 if (v == 0)
                 {
                     // freeze & add
-                    long node = Fst.AddNode(nodeIn);
+                    long node = fst.AddNode(nodeIn);
                     //System.out.println("  now freeze node=" + node);
                     long hashNode = Hash(node);
                     Debug.Assert(hashNode == h, "frozenHash=" + hashNode + " vs h=" + h);
-                    Count++;
-                    Table.Set(pos, node);
+                    count++;
+                    table.Set(pos, node);
                     // Rehash at 2/3 occupancy:
-                    if (Count > 2 * Table.Size() / 3)
+                    if (count > 2 * table.Size() / 3)
                     {
                         Rehash();
                     }
@@ -203,34 +203,34 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 // quadratic probe
-                pos = (pos + (++c)) & Mask;
+                pos = (pos + (++c)) & mask;
             }
         }
 
         // called only by rehash
         private void AddNew(long address)
         {
-            long pos = Hash(address) & Mask;
+            long pos = Hash(address) & mask;
             int c = 0;
             while (true)
             {
-                if (Table.Get(pos) == 0)
+                if (table.Get(pos) == 0)
                 {
-                    Table.Set(pos, address);
+                    table.Set(pos, address);
                     break;
                 }
 
                 // quadratic probe
-                pos = (pos + (++c)) & Mask;
+                pos = (pos + (++c)) & mask;
             }
         }
 
         private void Rehash()
         {
-            PagedGrowableWriter oldTable = Table;
+            PagedGrowableWriter oldTable = table;
 
-            Table = new PagedGrowableWriter(2 * oldTable.Size(), 1 << 30, PackedInts.BitsRequired(Count), PackedInts.COMPACT);
-            Mask = Table.Size() - 1;
+            table = new PagedGrowableWriter(2 * oldTable.Size(), 1 << 30, PackedInts.BitsRequired(count), PackedInts.COMPACT);
+            mask = table.Size() - 1;
             for (long idx = 0; idx < oldTable.Size(); idx++)
             {
                 long address = oldTable.Get(idx);

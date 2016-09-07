@@ -104,7 +104,7 @@ namespace Lucene.Net.Util.Fst
         /// <seealso cref= #shouldExpand(UnCompiledNode) </seealso>
         internal const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;*/
 
-        private int[] BytesPerArc = new int[0];
+        private int[] bytesPerArc = new int[0];
 
         /*// Increment version to change it
         private const string FILE_FORMAT_NAME = "FST";
@@ -144,7 +144,7 @@ namespace Lucene.Net.Util.Fst
 
         internal readonly BytesStore Bytes;
 
-        private long StartNode = -1;
+        private long startNode = -1;
 
         public readonly Outputs<T> Outputs;
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.Util.Fst
         // instead of storing the address of the target node for
         // a given arc, we mark a single bit noting that the next
         // node in the byte[] is the target node):
-        private long LastFrozenNode;
+        private long lastFrozenNode;
 
         private readonly T NO_OUTPUT;
 
@@ -160,31 +160,33 @@ namespace Lucene.Net.Util.Fst
         public long arcCount;
         public long arcWithOutputCount;
 
-        private readonly bool Packed;
-        private PackedInts.Reader NodeRefToAddress;
+        private readonly bool packed;
+        private PackedInts.Reader nodeRefToAddress;
 
         /// <summary>
         /// If arc has this label then that arc is final/accepted </summary>
         public static readonly int END_LABEL = -1;
 
-        private readonly bool AllowArrayArcs;
+        private readonly bool allowArrayArcs;
 
-        private Arc<T>[] CachedRootArcs;
-        private Arc<T>[] AssertingCachedRootArcs; // only set wit assert
+        private Arc<T>[] cachedRootArcs;
+        private Arc<T>[] assertingCachedRootArcs; // only set wit assert
+
+        // LUCENENET NOTE: Arc<T> moved into FST class
 
         internal static bool Flag(int flags, int bit)
         {
             return (flags & bit) != 0;
         }
 
-        private GrowableWriter NodeAddress;
+        private GrowableWriter nodeAddress;
 
         // TODO: we could be smarter here, and prune periodically
         // as we go; high in-count nodes will "usually" become
         // clear early on:
-        private GrowableWriter InCounts;
+        private GrowableWriter inCounts;
 
-        private readonly int Version;
+        private readonly int version;
 
         // make a new empty FST, for building; Builder invokes
         // this ctor
@@ -192,8 +194,8 @@ namespace Lucene.Net.Util.Fst
         {
             this.inputType = inputType;
             this.Outputs = outputs;
-            this.AllowArrayArcs = allowArrayArcs;
-            Version = VERSION_CURRENT;
+            this.allowArrayArcs = allowArrayArcs;
+            version = VERSION_CURRENT;
             Bytes = new BytesStore(bytesPageBits);
             // pad: ensure no node gets address 0 which is reserved to mean
             // the stop state w/ no arcs
@@ -201,18 +203,18 @@ namespace Lucene.Net.Util.Fst
             NO_OUTPUT = outputs.NoOutput;
             if (willPackFST)
             {
-                NodeAddress = new GrowableWriter(15, 8, acceptableOverheadRatio);
-                InCounts = new GrowableWriter(1, 8, acceptableOverheadRatio);
+                nodeAddress = new GrowableWriter(15, 8, acceptableOverheadRatio);
+                inCounts = new GrowableWriter(1, 8, acceptableOverheadRatio);
             }
             else
             {
-                NodeAddress = null;
-                InCounts = null;
+                nodeAddress = null;
+                inCounts = null;
             }
 
             emptyOutput = default(T);
-            Packed = false;
-            NodeRefToAddress = null;
+            packed = false;
+            nodeRefToAddress = null;
         }
 
         public static readonly int DEFAULT_MAX_BLOCK_BITS = Constants.JRE_IS_64BIT ? 30 : 28;
@@ -239,8 +241,8 @@ namespace Lucene.Net.Util.Fst
 
             // NOTE: only reads most recent format; we don't have
             // back-compat promise for FSTs (they are experimental):
-            Version = CodecUtil.CheckHeader(@in, FILE_FORMAT_NAME, VERSION_PACKED, VERSION_VINT_TARGET);
-            Packed = @in.ReadByte() == 1;
+            version = CodecUtil.CheckHeader(@in, FILE_FORMAT_NAME, VERSION_PACKED, VERSION_VINT_TARGET);
+            packed = @in.ReadByte() == 1;
             if (@in.ReadByte() == 1)
             {
                 // accepts empty string
@@ -251,7 +253,7 @@ namespace Lucene.Net.Util.Fst
 
                 // De-serialize empty-string output:
                 BytesReader reader;
-                if (Packed)
+                if (packed)
                 {
                     reader = emptyBytes.ForwardReader;
                 }
@@ -290,15 +292,15 @@ namespace Lucene.Net.Util.Fst
                 default:
                     throw new InvalidOperationException("invalid input type " + t);
             }
-            if (Packed)
+            if (packed)
             {
-                NodeRefToAddress = PackedInts.GetReader(@in);
+                nodeRefToAddress = PackedInts.GetReader(@in);
             }
             else
             {
-                NodeRefToAddress = null;
+                nodeRefToAddress = null;
             }
-            StartNode = @in.ReadVLong();
+            startNode = @in.ReadVLong();
             nodeCount = @in.ReadVLong();
             arcCount = @in.ReadVLong();
             arcWithOutputCount = @in.ReadVLong();
@@ -313,7 +315,7 @@ namespace Lucene.Net.Util.Fst
             // NOTE: bogus because this is only used during
             // building; we need to break out mutable FST from
             // immutable
-            AllowArrayArcs = false;
+            allowArrayArcs = false;
 
             /*
             if (bytes.length == 665) {
@@ -338,21 +340,21 @@ namespace Lucene.Net.Util.Fst
         public long SizeInBytes()
         {
             long size = Bytes.Position;
-            if (Packed)
+            if (packed)
             {
-                size += NodeRefToAddress.RamBytesUsed();
+                size += nodeRefToAddress.RamBytesUsed();
             }
-            else if (NodeAddress != null)
+            else if (nodeAddress != null)
             {
-                size += NodeAddress.RamBytesUsed();
-                size += InCounts.RamBytesUsed();
+                size += nodeAddress.RamBytesUsed();
+                size += inCounts.RamBytesUsed();
             }
             return size;
         }
 
         public void Finish(long newStartNode)
         {
-            if (StartNode != -1)
+            if (startNode != -1)
             {
                 throw new InvalidOperationException("already finished");
             }
@@ -360,7 +362,7 @@ namespace Lucene.Net.Util.Fst
             {
                 newStartNode = 0;
             }
-            StartNode = newStartNode;
+            startNode = newStartNode;
             Bytes.Finish();
 
             CacheRootArcs();
@@ -368,10 +370,10 @@ namespace Lucene.Net.Util.Fst
 
         private long GetNodeAddress(long node)
         {
-            if (NodeAddress != null)
+            if (nodeAddress != null)
             {
                 // Deref
-                return NodeAddress.Get((int)node);
+                return nodeAddress.Get((int)node);
             }
             else
             {
@@ -383,10 +385,10 @@ namespace Lucene.Net.Util.Fst
         // Caches first 128 labels
         private void CacheRootArcs()
         {
-            CachedRootArcs = (Arc<T>[])new Arc<T>[0x80];
-            ReadRootArcs(CachedRootArcs);
+            cachedRootArcs = (Arc<T>[])new Arc<T>[0x80];
+            ReadRootArcs(cachedRootArcs);
 
-            Debug.Assert(SetAssertingRootArcs(CachedRootArcs));
+            Debug.Assert(SetAssertingRootArcs(cachedRootArcs));
             Debug.Assert(AssertRootArcs());
         }
 
@@ -401,7 +403,7 @@ namespace Lucene.Net.Util.Fst
                 while (true)
                 {
                     Debug.Assert(arc.Label != END_LABEL);
-                    if (arc.Label < CachedRootArcs.Length)
+                    if (arc.Label < cachedRootArcs.Length)
                     {
                         arcs[arc.Label] = (new Arc<T>()).CopyFrom(arc);
                     }
@@ -420,19 +422,19 @@ namespace Lucene.Net.Util.Fst
 
         private bool SetAssertingRootArcs(Arc<T>[] arcs)
         {
-            AssertingCachedRootArcs = (Arc<T>[])new Arc<T>[arcs.Length];
-            ReadRootArcs(AssertingCachedRootArcs);
+            assertingCachedRootArcs = (Arc<T>[])new Arc<T>[arcs.Length];
+            ReadRootArcs(assertingCachedRootArcs);
             return true;
         }
 
         private bool AssertRootArcs()
         {
-            Debug.Assert(CachedRootArcs != null);
-            Debug.Assert(AssertingCachedRootArcs != null);
-            for (int i = 0; i < CachedRootArcs.Length; i++)
+            Debug.Assert(cachedRootArcs != null);
+            Debug.Assert(assertingCachedRootArcs != null);
+            for (int i = 0; i < cachedRootArcs.Length; i++)
             {
-                Arc<T> root = CachedRootArcs[i];
-                Arc<T> asserting = AssertingCachedRootArcs[i];
+                Arc<T> root = cachedRootArcs[i];
+                Arc<T> asserting = assertingCachedRootArcs[i];
                 if (root != null)
                 {
                     Debug.Assert(root.ArcIdx == asserting.ArcIdx);
@@ -491,20 +493,20 @@ namespace Lucene.Net.Util.Fst
 
         public void Save(DataOutput @out)
         {
-            if (StartNode == -1)
+            if (startNode == -1)
             {
                 throw new InvalidOperationException("call finish first");
             }
-            if (NodeAddress != null)
+            if (nodeAddress != null)
             {
                 throw new InvalidOperationException("cannot save an FST pre-packed FST; it must first be packed");
             }
-            if (Packed && !(NodeRefToAddress is PackedInts.Mutable))
+            if (packed && !(nodeRefToAddress is PackedInts.Mutable))
             {
                 throw new InvalidOperationException("cannot save a FST which has been loaded from disk ");
             }
             CodecUtil.WriteHeader(@out, FILE_FORMAT_NAME, VERSION_CURRENT);
-            if (Packed)
+            if (packed)
             {
                 @out.WriteByte(1);
             }
@@ -526,7 +528,7 @@ namespace Lucene.Net.Util.Fst
                 var emptyOutputBytes = new byte[(int)ros.FilePointer];
                 ros.WriteTo(emptyOutputBytes, 0);
 
-                if (!Packed)
+                if (!packed)
                 {
                     // reverse
                     int stopAt = emptyOutputBytes.Length / 2;
@@ -560,11 +562,11 @@ namespace Lucene.Net.Util.Fst
                 t = 2;
             }
             @out.WriteByte((byte)t);
-            if (Packed)
+            if (packed)
             {
-                ((PackedInts.Mutable)NodeRefToAddress).Save(@out);
+                ((PackedInts.Mutable)nodeRefToAddress).Save(@out);
             }
-            @out.WriteVLong(StartNode);
+            @out.WriteVLong(startNode);
             @out.WriteVLong(nodeCount);
             @out.WriteVLong(arcCount);
             @out.WriteVLong(arcWithOutputCount);
@@ -696,9 +698,9 @@ namespace Lucene.Net.Util.Fst
             if (doFixedArray)
             {
                 //System.out.println("  fixedArray");
-                if (BytesPerArc.Length < nodeIn.NumArcs)
+                if (bytesPerArc.Length < nodeIn.NumArcs)
                 {
-                    BytesPerArc = new int[ArrayUtil.Oversize(nodeIn.NumArcs, 1)];
+                    bytesPerArc = new int[ArrayUtil.Oversize(nodeIn.NumArcs, 1)];
                 }
             }
 
@@ -720,7 +722,7 @@ namespace Lucene.Net.Util.Fst
                     flags += BIT_LAST_ARC;
                 }
 
-                if (LastFrozenNode == target.Node && !doFixedArray)
+                if (lastFrozenNode == target.Node && !doFixedArray)
                 {
                     // TODO: for better perf (but more RAM used) we
                     // could avoid this except when arc is "near" the
@@ -747,9 +749,9 @@ namespace Lucene.Net.Util.Fst
                 {
                     flags += BIT_STOP_NODE;
                 }
-                else if (InCounts != null)
+                else if (inCounts != null)
                 {
-                    InCounts.Set((int)target.Node, InCounts.Get((int)target.Node) + 1);
+                    inCounts.Set((int)target.Node, inCounts.Get((int)target.Node) + 1);
                 }
 
                 if (!arc.Output.Equals(NO_OUTPUT))
@@ -787,9 +789,9 @@ namespace Lucene.Net.Util.Fst
                 // byte size:
                 if (doFixedArray)
                 {
-                    BytesPerArc[arcIdx] = (int)(Bytes.Position - lastArcStart);
+                    bytesPerArc[arcIdx] = (int)(Bytes.Position - lastArcStart);
                     lastArcStart = Bytes.Position;
-                    maxBytesPerArc = Math.Max(maxBytesPerArc, BytesPerArc[arcIdx]);
+                    maxBytesPerArc = Math.Max(maxBytesPerArc, bytesPerArc[arcIdx]);
                     //System.out.println("    bytes=" + bytesPerArc[arcIdx]);
                 }
             }
@@ -844,13 +846,13 @@ namespace Lucene.Net.Util.Fst
                     for (int arcIdx = nodeIn.NumArcs - 1; arcIdx >= 0; arcIdx--)
                     {
                         destPos -= maxBytesPerArc;
-                        srcPos -= BytesPerArc[arcIdx];
+                        srcPos -= bytesPerArc[arcIdx];
                         //System.out.println("  repack arcIdx=" + arcIdx + " srcPos=" + srcPos + " destPos=" + destPos);
                         if (srcPos != destPos)
                         {
                             //System.out.println("  copy len=" + bytesPerArc[arcIdx]);
-                            Debug.Assert(destPos > srcPos, "destPos=" + destPos + " srcPos=" + srcPos + " arcIdx=" + arcIdx + " maxBytesPerArc=" + maxBytesPerArc + " bytesPerArc[arcIdx]=" + BytesPerArc[arcIdx] + " nodeIn.numArcs=" + nodeIn.NumArcs);
-                            Bytes.CopyBytes(srcPos, destPos, BytesPerArc[arcIdx]);
+                            Debug.Assert(destPos > srcPos, "destPos=" + destPos + " srcPos=" + srcPos + " arcIdx=" + arcIdx + " maxBytesPerArc=" + maxBytesPerArc + " bytesPerArc[arcIdx]=" + bytesPerArc[arcIdx] + " nodeIn.numArcs=" + nodeIn.NumArcs);
+                            Bytes.CopyBytes(srcPos, destPos, bytesPerArc[arcIdx]);
                         }
                     }
                 }
@@ -865,22 +867,22 @@ namespace Lucene.Net.Util.Fst
 
             // PackedInts uses int as the index, so we cannot handle
             // > 2.1B nodes when packing:
-            if (NodeAddress != null && nodeCount == int.MaxValue)
+            if (nodeAddress != null && nodeCount == int.MaxValue)
             {
                 throw new InvalidOperationException("cannot create a packed FST with more than 2.1 billion nodes");
             }
 
             nodeCount++;
             long node;
-            if (NodeAddress != null)
+            if (nodeAddress != null)
             {
                 // Nodes are addressed by 1+ord:
-                if ((int)nodeCount == NodeAddress.Size())
+                if ((int)nodeCount == nodeAddress.Size())
                 {
-                    NodeAddress = NodeAddress.Resize(ArrayUtil.Oversize(NodeAddress.Size() + 1, NodeAddress.BitsPerValue));
-                    InCounts = InCounts.Resize(ArrayUtil.Oversize(InCounts.Size() + 1, InCounts.BitsPerValue));
+                    nodeAddress = nodeAddress.Resize(ArrayUtil.Oversize(nodeAddress.Size() + 1, nodeAddress.BitsPerValue));
+                    inCounts = inCounts.Resize(ArrayUtil.Oversize(inCounts.Size() + 1, inCounts.BitsPerValue));
                 }
-                NodeAddress.Set((int)nodeCount, thisNodeAddress);
+                nodeAddress.Set((int)nodeCount, thisNodeAddress);
                 // System.out.println("  write nodeAddress[" + nodeCount + "] = " + endAddress);
                 node = nodeCount;
             }
@@ -888,7 +890,7 @@ namespace Lucene.Net.Util.Fst
             {
                 node = thisNodeAddress;
             }
-            LastFrozenNode = node;
+            lastFrozenNode = node;
 
             //System.out.println("  ret node=" + node + " address=" + thisNodeAddress + " nodeAddress=" + nodeAddress);
             return node;
@@ -918,7 +920,7 @@ namespace Lucene.Net.Util.Fst
 
             // If there are no nodes, ie, the FST only accepts the
             // empty string, then startNode is 0
-            arc.Target = StartNode;
+            arc.Target = startNode;
             return arc;
         }
 
@@ -951,7 +953,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     // array: jump straight to end
                     arc.NumArcs = @in.ReadVInt();
-                    if (Packed || Version >= VERSION_VINT_TARGET)
+                    if (packed || version >= VERSION_VINT_TARGET)
                     {
                         arc.BytesPerArc = @in.ReadVInt();
                     }
@@ -987,7 +989,7 @@ namespace Lucene.Net.Util.Fst
                         else if (arc.Flag(BIT_TARGET_NEXT))
                         {
                         }
-                        else if (Packed)
+                        else if (packed)
                         {
                             @in.ReadVLong();
                         }
@@ -1010,7 +1012,7 @@ namespace Lucene.Net.Util.Fst
         private long ReadUnpackedNodeTarget(BytesReader @in)
         {
             long target;
-            if (Version < VERSION_VINT_TARGET)
+            if (version < VERSION_VINT_TARGET)
             {
                 target = @in.ReadInt();
             }
@@ -1071,7 +1073,7 @@ namespace Lucene.Net.Util.Fst
                 //System.out.println("  fixedArray");
                 // this is first arc in a fixed-array
                 arc.NumArcs = @in.ReadVInt();
-                if (Packed || Version >= VERSION_VINT_TARGET)
+                if (packed || version >= VERSION_VINT_TARGET)
                 {
                     arc.BytesPerArc = @in.ReadVInt();
                 }
@@ -1153,7 +1155,7 @@ namespace Lucene.Net.Util.Fst
                     @in.ReadVInt();
 
                     // Skip bytesPerArc:
-                    if (Packed || Version >= VERSION_VINT_TARGET)
+                    if (packed || version >= VERSION_VINT_TARGET)
                     {
                         @in.ReadVInt();
                     }
@@ -1249,7 +1251,7 @@ namespace Lucene.Net.Util.Fst
                 arc.NextArc = @in.Position;
                 // TODO: would be nice to make this lazy -- maybe
                 // caller doesn't need the target and is scanning arcs...
-                if (NodeAddress == null)
+                if (nodeAddress == null)
                 {
                     if (!arc.Flag(BIT_LAST_ARC))
                     {
@@ -1274,7 +1276,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                if (Packed)
+                if (packed)
                 {
                     long pos = @in.Position;
                     long code = @in.ReadVLong();
@@ -1284,10 +1286,10 @@ namespace Lucene.Net.Util.Fst
                         arc.Target = pos + code;
                         //System.out.println("    delta pos=" + pos + " delta=" + code + " target=" + arc.target);
                     }
-                    else if (code < NodeRefToAddress.Size())
+                    else if (code < nodeRefToAddress.Size())
                     {
                         // Deref
-                        arc.Target = NodeRefToAddress.Get((int)code);
+                        arc.Target = nodeRefToAddress.Get((int)code);
                         //System.out.println("    deref code=" + code + " target=" + arc.target);
                     }
                     else
@@ -1341,12 +1343,12 @@ namespace Lucene.Net.Util.Fst
             }
 
             // Short-circuit if this arc is in the root arc cache:
-            if (follow.Target == StartNode && labelToMatch < CachedRootArcs.Length)
+            if (follow.Target == startNode && labelToMatch < cachedRootArcs.Length)
             {
                 // LUCENE-5152: detect tricky cases where caller
                 // modified previously returned cached root-arcs:
                 Debug.Assert(AssertRootArcs());
-                Arc<T> result = CachedRootArcs[labelToMatch];
+                Arc<T> result = cachedRootArcs[labelToMatch];
                 if (result == null)
                 {
                     return null;
@@ -1373,7 +1375,7 @@ namespace Lucene.Net.Util.Fst
             {
                 // Arcs are full array; do binary search:
                 arc.NumArcs = @in.ReadVInt();
-                if (Packed || Version >= VERSION_VINT_TARGET)
+                if (packed || version >= VERSION_VINT_TARGET)
                 {
                     arc.BytesPerArc = @in.ReadVInt();
                 }
@@ -1459,7 +1461,7 @@ namespace Lucene.Net.Util.Fst
 
                 if (!Flag(flags, BIT_STOP_NODE) && !Flag(flags, BIT_TARGET_NEXT))
                 {
-                    if (Packed)
+                    if (packed)
                     {
                         @in.ReadVLong();
                     }
@@ -1517,7 +1519,7 @@ namespace Lucene.Net.Util.Fst
         /// <seealso cref= Builder.UnCompiledNode#depth </seealso>
         private bool ShouldExpand(Builder<T>.UnCompiledNode<T> node)
         {
-            return AllowArrayArcs && ((node.Depth <= FIXED_ARRAY_SHALLOW_DISTANCE && node.NumArcs >= FIXED_ARRAY_NUM_ARCS_SHALLOW) || node.NumArcs >= FIXED_ARRAY_NUM_ARCS_DEEP);
+            return allowArrayArcs && ((node.Depth <= FIXED_ARRAY_SHALLOW_DISTANCE && node.NumArcs >= FIXED_ARRAY_NUM_ARCS_SHALLOW) || node.NumArcs >= FIXED_ARRAY_NUM_ARCS_DEEP);
         }
 
         /// <summary>
@@ -1529,7 +1531,7 @@ namespace Lucene.Net.Util.Fst
             get
             {
                 FST.BytesReader @in;
-                if (Packed)
+                if (packed)
                 {
                     @in = Bytes.ForwardReader;
                 }
@@ -1673,8 +1675,8 @@ namespace Lucene.Net.Util.Fst
         // Creates a packed FST
         private FST(INPUT_TYPE inputType, Outputs<T> outputs, int bytesPageBits)
         {
-            Version = VERSION_CURRENT;
-            Packed = true;
+            version = VERSION_CURRENT;
+            packed = true;
             this.inputType = inputType;
             Bytes = new BytesStore(bytesPageBits);
             this.Outputs = outputs;
@@ -1683,7 +1685,7 @@ namespace Lucene.Net.Util.Fst
             // NOTE: bogus because this is only used during
             // building; we need to break out mutable FST from
             // immutable
-            AllowArrayArcs = false;
+            allowArrayArcs = false;
         }
 
         /// <summary>
@@ -1715,7 +1717,7 @@ namespace Lucene.Net.Util.Fst
             //   - use spare bits in flags.... for top few labels /
             //     outputs / targets
 
-            if (NodeAddress == null)
+            if (nodeAddress == null)
             {
                 throw new System.ArgumentException("this FST was not built with willPackFST=true");
             }
@@ -1724,34 +1726,34 @@ namespace Lucene.Net.Util.Fst
 
             BytesReader r = BytesReader;
 
-            int topN = Math.Min(maxDerefNodes, InCounts.Size());
+            int topN = Math.Min(maxDerefNodes, inCounts.Size());
 
             // Find top nodes with highest number of incoming arcs:
             NodeQueue q = new NodeQueue(topN);
 
             // TODO: we could use more RAM efficient selection algo here...
             NodeAndInCount bottom = null;
-            for (int node = 0; node < InCounts.Size(); node++)
+            for (int node = 0; node < inCounts.Size(); node++)
             {
-                if (InCounts.Get(node) >= minInCountDeref)
+                if (inCounts.Get(node) >= minInCountDeref)
                 {
                     if (bottom == null)
                     {
-                        q.Add(new NodeAndInCount(node, (int)InCounts.Get(node)));
+                        q.Add(new NodeAndInCount(node, (int)inCounts.Get(node)));
                         if (q.Size() == topN)
                         {
                             bottom = q.Top();
                         }
                     }
-                    else if (InCounts.Get(node) > bottom.Count)
+                    else if (inCounts.Get(node) > bottom.Count)
                     {
-                        q.InsertWithOverflow(new NodeAndInCount(node, (int)InCounts.Get(node)));
+                        q.InsertWithOverflow(new NodeAndInCount(node, (int)inCounts.Get(node)));
                     }
                 }
             }
 
             // Free up RAM:
-            InCounts = null;
+            inCounts = null;
 
             IDictionary<int, int> topNodeMap = new Dictionary<int, int>();
             for (int downTo = q.Size() - 1; downTo >= 0; downTo--)
@@ -1767,7 +1769,7 @@ namespace Lucene.Net.Util.Fst
             // Fill initial coarse guess:
             for (int node = 1; node <= nodeCount; node++)
             {
-                newNodeAddress.Set(node, 1 + this.Bytes.Position - NodeAddress.Get(node));
+                newNodeAddress.Set(node, 1 + this.Bytes.Position - nodeAddress.Get(node));
             }
 
             int absCount;
@@ -2075,9 +2077,9 @@ namespace Lucene.Net.Util.Fst
             {
                 nodeRefToAddressIn.Set(ent.Value, newNodeAddress.Get(ent.Key));
             }
-            fst.NodeRefToAddress = nodeRefToAddressIn;
+            fst.nodeRefToAddress = nodeRefToAddressIn;
 
-            fst.StartNode = newNodeAddress.Get((int)StartNode);
+            fst.startNode = newNodeAddress.Get((int)startNode);
             //System.out.println("new startNode=" + fst.startNode + " old startNode=" + startNode);
 
             if (emptyOutput != null)
