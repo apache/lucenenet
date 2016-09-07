@@ -333,10 +333,10 @@ namespace Lucene.Net.Util.Fst
             DirectoryInfo tempDir = CreateTempDir("fstlines");
             Directory dir = NewFSDirectory(tempDir);
             IndexWriter writer = new IndexWriter(dir, conf);
-            long stopTime = DateTime.Now.Millisecond + RUN_TIME_MSEC;
+            long stopTime = Environment.TickCount + RUN_TIME_MSEC;
             Document doc;
             int docCount = 0;
-            while ((doc = docs.NextDoc()) != null && DateTime.Now.Millisecond < stopTime)
+            while ((doc = docs.NextDoc()) != null && Environment.TickCount < stopTime)
             {
                 writer.AddDocument(doc);
                 docCount++;
@@ -542,7 +542,7 @@ namespace Lucene.Net.Util.Fst
                 try
                 {
                     IntsRef intsRef = new IntsRef(10);
-                    long tStart = DateTime.Now.Millisecond;
+                    long tStart = Environment.TickCount;
                     int ord = 0;
                     while (true)
                     {
@@ -557,7 +557,7 @@ namespace Lucene.Net.Util.Fst
                         ord++;
                         if (ord % 500000 == 0)
                         {
-                            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:000000.000}s: {1:000000000}...", ((DateTime.Now.Millisecond - tStart) / 1000.0), ord));
+                            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:000000.000}s: {1:000000000}...", ((Environment.TickCount - tStart) / 1000.0), ord));
                         }
                         if (ord >= limit)
                         {
@@ -565,12 +565,12 @@ namespace Lucene.Net.Util.Fst
                         }
                     }
 
-                    long tMid = DateTime.Now.Millisecond;
+                    long tMid = Environment.TickCount;
                     Console.WriteLine(((tMid - tStart) / 1000.0) + " sec to add all terms");
 
                     Debug.Assert(Builder.TermCount == ord);
                     FST<T> fst = Builder.Finish();
-                    long tEnd = DateTime.Now.Millisecond;
+                    long tEnd = Environment.TickCount;
                     Console.WriteLine(((tEnd - tMid) / 1000.0) + " sec to finish/pack");
                     if (fst == null)
                     {
@@ -619,7 +619,7 @@ namespace Lucene.Net.Util.Fst
                             @is = new StreamReader(new FileStream(WordsFileIn, FileMode.Open), Encoding.UTF8);
 
                             ord = 0;
-                            tStart = DateTime.Now.Millisecond;
+                            tStart = Environment.TickCount;
                             while (true)
                             {
                                 string w = @is.ReadLine();
@@ -659,7 +659,7 @@ namespace Lucene.Net.Util.Fst
                                 ord++;
                                 if (ord % 500000 == 0)
                                 {
-                                    Console.WriteLine(((DateTime.Now.Millisecond - tStart) / 1000.0) + "s: " + ord + "...");
+                                    Console.WriteLine(((Environment.TickCount - tStart) / 1000.0) + "s: " + ord + "...");
                                 }
                                 if (ord >= limit)
                                 {
@@ -667,7 +667,7 @@ namespace Lucene.Net.Util.Fst
                                 }
                             }
 
-                            double totSec = ((DateTime.Now.Millisecond - tStart) / 1000.0);
+                            double totSec = ((Environment.TickCount - tStart) / 1000.0);
                             Console.WriteLine("Verify " + (iter == 1 ? "(by output) " : "") + "took " + totSec + " sec + (" + (int)((totSec * 1000000000 / ord)) + " nsec per lookup)");
 
                             if (!verifyByOutput)
