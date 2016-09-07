@@ -1,15 +1,15 @@
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace Lucene.Net.Util.Fst
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -312,7 +312,17 @@ namespace Lucene.Net.Util.Fst
 
             bool willRewrite = Random.NextBoolean();
 
-            Builder<T> builder = new Builder<T>(InputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, prune1, prune2, prune1 == 0 && prune2 == 0, allowRandomSuffixSharing ? Random.NextBoolean() : true, allowRandomSuffixSharing ? TestUtil.NextInt(Random, 1, 10) : int.MaxValue, Outputs, null, willRewrite, PackedInts.DEFAULT, true, 15);
+            Builder<T> builder = new Builder<T>(InputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, 
+                                                prune1, prune2, 
+                                                prune1 == 0 && prune2 == 0, 
+                                                allowRandomSuffixSharing ? Random.NextBoolean() : true, 
+                                                allowRandomSuffixSharing ? TestUtil.NextInt(Random, 1, 10) : int.MaxValue, 
+                                                Outputs, 
+                                                null, 
+                                                willRewrite, 
+                                                PackedInts.DEFAULT, 
+                                                true, 
+                                                15);
             if (LuceneTestCase.VERBOSE)
             {
                 if (willRewrite)
@@ -823,7 +833,7 @@ namespace Lucene.Net.Util.Fst
             //System.out.println("TEST: tally prefixes");
 
             // build all prefixes
-            IDictionary<IntsRef, CountMinOutput<T>> prefixes = new Dictionary<IntsRef, CountMinOutput<T>>();
+            IDictionary<IntsRef, CountMinOutput<T>> prefixes = new HashMap<IntsRef, CountMinOutput<T>>();
             IntsRef scratch = new IntsRef(10);
             foreach (InputOutput<T> pair in Pairs)
             {
@@ -867,11 +877,13 @@ namespace Lucene.Net.Util.Fst
                 Console.WriteLine("TEST: now prune");
             }
 
+
             // prune 'em
-            IEnumerator<KeyValuePair<IntsRef, CountMinOutput<T>>> it = prefixes.GetEnumerator();
-            while (it.MoveNext())
+            // LUCENENET NOTE: Altered this a bit to go in reverse rather than use an enumerator since
+            // in .NET you cannot delete records while enumerating forward through a dictionary.
+            for (int i = prefixes.Count - 1; i >= 0; i--)
             {
-                KeyValuePair<IntsRef, CountMinOutput<T>> ent = it.Current;
+                KeyValuePair<IntsRef, CountMinOutput<T>> ent = prefixes.ElementAt(i);
                 IntsRef prefix = ent.Key;
                 CountMinOutput<T> cmo = ent.Value;
                 if (LuceneTestCase.VERBOSE)
@@ -895,7 +907,7 @@ namespace Lucene.Net.Util.Fst
                         // consult our parent
                         scratch.Length = prefix.Length - 1;
                         Array.Copy(prefix.Ints, prefix.Offset, scratch.Ints, 0, scratch.Length);
-                        CountMinOutput<T> cmo2 = prefixes[scratch];
+                        CountMinOutput<T> cmo2 = prefixes.ContainsKey(scratch) ? prefixes[scratch] : null;
                         //System.out.println("    parent count = " + (cmo2 == null ? -1 : cmo2.count));
                         keep = cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.Length <= 1)));
                     }
@@ -911,7 +923,7 @@ namespace Lucene.Net.Util.Fst
 
                 if (!keep)
                 {
-                    it.Reset();
+                    prefixes.Remove(prefix);
                     //System.out.println("    remove");
                 }
                 else
@@ -922,7 +934,7 @@ namespace Lucene.Net.Util.Fst
                     scratch.Length--;
                     while (scratch.Length >= 0)
                     {
-                        CountMinOutput<T> cmo2 = prefixes[scratch];
+                        CountMinOutput<T> cmo2 = prefixes.ContainsKey(scratch) ? prefixes[scratch] : null;
                         if (cmo2 != null)
                         {
                             //System.out.println("    clear isLeaf " + inputToString(inputMode, scratch));
@@ -932,6 +944,73 @@ namespace Lucene.Net.Util.Fst
                     }
                 }
             }
+
+
+            //// prune 'em
+            //IEnumerator<KeyValuePair<IntsRef, CountMinOutput<T>>> it = prefixes.GetEnumerator();
+            //while (it.MoveNext())
+            //{
+            //    KeyValuePair<IntsRef, CountMinOutput<T>> ent = it.Current;
+            //    IntsRef prefix = ent.Key;
+            //    CountMinOutput<T> cmo = ent.Value;
+            //    if (LuceneTestCase.VERBOSE)
+            //    {
+            //        Console.WriteLine("  term prefix=" + InputToString(inputMode, prefix, false) + " count=" + cmo.Count + " isLeaf=" + cmo.IsLeaf + " output=" + Outputs.OutputToString(cmo.Output) + " isFinal=" + cmo.IsFinal);
+            //    }
+            //    bool keep;
+            //    if (prune1 > 0)
+            //    {
+            //        keep = cmo.Count >= prune1;
+            //    }
+            //    else
+            //    {
+            //        Debug.Assert(prune2 > 0);
+            //        if (prune2 > 1 && cmo.Count >= prune2)
+            //        {
+            //            keep = true;
+            //        }
+            //        else if (prefix.Length > 0)
+            //        {
+            //            // consult our parent
+            //            scratch.Length = prefix.Length - 1;
+            //            Array.Copy(prefix.Ints, prefix.Offset, scratch.Ints, 0, scratch.Length);
+            //            CountMinOutput<T> cmo2 = prefixes.ContainsKey(scratch) ? prefixes[scratch] : null;
+            //            //System.out.println("    parent count = " + (cmo2 == null ? -1 : cmo2.count));
+            //            keep = cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.Length <= 1)));
+            //        }
+            //        else if (cmo.Count >= prune2)
+            //        {
+            //            keep = true;
+            //        }
+            //        else
+            //        {
+            //            keep = false;
+            //        }
+            //    }
+
+            //    if (!keep)
+            //    {
+            //        it.Reset();
+            //        //System.out.println("    remove");
+            //    }
+            //    else
+            //    {
+            //        // clear isLeaf for all ancestors
+            //        //System.out.println("    keep");
+            //        scratch.CopyInts(prefix);
+            //        scratch.Length--;
+            //        while (scratch.Length >= 0)
+            //        {
+            //            CountMinOutput<T> cmo2 = prefixes.ContainsKey(scratch) ? prefixes[scratch] : null;
+            //            if (cmo2 != null)
+            //            {
+            //                //System.out.println("    clear isLeaf " + inputToString(inputMode, scratch));
+            //                cmo2.IsLeaf = false;
+            //            }
+            //            scratch.Length--;
+            //        }
+            //    }
+            //}
 
             if (LuceneTestCase.VERBOSE)
             {
@@ -967,7 +1046,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.Input, false) + " output=" + Outputs.OutputToString(current.Output));
                 }
-                CountMinOutput<T> cmo = prefixes[current.Input];
+                CountMinOutput<T> cmo = prefixes.ContainsKey(current.Input) ? prefixes[current.Input] : null;
                 Assert.IsNotNull(cmo);
                 Assert.IsTrue(cmo.IsLeaf || cmo.IsFinal);
                 //if (cmo.isFinal && !cmo.isLeaf) {
