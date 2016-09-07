@@ -1,10 +1,14 @@
+using Lucene.Net.Attributes;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -25,46 +29,38 @@ namespace Lucene.Net.Util.Fst
      * limitations under the License.
      */
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using MultiFields = Lucene.Net.Index.MultiFields;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using Directory = Lucene.Net.Store.Directory;
-    using FSDirectory = Lucene.Net.Store.FSDirectory;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     //using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
-    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
     //using InputOutput = Lucene.Net.Util.Fst.BytesRefFSTEnum.InputOutput;
     //using Arc = Lucene.Net.Util.Fst.FST.Arc;
     using BytesReader = Lucene.Net.Util.Fst.FST.BytesReader;
-    using Pair = Lucene.Net.Util.Fst.PairOutputs<long?, long?>.Pair;
+    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Documents.Document;
+    using Field = Lucene.Net.Documents.Field;
+    using FSDirectory = Lucene.Net.Store.FSDirectory;
+    using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using IOContext = Lucene.Net.Store.IOContext;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using MultiFields = Lucene.Net.Index.MultiFields;
     //using ResultLong = Lucene.Net.Util.Fst.Util.Result<long?>;
     //using ResultPair = Lucene.Net.Util.Fst.Util.Result<long?>;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.Globalization;
+    using Pair = Lucene.Net.Util.Fst.PairOutputs<long?, long?>.Pair;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
+    using Terms = Lucene.Net.Index.Terms;
+    using TermsEnum = Lucene.Net.Index.TermsEnum;
 
-    /*
-    import static Lucene.Net.Util.Fst.FSTTester.GetRandomString;
-    import static Lucene.Net.Util.Fst.FSTTester.SimpleRandomString;
-    import static Lucene.Net.Util.Fst.FSTTester.ToIntsRef;*/
 
     [TestFixture]
     public class TestFSTs : LuceneTestCase
@@ -269,7 +265,7 @@ namespace Lucene.Net.Util.Fst
         }
 
 
-        [Test]
+        [Test, LongRunningTest, Timeout(27000000)] // 45 minutes to be on the safe side
         public virtual void TestRandomWords()
         {
             TestRandomWords(1000, AtLeast(2));
@@ -313,6 +309,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         [Test]
+        [Ignore("LUCENENET TODO: This test will take around 10-14 hours to finish. It was marked with a Nightly attribute in the original Java source, but we don't currently have a corresponding attribute")]
         public virtual void TestBigSet()
         {
             TestRandomWords(TestUtil.NextInt(Random(), 50000, 60000), 1);
