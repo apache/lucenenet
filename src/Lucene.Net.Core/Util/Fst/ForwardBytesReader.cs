@@ -62,9 +62,9 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override bool Reversed()
+        public override bool IsReversed
         {
-            return false;
+            get { return false; }
         }
     }
 }

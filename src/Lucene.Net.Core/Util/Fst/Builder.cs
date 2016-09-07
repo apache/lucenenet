@@ -554,7 +554,7 @@ namespace Lucene.Net.Util.Fst
             for (int arcIdx = 0; arcIdx < node.NumArcs; arcIdx++)
             {
                 Arc<T> arc = node.Arcs[arcIdx];
-                if (!arc.Target.Compiled)
+                if (!arc.Target.IsCompiled)
                 {
                     // not yet compiled
                     UnCompiledNode<T> n = (UnCompiledNode<T>)arc.Target;
@@ -585,7 +585,7 @@ namespace Lucene.Net.Util.Fst
 
         public interface Node
         {
-            bool Compiled { get; }
+            bool IsCompiled { get; }
         }
 
         public virtual long FstSizeInBytes()
@@ -597,7 +597,7 @@ namespace Lucene.Net.Util.Fst
         {
             public long Node;
 
-            public bool Compiled
+            public bool IsCompiled
             {
                 get
                 {
@@ -640,7 +640,7 @@ namespace Lucene.Net.Util.Fst
                 this.Depth = depth;
             }
 
-            public bool Compiled
+            public bool IsCompiled
             {
                 get
                 {

@@ -286,7 +286,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 // reversed
                 FST.BytesReader r2 = bytes.ReverseReader;
-                Assert.IsTrue(r2.Reversed());
+                Assert.IsTrue(r2.IsReversed);
                 r2.Position = totalLength - 1;
                 r2.ReadBytes(actual, 0, actual.Length);
                 int start = 0;
@@ -308,7 +308,7 @@ namespace Lucene.Net.Util.Fst
                     Console.WriteLine("    bulk: forward");
                 }
                 FST.BytesReader r3 = bytes.ForwardReader;
-                Assert.IsFalse(r3.Reversed());
+                Assert.IsFalse(r3.IsReversed);
                 r3.ReadBytes(actual, 0, actual.Length);
             }
 

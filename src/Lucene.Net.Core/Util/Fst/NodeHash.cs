@@ -51,12 +51,12 @@ namespace Lucene.Net.Util.Fst
             for (int arcUpto = 0; arcUpto < node.NumArcs; arcUpto++)
             {
                 Builder<T>.Arc<T> arc = node.Arcs[arcUpto];
-                if (arc.Label != ScratchArc.Label || !arc.Output.Equals(ScratchArc.Output) || ((Builder<T>.CompiledNode)arc.Target).Node != ScratchArc.Target || !arc.NextFinalOutput.Equals(ScratchArc.NextFinalOutput) || arc.IsFinal != ScratchArc.Final)
+                if (arc.Label != ScratchArc.Label || !arc.Output.Equals(ScratchArc.Output) || ((Builder<T>.CompiledNode)arc.Target).Node != ScratchArc.Target || !arc.NextFinalOutput.Equals(ScratchArc.NextFinalOutput) || arc.IsFinal != ScratchArc.IsFinal)
                 {
                     return false;
                 }
 
-                if (ScratchArc.Last)
+                if (ScratchArc.IsLast)
                 {
                     if (arcUpto == node.NumArcs - 1)
                     {
@@ -157,11 +157,11 @@ namespace Lucene.Net.Util.Fst
                     h = PRIME * h + ScratchArc.NextFinalOutput.GetHashCode();
                 }
 
-                if (ScratchArc.Final)
+                if (ScratchArc.IsFinal)
                 {
                     h += 17;
                 }
-                if (ScratchArc.Last)
+                if (ScratchArc.IsLast)
                 {
                     break;
                 }

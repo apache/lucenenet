@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         {
                             Debug.Assert(scratchArc.Label != FST<CharsRef>.END_LABEL); // LUCENENET TODO END_LABEL shouldn't be under generic?
                             cachedRootArcs[Convert.ToChar((char)scratchArc.Label)] = (new FST.Arc<CharsRef>()).CopyFrom(scratchArc);
-                            if (scratchArc.Last)
+                            if (scratchArc.IsLast)
                             {
                                 break;
                             }

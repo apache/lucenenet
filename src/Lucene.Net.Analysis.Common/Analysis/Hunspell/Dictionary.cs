@@ -1190,7 +1190,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     {
                         output = fst.Outputs.Add(output, arc.Output);
                     }
-                    if (arc.Final)
+                    if (arc.IsFinal)
                     {
                         longestOutput = fst.Outputs.Add(output, arc.NextFinalOutput);
                         longestMatch = j;

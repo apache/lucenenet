@@ -114,7 +114,7 @@ namespace Lucene.Net.Util.Fst
             {
                 // pop
                 //System.out.println("  check pop curArc target=" + arcs[upto].target + " label=" + arcs[upto].label + " isLast?=" + arcs[upto].isLast());
-                while (Arcs[Upto].Last)
+                while (Arcs[Upto].IsLast)
                 {
                     Upto--;
                     if (Upto == 0)
@@ -218,7 +218,7 @@ namespace Lucene.Net.Util.Fst
                         // Dead end
                         arc.ArcIdx = arc.NumArcs - 2;
                         Fst.ReadNextRealArc(arc, @in);
-                        Debug.Assert(arc.Last);
+                        Debug.Assert(arc.IsLast);
                         // Dead end (target is after the last arc);
                         // rollback to last fork then push
                         Upto--;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Util.Fst
                             }
                             FST<T>.Arc<T> prevArc = GetArc(Upto);
                             //System.out.println("  rollback upto=" + upto + " arc.label=" + prevArc.label + " isLast?=" + prevArc.isLast());
-                            if (!prevArc.Last)
+                            if (!prevArc.IsLast)
                             {
                                 Fst.ReadNextArc(prevArc, FstReader);
                                 PushFirst();
@@ -269,7 +269,7 @@ namespace Lucene.Net.Util.Fst
                         PushFirst();
                         return;
                     }
-                    else if (arc.Last)
+                    else if (arc.IsLast)
                     {
                         // Dead end (target is after the last arc);
                         // rollback to last fork then push
@@ -282,7 +282,7 @@ namespace Lucene.Net.Util.Fst
                             }
                             FST<T>.Arc<T> prevArc = GetArc(Upto);
                             //System.out.println("  rollback upto=" + upto + " arc.label=" + prevArc.label + " isLast?=" + prevArc.isLast());
-                            if (!prevArc.Last)
+                            if (!prevArc.IsLast)
                             {
                                 Fst.ReadNextArc(prevArc, FstReader);
                                 PushFirst();
@@ -401,7 +401,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 // Then, scan forwards to the arc just before
                                 // the targetLabel:
-                                while (!arc.Last && Fst.ReadNextArcLabel(arc, @in) < targetLabel)
+                                while (!arc.IsLast && Fst.ReadNextArcLabel(arc, @in) < targetLabel)
                                 {
                                     Fst.ReadNextArc(arc, FstReader);
                                 }
@@ -423,7 +423,7 @@ namespace Lucene.Net.Util.Fst
                         arc.ArcIdx = (low > high ? high : low) - 1;
                         //System.out.println(" hasFloor arcIdx=" + (arc.arcIdx+1));
                         Fst.ReadNextRealArc(arc, @in);
-                        Debug.Assert(arc.Last || Fst.ReadNextArcLabel(arc, @in) > targetLabel);
+                        Debug.Assert(arc.IsLast || Fst.ReadNextArcLabel(arc, @in) > targetLabel);
                         Debug.Assert(arc.Label < targetLabel, "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel);
                         PushLast();
                         return;
@@ -459,7 +459,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 // Then, scan forwards to the arc just before
                                 // the targetLabel:
-                                while (!arc.Last && Fst.ReadNextArcLabel(arc, FstReader) < targetLabel)
+                                while (!arc.IsLast && Fst.ReadNextArcLabel(arc, FstReader) < targetLabel)
                                 {
                                     Fst.ReadNextArc(arc, FstReader);
                                 }
@@ -475,7 +475,7 @@ namespace Lucene.Net.Util.Fst
                             arc = GetArc(Upto);
                         }
                     }
-                    else if (!arc.Last)
+                    else if (!arc.IsLast)
                     {
                         //System.out.println("  check next label=" + fst.readNextArcLabel(arc) + " (" + (char) fst.readNextArcLabel(arc) + ")");
                         if (Fst.ReadNextArcLabel(arc, FstReader) > targetLabel)

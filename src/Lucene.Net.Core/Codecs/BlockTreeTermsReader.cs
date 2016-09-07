@@ -1073,7 +1073,7 @@ namespace Lucene.Net.Codecs
 
                     FST<BytesRef>.Arc<BytesRef> arc = outerInstance.Index.GetFirstArc(Arcs[0]);
                     // Empty string prefix must have an output in the index!
-                    Debug.Assert(arc.Final);
+                    Debug.Assert(arc.IsFinal);
 
                     // Special pushFrame since it's the first one:
                     Frame f = Stack[0];
@@ -1169,7 +1169,7 @@ namespace Lucene.Net.Codecs
 
                     f.Arc = arc;
                     f.OutputPrefix = output;
-                    Debug.Assert(arc.Final);
+                    Debug.Assert(arc.IsFinal);
                     f.Load(OuterInstance.OuterInstance.FstOutputs.Add(output, arc.NextFinalOutput));
                     return f;
                 }
@@ -1578,7 +1578,7 @@ namespace Lucene.Net.Codecs
                     {
                         arc = outerInstance.Index.GetFirstArc(Arcs[0]);
                         // Empty string prefix must have an output in the index!
-                        Debug.Assert(arc.Final);
+                        Debug.Assert(arc.IsFinal);
                     }
                     else
                     {
@@ -1626,7 +1626,7 @@ namespace Lucene.Net.Codecs
                     {
                         arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
                         // Empty string prefix must have an output in the index!
-                        Debug.Assert(arc.Final);
+                        Debug.Assert(arc.IsFinal);
                     }
                     else
                     {
@@ -1701,7 +1701,7 @@ namespace Lucene.Net.Codecs
                     {
                         arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
                         // Empty string prefix must have an output in the index!
-                        Debug.Assert(arc.Final);
+                        Debug.Assert(arc.IsFinal);
                     }
                     else
                     {
@@ -1861,7 +1861,7 @@ namespace Lucene.Net.Codecs
                         // }
 
                         arc = Arcs[0];
-                        Debug.Assert(arc.Final);
+                        Debug.Assert(arc.IsFinal);
                         output = arc.Output;
                         targetUpto = 0;
 
@@ -1895,7 +1895,7 @@ namespace Lucene.Net.Codecs
                             {
                                 output = OuterInstance.OuterInstance.FstOutputs.Add(output, arc.Output);
                             }
-                            if (arc.Final)
+                            if (arc.IsFinal)
                             {
                                 lastFrame = Stack[1 + lastFrame.Ord];
                             }
@@ -1982,7 +1982,7 @@ namespace Lucene.Net.Codecs
                         arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
 
                         // Empty string prefix must have an output (block) in the index!
-                        Debug.Assert(arc.Final);
+                        Debug.Assert(arc.IsFinal);
                         Debug.Assert(arc.Output != null);
 
                         // if (DEBUG) {
@@ -2066,7 +2066,7 @@ namespace Lucene.Net.Codecs
                             // }
                             targetUpto++;
 
-                            if (arc.Final)
+                            if (arc.IsFinal)
                             {
                                 //if (DEBUG) System.out.println("    arc is final!");
                                 CurrentFrame = PushFrame(arc, OuterInstance.OuterInstance.FstOutputs.Add(output, arc.NextFinalOutput), targetUpto);
@@ -2150,7 +2150,7 @@ namespace Lucene.Net.Codecs
                         //}
 
                         arc = Arcs[0];
-                        Debug.Assert(arc.Final);
+                        Debug.Assert(arc.IsFinal);
                         output = arc.Output;
                         targetUpto = 0;
 
@@ -2186,7 +2186,7 @@ namespace Lucene.Net.Codecs
                             {
                                 output = OuterInstance.OuterInstance.FstOutputs.Add(output, arc.Output);
                             }
-                            if (arc.Final)
+                            if (arc.IsFinal)
                             {
                                 lastFrame = Stack[1 + lastFrame.Ord];
                             }
@@ -2267,7 +2267,7 @@ namespace Lucene.Net.Codecs
                         arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
 
                         // Empty string prefix must have an output (block) in the index!
-                        Debug.Assert(arc.Final);
+                        Debug.Assert(arc.IsFinal);
                         Debug.Assert(arc.Output != null);
 
                         //if (DEBUG) {
@@ -2353,7 +2353,7 @@ namespace Lucene.Net.Codecs
                             //}
                             targetUpto++;
 
-                            if (arc.Final)
+                            if (arc.IsFinal)
                             {
                                 //if (DEBUG) System.out.println("    arc is final!");
                                 CurrentFrame = PushFrame(arc, OuterInstance.OuterInstance.FstOutputs.Add(output, arc.NextFinalOutput), targetUpto);
@@ -2474,7 +2474,7 @@ namespace Lucene.Net.Codecs
                         {
                             arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
                             // Empty string prefix must have an output in the index!
-                            Debug.Assert(arc.Final);
+                            Debug.Assert(arc.IsFinal);
                         }
                         else
                         {

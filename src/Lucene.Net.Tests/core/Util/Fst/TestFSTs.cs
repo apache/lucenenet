@@ -1319,7 +1319,7 @@ namespace Lucene.Net.Util.Fst
                         int children = VerifyStateAndBelow(fst, new FST.Arc<object>().CopyFrom(arc), depth + 1);
 
                         Assert.AreEqual(expanded, (depth <= FST.FIXED_ARRAY_SHALLOW_DISTANCE && children >= FST.FIXED_ARRAY_NUM_ARCS_SHALLOW) || children >= FST.FIXED_ARRAY_NUM_ARCS_DEEP);
-                        if (arc.Last)
+                        if (arc.IsLast)
                         {
                             break;
                         }
@@ -1437,11 +1437,11 @@ namespace Lucene.Net.Util.Fst
             FST.Arc<long?> arc = fst.ReadFirstTargetArc(startArc, new FST.Arc<long?>(), fst.BytesReader);
             Assert.AreEqual('a', arc.Label);
             Assert.AreEqual(17, arc.NextFinalOutput);
-            Assert.IsTrue(arc.Final);
+            Assert.IsTrue(arc.IsFinal);
 
             arc = fst.ReadNextArc(arc, fst.BytesReader);
             Assert.AreEqual('b', arc.Label);
-            Assert.IsFalse(arc.Final);
+            Assert.IsFalse(arc.IsFinal);
             Assert.AreEqual(42, arc.Output);
         }
 

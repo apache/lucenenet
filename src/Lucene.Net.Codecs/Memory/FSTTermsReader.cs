@@ -582,7 +582,7 @@ namespace Lucene.Net.Codecs.Memory
                         next.Output = fstOutputs.Add(next.Output, last.Output);
                         last = next;
                     }
-                    if (last.Final)
+                    if (last.IsFinal)
                     {
                         meta = fstOutputs.Add(last.Output, last.NextFinalOutput);
                     }
@@ -738,7 +738,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         return null;
                     }
-                    while (!frame.fstArc.Last)
+                    while (!frame.fstArc.IsLast)
                     {
                         frame.fstArc = fst.ReadNextRealArc(frame.fstArc, fstReader);
                         frame.fsaState = fsa.Step(top.fsaState, frame.fstArc.Label);
@@ -778,7 +778,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 internal bool IsAccept(Frame frame) // reach a term both fst&fsa accepts
                 {
-                    return fsa.IsAccept(frame.fsaState) && frame.fstArc.Final;
+                    return fsa.IsAccept(frame.fsaState) && frame.fstArc.IsFinal;
                 }
                 internal bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject
                 {
@@ -790,7 +790,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 internal bool CanRewind(Frame frame) // can jump to sibling
                 {
-                    return !frame.fstArc.Last;
+                    return !frame.fstArc.IsLast;
                 }
 
                 internal void PushFrame(Frame frame)
@@ -882,7 +882,7 @@ namespace Lucene.Net.Codecs.Memory
                     while (true)
                     {
                         queue.Add((new FST.Arc<T>()).CopyFrom(arc));
-                        if (arc.Last)
+                        if (arc.IsLast)
                         {
                             break;
                         }

@@ -274,7 +274,7 @@ namespace Lucene.Net.Util.Fst
                 // read all arcs:
                 fst.ReadFirstTargetArc(arc, arc, fstReader);
                 arcs.Add((new FST.Arc<T>()).CopyFrom(arc));
-                while (!arc.Last)
+                while (!arc.IsLast)
                 {
                     fst.ReadNextArc(arc, fstReader);
                     arcs.Add((new FST.Arc<T>()).CopyFrom(arc));

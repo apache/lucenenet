@@ -62,7 +62,7 @@ namespace Lucene.Net.Util.Fst
                 output = fst.Outputs.Add(output, arc.Output);
             }
 
-            if (arc.Final)
+            if (arc.IsFinal)
             {
                 return fst.Outputs.Add(output, arc.NextFinalOutput);
             }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util.Fst
                 output = fst.Outputs.Add(output, arc.Output);
             }
 
-            if (arc.Final)
+            if (arc.IsFinal)
             {
                 return fst.Outputs.Add(output, arc.NextFinalOutput);
             }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util.Fst
             while (true)
             {
                 //System.out.println("loop: output=" + output + " upto=" + upto + " arc=" + arc);
-                if (arc.Final)
+                if (arc.IsFinal)
                 {
                     long finalOutput = output + arc.NextFinalOutput.Value;
                     //System.out.println("  isFinal finalOutput=" + finalOutput);
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util.Fst
                                     break;
                                 }
                             }
-                            else if (arc.Last)
+                            else if (arc.IsLast)
                             {
                                 // Recurse on this arc:
                                 output = minArcOutput;
@@ -465,7 +465,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         AddIfCompetitive(path);
                     }
-                    if (path.Arc.Last)
+                    if (path.Arc.IsLast)
                     {
                         break;
                     }
@@ -572,7 +572,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 AddIfCompetitive(path);
                             }
-                            if (path.Arc.Last)
+                            if (path.Arc.IsLast)
                             {
                                 break;
                             }
@@ -777,7 +777,7 @@ namespace Lucene.Net.Util.Fst
 
                 bool isFinal;
                 T finalOutput;
-                if (startArc.Final)
+                if (startArc.IsFinal)
                 {
                     isFinal = true;
                     finalOutput = startArc.NextFinalOutput.Equals(NO_OUTPUT) ? default(T) : startArc.NextFinalOutput;
@@ -875,7 +875,7 @@ namespace Lucene.Net.Util.Fst
                                 outs = "";
                             }
 
-                            if (!FST<T>.TargetHasArcs(arc) && arc.Final && !arc.NextFinalOutput.Equals(NO_OUTPUT))
+                            if (!FST<T>.TargetHasArcs(arc) && arc.IsFinal && !arc.NextFinalOutput.Equals(NO_OUTPUT))
                             {
                                 // Tricky special case: sometimes, due to
                                 // pruning, the builder can [sillily] produce
@@ -897,10 +897,10 @@ namespace Lucene.Net.Util.Fst
                             }
 
                             Debug.Assert(arc.Label != FST<T>.END_LABEL);
-                            @out.Write("  " + node + " -> " + arc.Target + " [label=\"" + PrintableLabel(arc.Label) + outs + "\"" + (arc.Final ? " style=\"bold\"" : "") + " color=\"" + arcColor + "\"]\n");
+                            @out.Write("  " + node + " -> " + arc.Target + " [label=\"" + PrintableLabel(arc.Label) + outs + "\"" + (arc.IsFinal ? " style=\"bold\"" : "") + " color=\"" + arcColor + "\"]\n");
 
                             // Break the loop if we're on the last arc of this state.
-                            if (arc.Last)
+                            if (arc.IsLast)
                             {
                                 //System.out.println("    break");
                                 break;
@@ -1071,7 +1071,7 @@ namespace Lucene.Net.Util.Fst
             // TODO maybe this is a useful in the FST class - we could simplify some other code like FSTEnum?
             if (label == FST<T>.END_LABEL)
             {
-                if (follow.Final)
+                if (follow.IsFinal)
                 {
                     if (follow.Target <= 0)
                     {
@@ -1156,7 +1156,7 @@ namespace Lucene.Net.Util.Fst
                     // System.out.println("    found!");
                     return arc;
                 }
-                else if (arc.Last)
+                else if (arc.IsLast)
                 {
                     return null;
                 }

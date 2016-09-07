@@ -409,7 +409,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         break;
                     }
-                    if (arc.Last)
+                    if (arc.IsLast)
                     {
                         break;
                     }
@@ -935,7 +935,7 @@ namespace Lucene.Net.Util.Fst
             if (!TargetHasArcs(follow))
             {
                 //System.out.println("  end node");
-                Debug.Assert(follow.Final);
+                Debug.Assert(follow.IsFinal);
                 arc.Label = END_LABEL;
                 arc.Target = FINAL_END_NODE;
                 arc.Output = follow.NextFinalOutput;
@@ -969,7 +969,7 @@ namespace Lucene.Net.Util.Fst
                     // non-array: linear scan
                     arc.BytesPerArc = 0;
                     //System.out.println("  scan");
-                    while (!arc.Last)
+                    while (!arc.IsLast)
                     {
                         // skip this arc:
                         ReadLabel(@in);
@@ -1002,7 +1002,7 @@ namespace Lucene.Net.Util.Fst
                     arc.NextArc = @in.Position;
                 }
                 ReadNextRealArc(arc, @in);
-                Debug.Assert(arc.Last);
+                Debug.Assert(arc.IsLast);
                 return arc;
             }
         }
@@ -1031,7 +1031,7 @@ namespace Lucene.Net.Util.Fst
         {
             //int pos = address;
             //System.out.println("    readFirstTarget follow.target=" + follow.Target + " isFinal=" + follow.isFinal());
-            if (follow.Final)
+            if (follow.IsFinal)
             {
                 // Insert "fake" final first arc:
                 arc.Label = END_LABEL;
@@ -1136,7 +1136,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public int ReadNextArcLabel(Arc<T> arc, BytesReader @in)
         {
-            Debug.Assert(!arc.Last);
+            Debug.Assert(!arc.IsLast);
 
             if (arc.Label == END_LABEL)
             {
@@ -1317,7 +1317,7 @@ namespace Lucene.Net.Util.Fst
         {
             if (labelToMatch == END_LABEL)
             {
-                if (follow.Final)
+                if (follow.IsFinal)
                 {
                     if (follow.Target <= 0)
                     {
@@ -1429,7 +1429,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     return null;
                 }
-                else if (arc.Last)
+                else if (arc.IsLast)
                 {
                     return null;
                 }
@@ -1554,7 +1554,7 @@ namespace Lucene.Net.Util.Fst
                 /// Returns true if this reader uses reversed bytes
                 ///  under-the-hood.
                 /// </summary>
-                public abstract bool Reversed();
+                public abstract bool IsReversed { get; }
 
                 /// <summary>
                 /// Skips bytes. </summary>
@@ -1874,7 +1874,7 @@ namespace Lucene.Net.Util.Fst
 
                             sbyte flags = 0;
 
-                            if (arc.Last)
+                            if (arc.IsLast)
                             {
                                 flags += (sbyte)BIT_LAST_ARC;
                             }
@@ -1891,7 +1891,7 @@ namespace Lucene.Net.Util.Fst
                                     nextCount++;
                                 }
                             }
-                            if (arc.Final)
+                            if (arc.IsFinal)
                             {
                                 flags += (sbyte)BIT_FINAL_ARC;
                                 if (!arc.NextFinalOutput.Equals(NO_OUTPUT))
@@ -2021,7 +2021,7 @@ namespace Lucene.Net.Util.Fst
                                 writer.SkipBytes((int)(arcStartPos + bytesPerArc - writer.Position));
                             }
 
-                            if (arc.Last)
+                            if (arc.IsLast)
                             {
                                 break;
                             }
@@ -2254,7 +2254,7 @@ namespace Lucene.Net.Util.Fst
             /// under-the-hood.
             /// </summary>
             /// <returns></returns>
-            public abstract bool Reversed();
+            public abstract bool IsReversed { get; }
 
             /// <summary>
             /// Skips bytes.
@@ -2333,12 +2333,12 @@ namespace Lucene.Net.Util.Fst
                 return FST<T>.Flag(Flags, flag);
             }
 
-            public bool Last
+            public bool IsLast
             {
                 get { return Flag(BIT_LAST_ARC); }
             }
 
-            public bool Final
+            public bool IsFinal
             {
                 get { return Flag(BIT_FINAL_ARC); }
             }
