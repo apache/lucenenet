@@ -24,10 +24,6 @@ namespace Lucene.Net.Util.Fst
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    /*
-	using Lucene.Net.Util.Fst.FST;
-	using BytesReader = Lucene.Net.Util.Fst.FST.BytesReader;
-    */
 
     /// <summary>
     /// Static helper methods.
