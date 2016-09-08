@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.QueryParser.Surround.Query;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.QueryParser.Surround.Parser
@@ -540,7 +539,6 @@ namespace Lucene.Net.QueryParser.Surround.Parser
         public void OptionalWeights(SrndQuery q)
         {
             Token weight = null;
-
             while (true)
             {
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
