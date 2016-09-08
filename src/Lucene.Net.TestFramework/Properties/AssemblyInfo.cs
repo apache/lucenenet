@@ -34,6 +34,7 @@ using System.Runtime.InteropServices;
 // This has broad implications, though because many methods are marked "protected internal", which means other assemblies
 // must update overridden methods to match.
 [assembly: InternalsVisibleTo("Lucene.Net.Tests")]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc")]
 
 // Version information for an assembly consists of the following four values:
 //
