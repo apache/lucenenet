@@ -1,12 +1,16 @@
+using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
 
-namespace org.apache.lucene
+namespace Lucene.Net
 {
-
-	/*
+    /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
 	 * this work for additional information regarding copyright ownership.
@@ -23,186 +27,179 @@ namespace org.apache.lucene
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// JUnit adaptation of an older test case SearchTest. </summary>
+    public class TestSearch_ : LuceneTestCase
+    {
+        [Test]
+        public virtual void TestNegativeQueryBoost()
+        {
+            Query q = new TermQuery(new Term("foo", "bar"));
+            q.Boost = -42f;
+            Assert.AreEqual(-42f, q.Boost, 0.0f);
 
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+            Store.Directory directory = NewDirectory();
+            try
+            {
+                Analyzer analyzer = new MockAnalyzer(Random());
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 
-	using Lucene.Net.Store;
-	using Lucene.Net.Document;
-	using Lucene.Net.Analysis;
-	using Lucene.Net.Index;
-	using Lucene.Net.Search;
+                IndexWriter writer = new IndexWriter(directory, conf);
+                try
+                {
+                    Documents.Document d = new Documents.Document();
+                    d.Add(NewTextField("foo", "bar", Field.Store.YES));
+                    writer.AddDocument(d);
+                }
+                finally
+                {
+                    writer.Dispose();
+                }
 
-	/// <summary>
-	/// JUnit adaptation of an older test case SearchTest. </summary>
-	public class TestSearch : LuceneTestCase
-	{
+                IndexReader reader = DirectoryReader.Open(directory);
+                try
+                {
+                    IndexSearcher searcher = NewSearcher(reader);
 
-	  public virtual void TestNegativeQueryBoost()
-	  {
-		Query q = new TermQuery(new Term("foo", "bar"));
-		q.Boost = -42f;
-		Assert.AreEqual(-42f, q.Boost, 0.0f);
+                    ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
+                    Assert.AreEqual(1, hits.Length);
+                    Assert.IsTrue(hits[0].Score < 0, "score is not negative: " + hits[0].Score);
 
-		Directory directory = newDirectory();
-		try
-		{
-		  Analyzer analyzer = new MockAnalyzer(random());
-		  IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                    Explanation explain = searcher.Explain(q, hits[0].Doc);
+                    Assert.AreEqual(hits[0].Score, explain.Value, 0.001f, "score doesn't match explanation");
+                    Assert.IsTrue(explain.IsMatch, "explain doesn't think doc is a match");
 
-		  IndexWriter writer = new IndexWriter(directory, conf);
-		  try
-		  {
-			Document d = new Document();
-			d.add(newTextField("foo", "bar", Field.Store.YES));
-			writer.addDocument(d);
-		  }
-		  finally
-		  {
-			writer.close();
-		  }
+                }
+                finally
+                {
+                    reader.Dispose();
+                }
+            }
+            finally
+            {
+                directory.Dispose();
+            }
 
-		  IndexReader reader = DirectoryReader.open(directory);
-		  try
-		  {
-			IndexSearcher searcher = newSearcher(reader);
+        }
 
-			ScoreDoc[] hits = searcher.search(q, null, 1000).scoreDocs;
-			Assert.AreEqual(1, hits.Length);
-			Assert.IsTrue("score is not negative: " + hits[0].score, hits[0].score < 0);
+        /// <summary>
+        /// this test performs a number of searches. It also compares output
+        ///  of searches using multi-file index segments with single-file
+        ///  index segments.
+        /// 
+        ///  TODO: someone should check that the results of the searches are
+        ///        still correct by adding assert statements. Right now, the test
+        ///        passes if the results are the same between multi-file and
+        ///        single-file formats, even if the results are wrong.
+        /// </summary>
+        [Test]
+        public virtual void TestSearch()
+        {
+            StringWriter sw;
+            string multiFileOutput;
+            string singleFileOutput;
+            using (sw = new StringWriter())
+            {
+                DoTestSearch(Random(), sw, false);
+                multiFileOutput = sw.ToString();
+            }
 
-			Explanation explain = searcher.explain(q, hits[0].doc);
-			Assert.AreEqual("score doesn't match explanation", hits[0].score, explain.Value, 0.001f);
-			Assert.IsTrue("explain doesn't think doc is a match", explain.Match);
+            //System.out.println(multiFileOutput);
 
-		  }
-		  finally
-		  {
-			reader.close();
-		  }
-		}
-		finally
-		{
-		  directory.close();
-		}
+            using (sw = new StringWriter())
+            {
+                DoTestSearch(Random(), sw, true);
+                singleFileOutput = sw.ToString();
+            }
 
-	  }
-
-		/// <summary>
-		/// this test performs a number of searches. It also compares output
-		///  of searches using multi-file index segments with single-file
-		///  index segments.
-		/// 
-		///  TODO: someone should check that the results of the searches are
-		///        still correct by adding assert statements. Right now, the test
-		///        passes if the results are the same between multi-file and
-		///        single-file formats, even if the results are wrong.
-		/// </summary>
-		public virtual void TestSearch()
-		{
-		  StringWriter sw = new StringWriter();
-		  PrintWriter pw = new PrintWriter(sw, true);
-		  DoTestSearch(random(), pw, false);
-		  pw.close();
-		  sw.close();
-		  string multiFileOutput = sw.ToString();
-		  //System.out.println(multiFileOutput);
-
-		  sw = new StringWriter();
-		  pw = new PrintWriter(sw, true);
-		  DoTestSearch(random(), pw, true);
-		  pw.close();
-		  sw.close();
-		  string singleFileOutput = sw.ToString();
-
-		  Assert.AreEqual(multiFileOutput, singleFileOutput);
-		}
+            Assert.AreEqual(multiFileOutput, singleFileOutput);
+        }
 
 
-		private void DoTestSearch(Random random, PrintWriter @out, bool useCompoundFile)
-		{
-		  Directory directory = newDirectory();
-		  Analyzer analyzer = new MockAnalyzer(random);
-		  IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		  MergePolicy mp = conf.MergePolicy;
-		  mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
-		  IndexWriter writer = new IndexWriter(directory, conf);
+        private void DoTestSearch(Random random, StringWriter @out, bool useCompoundFile)
+        {
+            Store.Directory directory = NewDirectory();
+            Analyzer analyzer = new MockAnalyzer(random);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+            MergePolicy mp = conf.MergePolicy;
+            mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
+            IndexWriter writer = new IndexWriter(directory, conf);
 
-		  string[] docs = new string[] {"a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c"};
-		  for (int j = 0; j < docs.Length; j++)
-		  {
-			Document d = new Document();
-			d.add(newTextField("contents", docs[j], Field.Store.YES));
-			d.add(newStringField("id", "" + j, Field.Store.NO));
-			writer.addDocument(d);
-		  }
-		  writer.close();
+            string[] docs = new string[] { "a b c d e", "a b c d e a b c d e", "a b c d e f g h i j", "a c e", "e c a", "a c e a c e", "a c e a b c" };
+            for (int j = 0; j < docs.Length; j++)
+            {
+                Documents.Document d = new Documents.Document();
+                d.Add(NewTextField("contents", docs[j], Field.Store.YES));
+                d.Add(NewStringField("id", "" + j, Field.Store.NO));
+                writer.AddDocument(d);
+            }
+            writer.Dispose();
 
-		  IndexReader reader = DirectoryReader.open(directory);
-		  IndexSearcher searcher = newSearcher(reader);
+            IndexReader reader = DirectoryReader.Open(directory);
+            IndexSearcher searcher = NewSearcher(reader);
 
-		  ScoreDoc[] hits = null;
+            ScoreDoc[] hits = null;
 
-		  Sort sort = new Sort(SortField.FIELD_SCORE, new SortField("id", SortField.Type.INT));
+            Sort sort = new Sort(SortField.FIELD_SCORE, new SortField("id", SortField.Type_e.INT));
 
-		  foreach (Query query in BuildQueries())
-		  {
-			@out.println("Query: " + query.ToString("contents"));
-			if (VERBOSE)
-			{
-			  Console.WriteLine("TEST: query=" + query);
-			}
+            foreach (Query query in BuildQueries())
+            {
+                @out.WriteLine("Query: " + query.ToString("contents"));
+                if (VERBOSE)
+                {
+                    Console.WriteLine("TEST: query=" + query);
+                }
 
-			hits = searcher.search(query, null, 1000, sort).scoreDocs;
+                hits = searcher.Search(query, null, 1000, sort).ScoreDocs;
 
-			@out.println(hits.Length + " total results");
-			for (int i = 0 ; i < hits.Length && i < 10; i++)
-			{
-			  Document d = searcher.doc(hits[i].doc);
-			  @out.println(i + " " + hits[i].score + " " + d.get("contents"));
-			}
-		  }
-		  reader.close();
-		  directory.close();
-		}
+                @out.WriteLine(hits.Length + " total results");
+                for (int i = 0; i < hits.Length && i < 10; i++)
+                {
+                    Documents.Document d = searcher.Doc(hits[i].Doc);
+                    @out.WriteLine(i + " " + hits[i].Score + " " + d.Get("contents"));
+                }
+            }
+            reader.Dispose();
+            directory.Dispose();
+        }
 
-	  private IList<Query> BuildQueries()
-	  {
-		IList<Query> queries = new List<Query>();
+        private IList<Query> BuildQueries()
+        {
+            IList<Query> queries = new List<Query>();
 
-		BooleanQuery booleanAB = new BooleanQuery();
-		booleanAB.add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur_e.SHOULD);
-		booleanAB.add(new TermQuery(new Term("contents", "b")), BooleanClause.Occur_e.SHOULD);
-		queries.Add(booleanAB);
+            BooleanQuery booleanAB = new BooleanQuery();
+            booleanAB.Add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur.SHOULD);
+            booleanAB.Add(new TermQuery(new Term("contents", "b")), BooleanClause.Occur.SHOULD);
+            queries.Add(booleanAB);
 
-		PhraseQuery phraseAB = new PhraseQuery();
-		phraseAB.add(new Term("contents", "a"));
-		phraseAB.add(new Term("contents", "b"));
-		queries.Add(phraseAB);
+            PhraseQuery phraseAB = new PhraseQuery();
+            phraseAB.Add(new Term("contents", "a"));
+            phraseAB.Add(new Term("contents", "b"));
+            queries.Add(phraseAB);
 
-		PhraseQuery phraseABC = new PhraseQuery();
-		phraseABC.add(new Term("contents", "a"));
-		phraseABC.add(new Term("contents", "b"));
-		phraseABC.add(new Term("contents", "c"));
-		queries.Add(phraseABC);
+            PhraseQuery phraseABC = new PhraseQuery();
+            phraseABC.Add(new Term("contents", "a"));
+            phraseABC.Add(new Term("contents", "b"));
+            phraseABC.Add(new Term("contents", "c"));
+            queries.Add(phraseABC);
 
-		BooleanQuery booleanAC = new BooleanQuery();
-		booleanAC.add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur_e.SHOULD);
-		booleanAC.add(new TermQuery(new Term("contents", "c")), BooleanClause.Occur_e.SHOULD);
-		queries.Add(booleanAC);
+            BooleanQuery booleanAC = new BooleanQuery();
+            booleanAC.Add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur.SHOULD);
+            booleanAC.Add(new TermQuery(new Term("contents", "c")), BooleanClause.Occur.SHOULD);
+            queries.Add(booleanAC);
 
-		PhraseQuery phraseAC = new PhraseQuery();
-		phraseAC.add(new Term("contents", "a"));
-		phraseAC.add(new Term("contents", "c"));
-		queries.Add(phraseAC);
+            PhraseQuery phraseAC = new PhraseQuery();
+            phraseAC.Add(new Term("contents", "a"));
+            phraseAC.Add(new Term("contents", "c"));
+            queries.Add(phraseAC);
 
-		PhraseQuery phraseACE = new PhraseQuery();
-		phraseACE.add(new Term("contents", "a"));
-		phraseACE.add(new Term("contents", "c"));
-		phraseACE.add(new Term("contents", "e"));
-		queries.Add(phraseACE);
+            PhraseQuery phraseACE = new PhraseQuery();
+            phraseACE.Add(new Term("contents", "a"));
+            phraseACE.Add(new Term("contents", "c"));
+            phraseACE.Add(new Term("contents", "e"));
+            queries.Add(phraseACE);
 
-		return queries;
-	  }
-	}
-
+            return queries;
+        }
+    }
 }
