@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
     {
         private static int ThreadPoolNumber = 1;
         private int ThreadNumber = 1;
-        private const string NAME_PATTERN = "%s-%d-thread";
+        private const string NAME_PATTERN = "{0}-{1}-thread";
         private readonly string ThreadNamePrefix;
 
         /// <summary>
