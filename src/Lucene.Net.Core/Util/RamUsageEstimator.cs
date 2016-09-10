@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -717,7 +718,7 @@ namespace Lucene.Net.Util
                 object existing;
                 while ((existing = Keys[slot]) != null)
                 {
-                    if (Object.ReferenceEquals(e, existing))
+                    if (object.ReferenceEquals(e, existing))
                     {
                         return false; // already found.
                     }
@@ -738,7 +739,7 @@ namespace Lucene.Net.Util
                 object existing;
                 while ((existing = Keys[slot]) != null)
                 {
-                    if (Object.ReferenceEquals(e, existing))
+                    if (object.ReferenceEquals(e, existing))
                     {
                         return true;
                     }
@@ -757,7 +758,7 @@ namespace Lucene.Net.Util
             /// <seealso cref= "http://sites.google.com/site/murmurhash/" </seealso>
             internal static int Rehash(object o)
             {
-                int k = o.GetHashCode();
+                int k = RuntimeHelpers.GetHashCode(o);
                 k ^= (int)((uint)k >> 16);
                 k *= unchecked((int)0x85ebca6b);
                 k ^= (int)((uint)k >> 13);
@@ -811,7 +812,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Return the next possible capacity, counting from the current buffers' size.
             /// </summary>
-            protected internal int NextCapacity(int current)
+            internal int NextCapacity(int current)
             {
                 Debug.Assert(current > 0 && ((current & (current - 1)) == 0), "Capacity must be a power of two.");
                 Debug.Assert((current << 1) > 0, "Maximum capacity exceeded (" + ((int)((uint)0x80000000 >> 1)) + ").");

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System.Linq;
 
 namespace Lucene.Net.Util
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -31,7 +31,8 @@ namespace Lucene.Net.Util
         public virtual void TestCheck()
         {
             Random rnd = Random();
-            ISet<object> jdk = CollectionsHelper.NewSetFromMap(new IdentityHashMap<object, bool?>());
+
+            ISet<object> jdk = Collections.NewSetFromMap<object, bool?>(new IdentityHashMap<object, bool?>());
             RamUsageEstimator.IdentityHashSet<object> us = new RamUsageEstimator.IdentityHashSet<object>();
 
             int max = 100000;
@@ -50,14 +51,13 @@ namespace Lucene.Net.Util
                 Assert.AreEqual(e1, e2);
             }
 
-            ISet<object> collected = CollectionsHelper.NewSetFromMap(new IdentityHashMap<object, bool?>());
+            ISet<object> collected = Collections.NewSetFromMap<object, bool?>(new IdentityHashMap<object, bool?>());
             foreach (object o in us)
             {
                 collected.Add(o);
             }
 
-            Assert.AreEqual(collected, jdk);
+            assertEquals(collected, jdk);
         }
     }
-
 }
