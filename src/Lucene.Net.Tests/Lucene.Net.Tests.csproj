@@ -429,6 +429,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\TestDemo.cs" />
+    <Compile Include="core\TestExternalCodecs.cs" />
     <Compile Include="core\TestMergeSchedulerExternal.cs">
       <SubType>Code</SubType>
     </Compile>
