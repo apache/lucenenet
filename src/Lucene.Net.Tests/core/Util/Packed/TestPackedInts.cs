@@ -1472,7 +1472,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test]        
+        [Test, Timeout(180000)]
         public virtual void TestBlockReaderOverflow()
         {
             long valueCount = TestUtil.NextLong(Random(), 1L + int.MaxValue, (long)int.MaxValue * 2);
