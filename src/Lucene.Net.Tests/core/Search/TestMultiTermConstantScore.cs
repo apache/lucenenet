@@ -131,7 +131,6 @@ namespace Lucene.Net.Search
             return query;
         }
 
-        [Ignore]
         [Test]
         public virtual void TestBasics()
         {
