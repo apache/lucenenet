@@ -4,9 +4,8 @@ using System.IO;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 
-namespace Lucene.Net.Tests
+namespace Lucene.Net
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +22,7 @@ namespace Lucene.Net.Tests
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Document = Documents.Document;
     using Field = Field;
