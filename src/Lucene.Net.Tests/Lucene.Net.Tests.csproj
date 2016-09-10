@@ -608,6 +608,7 @@
     <Compile Include="core\Util\TestWAH8DocIdSet.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\TestWeakIdentityMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="core\Util\Cache\" />
