@@ -1,21 +1,36 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
+    /*
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
+
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-
-    //using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
@@ -24,29 +39,12 @@ namespace Lucene.Net.Index
     using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
+    using Pulsing41PostingsFormat = Lucene.Net.Codecs.Pulsing.Pulsing41PostingsFormat;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -1208,7 +1206,6 @@ namespace Lucene.Net.Index
          * simple test that ensures we getting expected exceptions
          */
         [Test]
-        [Ignore("We don't have all the codecs in place to run this.")]
         public virtual void TestAddIndexMissingCodec()
         {
             BaseDirectoryWrapper toAdd = NewDirectory();
@@ -1228,27 +1225,31 @@ namespace Lucene.Net.Index
                 }
             }
 
-            // LUCENENET TODO: Pulsing41Codec is not in core
-            /*{
-                Directory dir = NewDirectory();
-                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-                conf.SetCodec(TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1 + Random().Next(20))));
-                IndexWriter w = new IndexWriter(dir, conf);
-                try
+            {
+                using (Directory dir = NewDirectory())
                 {
-                    w.AddIndexes(toAdd);
-                    Assert.Fail("no such codec");
+                    IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+                    conf.SetCodec(TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1 + Random().Next(20))));
+                    IndexWriter w = new IndexWriter(dir, conf);
+                    try
+                    {
+                        w.AddIndexes(toAdd);
+                        Assert.Fail("no such codec");
+                    }
+                    catch (System.ArgumentException ex)
+                    {
+                        // expected
+                    }
+                    finally
+                    {
+                        w.Dispose();
+                    }
+                    using (IndexReader open = DirectoryReader.Open(dir))
+                    {
+                        Assert.AreEqual(0, open.NumDocs);
+                    }
                 }
-                catch (System.ArgumentException ex)
-                {
-                    // expected
-                }
-                w.Dispose();
-                IndexReader open = DirectoryReader.Open(dir);
-                Assert.AreEqual(0, open.NumDocs);
-                open.Dispose();
-                dir.Dispose();
-            }*/
+            }
 
             try
             {
