@@ -111,7 +111,8 @@ namespace Lucene.Net.Util
             int arrayHeader = Constants.JRE_IS_64BIT ? 24 : 12;
             int objectAlignment = Constants.JRE_IS_64BIT ? 8 : 4;
 
-            /* LUCENE-TODO
+
+            /* LUCENENET TODO
 
 		    Type unsafeClass = null;
 		    object tempTheUnsafe = null;
@@ -138,12 +139,15 @@ namespace Lucene.Net.Util
 		    {
 		      // ignore.
 		    }
+            */
 
-		    // "best guess" based on reference size. We will attempt to modify
-		    // these to exact values if there is supported infrastructure.
-		    objectHeader = Constants.JRE_IS_64BIT ? (8 + referenceSize) : 8;
+            // "best guess" based on reference size. We will attempt to modify
+            // these to exact values if there is supported infrastructure.
+            objectHeader = Constants.JRE_IS_64BIT ? (8 + referenceSize) : 8;
 		    arrayHeader = Constants.JRE_IS_64BIT ? (8 + 2 * referenceSize) : 12;
 
+            /* LUCENENET TODO
+             
 		    // get the object header size:
 		    // - first try out if the field offsets are not scaled (see warning in Unsafe docs)
 		    // - get the object header size by getting the field offset of the first field of a dummy object
@@ -187,7 +191,7 @@ namespace Lucene.Net.Util
             NUM_BYTES_OBJECT_HEADER = objectHeader;
             NUM_BYTES_ARRAY_HEADER = arrayHeader;
 
-            /* LUCENE-TODO
+            /* LUCENENET TODO
           // Try to get the object alignment (the default seems to be 8 on Hotspot,
           // regardless of the architecture).
           int objectAlignment = 8;
@@ -207,6 +211,7 @@ namespace Lucene.Net.Util
             // Ignore.
           }
             */
+
             NUM_BYTES_OBJECT_ALIGNMENT = objectAlignment;
 
             JVM_INFO_STRING = "[JVM: " + Constants.JVM_NAME + ", " + Constants.JVM_VERSION + ", " + Constants.JVM_VENDOR + ", " + Constants.JAVA_VENDOR + ", " + Constants.JAVA_VERSION + "]";
@@ -215,7 +220,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// A handle to <code>sun.misc.Unsafe</code>.
         /// </summary>
-        private static readonly object TheUnsafe;
+        //private static readonly object TheUnsafe;
 
         /// <summary>
         /// A handle to <code>sun.misc.Unsafe#fieldOffset(Field)</code>.
@@ -237,18 +242,18 @@ namespace Lucene.Net.Util
             }
         }
 
-        // Object with just one field to determine the object header size by getting the offset of the dummy field:
-        private sealed class DummyOneFieldObject
-        {
-            public sbyte @base;
-        }
+        //// Object with just one field to determine the object header size by getting the offset of the dummy field:
+        //private sealed class DummyOneFieldObject
+        //{
+        //    public sbyte @base;
+        //}
 
-        // Another test object for checking, if the difference in offsets of dummy1 and dummy2 is 8 bytes.
-        // Only then we can be sure that those are real, unscaled offsets:
-        private sealed class DummyTwoLongObject
-        {
-            public long Dummy1, Dummy2;
-        }
+        //// Another test object for checking, if the difference in offsets of dummy1 and dummy2 is 8 bytes.
+        //// Only then we can be sure that those are real, unscaled offsets:
+        //private sealed class DummyTwoLongObject
+        //{
+        //    public long Dummy1, Dummy2;
+        //}
 
         /// <summary>
         /// Aligns an object size to be the next multiple of <seealso cref="#NUM_BYTES_OBJECT_ALIGNMENT"/>.
@@ -376,7 +381,12 @@ namespace Lucene.Net.Util
             // Walk type hierarchy
             for (; clazz != null; clazz = clazz.BaseType)
             {
-                FieldInfo[] fields = clazz.GetFields(BindingFlags.Public);
+                FieldInfo[] fields = clazz.GetFields(
+                    BindingFlags.Instance | 
+                    BindingFlags.NonPublic | 
+                    BindingFlags.Public | 
+                    BindingFlags.DeclaredOnly | 
+                    BindingFlags.Static);
                 foreach (FieldInfo f in fields)
                 {
                     if (!f.IsStatic)
@@ -525,7 +535,12 @@ namespace Lucene.Net.Util
             List<FieldInfo> referenceFields = new List<FieldInfo>(32);
             for (Type c = clazz; c != null; c = c.BaseType)
             {
-                FieldInfo[] fields = c.GetFields(BindingFlags.Public | BindingFlags.Instance);
+                FieldInfo[] fields = c.GetFields(
+                    BindingFlags.Instance | 
+                    BindingFlags.NonPublic | 
+                    BindingFlags.Public | 
+                    BindingFlags.DeclaredOnly | 
+                    BindingFlags.Static);
                 foreach (FieldInfo f in fields)
                 {
                     if (!f.IsStatic)
