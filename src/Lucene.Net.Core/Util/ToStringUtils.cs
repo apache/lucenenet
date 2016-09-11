@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -36,12 +37,11 @@ namespace Lucene.Net.Util
         {
             if (boost != 1.0f)
             {
-                return "^" + Convert.ToString(boost);
+                // .NET compatibility fix
+                return "^" + boost.ToString("0.0######", CultureInfo.InvariantCulture);
             }
             else
-            {
                 return "";
-            }
         }
 
         public static void ByteArray(StringBuilder buffer, byte[] bytes)
