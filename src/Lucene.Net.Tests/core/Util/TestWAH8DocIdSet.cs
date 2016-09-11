@@ -22,7 +22,6 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    [Ignore]
     [TestFixture]
     public class TestWAH8DocIdSet : BaseDocIdSetTestCase<WAH8DocIdSet>
     {
@@ -43,7 +42,6 @@ namespace Lucene.Net.Util
             Assert.AreEqual(ds1.Cardinality(), ds2.Cardinality());
         }
 
-        [Ignore]
         [Test]
         public virtual void TestUnion()
         {
@@ -72,7 +70,6 @@ namespace Lucene.Net.Util
             AssertEquals(numBits, expected, union);
         }
 
-        [Ignore]
         [Test]
         public virtual void TestIntersection()
         {
@@ -96,26 +93,14 @@ namespace Lucene.Net.Util
             {
                 for (int previousDoc = -1, doc = set.NextSetBit(0); ; previousDoc = doc, doc = set.NextSetBit(doc + 1))
                 {
-                    int startIdx = previousDoc + 1;
-                    int endIdx;
                     if (doc == -1)
                     {
-                        endIdx = startIdx + set.Count;
-                        //expected.Clear(previousDoc + 1, set.Count);
-                        for (int i = startIdx; i < endIdx; i++)
-                        {
-                            expected[i] = false;
-                        }
+                        expected.Clear(previousDoc + 1, set.Count);
                         break;
                     }
                     else
                     {
-                        endIdx = startIdx + doc;
-                        for (int i = startIdx; i > endIdx; i++)
-                        {
-                            expected[i] = false;
-                        }
-                        //expected.Clear(previousDoc + 1, doc);
+                        expected.Clear(previousDoc + 1, doc);
                     }
                 }
             }
