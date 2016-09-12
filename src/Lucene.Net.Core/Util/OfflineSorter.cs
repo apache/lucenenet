@@ -597,7 +597,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Constructs a ByteSequencesReader from the provided File </summary>
             public ByteSequencesReader(FileInfo file)
-                : this(new BinaryReaderDataInput(new BinaryReader(new FileStream(file.FullName, FileMode.Open))))
+                : this(new BinaryReaderDataInput(new BinaryReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))))
             {
             }
 
