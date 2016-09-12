@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,38 @@ namespace Lucene.Net
 
         public static string toString(this object obj)
         {
+            // LUCENENET: We compensate for the fact that
+            // .NET doesn't have reliable results from ToString
+            // by defaulting the behavior to return a concatenated
+            // list of the contents of enumerables rather than the 
+            // .NET type name (similar to the way Java behaves).
+            if (obj is IEnumerable)
+            {
+                string result = obj.ToString();
+                // Assume that this is a default call to object.ToString()
+                // when it starts with the same namespace as the type.
+                if (!result.StartsWith(obj.GetType().Namespace))
+                {
+                    return result;
+                }
+
+                // If this is the default text, replace it with
+                // the contents of the enumerable as Java would.
+                IEnumerable list = obj as IEnumerable;
+                StringBuilder sb = new StringBuilder();
+                bool isArray = obj.GetType().IsArray;
+                sb.Append(isArray ? "{" : "[");
+                foreach (object item in list)
+                {
+                    if (sb.Length > 1)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(item.ToString());
+                }
+                sb.Append(isArray ? "}" : "]");
+                return sb.ToString();
+            }
             return obj.ToString();
         }
 
