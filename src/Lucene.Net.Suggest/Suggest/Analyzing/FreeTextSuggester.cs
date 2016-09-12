@@ -316,8 +316,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             while (true)
             {
                 tempIndexPath = new DirectoryInfo(Path.Combine(directory.FullName, prefix + ".index." + random.Next(int.MaxValue)));
-                File.WriteAllText(tempIndexPath.FullName, string.Empty);
-                if (File.Exists(tempIndexPath.FullName))
+                tempIndexPath.Create();
+                if (System.IO.Directory.Exists(tempIndexPath.FullName))
                 {
                     break;
                 }
@@ -535,10 +535,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             TokenStream ts = queryAnalyzer.TokenStream("", key.ToString());
             try
             {
-                TermToBytesRefAttribute termBytesAtt = ts.AddAttribute<TermToBytesRefAttribute>();
-                OffsetAttribute offsetAtt = ts.AddAttribute<OffsetAttribute>();
-                PositionLengthAttribute posLenAtt = ts.AddAttribute<PositionLengthAttribute>();
-                PositionIncrementAttribute posIncAtt = ts.AddAttribute<PositionIncrementAttribute>();
+                ITermToBytesRefAttribute termBytesAtt = ts.AddAttribute<ITermToBytesRefAttribute>();
+                IOffsetAttribute offsetAtt = ts.AddAttribute<IOffsetAttribute>();
+                IPositionLengthAttribute posLenAtt = ts.AddAttribute<IPositionLengthAttribute>();
+                IPositionIncrementAttribute posIncAtt = ts.AddAttribute<IPositionIncrementAttribute>();
                 ts.Reset();
 
                 var lastTokens = new BytesRef[grams];
