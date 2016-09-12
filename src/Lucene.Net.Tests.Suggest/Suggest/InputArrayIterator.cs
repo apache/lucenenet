@@ -66,34 +66,24 @@ namespace Lucene.Net.Search.Suggest
 
         public BytesRef Next()
         {
-            if (i.MoveNext() || (first && current != null))
+            // LUCENENET NOTE: We moved the cursor when 
+            // the instance was created. Make sure we don't
+            // move it again until the second call to Next().
+            if (first && current != null)
             {
-                if (first)
-                {
-                    first = false;
-                }
-                else
-                {
-                    current = i.Current;
-                }
-                spare.CopyBytes(current.term);
-                return spare;
+                first = false; 
+            }
+            else if (i.MoveNext())
+            {
+                current = i.Current;
+            }
+            else
+            {
+                return null;
             }
 
-            //if (i.hasNext() || (first && current != null))
-            //{
-            //    if (first)
-            //    {
-            //        first = false;
-            //    }
-            //    else
-            //    {
-            //        current = i.next();
-            //    }
-            //    spare.copyBytes(current.term);
-            //    return spare;
-            //}
-            return null;
+            spare.CopyBytes(current.term);
+            return spare;
         }
 
         public BytesRef Payload
