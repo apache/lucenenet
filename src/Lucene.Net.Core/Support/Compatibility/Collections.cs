@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -234,6 +235,77 @@ namespace Lucene.Net
                 throw new NotImplementedException();
             }
             #endregion
+        }
+
+        public static IComparer<T> ReverseOrder<T>()
+        {
+            return (IComparer<T>)ReverseComparator.REVERSE_ORDER;
+        }
+
+        [Serializable]
+        private class ReverseComparator : IComparer<IComparable>
+        {
+            internal static readonly ReverseComparator REVERSE_ORDER = new ReverseComparator();
+
+
+            public int Compare(IComparable c1, IComparable c2)
+            {
+                return c2.CompareTo(c1);
+            }
+        }
+
+        public static IComparer<T> ReverseOrder<T>(IComparer<T> cmp)
+        {
+            if (cmp == null)
+                return ReverseOrder<T>();
+
+            if (cmp is ReverseComparator2<T>)
+                return ((ReverseComparator2<T>)cmp).cmp;
+
+            return new ReverseComparator2<T>(cmp);
+        }
+
+        [Serializable]
+        private class ReverseComparator2<T> : IComparer<T>
+
+        {
+            /**
+             * The comparator specified in the static factory.  This will never
+             * be null, as the static factory returns a ReverseComparator
+             * instance if its argument is null.
+             *
+             * @serial
+             */
+            internal readonly IComparer<T> cmp;
+
+            public ReverseComparator2(IComparer<T> cmp)
+            {
+                Debug.Assert(cmp != null);
+                this.cmp = cmp;
+            }
+
+            public int Compare(T t1, T t2)
+            {
+                return cmp.Compare(t2, t1);
+            }
+
+            public override bool Equals(object o)
+            {
+                return (o == this) ||
+                    (o is ReverseComparator2<T> &&
+                     cmp.Equals(((ReverseComparator2<T>)o).cmp));
+            }
+
+            public override int GetHashCode()
+            {
+                return cmp.GetHashCode() ^ int.MinValue;
+            }
+
+
+            public IComparer<T> Reversed()
+            {
+                return cmp;
+            }
         }
     }
 }
