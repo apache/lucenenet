@@ -19,11 +19,10 @@ namespace Lucene.Net.Search.Spell
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Score first, then frequency
     /// </summary>
-    public class SuggestWordScoreComparator : IComparer<SuggestWord>
+    public class SuggestWordScoreComparator : IComparer<SuggestWord> // LUCENENET TODO: Rename for .NET (Comparer)
     {
 
         /// <summary>
@@ -37,28 +36,27 @@ namespace Lucene.Net.Search.Spell
         public virtual int Compare(SuggestWord first, SuggestWord second)
         {
             // first criteria: the distance
-            if (first.score > second.score)
+            if (first.Score > second.Score)
             {
                 return 1;
             }
-            if (first.score < second.score)
+            if (first.Score < second.Score)
             {
                 return -1;
             }
 
             // second criteria (if first criteria is equal): the popularity
-            if (first.freq > second.freq)
+            if (first.Freq > second.Freq)
             {
                 return 1;
             }
 
-            if (first.freq < second.freq)
+            if (first.Freq < second.Freq)
             {
                 return -1;
             }
             // third criteria: term text
-            return second.@string.CompareTo(first.@string);
+            return second.String.CompareTo(first.String);
         }
     }
-
 }

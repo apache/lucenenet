@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Queries.Function;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Documents;
-using Lucene.Net.Index;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +23,7 @@ namespace Lucene.Net.Search.Suggest
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// <para>
     /// Dictionary with terms and optionally payload information 
@@ -120,19 +121,17 @@ namespace Lucene.Net.Search.Suggest
             /// current leave index </summary>
             internal int currentLeafIndex = 0;
 
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: public DocumentValueSourceInputIterator(boolean hasPayloads, boolean hasContexts) throws java.io.IOException
             public DocumentValueSourceInputIterator(DocumentValueSourceDictionary outerInstance, bool hasPayloads, bool hasContexts)
                 : base(outerInstance, hasPayloads, hasContexts)
             {
                 this.outerInstance = outerInstance;
-                leaves = outerInstance.reader.Leaves();
+                leaves = outerInstance.reader.Leaves;
                 starts = new int[leaves.Count + 1];
                 for (int i = 0; i < leaves.Count; i++)
                 {
                     starts[i] = leaves[i].DocBase;
                 }
-                starts[leaves.Count] = outerInstance.reader.MaxDoc();
+                starts[leaves.Count] = outerInstance.reader.MaxDoc;
                 currentWeightValues = (leaves.Count > 0) ? outerInstance.weightsValueSource.GetValues(new Dictionary<string, object>(), leaves[currentLeafIndex]) : null;
             }
 
@@ -147,7 +146,7 @@ namespace Lucene.Net.Search.Suggest
                 {
                     return 0;
                 }
-                int subIndex = ReaderUtil.subIndex(docId, starts);
+                int subIndex = ReaderUtil.SubIndex(docId, starts);
                 if (subIndex != currentLeafIndex)
                 {
                     currentLeafIndex = subIndex;
@@ -162,8 +161,6 @@ namespace Lucene.Net.Search.Suggest
                 }
                 return currentWeightValues.LongVal(docId - starts[subIndex]);
             }
-
         }
     }
-
 }

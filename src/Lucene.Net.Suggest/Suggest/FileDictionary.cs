@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Search.Spell;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Search.Spell;
-using Lucene.Net.Util;
+using System.Text;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -51,14 +51,14 @@ namespace Lucene.Net.Search.Suggest
     /// word3 TAB 101<br/>
     /// word4 word3 TAB 102<br/>
     /// </summary>
-    public class FileDictionary : Dictionary
+    public class FileDictionary : IDictionary
     {
 
         /// <summary>
         /// Tab-delimited fields are most common thus the default, but one can override this via the constructor
         /// </summary>
         public const string DEFAULT_FIELD_DELIMITER = "\t";
-        private BufferedReader @in;
+        private TextReader @in;
         private string line;
         private bool done = false;
         private readonly string fieldDelimiter;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Suggest
         /// NOTE: content is treated as UTF-8
         /// </para>
         /// </summary>
-        public FileDictionary(InputStream dictFile)
+        public FileDictionary(Stream dictFile)
             : this(dictFile, DEFAULT_FIELD_DELIMITER)
         {
         }
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Suggest
         /// Using <seealso cref="#DEFAULT_FIELD_DELIMITER"/> as the 
         /// field seperator in a line.
         /// </summary>
-        public FileDictionary(Reader reader)
+        public FileDictionary(TextReader reader)
             : this(reader, DEFAULT_FIELD_DELIMITER)
         {
         }
@@ -91,9 +91,9 @@ namespace Lucene.Net.Search.Suggest
         /// Using <code>fieldDelimiter</code> to seperate out the
         /// fields in a line.
         /// </summary>
-        public FileDictionary(Reader reader, string fieldDelimiter)
+        public FileDictionary(TextReader reader, string fieldDelimiter)
         {
-            @in = new BufferedReader(reader);
+            @in = reader;
             this.fieldDelimiter = fieldDelimiter;
         }
 
@@ -105,9 +105,9 @@ namespace Lucene.Net.Search.Suggest
         /// NOTE: content is treated as UTF-8
         /// </para>
         /// </summary>
-        public FileDictionary(InputStream dictFile, string fieldDelimiter)
+        public FileDictionary(Stream dictFile, string fieldDelimiter)
         {
-            @in = new BufferedReader(IOUtils.GetDecodingReader(dictFile, StandardCharsets.UTF_8));
+            @in = IOUtils.GetDecodingReader(dictFile, Encoding.UTF8);
             this.fieldDelimiter = fieldDelimiter;
         }
 
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Suggest
             internal FileIterator(FileDictionary outerInstance)
             {
                 this.outerInstance = outerInstance;
-                outerInstance.line = outerInstance.@in.readLine();
+                outerInstance.line = outerInstance.@in.ReadLine();
                 if (outerInstance.line == null)
                 {
                     outerInstance.done = true;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Suggest
                 }
                 else
                 {
-                    string[] fields = outerInstance.line.Split(outerInstance.fieldDelimiter, true);
+                    string[] fields = outerInstance.line.Split(new string[] { outerInstance.fieldDelimiter }, StringSplitOptions.RemoveEmptyEntries);
                     if (fields.Length > 3)
                     {
                         throw new System.ArgumentException("More than 3 fields in one line");
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Suggest
                 outerInstance.line = outerInstance.@in.ReadLine();
                 if (outerInstance.line != null)
                 {
-                    string[] fields = outerInstance.line.Split(outerInstance.fieldDelimiter, true);
+                    string[] fields = outerInstance.line.Split(new string[] { outerInstance.fieldDelimiter }, StringSplitOptions.RemoveEmptyEntries);
                     if (fields.Length > 3)
                     {
                         throw new System.ArgumentException("More than 3 fields in one line");
@@ -269,7 +269,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            public HashSet<BytesRef> Contexts
+            public IEnumerable<BytesRef> Contexts
             {
                 get { return null; }
             }
@@ -279,6 +279,5 @@ namespace Lucene.Net.Search.Suggest
                 get { return false; }
             }
         }
-
     }
 }

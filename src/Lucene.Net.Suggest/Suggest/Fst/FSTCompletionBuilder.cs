@@ -1,11 +1,10 @@
-﻿using System;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using Lucene.Net.Util.Packed;
+using System;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -45,7 +44,7 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// 
     /// </para>
     /// <para>
-    /// At runtime, in <seealso cref="FSTCompletion#lookup(CharSequence, int)"/>, 
+    /// At runtime, in <seealso cref="FSTCompletion.DoLookup(string, int)"/>, 
     /// the automaton is utilized as follows:
     /// <ul>
     /// <li>For each possible term weight encoded in the automaton (cached arcs from
@@ -137,7 +136,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// collects all the input entries, their weights and then provides sorted
         /// order.
         /// </summary>
-        private readonly BytesRefSorter sorter;
+        private readonly IBytesRefSorter sorter;
 
         /// <summary>
         /// Scratch buffer for <seealso cref="#add(BytesRef, int)"/>.
@@ -155,7 +154,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <seealso cref="BytesRef#getUTF8SortedAsUnicodeComparator()"/>.
         /// </summary>
         public FSTCompletionBuilder()
-            : this(DEFAULT_BUCKETS, new InMemorySorter(BytesRef.UTF8SortedAsUnicodeComparator), int.MaxValue)
+            : this(DEFAULT_BUCKETS, new InMemorySorter(BytesRef.UTF8SortedAsUnicodeComparer), int.MaxValue)
         {
         }
 
@@ -167,7 +166,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///          given here.
         /// </param>
         /// <param name="sorter">
-        ///          <seealso cref="BytesRefSorter"/> used for re-sorting input for the automaton.
+        ///          <seealso cref="IBytesRefSorter"/> used for re-sorting input for the automaton.
         ///          For large inputs, use on-disk sorting implementations. The sorter
         ///          is closed automatically in <seealso cref="#build()"/> if it implements
         ///          <seealso cref="Closeable"/>.
@@ -179,7 +178,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///          In general, for very large inputs you'll want to construct a non-minimal
         ///          automaton which will be larger, but the construction will take far less ram.
         ///          For minimal automata, set it to <seealso cref="Integer#MAX_VALUE"/>. </param>
-        public FSTCompletionBuilder(int buckets, BytesRefSorter sorter, int shareMaxTailLength)
+        public FSTCompletionBuilder(int buckets, IBytesRefSorter sorter, int shareMaxTailLength)
         {
             if (buckets < 1 || buckets > 255)
             {
@@ -220,7 +219,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
 
             scratch.Length = 1;
-            scratch.Bytes[0] = (sbyte)bucket;
+            scratch.Bytes[0] = (byte)bucket;
             scratch.Append(utf8);
             sorter.Add(scratch);
         }
@@ -245,7 +244,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Builds the final automaton from a list of entries.
         /// </summary>
-        private FST<object> BuildAutomaton(BytesRefSorter sorter)
+        private FST<object> BuildAutomaton(IBytesRefSorter sorter)
         {
             // Build the automaton.
             Outputs<object> outputs = NoOutputs.Singleton;
@@ -270,5 +269,4 @@ namespace Lucene.Net.Search.Suggest.Fst
             return count == 0 ? null : builder.Finish();
         }
     }
-
 }

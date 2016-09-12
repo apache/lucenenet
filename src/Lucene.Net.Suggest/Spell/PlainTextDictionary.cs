@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Search.Suggest;
+﻿using Lucene.Net.Search.Suggest;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +22,7 @@ namespace Lucene.Net.Search.Spell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Dictionary represented by a text file.
     /// 
@@ -30,10 +31,10 @@ namespace Lucene.Net.Search.Spell
     /// word2<br/>
     /// word3<br/>
     /// </summary>
-    public class PlainTextDictionary : Dictionary
+    public class PlainTextDictionary : IDictionary
     {
 
-        private BufferedReader @in;
+        private TextReader @in;
 
         /// <summary>
         /// Creates a dictionary based on a File.
@@ -41,9 +42,9 @@ namespace Lucene.Net.Search.Spell
         /// NOTE: content is treated as UTF-8
         /// </para>
         /// </summary>
-        public PlainTextDictionary(File file)
+        public PlainTextDictionary(FileInfo file)
         {
-            @in = new BufferedReader(IOUtils.getDecodingReader(file, StandardCharsets.UTF_8));
+            @in = IOUtils.GetDecodingReader(file, Encoding.UTF8);
         }
 
         /// <summary>
@@ -52,21 +53,19 @@ namespace Lucene.Net.Search.Spell
         /// NOTE: content is treated as UTF-8
         /// </para>
         /// </summary>
-        public PlainTextDictionary(InputStream dictFile)
+        public PlainTextDictionary(Stream dictFile)
         {
-            @in = new BufferedReader(IOUtils.getDecodingReader(dictFile, StandardCharsets.UTF_8));
+            @in = IOUtils.GetDecodingReader(dictFile, Encoding.UTF8);
         }
 
         /// <summary>
         /// Creates a dictionary based on a reader.
         /// </summary>
-        public PlainTextDictionary(Reader reader)
+        public PlainTextDictionary(TextReader reader)
         {
-            @in = new BufferedReader(reader);
+            @in = reader;
         }
 
-        //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-        //ORIGINAL LINE: @Override public org.apache.lucene.search.suggest.InputIterator getEntryIterator() throws IOException
         public virtual InputIterator EntryIterator
         {
             get
@@ -86,8 +85,7 @@ namespace Lucene.Net.Search.Spell
 
             internal bool done = false;
             internal readonly BytesRef spare = new BytesRef();
-            //JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-            //ORIGINAL LINE: @Override public org.apache.lucene.util.BytesRef next() throws IOException
+
             public BytesRef Next()
             {
                 if (done)

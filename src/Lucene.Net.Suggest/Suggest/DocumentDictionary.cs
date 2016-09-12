@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Documents;
+﻿using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Spell;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +23,7 @@ namespace Lucene.Net.Search.Suggest
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// <para>
     /// Dictionary with terms, weights, payload (optional) and contexts (optional)
@@ -45,7 +46,7 @@ namespace Lucene.Net.Search.Suggest
     ///    </li>
     ///  </ul>
     /// </summary>
-    public class DocumentDictionary : Dictionary
+    public class DocumentDictionary : IDictionary
     {
 
         /// <summary>
@@ -134,9 +135,9 @@ namespace Lucene.Net.Search.Suggest
                 this.outerInstance = outerInstance;
                 this.hasPayloads = hasPayloads;
                 this.hasContexts = hasContexts;
-                docCount = outerInstance.reader.MaxDoc() - 1;
+                docCount = outerInstance.reader.MaxDoc - 1;
                 weightValues = (outerInstance.weightField != null) ? MultiDocValues.GetNumericValues(outerInstance.reader, outerInstance.weightField) : null;
-                liveDocs = (outerInstance.reader.Leaves().Count > 0) ? MultiFields.GetLiveDocs(outerInstance.reader) : null;
+                liveDocs = (outerInstance.reader.Leaves.Count > 0) ? MultiFields.GetLiveDocs(outerInstance.reader) : null;
                 relevantFields = GetRelevantFields(new string[] { outerInstance.field, outerInstance.weightField, outerInstance.payloadField, outerInstance.contextsField });
             }
 
@@ -232,7 +233,9 @@ namespace Lucene.Net.Search.Suggest
                 IndexableField weight = doc.GetField(outerInstance.weightField);
                 if (weight != null) // found weight as stored
                 {
-                    return (weight.NumericValue != null) ? (long)weight.NumericValue : 0;
+                    // LUCENENET TODO: See if we can make NumericValue into Decimal (which can be converted to any other type of number)
+                    // rather than using object.
+                    return (weight.NumericValue != null) ? Convert.ToInt64(weight.NumericValue) : 0;
                 } // found weight as NumericDocValue
                 else if (weightValues != null)
                 {
@@ -257,7 +260,7 @@ namespace Lucene.Net.Search.Suggest
                 return relevantFields;
             }
 
-            public virtual HashSet<BytesRef> Contexts
+            public virtual IEnumerable<BytesRef> Contexts
             {
                 get
                 {

@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +23,7 @@ namespace Lucene.Net.Search.Suggest
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// This wrapper buffers incoming elements and makes sure they are sorted based on given comparator.
     /// @lucene.experimental
@@ -29,8 +32,8 @@ namespace Lucene.Net.Search.Suggest
     {
 
         private readonly InputIterator source;
-        private File tempInput;
-        private File tempSorted;
+        private FileInfo tempInput;
+        private FileInfo tempSorted;
         private readonly OfflineSorter.ByteSequencesReader reader;
         private readonly IComparer<BytesRef> comparator;
         private readonly bool hasPayloads;
@@ -48,7 +51,7 @@ namespace Lucene.Net.Search.Suggest
         /// sorting. 
         /// </summary>
         public SortedInputIterator(InputIterator source)
-            : this(source, BytesRef.UTF8SortedAsUnicodeComparator)
+            : this(source, BytesRef.UTF8SortedAsUnicodeComparer)
         {
         }
 
@@ -63,6 +66,7 @@ namespace Lucene.Net.Search.Suggest
             this.source = source;
             this.comparator = comparator;
             this.reader = Sort();
+            this.tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper(this);
         }
 
         public BytesRef Next()
@@ -125,7 +129,7 @@ namespace Lucene.Net.Search.Suggest
             get { return hasPayloads; }
         }
 
-        public virtual HashSet<BytesRef> Contexts
+        public virtual IEnumerable<BytesRef> Contexts
         {
             get { return contexts; }
         }
@@ -145,12 +149,14 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Sortes by BytesRef (ascending) then cost (ascending). </summary>
-        private readonly IComparer<BytesRef> tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper();
+        private readonly IComparer<BytesRef> tieBreakByCostComparator;
 
         private class ComparatorAnonymousInnerClassHelper : IComparer<BytesRef>
         {
-            public ComparatorAnonymousInnerClassHelper()
+            private readonly SortedInputIterator outerInstance;
+            public ComparatorAnonymousInnerClassHelper(SortedInputIterator outerInstance)
             {
+                this.outerInstance = outerInstance;
             }
 
 
@@ -167,19 +173,19 @@ namespace Lucene.Net.Search.Suggest
                 rightScratch.Bytes = right.Bytes;
                 rightScratch.Offset = right.Offset;
                 rightScratch.Length = right.Length;
-                long leftCost = outerInstance.decode(leftScratch, input);
-                long rightCost = outerInstance.decode(rightScratch, input);
-                if (outerInstance.hasPayloads_Renamed)
+                long leftCost = outerInstance.Decode(leftScratch, input);
+                long rightCost = outerInstance.Decode(rightScratch, input);
+                if (outerInstance.HasPayloads)
                 {
-                    outerInstance.decodePayload(leftScratch, input);
-                    outerInstance.decodePayload(rightScratch, input);
+                    outerInstance.DecodePayload(leftScratch, input);
+                    outerInstance.DecodePayload(rightScratch, input);
                 }
-                if (outerInstance.hasContexts_Renamed)
+                if (outerInstance.HasContexts)
                 {
-                    outerInstance.decodeContexts(leftScratch, input);
-                    outerInstance.decodeContexts(rightScratch, input);
+                    outerInstance.DecodeContexts(leftScratch, input);
+                    outerInstance.DecodeContexts(rightScratch, input);
                 }
-                int cmp = outerInstance.comparator.Compare(leftScratch, rightScratch);
+                int cmp = outerInstance.Comparator.Compare(leftScratch, rightScratch);
                 if (cmp != 0)
                 {
                     return cmp;
@@ -203,16 +209,16 @@ namespace Lucene.Net.Search.Suggest
         private OfflineSorter.ByteSequencesReader Sort()
         {
             string prefix = this.GetType().Name;
-            File directory = OfflineSorter.DefaultTempDir();
-            tempInput = File.createTempFile(prefix, ".input", directory);
-            tempSorted = File.createTempFile(prefix, ".sorted", directory);
+            DirectoryInfo directory = OfflineSorter.DefaultTempDir();
+            tempInput = FileSupport.CreateTempFile(prefix, ".input", directory);
+            tempSorted = FileSupport.CreateTempFile(prefix, ".sorted", directory);
 
             var writer = new OfflineSorter.ByteSequencesWriter(tempInput);
             bool success = false;
             try
             {
                 BytesRef spare;
-                sbyte[] buffer = new sbyte[0];
+                byte[] buffer = new byte[0];
                 var output = new ByteArrayDataOutput(buffer);
 
                 while ((spare = source.Next()) != null)
@@ -262,7 +268,7 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// encodes an entry (bytes+(contexts)+(payload)+weight) to the provided writer
         /// </summary>
-        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, sbyte[] buffer, BytesRef spare, BytesRef payload, HashSet<BytesRef> contexts, long weight)
+        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, IEnumerable<BytesRef> contexts, long weight)
         {
             int requiredLength = spare.Length + 8 + ((hasPayloads) ? 2 + payload.Length : 0);
             if (hasContexts)
@@ -286,7 +292,7 @@ namespace Lucene.Net.Search.Suggest
                     output.WriteBytes(ctx.Bytes, ctx.Offset, ctx.Length);
                     output.WriteShort((short)ctx.Length);
                 }
-                output.WriteShort((short)contexts.Count);
+                output.WriteShort((short)contexts.Count());
             }
             if (hasPayloads)
             {
@@ -349,5 +355,4 @@ namespace Lucene.Net.Search.Suggest
             return payloadScratch;
         }
     }
-
 }

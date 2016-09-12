@@ -57,7 +57,6 @@
     <Compile Include="Spell\SuggestWordQueue.cs" />
     <Compile Include="Spell\SuggestWordScoreComparator.cs" />
     <Compile Include="Spell\TermFreqIterator.cs" />
-    <Compile Include="Spell\WordBreakSpellChecker.cs" />
     <Compile Include="Suggest\Analyzing\AnalyzingInfixSuggester.cs" />
     <Compile Include="Suggest\Analyzing\AnalyzingSuggester.cs" />
     <Compile Include="Suggest\Analyzing\BlendedInfixSuggester.cs" />
@@ -96,6 +95,10 @@
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Misc\Lucene.Net.Misc.csproj">
+      <Project>{a3a0d943-b91a-4b7a-9fcb-6160ea575d95}</Project>
+      <Name>Lucene.Net.Misc</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
       <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>

@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Search.Suggest.Tst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -77,7 +76,7 @@ namespace Lucene.Net.Search.Suggest.Tst
             if (currentNode == null)
             {
                 TernaryTreeNode newNode = new TernaryTreeNode();
-                newNode.splitchar = s.charAt(x);
+                newNode.splitchar = s[x];
                 currentNode = newNode;
                 if (x < s.Length - 1)
                 {
@@ -90,11 +89,11 @@ namespace Lucene.Net.Search.Suggest.Tst
                     return currentNode;
                 }
             }
-            else if (currentNode.splitchar > s.charAt(x))
+            else if (currentNode.splitchar > s[x])
             {
                 currentNode.loKid = Insert(currentNode.loKid, s, val, x);
             }
-            else if (currentNode.splitchar == s.charAt(x))
+            else if (currentNode.splitchar == s[x])
             {
                 if (x < s.Length - 1)
                 {
@@ -135,11 +134,11 @@ namespace Lucene.Net.Search.Suggest.Tst
 
             while (p != null)
             {
-                if (s.charAt(x) < p.splitchar)
+                if (s[x] < p.splitchar)
                 {
                     p = p.loKid;
                 }
-                else if (s.charAt(x) == p.splitchar)
+                else if (s[x] == p.splitchar)
                 {
                     if (x == s.Length - 1)
                     {

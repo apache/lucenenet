@@ -18,13 +18,14 @@ namespace Lucene.Net.Search.Spell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// A simple interface representing a Dictionary. A Dictionary
     /// here is a list of entries, where every entry consists of
     /// term, weight and payload.
     /// 
     /// </summary>
-    public interface Dictionary
+    public interface IDictionary
     {
 
         /// <summary>

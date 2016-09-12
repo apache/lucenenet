@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
+using Lucene.Net.Util.Fst;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -166,7 +167,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.unicodeAware = unicodeAware;
         }
 
-        protected internal override IList<FSTUtil.Path<Pair<long?, BytesRef>>> GetFullPrefixPaths(IList<FSTUtil.Path<Pair<long?, BytesRef>>> prefixPaths, Automaton lookupAutomaton, FST<Pair<long?, BytesRef>> fst)
+        protected internal override IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> GetFullPrefixPaths(
+            IList<FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair>> prefixPaths, 
+            Automaton lookupAutomaton, 
+            FST<PairOutputs<long?, BytesRef>.Pair> fst)
         {
 
             // TODO: right now there's no penalty for fuzzy/edits,
@@ -179,7 +183,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // "compete") ... in which case I think the wFST needs
             // to be log weights or something ...
 
-            Automaton levA = convertAutomaton(ToLevenshteinAutomata(lookupAutomaton));
+            Automaton levA = ConvertAutomaton(ToLevenshteinAutomata(lookupAutomaton));
             /*
               Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"), StandardCharsets.UTF_8);
               w.write(levA.toDot());
@@ -235,7 +239,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // to allow the trailing dedup bytes to be
                     // edited... but then 0 byte is "in general" allowed
                     // on input (but not in UTF8).
-                    LevenshteinAutomata lev = new LevenshteinAutomata(ints, unicodeAware ? char.MAX_CODE_POINT : 255, transpositions);
+                    LevenshteinAutomata lev = new LevenshteinAutomata(ints, unicodeAware ? Character.MAX_CODE_POINT : 255, transpositions);
                     Automaton levAutomaton = lev.ToAutomaton(maxEdits);
                     Automaton combined = BasicOperations.Concatenate(Arrays.AsList(prefix, levAutomaton));
                     combined.Deterministic = true; // its like the special case in concatenate itself, except we cloneExpanded already
@@ -267,5 +271,4 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
     }
-
 }

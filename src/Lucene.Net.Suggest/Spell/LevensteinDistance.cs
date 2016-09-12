@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -23,7 +22,7 @@ namespace Lucene.Net.Search.Spell
     /// <summary>
     /// Levenstein edit distance class.
     /// </summary>
-    public sealed class LevensteinDistance : StringDistance
+    public sealed class LevensteinDistance : IStringDistance
     {
 
         /// <summary>

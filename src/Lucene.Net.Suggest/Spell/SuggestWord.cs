@@ -1,7 +1,5 @@
 ﻿namespace Lucene.Net.Search.Spell
 {
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -37,17 +35,16 @@
         /// <summary>
         /// the score of the word
         /// </summary>
-        public float score;
+        public float Score { get; set; }
 
         /// <summary>
         /// The freq of the word
         /// </summary>
-        public int freq;
+        public int Freq { get; set; }
 
         /// <summary>
         /// the suggested word
         /// </summary>
-        public string @string;
-
+        public string String { get; set; }
     }
 }

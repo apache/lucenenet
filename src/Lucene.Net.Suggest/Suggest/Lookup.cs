@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Search.Spell;
+﻿using Lucene.Net.Search.Spell;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -58,7 +57,7 @@ namespace Lucene.Net.Search.Suggest
 
             /// <summary>
             /// the key's contexts (null if not present) </summary>
-            public readonly HashSet<BytesRef> contexts;
+            public readonly IEnumerable<BytesRef> contexts;
 
             /// <summary>
             /// Create a new result from a key+weight pair.
@@ -87,7 +86,7 @@ namespace Lucene.Net.Search.Suggest
             /// <summary>
             /// Create a new result from a key+weight+payload+contexts triple.
             /// </summary>
-            public LookupResult(string key, long value, BytesRef payload, HashSet<BytesRef> contexts)
+            public LookupResult(string key, long value, BytesRef payload, IEnumerable<BytesRef> contexts)
                 : this(key, null, value, payload, contexts)
             {
             }
@@ -103,7 +102,7 @@ namespace Lucene.Net.Search.Suggest
             /// <summary>
             /// Create a new result from a key+highlightKey+weight+payload+contexts triple.
             /// </summary>
-            public LookupResult(string key, object highlightKey, long value, BytesRef payload, HashSet<BytesRef> contexts)
+            public LookupResult(string key, object highlightKey, long value, BytesRef payload, IEnumerable<BytesRef> contexts)
             {
                 this.key = key;
                 this.highlightKey = highlightKey;
@@ -204,7 +203,7 @@ namespace Lucene.Net.Search.Suggest
         /// <seealso cref="SortedInputIterator"/> or
         /// <seealso cref="UnsortedInputIterator"/> in such case.
         /// </summary>
-        public virtual void Build(Dictionary dict)
+        public virtual void Build(IDictionary dict)
         {
             Build(dict.EntryIterator);
         }
@@ -274,7 +273,7 @@ namespace Lucene.Net.Search.Suggest
         /// <param name="onlyMorePopular"> return only more popular results </param>
         /// <param name="num"> maximum number of results to return </param>
         /// <returns> a list of possible completions, with their relative weight (e.g. popularity) </returns>
-        public abstract IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num);
+        public abstract IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num);
 
         /// <summary>
         /// Persist the constructed lookup data to a directory. Optional operation. </summary>
@@ -295,7 +294,5 @@ namespace Lucene.Net.Search.Suggest
         /// Get the size of the underlying lookup implementation in memory </summary>
         /// <returns> ram size of the lookup implementation in bytes </returns>
         public abstract long SizeInBytes();
-
     }
-
 }

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
-using Version = System.Version;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,6 +26,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     // TODO:
     // - allow to use the search score
 
@@ -82,11 +82,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             //SCORE
         }
 
+        private static readonly object syncLock = new object();
+
         /// <summary>
         /// Create a new instance, loading from a previously built
         /// directory, if it exists.
         /// </summary>
-        public BlendedInfixSuggester(Version matchVersion, Directory dir, Analyzer analyzer)
+        public BlendedInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer analyzer)
             : base(matchVersion, dir, analyzer)
         {
             this.blenderType = BlenderType.POSITION_LINEAR;
@@ -100,23 +102,23 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="blenderType"> Type of blending strategy, see BlenderType for more precisions </param>
         /// <param name="numFactor">   Factor to multiply the number of searched elements before ponderate </param>
         /// <exception cref="IOException"> If there are problems opening the underlying Lucene index. </exception>
-        public BlendedInfixSuggester(Version matchVersion, Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars, BlenderType blenderType, int numFactor)
+        public BlendedInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars, BlenderType blenderType, int numFactor)
             : base(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars)
         {
             this.blenderType = blenderType;
             this.numFactor = numFactor;
         }
 
-        public override IList<Lookup.LookupResult> Lookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<Lookup.LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             // here we multiply the number of searched element by the defined factor
-            return base.Lookup(key, contexts, onlyMorePopular, num * numFactor);
+            return base.DoLookup(key, contexts, onlyMorePopular, num * numFactor);
         }
 
-        public IList<Lookup.LookupResult> Lookup(string key, HashSet<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
+        public override IList<Lookup.LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
         {
             // here we multiply the number of searched element by the defined factor
-            return base.Lookup(key, contexts, num * numFactor, allTermsRequired, doHighlight);
+            return base.DoLookup(key, contexts, num * numFactor, allTermsRequired, doHighlight);
         }
 
         protected internal override FieldType TextFieldType
@@ -133,8 +135,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        protected internal override IList<Lookup.LookupResult> createResults(IndexSearcher searcher, TopFieldDocs hits,
-            int num, string key, bool doHighlight, HashSet<string> matchedTokens, string prefixToken)
+        protected internal override IList<Lookup.LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits,
+            int num, string key, bool doHighlight, IEnumerable<string> matchedTokens, string prefixToken)
         {
 
             BinaryDocValues textDV = MultiDocValues.GetBinaryValues(searcher.IndexReader, TEXT_FIELD_NAME);
@@ -156,7 +158,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 textDV.Get(fd.Doc, scratch);
                 string text = scratch.Utf8ToString();
-                long weight = (long?)fd.Fields[0];
+                long weight = (long)fd.Fields[0];
 
                 BytesRef payload;
                 if (payloadsDV != null)
@@ -196,7 +198,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 BoundedTreeAdd(results, result, actualNum);
             }
 
-            return new List<LookupResult>(results.DescendingSet());
+            return new List<LookupResult>(results.Reverse());
         }
 
         /// <summary>
@@ -212,7 +214,22 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 if (results.Min.value < result.value)
                 {
-                    results.PollFirst();
+                    lock (syncLock)
+                    {
+                        if (results.Min.value < result.value)
+                        {
+                            // Code similar to the java TreeMap class
+                            var entry = results.FirstOrDefault();
+                            if (entry != null)
+                            {
+                                results.Remove(entry);
+                            }
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
                 }
                 else
                 {
@@ -231,9 +248,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="prefixToken"> unfinished token in the query </param>
         /// <returns> the coefficient </returns>
         /// <exception cref="IOException"> If there are problems reading term vectors from the underlying Lucene index. </exception>
-        private double CreateCoefficient(IndexSearcher searcher, int doc, HashSet<string> matchedTokens, string prefixToken)
+        private double CreateCoefficient(IndexSearcher searcher, int doc, IEnumerable<string> matchedTokens, string prefixToken)
         {
-
             Terms tv = searcher.IndexReader.GetTermVector(doc, TEXT_FIELD_NAME);
             TermsEnum it = tv.Iterator(TermsEnum.EMPTY);
 
@@ -242,12 +258,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // find the closest token position
             while ((term = it.Next()) != null)
             {
-
                 string docTerm = term.Utf8ToString();
 
                 if (matchedTokens.Contains(docTerm) || docTerm.StartsWith(prefixToken, StringComparison.Ordinal))
                 {
-
                     DocsAndPositionsEnum docPosEnum = it.DocsAndPositions(null, null, DocsAndPositionsEnum.FLAG_OFFSETS);
                     docPosEnum.NextDoc();
 
@@ -271,7 +285,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <returns> the coefficient </returns>
         protected internal virtual double CalculateCoefficient(int position)
         {
-
             double coefficient;
             switch (blenderType)
             {

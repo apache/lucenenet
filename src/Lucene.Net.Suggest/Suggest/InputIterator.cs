@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Search.Suggest.Analyzing;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -24,8 +22,8 @@ namespace Lucene.Net.Search.Suggest
 
     /// <summary>
     /// Interface for enumerating term,weight,payload triples for suggester consumption;
-    /// currently only <seealso cref="AnalyzingSuggester"/>, {@link
-    /// FuzzySuggester} and <seealso cref="AnalyzingInfixSuggester"/> support payloads.
+    /// currently only <seealso cref="AnalyzingSuggester"/>, <seealso cref="FuzzySuggester"/>
+    /// and <seealso cref="AnalyzingInfixSuggester"/> support payloads.
     /// </summary>
     public interface InputIterator : BytesRefIterator
     {
@@ -49,7 +47,7 @@ namespace Lucene.Net.Search.Suggest
         /// A term's contexts context can be used to filter suggestions.
         /// May return null, if suggest entries do not have any context
         /// </summary>
-        HashSet<BytesRef> Contexts { get; }
+        IEnumerable<BytesRef> Contexts { get; }
 
         /// <summary>
         /// Returns true if the iterator has contexts </summary>
@@ -110,7 +108,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public virtual HashSet<BytesRef> Contexts
+        public virtual IEnumerable<BytesRef> Contexts
         {
             get { return null; }
         }
@@ -120,5 +118,4 @@ namespace Lucene.Net.Search.Suggest
             get { return false; }
         }
     }
-
 }

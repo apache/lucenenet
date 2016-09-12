@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Fst;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
-using Lucene.Net.Util.Fst;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,6 +25,7 @@ namespace Lucene.Net.Search.Suggest.Fst
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Finite state automata based implementation of "autocomplete" functionality.
     /// </summary>
@@ -64,7 +63,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 return utf8.Utf8ToString() + "/" + bucket;
             }
 
-            /// <seealso cref= BytesRef#compareTo(BytesRef) </seealso>
+            /// <seealso cref="BytesRef.CompareTo(BytesRef)"></seealso>
             public int CompareTo(Completion o)
             {
                 return this.utf8.CompareTo(o.utf8);
@@ -80,7 +79,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// An empty result. Keep this an <seealso cref="ArrayList"/> to keep all the returned
         /// lists of single type (monomorphic calls).
         /// </summary>
-        private static readonly List<Completion> EMPTY_RESULT = new List<Completion>();
+        private static readonly IList<Completion> EMPTY_RESULT = new List<Completion>();
 
         /// <summary>
         /// Finite state automaton encoding all the lookup terms. See class notes for
@@ -94,11 +93,14 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// </summary>
         private readonly FST.Arc<object>[] rootArcs;
 
-        /// <seealso cref= #FSTCompletion(FST, boolean, boolean) </seealso>
+        /// <seealso cref="FSTCompletion(FST, bool, bool)" />
         private readonly bool exactFirst;
 
-        /// <seealso cref= #FSTCompletion(FST, boolean, boolean) </seealso>
+        /// <seealso cref="FSTCompletion(FST, bool, bool)" />
         private readonly bool higherWeightsFirst;
+
+        // LUCENENET SPECIFIC: We need some thread safety to execute atomic list operations
+        private readonly object syncLock = new object();
 
         /// <summary>
         /// Constructs an FSTCompletion, specifying higherWeightsFirst and exactFirst. </summary>
@@ -121,7 +123,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             else
             {
-                this.rootArcs = new FST.Arc[0];
+                this.rootArcs = new FST.Arc<object>[0];
             }
             this.higherWeightsFirst = higherWeightsFirst;
             this.exactFirst = exactFirst;
@@ -149,8 +151,8 @@ namespace Lucene.Net.Search.Suggest.Fst
                 automaton.ReadFirstTargetArc(arc, arc, fstReader);
                 while (true)
                 {
-                    rootArcs.Add((new FST.Arc<>()).copyFrom(arc));
-                    if (arc.Last)
+                    rootArcs.Add((new FST.Arc<object>()).CopyFrom(arc));
+                    if (arc.IsLast)
                     {
                         break;
                     }
@@ -162,7 +164,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             catch (IOException e)
             {
-                throw new Exception(e);
+                throw new Exception(e.Message, e);
             }
         }
 
@@ -184,24 +186,18 @@ namespace Lucene.Net.Search.Suggest.Fst
             // Get the UTF-8 bytes representation of the input key.
             try
             {
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<Object> scratch = new org.apache.lucene.util.fst.FST.Arc<>();
                 FST.Arc<object> scratch = new FST.Arc<object>();
                 FST.BytesReader fstReader = automaton.BytesReader;
                 for (; rootArcIndex < rootArcs.Length; rootArcIndex++)
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<Object> rootArc = rootArcs[rootArcIndex];
                     FST.Arc<object> rootArc = rootArcs[rootArcIndex];
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final org.apache.lucene.util.fst.FST.Arc<Object> arc = scratch.copyFrom(rootArc);
                     FST.Arc<object> arc = scratch.CopyFrom(rootArc);
 
                     // Descend into the automaton using the key as prefix.
-                    if (descendWithPrefix(arc, utf8))
+                    if (DescendWithPrefix(arc, utf8))
                     {
                         automaton.ReadFirstTargetArc(arc, arc, fstReader);
-                        if (arc.Label == FST.END_LABEL)
+                        if (arc.Label == Lucene.Net.Util.Fst.FST.END_LABEL)
                         {
                             // Normalize prefix-encoded weight.
                             return rootArc.Label;
@@ -212,7 +208,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             catch (IOException e)
             {
                 // Should never happen, but anyway.
-                throw new Exception(e);
+                throw new Exception(e.Message, e);
             }
 
             // No match.
@@ -228,7 +224,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///          At most this number of suggestions will be returned. </param>
         /// <returns> Returns the suggestions, sorted by their approximated weight first
         ///         (decreasing) and then alphabetically (UTF-8 codepoint order). </returns>
-        public virtual IList<Completion> Lookup(string key, int num)
+        public virtual IList<Completion> DoLookup(string key, int num)
         {
             if (key.Length == 0 || automaton == null)
             {
@@ -255,7 +251,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             catch (IOException e)
             {
                 // Should never happen, but anyway.
-                throw new Exception(e);
+                throw new Exception(e.Message, e);
             }
         }
 
@@ -267,13 +263,14 @@ namespace Lucene.Net.Search.Suggest.Fst
         private IList<Completion> LookupSortedAlphabetically(BytesRef key, int num)
         {
             // Greedily get num results from each weight branch.
-            var res = LookupSortedByWeight(key, num, true);
+            var res = new List<Completion>(LookupSortedByWeight(key, num, true));
 
             // Sort and trim.
             res.Sort();
             if (res.Count > num)
             {
-                res = res.SubList(0, num);
+                //res = res.SubList(0, num);
+                res = new List<Completion>(res.SubList(0, num));
             }
             return res;
         }
@@ -286,7 +283,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///          <code>num</code> suggestions have been collected. If
         ///          <code>false</code>, it will collect suggestions from all weight
         ///          arcs (needed for <seealso cref="#lookupSortedAlphabetically"/>. </param>
-        private List<Completion> LookupSortedByWeight(BytesRef key, int num, bool collectAll)
+        private IList<Completion> LookupSortedByWeight(BytesRef key, int num, bool collectAll)
         {
             // Don't overallocate the results buffers. This also serves the purpose of
             // allowing the user of this class to request all matches using Integer.MAX_VALUE as
@@ -300,7 +297,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 FST.Arc<object> arc = (new FST.Arc<object>()).CopyFrom(rootArc);
 
                 // Descend into the automaton using the key as prefix.
-                if (descendWithPrefix(arc, key))
+                if (DescendWithPrefix(arc, key))
                 {
                     // A subgraph starting from the current node has the completions
                     // of the key prefix. The arc we're at is the last key's byte,
@@ -321,7 +318,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                                     // Insert as the first result and truncate at num.
                                     while (res.Count >= num)
                                     {
-                                        res.Remove(res.Count - 1);
+                                        res.RemoveAt(res.Count - 1);
                                     }
                                     res.Insert(0, new Completion(key, exactMatchBucket));
                                 }
@@ -353,7 +350,15 @@ namespace Lucene.Net.Search.Suggest.Fst
                     // Key found. Unless already at i==0, remove it and push up front so
                     // that the ordering
                     // remains identical with the exception of the exact match.
-                    list.Insert(0, list.Remove(i));
+                    lock (syncLock)
+                    {
+                        if (key.Equals(list[i].utf8))
+                        {
+                            var element = list.ElementAt(i);
+                            list.Remove(element);
+                            list.Insert(0, element);
+                        }
+                    }
                     return true;
                 }
             }
@@ -371,7 +376,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <returns> If <code>true</code>, <code>arc</code> will be set to the arc
         ///         matching last byte of <code>term</code>. <code>false</code> is
         ///         returned if no such prefix exists. </returns>
-        private bool descendWithPrefix(FST.Arc<object> arc, BytesRef utf8)
+        private bool DescendWithPrefix(FST.Arc<object> arc, BytesRef utf8)
         {
             int max = utf8.Offset + utf8.Length;
             // Cannot save as instance var since multiple threads
@@ -401,12 +406,12 @@ namespace Lucene.Net.Search.Suggest.Fst
                 output.Bytes = ArrayUtil.Grow(output.Bytes);
             }
             Debug.Assert(output.Offset == 0);
-            output.Bytes[output.Length++] = (sbyte) arc.Label;
+            output.Bytes[output.Length++] = (byte) arc.Label;
             FST.BytesReader fstReader = automaton.BytesReader;
             automaton.ReadFirstTargetArc(arc, arc, fstReader);
             while (true)
             {
-                if (arc.Label == FST.END_LABEL)
+                if (arc.Label == Lucene.Net.Util.Fst.FST.END_LABEL)
                 {
                     res.Add(new Completion(output, bucket));
                     if (res.Count >= num)
@@ -417,14 +422,14 @@ namespace Lucene.Net.Search.Suggest.Fst
                 else
                 {
                     int save = output.Length;
-                    if (Collect(res, num, bucket, output, (new FST.Arc<>()).copyFrom(arc)))
+                    if (Collect(res, num, bucket, output, (new FST.Arc<object>()).CopyFrom(arc)))
                     {
                         return true;
                     }
                     output.Length = save;
                 }
 
-                if (arc.Last)
+                if (arc.IsLast)
                 {
                     break;
                 }

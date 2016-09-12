@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Search.Suggest.Tst;
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,6 +24,7 @@ namespace Lucene.Net.Search.Suggest.Fst
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// An adapter from <seealso cref="Lookup"/> API to <seealso cref="FSTCompletion"/>.
     /// 
@@ -145,8 +145,8 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 throw new System.ArgumentException("this suggester doesn't support contexts");
             }
-            File tempInput = File.CreateTempFile(typeof(FSTCompletionLookup).Name, ".input", OfflineSorter.defaultTempDir());
-            File tempSorted = File.CreateTempFile(typeof(FSTCompletionLookup).Name, ".sorted", OfflineSorter.defaultTempDir());
+            FileInfo tempInput = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".input", OfflineSorter.DefaultTempDir());
+            FileInfo tempSorted = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".sorted", OfflineSorter.DefaultTempDir());
 
             OfflineSorter.ByteSequencesWriter writer = new OfflineSorter.ByteSequencesWriter(tempInput);
             OfflineSorter.ByteSequencesReader reader = null;
@@ -158,7 +158,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             count = 0;
             try
             {
-                sbyte[] buffer = new sbyte[0];
+                byte[] buffer = new byte[0];
                 ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
                 BytesRef spare;
                 while ((spare = iterator.Next()) != null)
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             return (int)value;
         }
 
-        public override IList<LookupResult> Lookup(string key, HashSet<BytesRef> contexts, bool higherWeightsFirst, int num)
+        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool higherWeightsFirst, int num)
         {
             if (contexts != null)
             {
@@ -258,11 +258,11 @@ namespace Lucene.Net.Search.Suggest.Fst
             IList<FSTCompletion.Completion> completions;
             if (higherWeightsFirst)
             {
-                completions = higherWeightsCompletion.Lookup(key, num);
+                completions = higherWeightsCompletion.DoLookup(key, num);
             }
             else
             {
-                completions = normalCompletion.Lookup(key, num);
+                completions = normalCompletion.DoLookup(key, num);
             }
 
             List<LookupResult> results = new List<LookupResult>(completions.Count);
@@ -283,7 +283,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         public virtual object Get(string key)
         {
             int bucket = normalCompletion.GetBucket(key);
-            return bucket == -1 ? null : Convert.ToInt64(bucket);
+            return bucket == -1 ? (long?)null : Convert.ToInt64(bucket);
         }
 
         public override bool Store(DataOutput output)
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             lock (this)
             {
                 count = input.ReadVLong();
-                this.higherWeightsCompletion = new FSTCompletion(new FST<>(input, NoOutputs.Singleton));
+                this.higherWeightsCompletion = new FSTCompletion(new FST<object>(input, NoOutputs.Singleton));
                 this.normalCompletion = new FSTCompletion(higherWeightsCompletion.FST, false, exactMatchFirst);
                 return true;
             }

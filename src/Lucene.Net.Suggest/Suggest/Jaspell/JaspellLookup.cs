@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Store;
+﻿using Lucene.Net.Store;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Jaspell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +21,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Suggest implementation based on 
     /// <a href="http://jaspell.sourceforge.net/">JaSpell</a>.
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             return trie.Get(key);
         }
 
-        public override IList<LookupResult> DoLookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)
             {
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 mask |= HAS_VALUE;
             }
-            @out.WriteByte(mask);
+            @out.WriteByte((byte)mask);
             if (node.data != null)
             {
                 @out.WriteLong((long)(node.data));

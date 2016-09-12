@@ -2,7 +2,6 @@
 
 namespace Lucene.Net.Search.Spell
 {
-
     /// <summary>
     /// Licensed to the Apache Software Foundation (ASF) under one or more
     /// contributor license agreements.  See the NOTICE file distributed with
@@ -34,7 +33,7 @@ namespace Lucene.Net.Search.Spell
     /// strings with no matching characters will return a distance of 0.
     /// 
     /// </summary>
-    public class NGramDistance : StringDistance
+    public class NGramDistance : IStringDistance
     {
 
         private int n;
@@ -75,9 +74,9 @@ namespace Lucene.Net.Search.Spell
             int cost = 0;
             if (sl < n || tl < n)
             {
-                for (int i = 0, ni = Math.Min(sl, tl); i < ni; i++)
+                for (int i2 = 0, ni = Math.Min(sl, tl); i2 < ni; i2++)
                 {
-                    if (source[i] == target[i])
+                    if (source[i2] == target[i2])
                     {
                         cost++;
                     }
@@ -91,15 +90,15 @@ namespace Lucene.Net.Search.Spell
             float[] _d; //placeholder to assist in swapping p and d
 
             //construct sa with prefix
-            for (int i = 0; i < sa.Length; i++)
+            for (int i2 = 0; i2 < sa.Length; i2++)
             {
-                if (i < n - 1)
+                if (i2 < n - 1)
                 {
-                    sa[i] = (char)0; //add prefix
+                    sa[i2] = (char)0; //add prefix
                 }
                 else
                 {
-                    sa[i] = source[i - n + 1];
+                    sa[i2] = source[i2 - n + 1];
                 }
             }
             p = new float[sl + 1];
@@ -132,7 +131,7 @@ namespace Lucene.Net.Search.Spell
                 }
                 else
                 {
-                    t_j = StringHelperClass.SubstringSpecial(target, j - n, j).ToCharArray();
+                    t_j = target.Substring(j - n, j - (j - n)).ToCharArray();
                 }
                 d[0] = j;
                 for (i = 1; i <= sl; i++)
@@ -191,5 +190,4 @@ namespace Lucene.Net.Search.Spell
             return "ngram(" + n + ")";
         }
     }
-
 }

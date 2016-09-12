@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
 using Lucene.Net.Support;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,6 +21,7 @@ namespace Lucene.Net.Search.Spell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// <para>
     /// A spell checker whose sole function is to offer suggestions by combining
@@ -104,8 +104,10 @@ namespace Lucene.Net.Search.Spell
             }
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
-            IComparer<SuggestWordArrayWrapper> queueComparator = sortMethod == BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY ? new LengthThenMaxFreqComparator(this) : new LengthThenSumFreqComparator(this);
-            LinkedList<SuggestWordArrayWrapper> suggestions = new PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparator);
+            IComparer<SuggestWordArrayWrapper> queueComparator = sortMethod == BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY 
+                ? (IComparer<SuggestWordArrayWrapper>)new LengthThenMaxFreqComparator(this) 
+                : new LengthThenSumFreqComparator(this);
+            ICollection<SuggestWordArrayWrapper> suggestions = new PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparator);
 
             int origFreq = ir.DocFreq(term);
             if (origFreq > 0 && suggestMode == SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX)
@@ -221,7 +223,7 @@ namespace Lucene.Net.Search.Spell
                         minFreq = Math.Min(minFreq, origFreqs[j]);
                     }
 
-                    Term combinedTerm = new Term(terms[0].Field(), combinedTermText);
+                    Term combinedTerm = new Term(terms[0].Field, combinedTermText);
                     int combinedTermFreq = ir.DocFreq(combinedTerm);
 
                     if (suggestMode != SuggestMode.SUGGEST_MORE_POPULAR || combinedTermFreq >= maxFreq)
@@ -237,9 +239,9 @@ namespace Lucene.Net.Search.Spell
                                     origIndexes[k] = i + k;
                                 }
                                 SuggestWord word = new SuggestWord();
-                                word.freq = combinedTermFreq;
-                                word.score = origIndexes.Length - 1;
-                                word.@string = combinedTerm.Text();
+                                word.Freq = combinedTermFreq;
+                                word.Score = origIndexes.Length - 1;
+                                word.String = combinedTerm.Text();
                                 CombineSuggestionWrapper suggestion = new CombineSuggestionWrapper(this, new CombineSuggestion(word, origIndexes), (origIndexes.Length - 1));
                                 suggestions.AddLast(suggestion);
                                 if (suggestions.Count > maxSuggestions)
@@ -284,12 +286,12 @@ namespace Lucene.Net.Search.Spell
                 int end = termText.OffsetByCodePoints(0, i);
                 string leftText = termText.Substring(0, end);
                 string rightText = termText.Substring(end);
-                SuggestWord leftWord = GenerateSuggestWord(ir, term.Field(), leftText);
+                SuggestWord leftWord = GenerateSuggestWord(ir, term.Field, leftText);
 
-                if (leftWord.freq >= useMinSuggestionFrequency)
+                if (leftWord.Freq >= useMinSuggestionFrequency)
                 {
-                    SuggestWord rightWord = GenerateSuggestWord(ir, term.Field(), rightText);
-                    if (rightWord.freq >= useMinSuggestionFrequency)
+                    SuggestWord rightWord = GenerateSuggestWord(ir, term.Field, rightText);
+                    if (rightWord.Freq >= useMinSuggestionFrequency)
                     {
                         SuggestWordArrayWrapper suggestion = new SuggestWordArrayWrapper(this, NewSuggestion(prefix, leftWord, rightWord));
                         suggestions.AddLast(suggestion);
@@ -301,7 +303,7 @@ namespace Lucene.Net.Search.Spell
                     int newNumberBreaks = numberBreaks + 1;
                     if (newNumberBreaks <= maxChanges)
                     {
-                        int evaluations = GenerateBreakUpSuggestions(new Term(term.Field(), rightWord.@string), ir, newNumberBreaks, maxSuggestions, useMinSuggestionFrequency, NewPrefix(prefix, leftWord), suggestions, totalEvaluations, sortMethod);
+                        int evaluations = GenerateBreakUpSuggestions(new Term(term.Field, rightWord.String), ir, newNumberBreaks, maxSuggestions, useMinSuggestionFrequency, NewPrefix(prefix, leftWord), suggestions, totalEvaluations, sortMethod);
                         totalEvaluations += evaluations;
                     }
                 }
@@ -331,13 +333,13 @@ namespace Lucene.Net.Search.Spell
             for (int i = 0; i < prefix.Length; i++)
             {
                 SuggestWord word = new SuggestWord();
-                word.@string = prefix[i].@string;
-                word.freq = prefix[i].freq;
-                word.score = score;
+                word.String = prefix[i].String;
+                word.Freq = prefix[i].Freq;
+                word.Score = score;
                 newSuggestion[i] = word;
             }
-            append1.score = score;
-            append2.score = score;
+            append1.Score = score;
+            append2.Score = score;
             newSuggestion[newSuggestion.Length - 2] = append1;
             newSuggestion[newSuggestion.Length - 1] = append2;
             return newSuggestion;
@@ -348,9 +350,9 @@ namespace Lucene.Net.Search.Spell
             Term term = new Term(fieldname, text);
             int freq = ir.DocFreq(term);
             SuggestWord word = new SuggestWord();
-            word.freq = freq;
-            word.score = 1;
-            word.@string = text;
+            word.Freq = freq;
+            word.Score = 1;
+            word.String = text;
             return word;
         }
 
@@ -491,9 +493,9 @@ namespace Lucene.Net.Search.Spell
                 {
                     return o2.numCombinations - o1.numCombinations;
                 }
-                if (o1.combineSuggestion.suggestion.freq != o2.combineSuggestion.suggestion.freq)
+                if (o1.combineSuggestion.suggestion.Freq != o2.combineSuggestion.suggestion.Freq)
                 {
-                    return o1.combineSuggestion.suggestion.freq - o2.combineSuggestion.suggestion.freq;
+                    return o1.combineSuggestion.suggestion.Freq - o2.combineSuggestion.suggestion.Freq;
                 }
                 return 0;
             }
@@ -515,8 +517,8 @@ namespace Lucene.Net.Search.Spell
                 int aFreqMax = 0;
                 foreach (SuggestWord sw in suggestWords)
                 {
-                    aFreqSum += sw.freq;
-                    aFreqMax = Math.Max(aFreqMax, sw.freq);
+                    aFreqSum += sw.Freq;
+                    aFreqMax = Math.Max(aFreqMax, sw.Freq);
                 }
                 this.freqSum = aFreqSum;
                 this.freqMax = aFreqMax;
@@ -538,5 +540,4 @@ namespace Lucene.Net.Search.Spell
             }
         }
     }
-
 }

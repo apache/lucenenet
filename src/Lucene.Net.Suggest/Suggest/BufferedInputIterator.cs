@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -36,7 +35,7 @@ namespace Lucene.Net.Search.Suggest
         protected internal BytesRefArray payloads = new BytesRefArray(Counter.NewCounter());
         /// <summary>
         /// buffered context set entries </summary>
-        protected internal IList<HashSet<BytesRef>> contextSets = new List<HashSet<BytesRef>>();
+        protected internal IList<IEnumerable<BytesRef>> contextSets = new List<IEnumerable<BytesRef>>();
         /// <summary>
         /// current buffer position </summary>
         protected internal int curPos = -1;
@@ -83,7 +82,7 @@ namespace Lucene.Net.Search.Suggest
             get { return freqs[curPos]; }
         }
 
-        public BytesRef Next()
+        public virtual BytesRef Next()
         {
             if (++curPos < entries.Size())
             {
@@ -118,7 +117,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public virtual HashSet<BytesRef> Contexts
+        public virtual IEnumerable<BytesRef> Contexts
         {
             get
             {
@@ -135,5 +134,4 @@ namespace Lucene.Net.Search.Suggest
             get { return hasContexts_Renamed; }
         }
     }
-
 }

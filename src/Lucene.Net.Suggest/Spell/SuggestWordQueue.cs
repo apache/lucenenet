@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
-
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,11 +19,12 @@ namespace Lucene.Net.Search.Spell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Sorts SuggestWord instances
     /// </summary>
-    /// <seealso cref= org.apache.lucene.search.spell.SuggestWordScoreComparator </seealso>
-    /// <seealso cref= org.apache.lucene.search.spell.SuggestWordFrequencyComparator
+    /// <seealso cref="SuggestWordScoreComparator"/>
+    /// <seealso cref="SuggestWordFrequencyComparator"/>
     ///  </seealso>
     public sealed class SuggestWordQueue : PriorityQueue<SuggestWord>
     {

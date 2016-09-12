@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Lucene.Net.Store;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Search.Suggest.Tst
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +22,7 @@ namespace Lucene.Net.Search.Suggest.Tst
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Suggest implementation based on a 
     /// <a href="http://en.wikipedia.org/wiki/Ternary_search_tree">Ternary Search Tree</a>
@@ -54,14 +56,14 @@ namespace Lucene.Net.Search.Suggest.Tst
             }
             root = new TernaryTreeNode();
             // buffer first
-            if (tfit.Comparator != BytesRef.UTF8SortedAsUTF16Comparator)
+            if (tfit.Comparator != BytesRef.UTF8SortedAsUTF16Comparer)
             {
                 // make sure it's sorted and the comparator uses UTF16 sort order
-                tfit = new SortedInputIterator(tfit, BytesRef.UTF8SortedAsUTF16Comparator);
+                tfit = new SortedInputIterator(tfit, BytesRef.UTF8SortedAsUTF16Comparer);
             }
 
             List<string> tokens = new List<string>();
-            List<Number> vals = new List<Number>();
+            List<object> vals = new List<object>(); // LUCENENET TODO: Should this be long? in Java it was Number, but we can probably do better than object
             BytesRef spare;
             CharsRef charsSpare = new CharsRef();
             while ((spare = tfit.Next()) != null)
@@ -118,15 +120,15 @@ namespace Lucene.Net.Search.Suggest.Tst
             }
             for (int i = 0; i < len; i++)
             {
-                if (left.charAt(i) != right.charAt(i))
+                if (left[i] != right[i])
                 {
                     return false;
                 }
             }
             return true;
         }
-
-        public override IList<LookupResult> Lookup(string key, HashSet<BytesRef> contexts, bool onlyMorePopular, int num)
+       
+        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)
             {
@@ -145,7 +147,7 @@ namespace Lucene.Net.Search.Suggest.Tst
 
                 foreach (TernaryTreeNode ttn in list)
                 {
-                    queue.InsertWithOverflow(new LookupResult(ttn.token, (long)((Number)ttn.val)));
+                    queue.InsertWithOverflow(new LookupResult(ttn.token, (long)ttn.val));
                 }
                 foreach (LookupResult lr in queue.Results)
                 {
@@ -157,7 +159,7 @@ namespace Lucene.Net.Search.Suggest.Tst
                 for (int i = 0; i < maxCnt; i++)
                 {
                     TernaryTreeNode ttn = list[i];
-                    res.Add(new LookupResult(ttn.token, (long)((Number)ttn.val)));
+                    res.Add(new LookupResult(ttn.token, (long)ttn.val));
                 }
             }
             return res;
@@ -172,15 +174,15 @@ namespace Lucene.Net.Search.Suggest.Tst
         // pre-order traversal
         private void ReadRecursively(DataInput @in, TernaryTreeNode node)
         {
-            node.splitchar = @in.readString().charAt(0);
-            sbyte mask = @in.readByte();
+            node.splitchar = @in.ReadString().First();
+            sbyte mask = (sbyte)@in.ReadByte();
             if ((mask & HAS_TOKEN) != 0)
             {
-                node.token = @in.readString();
+                node.token = @in.ReadString();
             }
             if ((mask & HAS_VALUE) != 0)
             {
-                node.val = Convert.ToInt64(@in.readLong());
+                node.val = Convert.ToInt64(@in.ReadLong());
             }
             if ((mask & LO_KID) != 0)
             {
@@ -203,7 +205,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         private void WriteRecursively(DataOutput @out, TernaryTreeNode node)
         {
             // write out the current node
-            @out.writeString(new string(new char[] { node.splitchar }, 0, 1));
+            @out.WriteString(new string(new char[] { node.splitchar }, 0, 1));
             // prepare a mask of kids
             sbyte mask = 0;
             if (node.eqKid != null)
@@ -226,14 +228,14 @@ namespace Lucene.Net.Search.Suggest.Tst
             {
                 mask |= HAS_VALUE;
             }
-            @out.writeByte(mask);
+            @out.WriteByte((byte)mask);
             if (node.token != null)
             {
-                @out.writeString(node.token);
+                @out.WriteString(node.token);
             }
             if (node.val != null)
             {
-                @out.writeLong((long)((Number)node.val));
+                @out.WriteLong((long)node.val);
             }
             // recurse and write kids
             if (node.loKid != null)
@@ -254,7 +256,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         {
             lock (this)
             {
-                output.writeVLong(count);
+                output.WriteVLong(count);
                 WriteRecursively(output, root);
                 return true;
             }
@@ -264,7 +266,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         {
             lock (this)
             {
-                count = input.readVLong();
+                count = input.ReadVLong();
                 root = new TernaryTreeNode();
                 ReadRecursively(input, root);
                 return true;
@@ -279,7 +281,7 @@ namespace Lucene.Net.Search.Suggest.Tst
             long mem = RamUsageEstimator.ShallowSizeOf(this);
             if (root != null)
             {
-                mem += root.sizeInBytes();
+                mem += root.SizeInBytes();
             }
             return mem;
         }

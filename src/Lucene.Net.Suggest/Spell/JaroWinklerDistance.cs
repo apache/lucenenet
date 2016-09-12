@@ -1,9 +1,8 @@
-﻿using System;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,7 @@ namespace Lucene.Net.Search.Spell
     /// </para>
     /// </summary>
     /// <seealso cref= <a href="http://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance">http://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance</a> </seealso>
-    public class JaroWinklerDistance : StringDistance
+    public class JaroWinklerDistance : IStringDistance
     {
 
         private float threshold = 0.7f;
@@ -167,7 +166,5 @@ namespace Lucene.Net.Search.Spell
         {
             return "jarowinkler(" + threshold + ")";
         }
-
     }
-
 }

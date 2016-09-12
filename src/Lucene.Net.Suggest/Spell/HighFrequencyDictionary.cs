@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Suggest;
 using Lucene.Net.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Spell
     /// 
     /// Based on LuceneDictionary.
     /// </summary>
-    public class HighFrequencyDictionary : Dictionary
+    public class HighFrequencyDictionary : IDictionary
     {
         private IndexReader reader;
         private string field;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Spell
                 {
                     termsEnum = null;
                 }
-                minNumDocs = (int)(outerInstance.thresh * (float)outerInstance.reader.NumDocs());
+                minNumDocs = (int)(outerInstance.thresh * (float)outerInstance.reader.NumDocs);
             }
 
             internal bool IsFrequent(int freq)
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search.Spell
                 get { return false; }
             }
 
-            public HashSet<BytesRef> Contexts
+            public IEnumerable<BytesRef> Contexts
             {
                 get { return null; }
             }

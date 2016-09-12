@@ -25,12 +25,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
 
 namespace Lucene.Net.Search.Suggest.Jaspell
 {
@@ -61,26 +63,26 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <summary>
         /// An inner class of Ternary Search Trie that represents a node in the trie.
         /// </summary>
-        protected internal sealed class TSTNode
+        public sealed class TSTNode
         {
             private readonly JaspellTernarySearchTrie outerInstance;
 
 
             /// <summary>
             /// Index values for accessing relatives array. </summary>
-            protected internal const int PARENT = 0, LOKID = 1, EQKID = 2, HIKID = 3;
+            internal const int PARENT = 0, LOKID = 1, EQKID = 2, HIKID = 3;
 
             /// <summary>
             /// The key to the node. </summary>
-            protected internal object data;
+            internal object data;
 
             /// <summary>
             /// The relative nodes. </summary>
-            protected internal readonly TSTNode[] relatives = new TSTNode[4];
+            internal readonly TSTNode[] relatives = new TSTNode[4];
 
             /// <summary>
             /// The char used in the split. </summary>
-            protected internal char splitchar;
+            internal char splitchar;
 
             /// <summary>
             /// Constructor method.
@@ -89,7 +91,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             ///          The char used in the split. </param>
             /// <param name="parent">
             ///          The parent node. </param>
-            protected internal TSTNode(JaspellTernarySearchTrie outerInstance, char splitchar, TSTNode parent)
+            internal TSTNode(JaspellTernarySearchTrie outerInstance, char splitchar, TSTNode parent)
             {
                 this.outerInstance = outerInstance;
                 this.splitchar = splitchar;
@@ -122,36 +124,38 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The second char in the comparison. </param>
         /// <returns> A negative number, 0 or a positive number if the second char is
         ///         less, equal or greater. </returns>
-        private static int compareCharsAlphabetically(char cCompare2, char cRef)
+        ///         
+        private static int CompareCharsAlphabetically(char cCompare2, char cRef)
         {
-            return char.ToLower(cCompare2) - char.ToLower(cRef);
+            // LUCENENET TODO: Culture - from the current thread? Or perhaps another overload where it can be passed?
+            return Character.ToLowerCase(cCompare2) - Character.ToLowerCase(cRef);
         }
 
         /* what follows is the original Jaspell code. 
         private static int compareCharsAlphabetically(int cCompare2, int cRef) {
-          int cCompare = 0;
-          if (cCompare2 >= 65) {
+        int cCompare = 0;
+        if (cCompare2 >= 65) {
             if (cCompare2 < 89) {
-              cCompare = (2 * cCompare2) - 65;
+            cCompare = (2 * cCompare2) - 65;
             } else if (cCompare2 < 97) {
-              cCompare = cCompare2 + 24;
+            cCompare = cCompare2 + 24;
             } else if (cCompare2 < 121) {
-              cCompare = (2 * cCompare2) - 128;
+            cCompare = (2 * cCompare2) - 128;
             } else cCompare = cCompare2;
-          } else cCompare = cCompare2;
-          if (cRef < 65) {
+        } else cCompare = cCompare2;
+        if (cRef < 65) {
             return cCompare - cRef;
-          }
-          if (cRef < 89) {
+        }
+        if (cRef < 89) {
             return cCompare - ((2 * cRef) - 65);
-          }
-          if (cRef < 97) {
+        }
+        if (cRef < 97) {
             return cCompare - (cRef + 24);
-          }
-          if (cRef < 121) {
+        }
+        if (cRef < 121) {
             return cCompare - ((2 * cRef) - 128);
-          }
-          return cCompare - cRef;
+        }
+        return cCompare - cRef;
         }
         */
 
@@ -171,13 +175,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// The base node in the trie. </summary>
         private TSTNode rootNode;
 
-        private readonly Locale locale;
+        private readonly CultureInfo locale; // LUCENENET TODO: Remove this and add add oveloads to commmon actions to override the culture of the current thread?
 
         /// <summary>
         /// Constructs an empty Ternary Search Trie.
         /// </summary>
         public JaspellTernarySearchTrie()
-            : this(Locale.ROOT)
+            : this(CultureInfo.CurrentCulture)
         {
         }
 
@@ -185,7 +189,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Constructs an empty Ternary Search Trie,
         /// specifying the Locale used for lowercasing.
         /// </summary>
-        public JaspellTernarySearchTrie(Locale locale)
+        public JaspellTernarySearchTrie(CultureInfo locale)
         {
             this.locale = locale;
         }
@@ -213,7 +217,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The <code>File</code> with the data to load into the Trie. </param>
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
-        public JaspellTernarySearchTrie(File file)
+        public JaspellTernarySearchTrie(FileInfo file)
             : this(file, false)
         {
         }
@@ -230,80 +234,75 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          false, the file is a normal text document. </param>
         /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
-        public JaspellTernarySearchTrie(File file, bool compression)
+        public JaspellTernarySearchTrie(FileInfo file, bool compression)
             : this()
         {
-            BufferedReader @in;
-            if (compression)
+            using (TextReader @in = (compression) ?
+                IOUtils.GetDecodingReader(new GZipStream(new FileStream(file.FullName, FileMode.Open), CompressionMode.Decompress), Encoding.UTF8) :
+                IOUtils.GetDecodingReader(new FileStream(file.FullName, FileMode.Open), Encoding.UTF8))
             {
-                @in = new BufferedReader(IOUtils.getDecodingReader(new GZIPInputStream(new FileInputStream(file)), StandardCharsets.UTF_8));
-            }
-            else
-            {
-                @in = new BufferedReader(IOUtils.getDecodingReader((new FileInputStream(file)), StandardCharsets.UTF_8));
-            }
-            string word;
-            int pos;
-            float? occur, one = new float?(1);
-            while ((word = @in.readLine()) != null)
-            {
-                pos = word.IndexOf("\t", StringComparison.Ordinal);
-                occur = one;
-                if (pos != -1)
+                string word;
+                int pos;
+                float? occur, one = new float?(1);
+                while ((word = @in.ReadLine()) != null)
                 {
-                    occur = Convert.ToSingle(word.Substring(pos + 1).Trim());
-                    word = word.Substring(0, pos);
-                }
-                string key = word.ToLower(locale);
-                if (rootNode == null)
-                {
-                    rootNode = new TSTNode(this, key[0], null);
-                }
-                TSTNode node = null;
-                if (key.Length > 0 && rootNode != null)
-                {
-                    TSTNode currentNode = rootNode;
-                    int charIndex = 0;
-                    while (true)
+                    pos = word.IndexOf("\t", StringComparison.Ordinal);
+                    occur = one;
+                    if (pos != -1)
                     {
-                        if (currentNode == null)
+                        occur = Convert.ToSingle(word.Substring(pos + 1).Trim());
+                        word = word.Substring(0, pos);
+                    }
+                    string key = word.ToLower(locale);
+                    if (rootNode == null)
+                    {
+                        rootNode = new TSTNode(this, key[0], null);
+                    }
+                    TSTNode node = null;
+                    if (key.Length > 0 && rootNode != null)
+                    {
+                        TSTNode currentNode = rootNode;
+                        int charIndex = 0;
+                        while (true)
                         {
-                            break;
-                        }
-                        int charComp = compareCharsAlphabetically(key[charIndex], currentNode.splitchar);
-                        if (charComp == 0)
-                        {
-                            charIndex++;
-                            if (charIndex == key.Length)
+                            if (currentNode == null)
                             {
-                                node = currentNode;
                                 break;
                             }
-                            currentNode = currentNode.relatives[TSTNode.EQKID];
+                            int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar);
+                            if (charComp == 0)
+                            {
+                                charIndex++;
+                                if (charIndex == key.Length)
+                                {
+                                    node = currentNode;
+                                    break;
+                                }
+                                currentNode = currentNode.relatives[TSTNode.EQKID];
+                            }
+                            else if (charComp < 0)
+                            {
+                                currentNode = currentNode.relatives[TSTNode.LOKID];
+                            }
+                            else
+                            {
+                                currentNode = currentNode.relatives[TSTNode.HIKID];
+                            }
                         }
-                        else if (charComp < 0)
+                        float? occur2 = null;
+                        if (node != null)
                         {
-                            currentNode = currentNode.relatives[TSTNode.LOKID];
+                            occur2 = ((float?)(node.data));
                         }
-                        else
+                        if (occur2 != null)
                         {
-                            currentNode = currentNode.relatives[TSTNode.HIKID];
+                            occur += (float)occur2;
                         }
+                        currentNode = GetOrCreateNode(word.Trim().ToLower(locale));
+                        currentNode.data = occur;
                     }
-                    float? occur2 = null;
-                    if (node != null)
-                    {
-                        occur2 = ((float?)(node.data));
-                    }
-                    if (occur2 != null)
-                    {
-                        occur += (float)occur2;
-                    }
-                    currentNode = GetOrCreateNode(word.Trim().ToLower(locale));
-                    currentNode.data = occur;
                 }
             }
-            @in.close();
         }
 
         /// <summary>
@@ -486,7 +485,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="node">
         ///          The node whose index is to be calculated. </param>
         /// <returns> The <code>String</code> that indexes the node argument. </returns>
-        protected internal virtual string getKey(TSTNode node)
+        protected internal virtual string GetKey(TSTNode node)
         {
             StringBuilder getKeyBuffer = new StringBuilder();
             getKeyBuffer.Length = 0;
@@ -546,7 +545,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 {
                     return null;
                 }
-                int charComp = compareCharsAlphabetically(key.charAt(charIndex), currentNode.splitchar);
+                int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar);
                 if (charComp == 0)
                 {
                     charIndex++;
@@ -591,13 +590,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
             if (rootNode == null)
             {
-                rootNode = new TSTNode(this, key.charAt(0), null);
+                rootNode = new TSTNode(this, key[0], null);
             }
             TSTNode currentNode = rootNode;
             int charIndex = 0;
             while (true)
             {
-                int charComp = compareCharsAlphabetically(key.charAt(charIndex), currentNode.splitchar);
+                int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar);
                 if (charComp == 0)
                 {
                     charIndex++;
@@ -607,7 +606,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                     }
                     if (currentNode.relatives[TSTNode.EQKID] == null)
                     {
-                        currentNode.relatives[TSTNode.EQKID] = new TSTNode(this, key.charAt(charIndex), currentNode);
+                        currentNode.relatives[TSTNode.EQKID] = new TSTNode(this, key[charIndex], currentNode);
                     }
                     currentNode = currentNode.relatives[TSTNode.EQKID];
                 }
@@ -615,7 +614,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 {
                     if (currentNode.relatives[TSTNode.LOKID] == null)
                     {
-                        currentNode.relatives[TSTNode.LOKID] = new TSTNode(this, key.charAt(charIndex), currentNode);
+                        currentNode.relatives[TSTNode.LOKID] = new TSTNode(this, key[charIndex], currentNode);
                     }
                     currentNode = currentNode.relatives[TSTNode.LOKID];
                 }
@@ -623,7 +622,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 {
                     if (currentNode.relatives[TSTNode.HIKID] == null)
                     {
-                        currentNode.relatives[TSTNode.HIKID] = new TSTNode(this, key.charAt(charIndex), currentNode);
+                        currentNode.relatives[TSTNode.HIKID] = new TSTNode(this, key[charIndex], currentNode);
                     }
                     currentNode = currentNode.relatives[TSTNode.HIKID];
                 }
@@ -697,11 +696,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <returns> A <code>List</code> with the results. </returns>
         private IList<string> MatchAlmostRecursion(TSTNode currentNode, int charIndex, int d, string matchAlmostKey, int matchAlmostNumReturnValues, IList<string> matchAlmostResult2, bool upTo)
         {
-            if ((currentNode == null) || (matchAlmostNumReturnValues != -1 && matchAlmostResult2.Count >= matchAlmostNumReturnValues) || (d < 0) || (charIndex >= matchAlmostKey.length()))
+            if ((currentNode == null) || (matchAlmostNumReturnValues != -1 && matchAlmostResult2.Count >= matchAlmostNumReturnValues) || (d < 0) || (charIndex >= matchAlmostKey.Length))
             {
                 return matchAlmostResult2;
             }
-            int charComp = compareCharsAlphabetically(matchAlmostKey.charAt(charIndex), currentNode.splitchar);
+            int charComp = CompareCharsAlphabetically(matchAlmostKey[charIndex], currentNode.splitchar);
             IList<string> matchAlmostResult = matchAlmostResult2;
             if ((d > 0) || (charComp < 0))
             {
@@ -711,7 +710,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             bool cond = (upTo) ? (nextD >= 0) : (nextD == 0);
             if ((matchAlmostKey.Length == charIndex + 1) && cond && (currentNode.data != null))
             {
-                matchAlmostResult.Add(getKey(currentNode));
+                matchAlmostResult.Add(GetKey(currentNode));
             }
             matchAlmostResult = MatchAlmostRecursion(currentNode.relatives[TSTNode.EQKID], charIndex + 1, nextD, matchAlmostKey, matchAlmostNumReturnValues, matchAlmostResult, upTo);
             if ((d > 0) || (charComp > 0))
@@ -756,9 +755,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
             if (startNode.data != null)
             {
-                sortKeysResult.Add(getKey(startNode));
+                sortKeysResult.Add(GetKey(startNode));
             }
-            return sortKeysRecursion(startNode.relatives[TSTNode.EQKID], ((numReturnValues < 0) ? -1 : numReturnValues), sortKeysResult);
+            return SortKeysRecursion(startNode.relatives[TSTNode.EQKID], ((numReturnValues < 0) ? -1 : numReturnValues), sortKeysResult);
         }
 
         /// <summary>
@@ -928,9 +927,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="numReturnValues">
         ///          The maximum number of values returned from this method. </param>
         /// <returns> A <code>List</code> with the results. </returns>
-        protected internal virtual IList<string> sortKeys(TSTNode startNode, int numReturnValues)
+        protected internal virtual IList<string> SortKeys(TSTNode startNode, int numReturnValues)
         {
-            return sortKeysRecursion(startNode, ((numReturnValues < 0) ? -1 : numReturnValues), new List<string>());
+            return SortKeysRecursion(startNode, ((numReturnValues < 0) ? -1 : numReturnValues), new List<string>());
         }
 
         /// <summary>
@@ -950,23 +949,23 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="sortKeysResult2">
         ///          The results so far. </param>
         /// <returns> A <code>List</code> with the results. </returns>
-        private IList<string> sortKeysRecursion(TSTNode currentNode, int sortKeysNumReturnValues, IList<string> sortKeysResult2)
+        private IList<string> SortKeysRecursion(TSTNode currentNode, int sortKeysNumReturnValues, IList<string> sortKeysResult2)
         {
             if (currentNode == null)
             {
                 return sortKeysResult2;
             }
-            IList<string> sortKeysResult = sortKeysRecursion(currentNode.relatives[TSTNode.LOKID], sortKeysNumReturnValues, sortKeysResult2);
+            IList<string> sortKeysResult = SortKeysRecursion(currentNode.relatives[TSTNode.LOKID], sortKeysNumReturnValues, sortKeysResult2);
             if (sortKeysNumReturnValues != -1 && sortKeysResult.Count >= sortKeysNumReturnValues)
             {
                 return sortKeysResult;
             }
             if (currentNode.data != null)
             {
-                sortKeysResult.Add(getKey(currentNode));
+                sortKeysResult.Add(GetKey(currentNode));
             }
-            sortKeysResult = sortKeysRecursion(currentNode.relatives[TSTNode.EQKID], sortKeysNumReturnValues, sortKeysResult);
-            return sortKeysRecursion(currentNode.relatives[TSTNode.HIKID], sortKeysNumReturnValues, sortKeysResult);
+            sortKeysResult = SortKeysRecursion(currentNode.relatives[TSTNode.EQKID], sortKeysNumReturnValues, sortKeysResult);
+            return SortKeysRecursion(currentNode.relatives[TSTNode.HIKID], sortKeysNumReturnValues, sortKeysResult);
         }
 
         /// <summary>
@@ -981,6 +980,5 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
             return mem;
         }
-
     }
 }

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Lucene.Net.Index;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -25,6 +24,7 @@ namespace Lucene.Net.Search.Spell
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Simple automaton-based spellchecker.
     /// <para>
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search.Spell
         ///  to draw candidates from the term dictionary: this just re-uses the scoring.
         /// </para>
         /// </summary>
-        public static readonly StringDistance INTERNAL_LEVENSHTEIN = new LuceneLevenshteinDistance();
+        public static readonly IStringDistance INTERNAL_LEVENSHTEIN = new LuceneLevenshteinDistance();
 
         /// <summary>
         /// maximum edit distance for candidate terms </summary>
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Spell
         private IComparer<SuggestWord> comparator = SuggestWordQueue.DEFAULT_COMPARATOR;
         /// <summary>
         /// the string distance to use </summary>
-        private StringDistance distance = INTERNAL_LEVENSHTEIN;
+        private IStringDistance distance = INTERNAL_LEVENSHTEIN;
 
         /// <summary>
         /// Creates a DirectSpellChecker with default configuration values </summary>
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Get the string distance metric in use.
         /// </summary>
-        public virtual StringDistance Distance
+        public virtual IStringDistance Distance
         {
             get
             {
@@ -315,7 +315,7 @@ namespace Lucene.Net.Search.Spell
 
             if (lowerCaseTerms)
             {
-                term = new Term(term.Field(), text.ToLower(Locale.ROOT));
+                term = new Term(term.Field, text.ToLower()); // LUCENENET TODO: Culture - from the current thread? Or perhaps another overload where it can be passed?
             }
 
             int docfreq = ir.DocFreq(term);
@@ -325,13 +325,13 @@ namespace Lucene.Net.Search.Spell
                 return new SuggestWord[0];
             }
 
-            int maxDoc = ir.MaxDoc();
+            int maxDoc = ir.MaxDoc;
 
             if (maxQueryFrequency >= 1f && docfreq > maxQueryFrequency)
             {
                 return new SuggestWord[0];
             }
-            else if (docfreq > (int)Math.Ceiling(maxQueryFrequency * (float)maxDoc))
+            else if (docfreq > (int)Math.Ceiling(maxQueryFrequency * maxDoc))
             {
                 return new SuggestWord[0];
             }
@@ -347,25 +347,25 @@ namespace Lucene.Net.Search.Spell
             }
             else if (thresholdFrequency > 0f)
             {
-                docfreq = Math.Max(docfreq, (int)(thresholdFrequency * (float)maxDoc) - 1);
+                docfreq = Math.Max(docfreq, (int)(thresholdFrequency * maxDoc) - 1);
             }
 
-            ICollection<ScoreTerm> terms = null;
+            IEnumerable<ScoreTerm> terms = null;
             int inspections = numSug * maxInspections;
 
             // try ed=1 first, in case we get lucky
-            terms = suggestSimilar(term, inspections, ir, docfreq, 1, accuracy, spare);
-            if (maxEdits > 1 && terms.Count < inspections)
+            terms = SuggestSimilar(term, inspections, ir, docfreq, 1, accuracy, spare);
+            if (maxEdits > 1 && terms.Count() < inspections)
             {
                 var moreTerms = new HashSet<ScoreTerm>();
                 moreTerms.AddAll(terms);
-                moreTerms.AddAll(suggestSimilar(term, inspections, ir, docfreq, maxEdits, accuracy, spare));
+                moreTerms.AddAll(SuggestSimilar(term, inspections, ir, docfreq, maxEdits, accuracy, spare));
                 terms = moreTerms;
             }
 
             // create the suggestword response, sort it, and trim it to size.
 
-            var suggestions = new SuggestWord[terms.Count];
+            var suggestions = new SuggestWord[terms.Count()];
             int index = suggestions.Length - 1;
             foreach (ScoreTerm s in terms)
             {
@@ -375,9 +375,9 @@ namespace Lucene.Net.Search.Spell
                     UnicodeUtil.UTF8toUTF16(s.term, spare);
                     s.termAsString = spare.ToString();
                 }
-                suggestion.@string = s.termAsString;
-                suggestion.score = s.score;
-                suggestion.freq = s.docfreq;
+                suggestion.String = s.termAsString;
+                suggestion.Score = s.score;
+                suggestion.Freq = s.docfreq;
                 suggestions[index--] = suggestion;
             }
 
@@ -403,29 +403,29 @@ namespace Lucene.Net.Search.Spell
         /// <param name="spare"> a chars scratch </param>
         /// <returns> a collection of spelling corrections sorted by <code>ScoreTerm</code>'s natural order. </returns>
         /// <exception cref="IOException"> If I/O related errors occur </exception>
-        protected internal virtual ICollection<ScoreTerm> suggestSimilar(Term term, int numSug, IndexReader ir, int docfreq, int editDistance, float accuracy, CharsRef spare)
+        protected internal virtual IEnumerable<ScoreTerm> SuggestSimilar(Term term, int numSug, IndexReader ir, int docfreq, int editDistance, float accuracy, CharsRef spare)
         {
 
             var atts = new AttributeSource();
-            MaxNonCompetitiveBoostAttribute maxBoostAtt = atts.AddAttribute<MaxNonCompetitiveBoostAttribute>();
-            Terms terms = MultiFields.GetTerms(ir, term.Field());
+            IMaxNonCompetitiveBoostAttribute maxBoostAtt = atts.AddAttribute<IMaxNonCompetitiveBoostAttribute>();
+            Terms terms = MultiFields.GetTerms(ir, term.Field);
             if (terms == null)
             {
-                return Enumerable.Empty<ScoreDoc>();
+                return new List<ScoreTerm>();
             }
             FuzzyTermsEnum e = new FuzzyTermsEnum(terms, atts, term, editDistance, Math.Max(minPrefix, editDistance - 1), true);
 
-            var stQueue = new PriorityQueue<ScoreTerm>();
+            var stQueue = new Support.PriorityQueue<ScoreTerm>();
 
             BytesRef queryTerm = new BytesRef(term.Text());
             BytesRef candidateTerm;
             ScoreTerm st = new ScoreTerm();
-            BoostAttribute boostAtt = e.Attributes().AddAttribute<BoostAttribute>();
+            IBoostAttribute boostAtt = e.Attributes().AddAttribute<IBoostAttribute>();
             while ((candidateTerm = e.Next()) != null)
             {
                 float boost = boostAtt.Boost;
                 // ignore uncompetitive hits
-                if (stQueue.Size() >= numSug && boost <= stQueue.Peek().boost)
+                if (stQueue.Count >= numSug && boost <= stQueue.Peek().boost)
                 {
                     continue;
                 }
@@ -473,8 +473,8 @@ namespace Lucene.Net.Search.Spell
                 st.score = score;
                 stQueue.Offer(st);
                 // possibly drop entries from queue
-                st = (stQueue.Size() > numSug) ? stQueue.Poll() : new ScoreTerm();
-                maxBoostAtt.MaxNonCompetitiveBoost = (stQueue.Size() >= numSug) ? stQueue.Peek().boost : float.NegativeInfinity;
+                st = (stQueue.Count > numSug) ? stQueue.Poll() : new ScoreTerm();
+                maxBoostAtt.MaxNonCompetitiveBoost = (stQueue.Count >= numSug) ? stQueue.Peek().boost : float.NegativeInfinity;
             }
 
             return stQueue;

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Support;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -20,11 +20,10 @@ namespace Lucene.Net.Search.Spell
      * limitations under the License.
      */
 
-
     /// <summary>
     ///  Frequency first, then score.
     /// </summary>
-    public class SuggestWordFrequencyComparator : IComparer<SuggestWord>
+    public class SuggestWordFrequencyComparator : IComparer<SuggestWord> // LUCENENET TODO: Rename for .NET (comparer)
     {
 
         /// <summary>
@@ -38,27 +37,26 @@ namespace Lucene.Net.Search.Spell
         public virtual int Compare(SuggestWord first, SuggestWord second)
         {
             // first criteria: the frequency
-            if (first.freq > second.freq)
+            if (first.Freq > second.Freq)
             {
                 return 1;
             }
-            if (first.freq < second.freq)
+            if (first.Freq < second.Freq)
             {
                 return -1;
             }
 
             // second criteria (if first criteria is equal): the score
-            if (first.score > second.score)
+            if (first.Score > second.Score)
             {
                 return 1;
             }
-            if (first.score < second.score)
+            if (first.Score < second.Score)
             {
                 return -1;
             }
             // third criteria: term text
-            return second.@string.CompareTo(first.@string);
+            return second.String.CompareToOrdinal(first.String);
         }
     }
-
 }

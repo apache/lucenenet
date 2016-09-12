@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Search.Spell;
+﻿using Lucene.Net.Search.Spell;
 using Lucene.Net.Util;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,11 +20,12 @@ namespace Lucene.Net.Search.Suggest
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// This wrapper buffers incoming elements.
     /// @lucene.experimental
     /// </summary>
-    public class BufferingTermFreqIteratorWrapper : TermFreqIterator
+    public class BufferingTermFreqIteratorWrapper : ITermFreqIterator
     {
         // TODO keep this for now
         /// <summary>
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Creates a new iterator, buffering entries from the specified iterator
         /// </summary>
-        public BufferingTermFreqIteratorWrapper(TermFreqIterator source)
+        public BufferingTermFreqIteratorWrapper(ITermFreqIterator source)
         {
             this.comp = source.Comparator;
             BytesRef spare;
@@ -82,8 +82,5 @@ namespace Lucene.Net.Search.Suggest
                 return comp;
             }
         }
-
-
     }
-
 }
