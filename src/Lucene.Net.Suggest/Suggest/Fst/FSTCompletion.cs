@@ -4,6 +4,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -60,7 +61,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             public override string ToString()
             {
-                return utf8.Utf8ToString() + "/" + bucket;
+                return utf8.Utf8ToString() + "/" + bucket.ToString("0.0", CultureInfo.InvariantCulture);
             }
 
             /// <seealso cref="BytesRef.CompareTo(BytesRef)"></seealso>
