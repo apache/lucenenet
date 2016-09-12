@@ -838,10 +838,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             StringBuilder b = new StringBuilder();
             foreach (Lookup.LookupResult result in results)
             {
-                b.append(' ');
-                b.append(result.key);
-                b.append('/');
-                b.append(string.Format(CultureInfo.InvariantCulture, "{0:#.00}", ((double)result.value) / long.MaxValue));
+                b.Append(' ');
+                b.Append(result.key);
+                b.Append('/');
+                b.AppendFormat(CultureInfo.InvariantCulture, "{0:0.00}", ((double)result.value) / long.MaxValue);
             }
             return b.toString().Trim();
         }
