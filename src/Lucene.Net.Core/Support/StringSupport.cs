@@ -39,6 +39,11 @@ namespace Lucene.Net.Support
         }
 
 
+        public static int CodePointAt(this string str, int index)
+        {
+            return Character.CodePointAt(str, index);
+        }
+
         public static int CodePointCount(this string str, int beginIndex, int endIndex)
         {
             return Character.CodePointCount(str, beginIndex, endIndex);
