@@ -714,7 +714,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: apps can try to invert their analysis logic
             // here, e.g. downcase the two before checking prefix:
             sb.Append("<b>");
-            sb.Append(surface.Substring(0, prefixToken.Length));
+            sb.Append(surface.Substring(0, prefixToken.Length - 0));
             sb.Append("</b>");
             if (prefixToken.Length < surface.Length)
             {
