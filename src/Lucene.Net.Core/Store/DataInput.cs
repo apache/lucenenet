@@ -2,6 +2,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace Lucene.Net.Store
 {
@@ -245,8 +246,7 @@ namespace Lucene.Net.Store
             var bytes = new byte[length];
             ReadBytes(bytes, 0, length);
 
-            //return new string(bytes, 0, length, IOUtils.CHARSET_UTF_8);
-            return IOUtils.CHARSET_UTF_8.GetString((byte[])(Array)bytes);
+            return Encoding.UTF8.GetString(bytes);
         }
 
         /// <summary>
