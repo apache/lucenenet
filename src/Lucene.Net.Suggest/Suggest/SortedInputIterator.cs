@@ -61,12 +61,12 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public SortedInputIterator(InputIterator source, IComparer<BytesRef> comparator)
         {
+            this.tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper(this);
             this.hasPayloads = source.HasPayloads;
             this.hasContexts = source.HasContexts;
             this.source = source;
             this.comparator = comparator;
             this.reader = Sort();
-            this.tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper(this);
         }
 
         public BytesRef Next()
