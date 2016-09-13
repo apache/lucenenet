@@ -446,12 +446,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         Util.Fst.Util.ToBytesRef(path, scratch);
 
                         // length of the analyzed text (FST input)
-                        if (scratch.Length > short.MaxValue - 2)
+                        if (scratch.Length > ushort.MaxValue - 2)
                         {
-                            throw new System.ArgumentException("cannot handle analyzed forms > " + (short.MaxValue - 2) +
+                            throw new System.ArgumentException("cannot handle analyzed forms > " + (ushort.MaxValue - 2) +
                                                                " in length (got " + scratch.Length + ")");
                         }
-                        short analyzedLength = (short)scratch.Length;
+                        ushort analyzedLength = (ushort)scratch.Length;
 
                         // compute the required length:
                         // analyzed sequence + weight (4) + surface + analyzedLength (short)
@@ -461,9 +461,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         if (hasPayloads)
                         {
-                            if (surfaceForm.Length > (short.MaxValue - 2))
+                            if (surfaceForm.Length > (ushort.MaxValue - 2))
                             {
-                                throw new ArgumentException("cannot handle surface form > " + (short.MaxValue - 2) +
+                                throw new ArgumentException("cannot handle surface form > " + (ushort.MaxValue - 2) +
                                                             " in length (got " + surfaceForm.Length + ")");
                             }
                             payload = iterator.Payload;
@@ -479,7 +479,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         output.Reset(buffer);
 
-                        output.WriteShort(analyzedLength);
+                        output.WriteShort((short)analyzedLength);
 
                         output.WriteBytes(scratch.Bytes, scratch.Offset, scratch.Length);
 
@@ -541,7 +541,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 while (reader.Read(scratch))
                 {
                     input.Reset(scratch.Bytes, scratch.Offset, scratch.Length);
-                    short analyzedLength = input.ReadShort();
+                    ushort analyzedLength = (ushort)input.ReadShort();
                     analyzed.Grow(analyzedLength + 2);
                     input.ReadBytes(analyzed.Bytes, 0, analyzedLength);
                     analyzed.Length = analyzedLength;

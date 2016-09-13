@@ -399,7 +399,7 @@ namespace Lucene.Net.Util
                 BytesRefIterator iter = Buffer.Iterator(comparator);
                 while ((spare = iter.Next()) != null)
                 {
-                    Debug.Assert(spare.Length <= short.MaxValue);
+                    Debug.Assert(spare.Length <= ushort.MaxValue);
                     @out.Write(spare);
                 }
             }
@@ -617,10 +617,10 @@ namespace Lucene.Net.Util
             /// <exception cref="EOFException"> if the file ends before the full sequence is read. </exception>
             public virtual bool Read(BytesRef @ref)
             {
-                short length;
+                ushort length;
                 try
                 {
-                    length = inputStream.ReadShort();
+                    length = (ushort)inputStream.ReadShort();
                 }
                 catch (Exception)
                 {
@@ -644,10 +644,10 @@ namespace Lucene.Net.Util
             /// <exception cref="EOFException"> if the file ends before the full sequence is read. </exception>
             public virtual byte[] Read()
             {
-                short length;
+                ushort length;
                 try
                 {
-                    length = inputStream.ReadShort();
+                    length = (ushort)inputStream.ReadShort();
                 }
                 catch (Exception e)
                 {
