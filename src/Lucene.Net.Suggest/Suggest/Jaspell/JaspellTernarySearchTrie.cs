@@ -504,8 +504,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 currentNode = currentNode.relatives[TSTNode.PARENT];
             }
 
-            getKeyBuffer.Reverse();
-            return getKeyBuffer.ToString();
+            // LUCENENET NOTE: Reverse doesn't happen in place in .NET,
+            // so we need to return the reversed result.
+            return getKeyBuffer.Reverse().ToString();
         }
 
         /// <summary>
