@@ -84,7 +84,7 @@ namespace Lucene.Net.Store
         /// <seealso cref= DataOutput#writeByte(byte) </seealso>
         public virtual short ReadShort()
         {
-            return (short)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
+            return (short)(ushort)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
         }
 
         /// <summary>

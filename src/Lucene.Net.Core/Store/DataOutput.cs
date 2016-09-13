@@ -76,8 +76,8 @@ namespace Lucene.Net.Store
         /// <seealso cref= DataInput#readShort() </seealso>
         public virtual void WriteShort(short i)
         {
-            WriteByte((byte)(sbyte)(i >> 8));
-            WriteByte((byte)(sbyte)i);
+            WriteByte((byte)(sbyte)((ushort)i >> 8));
+            WriteByte((byte)(sbyte)(ushort)i);
         }
 
         /// <summary>
