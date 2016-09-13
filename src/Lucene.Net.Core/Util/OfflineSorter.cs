@@ -489,7 +489,7 @@ namespace Lucene.Net.Util
         /// Read in a single partition of data </summary>
         internal int ReadPartition(ByteSequencesReader reader)
         {
-            long start = DateTime.Now.Millisecond;
+            long start = Environment.TickCount;
             var scratch = new BytesRef();
             while ((scratch.Bytes = reader.Read()) != null)
             {
@@ -502,7 +502,7 @@ namespace Lucene.Net.Util
                     break;
                 }
             }
-            sortInfo.ReadTime += (DateTime.Now.Millisecond - start);
+            sortInfo.ReadTime += (Environment.TickCount - start);
             return Buffer.Size();
         }
 
