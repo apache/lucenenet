@@ -267,7 +267,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public SortInfo Sort(FileInfo input, FileInfo output)
         {
-            sortInfo = new SortInfo(this) { TotalTime = DateTime.Now.Millisecond };
+            sortInfo = new SortInfo(this) { TotalTime = Environment.TickCount };
 
             // LUCENENET NOTE: Can't do this because another thread could recreate the file before we are done here.
             // and cause this to bomb. We use the existence of the file as an indicator that we are done using it.
@@ -355,7 +355,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            sortInfo.TotalTime = (DateTime.Now.Millisecond - sortInfo.TotalTime);
+            sortInfo.TotalTime = (Environment.TickCount - sortInfo.TotalTime);
             return sortInfo;
         }
 
@@ -389,8 +389,8 @@ namespace Lucene.Net.Util
             var data = this.Buffer;
             FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", DefaultTempDir());
 
-            long start = DateTime.Now.Millisecond;
-            sortInfo.SortTime += (DateTime.Now.Millisecond - start);
+            long start = Environment.TickCount;
+            sortInfo.SortTime += (Environment.TickCount - start);
 
             using (var @out = new ByteSequencesWriter(tempFile))
             {
@@ -413,7 +413,7 @@ namespace Lucene.Net.Util
         /// Merge a list of sorted temporary files (partitions) into an output file </summary>
         internal void MergePartitions(IEnumerable<FileInfo> merges, FileInfo outputFile)
         {
-            long start = DateTime.Now.Millisecond;
+            long start = Environment.TickCount;
 
             var @out = new ByteSequencesWriter(outputFile);
 
@@ -451,7 +451,7 @@ namespace Lucene.Net.Util
                     }
                 }
 
-                sortInfo.MergeTime += DateTime.UtcNow.Ticks - start;
+                sortInfo.MergeTime += Environment.TickCount - start;
                 sortInfo.MergeRounds++;
             }
             finally
