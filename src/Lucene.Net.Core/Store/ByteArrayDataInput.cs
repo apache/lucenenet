@@ -96,7 +96,7 @@ namespace Lucene.Net.Store
 
         public override short ReadShort()
         {
-            return (short)(((Bytes[Pos++] & 0xFF) << 8) | (Bytes[Pos++] & 0xFF));
+            return (short)(ushort)(((Bytes[Pos++] & 0xFF) << 8) | (Bytes[Pos++] & 0xFF));
         }
 
         public override int ReadInt()
