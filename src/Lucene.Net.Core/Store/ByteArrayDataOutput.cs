@@ -47,7 +47,7 @@ namespace Lucene.Net.Store
 
         public ByteArrayDataOutput()
         {
-            Reset((byte[])(Array)BytesRef.EMPTY_BYTES);
+            Reset(BytesRef.EMPTY_BYTES);
         }
 
         public virtual void Reset(byte[] bytes)
