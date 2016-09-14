@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -125,87 +126,109 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        //  [Ignore]
-        //  public void TestWiki() 
-        //{
-        //    final LineFileDocs lfd = new LineFileDocs(null, "/lucenedata/enwiki/enwiki-20120502-lines-1k.txt", false);
-        //// Skip header:
-        //lfd.nextDoc();
-        //    FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random()));
-        //sug.Build(new IInputIterator()
-        //{
+        internal class TestWikiInputIterator : IInputIterator
+        {
+            private readonly LineFileDocs lfd;
+            private readonly TestFreeTextSuggester outerInstance;
+            private int count;
 
-        //        private int count;
+            public TestWikiInputIterator(TestFreeTextSuggester outerInstance, LineFileDocs lfd)
+            {
+                this.outerInstance = outerInstance;
+                this.lfd = lfd;
+            }
 
-        //@Override
-        //        public long weight()
-        //{
-        //    return 1;
-        //}
+            public long Weight
+            {
+                get
+                {
+                    return 1;
+                }
+            }
 
-        //@Override
-        //        public Comparator<BytesRef> getComparator()
-        //{
-        //    return null;
-        //}
+            public IComparer<BytesRef> Comparator
+            {
+                get
+                {
+                    return null;
+                }
+            }
 
-        //@Override
-        //        public BytesRef next()
-        //{
-        //    Document doc;
-        //    try
-        //    {
-        //        doc = lfd.nextDoc();
-        //    }
-        //    catch (IOException ioe)
-        //    {
-        //        throw new RuntimeException(ioe);
-        //    }
-        //    if (doc == null)
-        //    {
-        //        return null;
-        //    }
-        //    if (count++ == 10000)
-        //    {
-        //        return null;
-        //    }
-        //    return new BytesRef(doc.get("body"));
-        //}
+            public BytesRef Next()
+            {
+                Document doc;
+                try
+                {
+                    doc = lfd.NextDoc();
+                }
+                catch (IOException ioe)
+                {
+                    throw new Exception(ioe.Message, ioe);
+                }
+                if (doc == null)
+                {
+                    return null;
+                }
+                if (count++ == 10000)
+                {
+                    return null;
+                }
+                return new BytesRef(doc.Get("body"));
+            }
 
-        //@Override
-        //        public BytesRef payload()
-        //{
-        //    return null;
-        //}
+            public BytesRef Payload
+            {
+                get
+                {
+                    return null;
+                }
+            }
 
-        //@Override
-        //        public boolean hasPayloads()
-        //{
-        //    return false;
-        //}
+            public bool HasPayloads
+            {
+                get
+                {
+                    return false;
+                }
+            }
 
-        //@Override
-        //        public Set<BytesRef> contexts()
-        //{
-        //    return null;
-        //}
+            public IEnumerable<BytesRef> Contexts
+            {
+                get
+                {
+                    return null;
+                }
+            }
 
-        //@Override
-        //        public boolean hasContexts()
-        //{
-        //    return false;
-        //}
-        //      });
-        //    if (VERBOSE) {
-        //      System.out.println(sug.sizeInBytes() + " bytes");
+            public bool HasContexts
+            {
+                get
+                {
+                    return false;
+                }
+            }
+        }
 
-        //      List<LookupResult> results = sug.DoLookup("general r", 10);
-        //System.out.println("results:");
-        //      for(LookupResult result : results) {
-        //        System.out.println("  " + result);
-        //      }
-        //    }
-        //  }
+        [Ignore]
+        public void TestWiki()
+        {
+            LineFileDocs lfd = new LineFileDocs(null, "/lucenedata/enwiki/enwiki-20120502-lines-1k.txt", false);
+            // Skip header:
+            lfd.NextDoc();
+            FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random()));
+            sug.Build(new TestWikiInputIterator(this, lfd));
+            if (VERBOSE)
+            {
+                Console.WriteLine(sug.SizeInBytes() + " bytes");
+
+                IList<Lookup.LookupResult> results = sug.DoLookup("general r", 10);
+                Console.WriteLine("results:");
+                foreach (Lookup.LookupResult result in results)
+                {
+                    Console.WriteLine("  " + result);
+                }
+            }
+        }
 
         // Make sure you can suggest based only on unigram model:
         [Test]
