@@ -11,6 +11,12 @@
  * 6/20/2013
  */
 
+/*
+* Modified by Shad Storhaug to use either IComparable<T> or IComparer<T> depending
+* on which constructor is called, similar to the way the PQ in Java works.
+* 9/14/2016
+*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,17 +31,32 @@ namespace Lucene.Net.Support
     public class PriorityQueue<T> : ICollection<T>
         where T : IComparable<T>
     {
-        private readonly List<T> _baseHeap;
+        protected readonly List<T> baseHeap;
+        protected readonly IComparer<T> comparer;
 
         #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of priority queue with specified initial capacity
+        /// </summary>
+        /// <param name="capacity">initial capacity</param>
+        public PriorityQueue(int capacity)
+        {
+            baseHeap = new List<T>(capacity);
+        }
 
         /// <summary>
         /// Initializes a new instance of priority queue with specified initial capacity and specified priority comparer
         /// </summary>
         /// <param name="capacity">initial capacity</param>
-        public PriorityQueue(int capacity)
+        /// <param name="comparer">comparer</param>
+        public PriorityQueue(int capacity, IComparer<T> comparer)
         {
-            _baseHeap = new List<T>(capacity);
+            if (comparer == null)
+                throw new ArgumentNullException("comparer");
+
+            baseHeap = new List<T>(capacity);
+            this.comparer = comparer;
         }
 
         /// <summary>
@@ -43,7 +64,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public PriorityQueue()
         {
-            _baseHeap = new List<T>();
+            baseHeap = new List<T>();
         }
 
         /// <summary>
@@ -55,9 +76,9 @@ namespace Lucene.Net.Support
             if (data == null)
                 throw new ArgumentNullException();
 
-            _baseHeap = new List<T>(data);
+            baseHeap = new List<T>(data);
             // heapify data
-            for (int pos = _baseHeap.Count / 2 - 1; pos >= 0; pos--)
+            for (int pos = baseHeap.Count / 2 - 1; pos >= 0; pos--)
                 HeapifyFromBeginningToEnd(pos);
         }
 
@@ -66,7 +87,10 @@ namespace Lucene.Net.Support
         #region Merging
 
         /// <summary>
-        /// Merges two priority queues and sets specified comparer for resultant priority queue
+        /// Merges two priority queues and sets comparer of th resultant priority queue
+        /// to that of the first priority queue. If the first priority queue doesn't 
+        /// have a comparer, the resultant priority queue will use <see cref="IComparable{T}"/>
+        /// to sort its items.
         /// </summary>
         /// <param name="pq1">first priority queue</param>
         /// <param name="pq2">second priority queue</param>
@@ -76,11 +100,11 @@ namespace Lucene.Net.Support
             if (pq1 == null || pq2 == null)
                 throw new ArgumentNullException();
             // merge data
-            var result = new PriorityQueue<T>(pq1.Count + pq2.Count);
-            result._baseHeap.AddRange(pq1._baseHeap);
-            result._baseHeap.AddRange(pq2._baseHeap);
+            var result = new PriorityQueue<T>(pq1.Count + pq2.Count, pq1.comparer);
+            result.baseHeap.AddRange(pq1.baseHeap);
+            result.baseHeap.AddRange(pq2.baseHeap);
             // heapify data
-            for (var pos = result._baseHeap.Count / 2 - 1; pos >= 0; pos--)
+            for (var pos = result.baseHeap.Count / 2 - 1; pos >= 0; pos--)
                 result.HeapifyFromBeginningToEnd(pos);
 
             return result;
@@ -94,7 +118,7 @@ namespace Lucene.Net.Support
         /// Enqueues element into priority queue
         /// </summary>
         /// <param name="item">object to enqueue</param>
-        public void Enqueue(T item)
+        public virtual void Enqueue(T item)
         {
             Insert(item);
         }
@@ -106,11 +130,11 @@ namespace Lucene.Net.Support
         /// <remarks>
         /// Method throws <see cref="InvalidOperationException"/> if priority queue is empty
         /// </remarks>
-        public T Dequeue()
+        public virtual T Dequeue()
         {
             if (!IsEmpty)
             {
-                var result = _baseHeap[0];
+                var result = baseHeap[0];
                 DeleteRoot();
                 return result;
             }
@@ -125,15 +149,15 @@ namespace Lucene.Net.Support
         /// <remarks>
         /// Method throws <see cref="InvalidOperationException"/> if priority queue is empty
         /// </remarks>
-        public T Peek()
+        public virtual T Peek()
         {
             if (!IsEmpty)
-                return _baseHeap[0];
+                return baseHeap[0];
             else
                 throw new InvalidOperationException("Priority queue is empty");
         }
 
-        public T Poll()
+        public virtual T Poll()
         {
             try
             {
@@ -145,7 +169,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        public bool Offer(T item)
+        public virtual bool Offer(T item)
         {
             Insert(item);
             return true;
@@ -154,41 +178,52 @@ namespace Lucene.Net.Support
         /// <summary>
         /// Gets whether priority queue is empty
         /// </summary>
-        public bool IsEmpty
+        public virtual bool IsEmpty
         {
-            get { return _baseHeap.Count == 0; }
+            get { return baseHeap.Count == 0; }
         }
 
         #endregion Priority queue operations
 
         #region Heap operations
 
-        private void ExchangeElements(int pos1, int pos2)
+        protected virtual void ExchangeElements(int pos1, int pos2)
         {
-            var val = _baseHeap[pos1];
-            _baseHeap[pos1] = _baseHeap[pos2];
-            _baseHeap[pos2] = val;
+            var val = baseHeap[pos1];
+            baseHeap[pos1] = baseHeap[pos2];
+            baseHeap[pos2] = val;
         }
 
-        private void Insert(T item)
+        protected virtual void Insert(T item)
         {
-            _baseHeap.Add(item);
+            baseHeap.Add(item);
 
             // heap[i] have children heap[2*i + 1] and heap[2*i + 2] and parent heap[(i-1)/ 2];
 
             // heapify after insert, from end to beginning
-            HeapifyFromEndToBeginning(_baseHeap.Count - 1);
+            HeapifyFromEndToBeginning(baseHeap.Count - 1);
         }
 
-        private int HeapifyFromEndToBeginning(int pos)
+        protected virtual int HeapifyFromEndToBeginning(int pos)
         {
-            if (pos >= _baseHeap.Count) return -1;
+            if (comparer == null)
+            {
+                return HeapifyFromEndToBeginningUsingComparable(pos);
+            }
+            else
+            {
+                return HeapifyFromEndToBeginningUsingComparer(pos);
+            }
+        }
+
+        protected virtual int HeapifyFromEndToBeginningUsingComparable(int pos)
+        {
+            if (pos >= baseHeap.Count) return -1;
 
             while (pos > 0)
             {
                 var parentPos = (pos - 1) / 2;
-                if (_baseHeap[parentPos].CompareTo(_baseHeap[pos]) < 0)
-                //if (_comparer.Compare(_baseHeap[parentPos].Key, _baseHeap[pos].Key) > 0)
+                if (baseHeap[parentPos].CompareTo(baseHeap[pos]) < 0)
                 {
                     ExchangeElements(parentPos, pos);
                     pos = parentPos;
@@ -198,24 +233,53 @@ namespace Lucene.Net.Support
             return pos;
         }
 
-        private void DeleteRoot()
+        protected virtual int HeapifyFromEndToBeginningUsingComparer(int pos)
         {
-            if (_baseHeap.Count <= 1)
+            if (pos >= baseHeap.Count) return -1;
+
+            while (pos > 0)
             {
-                _baseHeap.Clear();
+                var parentPos = (pos - 1) / 2;
+                if (comparer.Compare(baseHeap[parentPos], baseHeap[pos]) > 0)
+                    {
+                    ExchangeElements(parentPos, pos);
+                    pos = parentPos;
+                }
+                else break;
+            }
+            return pos;
+        }
+
+        protected virtual void DeleteRoot()
+        {
+            if (baseHeap.Count <= 1)
+            {
+                baseHeap.Clear();
                 return;
             }
 
-            _baseHeap[0] = _baseHeap[_baseHeap.Count - 1];
-            _baseHeap.RemoveAt(_baseHeap.Count - 1);
+            baseHeap[0] = baseHeap[baseHeap.Count - 1];
+            baseHeap.RemoveAt(baseHeap.Count - 1);
 
             // heapify
             HeapifyFromBeginningToEnd(0);
         }
 
-        private void HeapifyFromBeginningToEnd(int pos)
+        protected virtual void HeapifyFromBeginningToEnd(int pos)
         {
-            if (pos >= _baseHeap.Count) return;
+            if (comparer == null)
+            {
+                HeapifyFromEndToBeginningUsingComparable(pos);
+            }
+            else
+            {
+                HeapifyFromBeginningToEndUsingComparer(pos);
+            }
+        }
+
+        protected virtual void HeapifyFromBeginningToEndUsingComparable(int pos)
+        {
+            if (pos >= baseHeap.Count) return;
 
             // heap[i] have children heap[2*i + 1] and heap[2*i + 2] and parent heap[(i-1)/ 2];
 
@@ -225,11 +289,35 @@ namespace Lucene.Net.Support
                 var smallest = pos;
                 var left = 2 * pos + 1;
                 var right = 2 * pos + 2;
-                if (left < _baseHeap.Count && _baseHeap[smallest].CompareTo(_baseHeap[left]) < 0)
-                    //if (left < _baseHeap.Count && _comparer.Compare(_baseHeap[smallest].Key, _baseHeap[left].Key) > 0)
+                if (left < baseHeap.Count && baseHeap[smallest].CompareTo(baseHeap[left]) < 0)
                     smallest = left;
-                if (right < _baseHeap.Count && _baseHeap[smallest].CompareTo(_baseHeap[right]) < 0)
-                    //if (right < _baseHeap.Count && _comparer.Compare(_baseHeap[smallest].Key, _baseHeap[right].Key) > 0)
+                if (right < baseHeap.Count && baseHeap[smallest].CompareTo(baseHeap[right]) < 0)
+                    smallest = right;
+
+                if (smallest != pos)
+                {
+                    ExchangeElements(smallest, pos);
+                    pos = smallest;
+                }
+                else break;
+            }
+        }
+
+        protected virtual void HeapifyFromBeginningToEndUsingComparer(int pos)
+        {
+            if (pos >= baseHeap.Count) return;
+
+            // heap[i] have children heap[2*i + 1] and heap[2*i + 2] and parent heap[(i-1)/ 2];
+
+            while (true)
+            {
+                // on each iteration exchange element with its largest child
+                var smallest = pos;
+                var left = 2 * pos + 1;
+                var right = 2 * pos + 2;
+                if (left < baseHeap.Count && comparer.Compare(baseHeap[smallest], baseHeap[left]) > 0)
+                    smallest = left;
+                if (right < baseHeap.Count && comparer.Compare(baseHeap[smallest], baseHeap[right]) > 0)
                     smallest = right;
 
                 if (smallest != pos)
@@ -249,7 +337,7 @@ namespace Lucene.Net.Support
         /// Enqueus element into priority queue
         /// </summary>
         /// <param name="item">element to add</param>
-        public void Add(T item)
+        public virtual void Add(T item)
         {
             Enqueue(item);
         }
@@ -257,9 +345,9 @@ namespace Lucene.Net.Support
         /// <summary>
         /// Clears the collection
         /// </summary>
-        public void Clear()
+        public virtual void Clear()
         {
-            _baseHeap.Clear();
+            baseHeap.Clear();
         }
 
         /// <summary>
@@ -267,17 +355,17 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="item">The object to locate in the priority queue</param>
         /// <returns><c>true</c> if item is found in the priority queue; otherwise, <c>false.</c> </returns>
-        public bool Contains(T item)
+        public virtual bool Contains(T item)
         {
-            return _baseHeap.Contains(item);
+            return baseHeap.Contains(item);
         }
 
         /// <summary>
         /// Gets number of elements in the priority queue
         /// </summary>
-        public int Count
+        public virtual int Count
         {
-            get { return _baseHeap.Count; }
+            get { return baseHeap.Count; }
         }
 
         /// <summary>
@@ -288,9 +376,9 @@ namespace Lucene.Net.Support
         /// <remarks>
         /// It is not guaranteed that items will be copied in the sorted order.
         /// </remarks>
-        public void CopyTo(T[] array, int arrayIndex)
+        public virtual void CopyTo(T[] array, int arrayIndex)
         {
-            _baseHeap.CopyTo(array, arrayIndex);
+            baseHeap.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
@@ -299,7 +387,7 @@ namespace Lucene.Net.Support
         /// <remarks>
         /// For priority queue this property returns <c>false</c>.
         /// </remarks>
-        public bool IsReadOnly
+        public virtual bool IsReadOnly
         {
             get { return false; }
         }
@@ -310,15 +398,15 @@ namespace Lucene.Net.Support
         /// <param name="item">The object to remove from the ICollection <(Of <(T >)>). </param>
         /// <returns><c>true</c> if item was successfully removed from the priority queue.
         /// This method returns false if item is not found in the collection. </returns>
-        public bool Remove(T item)
+        public virtual bool Remove(T item)
         {
             // find element in the collection and remove it
-            var elementIdx = _baseHeap.IndexOf(item);
+            var elementIdx = baseHeap.IndexOf(item);
             if (elementIdx < 0) return false;
 
             //remove element
-            _baseHeap[elementIdx] = _baseHeap[_baseHeap.Count - 1];
-            _baseHeap.RemoveAt(_baseHeap.Count - 1);
+            baseHeap[elementIdx] = baseHeap[baseHeap.Count - 1];
+            baseHeap.RemoveAt(baseHeap.Count - 1);
 
             // heapify
             var newPos = HeapifyFromEndToBeginning(elementIdx);
@@ -334,9 +422,9 @@ namespace Lucene.Net.Support
         /// <returns>Enumerator</returns>
         /// <remarks>
         /// Returned enumerator does not iterate elements in sorted order.</remarks>
-        public IEnumerator<T> GetEnumerator()
+        public virtual IEnumerator<T> GetEnumerator()
         {
-            return _baseHeap.GetEnumerator();
+            return baseHeap.GetEnumerator();
         }
 
         /// <summary>
