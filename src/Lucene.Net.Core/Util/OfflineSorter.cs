@@ -191,7 +191,7 @@ namespace Lucene.Net.Util
 
             public override string ToString()
             {
-                return string.Format("time=%.2f sec. total (%.2f reading, %.2f sorting, %.2f merging), lines=%d, temp files=%d, merges=%d, soft ram limit=%.2f MB", TotalTime / 1000.0d, ReadTime / 1000.0d, SortTime / 1000.0d, MergeTime / 1000.0d, Lines, TempMergeFiles, MergeRounds, (double)BufferSize / MB);
+                return string.Format("time={0:0.00} sec. total ({1:0.00} reading, {2:0.00} sorting, {3:0.00} merging), lines={4}, temp files={5}, merges={6}, soft ram limit={7:0.00} MB", TotalTime / 1000.0d, ReadTime / 1000.0d, SortTime / 1000.0d, MergeTime / 1000.0d, Lines, TempMergeFiles, MergeRounds, (double)BufferSize / MB);
             }
         }
 
