@@ -160,8 +160,8 @@ namespace Lucene.Net.Search.Suggest.Fst
                     automaton.ReadNextArc(arc, fstReader);
                 }
 
-                rootArcs.Reverse(); // we want highest weights first.
-                return rootArcs.ToArray();
+                // we want highest weights first.
+                return rootArcs.Reverse().ToArray();
             }
             catch (IOException e)
             {
