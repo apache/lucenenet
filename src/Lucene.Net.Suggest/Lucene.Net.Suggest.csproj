@@ -57,6 +57,7 @@
     <Compile Include="Spell\SuggestWordQueue.cs" />
     <Compile Include="Spell\SuggestWordScoreComparator.cs" />
     <Compile Include="Spell\TermFreqIterator.cs" />
+    <Compile Include="Spell\WordBreakSpellChecker.cs" />
     <Compile Include="Suggest\Analyzing\AnalyzingInfixSuggester.cs" />
     <Compile Include="Suggest\Analyzing\AnalyzingSuggester.cs" />
     <Compile Include="Suggest\Analyzing\BlendedInfixSuggester.cs" />

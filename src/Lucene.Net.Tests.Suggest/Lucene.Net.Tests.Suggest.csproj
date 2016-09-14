@@ -52,6 +52,7 @@
     <Compile Include="Spell\TestNGramDistance.cs" />
     <Compile Include="Spell\TestPlainTextDictionary.cs" />
     <Compile Include="Spell\TestSpellChecker.cs" />
+    <Compile Include="Spell\TestWordBreakSpellChecker.cs" />
     <Compile Include="Suggest\Analyzing\AnalyzingInfixSuggesterTest.cs" />
     <Compile Include="Suggest\Analyzing\AnalyzingSuggesterTest.cs" />
     <Compile Include="Suggest\Analyzing\BlendedInfixSuggesterTest.cs" />
