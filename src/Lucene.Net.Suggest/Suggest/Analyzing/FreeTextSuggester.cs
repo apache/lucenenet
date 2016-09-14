@@ -762,7 +762,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         seen.Add(BytesRef.DeepCopyOf(lastToken));
                         spare.Grow(token.Length);
                         UnicodeUtil.UTF8toUTF16(token, spare);
-                        LookupResult result = new LookupResult(spare.ToString(), (long)(long.MaxValue * backoff * ((double)DecodeWeight(completion.Output)) / contextCount));
+                        LookupResult result = new LookupResult(spare.ToString(),
+                            // LUCENENET NOTE: We need to calculate this as decimal because when using double it can sometimes 
+                            // return numbers that are greater than long.MaxValue, which results in a negative long number.
+                            (long)(long.MaxValue * (decimal)backoff * ((decimal)DecodeWeight(completion.Output)) / contextCount));
                         results.Add(result);
                         Debug.Assert(results.Count == seen.Count);
                         //System.out.println("  add result=" + result);
