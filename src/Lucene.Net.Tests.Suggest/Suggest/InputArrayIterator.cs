@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Suggest
     /// <summary>
     /// A <seealso cref="InputIterator"/> over a sequence of <seealso cref="Input"/>s.
     /// </summary>
-    public sealed class InputArrayIterator : InputIterator
+    public sealed class InputArrayIterator : IInputIterator
     {
         private readonly IEnumerator<Input> i;
         private readonly bool hasPayloads;

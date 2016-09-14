@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Suggest
             this.contextsField = contextsField;
         }
 
-        public virtual InputIterator EntryIterator
+        public virtual IInputIterator EntryIterator
         {
             get
             {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Implements <seealso cref="InputIterator"/> from stored fields. </summary>
-        protected internal class DocumentInputIterator : InputIterator
+        protected internal class DocumentInputIterator : IInputIterator
         {
             private readonly DocumentDictionary outerInstance;
 

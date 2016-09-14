@@ -24,7 +24,7 @@ namespace Lucene.Net.Search.Suggest
     /// This wrapper buffers incoming elements.
     /// @lucene.experimental
     /// </summary>
-    public class BufferedInputIterator : InputIterator
+    public class BufferedInputIterator : IInputIterator
     {
         // TODO keep this for now
         /// <summary>
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a new iterator, buffering entries from the specified iterator </summary>
-        public BufferedInputIterator(InputIterator source)
+        public BufferedInputIterator(IInputIterator source)
         {
             BytesRef spare;
             int freqIndex = 0;

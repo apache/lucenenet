@@ -28,10 +28,10 @@ namespace Lucene.Net.Search.Suggest
     /// This wrapper buffers incoming elements and makes sure they are sorted based on given comparator.
     /// @lucene.experimental
     /// </summary>
-    public class SortedInputIterator : InputIterator
+    public class SortedInputIterator : IInputIterator
     {
 
-        private readonly InputIterator source;
+        private readonly IInputIterator source;
         private FileInfo tempInput;
         private FileInfo tempSorted;
         private readonly OfflineSorter.ByteSequencesReader reader;
@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Suggest
         /// BytesRef#getUTF8SortedAsUnicodeComparator} for
         /// sorting. 
         /// </summary>
-        public SortedInputIterator(InputIterator source)
+        public SortedInputIterator(IInputIterator source)
             : this(source, BytesRef.UTF8SortedAsUnicodeComparer)
         {
         }
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Suggest
         /// Creates a new sorted wrapper, sorting by BytesRef
         /// (ascending) then cost (ascending).
         /// </summary>
-        public SortedInputIterator(InputIterator source, IComparer<BytesRef> comparator)
+        public SortedInputIterator(IInputIterator source, IComparer<BytesRef> comparator)
         {
             this.tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper(this);
             this.hasPayloads = source.HasPayloads;

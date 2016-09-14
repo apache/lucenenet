@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Spell
             this.thresh = thresh;
         }
 
-        public InputIterator EntryIterator
+        public IInputIterator EntryIterator
         {
             get
             {
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
-        internal sealed class HighFrequencyIterator : InputIterator
+        internal sealed class HighFrequencyIterator : IInputIterator
         {
             private readonly HighFrequencyDictionary outerInstance;
 

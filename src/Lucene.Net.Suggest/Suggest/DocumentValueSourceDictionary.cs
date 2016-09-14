@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Suggest
             this.weightsValueSource = weightsValueSource;
         }
 
-        public override InputIterator EntryIterator
+        public override IInputIterator EntryIterator
         {
             get
             {

@@ -111,7 +111,7 @@ namespace Lucene.Net.Search.Suggest
             this.fieldDelimiter = fieldDelimiter;
         }
 
-        public virtual InputIterator EntryIterator
+        public virtual IInputIterator EntryIterator
         {
             get
             {
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        internal sealed class FileIterator : InputIterator
+        internal sealed class FileIterator : IInputIterator
         {
             private readonly FileDictionary outerInstance;
 

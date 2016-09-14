@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Suggest
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);
             IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME, PAYLOAD_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
 
             assertNull(inputIterator.Next());
             assertEquals(inputIterator.Weight, 0);
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Suggest
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);
             IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME, PAYLOAD_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
             {
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search.Suggest
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);
             IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
             {
@@ -238,7 +238,7 @@ namespace Lucene.Net.Search.Suggest
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);
             IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME, PAYLOAD_FIELD_NAME, CONTEXT_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
             {
@@ -317,7 +317,7 @@ namespace Lucene.Net.Search.Suggest
             IndexReader ir = DirectoryReader.Open(dir);
             assertEquals(ir.NumDocs, docs.size());
             IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
             {

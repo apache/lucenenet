@@ -407,7 +407,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override void Build(InputIterator iterator)
+        public override void Build(IInputIterator iterator)
         {
             if (iterator.HasContexts)
             {

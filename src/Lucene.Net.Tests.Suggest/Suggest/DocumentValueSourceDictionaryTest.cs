@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Suggest
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);
             IDictionary dictionary = new DocumentValueSourceDictionary(ir, FIELD_NAME, new DoubleConstValueSource(10), PAYLOAD_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
 
             assertNull(inputIterator.Next());
             assertEquals(inputIterator.Weight, 0);
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Suggest
             IndexReader ir = DirectoryReader.Open(dir);
             ValueSource[] toAdd = new ValueSource[] { new LongFieldSource(WEIGHT_FIELD_NAME_1), new LongFieldSource(WEIGHT_FIELD_NAME_2), new LongFieldSource(WEIGHT_FIELD_NAME_3) };
             IDictionary dictionary = new DocumentValueSourceDictionary(ir, FIELD_NAME, new SumFloatFunction(toAdd), PAYLOAD_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
             {
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search.Suggest
             IndexReader ir = DirectoryReader.Open(dir);
             ValueSource[] toAdd = new ValueSource[] { new LongFieldSource(WEIGHT_FIELD_NAME_1), new LongFieldSource(WEIGHT_FIELD_NAME_2), new LongFieldSource(WEIGHT_FIELD_NAME_3) };
             IDictionary dictionary = new DocumentValueSourceDictionary(ir, FIELD_NAME, new SumFloatFunction(toAdd), PAYLOAD_FIELD_NAME, CONTEXTS_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
             {
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Suggest
             IndexReader ir = DirectoryReader.Open(dir);
             ValueSource[] toAdd = new ValueSource[] { new LongFieldSource(WEIGHT_FIELD_NAME_1), new LongFieldSource(WEIGHT_FIELD_NAME_2), new LongFieldSource(WEIGHT_FIELD_NAME_3) };
             IDictionary dictionary = new DocumentValueSourceDictionary(ir, FIELD_NAME, new SumFloatFunction(toAdd));
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
             {
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search.Suggest
             ValueSource[] toAdd = new ValueSource[] { new LongFieldSource(WEIGHT_FIELD_NAME_1), new LongFieldSource(WEIGHT_FIELD_NAME_2) };
 
             IDictionary dictionary = new DocumentValueSourceDictionary(ir, FIELD_NAME, new SumFloatFunction(toAdd), PAYLOAD_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
             {
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search.Suggest
 
             IndexReader ir = DirectoryReader.Open(dir);
             IDictionary dictionary = new DocumentValueSourceDictionary(ir, FIELD_NAME, new DoubleConstValueSource(10), PAYLOAD_FIELD_NAME);
-            InputIterator inputIterator = dictionary.EntryIterator;
+            IInputIterator inputIterator = dictionary.EntryIterator;
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
             {

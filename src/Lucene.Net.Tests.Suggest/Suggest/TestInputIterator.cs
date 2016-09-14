@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.Suggest
         public void TestEmpty()
         {
             InputArrayIterator iterator = new InputArrayIterator(new Input[0]);
-            InputIterator wrapper = new SortedInputIterator(iterator, BytesRef.UTF8SortedAsUnicodeComparer);
+            IInputIterator wrapper = new SortedInputIterator(iterator, BytesRef.UTF8SortedAsUnicodeComparer);
             assertNull(wrapper.Next());
             wrapper = new UnsortedInputIterator(iterator);
             assertNull(wrapper.Next());
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Suggest
             }
 
             // test the sorted iterator wrapper with payloads
-            InputIterator wrapper = new SortedInputIterator(new InputArrayIterator(unsorted), comparator);
+            IInputIterator wrapper = new SortedInputIterator(new InputArrayIterator(unsorted), comparator);
             IEnumerator<KeyValuePair<BytesRef, KeyValuePair<long, BytesRef>>> expected = sorted.GetEnumerator();
             while (expected.MoveNext())
             {
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Suggest
             assertEquals(sorted, actual);
 
             // test the sorted iterator wrapper without payloads
-            InputIterator wrapperWithoutPayload = new SortedInputIterator(new InputArrayIterator(unsortedWithoutPayload), comparator);
+            IInputIterator wrapperWithoutPayload = new SortedInputIterator(new InputArrayIterator(unsortedWithoutPayload), comparator);
             IEnumerator<KeyValuePair<BytesRef, long>> expectedWithoutPayload = sortedWithoutPayload.GetEnumerator();
             while (expectedWithoutPayload.MoveNext())
             {

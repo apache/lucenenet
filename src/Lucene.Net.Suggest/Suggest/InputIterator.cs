@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Suggest
     /// currently only <seealso cref="AnalyzingSuggester"/>, <seealso cref="FuzzySuggester"/>
     /// and <seealso cref="AnalyzingInfixSuggester"/> support payloads.
     /// </summary>
-    public interface InputIterator : BytesRefIterator
+    public interface IInputIterator : BytesRefIterator
     {
 
         /// <summary>
@@ -55,18 +55,18 @@ namespace Lucene.Net.Search.Suggest
     }
 
     /// <summary>
-    /// Singleton InputIterator that iterates over 0 BytesRefs.
+    /// Singleton IInputIterator that iterates over 0 BytesRefs.
     /// </summary>
     public static class EmptyInputIterator
     {
-        public static readonly InputIterator Instance = new InputIteratorWrapper(EmptyBytesRefIterator.Instance);
+        public static readonly IInputIterator Instance = new InputIteratorWrapper(EmptyBytesRefIterator.Instance);
     }
 
     /// <summary>
-    /// Wraps a BytesRefIterator as a suggester InputIterator, with all weights
+    /// Wraps a BytesRefIterator as a suggester IInputIterator, with all weights
     /// set to <code>1</code> and carries no payload
     /// </summary>
-    public class InputIteratorWrapper : InputIterator
+    public class InputIteratorWrapper : IInputIterator
     {
         internal readonly BytesRefIterator wrapped;
 

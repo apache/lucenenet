@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         //// Skip header:
         //lfd.nextDoc();
         //    FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random()));
-        //sug.Build(new InputIterator()
+        //sug.Build(new IInputIterator()
         //{
 
         //        private int count;
@@ -332,7 +332,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         private static IComparer<Lookup.LookupResult> byScoreThenKey = new ByScoreThenKeyComparator();
 
-        internal class TestRandomInputIterator : InputIterator
+        internal class TestRandomInputIterator : IInputIterator
         {
             internal int upto;
             private readonly TestFreeTextSuggester outerInstance;

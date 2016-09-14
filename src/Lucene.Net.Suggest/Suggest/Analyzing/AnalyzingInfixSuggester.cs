@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return FSDirectory.Open(path);
         }
 
-        public override void Build(InputIterator iter)
+        public override void Build(IInputIterator iter)
         {
 
             if (searcherMgr != null)

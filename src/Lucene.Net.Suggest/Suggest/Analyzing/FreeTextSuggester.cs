@@ -286,7 +286,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override void Build(InputIterator iterator)
+        public override void Build(IInputIterator iterator)
         {
             Build(iterator, IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB);
         }
@@ -296,7 +296,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  amount of temporary RAM while building.  Note that
         ///  the weights for the suggestions are ignored. 
         /// </summary>
-        public virtual void Build(InputIterator iterator, double ramBufferSizeMB)
+        public virtual void Build(IInputIterator iterator, double ramBufferSizeMB)
         {
             if (iterator.HasPayloads)
             {

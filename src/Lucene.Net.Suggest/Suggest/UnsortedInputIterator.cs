@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Suggest
         /// Creates a new iterator, wrapping the specified iterator and
         /// returning elements in a random order.
         /// </summary>
-        public UnsortedInputIterator(InputIterator source)
+        public UnsortedInputIterator(IInputIterator source)
             : base(source)
         {
             ords = new int[entries.Size()];

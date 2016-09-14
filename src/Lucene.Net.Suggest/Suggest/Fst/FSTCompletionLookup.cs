@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             this.higherWeightsCompletion = new FSTCompletion(completion.FST, true, exactMatchFirst);
         }
 
-        public override void Build(InputIterator iterator)
+        public override void Build(IInputIterator iterator)
         {
             if (iterator.HasPayloads)
             {

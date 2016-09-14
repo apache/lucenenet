@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             this.exactFirst = exactFirst;
         }
 
-        public override void Build(InputIterator iterator)
+        public override void Build(IInputIterator iterator)
         {
             if (iterator.HasPayloads)
             {
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             count = 0;
             var scratch = new BytesRef();
-            InputIterator iter = new WFSTInputIterator(this, iterator);
+            IInputIterator iter = new WFSTInputIterator(this, iterator);
             var scratchInts = new IntsRef();
             BytesRef previous = null;
             var outputs = PositiveIntOutputs.Singleton;
@@ -288,7 +288,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             private readonly WFSTCompletionLookup outerInstance;
 
 
-            internal WFSTInputIterator(WFSTCompletionLookup outerInstance, InputIterator source)
+            internal WFSTInputIterator(WFSTCompletionLookup outerInstance, IInputIterator source)
                 : base(source)
             {
                 this.outerInstance = outerInstance;

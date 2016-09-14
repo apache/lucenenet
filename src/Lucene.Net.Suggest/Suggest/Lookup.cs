@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Suggest
         /// Builds up a new internal <seealso cref="Lookup"/> representation based on the given <seealso cref="InputIterator"/>.
         /// The implementation might re-sort the data internally.
         /// </summary>
-        public abstract void Build(InputIterator inputIterator);
+        public abstract void Build(IInputIterator inputIterator);
 
         /// <summary>
         /// Look up a key and return possible completion for this key. </summary>

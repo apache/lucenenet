@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Spell
             @in = reader;
         }
 
-        public virtual InputIterator EntryIterator
+        public virtual IInputIterator EntryIterator
         {
             get
             {

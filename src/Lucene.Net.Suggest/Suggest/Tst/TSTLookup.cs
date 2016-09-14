@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         {
         }
 
-        public override void Build(InputIterator tfit)
+        public override void Build(IInputIterator tfit)
         {
             if (tfit.HasPayloads)
             {
