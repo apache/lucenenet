@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -9,6 +10,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -528,46 +532,63 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             internal int index;
         }
 
-        //private static class LookupThread : Thread
-        //{
-        //    private readonly AnalyzingInfixSuggester suggester;
-        //    private volatile boolean stop;
+        private class LookupThread : ThreadClass
+        {
+            private readonly AnalyzingInfixSuggesterTest outerInstance;
 
-        //public LookupThread(AnalyzingInfixSuggester suggester)
-        //{
-        //    this.suggester = suggester;
-        //}
+            private readonly AnalyzingInfixSuggester suggester;
+            private readonly AtomicBoolean stop;
+            private Exception[] error;
 
-        //public void finish()
-        //{
-        //    stop = true;
-        //      this.join();
-        //}
+            public LookupThread(AnalyzingInfixSuggesterTest outerInstance, AnalyzingInfixSuggester suggester, AtomicBoolean stop, Exception[] error)
+            {
+                this.outerInstance = outerInstance;
+                this.suggester = suggester;
+                this.stop = stop;
+                this.error = error;
+            }
 
-        //@Override
-        //    public void run()
-        //{
-        //    while (stop == false)
-        //    {
-        //        String query = randomText();
-        //        int topN = TestUtil.nextInt(random(), 1, 100);
-        //        boolean allTermsRequired = random().nextBoolean();
-        //        boolean doHilite = random().nextBoolean();
-        //        // We don't verify the results; just doing
-        //        // simultaneous lookups while adding/updating to
-        //        // see if there are any thread hazards:
-        //        try
-        //        {
-        //            suggester.lookup(TestUtil.stringToCharSequence(query, random()),
-        //                             topN, allTermsRequired, doHilite);
-        //        }
-        //        catch (IOException ioe)
-        //        {
-        //            throw new RuntimeException(ioe);
-        //        }
-        //    }
-        //}
-        //  }
+            public override void Run()
+            {
+                Priority += 1;
+                while (!stop.Get())
+                {
+                    string query = RandomText();
+                    int topN = TestUtil.NextInt(Random(), 1, 100);
+                    bool allTermsRequired = Random().nextBoolean();
+                    bool doHilite = Random().nextBoolean();
+                    // We don't verify the results; just doing
+                    // simultaneous lookups while adding/updating to
+                    // see if there are any thread hazards:
+                    try
+                    {
+                        suggester.DoLookup(TestUtil.StringToCharSequence(query, Random()).ToString(),
+                                         topN, allTermsRequired, doHilite);
+                        Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
+                    }
+                    catch (Exception e)
+                    {
+                        error[0] = e;
+                        stop.Set(true);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Grab the stack trace into a string since the exception was thrown in a thread and we want the assert 
+        /// outside the thread to show the stack trace in case of failure.   
+        /// </summary>
+        private string stackTraceStr(Exception error)
+        {
+            if (error == null)
+            {
+                return "";
+            }
+
+            error.printStackTrace();
+            return error.StackTrace;
+        }
 
         internal class TestRandomNRTComparator : IComparer<Input>
         {
@@ -588,7 +609,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        /* LUCENENET TODO: Compile issues
         [Test]
         public void TestRandomNRT()
         {
@@ -605,8 +625,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // Initial suggester built with nothing:
             suggester.Build(new InputArrayIterator(new Input[0]));
 
-            LookupThread lookupThread = new LookupThread(suggester);
-            lookupThread.start();
+            var stop = new AtomicBoolean(false);
+            Exception[] error = new Exception[] { null };
+
+            LookupThread lookupThread = new LookupThread(this, suggester, stop, error);
+            lookupThread.Start();
 
             int iters = AtLeast(1000);
             int visibleUpto = 0;
@@ -693,11 +716,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         Console.WriteLine("TEST: now close/reopen suggester");
                     }
-                    lookupThread.finish();
+                    //lookupThread.Finish();
+                    stop.Set(true);
+                    lookupThread.Join();
+                    Assert.Null(error[0], "Unexpcted exception at retry : \n" + stackTraceStr(error[0]));
                     suggester.Dispose();
                     suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewFSDirectory(tempDir), a, a, minPrefixChars);
-                    lookupThread = new LookupThread(suggester);
-                    lookupThread.start();
+                    lookupThread = new LookupThread(this, suggester, stop, error);
+                    lookupThread.Start();
 
                     visibleUpto = inputs.size();
                     foreach (Update update in pendingUpdates)
@@ -711,7 +737,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (visibleUpto > 0)
                 {
-                    String query = RandomText();
+                    string query = RandomText();
                     bool lastPrefix = Random().nextInt(5) != 1;
                     if (lastPrefix == false)
                     {
@@ -791,26 +817,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     expected.Sort(new TestRandomNRTComparator());
 
-                    //        Collections.sort(expected,
-                    //                         new Comparator<Input>() {
-                    //                           @Override
-                    //                           public int compare(Input a, Input b)
-                    //{
-                    //    if (a.v > b.v)
-                    //    {
-                    //        return -1;
-                    //    }
-                    //    else if (a.v < b.v)
-                    //    {
-                    //        return 1;
-                    //    }
-                    //    else
-                    //    {
-                    //        return 0;
-                    //    }
-                    //}
-                    //                         });
-
                     if (expected.Any())
                     {
 
@@ -853,10 +859,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            lookupThread.finish();
+            //lookupThread.finish();
+            stop.Set(true);
+            lookupThread.Join();
+            Assert.Null(error[0], "Unexpcted exception at retry : \n" + stackTraceStr(error[0]));
             suggester.Dispose();
         }
-        */
 
         private static string Hilite(bool lastPrefix, string[] inputTerms, string[] queryTerms)
         {
@@ -893,7 +901,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         b.Append("<b>");
                         b.Append(queryTerm);
                         b.Append("</b>");
-                        b.Append(inputTerm.Substring(queryTerm.Length, inputTerm.Length));
+                        b.Append(inputTerm.Substring(queryTerm.Length, inputTerm.Length - queryTerm.Length));
                         matched = true;
                         break;
                     }
