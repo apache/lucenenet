@@ -172,7 +172,7 @@ namespace Lucene.Net.Support
                         continue;
                     }
                     // Create the file
-                    File.WriteAllText(fileName, string.Empty, Encoding.UTF8);
+                    File.WriteAllText(fileName, string.Empty, new UTF8Encoding(false) /* No BOM */);
                     break;
                 }
                 catch (IOException e)

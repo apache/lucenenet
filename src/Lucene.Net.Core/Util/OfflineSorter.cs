@@ -6,6 +6,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support.Compatibility;
 using System.Linq;
 using Lucene.Net.Support;
+using System.Text;
 
 namespace Lucene.Net.Util
 {
@@ -530,7 +531,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Constructs a ByteSequencesWriter to the provided File </summary>
             public ByteSequencesWriter(FileInfo file)
-                : this(new BinaryWriterDataOutput(new BinaryWriter(new FileStream(file.FullName, FileMode.OpenOrCreate))))
+                : this(NewBinaryWriterDataOutput(file))
             {
             }
 
@@ -539,6 +540,24 @@ namespace Lucene.Net.Util
             public ByteSequencesWriter(DataOutput os)
             {
                 this.Os = os;
+            }
+
+            /// <summary>
+            /// LUCENENET specific - ensures the file has been created with no BOM
+            /// if it doesn't already exist and opens the file for writing.
+            /// Java doesn't use a BOM by default.
+            /// </summary>
+            private static BinaryWriterDataOutput NewBinaryWriterDataOutput(FileInfo file)
+            {
+                string fileName = file.FullName;
+                // Create the file (without BOM) if it doesn't already exist
+                if (!File.Exists(fileName))
+                {
+                    // Create the file
+                    File.WriteAllText(fileName, string.Empty, new UTF8Encoding(false) /* No BOM */);
+                }
+
+                return new BinaryWriterDataOutput(new BinaryWriter(new FileStream(fileName, FileMode.Open, FileAccess.Write)));
             }
 
             /// <summary>
