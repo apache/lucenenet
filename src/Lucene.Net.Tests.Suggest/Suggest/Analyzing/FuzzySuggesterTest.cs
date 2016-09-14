@@ -287,54 +287,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestGraphDups()
         {
             Analyzer analyzer = new TestGraphDupsAnalyzer(this);
-            //                Analyzer analyzer = new Analyzer()
-            //{
-            //    @Override
-            //      protected TokenStreamComponents createComponents(String fieldName, Reader reader)
-            //{
-            //    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-
-            //    return new TokenStreamComponents(tokenizer) {
-            //          int tokenStreamCounter = 0;
-            //    final TokenStream[] tokenStreams = new TokenStream[] {
-            //            new CannedTokenStream(new Token[] {
-            //                token("wifi",1,1),
-            //                token("hotspot",0,2),
-            //                token("network",1,1),
-            //                token("is",1,1),
-            //                token("slow",1,1)
-            //              }),
-            //            new CannedTokenStream(new Token[] {
-            //                token("wi",1,1),
-            //                token("hotspot",0,3),
-            //                token("fi",1,1),
-            //                token("network",1,1),
-            //                token("is",1,1),
-            //                token("fast",1,1)
-
-            //              }),
-            //            new CannedTokenStream(new Token[] {
-            //                token("wifi",1,1),
-            //                token("hotspot",0,2),
-            //                token("network",1,1)
-            //              }),
-            //          };
-
-            //    @Override
-            //          public TokenStream getTokenStream()
-            //{
-            //    TokenStream result = tokenStreams[tokenStreamCounter];
-            //    tokenStreamCounter++;
-            //    return result;
-            //}
-
-            //@Override
-            //          protected void setReader(final Reader reader) 
-            //{
-            //}
-            //        };
-            //      }
-            //    };
 
             Input[] keys = new Input[] {
                 new Input("wifi network is slow", 50),
@@ -389,7 +341,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             public TestInputPathRequiredTokenStreamComponents(FuzzySuggesterTest outerInstance, Tokenizer tokenizer)
                 : base(tokenizer)
             {
-
+                this.outerInstance = outerInstance;
             }
 
             public override TokenStream TokenStream
@@ -439,47 +391,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             //  synonym module 
 
             Analyzer analyzer = new TestInputPathRequiredAnalyzer(this);
-            //    Analyzer analyzer = new Analyzer()
-            //{
-            //    @Override
-            //      protected TokenStreamComponents createComponents(String fieldName, Reader reader)
-            //{
-            //    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-
-            //    return new TokenStreamComponents(tokenizer) {
-            //          int tokenStreamCounter = 0;
-            //    final TokenStream[] tokenStreams = new TokenStream[] {
-            //            new CannedTokenStream(new Token[] {
-            //                token("ab",1,1),
-            //                token("ba",0,1),
-            //                token("xc",1,1)
-            //              }),
-            //            new CannedTokenStream(new Token[] {
-            //                token("ba",1,1),
-            //                token("xd",1,1)
-            //              }),
-            //            new CannedTokenStream(new Token[] {
-            //                token("ab",1,1),
-            //                token("ba",0,1),
-            //                token("x",1,1)
-            //              })
-            //          };
-
-            //    @Override
-            //          public TokenStream getTokenStream()
-            //{
-            //    TokenStream result = tokenStreams[tokenStreamCounter];
-            //    tokenStreamCounter++;
-            //    return result;
-            //}
-
-            //@Override
-            //          protected void setReader(final Reader reader) 
-            //{
-            //}
-            //        };
-            //      }
-            //    };
 
             Input[] keys = new Input[] {
                 new Input("ab xc", 50),
@@ -576,44 +487,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private Analyzer GetUnusualAnalyzer()
         {
             return new UsualAnalyzer(this);
-            //    return new Analyzer() {
-            //      @Override
-            //      protected TokenStreamComponents createComponents(String fieldName, Reader reader)
-            //{
-            //    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-
-            //    return new TokenStreamComponents(tokenizer) {
-
-            //          int count;
-
-            //    @Override
-            //          public TokenStream getTokenStream()
-            //{
-            //    // 4th time we are called, return tokens a b,
-            //    // else just a:
-            //    if (count++ != 3)
-            //    {
-            //        return new CannedTokenStream(new Token[] {
-            //                  token("a", 1, 1),
-            //                });
-            //    }
-            //    else
-            //    {
-            //        // After that "a b":
-            //        return new CannedTokenStream(new Token[] {
-            //                  token("a", 1, 1),
-            //                  token("b", 1, 1),
-            //                });
-            //    }
-            //}
-
-            //@Override
-            //          protected void setReader(final Reader reader) 
-            //{
-            //}
-            //        };
-            //      }
-            //    };
         }
 
         [Test]
@@ -835,12 +708,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             public int Compare(Lookup.LookupResult left, Lookup.LookupResult right)
             {
-                // LUCENENET TODO: Work out how to cast long to float in the same way Java does
-                // http://stackoverflow.com/q/1293819/181087
-                //int cmp = Float.compare(right.weight, left.weight);
-                // LUCENENET NOTE: It shouldn't matter that the decimal place is not correct here,
-                // since all we care about is the relative difference between the numbers. Hopefully,
-                // the loss of precision is equivalent between Java and .NET...
                 int cmp = ((float)right.value).CompareTo((float)left.value);
                 if (cmp == 0)
                 {
@@ -923,7 +790,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                     }
 
-                    //analyzedKey = analyzedKey.replaceAll("(^| )\u0000$", "");
                     analyzedKey = Regex.Replace(analyzedKey, "(^| )\u0000$", "");
 
                     if (preserveSep && lastRemoved)
@@ -955,7 +821,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Don't just sort original list, to avoid VERBOSE
                 // altering the test:
                 List<TermFreqPayload2> sorted = new List<TermFreqPayload2>(slowCompletor);
-                //Collections.sort(sorted);
                 sorted.Sort();
                 foreach (TermFreqPayload2 ent in sorted)
                 {
@@ -1016,9 +881,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // issue open for this):
                 while (true)
                 {
-                    //String s = analyzedKey.replaceAll("(^| )\u0000$", "");
                     string s = Regex.Replace(analyzedKey, "(^| )\u0000$", "");
-                    //s = s.replaceAll("\\s+$", "");
                     s = Regex.Replace(s, "\\s+$", "");
                     if (s.Equals(analyzedKey))
                     {
@@ -1088,23 +951,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (matches.size() > 1)
                 {
-
                     matches.Sort(new TestRandomComparator());
-                    //        Collections.sort(matches, new Comparator<Lookup.LookupResult>() {
-                    //            @Override
-                    //            public int compare(Lookup.LookupResult left, Lookup.LookupResult right)
-                    //{
-                    //    int cmp = Float.compare(right.value, left.value);
-                    //    if (cmp == 0)
-                    //    {
-                    //        return left.compareTo(right);
-                    //    }
-                    //    else
-                    //    {
-                    //        return cmp;
-                    //    }
-                    //}
-                    //          });
                 }
 
                 if (matches.size() > topN)
@@ -1150,7 +997,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input(" a", 60),
             });
 
-            //Collections.shuffle(keys, Random());
             keys = CollectionsHelper.Shuffle(keys);
             suggester.Build(new InputArrayIterator(keys));
 
@@ -1175,7 +1021,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("barbazfoo", 10),
             });
 
-            //Collections.shuffle(keys, Random());
             keys = CollectionsHelper.Shuffle(keys);
             suggester.Build(new InputArrayIterator(keys));
 
@@ -1186,7 +1031,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
 
-        //@SuppressWarnings("fallthrough")
         private static string AddRandomEdit(string @string, int prefixLength)
         {
             char[] input = @string.ToCharArray();
@@ -1290,13 +1134,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             answers.Sort(new TestRandom2Comparator());
 
-            //    Collections.sort(answers, new Comparator<Input>() {
-            //        @Override
-            //        public int compare(Input a, Input b)
-            //{
-            //    return a.term.compareTo(b.term);
-            //}
-            //      });
             if (VERBOSE)
             {
                 Console.WriteLine("\nTEST: targets");
@@ -1319,7 +1156,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 Console.WriteLine("TEST: maxEdits=" + maxEdits + " prefixLen=" + prefixLen + " transpositions=" + transpositions + " num=" + NUM);
             }
 
-            //Collections.shuffle(answers, Random());
             answers = new List<Input>(CollectionsHelper.Shuffle(answers));
             suggest.Build(new InputArrayIterator(answers.ToArray()));
 
@@ -1350,7 +1186,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                 }
 
-                //Collections.sort(actual, new CompareByCostThenAlpha());
                 actual.Sort(new CompareByCostThenAlpha());
 
                 int limit = Math.Min(expected.size(), actual.size());
@@ -1435,7 +1270,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                 }
 
-                //Collections.sort(results, new CompareByCostThenAlpha());
                 results.Sort(new CompareByCostThenAlpha());
             }
 
@@ -1513,7 +1347,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             otherPoints = ToIntsRef(other);
             n = targetPoints.Length;
             int m = otherPoints.Length;
-            //d = new int[n + 1][m + 1];
+
             d = ReturnRectangularIntArray(n + 1, m + 1);
 
 

@@ -276,7 +276,6 @@ namespace Lucene.Net.Search.Suggest.Fst
                 int colLen = Math.Max(MaxLen(expected), MaxLen(result));
 
                 StringBuilder b = new StringBuilder();
-                //string format = "%" + colLen + "s  " + "%" + colLen + "s\n";
                 string format = "{0," + colLen + "}  {1," + colLen + "}\n";
                 b.append(string.Format(CultureInfo.InvariantCulture, format, "Expected", "Result"));
                 for (int i = 0; i < Math.Max(result.Length, expected.Length); i++)
@@ -296,7 +295,6 @@ namespace Lucene.Net.Search.Suggest.Fst
             string[] result = new string[expected.Length];
             for (int i = 0; i < result.Length; i++)
             {
-                //result[i] = expected[i].replaceAll("\\/[0-9\\.]+", "");
                 result[i] = Regex.Replace(expected[i], "\\/[0-9\\.]+", "");
             }
             return result;

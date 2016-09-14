@@ -153,7 +153,6 @@ namespace Lucene.Net.Search.Suggest
                 string field = f.Utf8ToString();
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
-                //Document doc = docs.remove(f.utf8ToString());
                 long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).NumericValue);
                 long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).NumericValue);
                 long w3 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_3).NumericValue);
@@ -197,7 +196,6 @@ namespace Lucene.Net.Search.Suggest
                 string field = f.Utf8ToString();
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
-                //Document doc = docs.remove(f.utf8ToString());
                 long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).NumericValue);
                 long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).NumericValue);
                 long w3 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_3).NumericValue);
@@ -248,7 +246,6 @@ namespace Lucene.Net.Search.Suggest
                 var toDel = docs[termToDel];
                 docs.Remove(termToDel);
                 assertTrue(null != toDel);
-                //assertTrue(null!=docs.remove(termToDel));
             }
 
             IndexReader ir = DirectoryReader.Open(dir);
@@ -264,7 +261,6 @@ namespace Lucene.Net.Search.Suggest
                 string field = f.Utf8ToString();
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
-                //Document doc = docs.remove(f.utf8ToString());
                 long w1 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_1).NumericValue);
                 long w2 = Convert.ToInt64(doc.GetField(WEIGHT_FIELD_NAME_2).NumericValue);
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
@@ -301,7 +297,6 @@ namespace Lucene.Net.Search.Suggest
                 string field = f.Utf8ToString();
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
-                //Document doc = docs.remove(f.utf8ToString());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 assertEquals(inputIterator.Weight, 10);
                 assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).BinaryValue));

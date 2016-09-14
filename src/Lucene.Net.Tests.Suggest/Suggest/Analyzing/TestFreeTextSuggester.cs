@@ -275,16 +275,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             // Just deletes "of"
             Analyzer a = new TestEndingHoleAnalyzer();
-            //    Analyzer a = new Analyzer()
-            //{
-            //    @Override
-            //        public TokenStreamComponents createComponents(string field, Reader reader)
-            //{
-            //    Tokenizer tokenizer = new MockTokenizer(reader);
-            //    CharArraySet stopSet = StopFilter.makeStopSet(TEST_VERSION_CURRENT, "of");
-            //    return new TokenStreamComponents(tokenizer, new StopFilter(TEST_VERSION_CURRENT, tokenizer, stopSet));
-            //}
-            //      };
 
             IEnumerable<Input> keys = AnalyzingSuggesterTest.Shuffle(
                 new Input("wizard of oz", 50)
@@ -310,16 +300,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             // Just deletes "of"
             Analyzer a = new TestEndingHoleAnalyzer();
-            //    Analyzer a = new Analyzer()
-            //{
-            //    @Override
-            //        public TokenStreamComponents createComponents(String field, Reader reader)
-            //{
-            //    Tokenizer tokenizer = new MockTokenizer(reader);
-            //    CharArraySet stopSet = StopFilter.makeStopSet(TEST_VERSION_CURRENT, "of");
-            //    return new TokenStreamComponents(tokenizer, new StopFilter(TEST_VERSION_CURRENT, tokenizer, stopSet));
-            //}
-            //      };
 
             IEnumerable<Input> keys = AnalyzingSuggesterTest.Shuffle(
                 new Input("wizard of of oz", 50)
@@ -351,25 +331,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         private static IComparer<Lookup.LookupResult> byScoreThenKey = new ByScoreThenKeyComparator();
-        //  private static IComparer<Lookup.LookupResult> byScoreThenKey = new IComparer<Lookup.LookupResult>() {
-        //    @Override
-        //    public int compare(Lookup.LookupResult a, Lookup.LookupResult b)
-        //{
-        //    if (a.value > b.value)
-        //    {
-        //        return -1;
-        //    }
-        //    else if (a.value < b.value)
-        //    {
-        //        return 1;
-        //    }
-        //    else
-        //    {
-        //        // Tie break by UTF16 sort order:
-        //        return ((String)a.key).compareTo((String)b.key);
-        //    }
-        //}
-        //  };
 
         internal class TestRandomInputIterator : InputIterator
         {
@@ -504,66 +465,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // Build suggester model:
             FreeTextSuggester sug = new FreeTextSuggester(a, a, grams, (byte)0x20);
             sug.Build(new TestRandomInputIterator(this, docs));
-            //sug.Build(new InputIterator()
-            //{
-            //    int upto;
-
-            //    @Override
-            //        public Comparator<BytesRef> getComparator()
-            //{
-            //    return null;
-            //}
-
-            //@Override
-            //        public BytesRef next()
-            //{
-            //    if (upto == docs.length)
-            //    {
-            //        return null;
-            //    }
-            //    else
-            //    {
-            //        StringBuilder b = new StringBuilder();
-            //        for (String token : docs[upto])
-            //        {
-            //            b.append(' ');
-            //            b.append(token);
-            //        }
-            //        upto++;
-            //        return new BytesRef(b.toString());
-            //    }
-            //}
-
-            //@Override
-            //        public long weight()
-            //{
-            //    return Random().nextLong();
-            //}
-
-            //@Override
-            //        public BytesRef payload()
-            //{
-            //    return null;
-            //}
-
-            //@Override
-            //        public boolean hasPayloads()
-            //{
-            //    return false;
-            //}
-
-            //@Override
-            //        public Set<BytesRef> contexts()
-            //{
-            //    return null;
-            //}
-
-            //@Override
-            //        public boolean hasContexts()
-            //{
-            //    return false;
-            //}
-            //      });
 
             // Build inefficient but hopefully correct model:
             List<IDictionary<string, int?>> gramCounts = new List<IDictionary<string, int?>>(grams);
@@ -763,7 +664,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     // Second pass, trim to only top N, and fold those
                     // into overall suggestions:
-                    //Collections.sort(tmp, byScoreThenKey);
                     tmp.Sort(byScoreThenKey);
                     if (tmp.size() > num)
                     {
@@ -797,12 +697,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     backoff *= FreeTextSuggester.ALPHA;
                 }
 
-                //Collections.sort(expected, byScoreThenKey);
                 expected.Sort(byScoreThenKey);
 
                 if (expected.size() > num)
                 {
-                    //expected.subList(num, expected.size()).clear();
                     expected.RemoveRange(num, expected.size() - num);
                 }
 

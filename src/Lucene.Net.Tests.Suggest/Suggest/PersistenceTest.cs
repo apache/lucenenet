@@ -69,7 +69,6 @@ namespace Lucene.Net.Search.Suggest
         {
 
             // Add all input keys.
-            //Lookup lookup = lookupClass.newInstance();
             Lookup lookup = (Lookup)Activator.CreateInstance(lookupClass);
             Input[] keys = new Input[this.keys.Length];
             for (int i = 0; i < keys.Length; i++)
@@ -81,7 +80,6 @@ namespace Lucene.Net.Search.Suggest
             lookup.Store(new FileStream(Path.Combine(storeDir.FullName, "lookup.dat"), FileMode.OpenOrCreate));
 
             // Re-read it from disk.
-            //lookup = lookupClass.newInstance();
             lookup = (Lookup)Activator.CreateInstance(lookupClass);
             lookup.Load(new FileStream(Path.Combine(storeDir.FullName, "lookup.dat"), FileMode.Open));
 

@@ -168,7 +168,6 @@ namespace Lucene.Net.Search.Suggest
                 var invalid = docs[invalidTerm];
                 docs.Remove(invalidTerm);
                 assertNotNull(invalid);
-                //assertNotNull(docs.remove(invalidTerm));
             }
             assertTrue(!docs.Any());
 
@@ -201,7 +200,6 @@ namespace Lucene.Net.Search.Suggest
                 var field = f.Utf8ToString();
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
-                //Document doc = docs.remove(f.Utf8ToString());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
                 assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.NumericValue) : 0);
@@ -213,7 +211,6 @@ namespace Lucene.Net.Search.Suggest
                 var invalid = docs[invalidTerm];
                 docs.Remove(invalidTerm);
                 assertNotNull(invalid);
-                //assertNotNull(docs.remove(invalidTerm));
             }
 
 
@@ -267,7 +264,6 @@ namespace Lucene.Net.Search.Suggest
                 var invalid = docs[invalidTerm];
                 docs.Remove(invalidTerm);
                 assertNotNull(invalid);
-                //assertNotNull(docs.remove(invalidTerm));
             }
             assertTrue(!docs.Any());
 
@@ -316,7 +312,6 @@ namespace Lucene.Net.Search.Suggest
                 var toDel = docs[termToDel];
                 assertTrue(toDel != null);
                 docs.Remove(termToDel);
-                //assertTrue(null!=docs.remove(termToDel));
             }
 
             IndexReader ir = DirectoryReader.Open(dir);
@@ -329,7 +324,6 @@ namespace Lucene.Net.Search.Suggest
                 var field = f.Utf8ToString();
                 Document doc = docs.ContainsKey(field) ? docs[field] : null;
                 docs.Remove(field);
-                //Document doc = docs.remove(f.utf8ToString());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
                 assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.NumericValue) : 0);
@@ -341,7 +335,6 @@ namespace Lucene.Net.Search.Suggest
                 var invalid = docs[invalidTerm];
                 docs.Remove(invalidTerm);
                 assertNotNull(invalid);
-                //assertNotNull(docs.remove(invalidTerm));
             }
             assertTrue(!docs.Any());
 

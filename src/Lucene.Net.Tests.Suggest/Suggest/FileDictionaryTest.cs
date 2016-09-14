@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Suggest
         {
             List<string> entryValues = new List<string>();
             StringBuilder sb = new StringBuilder();
-            String term = TestUtil.RandomSimpleString(Random(), 1, 300);
+            string term = TestUtil.RandomSimpleString(Random(), 1, 300);
             sb.append(term);
             entryValues.Add(term);
             if (hasWeight)
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Suggest
             if (hasPayload)
             {
                 sb.append(fieldDelimiter);
-                String payload = TestUtil.RandomSimpleString(Random(), 1, 300);
+                string payload = TestUtil.RandomSimpleString(Random(), 1, 300);
                 sb.append(payload);
                 entryValues.Add(payload);
             }
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Suggest
             return new KeyValuePair<List<string>, string>(entryValues, sb.toString());
         }
 
-        private KeyValuePair<List<List<String>>, String> generateFileInput(int count, String fieldDelimiter, bool hasWeights, bool hasPayloads)
+        private KeyValuePair<List<List<string>>, string> generateFileInput(int count, string fieldDelimiter, bool hasWeights, bool hasPayloads)
         {
             List<List<string>> entries = new List<List<string>>();
             StringBuilder sb = new StringBuilder();
@@ -121,10 +121,10 @@ namespace Lucene.Net.Search.Suggest
         [Test]
         public void TestFileWithWeightAndPayload()
         {
-            KeyValuePair<List<List<String>>, String> fileInput = generateFileInput(AtLeast(100), FileDictionary.DEFAULT_FIELD_DELIMITER, true, true);
+            KeyValuePair<List<List<string>>, string> fileInput = generateFileInput(AtLeast(100), FileDictionary.DEFAULT_FIELD_DELIMITER, true, true);
             Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
             FileDictionary dictionary = new FileDictionary(inputReader);
-            List<List<String>> entries = fileInput.Key;
+            List<List<string>> entries = fileInput.Key;
             InputIterator inputIter = dictionary.EntryIterator;
             assertTrue(inputIter.HasPayloads);
             BytesRef term;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Suggest
             while ((term = inputIter.Next()) != null)
             {
                 assertTrue(entries.size() > count);
-                List<String> entry = entries[count];
+                List<string> entry = entries[count];
                 assertTrue(entry.size() >= 2); // at least term and weight
                 assertEquals(entry[0], term.Utf8ToString());
                 assertEquals(long.Parse(entry[1], CultureInfo.InvariantCulture), inputIter.Weight);
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Suggest
             KeyValuePair<List<List<string>>, string> fileInput = generateFileInput(1, FileDictionary.DEFAULT_FIELD_DELIMITER, true, true);
             Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
             FileDictionary dictionary = new FileDictionary(inputReader);
-            List<List<String>> entries = fileInput.Key;
+            List<List<string>> entries = fileInput.Key;
             InputIterator inputIter = dictionary.EntryIterator;
             assertTrue(inputIter.HasPayloads);
             BytesRef term;
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.Suggest
             while ((term = inputIter.Next()) != null)
             {
                 assertTrue(entries.size() > count);
-                List<String> entry = entries[count];
+                List<string> entry = entries[count];
                 assertTrue(entry.size() >= 2); // at least term and weight
                 assertEquals(entry[0], term.Utf8ToString());
                 assertEquals(long.Parse(entry[1], CultureInfo.InvariantCulture), inputIter.Weight);
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Suggest
             KeyValuePair<List<List<string>>, string> fileInput = generateFileInput(AtLeast(100), " , ", true, true);
             Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
             FileDictionary dictionary = new FileDictionary(inputReader, " , ");
-            List<List<String>> entries = fileInput.Key;
+            List<List<string>> entries = fileInput.Key;
             InputIterator inputIter = dictionary.EntryIterator;
             assertTrue(inputIter.HasPayloads);
             BytesRef term;
@@ -195,7 +195,7 @@ namespace Lucene.Net.Search.Suggest
             while ((term = inputIter.Next()) != null)
             {
                 assertTrue(entries.size() > count);
-                List<String> entry = entries[count];
+                List<string> entry = entries[count];
                 assertTrue(entry.size() >= 2); // at least term and weight
                 assertEquals(entry[0], term.Utf8ToString());
                 assertEquals(long.Parse(entry[1]), inputIter.Weight);

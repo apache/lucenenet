@@ -35,7 +35,6 @@ namespace Lucene.Net.Search.Suggest
      * limitations under the License.
      */
 
-    // LUCENENET TODO: Run these tests
     [Ignore("COMMENT ME TO RUN BENCHMARKS!")]
     public class LookupBenchmarkTest : LuceneTestCase
     {
@@ -76,11 +75,9 @@ namespace Lucene.Net.Search.Suggest
             Debug.Assert(false, "disable assertions before running benchmarks!");
             IList<Input> input = ReadTop50KWiki();
             input = CollectionsHelper.Shuffle(input);
-            //Collections.Shuffle(input, random);
-            LookupBenchmarkTest.dictionaryInput = input.ToArray();
+            dictionaryInput = input.ToArray();
             input = CollectionsHelper.Shuffle(input);
-            //Collections.shuffle(input, random);
-            LookupBenchmarkTest.benchmarkInput = input;
+            benchmarkInput = input;
         }
 
         static readonly Encoding UTF_8 = Encoding.UTF8;
@@ -122,17 +119,8 @@ namespace Lucene.Net.Search.Suggest
             {
                 BenchmarkResult result = Measure(new CallableIntHelper(this, cls));
 
-                //        BenchmarkResult result = measure(new ICallable<int>() {
-                //        @Override
-                //        public Integer call() 
-                //{
-                //    Lookup lookup = buildLookup(cls, dictionaryInput);          
-                //          return lookup.hashCode();
-                //}
-                //      });
-
                 Console.WriteLine(
-                    string.Format(CultureInfo.InvariantCulture, "{0:000000000000000}s input: {1}, time[ms]: {2}" /*"%-15s input: %d, time[ms]: %s"*/,
+                    string.Format(CultureInfo.InvariantCulture, "{0,15}s input: {1}, time[ms]: {2}" /*"%-15s input: %d, time[ms]: %s"*/,
                         cls.Name,
                         dictionaryInput.Length,
                         result.average.ToString()));
@@ -167,7 +155,7 @@ namespace Lucene.Net.Search.Suggest
                 Lookup lookup = BuildLookup(cls, dictionaryInput);
                 long sizeInBytes = lookup.SizeInBytes();
                 Console.WriteLine(
-            string.Format(CultureInfo.InvariantCulture, "{0:000000000000000}s size[B]:{1:#,##0}" /*"%-15s size[B]:%,13d"*/,
+            string.Format(CultureInfo.InvariantCulture, "{0,15}s size[B]:{1:#,##0}" /*"%-15s size[B]:%,13d"*/,
                 lookup.GetType().Name,
                 sizeInBytes));
             }
@@ -259,30 +247,10 @@ namespace Lucene.Net.Search.Suggest
                     input.Add(sub);
                 }
 
-                BenchmarkResult result = null;// = Measure(new PerformanceTestCallableIntHelper(this, input, lookup));
-
-                try
-                {
-                    result = Measure(new PerformanceTestCallableIntHelper(this, input, lookup));
-                }
-                catch (Exception e)
-                {
-                    string foo = "";
-                }
-
-                //        BenchmarkResult result = measure(new Callable<Integer>() {
-                //        public Integer call() 
-                //{
-                //          int v = 0;
-                //          for (String term : input) {
-                //        v += lookup.lookup(term, onlyMorePopular, num).size();
-                //    }
-                //          return v;
-                //}
-                //      });
+                BenchmarkResult result = Measure(new PerformanceTestCallableIntHelper(this, input, lookup));
 
                 Console.WriteLine(
-            string.Format(CultureInfo.InvariantCulture, "{0:000000000000000}s queries: {1}, time[ms]: {2}, ~kQPS: {3:#.0}" /*"%-15s queries: %d, time[ms]: %s, ~kQPS: %.0f"*/,
+                    string.Format(CultureInfo.InvariantCulture, "{0,15}s queries: {1}, time[ms]: {2}, ~kQPS: {3:#.0}" /*"%-15s queries: %d, time[ms]: %s, ~kQPS: %.0f"*/,
                 lookup.GetType().Name,
                 input.size(),
                 result.average.toString(),

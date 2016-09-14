@@ -1,6 +1,4 @@
-﻿using Lucene.Net.Search.Suggest;
-using Lucene.Net.Search.Suggest.Fst;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -194,21 +192,6 @@ namespace Lucene.Net.Search.Suggest.Fst
                 assertTrue(matches.size() > 0);
                 matches.Sort(new TestRandomComparer());
 
-                //      Collections.Sort(matches, new Comparator<Lookup.LookupResult>() {
-                //        @Override
-                //        public int compare(Lookup.LookupResult left, Lookup.LookupResult right)
-                //{
-                //    int cmp = Float.compare(right.value, left.value);
-                //    if (cmp == 0)
-                //    {
-                //        return left.compareTo(right);
-                //    }
-                //    else
-                //    {
-                //        return cmp;
-                //    }
-                //}
-                //      });
                 if (matches.size() > topN)
                 {
                     //matches.SubList(topN, matches.size()).clear();
@@ -230,12 +213,6 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             public int Compare(Lookup.LookupResult left, Lookup.LookupResult right)
             {
-                // LUCENENET TODO: Work out how to cast long to float in the same way Java does
-                // http://stackoverflow.com/q/1293819/181087
-                //int cmp = Float.compare(right.value, left.value);
-                // LUCENENET NOTE: It shouldn't matter that the decimal place is not correct here,
-                // since all we care about is the relative difference between the numbers. Hopefully,
-                // the loss of precision is equivalent between Java and .NET...
                 int cmp = ((float)right.value).CompareTo((float)left.value);
                 if (cmp == 0)
                 {

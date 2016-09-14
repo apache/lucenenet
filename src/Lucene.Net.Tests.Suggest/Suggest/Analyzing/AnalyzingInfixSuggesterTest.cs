@@ -199,52 +199,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
             AnalyzingInfixSuggester suggester = new TestHighlightAnalyzingInfixSuggester(this, a);
-            //AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3) {
 
-            //        protected override object highlight(string text, ISet<string> matchedTokens, string prefixToken) 
-            //{
-            //    TokenStream ts = queryAnalyzer.tokenStream("text", new StringReader(text));
-            //          try {
-            //            CharTermAttribute termAtt = ts.addAttribute(CharTermAttribute.class);
-            //            OffsetAttribute offsetAtt = ts.addAttribute(OffsetAttribute.class);
-            //            ts.reset();
-            //            List<LookupHighlightFragment> fragments = new ArrayList<>();
-            //int upto = 0;
-            //            while (ts.incrementToken()) {
-            //              String token = termAtt.toString();
-            //int startOffset = offsetAtt.startOffset();
-            //int endOffset = offsetAtt.endOffset();
-            //              if (upto<startOffset) {
-            //                fragments.add(new LookupHighlightFragment(text.substring(upto, startOffset), false));
-            //                upto = startOffset;
-            //              } else if (upto > startOffset) {
-            //                continue;
-            //              }
-
-            //              if (matchedTokens.contains(token)) {
-            //                // Token matches.
-            //                fragments.add(new LookupHighlightFragment(text.substring(startOffset, endOffset), true));
-            //                upto = endOffset;
-            //              } else if (prefixToken != null && token.startsWith(prefixToken)) {
-            //                fragments.add(new LookupHighlightFragment(text.substring(startOffset, startOffset+prefixToken.length()), true));
-            //                if (prefixToken.length() < token.length()) {
-            //                  fragments.add(new LookupHighlightFragment(text.substring(startOffset+prefixToken.length(), startOffset+token.length()), false));
-            //                }
-            //                upto = endOffset;
-            //              }
-            //            }
-            //            ts.end();
-            //            int endOffset = offsetAtt.endOffset();
-            //            if (upto<endOffset) {
-            //              fragments.add(new LookupHighlightFragment(text.substring(upto), false));
-            //            }
-
-            //            return fragments;
-            //          } finally {
-            //            IOUtils.closeWhileHandlingException(ts);
-            //          }
-            //        }
-            //      };
             suggester.Build(new InputArrayIterator(keys));
 
             IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random()).ToString(), 10, true, true);
@@ -415,15 +370,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // Try again, but overriding addPrefixMatch to highlight
             // the entire hit:
             suggester = new TestHighlightChangeCaseAnalyzingInfixSuggester(this, a);
-            //    suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), a, a, 3) {
-            //        @Override
-            //        protected void addPrefixMatch(StringBuilder sb, String surface, String analyzed, String prefixToken)
-            //{
-            //    sb.append("<b>");
-            //    sb.append(surface);
-            //    sb.append("</b>");
-            //}
-            //      };
+
             suggester.Build(new InputArrayIterator(keys));
             results = suggester.DoLookup(TestUtil.StringToCharSequence("penn", Random()).ToString(), 10, true, true);
             assertEquals(1, results.size());
@@ -486,28 +433,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             CharArraySet stopWords = StopFilter.MakeStopSet(TEST_VERSION_CURRENT, "a");
             Analyzer indexAnalyzer = new TestSuggestStopFilterAnalyzer1(this, stopWords);
-            //    Analyzer indexAnalyzer = new Analyzer()
-            //{
-            //    @Override
-            //        protected TokenStreamComponents createComponents(String fieldName, Reader reader)
-            //{
-            //    MockTokenizer tokens = new MockTokenizer(reader);
-            //    return new TokenStreamComponents(tokens,
-            //                                     new StopFilter(TEST_VERSION_CURRENT, tokens, stopWords));
-            //}
-            //      };
-
             Analyzer queryAnalyzer = new TestSuggestStopFilterAnalyzer2(this, stopWords);
-
-            //    Analyzer queryAnalyzer = new Analyzer() {
-            //        @Override
-            //        protected TokenStreamComponents createComponents(String fieldName, Reader reader)
-            //{
-            //    MockTokenizer tokens = new MockTokenizer(reader);
-            //    return new TokenStreamComponents(tokens,
-            //                                     new SuggestStopFilter(tokens, stopWords));
-            //}
-            //      };
 
             AnalyzingInfixSuggester suggester = new AnalyzingInfixSuggester(TEST_VERSION_CURRENT, NewDirectory(), indexAnalyzer, queryAnalyzer, 3);
 
@@ -943,12 +869,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     b.Append(' ');
                 }
-                String inputTerm = inputTerms[i];
+                string inputTerm = inputTerms[i];
                 //System.out.println("  inputTerm=" + inputTerm);
                 bool matched = false;
                 for (int j = 0; j < queryTerms.Length; j++)
                 {
-                    String queryTerm = queryTerms[j];
+                    string queryTerm = queryTerms[j];
                     //System.out.println("    queryTerm=" + queryTerm);
                     if (j < queryTerms.Length - 1 || lastPrefix == false)
                     {

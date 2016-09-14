@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Spell
         public override void TearDown()
         {
             userindex.Dispose();
-            if (!spellChecker.IsDisposed) // LUCENENET TODO: Change this property to IsDisposed
+            if (!spellChecker.IsDisposed)
                 spellChecker.Dispose();
             spellindex.Dispose();
             base.TearDown();
