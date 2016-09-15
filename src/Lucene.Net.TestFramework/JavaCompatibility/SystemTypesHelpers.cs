@@ -60,13 +60,97 @@ namespace Lucene.Net
             return obj1.Equals(obj2);
         }
 
+        public static StringBuilder append(this StringBuilder sb, bool value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, byte value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, char value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, char[] value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, decimal value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, double value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, float value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, int value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
         public static StringBuilder append(this StringBuilder sb, long value)
         {
             sb.Append(value);
             return sb;
         }
 
+        public static StringBuilder append(this StringBuilder sb, object value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, sbyte value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, short value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
         public static StringBuilder append(this StringBuilder sb, string value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, uint value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, ulong value)
+        {
+            sb.Append(value);
+            return sb;
+        }
+
+        public static StringBuilder append(this StringBuilder sb, ushort value)
         {
             sb.Append(value);
             return sb;
