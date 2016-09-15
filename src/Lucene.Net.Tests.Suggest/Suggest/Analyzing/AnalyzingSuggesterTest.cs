@@ -643,7 +643,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             public int CompareTo(TermFreq2 other)
             {
-                int cmp = analyzedForm.CompareTo(other.analyzedForm);
+                int cmp = analyzedForm.CompareToOrdinal(other.analyzedForm);
                 if (cmp != 0)
                 {
                     return cmp;
@@ -769,7 +769,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 int cmp = ((float)right.weight).CompareTo((float)left.weight);
                 if (cmp == 0)
                 {
-                    return left.analyzedForm.CompareTo(right.analyzedForm);
+                    return left.analyzedForm.CompareToOrdinal(right.analyzedForm);
                 }
                 else
                 {
@@ -814,8 +814,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             for (int i = 0; i < numQueries; i++)
             {
                 int numTokens = TestUtil.NextInt(Random(), 1, 4);
-                String key;
-                String analyzedKey;
+                string key;
+                string analyzedKey;
                 while (true)
                 {
                     key = "";
@@ -823,7 +823,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     bool lastRemoved = false;
                     for (int token = 0; token < numTokens; token++)
                     {
-                        String s;
+                        string s;
                         while (true)
                         {
                             // TODO: would be nice to fix this slowCompletor/comparator to
@@ -941,27 +941,27 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 for (int i = 0; i < tokens.Length; i++)
                 {
                     string token = tokens[i];
-                    if (preserveSep && builder.Length > 0 && !builder.toString().EndsWith("" + SEP))
+                    if (preserveSep && builder.Length > 0 && !builder.ToString().EndsWith("" + SEP, StringComparison.Ordinal))
                     {
-                        builder.append(SEP);
+                        builder.Append(SEP);
                     }
 
                     if (token.Length == 1 && IsStopChar(token[0], numStopChars))
                     {
                         if (preserveSep && preserveHoles)
                         {
-                            builder.append(SEP);
+                            builder.Append(SEP);
                         }
                         lastRemoved = true;
                     }
                     else
                     {
-                        builder.append(token);
+                        builder.Append(token);
                         lastRemoved = false;
                     }
                 }
 
-                string analyzedKey = builder.toString();
+                string analyzedKey = builder.ToString();
 
                 // Remove trailing sep/holes (TokenStream.end() does
                 // not tell us any trailing holes, yet ... there is an
@@ -983,7 +983,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     continue;
                 }
 
-                if (preserveSep && (prefix.EndsWith(" ") || lastRemoved))
+                if (preserveSep && (prefix.EndsWith(" ", StringComparison.Ordinal) || lastRemoved))
                 {
                     analyzedKey += SEP;
                 }
@@ -1011,7 +1011,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (matches.size() > topN)
                 {
-                    matches = new List<TermFreq2>(matches.SubList(0, topN));
+                    //matches = new List<TermFreq2>(matches.SubList(0, topN));
+                    matches = matches.GetRange(0, topN);
                 }
 
                 if (VERBOSE)
@@ -1034,7 +1035,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 for (int hit = 0; hit < r.size(); hit++)
                 {
                     //System.out.println("  check hit " + hit);
-                    assertEquals(matches.ElementAt(hit).surfaceForm.toString(), r.ElementAt(hit).key.toString());
+                    assertEquals(matches.ElementAt(hit).surfaceForm, r.ElementAt(hit).key);
                     assertEquals(matches.ElementAt(hit).weight, r.ElementAt(hit).value, 0f);
                     if (doPayloads)
                     {
