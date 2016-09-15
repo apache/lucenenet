@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Support;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -56,7 +57,7 @@ namespace Lucene.Net.Search.Spell
                 return -1;
             }
             // third criteria: term text
-            return second.String.CompareTo(first.String);
+            return second.String.CompareToOrdinal(first.String);
         }
     }
 }
