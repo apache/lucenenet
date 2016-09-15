@@ -80,7 +80,11 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads two bytes and returns a short. </summary>
+        /// Reads two bytes and returns a short. 
+        /// 
+        /// LUCENENET NOTE: Important - always cast to ushort (System.UInt16) before using to ensure
+        /// the value is positive!
+        /// </summary>
         /// <seealso cref= DataOutput#writeByte(byte) </seealso>
         public virtual short ReadShort()
         {

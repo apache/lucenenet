@@ -94,6 +94,10 @@ namespace Lucene.Net.Store
             Pos += (int)count;
         }
 
+        /// <summary>
+        /// LUCENENET NOTE: Important - always cast to ushort (System.UInt16) before using to ensure
+        /// the value is positive!
+        /// </summary>
         public override short ReadShort()
         {
             return (short)(ushort)(((Bytes[Pos++] & 0xFF) << 8) | (Bytes[Pos++] & 0xFF));

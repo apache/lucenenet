@@ -214,12 +214,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 readerB.Reset(b.Bytes, b.Offset, b.Length);
 
                 // By token:
-                scratchA.Length = readerA.ReadShort();
+                scratchA.Length = (ushort)readerA.ReadShort();
                 scratchA.Bytes = a.Bytes;
                 scratchA.Offset = readerA.Position;
 
                 scratchB.Bytes = b.Bytes;
-                scratchB.Length = readerB.ReadShort();
+                scratchB.Length = (ushort)readerB.ReadShort();
                 scratchB.Offset = readerB.Position;
 
                 int cmp = scratchA.CompareTo(scratchB);

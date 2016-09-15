@@ -356,13 +356,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 // First by analyzed form:
                 readerA.Reset(a.Bytes, a.Offset, a.Length);
-                scratchA.Length = readerA.ReadShort();
+                scratchA.Length = (ushort)readerA.ReadShort();
                 scratchA.Bytes = a.Bytes;
                 scratchA.Offset = readerA.Position;
 
                 readerB.Reset(b.Bytes, b.Offset, b.Length);
                 scratchB.Bytes = b.Bytes;
-                scratchB.Length = readerB.ReadShort();
+                scratchB.Length = (ushort)readerB.ReadShort();
                 scratchB.Offset = readerB.Position;
 
                 int cmp = scratchA.CompareTo(scratchB);
@@ -390,8 +390,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Finally by surface form:
                 if (hasPayloads)
                 {
-                    scratchA.Length = readerA.ReadShort();
-                    scratchB.Length = readerB.ReadShort();
+                    scratchA.Length = (ushort)readerA.ReadShort();
+                    scratchB.Length = (ushort)readerB.ReadShort();
                     scratchA.Offset = readerA.Position;
                     scratchB.Offset = readerB.Position;
                 }
@@ -551,7 +551,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     surface.Bytes = scratch.Bytes;
                     if (hasPayloads)
                     {
-                        surface.Length = input.ReadShort();
+                        surface.Length = (ushort)input.ReadShort();
                         surface.Offset = input.Position;
                     }
                     else
