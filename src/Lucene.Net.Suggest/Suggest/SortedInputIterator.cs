@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest
         private long weight;
         private readonly BytesRef scratch = new BytesRef();
         private BytesRef payload = new BytesRef();
-        private HashSet<BytesRef> contexts = null;
+        private ISet<BytesRef> contexts = null;
 
         /// <summary>
         /// Creates a new sorted wrapper, using {@link
@@ -316,7 +316,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// decodes the contexts at the current position </summary>
-        protected internal virtual HashSet<BytesRef> DecodeContexts(BytesRef scratch, ByteArrayDataInput tmpInput)
+        protected internal virtual ISet<BytesRef> DecodeContexts(BytesRef scratch, ByteArrayDataInput tmpInput)
         {
             tmpInput.Reset(scratch.Bytes);
             tmpInput.SkipBytes(scratch.Length - 2); //skip to context set size
@@ -333,10 +333,16 @@ namespace Lucene.Net.Search.Suggest
                 BytesRef contextSpare = new BytesRef(curContextLength);
                 tmpInput.ReadBytes(contextSpare.Bytes, 0, curContextLength);
                 contextSpare.Length = curContextLength;
-                contextSet.Add(contextSpare);
+                contextSet.Add(contextSpare); 
                 scratch.Length -= curContextLength;
             }
-            return contextSet;
+
+            // LUCENENET TODO: We are writing the data forward.
+            // Not sure exactly why, but when we read it back it
+            // is reversed. So, we need to fix that before returning the result.
+            // If the underlying problem is found and fixed, then this line can just be
+            // return contextSet;
+            return new HashSet<BytesRef>(contextSet.Reverse());
         }
 
         /// <summary>
