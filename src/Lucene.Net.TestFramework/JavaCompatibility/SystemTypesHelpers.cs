@@ -23,7 +23,9 @@ namespace Lucene.Net
             // by defaulting the behavior to return a concatenated
             // list of the contents of enumerables rather than the 
             // .NET type name (similar to the way Java behaves).
-            if (obj is IEnumerable)
+            // Unless of course we already have a string (which
+            // implements IEnumerable so we need skip it).
+            if (obj is IEnumerable && !(obj is string))
             {
                 string result = obj.ToString();
                 // Assume that this is a default call to object.ToString()
