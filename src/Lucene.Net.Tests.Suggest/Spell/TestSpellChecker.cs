@@ -294,7 +294,7 @@ namespace Lucene.Net.Search.Spell
         private void CheckLevenshteinSuggestions(IndexReader r)
         {
             // test small word
-            string[] 
+            string[]
             similar = spellChecker.SuggestSimilar("fvie", 2);
             assertEquals(1, similar.Length);
             assertEquals(similar[0], "five");
@@ -504,7 +504,7 @@ namespace Lucene.Net.Search.Spell
 
                 for (int i = 0; i < workers.Length; i++)
                 {
-                    assertFalse(string.Format(CultureInfo.InvariantCulture, "worker thread {0} failed \n" + workers[i].Error.ToString(), i), workers[i].Error == null);
+                    assertFalse(string.Format(CultureInfo.InvariantCulture, "worker thread {0} failed \n" + workers[i].Error, i), workers[i].Error != null);
                     assertTrue(string.Format(CultureInfo.InvariantCulture, "worker thread {0} is still running but should be terminated", i), workers[i].terminated);
                 }
                 // 4 searchers more than iterations
@@ -587,10 +587,15 @@ namespace Lucene.Net.Search.Spell
 
                             Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                         }
+                        catch (AlreadyClosedException e)
+                        {
+                            return;
+                        }
                         catch (Exception e)
                         {
+                            e.printStackTrace();
                             error = e;
-                            stop.Set(true);
+                            return;
                         }
                     }
                 }
