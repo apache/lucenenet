@@ -747,7 +747,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override long SizeInBytes()
+        public override long GetSizeInBytes()
         {
             long mem = RamUsageEstimator.ShallowSizeOf(this);
             try

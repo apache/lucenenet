@@ -311,7 +311,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
         }
 
-        public override long SizeInBytes()
+        public override long GetSizeInBytes()
         {
             long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.ShallowSizeOf(normalCompletion) + RamUsageEstimator.ShallowSizeOf(higherWeightsCompletion);
             if (normalCompletion != null)

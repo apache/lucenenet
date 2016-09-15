@@ -252,9 +252,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Returns byte size of the underlying FST. </summary>
-        public override long SizeInBytes()
+        public override long GetSizeInBytes()
         {
-            return fst == null ? 0 : fst.SizeInBytes();
+            return fst == null ? 0 : fst.SizeInBytes(); // LUCENENET TODO: Rename FST.SizeInBytes() to FST.GetSizeInBytes() because this can be intensive and it should be a method (with a verb)
         }
 
         private void CopyDestTransitions(State from, State to, IList<Transition> transitions)

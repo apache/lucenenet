@@ -100,14 +100,14 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
             /// <summary>
             /// Return an approximate memory usage for this node and its sub-nodes. </summary>
-            public long SizeInBytes()
+            public long GetSizeInBytes()
             {
                 long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.ShallowSizeOf(relatives);
                 foreach (TSTNode node in relatives)
                 {
                     if (node != null)
                     {
-                        mem += node.SizeInBytes();
+                        mem += node.GetSizeInBytes();
                     }
                 }
                 return mem;
@@ -971,13 +971,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// Return an approximate memory usage for this trie. </summary>
-        public virtual long SizeInBytes()
+        public virtual long GetSizeInBytes()
         {
             long mem = RamUsageEstimator.ShallowSizeOf(this);
             TSTNode root = Root;
             if (root != null)
             {
-                mem += root.SizeInBytes();
+                mem += root.GetSizeInBytes();
             }
             return mem;
         }

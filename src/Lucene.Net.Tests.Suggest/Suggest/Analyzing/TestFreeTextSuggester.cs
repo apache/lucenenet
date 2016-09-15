@@ -219,7 +219,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             sug.Build(new TestWikiInputIterator(this, lfd));
             if (VERBOSE)
             {
-                Console.WriteLine(sug.SizeInBytes() + " bytes");
+                Console.WriteLine(sug.GetSizeInBytes() + " bytes");
 
                 IList<Lookup.LookupResult> results = sug.DoLookup("general r", 10);
                 Console.WriteLine("results:");

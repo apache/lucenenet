@@ -242,9 +242,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// Returns byte size of the underlying TST. </summary>
-        public override long SizeInBytes()
+        public override long GetSizeInBytes()
         {
-            return trie.SizeInBytes();
+            return trie.GetSizeInBytes();
         }
 
         public override long Count

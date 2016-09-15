@@ -276,12 +276,12 @@ namespace Lucene.Net.Search.Suggest.Tst
         /// <summary>
         /// Returns byte size of the underlying TST
         /// </summary>
-        public override long SizeInBytes()
+        public override long GetSizeInBytes()
         {
             long mem = RamUsageEstimator.ShallowSizeOf(this);
             if (root != null)
             {
-                mem += root.SizeInBytes();
+                mem += root.GetSizeInBytes();
             }
             return mem;
         }

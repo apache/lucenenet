@@ -153,7 +153,7 @@ namespace Lucene.Net.Search.Suggest
             foreach (Type cls in benchmarkClasses)
             {
                 Lookup lookup = BuildLookup(cls, dictionaryInput);
-                long sizeInBytes = lookup.SizeInBytes();
+                long sizeInBytes = lookup.GetSizeInBytes();
                 Console.WriteLine(
             string.Format(CultureInfo.InvariantCulture, "{0,15}s size[B]:{1:#,##0}" /*"%-15s size[B]:%,13d"*/,
                 lookup.GetType().Name,

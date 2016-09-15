@@ -293,6 +293,6 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Get the size of the underlying lookup implementation in memory </summary>
         /// <returns> ram size of the lookup implementation in bytes </returns>
-        public abstract long SizeInBytes();
+        public abstract long GetSizeInBytes();
     }
 }
