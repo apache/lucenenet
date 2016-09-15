@@ -185,7 +185,8 @@ namespace Lucene.Net.Search.Suggest
                     outerInstance.DecodeContexts(leftScratch, input);
                     outerInstance.DecodeContexts(rightScratch, input);
                 }
-                int cmp = outerInstance.Comparator.Compare(leftScratch, rightScratch);
+                // LUCENENET NOTE: outerInstance.Comparator != outerInstance.comparator!!
+                int cmp = outerInstance.comparator.Compare(leftScratch, rightScratch);
                 if (cmp != 0)
                 {
                     return cmp;
