@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 
 namespace Lucene.Net.Search.Spell
@@ -519,7 +520,13 @@ namespace Lucene.Net.Search.Spell
         private void AssertLastSearcherOpen(int numSearchers)
         {
             assertEquals(numSearchers, searchers.Count);
-            IndexSearcher[] searcherArray = searchers.ToArray();
+
+            // LUCENENET NOTE: The ConcurrentBag.Add() method adds each item to the
+            // beginning of the list, so we end up with a reverse order array.
+            // We can correct that here, since this is the only part of the
+            // test that cares about the order.
+            IndexSearcher[] searcherArray = searchers.Reverse().ToArray();
+
             for (int i = 0; i < searcherArray.Length; i++)
             {
                 if (i == searcherArray.Length - 1)
