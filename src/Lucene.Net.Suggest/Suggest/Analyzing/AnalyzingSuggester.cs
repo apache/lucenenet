@@ -1001,7 +1001,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: is there a Reader from a CharSequence?
             // Turn tokenstream into automaton:
             Automaton automaton = null;
-            TokenStream ts = queryAnalyzer.TokenStream("", key.ToString());
+            TokenStream ts = queryAnalyzer.TokenStream("", key);
             try
             {
                 automaton = (TokenStreamToAutomaton).ToAutomaton(ts);
