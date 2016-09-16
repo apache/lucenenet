@@ -105,14 +105,20 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.ShallowSizeOf(relatives);
                 foreach (TSTNode node in relatives)
                 {
-                    if (node != null)
+                    // LUCENENET NOTE: Going with the summary of this method, which says it should not
+                    // include the parent node. When we include the parent node, it results in overflowing
+                    // the thread stack because we have infinite recursion.
+                    //
+                    // However, in version 6.2 of Lucene (latest) it mentions we should also estimate the parent node.
+                    // https://github.com/apache/lucene-solr/blob/764d0f19151dbff6f5fcd9fc4b2682cf934590c5/lucene/suggest/src/java/org/apache/lucene/search/suggest/jaspell/JaspellTernarySearchTrie.java#L104
+                    // Not sure what the reason for that is, but it seems like a recipe for innaccuracy.
+                    if (node != null && node != relatives[PARENT])
                     {
                         mem += node.GetSizeInBytes();
                     }
                 }
                 return mem;
             }
-
         }
 
         /// <summary>
