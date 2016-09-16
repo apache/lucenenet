@@ -30,8 +30,8 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// <summary>
     /// Finite state automata based implementation of "autocomplete" functionality.
     /// </summary>
-    /// <seealso cref=FSTCompletionBuilder
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="FSTCompletionBuilder"/>
+    /// @lucene.experimental
 
     // TODO: we could store exact weights as outputs from the FST (int4 encoded
     // floats). This would provide exact outputs from this method and to some
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         public const int DEFAULT_BUCKETS = 10;
 
         /// <summary>
-        /// An empty result. Keep this an <seealso cref="ArrayList"/> to keep all the returned
+        /// An empty result. Keep this an <see cref="List"/> to keep all the returned
         /// lists of single type (monomorphic calls).
         /// </summary>
         private static readonly IList<Completion> EMPTY_RESULT = new List<Completion>();
@@ -106,10 +106,10 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Constructs an FSTCompletion, specifying higherWeightsFirst and exactFirst. </summary>
         /// <param name="automaton">
-        ///          Automaton with completions. See <seealso cref="FSTCompletionBuilder"/>. </param>
+        ///          Automaton with completions. See <see cref="FSTCompletionBuilder"/>. </param>
         /// <param name="exactFirst">
         ///          Return most popular suggestions first. This is the default
-        ///          behavior for this implementation. Setting it to <code>false</code>
+        ///          behavior for this implementation. Setting it to <c>false</c>
         ///          has no effect (use constant term weights to sort alphabetically
         ///          only). </param>
         /// <param name="exactFirst">
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// Defaults to higher weights first and exact first. </summary>
-        /// <seealso cref= #FSTCompletion(FST, boolean, boolean) </seealso>
+        /// <seealso cref="FSTCompletion(FST, bool, bool)"/>
         public FSTCompletion(FST<object> automaton)
             : this(automaton, true, true)
         {
@@ -171,10 +171,10 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// Returns the first exact match by traversing root arcs, starting from the
-        /// arc <code>rootArcIndex</code>.
+        /// arc <paramref name="rootArcIndex"/>.
         /// </summary>
         /// <param name="rootArcIndex">
-        ///          The first root arc index in <seealso cref="#rootArcs"/> to consider when
+        ///          The first root arc index in <see cref="rootArcs"/> to consider when
         ///          matching.
         /// </param>
         /// <param name="utf8">
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         /// <summary>
-        /// Lookup suggestions to <code>key</code>.
+        /// Lookup suggestions to <paramref name="key"/>.
         /// </summary>
         /// <param name="key">
         ///          The prefix to which suggestions should be sought. </param>
@@ -257,8 +257,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         /// <summary>
-        /// Lookup suggestions sorted alphabetically <b>if weights are not
-        /// constant</b>. This is a workaround: in general, use constant weights for
+        /// Lookup suggestions sorted alphabetically <c>if weights are not
+        /// constant</c>. This is a workaround: in general, use constant weights for
         /// alphabetically sorted result.
         /// </summary>
         private IList<Completion> LookupSortedAlphabetically(BytesRef key, int num)
@@ -270,7 +270,6 @@ namespace Lucene.Net.Search.Suggest.Fst
             res.Sort();
             if (res.Count > num)
             {
-                //res = res.SubList(0, num);
                 res = new List<Completion>(res.SubList(0, num));
             }
             return res;
@@ -280,10 +279,10 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Lookup suggestions sorted by weight (descending order).
         /// </summary>
         /// <param name="collectAll">
-        ///          If <code>true</code>, the routine terminates immediately when
-        ///          <code>num</code> suggestions have been collected. If
-        ///          <code>false</code>, it will collect suggestions from all weight
-        ///          arcs (needed for <seealso cref="#lookupSortedAlphabetically"/>. </param>
+        ///          If <c>true</c>, the routine terminates immediately when
+        ///          <paramref name="num"/> suggestions have been collected. If
+        ///          <c>false</c>, it will collect suggestions from all weight
+        ///          arcs (needed for <see cref="LookupSortedAlphabetically"/>. </param>
         private IList<Completion> LookupSortedByWeight(BytesRef key, int num, bool collectAll)
         {
             // Don't overallocate the results buffers. This also serves the purpose of
@@ -334,13 +333,15 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// Checks if the list of
-        /// <seealso cref="Suggest.Lookup.LookupResult"/>s already has a
-        /// <code>key</code>. If so, reorders that
-        /// <seealso cref="Suggest.Lookup.LookupResult"/> to the first
+        /// <see cref="Lookup.LookupResult"/>s already has a
+        /// <paramref name="key"/>. If so, reorders that
+        /// <see cref="Lookup.LookupResult"/> to the first
         /// position.
         /// </summary>
-        /// <returns> Returns <code>true<code> if and only if <code>list</code> contained
-        ///         <code>key</code>. </returns>
+        /// <returns> 
+        /// Returns <c>true<c> if and only if <paramref name="list"/> contained
+        /// <paramref name="key"/>.
+        /// </returns>
         private bool CheckExistingAndReorder(List<Completion> list, BytesRef key)
         {
             // We assume list does not have duplicates (because of how the FST is created).
@@ -367,15 +368,15 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         /// <summary>
-        /// Descend along the path starting at <code>arc</code> and going through bytes
+        /// Descend along the path starting at <paramref name="arc"/> and going through bytes
         /// in the argument.
         /// </summary>
         /// <param name="arc">
         ///          The starting arc. This argument is modified in-place. </param>
         /// <param name="utf8">
         ///          The term to descend along. </param>
-        /// <returns> If <code>true</code>, <code>arc</code> will be set to the arc
-        ///         matching last byte of <code>term</code>. <code>false</code> is
+        /// <returns> If <c>true</c>, <paramref name="arc"/> will be set to the arc
+        ///         matching last byte of <paramref name="term"/>. <c>false</c> is
         ///         returned if no such prefix exists. </returns>
         private bool DescendWithPrefix(FST.Arc<object> arc, BytesRef utf8)
         {
@@ -396,7 +397,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// Recursive collect lookup results from the automaton subgraph starting at
-        /// <code>arc</code>.
+        /// <paramref name="arc"/>.
         /// </summary>
         /// <param name="num">
         ///          Maximum number of results needed (early termination). </param>
@@ -451,7 +452,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         /// <summary>
-        /// Returns the bucket assigned to a given key (if found) or <code>-1</code> if
+        /// Returns the bucket assigned to a given key (if found) or <c>-1</c> if
         /// no exact match exists.
         /// </summary>
         public virtual int GetBucket(string key)

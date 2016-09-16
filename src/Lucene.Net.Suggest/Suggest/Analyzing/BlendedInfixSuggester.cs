@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     // - allow to use the search score
 
     /// <summary>
-    /// Extension of the AnalyzingInfixSuggester which transforms the weight
+    /// Extension of the <see cref="AnalyzingInfixSuggester"/> which transforms the weight
     /// after search to take into account the position of the searched term into
     /// the indexed text.
     /// Please note that it increases the number of elements searched and applies the
@@ -68,20 +68,26 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public enum BlenderType
         {
             /// <summary>
-            /// Application dependent; override {@link
-            ///  #calculateCoefficient} to compute it. 
+            /// Application dependent; override <see cref="CalculateCoefficient(int)"/>
+            /// to compute it. 
             /// </summary>
             CUSTOM,
             /// <summary>
-            /// weight*(1 - 0.10*position) </summary>
+            /// weight*(1 - 0.10*position)
+            /// </summary>
             POSITION_LINEAR,
             /// <summary>
-            /// weight/(1+position) </summary>
+            /// weight/(1+position)
+            /// </summary>
             POSITION_RECIPROCAL,
             // TODO:
             //SCORE
         }
 
+        /// <summary>
+        /// LUCENENET specific to ensure our Queue is only altered by a single
+        /// thread at a time.
+        /// </summary>
         private static readonly object syncLock = new object();
 
         /// <summary>
@@ -101,7 +107,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         /// <param name="blenderType"> Type of blending strategy, see BlenderType for more precisions </param>
         /// <param name="numFactor">   Factor to multiply the number of searched elements before ponderate </param>
-        /// <exception cref="IOException"> If there are problems opening the underlying Lucene index. </exception>
+        /// <exception cref="System.IO.IOException"> If there are problems opening the underlying Lucene index. </exception>
         public BlendedInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars, BlenderType blenderType, int numFactor)
             : base(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars)
         {
@@ -247,7 +253,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="matchedTokens"> tokens found in the query </param>
         /// <param name="prefixToken"> unfinished token in the query </param>
         /// <returns> the coefficient </returns>
-        /// <exception cref="IOException"> If there are problems reading term vectors from the underlying Lucene index. </exception>
+        /// <exception cref="System.IO.IOException"> If there are problems reading term vectors from the underlying Lucene index. </exception>
         private double CreateCoefficient(IndexSearcher searcher, int doc, IEnumerable<string> matchedTokens, string prefixToken)
         {
             Terms tv = searcher.IndexReader.GetTermVector(doc, TEXT_FIELD_NAME);

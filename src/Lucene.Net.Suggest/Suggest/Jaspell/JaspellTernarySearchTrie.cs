@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 {
     /// <summary>
     /// Implementation of a Ternary Search Trie, a data structure for storing
-    /// <code>String</code> objects that combines the compact size of a binary search
+    /// <see cref="string"/>s that combines the compact size of a binary search
     /// tree with the speed of a digital search trie, and is therefore ideal for
     /// practical use in sorting and searching data.</p>
     /// <para>
@@ -166,14 +166,14 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         */
 
         /// <summary>
-        /// The default number of values returned by the <code>matchAlmost</code>
+        /// The default number of values returned by the <see cref="MatchAlmost"/>
         /// method.
         /// </summary>
         private int defaultNumReturnValues = -1;
 
         /// <summary>
-        /// the number of differences allowed in a call to the
-        /// <code>matchAlmostKey</code> method.
+        /// the number of differences allowed in a call to the <see cref="MatchAlmost"/>
+        /// <paramref cref="key"/>.
         /// </summary>
         private int matchAlmostDiff;
 
@@ -215,13 +215,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
 
         /// <summary>
-        /// Constructs a Ternary Search Trie and loads data from a <code>File</code>
+        /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
         /// into the Trie. The file is a normal text document, where each line is of
         /// the form word TAB float.
         /// </summary>
         /// <param name="file">
-        ///          The <code>File</code> with the data to load into the Trie. </param>
-        /// <exception cref="IOException">
+        ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
+        /// <exception cref="System.IO.IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file)
             : this(file, false)
@@ -229,16 +229,16 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Constructs a Ternary Search Trie and loads data from a <code>File</code>
+        /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
         /// into the Trie. The file is a normal text document, where each line is of
         /// the form "word TAB float".
         /// </summary>
         /// <param name="file">
-        ///          The <code>File</code> with the data to load into the Trie. </param>
+        ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
         /// <param name="compression">
         ///          If true, the file is compressed with the GZIP algorithm, and if
         ///          false, the file is a normal text document. </param>
-        /// <exception cref="IOException">
+        /// <exception cref="System.IO.IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, bool compression)
             : this()
@@ -339,11 +339,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// method, then pass the node returned by this method into this method (make
         /// sure you don't delete the data of any of the nodes returned from this
         /// method!) and continue in this fashion until the node returned by this
-        /// method is <code>null</code>.
+        /// method is <c>null</c>.
         /// 
         /// The TSTNode instance returned by this method will be next node to be
-        /// operated on by <code>deleteNodeRecursion</code> (This emulates recursive
-        /// method call while avoiding the JVM overhead normally associated with a
+        /// operated on by <see cref="DeleteNodeRecursion(TSTNode)"/> (This emulates recursive
+        /// method call while avoiding the overhead normally associated with a
         /// recursive method.)
         /// </summary>
         /// <param name="currentNode">
@@ -445,7 +445,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Retrieve the object indexed by a key.
         /// </summary>
         /// <param name="key">
-        ///          A <code>String</code> index. </param>
+        ///          A <see cref="string"/> index. </param>
         /// <returns> The object retrieved from the Ternary Search Trie. </returns>
         public virtual object Get(string key)
         {
@@ -462,7 +462,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// and store the new <code>Float</code>.
         /// </summary>
         /// <param name="key">
-        ///          A <code>String</code> index. </param>
+        ///          A <see cref="string"/> index. </param>
         /// <returns> The <code>Float</code> retrieved from the Ternary Search Trie. </returns>
         public virtual float? GetAndIncrement(string key)
         {
@@ -490,7 +490,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// </summary>
         /// <param name="node">
         ///          The node whose index is to be calculated. </param>
-        /// <returns> The <code>String</code> that indexes the node argument. </returns>
+        /// <returns> The <see cref="string"/> that indexes the node argument. </returns>
         protected internal virtual string GetKey(TSTNode node)
         {
             StringBuilder getKeyBuffer = new StringBuilder();
@@ -510,34 +510,34 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 currentNode = currentNode.relatives[TSTNode.PARENT];
             }
 
-            // LUCENENET NOTE: Reverse doesn't happen in place in .NET,
+            // LUCENENET NOTE: Reverse doesn't happen in place in a .NET StringBuilder,
             // so we need to return the reversed result.
             return getKeyBuffer.Reverse().ToString();
         }
 
         /// <summary>
-        /// Returns the node indexed by key, or <code>null</code> if that node doesn't
+        /// Returns the node indexed by key, or <c>null</c> if that node doesn't
         /// exist. Search begins at root node.
         /// </summary>
         /// <param name="key">
-        ///          A <code>String</code> that indexes the node that is returned. </param>
+        ///          A <see cref="string"/> that indexes the node that is returned. </param>
         /// <returns> The node object indexed by key. This object is an instance of an
-        ///         inner class named <code>TernarySearchTrie.TSTNode</code>. </returns>
+        ///         inner class named <see cref="TSTNode"/>. </returns>
         public virtual TSTNode GetNode(string key)
         {
             return GetNode(key, rootNode);
         }
 
         /// <summary>
-        /// Returns the node indexed by key, or <code>null</code> if that node doesn't
+        /// Returns the node indexed by key, or <c>null</c> if that node doesn't
         /// exist. The search begins at root node.
         /// </summary>
         /// <param name="key">
-        ///          A <code>String</code> that indexes the node that is returned. </param>
+        ///          A <see cref="string"/> that indexes the node that is returned. </param>
         /// <param name="startNode">
         ///          The top node defining the subtrie to be searched. </param>
         /// <returns> The node object indexed by key. This object is an instance of an
-        ///         inner class named <code>TernarySearchTrie.TSTNode</code>. </returns>
+        ///         inner class named <see cref="TSTNode"/>. </returns>
         protected internal virtual TSTNode GetNode(string key, TSTNode startNode)
         {
             if (key == null || startNode == null || key.Length == 0)
@@ -578,13 +578,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// and creating any required intermediate nodes if they don't exist.
         /// </summary>
         /// <param name="key">
-        ///          A <code>String</code> that indexes the node that is returned. </param>
+        ///          A <see cref="string"/> that indexes the node that is returned. </param>
         /// <returns> The node object indexed by key. This object is an instance of an
-        ///         inner class named <code>TernarySearchTrie.TSTNode</code>. </returns>
-        /// <exception cref="NullPointerException">
-        ///              If the key is <code>null</code>. </exception>
-        /// <exception cref="IllegalArgumentException">
-        ///              If the key is an empty <code>String</code>. </exception>
+        ///         inner class named <see cref="TSTNode"/>. </returns>
+        /// <exception cref="NullReferenceException">
+        ///              If the key is <c>null</c>. </exception>
+        /// <exception cref="ArgumentException">
+        ///              If the key is an empty <see cref="string"/>. </exception>
         protected internal virtual TSTNode GetOrCreateNode(string key)
         {
             if (key == null)
@@ -637,33 +637,33 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Returns a <code>List</code> of keys that almost match the argument key.
+        /// Returns a <see cref="List{String}"/> of keys that almost match the argument key.
         /// Keys returned will have exactly diff characters that do not match the
-        /// target key, where diff is equal to the last value passed in as an argument
-        /// to the <code>setMatchAlmostDiff</code> method.
+        /// target key, where diff is equal to the last value set
+        /// to the <see cref="MatchAlmostDiff"/> property.
         /// <para>
-        /// If the <code>matchAlmost</code> method is called before the
-        /// <code>setMatchAlmostDiff</code> method has been called for the first time,
+        /// If the <see cref="MatchAlmost"/> method is called before the
+        /// <see cref="MatchAlmostDiff"/> property has been called for the first time,
         /// then diff = 0.
         /// 
         /// </para>
         /// </summary>
         /// <param name="key">
         ///          The target key. </param>
-        /// <returns> A <code>List</code> with the results. </returns>
+        /// <returns> A <see cref="List{String}"/> with the results. </returns>
         public virtual IList<string> MatchAlmost(string key)
         {
             return MatchAlmost(key, defaultNumReturnValues);
         }
 
         /// <summary>
-        /// Returns a <code>List</code> of keys that almost match the argument key.
+        /// Returns a <see cref="List{String}"/> of keys that almost match the argument key.
         /// Keys returned will have exactly diff characters that do not match the
-        /// target key, where diff is equal to the last value passed in as an argument
-        /// to the <code>setMatchAlmostDiff</code> method.
+        /// target key, where diff is equal to the last value set
+        /// to the <see cref="MatchAlmostDiff"/> property.
         /// <para>
-        /// If the <code>matchAlmost</code> method is called before the
-        /// <code>setMatchAlmostDiff</code> method has been called for the first time,
+        /// If the <see cref="MatchAlmost"/> method is called before the
+        /// <see cref="MatchAlmostDiff"/> property has been called for the first time,
         /// then diff = 0.
         /// 
         /// </para>
@@ -672,7 +672,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The target key. </param>
         /// <param name="numReturnValues">
         ///          The maximum number of values returned by this method. </param>
-        /// <returns> A <code>List</code> with the results </returns>
+        /// <returns> A <see cref="List{String}"/> with the results </returns>
         public virtual IList<string> MatchAlmost(string key, int numReturnValues)
         {
             return MatchAlmostRecursion(rootNode, 0, matchAlmostDiff, key, ((numReturnValues < 0) ? -1 : numReturnValues), new List<string>(), false);
@@ -689,18 +689,18 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="d">
         ///          The number of differences so far. </param>
         /// <param name="matchAlmostNumReturnValues">
-        ///          The maximum number of values in the result <code>List</code>. </param>
+        ///          The maximum number of values in the result <see cref="List{String}"/>. </param>
         /// <param name="matchAlmostResult2">
         ///          The results so far. </param>
         /// <param name="upTo">
-        ///          If true all keys having up to and including matchAlmostDiff
+        ///          If true all keys having up to and including <see cref="MatchAlmostDiff"/> 
         ///          mismatched letters will be included in the result (including a key
         ///          that is exactly the same as the target string) otherwise keys will
         ///          be included in the result only if they have exactly
-        ///          matchAlmostDiff number of mismatched letters. </param>
+        ///          <see cref="MatchAlmostDiff"/> number of mismatched letters. </param>
         /// <param name="matchAlmostKey">
         ///          The key being searched. </param>
-        /// <returns> A <code>List</code> with the results. </returns>
+        /// <returns> A <see cref="List{String}"/> with the results. </returns>
         private IList<string> MatchAlmostRecursion(TSTNode currentNode, int charIndex, int d, string matchAlmostKey, int matchAlmostNumReturnValues, IList<string> matchAlmostResult2, bool upTo)
         {
             if ((currentNode == null) || (matchAlmostNumReturnValues != -1 && matchAlmostResult2.Count >= matchAlmostNumReturnValues) || (d < 0) || (charIndex >= matchAlmostKey.Length))
@@ -728,30 +728,30 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Returns an alphabetical <code>List</code> of all keys in the trie that
+        /// Returns an alphabetical <see cref="List{String}"/> of all keys in the trie that
         /// begin with a given prefix. Only keys for nodes having non-null data are
-        /// included in the <code>List</code>.
+        /// included in the <see cref="List{String}"/>.
         /// </summary>
         /// <param name="prefix">
         ///          Each key returned from this method will begin with the characters
         ///          in prefix. </param>
-        /// <returns> A <code>List</code> with the results. </returns>
+        /// <returns> A <see cref="List{String}"/> with the results. </returns>
         public virtual IList<string> MatchPrefix(string prefix)
         {
             return MatchPrefix(prefix, defaultNumReturnValues);
         }
 
         /// <summary>
-        /// Returns an alphabetical <code>List</code> of all keys in the trie that
+        /// Returns an alphabetical <see cref="List{String}"/> of all keys in the trie that
         /// begin with a given prefix. Only keys for nodes having non-null data are
-        /// included in the <code>List</code>.
+        /// included in the <see cref="List{String}"/>.
         /// </summary>
         /// <param name="prefix">
         ///          Each key returned from this method will begin with the characters
         ///          in prefix. </param>
         /// <param name="numReturnValues">
         ///          The maximum number of values returned from this method. </param>
-        /// <returns> A <code>List</code> with the results </returns>
+        /// <returns> A <see cref="List{String}"/> with the results </returns>
         public virtual IList<string> MatchPrefix(string prefix, int numReturnValues)
         {
             List<string> sortKeysResult = new List<string>();
@@ -814,7 +814,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Stores a value in the trie. The value may be retrieved using the key.
         /// </summary>
         /// <param name="key">
-        ///          A <code>String</code> that indexes the object to be stored. </param>
+        ///          A <see cref="string"/> that indexes the object to be stored. </param>
         /// <param name="value">
         ///          The object to be stored in the Trie. </param>
         public virtual void Put(string key, object value)
@@ -828,7 +828,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="currentNode">
         ///          The current node. </param>
         /// <param name="checkData">
-        ///          If true we check the data to be different of <code>null</code>. </param>
+        ///          If true we check the data to be different of <c>null</c>. </param>
         /// <param name="numNodes2">
         ///          The number of nodes so far. </param>
         /// <returns> The number of nodes accounted. </returns>
@@ -860,7 +860,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// unnecessary by the removal of this data.
         /// </summary>
         /// <param name="key">
-        ///          A <code>string</code> that indexes the object to be removed from
+        ///          A <see cref="string"/> that indexes the object to be removed from
         ///          the Trie. </param>
         public virtual void Remove(string key)
         {
@@ -869,7 +869,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// Sets the number of characters by which words can differ from target word
-        /// when calling the <code>matchAlmost</code> method.
+        /// when calling the <see cref="MatchAlmost"/> method.
         /// <para>
         /// Arguments less than 0 will set the char difference to 0, and arguments
         /// greater than 3 will set the char difference to 3.
@@ -900,13 +900,12 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// Sets the default maximum number of values returned from the
-        /// <code>matchPrefix</code> and <code>matchAlmost</code> methods.
+        /// <see cref="MatchPrefix"/> and <see cref="MatchAlmost"/> methods.
         /// <para>
         /// The value should be set this to -1 to get an unlimited number of return
         /// values. note that the methods mentioned above provide overloaded versions
         /// that allow you to specify the maximum number of return values, in which
         /// case this value is temporarily overridden.
-        /// 
         /// </para>
         /// </summary>
         /// **<param name="num">
@@ -933,7 +932,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The top node defining the subtrie to be searched. </param>
         /// <param name="numReturnValues">
         ///          The maximum number of values returned from this method. </param>
-        /// <returns> A <code>List</code> with the results. </returns>
+        /// <returns> A <see cref="List{String}"/> with the results. </returns>
         protected internal virtual IList<string> SortKeys(TSTNode startNode, int numReturnValues)
         {
             return SortKeysRecursion(startNode, ((numReturnValues < 0) ? -1 : numReturnValues), new List<string>());
@@ -943,9 +942,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Returns keys sorted in alphabetical order. This includes the current Node
         /// and all nodes connected to the current Node.
         /// <para>
-        /// Sorted keys will be appended to the end of the resulting <code>List</code>.
+        /// Sorted keys will be appended to the end of the resulting <see cref="List{String}"/>.
         /// The result may be empty when this method is invoked, but may not be
-        /// <code>null</code>.
+        /// <c>null</c>.
         /// 
         /// </para>
         /// </summary>
@@ -955,7 +954,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The maximum number of values in the result. </param>
         /// <param name="sortKeysResult2">
         ///          The results so far. </param>
-        /// <returns> A <code>List</code> with the results. </returns>
+        /// <returns> A <see cref="List{String}"/> with the results. </returns>
         private IList<string> SortKeysRecursion(TSTNode currentNode, int sortKeysNumReturnValues, IList<string> sortKeysResult2)
         {
             if (currentNode == null)
@@ -976,7 +975,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Return an approximate memory usage for this trie. </summary>
+        /// Return an approximate memory usage for this trie.
+        /// </summary>
         public virtual long GetSizeInBytes()
         {
             long mem = RamUsageEstimator.ShallowSizeOf(this);

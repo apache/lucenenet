@@ -27,8 +27,8 @@ namespace Lucene.Net.Search.Spell
     {
 
         /// <summary>
-        /// Creates a new comparator that will compare by <seealso cref="SuggestWord#score"/>,
-        /// then by <seealso cref="SuggestWord#freq"/>, then by <seealso cref="SuggestWord#string"/>.
+        /// Creates a new comparator that will compare by <see cref="SuggestWord.Score"/>,
+        /// then by <see cref="SuggestWord.Freq"/>, then by <see cref="SuggestWord.String"/>.
         /// </summary>
         public SuggestWordScoreComparator()
         {

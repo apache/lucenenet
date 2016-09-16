@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.Spell
     /// Threshold is a value in [0..1] representing the minimum
     /// number of documents (of the total) where a term should appear.
     /// 
-    /// Based on LuceneDictionary.
+    /// Based on <see cref="LuceneDictionary"/>.
     /// </summary>
     public class HighFrequencyDictionary : IDictionary
     {

@@ -22,11 +22,12 @@ namespace Lucene.Net.Search.Spell
     /// <summary>
     /// Levenstein edit distance class.
     /// </summary>
+    // LUCENENET NOTE: This class is misspelled: It should be Levenshtein
     public sealed class LevensteinDistance : IStringDistance
     {
 
         /// <summary>
-        /// Optimized to run a bit faster than the static getDistance().
+        /// Optimized to run a bit faster than the static GetDistance().
         /// In one benchmark times were 5.3sec using ctr vs 8.5sec w/ static method, thus 37% faster.
         /// </summary>
         public LevensteinDistance()

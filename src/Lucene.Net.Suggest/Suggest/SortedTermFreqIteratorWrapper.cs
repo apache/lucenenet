@@ -42,9 +42,8 @@ namespace Lucene.Net.Search.Suggest
         private readonly BytesRef scratch = new BytesRef();
 
         /// <summary>
-        /// Creates a new sorted wrapper, using {@link
-        /// BytesRef#getUTF8SortedAsUnicodeComparator} for
-        /// sorting. 
+        /// Creates a new sorted wrapper, using <see cref="BytesRef.UTF8SortedAsUnicodeComparer"/>
+        /// for sorting. 
         /// </summary>
         public SortedTermFreqIteratorWrapper(ITermFreqIterator source)
             : this(source, BytesRef.UTF8SortedAsUnicodeComparer)
@@ -139,7 +138,6 @@ namespace Lucene.Net.Search.Suggest
                 {
                     return cmp;
                 }
-                //return long.Compare(leftCost, rightCost);
                 return leftCost.CompareTo(rightCost);
             }
         }

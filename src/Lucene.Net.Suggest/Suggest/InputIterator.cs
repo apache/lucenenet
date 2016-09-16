@@ -22,8 +22,8 @@ namespace Lucene.Net.Search.Suggest
 
     /// <summary>
     /// Interface for enumerating term,weight,payload triples for suggester consumption;
-    /// currently only <seealso cref="AnalyzingSuggester"/>, <seealso cref="FuzzySuggester"/>
-    /// and <seealso cref="AnalyzingInfixSuggester"/> support payloads.
+    /// currently only <see cref="Analyzing.AnalyzingSuggester"/>, <see cref="Analyzing.FuzzySuggester"/>
+    /// and <see cref="Analyzing.AnalyzingInfixSuggester"/> support payloads.
     /// </summary>
     public interface IInputIterator : BytesRefIterator
     {
@@ -34,8 +34,8 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// An arbitrary byte[] to record per suggestion.  See
-        ///  <seealso cref="Lookup.LookupResult#payload"/> to retrieve the payload
-        ///  for each suggestion. 
+        /// <see cref="Lookup.LookupResult.payload"/> to retrieve the payload
+        /// for each suggestion. 
         /// </summary>
         BytesRef Payload { get; }
 
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search.Suggest
     }
 
     /// <summary>
-    /// Singleton IInputIterator that iterates over 0 BytesRefs.
+    /// Singleton <see cref="IInputIterator"/> that iterates over 0 BytesRefs.
     /// </summary>
     public static class EmptyInputIterator
     {
@@ -63,8 +63,8 @@ namespace Lucene.Net.Search.Suggest
     }
 
     /// <summary>
-    /// Wraps a BytesRefIterator as a suggester IInputIterator, with all weights
-    /// set to <code>1</code> and carries no payload
+    /// Wraps a <see cref="BytesRefIterator"/> as a suggester <see cref="IInputIterator"/>, with all weights
+    /// set to <c>1</c> and carries no payload
     /// </summary>
     public class InputIteratorWrapper : IInputIterator
     {
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Creates a new wrapper, wrapping the specified iterator and 
-        /// specifying a weight value of <code>1</code> for all terms 
+        /// specifying a weight value of <c>1</c> for all terms 
         /// and nullifies associated payloads.
         /// </summary>
         public InputIteratorWrapper(BytesRefIterator wrapped)

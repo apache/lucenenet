@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// suggestions.
     /// <para>
     /// <b>NOTE</b>:
-    /// Input weights must be between 0 and <seealso cref="Integer#MAX_VALUE"/>, any
+    /// Input weights must be between 0 and <see cref="int.MaxValue"/>, any
     /// other values will be rejected.
     /// 
     /// @lucene.experimental
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         private long count = 0;
 
         /// <summary>
-        /// Calls <seealso cref="#WFSTCompletionLookup(boolean) WFSTCompletionLookup(true)"/>
+        /// Calls <see cref="WFSTCompletionLookup(bool)">WFSTCompletionLookup(true)</see>
         /// </summary>
         public WFSTCompletionLookup()
             : this(true)

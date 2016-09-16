@@ -70,13 +70,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Field name used for the indexed text, as a
-        ///  StringField, for exact lookup. 
+        /// <see cref="StringField"/>, for exact lookup. 
         /// </summary>
         protected internal const string EXACT_TEXT_FIELD_NAME = "exacttext";
 
         /// <summary>
         /// Field name used for the indexed context, as a
-        ///  StringField and a SortedSetDVField, for filtering. 
+        /// <see cref="StringField"/> and a <see cref="SortedSetDocValuesField"/>, for filtering. 
         /// </summary>
         protected internal const string CONTEXTS_FIELD_NAME = "contexts";
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private IndexWriter writer;
 
         /// <summary>
-        /// <seealso cref="IndexSearcher"/> used for lookups. </summary>
+        /// <see cref="IndexSearcher"/> used for lookups. </summary>
         protected internal SearcherManager searcherMgr;
 
         /// <summary>
@@ -110,10 +110,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Create a new instance, loading from a previously built
-        ///  AnalyzingInfixSuggester directory, if it exists.  This directory must be
-        ///  private to the infix suggester (i.e., not an external
-        ///  Lucene index).  Note that <seealso cref="#close"/>
-        ///  will also close the provided directory. 
+        /// <see cref="AnalyzingInfixSuggester"/> directory, if it exists. 
+        /// This directory must be
+        /// private to the infix suggester (i.e., not an external
+        /// Lucene index).  Note that <see cref="Dispose()"/>
+        /// will also dispose the provided directory. 
         /// </summary>
         public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer analyzer)
             : this(matchVersion, dir, analyzer, analyzer, DEFAULT_MIN_PREFIX_CHARS)
@@ -122,13 +123,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Create a new instance, loading from a previously built
-        ///  AnalyzingInfixSuggester directory, if it exists.  This directory must be
-        ///  private to the infix suggester (i.e., not an external
-        ///  Lucene index).  Note that <seealso cref="#close"/>
-        ///  will also close the provided directory.
+        /// <see cref="AnalyzingInfixSuggester"/> directory, if it exists.  This directory must be
+        /// private to the infix suggester (i.e., not an external
+        /// Lucene index).  Note that <see cref="Dispose()"/>
+        /// will also dispose the provided directory.
         /// </summary>
         ///  <param name="minPrefixChars"> Minimum number of leading characters
-        ///     before PrefixQuery is used (default 4).
+        ///     before <see cref="PrefixQuery"/> is used (default 4).
         ///     Prefixes shorter than this are indexed as character
         ///     ngrams (increasing index size but making lookups
         ///     faster). </param>
@@ -156,7 +157,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Override this to customize index settings, e.g. which
-        ///  codec to use. 
+        /// codec to use. 
         /// </summary>
         protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion, Analyzer indexAnalyzer, IndexWriterConfig.OpenMode_e openMode)
         {
@@ -173,8 +174,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         /// <summary>
-        /// Subclass can override to choose a specific {@link
-        ///  Directory} implementation. 
+        /// Subclass can override to choose a specific 
+        /// <see cref="Directory"/> implementation. 
         /// </summary>
         protected internal virtual Directory GetDirectory(DirectoryInfo path)
         {
@@ -283,11 +284,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         /// <summary>
-        /// Adds a new suggestion.  Be sure to use <seealso cref="#update"/>
-        ///  instead if you want to replace a previous suggestion.
-        ///  After adding or updating a batch of new suggestions,
-        ///  you must call <seealso cref="#refresh"/> in the end in order to
-        ///  see the suggestions in <seealso cref="#lookup"/> 
+        /// Adds a new suggestion.  Be sure to use <see cref="Update"/>
+        /// instead if you want to replace a previous suggestion.
+        /// After adding or updating a batch of new suggestions,
+        /// you must call <see cref="Refresh()"/> in the end in order to
+        /// see the suggestions in <see cref="DoLookup"/> 
         /// </summary>
         public virtual void Add(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
@@ -296,12 +297,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Updates a previous suggestion, matching the exact same
-        ///  text as before.  Use this to change the weight or
-        ///  payload of an already added suggstion.  If you know
-        ///  this text is not already present you can use {@link
-        ///  #add} instead.  After adding or updating a batch of
-        ///  new suggestions, you must call <seealso cref="#refresh"/> in the
-        ///  end in order to see the suggestions in <seealso cref="#lookup"/> 
+        /// text as before.  Use this to change the weight or
+        /// payload of an already added suggstion.  If you know
+        /// this text is not already present you can use <see cref="Add"/> 
+        /// instead.  After adding or updating a batch of
+        /// new suggestions, you must call <see cref="Refresh()"/> in the
+        /// end in order to see the suggestions in <see cref="DoLookup"/> 
         /// </summary>
         public virtual void Update(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
@@ -339,8 +340,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Reopens the underlying searcher; it's best to "batch
-        ///  up" many additions/updates, and then call refresh
-        ///  once in the end. 
+        /// up" many additions/updates, and then call refresh
+        /// once in the end. 
         /// </summary>
         public virtual void Refresh()
         {
@@ -378,8 +379,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// This is called if the last token isn't ended
-        ///  (e.g. user did not type a space after it).  Return an
-        ///  appropriate Query clause to add to the BooleanQuery. 
+        /// (e.g. user did not type a space after it).  Return an
+        /// appropriate <see cref="Query"/> clause to add to the <see cref="BooleanQuery"/>. 
         /// </summary>
         protected internal virtual Query GetLastTokenQuery(string token)
         {
@@ -394,8 +395,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Retrieve suggestions, specifying whether all terms
-        ///  must match ({@code allTermsRequired}) and whether the hits
-        ///  should be highlighted ({@code doHighlight}). 
+        ///  must match (<paramref name="allTermsRequired"/>) and whether the hits
+        ///  should be highlighted (<paramref name="doHighlight"/>). 
         /// </summary>
         public virtual IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
         {
@@ -541,7 +542,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Create the results based on the search hits.
         /// Can be overridden by subclass to add particular behavior (e.g. weight transformation) </summary>
-        /// <exception cref="IOException"> If there are problems reading fields from the underlying Lucene index. </exception>
+        /// <exception cref="System.IO.IOException"> If there are problems reading fields from the underlying Lucene index. </exception>
         protected internal virtual IList<LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits, int num, string charSequence, bool doHighlight, IEnumerable<string> matchedTokens, string prefixToken)
         {
 
@@ -612,7 +613,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Subclass can override this to tweak the Query before
-        ///  searching. 
+        /// searching. 
         /// </summary>
         protected internal virtual Query FinishQuery(BooleanQuery bq, bool allTermsRequired)
         {
@@ -621,9 +622,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Override this method to customize the Object
-        ///  representing a single highlighted suggestions; the
-        ///  result is set on each {@link
-        ///  LookupResult#highlightKey} member. 
+        /// representing a single highlighted suggestions; the
+        /// result is set on each <see cref="Lookup.LookupResult.highlightKey"/>
+        /// member. 
         /// </summary>
         protected internal virtual object Highlight(string text, IEnumerable<string> matchedTokens, string prefixToken)
         {
@@ -678,10 +679,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Called while highlighting a single result, to append a
-        ///  non-matching chunk of text from the suggestion to the
-        ///  provided fragments list. </summary>
-        ///  <param name="sb"> The {@code StringBuilder} to append to </param>
-        ///  <param name="text"> The text chunk to add </param>
+        /// non-matching chunk of text from the suggestion to the
+        /// provided fragments list. </summary>
+        /// <param name="sb"> The <see cref="StringBuilder"/> to append to </param>
+        /// <param name="text"> The text chunk to add </param>
         protected internal virtual void AddNonMatch(StringBuilder sb, string text)
         {
             sb.Append(text);
@@ -689,10 +690,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Called while highlighting a single result, to append
-        ///  the whole matched token to the provided fragments list. </summary>
-        ///  <param name="sb"> The {@code StringBuilder} to append to </param>
-        ///  <param name="surface"> The surface form (original) text </param>
-        ///  <param name="analyzed"> The analyzed token corresponding to the surface form text </param>
+        /// the whole matched token to the provided fragments list. </summary>
+        /// <param name="sb"> The <see cref="StringBuilder"/> to append to </param>
+        /// <param name="surface"> The surface form (original) text </param>
+        /// <param name="analyzed"> The analyzed token corresponding to the surface form text </param>
         protected internal virtual void AddWholeMatch(StringBuilder sb, string surface, string analyzed)
         {
             sb.Append("<b>");
@@ -702,13 +703,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Called while highlighting a single result, to append a
-        ///  matched prefix token, to the provided fragments list. </summary>
-        ///  <param name="sb"> The {@code StringBuilder} to append to </param>
-        ///  <param name="surface"> The fragment of the surface form
-        ///        (indexed during <seealso cref="#build"/>, corresponding to
+        /// matched prefix token, to the provided fragments list. </summary>
+        /// <param name="sb"> The <see cref="StringBuilder"/> to append to </param>
+        /// <param name="surface"> The fragment of the surface form
+        ///        (indexed during <see cref="Build(IInputIterator)"/>, corresponding to
         ///        this match </param>
-        ///  <param name="analyzed"> The analyzed token that matched </param>
-        ///  <param name="prefixToken"> The prefix of the token that matched </param>
+        /// <param name="analyzed"> The analyzed token that matched </param>
+        /// <param name="prefixToken"> The prefix of the token that matched </param>
         protected internal virtual void AddPrefixMatch(StringBuilder sb, string surface, string analyzed, string prefixToken)
         {
             // TODO: apps can try to invert their analysis logic

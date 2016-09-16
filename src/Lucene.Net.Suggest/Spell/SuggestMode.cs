@@ -37,7 +37,7 @@
         /// <summary>
         /// Always attempt to offer suggestions (however, other parameters may limit
         /// suggestions. For example, see
-        /// <seealso cref="DirectSpellChecker#setMaxQueryFrequency(float)"/> ).
+        /// <see cref="DirectSpellChecker.MaxQueryFrequency"/> ).
         /// </summary>
         SUGGEST_ALWAYS
     }

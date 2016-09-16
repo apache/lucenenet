@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
     /// Suggest implementation based on 
     /// <a href="http://jaspell.sourceforge.net/">JaSpell</a>.
     /// </summary>
-    /// <seealso cref= JaspellTernarySearchTrie </seealso>
+    /// <seealso cref="JaspellTernarySearchTrie"/>
     public class JaspellLookup : Lookup
     {
         internal JaspellTernarySearchTrie trie = new JaspellTernarySearchTrie();
@@ -38,9 +38,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         private long count = 0;
 
         /// <summary>
-        /// Creates a new empty trie </summary>
-        /// <seealso cref= #build(InputIterator)
-        ///  </seealso>
+        /// Creates a new empty trie
+        /// </summary>
+        /// <seealso cref="Build(IInputIterator)"/>
         public JaspellLookup()
         {
         }

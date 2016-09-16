@@ -28,32 +28,32 @@ namespace Lucene.Net.Search.Suggest
     /// <para>
     /// Dictionary with terms and optionally payload information 
     /// taken from stored fields in a Lucene index. Similar to 
-    /// <seealso cref="DocumentDictionary"/>, except it obtains the weight
-    /// of the terms in a document based on a <seealso cref="ValueSource"/>.
+    /// <see cref="DocumentDictionary"/>, except it obtains the weight
+    /// of the terms in a document based on a <see cref="ValueSource"/>.
     /// </para>
     /// <b>NOTE:</b> 
-    ///  <ul>
-    ///    <li>
+    ///  <list type="bullet">
+    ///    <item>
     ///      The term and (optionally) payload fields have to be
     ///      stored
-    ///    </li>
-    ///    <li>
+    ///    </item>
+    ///    <item>
     ///      if the term or (optionally) payload fields supplied
     ///      do not have a value for a document, then the document is 
     ///      rejected by the dictionary
-    ///    </li>
-    ///  </ul>
+    ///    </item>
+    ///  </list>
     ///  <para>
-    ///  In practice the <seealso cref="ValueSource"/> will likely be obtained
+    ///  In practice the <see cref="ValueSource"/> will likely be obtained
     ///  using the lucene expression module. The following example shows
-    ///  how to create a <seealso cref="ValueSource"/> from a simple addition of two
+    ///  how to create a <see cref="ValueSource"/> from a simple addition of two
     ///  fields:
     ///  <code>
-    ///    Expression expression = JavascriptCompiler.compile("f1 + f2");
+    ///    Expression expression = JavascriptCompiler.Compile("f1 + f2");
     ///    SimpleBindings bindings = new SimpleBindings();
-    ///    bindings.add(new SortField("f1", SortField.Type.LONG));
-    ///    bindings.add(new SortField("f2", SortField.Type.LONG));
-    ///    ValueSource valueSource = expression.getValueSource(bindings);
+    ///    bindings.Add(new SortField("f1", SortField.Type_e.LONG));
+    ///    bindings.Add(new SortField("f2", SortField.Type_e.LONG));
+    ///    ValueSource valueSource = expression.GetValueSource(bindings);
     ///  </code>
     ///  </para>
     /// 
@@ -64,9 +64,9 @@ namespace Lucene.Net.Search.Suggest
         private readonly ValueSource weightsValueSource;
 
         /// <summary>
-        /// Creates a new dictionary with the contents of the fields named <code>field</code>
-        /// for the terms, <code>payload</code> for the corresponding payloads, <code>contexts</code>
-        /// for the associated contexts and uses the <code>weightsValueSource</code> supplied 
+        /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
+        /// for the terms, <paramref name="payload"/> for the corresponding payloads, <paramref name="contexts"/>
+        /// for the associated contexts and uses the <paramref name="weightsValueSource"/> supplied 
         /// to determine the score.
         /// </summary>
         public DocumentValueSourceDictionary(IndexReader reader, string field, ValueSource weightsValueSource, string payload, string contexts)
@@ -75,9 +75,9 @@ namespace Lucene.Net.Search.Suggest
             this.weightsValueSource = weightsValueSource;
         }
         /// <summary>
-        /// Creates a new dictionary with the contents of the fields named <code>field</code>
-        /// for the terms, <code>payloadField</code> for the corresponding payloads
-        /// and uses the <code>weightsValueSource</code> supplied to determine the 
+        /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
+        /// for the terms, <paramref name="payload"/> for the corresponding payloads
+        /// and uses the <paramref name="weightsValueSource"/> supplied to determine the 
         /// score.
         /// </summary>
         public DocumentValueSourceDictionary(IndexReader reader, string field, ValueSource weightsValueSource, string payload)
@@ -87,8 +87,8 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Creates a new dictionary with the contents of the fields named <code>field</code>
-        /// for the terms and uses the <code>weightsValueSource</code> supplied to determine the 
+        /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
+        /// for the terms and uses the <paramref name="weightsValueSource"/> supplied to determine the 
         /// score.
         /// </summary>
         public DocumentValueSourceDictionary(IndexReader reader, string field, ValueSource weightsValueSource)
@@ -136,9 +136,8 @@ namespace Lucene.Net.Search.Suggest
             }
 
             /// <summary>
-            /// Returns the weight for the current <code>docId</code> as computed 
-            /// by the <code>weightsValueSource</code>
-            /// 
+            /// Returns the weight for the current <paramref name="docId"/> as computed 
+            /// by the <see cref="weightsValueSource"/>
             /// </summary>
             protected internal override long GetWeight(Document doc, int docId)
             {

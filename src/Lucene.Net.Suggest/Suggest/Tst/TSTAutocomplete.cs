@@ -22,7 +22,7 @@ namespace Lucene.Net.Search.Suggest.Tst
     /// <summary>
     /// Ternary Search Trie implementation.
     /// </summary>
-    /// <seealso cref= TernaryTreeNode </seealso>
+    /// <seealso cref="TernaryTreeNode"/>
     public class TSTAutocomplete
     {
 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         ///          key to be inserted in TST. </param>
         /// <param name="x">
         ///          index of character in key to be inserted currently. </param>
-        /// <returns> currentNode The new reference to root node of TST </returns>
+        /// <returns> The new reference to root node of TST </returns>
         public virtual TernaryTreeNode Insert(TernaryTreeNode currentNode, string s, object val, int x)
         {
             if (s == null || s.Length <= x)

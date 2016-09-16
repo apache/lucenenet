@@ -21,7 +21,7 @@ namespace Lucene.Net.Search.Suggest.Fst
      */
 
     /// <summary>
-    /// Collects <seealso cref="BytesRef"/> and then allows one to iterate over their sorted order. Implementations
+    /// Collects <see cref="BytesRef"/> and then allows one to iterate over their sorted order. Implementations
     /// of this interface will be called in a single-threaded scenario.
     /// </summary>
     public interface IBytesRefSorter
@@ -29,16 +29,16 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Adds a single suggestion entry (possibly compound with its bucket).
         /// </summary>
-        /// <exception cref="IOException"> If an I/O exception occurs. </exception>
-        /// <exception cref="InvalidOperationException"> If an addition attempt is performed after
-        /// a call to <seealso cref="#iterator()"/> has been made. </exception>
+        /// <exception cref="System.IO.IOException"> If an I/O exception occurs. </exception>
+        /// <exception cref="System.InvalidOperationException"> If an addition attempt is performed after
+        /// a call to <see cref="GetEnumerator"/> has been made. </exception>
         void Add(BytesRef utf8);
 
         /// <summary>
-        /// Sorts the entries added in <seealso cref="#add(BytesRef)"/> and returns 
-        /// an iterator over all sorted entries.
+        /// Sorts the entries added in <see cref="Add(BytesRef)"/> and returns 
+        /// an enumerator over all sorted entries.
         /// </summary>
-        /// <exception cref="IOException"> If an I/O exception occurs. </exception>
+        /// <exception cref="System.IO.IOException"> If an I/O exception occurs. </exception>
         BytesRefIterator GetEnumerator();
 
         /// <summary>

@@ -23,7 +23,7 @@ namespace Lucene.Net.Search.Suggest
      */
 
     /// <summary>
-    /// An <seealso cref="IBytesRefSorter"/> that keeps all the entries in memory.
+    /// An <see cref="IBytesRefSorter"/> that keeps all the entries in memory.
     /// @lucene.experimental
     /// @lucene.internal
     /// </summary>

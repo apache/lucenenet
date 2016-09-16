@@ -25,19 +25,18 @@ namespace Lucene.Net.Search.Spell
     /// </summary>
     /// <seealso cref="SuggestWordScoreComparator"/>
     /// <seealso cref="SuggestWordFrequencyComparator"/>
-    ///  </seealso>
     public sealed class SuggestWordQueue : PriorityQueue<SuggestWord>
     {
         /// <summary>
         /// Default comparator: score then frequency. </summary>
-        /// <seealso cref= SuggestWordScoreComparator </seealso>
+        /// <seealso cref="SuggestWordScoreComparator"/>
         public static readonly IComparer<SuggestWord> DEFAULT_COMPARATOR = new SuggestWordScoreComparator();
 
 
         private readonly IComparer<SuggestWord> comparator;
 
         /// <summary>
-        /// Use the <seealso cref="#DEFAULT_COMPARATOR"/> </summary>
+        /// Use the <see cref="DEFAULT_COMPARATOR"/> </summary>
         /// <param name="size"> The size of the queue </param>
         public SuggestWordQueue(int size)
             : base(size)

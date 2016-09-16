@@ -27,19 +27,20 @@ namespace Lucene.Net.Search.Suggest.Tst
     /// Suggest implementation based on a 
     /// <a href="http://en.wikipedia.org/wiki/Ternary_search_tree">Ternary Search Tree</a>
     /// </summary>
-    /// <seealso cref= TSTAutocomplete </seealso>
+    /// <seealso cref="TSTAutocomplete"/>
     public class TSTLookup : Lookup
     {
         internal TernaryTreeNode root = new TernaryTreeNode();
         internal TSTAutocomplete autocomplete = new TSTAutocomplete();
 
         /// <summary>
-        /// Number of entries the lookup was built with </summary>
+        /// Number of entries the lookup was built with
+        /// </summary>
         private long count = 0;
 
         /// <summary>
         /// Creates a new TSTLookup with an empty Ternary Search Tree. </summary>
-        /// <seealso cref= #build(InputIterator) </seealso>
+        /// <seealso cref="Build(IInputIterator)"/>
         public TSTLookup()
         {
         }

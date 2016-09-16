@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// suggestion "The Ghost of Christmas Past". Note that
     /// position increments MUST NOT be preserved for this example
     /// to work, so you should call the constructor with 
-    /// <code>preservePositionIncrements</code> parameter set to 
+    /// <paramref name="preservePositionIncrements"/> parameter set to 
     /// false
     /// 
     /// </para>
@@ -63,24 +63,24 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// </para>
     /// <para>
     /// There are some limitations:
-    /// <ul>
+    /// <list type="number">
     /// 
-    ///   <li> A lookup from a query like "net" in English won't
+    ///   <item> A lookup from a query like "net" in English won't
     ///        be any different than "net " (ie, user added a
     ///        trailing space) because analyzers don't reflect
     ///        when they've seen a token separator and when they
-    ///        haven't.
+    ///        haven't.</item>
     /// 
-    ///   <li> If you're using {@code StopFilter}, and the user will
+    ///   <item> If you're using <see cref="Analysis.Core.StopFilter"/>, and the user will
     ///        type "fast apple", but so far all they've typed is
     ///        "fast a", again because the analyzer doesn't convey whether
     ///        it's seen a token separator after the "a",
-    ///        {@code StopFilter} will remove that "a" causing
-    ///        far more matches than you'd expect.
+    ///        <see cref="Analysis.Core.StopFilter"/> will remove that "a" causing
+    ///        far more matches than you'd expect.</item>
     /// 
-    ///   <li> Lookups with the empty string return no results
-    ///        instead of all results.
-    /// </ul>
+    ///   <item> Lookups with the empty string return no results
+    ///        instead of all results.</item>
+    /// </list>
     /// 
     /// @lucene.experimental
     /// </para>
@@ -89,10 +89,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     {
 
         /// <summary>
-        /// FST<Weight,Surface>: 
-        ///  input is the analyzed form, with a null byte between terms
-        ///  weights are encoded as costs: (Integer.MAX_VALUE-weight)
-        ///  surface is the original, unanalyzed form.
+        /// FST(Weight,Surface):
+        /// input is the analyzed form, with a null byte between terms
+        /// weights are encoded as costs: (<see cref="int.MaxValue"/> - weight)
+        /// surface is the original, unanalyzed form.
         /// </summary>
         private FST<PairOutputs<long?, BytesRef>.Pair> fst = null;
 
@@ -119,18 +119,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly bool preserveSep;
 
         /// <summary>
-        /// Include this flag in the options parameter to {@link
-        ///  #AnalyzingSuggester(Analyzer,Analyzer,int,int,int,boolean)} to always
-        ///  return the exact match first, regardless of score.  This
-        ///  has no performance impact but could result in
-        ///  low-quality suggestions. 
+        /// Include this flag in the options parameter to 
+        /// <see cref="AnalyzingSuggester(Analyzer,Analyzer,int,int,int,bool)"/> to always
+        /// return the exact match first, regardless of score.  This
+        /// has no performance impact but could result in
+        /// low-quality suggestions. 
         /// </summary>
         public const int EXACT_FIRST = 1;
 
         /// <summary>
-        /// Include this flag in the options parameter to {@link
-        ///  #AnalyzingSuggester(Analyzer,Analyzer,int,int,int,boolean)} to preserve
-        ///  token separators when matching. 
+        /// Include this flag in the options parameter to
+        /// <see cref="AnalyzingSuggester(Analyzer,Analyzer,int,int,int,bool)"/> to preserve
+        /// token separators when matching. 
         /// </summary>
         public const int PRESERVE_SEP = 2;
 
@@ -180,9 +180,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private long count = 0;
 
         /// <summary>
-        /// Calls {@link #AnalyzingSuggester(Analyzer,Analyzer,int,int,int,boolean)
-        /// AnalyzingSuggester(analyzer, analyzer, EXACT_FIRST |
-        /// PRESERVE_SEP, 256, -1, true)}
+        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,int,int,int,bool)">
+        /// AnalyzingSuggester(analyzer, analyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
+        /// </see>
         /// </summary>
         public AnalyzingSuggester(Analyzer analyzer)
             : this(analyzer, analyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
@@ -190,9 +190,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         /// <summary>
-        /// Calls {@link #AnalyzingSuggester(Analyzer,Analyzer,int,int,int,boolean)
-        /// AnalyzingSuggester(indexAnalyzer, queryAnalyzer, EXACT_FIRST |
-        /// PRESERVE_SEP, 256, -1, true)}
+        /// Calls <see cref="AnalyzingSuggester(Analyzer,Analyzer,int,int,int,bool)">
+        /// AnalyzingSuggester(indexAnalyzer, queryAnalyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
+        /// </see>
         /// </summary>
         public AnalyzingSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer)
             : this(indexAnalyzer, queryAnalyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true)
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///   analyzing suggestions while building the index. </param>
         /// <param name="queryAnalyzer"> Analyzer that will be used for
         ///   analyzing query text during lookup </param>
-        /// <param name="options"> see <seealso cref="#EXACT_FIRST"/>, <seealso cref="#PRESERVE_SEP"/> </param>
+        /// <param name="options"> see <see cref="EXACT_FIRST"/>, <see cref="PRESERVE_SEP"/> </param>
         /// <param name="maxSurfaceFormsPerAnalyzedForm"> Maximum number of
         ///   surface forms to keep for a single analyzed form.
         ///   When there are too many surface forms we discard the

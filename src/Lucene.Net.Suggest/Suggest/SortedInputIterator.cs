@@ -46,9 +46,8 @@ namespace Lucene.Net.Search.Suggest
         private ISet<BytesRef> contexts = null;
 
         /// <summary>
-        /// Creates a new sorted wrapper, using {@link
-        /// BytesRef#getUTF8SortedAsUnicodeComparator} for
-        /// sorting. 
+        /// Creates a new sorted wrapper, using <see cref="BytesRef.UTF8SortedAsUnicodeComparer"/>
+        /// for sorting. 
         /// </summary>
         public SortedInputIterator(IInputIterator source)
             : this(source, BytesRef.UTF8SortedAsUnicodeComparer)

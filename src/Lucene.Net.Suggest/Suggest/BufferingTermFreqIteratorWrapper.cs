@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Suggest
         /// current buffer position </summary>
         protected internal int curPos = -1;
         /// <summary>
-        /// buffered weights, parallel with <seealso cref="#entries"/> </summary>
+        /// buffered weights, parallel with <see cref="entries"/> </summary>
         protected internal long[] freqs = new long[1];
         private readonly BytesRef spare = new BytesRef();
         private readonly IComparer<BytesRef> comp;

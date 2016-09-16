@@ -26,12 +26,12 @@ namespace Lucene.Net.Search.Suggest.Fst
      */
 
     /// <summary>
-    /// An adapter from <seealso cref="Lookup"/> API to <seealso cref="FSTCompletion"/>.
+    /// An adapter from <see cref="Lookup"/> API to <see cref="FSTCompletion"/>.
     /// 
-    /// <para>This adapter differs from <seealso cref="FSTCompletion"/> in that it attempts
-    /// to discretize any "weights" as passed from in <seealso cref="InputIterator#weight()"/>
+    /// <para>This adapter differs from <see cref="FSTCompletion"/> in that it attempts
+    /// to discretize any "weights" as passed from in <see cref="IInputIterator.Weight"/>
     /// to match the number of buckets. For the rationale for bucketing, see
-    /// <seealso cref="FSTCompletion"/>.
+    /// <see cref="FSTCompletion"/>.
     /// 
     /// </para>
     /// <para><b>Note:</b>Discretization requires an additional sorting pass.
@@ -48,25 +48,25 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// 
     /// </para>
     /// <para>For fine-grained control over which weights are assigned to which buckets,
-    /// use <seealso cref="FSTCompletion"/> directly or <seealso cref="TSTLookup"/>, for example.
+    /// use <see cref="FSTCompletion"/> directly or <see cref="Tst.TSTLookup"/>, for example.
     /// 
     /// </para>
     /// </summary>
-    /// <seealso cref= FSTCompletion
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="FSTCompletion"/>
+    /// @lucene.experimental
     public class FSTCompletionLookup : Lookup
     {
         /// <summary>
         /// An invalid bucket count if we're creating an object
         /// of this class from an existing FST.
         /// </summary>
-        /// <seealso cref= #FSTCompletionLookup(FSTCompletion, boolean) </seealso>
+        /// <seealso cref="FSTCompletionLookup(FSTCompletion, bool)"/> </seealso>
         private static int INVALID_BUCKETS_COUNT = -1;
 
         /// <summary>
         /// Shared tail length for conflating in the created automaton. Setting this
-        /// to larger values (<seealso cref="Integer#MAX_VALUE"/>) will create smaller (or minimal) 
-        /// automata at the cost of RAM for keeping nodes hash in the <seealso cref="FST"/>. 
+        /// to larger values (<see cref="int.MaxValue"/>) will create smaller (or minimal) 
+        /// automata at the cost of RAM for keeping nodes hash in the <see cref="FST"/>. 
         ///  
         /// <para>Empirical pick.
         /// </para>
@@ -92,8 +92,8 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// This constructor prepares for creating a suggested FST using the
-        /// <seealso cref="#build(InputIterator)"/> method. The number of weight
-        /// discretization buckets is set to <seealso cref="FSTCompletion#DEFAULT_BUCKETS"/> and
+        /// <see cref="Build(IInputIterator)"/> method. The number of weight
+        /// discretization buckets is set to <see cref="FSTCompletion.DEFAULT_BUCKETS"/> and
         /// exact matches are promoted to the top of the suggestions list.
         /// </summary>
         public FSTCompletionLookup()
@@ -103,14 +103,14 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// This constructor prepares for creating a suggested FST using the
-        /// <seealso cref="#build(InputIterator)"/> method.
+        /// <see cref="Build(IInputIterator)"/> method.
         /// </summary>
         /// <param name="buckets">
         ///          The number of weight discretization buckets (see
-        ///          <seealso cref="FSTCompletion"/> for details).
+        ///          <see cref="FSTCompletion"/> for details).
         /// </param>
         /// <param name="exactMatchFirst">
-        ///          If <code>true</code> exact matches are promoted to the top of the
+        ///          If <c>true</c> exact matches are promoted to the top of the
         ///          suggestions list. Otherwise they appear in the order of
         ///          discretized weight and alphabetical within the bucket. </param>
         public FSTCompletionLookup(int buckets, bool exactMatchFirst)
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// This constructor takes a pre-built automaton.
         /// </summary>
         ///  <param name="completion"> 
-        ///          An instance of <seealso cref="FSTCompletion"/>. </param>
+        ///          An instance of <see cref="FSTCompletion"/>. </param>
         ///  <param name="exactMatchFirst">
         ///          If <code>true</code> exact matches are promoted to the top of the
         ///          suggestions list. Otherwise they appear in the order of

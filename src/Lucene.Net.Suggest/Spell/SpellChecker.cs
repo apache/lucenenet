@@ -32,17 +32,16 @@ namespace Lucene.Net.Search.Spell
     ///  (initially inspired by the David Spencer code).
     /// </para>
     /// 
-    /// <para>Example Usage:
+    /// <para>Example Usage (C#):
     /// 
-    /// <pre class="prettyprint">
+    /// <code>
     ///  SpellChecker spellchecker = new SpellChecker(spellIndexDirectory);
     ///  // To index a field of a user index:
-    ///  spellchecker.indexDictionary(new LuceneDictionary(my_lucene_reader, a_field));
+    ///  spellchecker.IndexDictionary(new LuceneDictionary(my_lucene_reader, a_field));
     ///  // To index a file containing words:
-    ///  spellchecker.indexDictionary(new PlainTextDictionary(new File("myfile.txt")));
-    ///  String[] suggestions = spellchecker.suggestSimilar("misspelt", 5);
-    /// </pre>
-    /// 
+    ///  spellchecker.IndexDictionary(new PlainTextDictionary(new FileInfo("myfile.txt")));
+    ///  string[] suggestions = spellchecker.SuggestSimilar("misspelt", 5);
+    /// </code>
     /// 
     /// </para>
     /// </summary>
@@ -50,7 +49,8 @@ namespace Lucene.Net.Search.Spell
     {
 
         /// <summary>
-        /// The default minimum score to use, if not specified by calling <seealso cref="#setAccuracy(float)"/> .
+        /// The default minimum score to use, if not specified by setting <see cref="Accuracy"/>
+        /// or overriding with <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/> .
         /// </summary>
         public const float DEFAULT_ACCURACY = 0.5f;
 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// the spell index
         /// </summary>
-        // don't modify the directory directly - see #swapSearcher()
+        // don't modify the directory directly - see SwapSearcher()
         // TODO: why is this package private?
         internal Directory spellIndex;
         /// <summary>
@@ -71,8 +71,8 @@ namespace Lucene.Net.Search.Spell
         private float bStart = 2.0f;
 
         private float bEnd = 1.0f;
-        // don't use this searcher directly - see #swapSearcher()
 
+        // don't use this searcher directly - see SwapSearcher()
         private IndexSearcher searcher;
 
         /// <summary>
@@ -100,20 +100,20 @@ namespace Lucene.Net.Search.Spell
         /// Use the given directory as a spell checker index. The directory
         /// is created if it doesn't exist yet. </summary>
         /// <param name="spellIndex"> the spell index directory </param>
-        /// <param name="sd"> the <seealso cref="StringDistance"/> measurement to use </param>
-        /// <exception cref="IOException"> if Spellchecker can not open the directory </exception>
+        /// <param name="sd"> the <see cref="StringDistance"/> measurement to use </param>
+        /// <exception cref="System.IO.IOException"> if Spellchecker can not open the directory </exception>
         public SpellChecker(Directory spellIndex, IStringDistance sd)
             : this(spellIndex, sd, SuggestWordQueue.DEFAULT_COMPARATOR)
         {
         }
         /// <summary>
         /// Use the given directory as a spell checker index with a
-        /// <seealso cref="LevensteinDistance"/> as the default <seealso cref="StringDistance"/>. The
+        /// <see cref="LevensteinDistance"/> as the default <see cref="T:StringDistance"/>. The
         /// directory is created if it doesn't exist yet.
         /// </summary>
         /// <param name="spellIndex">
         ///          the spell index directory </param>
-        /// <exception cref="IOException">
+        /// <exception cref="System.IO.IOException">
         ///           if spellchecker can not open the directory </exception>
         public SpellChecker(Directory spellIndex)
             : this(spellIndex, new LevensteinDistance())
@@ -121,12 +121,12 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Use the given directory as a spell checker index with the given <seealso cref="Lucene.Net.Search.Spell.IStringDistance"/> measure
-        /// and the given <seealso cref="System.Collections.Generic.IComparer{T}"/> for sorting the results. </summary>
+        /// Use the given directory as a spell checker index with the given <see cref="IStringDistance"/> measure
+        /// and the given <see cref="System.Collections.Generic.IComparer{T}"/> for sorting the results. </summary>
         /// <param name="spellIndex"> The spelling index </param>
         /// <param name="sd"> The distance </param>
         /// <param name="comparator"> The comparator </param>
-        /// <exception cref="IOException"> if there is a problem opening the index </exception>
+        /// <exception cref="System.IO.IOException"> if there is a problem opening the index </exception>
         public SpellChecker(Directory spellIndex, IStringDistance sd, IComparer<SuggestWord> comparator)
         {
             SpellIndex = spellIndex;
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Use a different index as the spell checker index or re-open
+        /// Sets a different index as the spell checker index or re-open
         /// the existing index if <code>spellIndex</code> is the same value
         /// as given in the constructor. </summary>
         /// <param name="spellIndexDir"> the spell directory to use </param>
@@ -163,8 +163,8 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Sets the <seealso cref="java.util.Comparator"/> for the <seealso cref="SuggestWordQueue"/>. </summary>
-        /// <param name="comparator"> the comparator </param>
+        /// Gets or sets the <see cref="IComparer{T}"/> for the <see cref="SuggestWordQueue"/>.
+        /// </summary>
         public virtual IComparer<SuggestWord> Comparator
         {
             set
@@ -179,11 +179,9 @@ namespace Lucene.Net.Search.Spell
 
 
         /// <summary>
-        /// Sets the <seealso cref="StringDistance"/> implementation for this
-        /// <seealso cref="SpellChecker"/> instance.
+        /// Gets or sets the <see cref="T:StringDistance"/> implementation for this
+        /// <see cref="SpellChecker"/> instance.
         /// </summary>
-        /// <param name="sd"> the <seealso cref="StringDistance"/> implementation for this
-        /// <seealso cref="SpellChecker"/> instance </param>
         public virtual IStringDistance StringDistance
         {
             set
@@ -197,8 +195,11 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Sets the accuracy 0 &lt; minScore &lt; 1; default <seealso cref="#DEFAULT_ACCURACY"/> </summary>
-        /// <param name="acc"> The new accuracy </param>
+        /// Gets or sets the accuracy (minimum score) to be used, unless overridden in 
+        /// <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>, 
+        /// to decide whether a suggestion is included or not.
+        /// Sets the accuracy 0 &lt; minScore &lt; 1; default <see cref="DEFAULT_ACCURACY"/>
+        /// </summary>
         public virtual float Accuracy
         {
             set
@@ -214,25 +215,25 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Suggest similar words.
-        /// 
-        /// <para>As the Lucene similarity that is used to fetch the most relevant n-grammed terms
+        /// <para>
+        /// As the Lucene similarity that is used to fetch the most relevant n-grammed terms
         /// is not the same as the edit distance strategy used to calculate the best
         /// matching spell-checked word from the hits that Lucene found, one usually has
         /// to retrieve a couple of numSug's in order to get the true best match.
-        /// 
         /// </para>
-        /// <para>I.e. if numSug == 1, don't count on that suggestion being the best one.
+        /// <para>
+        /// I.e. if numSug == 1, don't count on that suggestion being the best one.
         /// Thus, you should set this value to <b>at least</b> 5 for a good suggestion.
-        /// 
         /// </para>
         /// </summary>
         /// <param name="word"> the word you want a spell check done on </param>
         /// <param name="numSug"> the number of suggested words </param>
-        /// <exception cref="IOException"> if the underlying index throws an <seealso cref="IOException"/> </exception>
-        /// <exception cref="AlreadyClosedException"> if the Spellchecker is already closed </exception>
-        /// <returns> String[]
-        /// </returns>
-        /// <seealso cref= #suggestSimilar(String, int, IndexReader, String, SuggestMode, float)  </seealso>
+        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
+        /// <exception cref="AlreadyClosedException"> if the Spellchecker is already disposed </exception>
+        /// <returns>string[] the sorted list of the suggest words with these 2 criteria:
+        /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
+        /// of the suggest words in the field of the user index</returns>
+        /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
         public virtual string[] SuggestSimilar(string word, int numSug)
         {
             return this.SuggestSimilar(word, numSug, null, null, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
@@ -240,34 +241,34 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Suggest similar words.
-        /// 
-        /// <para>As the Lucene similarity that is used to fetch the most relevant n-grammed terms
+        /// <para>
+        /// As the Lucene similarity that is used to fetch the most relevant n-grammed terms
         /// is not the same as the edit distance strategy used to calculate the best
         /// matching spell-checked word from the hits that Lucene found, one usually has
         /// to retrieve a couple of numSug's in order to get the true best match.
-        /// 
         /// </para>
-        /// <para>I.e. if numSug == 1, don't count on that suggestion being the best one.
+        /// <para>
+        /// I.e. if numSug == 1, don't count on that suggestion being the best one.
         /// Thus, you should set this value to <b>at least</b> 5 for a good suggestion.
-        /// 
         /// </para>
         /// </summary>
         /// <param name="word"> the word you want a spell check done on </param>
         /// <param name="numSug"> the number of suggested words </param>
         /// <param name="accuracy"> The minimum score a suggestion must have in order to qualify for inclusion in the results </param>
-        /// <exception cref="IOException"> if the underlying index throws an <seealso cref="IOException"/> </exception>
-        /// <exception cref="AlreadyClosedException"> if the Spellchecker is already closed </exception>
-        /// <returns> String[]
-        /// </returns>
-        /// <seealso cref= #suggestSimilar(String, int, IndexReader, String, SuggestMode, float) </seealso>
+        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
+        /// <exception cref="AlreadyClosedException"> if the Spellchecker is already disposed </exception>
+        /// <returns>string[] the sorted list of the suggest words with these 2 criteria:
+        /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
+        /// of the suggest words in the field of the user index</returns>
+        /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
         public virtual string[] SuggestSimilar(string word, int numSug, float accuracy)
         {
             return this.SuggestSimilar(word, numSug, null, null, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX, accuracy);
         }
 
         /// <summary>
-        /// Calls {@link #suggestSimilar(String, int, IndexReader, String, SuggestMode, float) 
-        ///       suggestSimilar(word, numSug, ir, suggestMode, field, this.accuracy)}
+        /// Calls <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
+        ///       SuggestSimilar(word, numSug, ir, suggestMode, field, this.accuracy)
         /// 
         /// </summary>
         public virtual string[] SuggestSimilar(string word, int numSug, IndexReader ir, string field, SuggestMode suggestMode)
@@ -277,16 +278,15 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Suggest similar words (optionally restricted to a field of an index).
-        /// 
-        /// <para>As the Lucene similarity that is used to fetch the most relevant n-grammed terms
+        /// <para>
+        /// As the Lucene similarity that is used to fetch the most relevant n-grammed terms
         /// is not the same as the edit distance strategy used to calculate the best
         /// matching spell-checked word from the hits that Lucene found, one usually has
         /// to retrieve a couple of numSug's in order to get the true best match.
-        /// 
         /// </para>
-        /// <para>I.e. if numSug == 1, don't count on that suggestion being the best one.
+        /// <para>
+        /// I.e. if numSug == 1, don't count on that suggestion being the best one.
         /// Thus, you should set this value to <b>at least</b> 5 for a good suggestion.
-        /// 
         /// </para>
         /// </summary>
         /// <param name="word"> the word you want a spell check done on </param>
@@ -297,9 +297,9 @@ namespace Lucene.Net.Search.Spell
         /// <param name="suggestMode"> 
         /// (NOTE: if indexReader==null and/or field==null, then this is overridden with SuggestMode.SUGGEST_ALWAYS) </param>
         /// <param name="accuracy"> The minimum score a suggestion must have in order to qualify for inclusion in the results </param>
-        /// <exception cref="IOException"> if the underlying index throws an <seealso cref="IOException"/> </exception>
-        /// <exception cref="AlreadyClosedException"> if the Spellchecker is already closed </exception>
-        /// <returns> String[] the sorted list of the suggest words with these 2 criteria:
+        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
+        /// <exception cref="AlreadyClosedException"> if the <see cref="Spellchecker"/> is already disposed </exception>
+        /// <returns> string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
         /// of the suggest words in the field of the user index
         ///  </returns>
@@ -457,7 +457,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Removes all terms from the spell check index. </summary>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         /// <exception cref="AlreadyClosedException"> if the Spellchecker is already closed </exception>
         public virtual void ClearIndex()
         {
@@ -474,8 +474,8 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Check whether the word exists in the index. </summary>
         /// <param name="word"> word to check </param>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-        /// <exception cref="AlreadyClosedException"> if the Spellchecker is already closed </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="AlreadyClosedException"> if the <see cref="Spellchecker"/> is already disposed </exception>
         /// <returns> true if the word exists in the index </returns>
         public virtual bool Exist(string word)
         {
@@ -494,12 +494,13 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Indexes the data from the given <seealso cref="IDictionary"/>. </summary>
+        /// Indexes the data from the given <see cref="IDictionary"/>. </summary>
         /// <param name="dict"> Dictionary to index </param>
-        /// <param name="config"> <seealso cref="IndexWriterConfig"/> to use </param>
+        /// <param name="config"> <see cref="IndexWriterConfig"/> to use </param>
         /// <param name="fullMerge"> whether or not the spellcheck index should be fully merged </param>
-        /// <exception cref="AlreadyClosedException"> if the Spellchecker is already closed </exception>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="AlreadyClosedException"> if the <see cref="Spellchecker"/> is already disposed </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        // LUCENENET TODO: Replace all usage of AlreadyClosedException with System.ObjectDisposedException
         public void IndexDictionary(IDictionary dict, IndexWriterConfig config, bool fullMerge)
         {
             lock (modifyCurrentIndexLock)
@@ -673,9 +674,9 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Close the IndexSearcher used by this SpellChecker </summary>
-        /// <exception cref="IOException"> if the close operation causes an <seealso cref="IOException"/> </exception>
-        /// <exception cref="AlreadyClosedException"> if the <seealso cref="SpellChecker"/> is already closed </exception>
+        /// Dispose the underlying IndexSearcher used by this SpellChecker </summary>
+        /// <exception cref="System.IO.IOException"> if the close operation causes an <see cref="IOException"/> </exception>
+        /// <exception cref="AlreadyClosedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         public void Dispose()
         {
             lock (searcherLock)
@@ -719,7 +720,7 @@ namespace Lucene.Net.Search.Spell
         /// Creates a new read-only IndexSearcher </summary>
         /// <param name="dir"> the directory used to open the searcher </param>
         /// <returns> a new read-only IndexSearcher </returns>
-        /// <exception cref="IOException"> f there is a low-level IO error </exception>
+        /// <exception cref="System.IO.IOException"> f there is a low-level IO error </exception>
         // for testing purposes
         internal virtual IndexSearcher CreateSearcher(Directory dir)
         {
@@ -727,11 +728,11 @@ namespace Lucene.Net.Search.Spell
         }
 
         /// <summary>
-        /// Returns <code>true</code> if and only if the <seealso cref="SpellChecker"/> is
-        /// disposed, otherwise <code>false</code>.
+        /// Returns <c>true</c> if and only if the <see cref="SpellChecker"/> is
+        /// disposed, otherwise <c>false</c>.
         /// </summary>
-        /// <returns> <code>true</code> if and only if the <seealso cref="SpellChecker"/> is
-        ///         disposed, otherwise <code>false</code>. </returns>
+        /// <returns> <c>true</c> if and only if the <see cref="SpellChecker"/> is
+        ///         disposed, otherwise <c>false</c>. </returns>
         internal virtual bool IsDisposed
         {
             get

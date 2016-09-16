@@ -26,10 +26,10 @@ namespace Lucene.Net.Search.Spell
     /// <summary>
     /// Dictionary represented by a text file.
     /// 
-    /// <p/>Format allowed: 1 word per line:<br/>
-    /// word1<br/>
-    /// word2<br/>
-    /// word3<br/>
+    /// <para/>Format allowed: 1 word per line:<para/>
+    /// word1<para/>
+    /// word2<para/>
+    /// word3<para/>
     /// </summary>
     public class PlainTextDictionary : IDictionary
     {

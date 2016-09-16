@@ -26,24 +26,23 @@ namespace Lucene.Net.Search.Suggest.Analyzing
      */
 
     /// <summary>
-    /// Implements a fuzzy <seealso cref="AnalyzingSuggester"/>. The similarity measurement is
+    /// Implements a fuzzy <see cref="AnalyzingSuggester"/>. The similarity measurement is
     /// based on the Damerau-Levenshtein (optimal string alignment) algorithm, though
-    /// you can explicitly choose classic Levenshtein by passing <code>false</code>
-    /// for the <code>transpositions</code> parameter.
+    /// you can explicitly choose classic Levenshtein by passing <c>false</c>
+    /// for the <paramref name="transpositions"/> parameter.
     /// <para>
-    /// At most, this query will match terms up to
-    /// {@value org.apache.lucene.util.automaton.LevenshteinAutomata#MAXIMUM_SUPPORTED_DISTANCE}
+    /// At most, this query will match terms up to <see cref="LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE"/>
     /// edits. Higher distances are not supported.  Note that the
     /// fuzzy distance is measured in "byte space" on the bytes
-    /// returned by the <seealso cref="TokenStream"/>'s {@link
-    /// TermToBytesRefAttribute}, usually UTF8.  By default
-    /// the analyzed bytes must be at least 3 {@link
-    /// #DEFAULT_MIN_FUZZY_LENGTH} bytes before any edits are
-    /// considered.  Furthermore, the first 1 {@link
-    /// #DEFAULT_NON_FUZZY_PREFIX} byte is not allowed to be
-    /// edited.  We allow up to 1 (@link
-    /// #DEFAULT_MAX_EDITS} edit.
-    /// If <seealso cref="#unicodeAware"/> parameter in the constructor is set to true, maxEdits,
+    /// returned by the <see cref="TokenStream"/>'s <see cref="Analysis.Tokenattributes.ITermToBytesRefAttribute"/>, 
+    /// usually UTF8.  By default
+    /// the analyzed bytes must be at least 3 <see cref="DEFAULT_MIN_FUZZY_LENGTH"/>
+    /// bytes before any edits are
+    /// considered.  Furthermore, the first 1 <see cref="DEFAULT_NON_FUZZY_PREFIX"/>
+    /// byte is not allowed to be
+    /// edited.  We allow up to 1 <see cref="DEFAULT_MAX_EDITS"/>
+    /// edit.
+    /// If <paramref name="unicodeAware"/> parameter in the constructor is set to true, maxEdits,
     /// minFuzzyLength, transpositions and nonFuzzyPrefix are measured in Unicode code 
     /// points (actual letters) instead of bytes. 
     /// 
@@ -72,15 +71,16 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private readonly bool unicodeAware;
 
         /// <summary>
-        /// Measure maxEdits, minFuzzyLength, transpositions and nonFuzzyPrefix 
-        ///  parameters in Unicode code points (actual letters)
-        ///  instead of bytes. 
+        /// Measure <paramref name="maxEdits"/>, <paramref name="minFuzzyLength"/>, 
+        /// <paramref name="transpositions"/>, and <paramref name="nonFuzzyPrefix"/> 
+        /// parameters in Unicode code points (actual letters)
+        /// instead of bytes.
         /// </summary>
         public const bool DEFAULT_UNICODE_AWARE = false;
 
         /// <summary>
-        /// The default minimum length of the key passed to {@link
-        /// #lookup} before any edits are allowed.
+        /// The default minimum length of the key passed to <see cref="Lookup"/>
+        /// before any edits are allowed.
         /// </summary>
         public const int DEFAULT_MIN_FUZZY_LENGTH = 3;
 
@@ -96,39 +96,39 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public const int DEFAULT_MAX_EDITS = 1;
 
         /// <summary>
-        /// The default transposition value passed to <seealso cref="LevenshteinAutomata"/>
+        /// The default transposition value passed to <see cref="LevenshteinAutomata"/>
         /// </summary>
         public const bool DEFAULT_TRANSPOSITIONS = true;
 
         /// <summary>
-        /// Creates a <seealso cref="FuzzySuggester"/> instance initialized with default values.
+        /// Creates a <see cref="FuzzySuggester"/> instance initialized with default values.
         /// </summary>
-        /// <param name="analyzer"> the analyzer used for this suggester </param>
+        /// <param name="analyzer"> The <see cref="Analyzer"/> used for this suggester. </param>
         public FuzzySuggester(Analyzer analyzer)
             : this(analyzer, analyzer)
         {
         }
 
         /// <summary>
-        /// Creates a <seealso cref="FuzzySuggester"/> instance with an index & a query analyzer initialized with default values.
+        /// Creates a <see cref="FuzzySuggester"/> instance with an index & a query analyzer initialized with default values.
         /// </summary>
         /// <param name="indexAnalyzer">
-        ///           Analyzer that will be used for analyzing suggestions while building the index. </param>
+        ///           <see cref="Analyzer"/> that will be used for analyzing suggestions while building the index. </param>
         /// <param name="queryAnalyzer">
-        ///           Analyzer that will be used for analyzing query text during lookup </param>
+        ///           <see cref="Analyzer"/> that will be used for analyzing query text during lookup </param>
         public FuzzySuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer)
             : this(indexAnalyzer, queryAnalyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true, DEFAULT_MAX_EDITS, DEFAULT_TRANSPOSITIONS, DEFAULT_NON_FUZZY_PREFIX, DEFAULT_MIN_FUZZY_LENGTH, DEFAULT_UNICODE_AWARE)
         {
         }
 
         /// <summary>
-        /// Creates a <seealso cref="FuzzySuggester"/> instance.
+        /// Creates a <see cref="FuzzySuggester"/> instance.
         /// </summary>
-        /// <param name="indexAnalyzer"> Analyzer that will be used for
+        /// <param name="indexAnalyzer"> The <see cref="Analyzer"/> that will be used for
         ///        analyzing suggestions while building the index. </param>
-        /// <param name="queryAnalyzer"> Analyzer that will be used for
+        /// <param name="queryAnalyzer"> The <see cref="Analyzer"/> that will be used for
         ///        analyzing query text during lookup </param>
-        /// <param name="options"> see <seealso cref="#EXACT_FIRST"/>, <seealso cref="#PRESERVE_SEP"/> </param>
+        /// <param name="options"> see <see cref="EXACT_FIRST"/>, <see cref="PRESERVE_SEP"/> </param>
         /// <param name="maxSurfaceFormsPerAnalyzedForm"> Maximum number of
         ///        surface forms to keep for a single analyzed form.
         ///        When there are too many surface forms we discard the
@@ -137,12 +137,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///        to expand from the analyzed form.  Set this to -1 for
         ///        no limit. </param>
         /// <param name="preservePositionIncrements"> Whether position holes should appear in the automaton </param>
-        /// <param name="maxEdits"> must be >= 0 and <= <seealso cref="LevenshteinAutomata#MAXIMUM_SUPPORTED_DISTANCE"/> . </param>
-        /// <param name="transpositions"> <code>true</code> if transpositions should be treated as a primitive 
+        /// <param name="maxEdits"> must be &gt;= 0 and &lt;= <see cref="LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE"/>. </param>
+        /// <param name="transpositions"> <c>true</c> if transpositions should be treated as a primitive 
         ///        edit operation. If this is false, comparisons will implement the classic
         ///        Levenshtein algorithm. </param>
-        /// <param name="nonFuzzyPrefix"> length of common (non-fuzzy) prefix (see default <seealso cref="#DEFAULT_NON_FUZZY_PREFIX"/> </param>
-        /// <param name="minFuzzyLength"> minimum length of lookup key before any edits are allowed (see default <seealso cref="#DEFAULT_MIN_FUZZY_LENGTH"/>) </param>
+        /// <param name="nonFuzzyPrefix"> length of common (non-fuzzy) prefix (see default <see cref="DEFAULT_NON_FUZZY_PREFIX"/> </param>
+        /// <param name="minFuzzyLength"> minimum length of lookup key before any edits are allowed (see default <see cref="DEFAULT_MIN_FUZZY_LENGTH"/>) </param>
         /// <param name="unicodeAware"> operate Unicode code points instead of bytes. </param>
         public FuzzySuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int options, int maxSurfaceFormsPerAnalyzedForm, int maxGraphExpansions, bool preservePositionIncrements, int maxEdits, bool transpositions, int nonFuzzyPrefix, int minFuzzyLength, bool unicodeAware)
             : base(indexAnalyzer, queryAnalyzer, options, maxSurfaceFormsPerAnalyzedForm, maxGraphExpansions, preservePositionIncrements)

@@ -18,7 +18,7 @@
      */
 
     /// <summary>
-    ///  SuggestWord, used in suggestSimilar method in SpellChecker class.
+    /// SuggestWord, used in suggestSimilar method in <see cref="SpellChecker"/> class.
     /// <p/>
     /// Default sort is first by score, then by frequency.
     /// </summary>

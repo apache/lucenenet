@@ -30,27 +30,27 @@ namespace Lucene.Net.Search.Suggest
     /// information taken from stored/indexed fields in a Lucene index.
     /// </para>
     /// <b>NOTE:</b> 
-    ///  <ul>
-    ///    <li>
+    ///  <list type="bullet">
+    ///    <item>
     ///      The term and (optionally) payload fields have to be
     ///      stored
-    ///    </li>
-    ///    <li>
-    ///      The weight field can be stored or can be a <seealso cref="NumericDocValues"/>.
-    ///      If the weight field is not defined, the value of the weight is <code>0</code>
-    ///    </li>
-    ///    <li>
+    ///    </item>
+    ///    <item>
+    ///      The weight field can be stored or can be a <see cref="NumericDocValues"/>.
+    ///      If the weight field is not defined, the value of the weight is <c>0</c>
+    ///    </item>
+    ///    <item>
     ///      if any of the term or (optionally) payload fields supplied
     ///      do not have a value for a document, then the document is 
     ///      skipped by the dictionary
-    ///    </li>
-    ///  </ul>
+    ///    </item>
+    ///  </list>
     /// </summary>
     public class DocumentDictionary : IDictionary
     {
 
         /// <summary>
-        /// <seealso cref="IndexReader"/> to load documents from </summary>
+        /// <see cref="IndexReader"/> to load documents from </summary>
         protected internal readonly IndexReader reader;
 
         /// <summary>
@@ -63,8 +63,8 @@ namespace Lucene.Net.Search.Suggest
         private readonly string weightField;
 
         /// <summary>
-        /// Creates a new dictionary with the contents of the fields named <code>field</code>
-        /// for the terms and <code>weightField</code> for the weights that will be used for
+        /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
+        /// for the terms and <paramref name="weightField"/> for the weights that will be used for
         /// the corresponding terms.
         /// </summary>
         public DocumentDictionary(IndexReader reader, string field, string weightField)
@@ -73,9 +73,9 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Creates a new dictionary with the contents of the fields named <code>field</code>
-        /// for the terms, <code>weightField</code> for the weights that will be used for the 
-        /// the corresponding terms and <code>payloadField</code> for the corresponding payloads
+        /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
+        /// for the terms, <paramref name="weightField"/> for the weights that will be used for the 
+        /// the corresponding terms and <paramref name="payloadField"/> for the corresponding payloads
         /// for the entry.
         /// </summary>
         public DocumentDictionary(IndexReader reader, string field, string weightField, string payloadField)
@@ -84,10 +84,10 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Creates a new dictionary with the contents of the fields named <code>field</code>
-        /// for the terms, <code>weightField</code> for the weights that will be used for the 
-        /// the corresponding terms, <code>payloadField</code> for the corresponding payloads
-        /// for the entry and <code>contextsFeild</code> for associated contexts.
+        /// Creates a new dictionary with the contents of the fields named <paramref name="field"/>
+        /// for the terms, <paramref name="weightField"/> for the weights that will be used for the 
+        /// the corresponding terms, <paramref name="payloadField"/> for the corresponding payloads
+        /// for the entry and <paramref name="contextsFeild"/> for associated contexts.
         /// </summary>
         public DocumentDictionary(IndexReader reader, string field, string weightField, string payloadField, string contextsField)
         {
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Implements <seealso cref="InputIterator"/> from stored fields. </summary>
+        /// Implements <see cref="IInputIterator"/> from stored fields. </summary>
         protected internal class DocumentInputIterator : IInputIterator
         {
             private readonly DocumentDictionary outerInstance;
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Suggest
 
             /// <summary>
             /// Creates an iterator over term, weight and payload fields from the lucene
-            /// index. setting <code>withPayload</code> to false, implies an iterator
+            /// index. setting <see cref="HasPayloads"/> to false, implies an iterator
             /// over only term and weight.
             /// </summary>
             public DocumentInputIterator(DocumentDictionary outerInstance, bool hasPayloads, bool hasContexts)
@@ -223,9 +223,9 @@ namespace Lucene.Net.Search.Suggest
             }
 
             /// <summary>
-            /// Returns the value of the <code>weightField</code> for the current document.
-            /// Retrieves the value for the <code>weightField</code> if its stored (using <code>doc</code>)
-            /// or if its indexed as <seealso cref="NumericDocValues"/> (using <code>docId</code>) for the document.
+            /// Returns the value of the <see cref="Weight"/> property for the current document.
+            /// Retrieves the value for the <see cref="Weight"/> property if its stored (using <paramref name="doc"/>)
+            /// or if its indexed as <see cref="NumericDocValues"/> (using <paramref name="docId"/>) for the document.
             /// If no value is found, then the weight is 0.
             /// </summary>
             protected internal virtual long GetWeight(Document doc, int docId)

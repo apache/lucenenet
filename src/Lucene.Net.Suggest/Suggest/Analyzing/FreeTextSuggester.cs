@@ -39,9 +39,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     //   - add pruning of low-freq ngrams?   
 
     /// <summary>
-    /// Builds an ngram model from the text sent to {@link
-    /// #build} and predicts based on the last grams-1 tokens in
-    /// the request sent to <seealso cref="#lookup"/>.  This tries to
+    /// Builds an ngram model from the text sent to <see cref="Build"/>
+    /// and predicts based on the last grams-1 tokens in
+    /// the request sent to <see cref="DoLookup"/>.  This tries to
     /// handle the "long tail" of suggestions for when the
     /// incoming query is a never before seen query string.
     /// 
@@ -56,18 +56,17 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// 
     /// </para>
     /// <para>This uses the stupid backoff language model to smooth
-    /// scores across ngram models; see
-    /// "Large language models in machine translation",
-    /// http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.76.1126
-    /// for details.
+    /// scores across ngram models; see 
+    /// <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.76.1126">
+    /// "Large language models in machine translation"</a> for details.
     /// 
     /// </para>
-    /// <para> From <seealso cref="#lookup"/>, the key of each result is the
-    /// ngram token; the value is Long.MAX_VALUE * score (fixed
-    /// point, cast to long).  Divide by Long.MAX_VALUE to get
+    /// <para> From <see cref="DoLookup"/>, the key of each result is the
+    /// ngram token; the value is <see cref="long.MaxValue"/> * score (fixed
+    /// point, cast to long).  Divide by <see cref="long.MaxValue"/> to get
     /// the score back, which ranges from 0.0 to 1.0.
     /// 
-    /// onlyMorePopular is unused.
+    /// <paramref name="onlyMorePopular"/> is unused.
     /// 
     /// @lucene.experimental
     /// </para>
@@ -131,14 +130,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// The default character used to join multiple tokens
-        ///  into a single ngram token.  The input tokens produced
-        ///  by the analyzer must not contain this character. 
+        /// into a single ngram token.  The input tokens produced
+        /// by the analyzer must not contain this character. 
         /// </summary>
         public const byte DEFAULT_SEPARATOR = 0x1e;
 
         /// <summary>
         /// Instantiate, using the provided analyzer for both
-        ///  indexing and lookup, using bigram model by default. 
+        /// indexing and lookup, using bigram model by default. 
         /// </summary>
         public FreeTextSuggester(Analyzer analyzer)
               : this(analyzer, analyzer, DEFAULT_GRAMS)
@@ -147,7 +146,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Instantiate, using the provided indexing and lookup
-        ///  analyzers, using bigram model by default. 
+        /// analyzers, using bigram model by default. 
         /// </summary>
         public FreeTextSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer)
               : this(indexAnalyzer, queryAnalyzer, DEFAULT_GRAMS)
@@ -156,8 +155,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Instantiate, using the provided indexing and lookup
-        ///  analyzers, with the specified model (2
-        ///  = bigram, 3 = trigram, etc.). 
+        /// analyzers, with the specified model (2
+        /// = bigram, 3 = trigram, etc.). 
         /// </summary>
         public FreeTextSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int grams)
               : this(indexAnalyzer, queryAnalyzer, grams, DEFAULT_SEPARATOR)
@@ -166,13 +165,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Instantiate, using the provided indexing and lookup
-        ///  analyzers, and specified model (2 = bigram, 3 =
-        ///  trigram ,etc.).  The separator is passed to {@link
-        ///  ShingleFilter#setTokenSeparator} to join multiple
-        ///  tokens into a single ngram token; it must be an ascii
-        ///  (7-bit-clean) byte.  No input tokens should have this
-        ///  byte, otherwise {@code IllegalArgumentException} is
-        ///  thrown. 
+        /// analyzers, and specified model (2 = bigram, 3 =
+        /// trigram ,etc.).  The separator is passed to <see cref="ShingleFilter.TokenSeparator"/>
+        /// to join multiple
+        /// tokens into a single ngram token; it must be an ascii
+        /// (7-bit-clean) byte.  No input tokens should have this
+        /// byte, otherwise <see cref="ArgumentException"/> is
+        /// thrown. 
         /// </summary>
         public FreeTextSuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int grams, byte separator)
         {
@@ -886,7 +885,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         // NOTE: copied from WFSTCompletionLookup & tweaked
-        private long? LookupPrefix(FST<long?> fst, FST.BytesReader bytesReader, BytesRef scratch, FST.Arc<long?> arc) //Bogus
+        private long? LookupPrefix(FST<long?> fst, FST.BytesReader bytesReader, BytesRef scratch, FST.Arc<long?> arc)
         {
 
             long? output = fst.Outputs.NoOutput;

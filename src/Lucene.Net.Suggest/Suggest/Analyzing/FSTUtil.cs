@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
     /// <summary>
     /// Exposes a utility method to enumerate all paths
-    /// intersecting an <seealso cref="Automaton"/> with an <seealso cref="FST"/>.
+    /// intersecting an <see cref="Automaton"/> with an <see cref="FST"/>.
     /// </summary>
     public class FSTUtil
     {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             public readonly State state;
 
             /// <summary>
-            /// Node in the FST where path ends: </summary>
+            /// Node in the <see cref="FST"/> where path ends: </summary>
             public readonly FST.Arc<T> fstNode;
 
             /// <summary>
@@ -68,8 +68,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         /// <summary>
-        /// Enumerates all minimal prefix paths in the automaton that also intersect the FST,
-        /// accumulating the FST end node and output for each path.
+        /// Enumerates all minimal prefix paths in the automaton that also intersect the <see cref="FST"/>,
+        /// accumulating the <see cref="FST"/> end node and output for each path.
         /// </summary>
         public static IList<Path<T>> IntersectPrefixPaths<T>(Automaton a, FST<T> fst)
         {

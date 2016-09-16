@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Suggest
      */
 
     /// <summary>
-    /// Simple Lookup interface for <seealso cref="string"/> suggestions.
+    /// Simple Lookup interface for <see cref="string"/> suggestions.
     /// @lucene.experimental
     /// </summary>
     public abstract class Lookup
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest
 
             /// <summary>
             /// Expert: custom Object to hold the result of a
-            ///  highlighted suggestion. 
+            /// highlighted suggestion. 
             /// </summary>
             public readonly object highlightKey;
 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// A simple char-by-char comparator for <seealso cref="CharSequence"/>
+        /// A simple char-by-char comparator for <see cref="string"/>
         /// </summary>
         public static readonly IComparer<string> CHARSEQUENCE_COMPARATOR = new CharSequenceComparator();
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// A <seealso cref="PriorityQueue"/> collecting a fixed size of high priority <seealso cref="LookupResult"/>
+        /// A <see cref="PriorityQueue{LookupResult}"/> collecting a fixed size of high priority <see cref="LookupResult"/>s.
         /// </summary>
         public sealed class LookupPriorityQueue : PriorityQueue<LookupResult>
         {
@@ -200,8 +200,8 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Build lookup from a dictionary. Some implementations may require sorted
         /// or unsorted keys from the dictionary's iterator - use
-        /// <seealso cref="SortedInputIterator"/> or
-        /// <seealso cref="UnsortedInputIterator"/> in such case.
+        /// <see cref="SortedInputIterator"/> or
+        /// <see cref="UnsortedInputIterator"/> in such case.
         /// </summary>
         public virtual void Build(IDictionary dict)
         {
@@ -209,8 +209,8 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Calls <seealso cref="#load(DataInput)"/> after converting
-        /// <seealso cref="InputStream"/> to <seealso cref="DataInput"/>
+        /// Calls <see cref="Load(DataInput)"/> after converting
+        /// <see cref="Stream"/> to <see cref="DataInput"/>
         /// </summary>
         public virtual bool Load(Stream input)
         {
@@ -226,8 +226,8 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /// <summary>
-        /// Calls <seealso cref="#store(DataOutput)"/> after converting
-        /// <seealso cref="OutputStream"/> to <seealso cref="DataOutput"/>
+        /// Calls <see cref="Store(DataOutput)"/> after converting
+        /// <see cref="Stream"/> to <see cref="DataOutput"/>
         /// </summary>
         public virtual bool Store(Stream output)
         {
@@ -248,7 +248,7 @@ namespace Lucene.Net.Search.Suggest
         public abstract long Count { get; }
 
         /// <summary>
-        /// Builds up a new internal <seealso cref="Lookup"/> representation based on the given <seealso cref="InputIterator"/>.
+        /// Builds up a new internal <see cref="Lookup"/> representation based on the given <see cref="IInputIterator"/>.
         /// The implementation might re-sort the data internally.
         /// </summary>
         public abstract void Build(IInputIterator inputIterator);
@@ -277,17 +277,17 @@ namespace Lucene.Net.Search.Suggest
 
         /// <summary>
         /// Persist the constructed lookup data to a directory. Optional operation. </summary>
-        /// <param name="output"> <seealso cref="DataOutput"/> to write the data to. </param>
+        /// <param name="output"> <see cref="DataOutput"/> to write the data to. </param>
         /// <returns> true if successful, false if unsuccessful or not supported. </returns>
-        /// <exception cref="IOException"> when fatal IO error occurs. </exception>
+        /// <exception cref="System.IO.IOException"> when fatal IO error occurs. </exception>
         public abstract bool Store(DataOutput output);
 
         /// <summary>
         /// Discard current lookup data and load it from a previously saved copy.
         /// Optional operation. </summary>
-        /// <param name="input"> the <seealso cref="DataInput"/> to load the lookup data. </param>
+        /// <param name="input"> the <see cref="DataInput"/> to load the lookup data. </param>
         /// <returns> true if completed successfully, false if unsuccessful or not supported. </returns>
-        /// <exception cref="IOException"> when fatal IO error occurs. </exception>
+        /// <exception cref="System.IO.IOException"> when fatal IO error occurs. </exception>
         public abstract bool Load(DataInput input);
 
         /// <summary>
