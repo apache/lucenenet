@@ -68,7 +68,7 @@ namespace Lucene.Net.Search.Suggest
             this.reader = Sort();
         }
 
-        public BytesRef Next()
+        public virtual BytesRef Next()
         {
             bool success = false;
             if (done)
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.Suggest
             get { return contexts; }
         }
 
-        public IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparator
         {
             get
             {

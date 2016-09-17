@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Spell
             this.field = field;
         }
 
-        public IInputIterator EntryIterator
+        public virtual IInputIterator EntryIterator
         {
             get
             {

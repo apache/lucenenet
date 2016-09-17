@@ -126,11 +126,11 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         public override bool Load(DataInput input)
-	  {
-		count = input.ReadVLong();
-		this.fst = new FST<long?>(input, PositiveIntOutputs.Singleton);
-		return true;
-	  }
+        {
+            count = input.ReadVLong();
+            this.fst = new FST<long?>(input, PositiveIntOutputs.Singleton);
+            return true;
+        }
 
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {

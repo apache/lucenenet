@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Suggest
             get { return hasPayloads; }
         }
 
-        public IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparator
         {
             get
             {

@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Suggest
             get { return freqs[curPos]; }
         }
 
-        public BytesRef Next()
+        public virtual BytesRef Next()
         {
             if (++curPos < entries.Size())
             {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search.Suggest
             return null;
         }
 
-        public IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparator
         {
             get
             {

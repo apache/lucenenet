@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Suggest
             this.tieBreakByCostComparator = new ComparatorAnonymousInnerClassHelper(this);
         }
 
-        public IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparator
         {
             get
             {
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public BytesRef Next()
+        public virtual BytesRef Next()
         {
             bool success = false;
             if (done)
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Suggest
                     success = true;
                     return scratch;
                 }
-                Close();
+                Dispose();
                 success = done = true;
                 return null;
             }
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Suggest
                 if (!success)
                 {
                     done = true;
-                    Close();
+                    Dispose();
                 }
             }
         }
@@ -182,13 +182,13 @@ namespace Lucene.Net.Search.Suggest
                     }
                     finally
                     {
-                        Close();
+                        Dispose();
                     }
                 }
             }
         }
 
-        private void Close()
+        private void Dispose()
         {
             IOUtils.Close(reader);
             if (tempInput != null)

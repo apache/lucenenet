@@ -733,7 +733,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return false;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (searcherMgr != null)
             {

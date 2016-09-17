@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             this.writer = new OfflineSorter.ByteSequencesWriter(input);
         }
 
-        public void Add(BytesRef utf8)
+        public virtual void Add(BytesRef utf8)
         {
             if (writer == null)
             {
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             writer.Write(utf8);
         }
 
-        public BytesRefIterator GetEnumerator()
+        public virtual BytesRefIterator GetEnumerator()
         {
             if (sorted == null)
             {
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Removes any written temporary files.
         /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 this.comparator = comparator;
             }
 
-            public BytesRef Next()
+            public virtual BytesRef Next()
             {
                 if (scratch == null)
                 {
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
             }
 
-            public IComparer<BytesRef> Comparator
+            public virtual IComparer<BytesRef> Comparator
             {
                 get
                 {

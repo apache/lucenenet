@@ -54,12 +54,12 @@ namespace Lucene.Net.Search.Spell
             get { return 1; }
         }
 
-        public BytesRef Next()
+        public virtual BytesRef Next()
         {
             return wrapped.Next();
         }
 
-        public IComparer<BytesRef> Comparator
+        public virtual IComparer<BytesRef> Comparator
         {
             get { return wrapped.Comparator; }
         }

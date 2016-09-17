@@ -113,16 +113,16 @@ namespace Lucene.Net.Search.Suggest
             private readonly DocumentDictionary outerInstance;
 
 
-            internal readonly int docCount;
-            internal readonly HashSet<string> relevantFields;
-            internal readonly bool hasPayloads;
-            internal readonly bool hasContexts;
-            internal readonly Bits liveDocs;
-            internal int currentDocId = -1;
-            internal long currentWeight;
-            internal BytesRef currentPayload;
-            internal HashSet<BytesRef> currentContexts;
-            internal readonly NumericDocValues weightValues;
+            private readonly int docCount;
+            private readonly HashSet<string> relevantFields;
+            private readonly bool hasPayloads;
+            private readonly bool hasContexts;
+            private readonly Bits liveDocs;
+            private int currentDocId = -1;
+            private long currentWeight;
+            private BytesRef currentPayload;
+            private HashSet<BytesRef> currentContexts;
+            private readonly NumericDocValues weightValues;
 
 
             /// <summary>
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search.Suggest
                 get { return currentWeight; }
             }
 
-            public IComparer<BytesRef> Comparator
+            public virtual IComparer<BytesRef> Comparator
             {
                 get
                 {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            public BytesRef Next()
+            public virtual BytesRef Next()
             {
                 while (currentDocId < docCount)
                 {
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            internal HashSet<string> GetRelevantFields(params string[] fields)
+            private HashSet<string> GetRelevantFields(params string[] fields)
             {
                 var relevantFields = new HashSet<string>();
                 foreach (string relevantField in fields)
