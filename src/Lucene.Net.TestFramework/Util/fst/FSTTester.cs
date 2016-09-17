@@ -407,25 +407,11 @@ namespace Lucene.Net.Util.Fst
 
         protected internal virtual bool OutputsEqual(T a, T b)
         {
-            // LUCENENET: In .NET, lists do not automatically test to ensure
+            // LUCENENET: In .NET, IEnumerables do not automatically test to ensure
             // their values are equal, so we need to do that manually.
             // Note that we are testing the values without regard to whether
             // the enumerable type is nullable.
-            if (a is IEnumerable && b is IEnumerable)
-            {
-                var iter = (b as IEnumerable).GetEnumerator();
-                foreach (object value in a as IEnumerable)
-                {
-                    iter.MoveNext();
-                    if (!object.Equals(value, iter.Current))
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            return a.Equals(b);
+            return a.ValueEquals(b);
         }
 
         // FST is complete

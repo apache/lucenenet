@@ -638,6 +638,7 @@
     <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\MathExtension.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
+    <Compile Include="Support\ObjectExtensions.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
     <Compile Include="Support\SetExtensions.cs" />

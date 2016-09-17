@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -440,22 +441,11 @@ namespace Lucene.Net.Util.Fst
                     Debug.Assert(root.Flags == asserting.Flags);
                     Debug.Assert(root.Label == asserting.Label);
                     Debug.Assert(root.NextArc == asserting.NextArc);
+
                     // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
                     // because it checks for reference equality, not that the list contents
-                    // are the same.
-                    if (root.NextFinalOutput is IEnumerable && asserting.NextFinalOutput is IEnumerable)
-                    {
-                        var iter = (asserting.NextFinalOutput as IEnumerable).GetEnumerator();
-                        foreach (object value in root.NextFinalOutput as IEnumerable)
-                        {
-                            iter.MoveNext();
-                            Debug.Assert(object.Equals(value, iter.Current));
-                        }
-                    }
-                    else
-                    {
-                        Debug.Assert(root.NextFinalOutput.Equals(asserting.NextFinalOutput));
-                    }
+                    // are the same. ValueEquals (a custom extension method) will make that check.
+                    Debug.Assert(root.NextFinalOutput.ValueEquals(asserting.NextFinalOutput));
                     Debug.Assert(root.Node == asserting.Node);
                     Debug.Assert(root.NumArcs == asserting.NumArcs);
                     Debug.Assert(root.Output.Equals(asserting.Output));
