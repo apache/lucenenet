@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -91,7 +92,7 @@ namespace Lucene.Net.Index.Sorter
 
         /// <summary>
         /// A comparator of doc IDs. </summary>
-        internal abstract class DocComparator
+        internal abstract class DocComparator : IComparer<int>
         {
 
             /// <summary>
