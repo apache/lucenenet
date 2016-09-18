@@ -402,15 +402,19 @@ namespace Lucene.Net.Search.Spell
                 AssertLastSearcherOpen(4);
                 spellChecker.Dispose();
                 AssertSearchersClosed();
-                try
-                {
-                    spellChecker.Dispose();
-                    fail("spellchecker was already closed");
-                }
-                catch (AlreadyClosedException e)
-                {
-                    // expected
-                }
+                // LUCENENET NOTE: Per MSDN, calling Dispose() multiple times
+                // should be a safe operation. http://stackoverflow.com/a/5306896/181087
+                // Certainly, there shouldn't be a problem with calling Dispose() within
+                // a using block if you decide to free up resources early.
+                //try
+                //{
+                //    spellChecker.Dispose();
+                //    fail("spellchecker was already closed");
+                //}
+                //catch (AlreadyClosedException e)
+                //{
+                //    // expected
+                //}
                 try
                 {
                     CheckCommonSuggestions(r);

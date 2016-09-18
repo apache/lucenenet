@@ -499,7 +499,6 @@ namespace Lucene.Net.Search.Spell
         /// <param name="fullMerge"> whether or not the spellcheck index should be fully merged </param>
         /// <exception cref="AlreadyClosedException"> if the <see cref="Spellchecker"/> is already disposed </exception>
         /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
-        // LUCENENET TODO: Replace all usage of AlreadyClosedException with System.ObjectDisposedException
         public void IndexDictionary(IDictionary dict, IndexWriterConfig config, bool fullMerge)
         {
             lock (modifyCurrentIndexLock)
@@ -678,15 +677,17 @@ namespace Lucene.Net.Search.Spell
         /// <exception cref="AlreadyClosedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         public void Dispose()
         {
-            lock (searcherLock)
+            if (!disposed)
             {
-                EnsureOpen();
-                disposed = true;
-                if (searcher != null)
+                lock (searcherLock)
                 {
-                    searcher.IndexReader.Dispose();
+                    disposed = true;
+                    if (searcher != null)
+                    {
+                        searcher.IndexReader.Dispose();
+                    }
+                    searcher = null;
                 }
-                searcher = null;
             }
         }
 
