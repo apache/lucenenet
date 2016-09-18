@@ -204,7 +204,8 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// encodes an entry (bytes+weight) to the provided writer
         /// </summary>
-        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, byte[] buffer, BytesRef spare, long weight)
+        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, 
+            ByteArrayDataOutput output, byte[] buffer, BytesRef spare, long weight)
         {
             if (spare.Length + 8 >= buffer.Length)
             {

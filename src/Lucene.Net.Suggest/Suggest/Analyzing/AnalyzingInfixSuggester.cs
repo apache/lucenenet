@@ -133,7 +133,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///     Prefixes shorter than this are indexed as character
         ///     ngrams (increasing index size but making lookups
         ///     faster). </param>
-        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars)
+        public AnalyzingInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, 
+            Analyzer queryAnalyzer, int minPrefixChars)
         {
 
             if (minPrefixChars < 0)
@@ -159,7 +160,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Override this to customize index settings, e.g. which
         /// codec to use. 
         /// </summary>
-        protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion, Analyzer indexAnalyzer, IndexWriterConfig.OpenMode_e openMode)
+        protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion, 
+            Analyzer indexAnalyzer, IndexWriterConfig.OpenMode_e openMode)
         {
             IndexWriterConfig iwc = new IndexWriterConfig(matchVersion, indexAnalyzer);
             iwc.SetCodec(new Lucene46Codec());

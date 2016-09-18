@@ -202,5 +202,4 @@ namespace Lucene.Net.Search.Suggest.Tst
             return suggest;
         }
     }
-
 }

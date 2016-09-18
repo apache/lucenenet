@@ -117,7 +117,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="queryAnalyzer">
         ///           <see cref="Analyzer"/> that will be used for analyzing query text during lookup </param>
         public FuzzySuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer)
-            : this(indexAnalyzer, queryAnalyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true, DEFAULT_MAX_EDITS, DEFAULT_TRANSPOSITIONS, DEFAULT_NON_FUZZY_PREFIX, DEFAULT_MIN_FUZZY_LENGTH, DEFAULT_UNICODE_AWARE)
+            : this(indexAnalyzer, queryAnalyzer, EXACT_FIRST | PRESERVE_SEP, 256, -1, true, 
+                  DEFAULT_MAX_EDITS, DEFAULT_TRANSPOSITIONS, DEFAULT_NON_FUZZY_PREFIX, 
+                  DEFAULT_MIN_FUZZY_LENGTH, DEFAULT_UNICODE_AWARE)
         {
         }
 
@@ -144,7 +146,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="nonFuzzyPrefix"> length of common (non-fuzzy) prefix (see default <see cref="DEFAULT_NON_FUZZY_PREFIX"/> </param>
         /// <param name="minFuzzyLength"> minimum length of lookup key before any edits are allowed (see default <see cref="DEFAULT_MIN_FUZZY_LENGTH"/>) </param>
         /// <param name="unicodeAware"> operate Unicode code points instead of bytes. </param>
-        public FuzzySuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int options, int maxSurfaceFormsPerAnalyzedForm, int maxGraphExpansions, bool preservePositionIncrements, int maxEdits, bool transpositions, int nonFuzzyPrefix, int minFuzzyLength, bool unicodeAware)
+        public FuzzySuggester(Analyzer indexAnalyzer, Analyzer queryAnalyzer, int options, 
+            int maxSurfaceFormsPerAnalyzedForm, int maxGraphExpansions, bool preservePositionIncrements, 
+            int maxEdits, bool transpositions, int nonFuzzyPrefix, int minFuzzyLength, bool unicodeAware)
             : base(indexAnalyzer, queryAnalyzer, options, maxSurfaceFormsPerAnalyzedForm, maxGraphExpansions, preservePositionIncrements)
         {
             if (maxEdits < 0 || maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)

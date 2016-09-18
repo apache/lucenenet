@@ -268,7 +268,9 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// encodes an entry (bytes+(contexts)+(payload)+weight) to the provided writer
         /// </summary>
-        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, IEnumerable<BytesRef> contexts, long weight)
+        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, 
+            ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, 
+            IEnumerable<BytesRef> contexts, long weight)
         {
             int requiredLength = spare.Length + 8 + ((hasPayloads) ? 2 + payload.Length : 0);
             if (hasContexts)

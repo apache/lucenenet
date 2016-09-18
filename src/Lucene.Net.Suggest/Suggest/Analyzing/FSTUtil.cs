@@ -83,7 +83,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             while (queue.Count != 0)
             {
-                //Path<T> path = queue.RemoveAt(queue.Count - 1);
                 Path<T> path = queue.ElementAt(queue.Count - 1);
                 queue.Remove(path);
                 if (path.state.Accept)

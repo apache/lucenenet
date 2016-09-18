@@ -47,7 +47,7 @@ namespace Lucene.Net.Search.Suggest
         private readonly bool hasPayloads;
         private readonly IComparer<BytesRef> comp;
 
-        private readonly bool hasContexts_Renamed;
+        private readonly bool hasContexts;
 
         /// <summary>
         /// Creates a new iterator, buffering entries from the specified iterator </summary>
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Suggest
             BytesRef spare;
             int freqIndex = 0;
             hasPayloads = source.HasPayloads;
-            hasContexts_Renamed = source.HasContexts;
+            hasContexts = source.HasContexts;
             while ((spare = source.Next()) != null)
             {
                 entries.Append(spare);
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Suggest
                 {
                     payloads.Append(source.Payload);
                 }
-                if (hasContexts_Renamed)
+                if (hasContexts)
                 {
                     contextSets.Add(source.Contexts);
                 }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                if (hasContexts_Renamed && curPos < contextSets.Count)
+                if (hasContexts && curPos < contextSets.Count)
                 {
                     return contextSets[curPos];
                 }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Suggest
 
         public virtual bool HasContexts
         {
-            get { return hasContexts_Renamed; }
+            get { return hasContexts; }
         }
     }
 }
