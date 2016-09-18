@@ -128,13 +128,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          The first char in the comparison. </param>
         /// <param name="cRef">
         ///          The second char in the comparison. </param>
+        /// <param name="culture">The culture used for lowercasing.</param>
         /// <returns> A negative number, 0 or a positive number if the second char is
         ///         less, equal or greater. </returns>
         ///         
-        private static int CompareCharsAlphabetically(char cCompare2, char cRef)
+        private static int CompareCharsAlphabetically(char cCompare2, char cRef, CultureInfo culture)
         {
-            // LUCENENET TODO: Culture - from the current thread? Or perhaps another overload where it can be passed?
-            return Character.ToLowerCase(cCompare2) - Character.ToLowerCase(cRef);
+            return char.ToLower(cCompare2, culture) - char.ToLower(cRef, culture);
         }
 
         /* what follows is the original Jaspell code. 
@@ -181,7 +181,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// The base node in the trie. </summary>
         private TSTNode rootNode;
 
-        private readonly CultureInfo locale; // LUCENENET TODO: Remove this and add add oveloads to commmon actions to override the culture of the current thread?
+        // LUCENENET NOTE: Renamed from locale to culture.
+        private readonly CultureInfo culture;
 
         /// <summary>
         /// Constructs an empty Ternary Search Trie.
@@ -193,11 +194,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// Constructs an empty Ternary Search Trie,
-        /// specifying the Locale used for lowercasing.
+        /// specifying the <see cref="CultureInfo"/> used for lowercasing.
         /// </summary>
-        public JaspellTernarySearchTrie(CultureInfo locale)
+        public JaspellTernarySearchTrie(CultureInfo culture)
         {
-            this.locale = locale;
+            this.culture = culture;
         }
 
         // for loading
@@ -218,13 +219,32 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
         /// into the Trie. The file is a normal text document, where each line is of
         /// the form word TAB float.
+        /// 
+        /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
         /// </summary>
         /// <param name="file">
         ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
         /// <exception cref="System.IO.IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file)
-            : this(file, false)
+            : this(file, false, CultureInfo.CurrentCulture)
+        {
+        }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form word TAB float.
+        /// 
+        /// <para>Uses the supplied culture to lowercase words before comparing.</para>
+        /// </summary>
+        /// <param name="file">
+        ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
+        /// <param name="culture">The culture used for lowercasing.</param>
+        /// <exception cref="System.IO.IOException">
+        ///              A problem occured while reading the data. </exception>
+        public JaspellTernarySearchTrie(FileInfo file, CultureInfo culture)
+            : this(file, false, culture)
         {
         }
 
@@ -232,6 +252,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
         /// into the Trie. The file is a normal text document, where each line is of
         /// the form "word TAB float".
+        /// 
+        /// <para>Uses the culture of the current thread to lowercase words before comparing.</para>
         /// </summary>
         /// <param name="file">
         ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
@@ -241,7 +263,26 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <exception cref="System.IO.IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, bool compression)
-            : this()
+            : this(file, compression, CultureInfo.CurrentCulture)
+        { }
+
+        /// <summary>
+        /// Constructs a Ternary Search Trie and loads data from a <see cref="FileInfo"/>
+        /// into the Trie. The file is a normal text document, where each line is of
+        /// the form "word TAB float".
+        /// 
+        /// <para>Uses the supplied culture to lowercase words before comparing.</para>
+        /// </summary>
+        /// <param name="file">
+        ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
+        /// <param name="compression">
+        ///          If true, the file is compressed with the GZIP algorithm, and if
+        ///          false, the file is a normal text document. </param>
+        /// <param name="culture">The culture used for lowercasing.</param>
+        /// <exception cref="System.IO.IOException">
+        ///              A problem occured while reading the data. </exception>
+        public JaspellTernarySearchTrie(FileInfo file, bool compression, CultureInfo culture)
+            : this(culture)
         {
             using (TextReader @in = (compression) ?
                 IOUtils.GetDecodingReader(new GZipStream(new FileStream(file.FullName, FileMode.Open), CompressionMode.Decompress), Encoding.UTF8) :
@@ -252,14 +293,14 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 float? occur, one = new float?(1);
                 while ((word = @in.ReadLine()) != null)
                 {
-                    pos = word.IndexOf("\t", StringComparison.Ordinal);
+                    pos = word.IndexOf('\t');
                     occur = one;
                     if (pos != -1)
                     {
                         occur = Convert.ToSingle(word.Substring(pos + 1).Trim());
                         word = word.Substring(0, pos);
                     }
-                    string key = word.ToLower(locale);
+                    string key = word.ToLower(culture);
                     if (rootNode == null)
                     {
                         rootNode = new TSTNode(this, key[0], null);
@@ -275,7 +316,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                             {
                                 break;
                             }
-                            int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar);
+                            int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar, culture);
                             if (charComp == 0)
                             {
                                 charIndex++;
@@ -304,7 +345,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                         {
                             occur += (float)occur2;
                         }
-                        currentNode = GetOrCreateNode(word.Trim().ToLower(locale));
+                        currentNode = GetOrCreateNode(word.Trim().ToLower(culture));
                         currentNode.data = occur;
                     }
                 }
@@ -316,8 +357,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// then both the node and the data will be deleted. It also deletes any other
         /// nodes in the trie that are no longer needed after the deletion of the node.
         /// </summary>
-        /// <param name="nodeToDelete">
-        ///          The node to delete. </param>
+        /// <param name="nodeToDelete"> The node to delete. </param>
         private void DeleteNode(TSTNode nodeToDelete)
         {
             if (nodeToDelete == null)
@@ -346,8 +386,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// method call while avoiding the overhead normally associated with a
         /// recursive method.)
         /// </summary>
-        /// <param name="currentNode">
-        ///          The node to delete. </param>
+        /// <param name="currentNode"> The node to delete. </param>
         /// <returns> The next node to be called in deleteNodeRecursion. </returns>
         private TSTNode DeleteNodeRecursion(TSTNode currentNode)
         {
@@ -444,8 +483,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <summary>
         /// Retrieve the object indexed by a key.
         /// </summary>
-        /// <param name="key">
-        ///          A <see cref="string"/> index. </param>
+        /// <param name="key"> A <see cref="string"/> index. </param>
         /// <returns> The object retrieved from the Ternary Search Trie. </returns>
         public virtual object Get(string key)
         {
@@ -458,15 +496,15 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         }
 
         /// <summary>
-        /// Retrieve the <code>Float</code> indexed by key, increment it by one unit
-        /// and store the new <code>Float</code>.
+        /// Retrieve the <see cref="System.Nullable{float}"/> indexed by key, increment it by one unit
+        /// and store the new <see cref="System.Nullable{float}"/>.
         /// </summary>
-        /// <param name="key">
-        ///          A <see cref="string"/> index. </param>
-        /// <returns> The <code>Float</code> retrieved from the Ternary Search Trie. </returns>
+        /// <param name="key"> A <see cref="string"/> index. </param>
+        /// <param name="culture">The culture used for lowercasing.</param>
+        /// <returns> The <see cref="System.Nullable{float}"/> retrieved from the Ternary Search Trie. </returns>
         public virtual float? GetAndIncrement(string key)
         {
-            string key2 = key.Trim().ToLower(locale);
+            string key2 = key.Trim().ToLower(culture);
             TSTNode node = GetNode(key2);
             if (node == null)
             {
@@ -552,7 +590,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 {
                     return null;
                 }
-                int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar);
+                int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar, this.culture);
                 if (charComp == 0)
                 {
                     charIndex++;
@@ -603,7 +641,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             int charIndex = 0;
             while (true)
             {
-                int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar);
+                int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar, this.culture);
                 if (charComp == 0)
                 {
                     charIndex++;
@@ -668,10 +706,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// 
         /// </para>
         /// </summary>
-        /// <param name="key">
-        ///          The target key. </param>
-        /// <param name="numReturnValues">
-        ///          The maximum number of values returned by this method. </param>
+        /// <param name="key"> The target key. </param>
+        /// <param name="numReturnValues"> The maximum number of values returned by this method. </param>
         /// <returns> A <see cref="List{String}"/> with the results </returns>
         public virtual IList<string> MatchAlmost(string key, int numReturnValues)
         {
@@ -707,7 +743,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             {
                 return matchAlmostResult2;
             }
-            int charComp = CompareCharsAlphabetically(matchAlmostKey[charIndex], currentNode.splitchar);
+            int charComp = CompareCharsAlphabetically(matchAlmostKey[charIndex], currentNode.splitchar, this.culture);
             IList<string> matchAlmostResult = matchAlmostResult2;
             if ((d > 0) || (charComp < 0))
             {
@@ -732,8 +768,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// begin with a given prefix. Only keys for nodes having non-null data are
         /// included in the <see cref="List{String}"/>.
         /// </summary>
-        /// <param name="prefix">
-        ///          Each key returned from this method will begin with the characters
+        /// <param name="prefix"> Each key returned from this method will begin with the characters
         ///          in prefix. </param>
         /// <returns> A <see cref="List{String}"/> with the results. </returns>
         public virtual IList<string> MatchPrefix(string prefix)
@@ -746,11 +781,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// begin with a given prefix. Only keys for nodes having non-null data are
         /// included in the <see cref="List{String}"/>.
         /// </summary>
-        /// <param name="prefix">
-        ///          Each key returned from this method will begin with the characters
+        /// <param name="prefix"> Each key returned from this method will begin with the characters
         ///          in prefix. </param>
-        /// <param name="numReturnValues">
-        ///          The maximum number of values returned from this method. </param>
+        /// <param name="numReturnValues"> The maximum number of values returned from this method. </param>
         /// <returns> A <see cref="List{String}"/> with the results </returns>
         public virtual IList<string> MatchPrefix(string prefix, int numReturnValues)
         {
@@ -813,10 +846,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <summary>
         /// Stores a value in the trie. The value may be retrieved using the key.
         /// </summary>
-        /// <param name="key">
-        ///          A <see cref="string"/> that indexes the object to be stored. </param>
-        /// <param name="value">
-        ///          The object to be stored in the Trie. </param>
+        /// <param name="key"> A <see cref="string"/> that indexes the object to be stored. </param>
+        /// <param name="value"> The object to be stored in the Trie. </param>
         public virtual void Put(string key, object value)
         {
             GetOrCreateNode(key).data = value;
@@ -859,12 +890,11 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Removes the value indexed by key. Also removes all nodes that are rendered
         /// unnecessary by the removal of this data.
         /// </summary>
-        /// <param name="key">
-        ///          A <see cref="string"/> that indexes the object to be removed from
+        /// <param name="key"> A <see cref="string"/> that indexes the object to be removed from
         ///          the Trie. </param>
         public virtual void Remove(string key)
         {
-            DeleteNode(GetNode(key.Trim().ToLower(locale)));
+            DeleteNode(GetNode(key.Trim().ToLower(this.culture)));
         }
 
         /// <summary>
@@ -908,8 +938,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// case this value is temporarily overridden.
         /// </para>
         /// </summary>
-        /// **<param name="num">
-        ///          The number of values that will be returned when calling the
+        /// <param name="num"> The number of values that will be returned when calling the
         ///          methods above. </param>
         public virtual int NumReturnValues
         {

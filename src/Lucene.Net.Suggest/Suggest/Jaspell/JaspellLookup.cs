@@ -88,6 +88,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// This method always returns false.
         /// </para>
         /// </summary>
+        /// <param name="key"> A <see cref="string"/> index. </param>
+        /// <param name="value"> The object to be stored in the Trie. </param>
         public virtual bool Add(string key, object value)
         {
             trie.Put(key, value);
@@ -99,6 +101,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// Returns the value for the specified key, or null
         /// if the key does not exist.
         /// </summary>
+        /// <param name="key"> A <see cref="string"/> index. </param>
         public virtual object Get(string key)
         {
             return trie.Get(key);
