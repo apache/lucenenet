@@ -352,7 +352,8 @@ namespace Lucene.Net.Search.Spell
         /// <param name="accuracy"> return only suggested words that match with this similarity </param>
         /// <returns> sorted list of the suggested words according to the comparator </returns>
         /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
-        public virtual SuggestWord[] SuggestSimilar(Term term, int numSug, IndexReader ir, SuggestMode suggestMode, float accuracy)
+        public virtual SuggestWord[] SuggestSimilar(Term term, int numSug, IndexReader ir, 
+            SuggestMode suggestMode, float accuracy)
         {
             CharsRef spare = new CharsRef();
             string text = term.Text();
@@ -363,7 +364,7 @@ namespace Lucene.Net.Search.Spell
 
             if (lowerCaseTerms)
             {
-                term = new Term(term.Field, text.ToLower()); // LUCENENET TODO: Culture - from the current thread? Or perhaps another overload where it can be passed?
+                term = new Term(term.Field, text.ToLower());
             }
 
             int docfreq = ir.DocFreq(term);
@@ -451,7 +452,8 @@ namespace Lucene.Net.Search.Spell
         /// <param name="spare"> a chars scratch </param>
         /// <returns> a collection of spelling corrections sorted by <code>ScoreTerm</code>'s natural order. </returns>
         /// <exception cref="System.IO.IOException"> If I/O related errors occur </exception>
-        protected internal virtual IEnumerable<ScoreTerm> SuggestSimilar(Term term, int numSug, IndexReader ir, int docfreq, int editDistance, float accuracy, CharsRef spare)
+        protected internal virtual IEnumerable<ScoreTerm> SuggestSimilar(Term term, int numSug, IndexReader ir, 
+            int docfreq, int editDistance, float accuracy, CharsRef spare)
         {
 
             var atts = new AttributeSource();
