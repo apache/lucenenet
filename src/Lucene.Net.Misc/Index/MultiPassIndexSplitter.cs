@@ -205,7 +205,9 @@ namespace Lucene.Net.Index
             {
                 input = new MultiReader(indexes.ToArray());
             }
+#pragma warning disable 612, 618
             splitter.Split(LuceneVersion.LUCENE_CURRENT, input, dirs, seq);
+#pragma warning restore 612, 618
         }
 
         /// <summary>

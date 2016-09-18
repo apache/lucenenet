@@ -30,7 +30,7 @@ namespace Lucene.Net.Documents
                     dir.Dispose();
                     dir = null;
                 }
-                catch (Exception e) { /* NOOP */ }
+                catch (Exception /*e*/) { /* NOOP */ }
             }
         }
 
