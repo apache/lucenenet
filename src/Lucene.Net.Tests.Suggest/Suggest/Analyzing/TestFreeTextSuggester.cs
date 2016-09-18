@@ -98,7 +98,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 sug.Build(new InputArrayIterator(keys));
                 fail("did not hit expected exception");
             }
-            catch (ArgumentException iae)
+            catch (ArgumentException /*iae*/)
             {
                 // expected
             }
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 sug.DoLookup("foo\u001eb", 10);
                 fail("did not hit expected exception");
             }
-            catch (ArgumentException iae)
+            catch (ArgumentException /*iae*/)
             {
                 // expected
             }
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 sug.DoLookup("", 10);
                 fail("did not hit exception");
             }
-            catch (ArgumentException iae)
+            catch (ArgumentException /*iae*/)
             {
                 // expected
             }

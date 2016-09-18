@@ -344,7 +344,7 @@ namespace Lucene.Net.Search.Spell
                 similar = spellChecker.SuggestSimilar("tousand", 10, r, null,
                     SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
             }
-            catch (NullReferenceException e)
+            catch (NullReferenceException /*e*/)
             {
                 assertTrue("threw an NPE, and it shouldn't have", false);
             }
@@ -420,7 +420,7 @@ namespace Lucene.Net.Search.Spell
                     CheckCommonSuggestions(r);
                     fail("spellchecker was already closed");
                 }
-                catch (AlreadyClosedException e)
+                catch (AlreadyClosedException /*e*/)
                 {
                     // expected
                 }
@@ -430,7 +430,7 @@ namespace Lucene.Net.Search.Spell
                     spellChecker.ClearIndex();
                     fail("spellchecker was already closed");
                 }
-                catch (AlreadyClosedException e)
+                catch (AlreadyClosedException /*e*/)
                 {
                     // expected
                 }
@@ -440,7 +440,7 @@ namespace Lucene.Net.Search.Spell
                     spellChecker.IndexDictionary(new LuceneDictionary(r, field), NewIndexWriterConfig(TEST_VERSION_CURRENT, null), false);
                     fail("spellchecker was already closed");
                 }
-                catch (AlreadyClosedException e)
+                catch (AlreadyClosedException /*e*/)
                 {
                     // expected
                 }
@@ -450,7 +450,7 @@ namespace Lucene.Net.Search.Spell
                     spellChecker.SpellIndex = (spellindex);
                     fail("spellchecker was already closed");
                 }
-                catch (AlreadyClosedException e)
+                catch (AlreadyClosedException /*e*/)
                 {
                     // expected
                 }
@@ -598,7 +598,7 @@ namespace Lucene.Net.Search.Spell
 
                             Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                         }
-                        catch (AlreadyClosedException e)
+                        catch (AlreadyClosedException /*e*/)
                         {
                             return;
                         }

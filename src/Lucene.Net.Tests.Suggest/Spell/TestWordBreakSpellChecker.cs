@@ -157,7 +157,7 @@ namespace Lucene.Net.Search.Spell
             }
             finally
             {
-                try { ir.Dispose(); } catch (Exception e1) { }
+                try { ir.Dispose(); } catch (Exception /*e1*/) { }
             }
         }
 
@@ -269,7 +269,7 @@ namespace Lucene.Net.Search.Spell
             }
             finally
             {
-                try { ir.Dispose(); } catch (Exception e1) { }
+                try { ir.Dispose(); } catch (Exception /*e1*/) { }
             }
         }
         public void GRandom()
@@ -380,17 +380,17 @@ namespace Lucene.Net.Search.Spell
                 {
                     ir.Dispose();
                 }
-                catch (Exception e1) { }
+                catch (Exception /*e1*/) { }
                 try
                 {
                     writer.Dispose();
                 }
-                catch (Exception e1) { }
+                catch (Exception /*e1*/) { }
                 try
                 {
                     dir.Dispose();
                 }
-                catch (Exception e1) { }
+                catch (Exception /*e1*/) { }
             }
         }
 

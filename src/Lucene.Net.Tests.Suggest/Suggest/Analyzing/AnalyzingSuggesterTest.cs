@@ -1444,7 +1444,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 suggester.DoLookup("а\u001E", false, 3);
                 fail("should throw IllegalArgumentException");
             }
-            catch (ArgumentException e)
+            catch (ArgumentException /*e*/)
             {
                 // expected
             }
@@ -1453,7 +1453,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 suggester.DoLookup("а\u001F", false, 3);
                 fail("should throw IllegalArgumentException");
             }
-            catch (ArgumentException e)
+            catch (ArgumentException /*e*/)
             {
                 // expected
             }

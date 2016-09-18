@@ -40,8 +40,9 @@ namespace Lucene.Net.Search.Suggest
         {
             Random random = Random();
             int num = AtLeast(10000);
-
+#pragma warning disable 612, 618
             IComparer<BytesRef> comparator = random.nextBoolean() ? BytesRef.UTF8SortedAsUnicodeComparer : BytesRef.UTF8SortedAsUTF16Comparer;
+#pragma warning restore 612, 618
             IDictionary<BytesRef, KeyValuePair<long, BytesRef>> sorted = new SortedDictionary<BytesRef, KeyValuePair<long, BytesRef>>(comparator); //new TreeMap<>(comparator);
             IDictionary<BytesRef, long> sortedWithoutPayload = new SortedDictionary<BytesRef, long>(comparator); //new TreeMap<>(comparator);
             IDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>> sortedWithContext = new SortedDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>>(comparator); //new TreeMap<>(comparator);

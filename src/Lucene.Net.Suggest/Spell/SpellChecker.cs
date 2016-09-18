@@ -152,9 +152,11 @@ namespace Lucene.Net.Search.Spell
                     EnsureOpen();
                     if (!DirectoryReader.IndexExists(value))
                     {
+#pragma warning disable 612, 618
                         using (var writer = new IndexWriter(value, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null)))
                         {
                         }
+#pragma warning restore 612, 618
                     }
                     SwapSearcher(value);
                 }
@@ -464,8 +466,10 @@ namespace Lucene.Net.Search.Spell
             {
                 EnsureOpen();
                 var dir = this.spellIndex;
+#pragma warning disable 612, 618
                 using (var writer = new IndexWriter(dir, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null)
                    .SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE))) { }
+#pragma warning restore 612, 618
                 SwapSearcher(dir);
             }
         }

@@ -57,11 +57,13 @@ namespace Lucene.Net.Search.Suggest.Tst
             }
             root = new TernaryTreeNode();
             // buffer first
+#pragma warning disable 612, 618
             if (tfit.Comparator != BytesRef.UTF8SortedAsUTF16Comparer)
             {
                 // make sure it's sorted and the comparator uses UTF16 sort order
                 tfit = new SortedInputIterator(tfit, BytesRef.UTF8SortedAsUTF16Comparer);
             }
+#pragma warning restore 612, 618
 
             List<string> tokens = new List<string>();
             List<object> vals = new List<object>(); // LUCENENET TODO: Should this be long? in Java it was Number, but we can probably do better than object
