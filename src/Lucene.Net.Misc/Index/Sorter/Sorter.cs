@@ -35,7 +35,8 @@ namespace Lucene.Net.Index.Sorter
         internal readonly Sort sort_Renamed;
 
         /// <summary>
-        /// Creates a new Sorter to sort the index with {@code sort} </summary>
+        /// Creates a new Sorter to sort the index with <paramref name="sort"/>.
+        /// </summary>
         internal Sorter(Sort sort)
         {
             if (sort.NeedsScores())
@@ -46,8 +47,8 @@ namespace Lucene.Net.Index.Sorter
         }
 
         /// <summary>
-        /// A permutation of doc IDs. For every document ID between <tt>0</tt> and
-        /// <seealso cref="IndexReader#maxDoc()"/>, <code>oldToNew(newToOld(docID))</code> must
+        /// A permutation of doc IDs. For every document ID between <c>0</c> and
+        /// <see cref="IndexReader.MaxDoc"/>, <code>OldToNew(NewToOld(docID))</code> must
         /// return <code>docID</code>.
         /// </summary>
         internal abstract class DocMap
@@ -60,19 +61,21 @@ namespace Lucene.Net.Index.Sorter
             public abstract int OldToNew(int docID);
 
             /// <summary>
-            /// Given the ordinal of a doc ID, return its doc ID in the original index. </summary>
+            /// Given the ordinal of a doc ID, return its doc ID in the original index. 
+            /// </summary>
             public abstract int NewToOld(int docID);
 
             /// <summary>
             /// Return the number of documents in this map. This must be equal to the
-            ///  <seealso cref="AtomicReader#maxDoc() number of documents"/> of the
-            ///  <seealso cref="AtomicReader"/> which is sorted. 
+            /// <see cref="AtomicReader.LiveDocs">number of documents</see> of the
+            /// <see cref="AtomicReader"/> which is sorted. 
             /// </summary>
             public abstract int Count { get; }
         }
 
         /// <summary>
-        /// Check consistency of a <seealso cref="DocMap"/>, useful for assertions. </summary>
+        /// Check consistency of a <see cref="DocMap"/>, useful for assertions.
+        /// </summary>
         internal static bool IsConsistent(DocMap docMap)
         {
             int maxDoc = docMap.Count;
@@ -91,13 +94,14 @@ namespace Lucene.Net.Index.Sorter
         }
 
         /// <summary>
-        /// A comparator of doc IDs. </summary>
+        /// A comparator of doc IDs.
+        /// </summary>
         internal abstract class DocComparator : IComparer<int>
         {
 
             /// <summary>
             /// Compare docID1 against docID2. The contract for the return value is the
-            ///  same as <seealso cref="Comparator#compare(Object, Object)"/>. 
+            /// same as <see cref="IComparer{T}.Compare(T, T)"/>. 
             /// </summary>
             public abstract int Compare(int docID1, int docID2);
 
@@ -151,7 +155,8 @@ namespace Lucene.Net.Index.Sorter
         }
 
         /// <summary>
-        /// Computes the old-to-new permutation over the given comparator. </summary>
+        /// Computes the old-to-new permutation over the given comparator.
+        /// </summary>
         private static Sorter.DocMap Sort(int maxDoc, DocComparator comparator)
         {
             // check if the index is sorted
@@ -239,11 +244,11 @@ namespace Lucene.Net.Index.Sorter
         /// <summary>
         /// Returns a mapping from the old document ID to its new location in the
         /// sorted index. Implementations can use the auxiliary
-        /// <seealso cref="#sort(int, DocComparator)"/> to compute the old-to-new permutation
+        /// <see cref="Sort(int, DocComparator)"/> to compute the old-to-new permutation
         /// given a list of documents and their corresponding values.
         /// <para>
-        /// A return value of <tt>null</tt> is allowed and means that
-        /// <code>reader</code> is already sorted.
+        /// A return value of <c>null</c> is allowed and means that
+        /// <c>reader</c> is already sorted.
         /// </para>
         /// <para>
         /// <b>NOTE:</b> deleted documents are expected to appear in the mapping as
@@ -308,11 +313,11 @@ namespace Lucene.Net.Index.Sorter
         }
 
         /// <summary>
-        /// Returns the identifier of this <seealso cref="Sorter"/>.
-        /// <para>This identifier is similar to <seealso cref="Object#hashCode()"/> and should be
+        /// Returns the identifier of this <see cref="Sorter"/>.
+        /// <para>This identifier is similar to <see cref="object.GetHashCode()"/> and should be
         /// chosen so that two instances of this class that sort documents likewise
         /// will have the same identifier. On the contrary, this identifier should be
-        /// different on different <seealso cref="Sort sorts"/>.
+        /// different on different <see cref="Sort">sorts</see>.
         /// </para>
         /// </summary>
         public string ID

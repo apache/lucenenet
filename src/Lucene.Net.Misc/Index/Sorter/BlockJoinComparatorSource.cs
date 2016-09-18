@@ -25,12 +25,13 @@ namespace Lucene.Net.Index.Sorter
     /// <summary>
     /// Helper class to sort readers that contain blocks of documents.
     /// <para>
-    /// Note that this class is intended to used with <seealso cref="SortingMergePolicy"/>,
+    /// Note that this class is intended to used with <see cref="SortingMergePolicy"/>,
     /// and for other purposes has some limitations:
-    /// <ul>
-    ///    <li>Cannot yet be used with <seealso cref="IndexSearcher#searchAfter(ScoreDoc, Query, int, Sort) IndexSearcher.searchAfter"/>
-    ///    <li>Filling sort field values is not yet supported.
-    /// </ul>
+    /// <list type="bullet">
+    ///    <item>Cannot yet be used with <see cref="IndexSearcher.SearchAfter(ScoreDoc, Query, Filter, int, Sort)">
+    ///    IndexSearcher.SearchAfter</see></item>
+    ///    <item>Filling sort field values is not yet supported.</item>
+    /// </list>
     /// @lucene.experimental
     /// </para>
     /// </summary>
@@ -44,7 +45,7 @@ namespace Lucene.Net.Index.Sorter
 
         /// <summary>
         /// Create a new BlockJoinComparatorSource, sorting only blocks of documents
-        /// with {@code parentSort} and not reordering children with a block.
+        /// with <paramref name="parentSort"/> and not reordering children with a block.
         /// </summary>
         /// <param name="parentsFilter"> Filter identifying parent documents </param>
         /// <param name="parentSort"> Sort for parent documents </param>

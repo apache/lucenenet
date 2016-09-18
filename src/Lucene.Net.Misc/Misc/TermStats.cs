@@ -21,7 +21,7 @@ namespace Lucene.Net.Misc
 
     /// <summary>
     /// Holder for a term along with its statistics
-    /// (<seealso cref="#docFreq"/> and <seealso cref="#totalTermFreq"/>).
+    /// (<see cref="DocFreq"/> and <see cref="TotalTermFreq"/>).
     /// </summary>
     public sealed class TermStats
     {

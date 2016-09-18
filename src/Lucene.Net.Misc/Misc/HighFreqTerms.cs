@@ -25,7 +25,7 @@ namespace Lucene.Net.Misc
 	 */
 
     /// <summary>
-    /// <code>HighFreqTerms</code> class extracts the top n most frequent terms
+    /// <see cref="HighFreqTerms"/> class extracts the top n most frequent terms
     /// (by document frequency) from an existing Lucene index and reports their
     /// document frequency.
     /// <para>
@@ -92,7 +92,7 @@ namespace Lucene.Net.Misc
         }
 
         /// <summary>
-        /// Returns TermStats[] ordered by the specified comparator
+        /// Returns <see cref="TermStats[]"/> ordered by the specified comparator
         /// </summary>
         public static TermStats[] GetHighFreqTerms(IndexReader reader, int numTerms, string field, IComparer<TermStats> comparator)
         {
@@ -144,7 +144,7 @@ namespace Lucene.Net.Misc
         }
 
         /// <summary>
-        /// Compares terms by docTermFreq
+        /// Compares terms by <see cref="TermStats.DocFreq"/>
         /// </summary>
         public sealed class DocFreqComparator : IComparer<TermStats>
         {
@@ -165,7 +165,7 @@ namespace Lucene.Net.Misc
         }
 
         /// <summary>
-        /// Compares terms by totalTermFreq
+        /// Compares terms by <see cref="TermStats.TotalTermFreq"/> 
         /// </summary>
         public sealed class TotalTermFreqComparator : IComparer<TermStats>
         {
@@ -185,7 +185,7 @@ namespace Lucene.Net.Misc
         }
 
         /// <summary>
-        /// Priority queue for TermStats objects
+        /// Priority queue for <see cref="TermStats"/> objects
         /// 
         /// </summary>
         internal sealed class TermStatsQueue : PriorityQueue<TermStats>

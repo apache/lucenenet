@@ -22,26 +22,27 @@ namespace Lucene.Net.Util.Fst
 	 */
 
     /// <summary>
-    /// An FST <seealso cref="Outputs"/> implementation where each output
+    /// An FST <see cref="Outputs{T}"/> implementation where each output
     /// is one or two non-negative long values.  If it's a
-    /// single output, Long is returned; else, TwoLongs.  Order
+    /// <see cref="float"/> output, <see cref="Nullable{Int64}"/> is 
+    /// returned; else, TwoLongs.  Order
     /// is preserved in the TwoLongs case, ie .first is the first
-    /// input/output added to Builder, and .second is the
+    /// input/output added to <see cref="Builder{T}"/>, and .second is the
     /// second.  You cannot store 0 output with this (that's
     /// reserved to mean "no output")!
     /// 
     /// <para>NOTE: the only way to create a TwoLongs output is to
     /// add the same input to the FST twice in a row.  This is
     /// how the FST maps a single input to two outputs (e.g. you
-    /// cannot pass a TwoLongs to <seealso cref="Builder#add"/>.  If you
-    /// need more than two then use <seealso cref="ListOfOutputs"/>, but if
+    /// cannot pass a <see cref="TwoLongs"/> to <see cref="Builder.Add(IntsRef, T)"/>.  If you
+    /// need more than two then use <see cref="ListOfOutputs{T}"/>, but if
     /// you only have at most 2 then this implementation will
     /// require fewer bytes as it steals one bit from each long
     /// value.
     /// 
     /// </para>
     /// <para>NOTE: the resulting FST is not guaranteed to be minimal!
-    /// See <seealso cref="Builder"/>.
+    /// See <see cref="Builder{T}"/>.
     /// 
     /// @lucene.experimental
     /// </para>

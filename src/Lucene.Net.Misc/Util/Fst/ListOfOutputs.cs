@@ -28,9 +28,9 @@ namespace Lucene.Net.Util.Fst
     /// more of its output values.  You can use this when a single
     /// input may need to map to more than one output,
     /// maintaining order: pass the same input with a different
-    /// output by calling <seealso cref="Builder#add(IntsRef,Object)"/> multiple
+    /// output by calling <see cref="Builder.Add(IntsRef,T)"/> multiple
     /// times.  The builder will then combine the outputs using
-    /// the <seealso cref="Outputs#merge(Object,Object)"/> method.
+    /// the <see cref="Outputs.Merge(T,T)"/> method.
     /// 
     /// <para>The resulting FST may not be minimal when an input has
     /// more than one output, as this requires pushing all
@@ -40,9 +40,9 @@ namespace Lucene.Net.Util.Fst
     /// <para>NOTE: the only way to create multiple outputs is to
     /// add the same input to the FST multiple times in a row.  This is
     /// how the FST maps a single input to multiple outputs (e.g. you
-    /// cannot pass a List&lt;Object&gt; to <seealso cref="Builder#add"/>).  If
+    /// cannot pass a List&lt;Object&gt; to <see cref="Builder.Add(IntsRef, T)"/>).  If
     /// your outputs are longs, and you need at most 2, then use
-    /// <seealso cref="UpToTwoPositiveIntOutputs"/> instead since it stores
+    /// <see cref="UpToTwoPositiveIntOutputs"/> instead since it stores
     /// the outputs more compactly (by stealing a bit from each
     /// long value).
     /// 

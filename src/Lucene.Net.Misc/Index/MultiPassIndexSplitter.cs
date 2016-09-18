@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// This tool splits input index into multiple equal parts. The method employed
-    /// here uses <seealso cref="IndexWriter#addIndexes(IndexReader[])"/> where the input data
+    /// here uses <see cref="IndexWriter.AddIndexes(IndexReader[])"/> where the input data
     /// comes from the input index with artificially applied deletes to the document
     /// id-s that fall outside the selected partition.
     /// <para>Note 1: Deletes are only applied to a buffered list of deleted docs and
@@ -39,8 +39,8 @@ namespace Lucene.Net.Index
     /// 
     /// </para>
     /// <para><b>NOTE</b>: this tool is unaware of documents added
-    /// atomically via <seealso cref="IndexWriter#addDocuments"/> or {@link
-    /// IndexWriter#updateDocuments}, which means it can easily
+    /// atomically via <see cref="IndexWriter.AddDocuments"/> or 
+    /// <see cref="IndexWriter.UpdateDocuments"/>, which means it can easily
     /// break up such document groups.
     /// </para>
     /// </summary>

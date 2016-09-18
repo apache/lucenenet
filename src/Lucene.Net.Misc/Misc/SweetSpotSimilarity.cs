@@ -37,7 +37,7 @@ namespace Lucene.Net.Misc
     /// subclasses can choose between.
     /// </para>
     /// </summary>
-    /// <seealso cref= <a href="doc-files/ss.gnuplot">A Gnuplot file used to generate some of the visualizations refrenced from each function.</a>  </seealso>
+    /// <a href="doc-files/ss.gnuplot">A Gnuplot file used to generate some of the visualizations refrenced from each function.</a>
     public class SweetSpotSimilarity : DefaultSimilarity
     {
         private int ln_min = 1;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Misc
         /// <summary>
         /// Sets the baseline and minimum function variables for baselineTf
         /// </summary>
-        /// <seealso cref= #baselineTf </seealso>
+        /// <seealso cref="BaselineTf(float)"/>
         public virtual void SetBaselineTfFactors(float @base, float min)
         {
             tf_min = min;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Misc
         /// <param name="max"> the maximum tf value to ever be returned (default: 2.0) </param>
         /// <param name="base"> the base value to be used in the exponential for the hyperbolic function (default: 1.3) </param>
         /// <param name="xoffset"> the midpoint of the hyperbolic function (default: 10.0) </param>
-        /// <seealso cref= #hyperbolicTf </seealso>
+        /// <seealso cref="HyperbolicTf(float)"/>
         public virtual void SetHyperbolicTfFactors(float min, float max, double @base, float xoffset)
         {
             tf_hyper_min = min;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Misc
         /// Sets the default function variables used by lengthNorm when no field
         /// specific variables have been set.
         /// </summary>
-        /// <seealso cref= #computeLengthNorm </seealso>
+        /// <seealso cref="ComputeLengthNorm(int)"/>
         public virtual void SetLengthNormFactors(int min, int max, float steepness, bool discountOverlaps)
         {
             this.ln_min = min;
@@ -97,9 +97,11 @@ namespace Lucene.Net.Misc
         }
 
         /// <summary>
-        /// Implemented as <code> state.getBoost() *
-        /// computeLengthNorm(numTokens) </code> where
-        /// numTokens does not count overlap tokens if
+        /// Implemented as 
+        /// <c>
+        /// state.Boost * ComputeLengthNorm(numTokens) 
+        /// </c> 
+        /// where numTokens does not count overlap tokens if
         /// discountOverlaps is true by default or true for this
         /// specific field. 
         /// </summary>
@@ -122,11 +124,11 @@ namespace Lucene.Net.Misc
         /// <summary>
         /// Implemented as:
         /// <code>
-        /// 1/sqrt( steepness * (abs(x-min) + abs(x-max) - (max-min)) + 1 )
+        /// 1/sqrt( steepness * (Math.Abs(x-min) + Math.Abs(x-max) - (max-min)) + 1 )
         /// </code>.
         /// 
         /// <para>
-        /// This degrades to <code>1/sqrt(x)</code> when min and max are both 1 and
+        /// This degrades to <code>1/Math.Sqrt(x)</code> when min and max are both 1 and
         /// steepness is 0.5
         /// </para>
         /// 
@@ -135,8 +137,8 @@ namespace Lucene.Net.Misc
         /// is between min and max.
         /// </para>
         /// </summary>
-        /// <seealso cref= #setLengthNormFactors </seealso>
-        /// <seealso cref= <a href="doc-files/ss.computeLengthNorm.svg">An SVG visualization of this function</a>  </seealso>
+        /// <seealso cref="SetLengthNormFactors(int, int, float, bool)"/>
+        /// <a href="doc-files/ss.computeLengthNorm.svg">An SVG visualization of this function</a>
         public virtual float ComputeLengthNorm(int numTerms)
         {
             int l = ln_min;
@@ -149,7 +151,7 @@ namespace Lucene.Net.Misc
         /// <summary>
         /// Delegates to baselineTf
         /// </summary>
-        /// <seealso cref= #baselineTf </seealso>
+        /// <seealso cref="BaselineTf(float)"/>
         public override float Tf(float freq)
         {
             return BaselineTf(freq);
@@ -158,15 +160,15 @@ namespace Lucene.Net.Misc
         /// <summary>
         /// Implemented as:
         /// <code>
-        ///  (x &lt;= min) &#63; base : sqrt(x+(base**2)-min)
+        ///  (x &lt;= min) &#63; base : Math.Sqrt(x+(base**2)-min)
         /// </code>
         /// ...but with a special case check for 0.
         /// <para>
-        /// This degrates to <code>sqrt(x)</code> when min and base are both 0
+        /// This degrates to <code>Math.Sqrt(x)</code> when min and base are both 0
         /// </para>
         /// </summary>
-        /// <seealso cref= #setBaselineTfFactors </seealso>
-        /// <seealso cref= <a href="doc-files/ss.baselineTf.svg">An SVG visualization of this function</a>  </seealso>
+        /// <seealso cref="SetBaselineTfFactors(float, float)"/>
+        /// <a href="doc-files/ss.baselineTf.svg">An SVG visualization of this function</a>
         public virtual float BaselineTf(float freq)
         {
             if (0.0f == freq)
@@ -189,8 +191,8 @@ namespace Lucene.Net.Misc
         /// to use a hyperbolic tf function.
         /// </para>
         /// </summary>
-        /// <seealso cref= #setHyperbolicTfFactors </seealso>
-        /// <seealso cref= <a href="doc-files/ss.hyperbolicTf.svg">An SVG visualization of this function</a>  </seealso>
+        /// <seealso cref="SetHyperbolicTfFactors(float, float, double, float)"/>
+        /// <a href="doc-files/ss.hyperbolicTf.svg">An SVG visualization of this function</a>
         public virtual float HyperbolicTf(float freq)
         {
             if (0.0f == freq)

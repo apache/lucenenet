@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 	 */
 
     /// <summary>
-    /// Split an index based on a <seealso cref="Filter"/>.
+    /// Split an index based on a <see cref="Filter"/>.
     /// </summary>
     public class PKIndexSplitter
     {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
         private readonly IndexWriterConfig config2;
 
         /// <summary>
-        /// Split an index based on a <seealso cref="Filter"/>. All documents that match the filter
+        /// Split an index based on a <see cref="Filter"/>. All documents that match the filter
         /// are sent to dir1, remaining ones to dir2.
         /// </summary>
         public PKIndexSplitter(LuceneVersion version, Directory input, Directory dir1, Directory dir2, Filter docsInFirstIndex)

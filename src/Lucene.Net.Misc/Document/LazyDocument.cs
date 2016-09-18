@@ -29,7 +29,7 @@ namespace Lucene.Net.Documents
     /// Defers actually loading a field's value until you ask
     ///  for it.  You must not use the returned Field instances
     ///  after the provided reader has been closed. </summary>
-    /// <seealso cref= #getField </seealso>
+    /// <seealso cref="GetField(FieldInfo)"/>
     public class LazyDocument
     {
         private readonly IndexReader reader;

@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     /// into multiple segments.  For example if your index is a
     /// single segment, this tool won't help.  Also, it does basic
     /// file-level copying (using simple
-    /// File{In,Out}putStream) so it will not work with non
+    /// FileInfo) so it will not work with non
     /// FSDirectory Directory impls.</para>
     /// 
     /// @lucene.experimental You can easily

@@ -27,27 +27,27 @@ namespace Lucene.Net.Index.Sorter
 	 */
 
     /// <summary>
-    /// A <seealso cref="MergePolicy"/> that reorders documents according to a <seealso cref="Sort"/>
-    ///  before merging them. As a consequence, all segments resulting from a merge
-    ///  will be sorted while segments resulting from a flush will be in the order
-    ///  in which documents have been added.
-    ///  <para><b>NOTE</b>: Never use this policy if you rely on
-    ///  <seealso cref="IndexWriter#addDocuments(Iterable, Analyzer) IndexWriter.addDocuments"/>
-    ///  to have sequentially-assigned doc IDs, this policy will scatter doc IDs.
+    /// A <see cref="MergePolicy"/> that reorders documents according to a <see cref="Sort"/>
+    /// before merging them. As a consequence, all segments resulting from a merge
+    /// will be sorted while segments resulting from a flush will be in the order
+    /// in which documents have been added.
+    /// <para><b>NOTE</b>: Never use this policy if you rely on
+    /// <see cref="Index.IndexWriter.AddDocuments(IEnumerable{IEnumerable{IndexableField}}, Analysis.Analyzer)">IndexWriter.AddDocuments</see> 
+    /// to have sequentially-assigned doc IDs, this policy will scatter doc IDs.
     /// </para>
-    ///  <para><b>NOTE</b>: This policy should only be used with idempotent {@code Sort}s 
-    ///  so that the order of segments is predictable. For example, using 
-    ///  <seealso cref="Sort#INDEXORDER"/> in reverse (which is not idempotent) will make 
-    ///  the order of documents in a segment depend on the number of times the segment 
-    ///  has been merged.
-    ///  @lucene.experimental 
+    /// <para><b>NOTE</b>: This policy should only be used with idempotent <see cref="Sort"/>s 
+    /// so that the order of segments is predictable. For example, using 
+    /// <see cref="Sort.INDEXORDER"/> in reverse (which is not idempotent) will make 
+    /// the order of documents in a segment depend on the number of times the segment 
+    /// has been merged.
+    /// @lucene.experimental 
     /// </para>
     /// </summary>
     public sealed class SortingMergePolicy : MergePolicy
     {
 
         /// <summary>
-        /// Put in the <seealso cref="SegmentInfo#getDiagnostics() diagnostics"/> to denote that
+        /// Put in the <see cref="SegmentInfo.Diagnostics">diagnostics</see> to denote that
         /// this segment is sorted.
         /// </summary>
         public const string SORTER_ID_PROP = "sorter";
@@ -188,7 +188,8 @@ namespace Lucene.Net.Index.Sorter
         }
 
         /// <summary>
-        /// Returns {@code true} if the given {@code reader} is sorted by the specified {@code sort}. </summary>
+        /// Returns <c>true</c> if the given <paramref name="reader"/> is sorted by the specified <paramref name="sort"/>.
+        /// </summary>
         public static bool IsSorted(AtomicReader reader, Sort sort)
         {
             if (reader is SegmentReader)
@@ -223,7 +224,8 @@ namespace Lucene.Net.Index.Sorter
         internal readonly Sort sort;
 
         /// <summary>
-        /// Create a new {@code MergePolicy} that sorts documents with the given {@code sort}. </summary>
+        /// Create a new <see cref="MergePolicy"/> that sorts documents with the given <paramref name="sort"/>.
+        /// </summary>
         public SortingMergePolicy(MergePolicy @in, Sort sort)
         {
             this.@in = @in;

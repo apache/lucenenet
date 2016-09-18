@@ -26,18 +26,18 @@ namespace Lucene.Net.Index.Sorter
 	 */
 
     /// <summary>
-    /// An <seealso cref="AtomicReader"/> which supports sorting documents by a given
-    /// <seealso cref="Sort"/>. You can use this class to sort an index as follows:
+    /// An <see cref="AtomicReader"/> which supports sorting documents by a given
+    /// <see cref="Sort"/>. You can use this class to sort an index as follows:
     /// 
-    /// <pre class="prettyprint">
+    /// <code>
     /// IndexWriter writer; // writer to which the sorted index will be added
     /// DirectoryReader reader; // reader on the input index
     /// Sort sort; // determines how the documents are sorted
-    /// AtomicReader sortingReader = SortingAtomicReader.wrap(SlowCompositeReaderWrapper.wrap(reader), sort);
-    /// writer.addIndexes(reader);
-    /// writer.close();
-    /// reader.close();
-    /// </pre>
+    /// AtomicReader sortingReader = SortingAtomicReader.Wrap(SlowCompositeReaderWrapper.Wrap(reader), sort);
+    /// writer.AddIndexes(reader);
+    /// reader.Dispose(); // alternatively, you can use a using block
+    /// writer.Dispose(); // alternatively, you can use a using block
+    /// </code>
     /// 
     /// @lucene.experimental
     /// </summary>
@@ -525,7 +525,7 @@ namespace Lucene.Net.Index.Sorter
             }
 
             /// <summary>
-            /// Returns the wrapped <seealso cref="DocsEnum"/>. </summary>
+            /// Returns the wrapped <see cref="DocsEnum"/>. </summary>
             internal virtual DocsEnum Wrapped
             {
                 get
@@ -539,7 +539,7 @@ namespace Lucene.Net.Index.Sorter
         {
 
             /// <summary>
-            /// A <seealso cref="TimSorter"/> which sorts two parallel arrays of doc IDs and
+            /// A <see cref="TimSorter"/> which sorts two parallel arrays of doc IDs and
             /// offsets in one go. Everytime a doc ID is 'swapped', its correponding offset
             /// is swapped too.
             /// </summary>
@@ -790,7 +790,8 @@ namespace Lucene.Net.Index.Sorter
             }
 
             /// <summary>
-            /// Returns the wrapped <seealso cref="DocsAndPositionsEnum"/>. </summary>
+            /// Returns the wrapped <see cref="DocsAndPositionsEnum"/>.
+            /// </summary>
             internal virtual DocsAndPositionsEnum Wrapped
             {
                 get
@@ -801,9 +802,9 @@ namespace Lucene.Net.Index.Sorter
         }
 
         /// <summary>
-        /// Return a sorted view of <code>reader</code> according to the order
-        ///  defined by <code>sort</code>. If the reader is already sorted, this
-        ///  method might return the reader as-is. 
+        /// Return a sorted view of <paramref name="reader"/> according to the order
+        /// defined by <paramref name="sort"/>. If the reader is already sorted, this
+        /// method might return the reader as-is. 
         /// </summary>
         public static AtomicReader Wrap(AtomicReader reader, Sort sort)
         {
@@ -811,7 +812,8 @@ namespace Lucene.Net.Index.Sorter
         }
 
         /// <summary>
-        /// Expert: same as <seealso cref="#wrap(AtomicReader, Sort)"/> but operates directly on a <seealso cref="Sorter.DocMap"/>. </summary>
+        /// Expert: same as <see cref="Wrap(AtomicReader, Sort)"/> but operates directly on a <see cref="Sorter.DocMap"/>.
+        /// </summary>
         internal static AtomicReader Wrap(AtomicReader reader, Sorter.DocMap docMap)
         {
             if (docMap == null)
