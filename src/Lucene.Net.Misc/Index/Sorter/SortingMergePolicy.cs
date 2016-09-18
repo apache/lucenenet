@@ -257,12 +257,6 @@ namespace Lucene.Net.Index.Sorter
             @in.Dispose();
         }
 
-        // LUCENENET TODO: Do we need this?
-        //public override void close()
-        //{
-        //    @in.close();
-        //}
-
         public override bool UseCompoundFile(SegmentInfos segments, SegmentCommitInfo newSegment)
         {
             return @in.UseCompoundFile(segments, newSegment);

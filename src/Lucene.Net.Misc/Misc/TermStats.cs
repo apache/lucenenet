@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Util;
-using System;
 
 namespace Lucene.Net.Misc
 {
@@ -24,7 +23,7 @@ namespace Lucene.Net.Misc
     /// Holder for a term along with its statistics
     /// (<seealso cref="#docFreq"/> and <seealso cref="#totalTermFreq"/>).
     /// </summary>
-    public sealed class TermStats : IComparable<TermStats>
+    public sealed class TermStats
     {
         internal readonly BytesRef termtext;
         public string Field { get; set; }
@@ -50,12 +49,6 @@ namespace Lucene.Net.Misc
         public override string ToString()
         {
             return ("TermStats: Term=" + termtext.Utf8ToString() + " DocFreq=" + DocFreq + " TotalTermFreq=" + TotalTermFreq);
-        }
-
-        public int CompareTo(TermStats other)
-        {
-            // LUCENENET TODO: Implement
-            throw new NotImplementedException();
         }
     }
 }

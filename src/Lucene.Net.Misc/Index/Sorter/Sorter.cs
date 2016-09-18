@@ -268,7 +268,6 @@ namespace Lucene.Net.Index.Sorter
             return Sort(reader.MaxDoc, comparator);
         }
 
-        // LUCENENET TODO: Is there a way to make this class generic like in Java?
         private class DocComparatorAnonymousInnerClassHelper : DocComparator
         {
             private readonly Sorter outerInstance;

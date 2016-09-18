@@ -114,7 +114,7 @@ namespace Lucene.Net.Index.Sorter
                 throw new CollectionTerminatedException();
             }
         }
-        // LUCENENET TODO: This should be a method because it changes the state of the object
+
         public override AtomicReaderContext NextReader
         {
             set

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
