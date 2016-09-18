@@ -260,7 +260,7 @@ namespace Lucene.Net.Search.Suggest
         /// <param name="onlyMorePopular"> return only more popular results </param>
         /// <param name="num"> maximum number of results to return </param>
         /// <returns> a list of possible completions, with their relative weight (e.g. popularity) </returns>
-        public virtual IList<LookupResult> DoLookup(string key, bool onlyMorePopular, int num)
+        public virtual List<LookupResult> DoLookup(string key, bool onlyMorePopular, int num)
         {
             return DoLookup(key, null, onlyMorePopular, num);
         }
@@ -273,7 +273,7 @@ namespace Lucene.Net.Search.Suggest
         /// <param name="onlyMorePopular"> return only more popular results </param>
         /// <param name="num"> maximum number of results to return </param>
         /// <returns> a list of possible completions, with their relative weight (e.g. popularity) </returns>
-        public abstract IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num);
+        public abstract List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num);
 
         /// <summary>
         /// Persist the constructed lookup data to a directory. Optional operation. </summary>

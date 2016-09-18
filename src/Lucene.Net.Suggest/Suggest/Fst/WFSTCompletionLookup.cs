@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             return true;
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)
             {
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             if (fst == null)
             {
-                return Collections.EmptyList<LookupResult>();
+                return new List<LookupResult>();
             }
 
             BytesRef scratch = new BytesRef(key);
@@ -167,10 +167,10 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             if (prefixOutput == null)
             {
-                return Collections.EmptyList<LookupResult>();
+                return new List<LookupResult>();
             }
 
-            IList<LookupResult> results = new List<LookupResult>(num);
+            List<LookupResult> results = new List<LookupResult>(num);
             CharsRef spare = new CharsRef();
             if (exactFirst && arc.IsFinal)
             {

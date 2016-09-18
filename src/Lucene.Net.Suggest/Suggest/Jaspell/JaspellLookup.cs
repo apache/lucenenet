@@ -107,13 +107,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             return trie.Get(key);
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)
             {
                 throw new System.ArgumentException("this suggester doesn't support contexts");
             }
-            IList<LookupResult> res = new List<LookupResult>();
+            List<LookupResult> res = new List<LookupResult>();
             IList<string> list;
             int count = onlyMorePopular ? num * 2 : num;
             if (usePrefix)

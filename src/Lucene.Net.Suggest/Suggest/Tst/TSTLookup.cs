@@ -129,14 +129,14 @@ namespace Lucene.Net.Search.Suggest.Tst
             return true;
         }
        
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             if (contexts != null)
             {
                 throw new System.ArgumentException("this suggester doesn't support contexts");
             }
             IList<TernaryTreeNode> list = autocomplete.PrefixCompletion(root, key, 0);
-            IList<LookupResult> res = new List<LookupResult>();
+            List<LookupResult> res = new List<LookupResult>();
             if (list == null || list.Count == 0)
             {
                 return res;

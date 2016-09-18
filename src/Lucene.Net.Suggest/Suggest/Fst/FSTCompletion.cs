@@ -80,7 +80,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// An empty result. Keep this an <see cref="List"/> to keep all the returned
         /// lists of single type (monomorphic calls).
         /// </summary>
-        private static readonly IList<Completion> EMPTY_RESULT = new List<Completion>();
+        private static readonly List<Completion> EMPTY_RESULT = new List<Completion>();
 
         /// <summary>
         /// Finite state automaton encoding all the lookup terms. See class notes for
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///          At most this number of suggestions will be returned. </param>
         /// <returns> Returns the suggestions, sorted by their approximated weight first
         ///         (decreasing) and then alphabetically (UTF-8 codepoint order). </returns>
-        public virtual IList<Completion> DoLookup(string key, int num)
+        public virtual List<Completion> DoLookup(string key, int num)
         {
             if (key.Length == 0 || automaton == null)
             {
@@ -261,16 +261,16 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// constant</c>. This is a workaround: in general, use constant weights for
         /// alphabetically sorted result.
         /// </summary>
-        private IList<Completion> LookupSortedAlphabetically(BytesRef key, int num)
+        private List<Completion> LookupSortedAlphabetically(BytesRef key, int num)
         {
             // Greedily get num results from each weight branch.
-            var res = new List<Completion>(LookupSortedByWeight(key, num, true));
+            var res = LookupSortedByWeight(key, num, true);
 
             // Sort and trim.
             res.Sort();
             if (res.Count > num)
             {
-                res = new List<Completion>(res.SubList(0, num));
+                res = res.GetRange(0, num - 0);
             }
             return res;
         }
@@ -283,7 +283,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         ///          <paramref name="num"/> suggestions have been collected. If
         ///          <c>false</c>, it will collect suggestions from all weight
         ///          arcs (needed for <see cref="LookupSortedAlphabetically"/>. </param>
-        private IList<Completion> LookupSortedByWeight(BytesRef key, int num, bool collectAll)
+        private List<Completion> LookupSortedByWeight(BytesRef key, int num, bool collectAll)
         {
             // Don't overallocate the results buffers. This also serves the purpose of
             // allowing the user of this class to request all matches using Integer.MAX_VALUE as
@@ -342,7 +342,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Returns <c>true<c> if and only if <paramref name="list"/> contained
         /// <paramref name="key"/>.
         /// </returns>
-        private bool CheckExistingAndReorder(List<Completion> list, BytesRef key)
+        private bool CheckExistingAndReorder(IList<Completion> list, BytesRef key)
         {
             // We assume list does not have duplicates (because of how the FST is created).
             for (int i = list.Count; --i >= 0; )

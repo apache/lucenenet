@@ -366,7 +366,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
+        public override List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
             return DoLookup(key, contexts, num, true, true);
         }
@@ -374,7 +374,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Lookup, without any context.
         /// </summary>
-        public virtual IList<LookupResult> DoLookup(string key, int num, bool allTermsRequired, bool doHighlight)
+        public virtual List<LookupResult> DoLookup(string key, int num, bool allTermsRequired, bool doHighlight)
         {
             return DoLookup(key, null, num, allTermsRequired, doHighlight);
         }
@@ -400,7 +400,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  must match (<paramref name="allTermsRequired"/>) and whether the hits
         ///  should be highlighted (<paramref name="doHighlight"/>). 
         /// </summary>
-        public virtual IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
+        public virtual List<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, int num, bool allTermsRequired, bool doHighlight)
         {
 
             if (searcherMgr == null)
@@ -518,7 +518,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // only retrieve the first num hits now:
             Collector c2 = new EarlyTerminatingSortingCollector(c, SORT, num);
             IndexSearcher searcher = searcherMgr.Acquire();
-            IList<LookupResult> results = null;
+            List<LookupResult> results = null;
             try
             {
                 //System.out.println("got searcher=" + searcher);
@@ -545,7 +545,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Create the results based on the search hits.
         /// Can be overridden by subclass to add particular behavior (e.g. weight transformation) </summary>
         /// <exception cref="System.IO.IOException"> If there are problems reading fields from the underlying Lucene index. </exception>
-        protected internal virtual IList<LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits, int num, string charSequence, bool doHighlight, IEnumerable<string> matchedTokens, string prefixToken)
+        protected internal virtual List<LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits, int num, string charSequence, bool doHighlight, IEnumerable<string> matchedTokens, string prefixToken)
         {
 
             BinaryDocValues textDV = MultiDocValues.GetBinaryValues(searcher.IndexReader, TEXT_FIELD_NAME);
@@ -554,7 +554,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: maybe just stored fields?  they compress...
             BinaryDocValues payloadsDV = MultiDocValues.GetBinaryValues(searcher.IndexReader, "payloads");
             IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves;
-            IList<LookupResult> results = new List<LookupResult>();
+            List<LookupResult> results = new List<LookupResult>();
             BytesRef scratch = new BytesRef();
             for (int i = 0; i < hits.ScoreDocs.Length; i++)
             {
