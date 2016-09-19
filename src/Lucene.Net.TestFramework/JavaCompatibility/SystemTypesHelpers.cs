@@ -47,7 +47,7 @@ namespace Lucene.Net
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(item.ToString());
+                    sb.Append(item != null ? item.ToString() : "null");
                 }
                 sb.Append(isArray ? "}" : "]");
                 return sb.ToString();
