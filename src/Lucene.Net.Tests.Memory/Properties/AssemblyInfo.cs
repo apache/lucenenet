@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Lucene.Net.Memory")]
-[assembly: AssemblyDescription("Single-document in-memory index implementation")]
+[assembly: AssemblyTitle("Lucene.Net.Tests.Memory")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Lucene.Net.Memory")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyProduct("Lucene.Net.Tests.Memory")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,10 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ca052094-4c45-44d7-9dcf-3d46ae6930fe")]
-
-// for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Memory")]
+[assembly: Guid("7f9378bf-c88d-46ff-9ae8-5e7d8c0225d3")]
 
 // Version information for an assembly consists of the following four values:
 //
