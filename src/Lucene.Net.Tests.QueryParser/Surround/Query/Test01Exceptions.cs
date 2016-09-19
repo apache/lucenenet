@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         //}
 
         private bool verbose = false; /* to show actual parsing error messages */
-        private readonly string fieldName = "bi";
+        //private readonly string fieldName = "bi";
 
         string[] exceptionQueries = {
             "*",

@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Ext
                 fail("should throw NPE - escape string is null");
             }
             //catch (NullPointerException e)
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 // 
             }

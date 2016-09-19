@@ -156,7 +156,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 typeof(QueryParser).GetConstructor(new Type[] { typeof(ICharStream) });
                 fail("please switch public QueryParser(CharStream) to be protected");
             }
-            catch (Exception nsme)
+            catch (Exception /*nsme*/)
             {
                 // expected
             }
@@ -165,7 +165,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 typeof(QueryParser).GetConstructor(new Type[] { typeof(QueryParserTokenManager) });
                 fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
             }
-            catch (Exception nsme)
+            catch (Exception /*nsme*/)
             {
                 // expected
             }
@@ -186,7 +186,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     {
                         fms = float.Parse(fuzzySlop.image.Substring(1, fuzzySlop.image.Length - 2));
                     }
-                    catch (Exception ignored) { }
+                    catch (Exception /*ignored*/) { }
                     float value = float.Parse(termImage);
                     return GetRangeQuery(qfield, (value - fms / 2.0f).ToString(), (value + fms / 2.0f).ToString(), true, true);
                 }
@@ -281,7 +281,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     MockTokenizer.WHITESPACE, false)).Parse("a?t");
                 fail("Wildcard queries should not be allowed");
             }
-            catch (ParseException expected)
+            catch (ParseException /*expected*/)
             {
                 // expected exception
             }
@@ -296,7 +296,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     MockTokenizer.WHITESPACE, false)).Parse("xunit~");
                 fail("Fuzzy queries should not be allowed");
             }
-            catch (ParseException expected)
+            catch (ParseException /*expected*/)
             {
                 // expected exception
             }

@@ -433,7 +433,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 38 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { curChar = input_stream.ReadChar(); }
-                catch (System.IO.IOException e) { return curPos; }
+                catch (System.IO.IOException /*e*/) { return curPos; }
             }
         }
 
@@ -520,7 +520,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 if ((i = jjnewStateCnt) == (startsAt = 3 - (jjnewStateCnt = startsAt)))
                     return curPos;
                 try { curChar = input_stream.ReadChar(); }
-                catch (System.IO.IOException e) { return curPos; }
+                catch (System.IO.IOException /*e*/) { return curPos; }
             }
         }
         internal static readonly int[] jjnextStates = {
@@ -662,7 +662,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 {
                     curChar = input_stream.BeginToken();
                 }
-                catch (System.IO.IOException e)
+                catch (System.IO.IOException /*e*/)
                 {
                     jjmatchedKind = 0;
                     matchedToken = JjFillToken();
@@ -705,7 +705,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 string error_after = null;
                 bool EOFSeen = false;
                 try { input_stream.ReadChar(); input_stream.Backup(1); }
-                catch (System.IO.IOException e1)
+                catch (System.IO.IOException /*e1*/)
                 {
                     EOFSeen = true;
                     error_after = curPos <= 1 ? "" : input_stream.Image;

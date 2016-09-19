@@ -137,7 +137,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             {
                 Query q = GetAnalyzedQuery("*", a, false);
             }
-            catch (ParseException e)
+            catch (ParseException /*e*/)
             {
                 pex = true;
             }
@@ -149,7 +149,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 String qString = ParseWithAnalyzingQueryParser("*", a, true);
                 assertEquals("Every word", "*", qString);
             }
-            catch (ParseException e)
+            catch (ParseException /*e*/)
             {
                 pex = true;
             }
@@ -181,7 +181,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 string q = ParseWithAnalyzingQueryParser(wildcardInput[0], a, false);
 
             }
-            catch (ParseException e)
+            catch (ParseException /*e*/)
             {
                 ex = true;
             }

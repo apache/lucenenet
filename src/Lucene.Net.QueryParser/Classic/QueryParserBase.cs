@@ -123,7 +123,9 @@ namespace Lucene.Net.QueryParsers.Classic
             AllowLeadingWildcard = false;
 
             PhraseSlop = 0;
+#pragma warning disable 612, 618
             FuzzyMinSim = FuzzyQuery.DefaultMinSimilarity;
+#pragma warning restore 612, 618
             FuzzyPrefixLength = FuzzyQuery.DefaultPrefixLength;
             Locale = CultureInfo.CurrentCulture;
             TimeZone = TimeZoneInfo.Local;
@@ -141,7 +143,9 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             Analyzer = a;
             field = f;
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 AutoGeneratePhraseQueries = false;
             }
@@ -542,8 +546,10 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             // FuzzyQuery doesn't yet allow constant score rewrite
             string text = term.Text();
+#pragma warning disable 612, 618
             int numEdits = FuzzyQuery.FloatToEdits(minimumSimilarity,
                 Character.CodePointCount(text,0, text.Length));
+#pragma warning restore 612, 618
             return new FuzzyQuery(term, numEdits, prefixLength);
         }
 
@@ -837,7 +843,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 fms = float.Parse(fuzzySlop.image.Substring(1), Locale);
             }
-            catch (Exception ignored) { }
+            catch (Exception /*ignored*/) { }
             if (fms < 0.0f)
             {
                 throw new ParseException("Minimum similarity for a FuzzyQuery has to be between 0.0f and 1.0f !");
@@ -860,7 +866,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 {
                     s = (int)float.Parse(fuzzySlop.image.Substring(1), Locale);
                 }
-                catch (Exception ignored) { }
+                catch (Exception /*ignored*/) { }
             }
             return GetFieldQuery(qfield, DiscardEscapeChar(term.image.Substring(1, term.image.Length - 2)), s);
         }
@@ -875,7 +881,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 {
                     f = float.Parse(boost.image, Locale);
                 }
-                catch (Exception ignored)
+                catch (Exception /*ignored*/)
                 {
                     /* Should this be handled somehow? (defaults to "no boost", if
                      * boost number is invalid)
