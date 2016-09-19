@@ -161,7 +161,9 @@ namespace Lucene.Net.Analysis.Ar
         {
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 1, true);
             set.add("ساهدهات");
+#pragma warning disable 612, 618
             ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader("ساهدهات"));
+#pragma warning restore 612, 618
 
             ArabicStemFilter filter = new ArabicStemFilter(new SetKeywordMarkerFilter(tokenStream, set));
             AssertTokenStreamContents(filter, new string[] { "ساهدهات" });
@@ -169,7 +171,9 @@ namespace Lucene.Net.Analysis.Ar
 
         private void Check(string input, string expected)
         {
+#pragma warning disable 612, 618
             ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
+#pragma warning restore 612, 618
             ArabicStemFilter filter = new ArabicStemFilter(tokenStream);
             AssertTokenStreamContents(filter, new string[] { expected });
         }

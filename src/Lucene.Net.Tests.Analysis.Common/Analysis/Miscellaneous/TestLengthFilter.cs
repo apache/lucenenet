@@ -30,7 +30,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public virtual void TestFilterNoPosIncr()
         {
             TokenStream stream = new MockTokenizer(new StringReader("short toolong evenmuchlongertext a ab toolong foo"), MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
             LengthFilter filter = new LengthFilter(LuceneVersion.LUCENE_43, false, stream, 2, 6);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(filter, new string[] { "short", "ab", "foo" }, new int[] { 1, 1, 1 });
         }
 

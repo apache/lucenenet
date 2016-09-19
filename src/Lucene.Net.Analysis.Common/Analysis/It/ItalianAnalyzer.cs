@@ -51,8 +51,12 @@ namespace Lucene.Net.Analysis.It
         /// File containing default Italian stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "italian_stop.txt";
 
-        private static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT,
-            Arrays.AsList("c", "l", "all", "dall", "dell", "nell", "sull", "coll", "pell", "gl", "agl", "dagl", "degl", "negl", "sugl", "un", "m", "t", "s", "v", "d"), true));
+        private static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("c", "l", "all", "dall", "dell", "nell", "sull", "coll", "pell", "gl", "agl", 
+                "dagl", "degl", "negl", "sugl", "un", "m", "t", "s", "v", "d"), true));
 
         /// <summary>
         /// Returns an unmodifiable instance of the default stop words set. </summary>
@@ -79,7 +83,9 @@ namespace Lucene.Net.Analysis.It
                 {
                     DEFAULT_STOP_SET = WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), typeof(SnowballFilter).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8),
+#pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
+#pragma warning restore 612, 618
                 }
                 catch (IOException)
                 {
@@ -137,7 +143,9 @@ namespace Lucene.Net.Analysis.It
         {
             Tokenizer source = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new StandardFilter(matchVersion, source);
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_32))
+#pragma warning restore 612, 618
             {
                 result = new ElisionFilter(result, DEFAULT_ARTICLES);
             }
@@ -147,7 +155,9 @@ namespace Lucene.Net.Analysis.It
             {
                 result = new SetKeywordMarkerFilter(result, stemExclusionSet);
             }
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
+#pragma warning restore 612, 618
             {
                 result = new ItalianLightStemFilter(result);
             }

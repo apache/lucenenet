@@ -254,7 +254,9 @@ namespace Lucene.Net.Analysis.Synonym
 
                 IEnumerable<CharsRef> keys = workingSet.Keys;
                 CharsRef[] sortedKeys = keys.ToArray();
+#pragma warning disable 612, 618
                 System.Array.Sort(sortedKeys, CharsRef.UTF16SortedAsUTF8Comparer);
+#pragma warning restore 612, 618
 
 
                 IntsRef scratchIntsRef = new IntsRef();

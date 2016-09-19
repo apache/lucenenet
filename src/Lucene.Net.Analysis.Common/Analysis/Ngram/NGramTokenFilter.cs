@@ -80,7 +80,11 @@ namespace Lucene.Net.Analysis.Ngram
             : base(new CodepointCountFilter(version, input, minGram, int.MaxValue))
         {
             this.version = version;
-            this.charUtils = version.OnOrAfter(LuceneVersion.LUCENE_44) ? CharacterUtils.GetInstance(version) : CharacterUtils.Java4Instance;
+            this.charUtils = version.OnOrAfter(
+#pragma warning disable 612, 618
+                LuceneVersion.LUCENE_44) ?
+#pragma warning restore 612, 618
+                CharacterUtils.GetInstance(version) : CharacterUtils.Java4Instance;
             if (minGram < 1)
             {
                 throw new System.ArgumentException("minGram must be greater than zero");
@@ -91,7 +95,9 @@ namespace Lucene.Net.Analysis.Ngram
             }
             this.minGram = minGram;
             this.maxGram = maxGram;
+#pragma warning disable 612, 618
             if (version.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
             {
                 posIncAtt = AddAttribute<IPositionIncrementAttribute>();
                 posLenAtt = AddAttribute<IPositionLengthAttribute>();
@@ -186,7 +192,9 @@ namespace Lucene.Net.Analysis.Ngram
                         hasIllegalOffsets = (tokStart + curTermLength) != tokEnd;
                     }
                 }
+#pragma warning disable 612, 618
                 if (version.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
                 {
                     if (curGramSize > maxGram || (curPos + curGramSize) > curCodePointCount)
                     {

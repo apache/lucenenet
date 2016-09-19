@@ -59,7 +59,11 @@ namespace Lucene.Net.Analysis.En
             char[] buffer = termAtt.Buffer();
             int bufferLength = termAtt.Length;
 
-            if (bufferLength >= 2 && (buffer[bufferLength - 2] == '\'' || (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) && (buffer[bufferLength - 2] == '\u2019' || buffer[bufferLength - 2] == '\uFF07'))) && (buffer[bufferLength - 1] == 's' || buffer[bufferLength - 1] == 'S'))
+            if (bufferLength >= 2 && (buffer[bufferLength - 2] == '\'' ||
+#pragma warning disable 612, 618
+                (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) && (buffer[bufferLength - 2] == '\u2019' ||
+#pragma warning restore 612, 618
+                buffer[bufferLength - 2] == '\uFF07'))) && (buffer[bufferLength - 1] == 's' || buffer[bufferLength - 1] == 'S'))
             {
                 termAtt.Length = bufferLength - 2; // Strip last 2 characters off
             }

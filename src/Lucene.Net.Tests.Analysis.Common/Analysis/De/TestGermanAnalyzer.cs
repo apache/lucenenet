@@ -63,7 +63,9 @@ namespace Lucene.Net.Analysis.De
             CheckOneTerm(a, "Schaltflächen", "schaltflach");
             CheckOneTerm(a, "Schaltflaechen", "schaltflach");
             // here they are with the old stemmer
+#pragma warning disable 612, 618
             a = new GermanAnalyzer(LuceneVersion.LUCENE_30);
+#pragma warning restore 612, 618
             CheckOneTerm(a, "Schaltflächen", "schaltflach");
             CheckOneTerm(a, "Schaltflaechen", "schaltflaech");
         }

@@ -27,6 +27,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// <summary>
     /// Verifies the behavior of PatternAnalyzer.
     /// </summary>
+#pragma warning disable 612, 618
     public class PatternAnalyzerTest : BaseTokenStreamTestCase
     {
 
@@ -140,4 +141,5 @@ namespace Lucene.Net.Analysis.Miscellaneous
             CheckRandomData(Random(), a, 10000 * RANDOM_MULTIPLIER);
         }
     }
+#pragma warning restore 612, 618
 }

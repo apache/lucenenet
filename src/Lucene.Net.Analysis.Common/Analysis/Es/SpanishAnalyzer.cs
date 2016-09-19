@@ -73,7 +73,9 @@ namespace Lucene.Net.Analysis.Es
                 {
                     DEFAULT_STOP_SET = WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), typeof(SnowballFilter).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8),
+#pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
+#pragma warning restore 612, 618
                 }
                 catch (IOException)
                 {
@@ -137,7 +139,9 @@ namespace Lucene.Net.Analysis.Es
             {
                 result = new SetKeywordMarkerFilter(result, stemExclusionSet);
             }
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
+#pragma warning restore 612, 618
             {
                 result = new SpanishLightStemFilter(result);
             }

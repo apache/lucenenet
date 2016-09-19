@@ -174,7 +174,9 @@ namespace Lucene.Net.Analysis.Compound
                 int startOff = outerInstance.offsetAtt.StartOffset();
                 int endOff = outerInstance.offsetAtt.EndOffset();
 
+#pragma warning disable 612, 618
                 if (outerInstance.matchVersion.OnOrAfter(LuceneVersion.LUCENE_44) || endOff - startOff != outerInstance.termAtt.Length)
+#pragma warning restore 612, 618
                 {
                     // if length by start + end offsets doesn't match the term text then assume
                     // this is a synonym and don't adjust the offsets.

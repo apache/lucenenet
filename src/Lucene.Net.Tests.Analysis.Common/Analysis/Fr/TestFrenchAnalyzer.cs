@@ -166,7 +166,9 @@ namespace Lucene.Net.Analysis.Fr
         [Test]
         public virtual void TestStopwordsCasing()
         {
+#pragma warning disable 612, 618
             FrenchAnalyzer a = new FrenchAnalyzer(LuceneVersion.LUCENE_31);
+#pragma warning restore 612, 618
             AssertAnalyzesTo(a, "Votre", new string[] { });
         }
 

@@ -98,9 +98,11 @@ namespace Lucene.Net.Analysis.Util
             TextReader reader = null;
             try
             {
-                //reader = IOUtils.GetDecodingReader(aClass.GetResourceAsStream(resource), StandardCharsets.UTF_8);
                 reader = IOUtils.GetDecodingReader(aClass.Assembly.GetManifestResourceStream(resource), Encoding.UTF8);
-                return WordlistLoader.GetWordSet(reader, comment, new CharArraySet(LuceneVersion.LUCENE_CURRENT, 16, ignoreCase));
+                return WordlistLoader.GetWordSet(reader, comment, new CharArraySet(
+#pragma warning disable 612, 618
+                    LuceneVersion.LUCENE_CURRENT, 16, ignoreCase));
+#pragma warning restore 612, 618
             }
             finally
             {

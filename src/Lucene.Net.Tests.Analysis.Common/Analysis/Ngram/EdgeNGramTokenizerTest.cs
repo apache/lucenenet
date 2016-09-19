@@ -92,7 +92,9 @@ namespace Lucene.Net.Analysis.Ngram
         [Test]
         public virtual void TestBackUnigram()
         {
+#pragma warning disable 612, 618
             Tokenizer tokenizer = new Lucene43EdgeNGramTokenizer(Version.LUCENE_43, input, Lucene43EdgeNGramTokenizer.Side.BACK, 1, 1);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[] { "e" }, new int[] { 4 }, new int[] { 5 }, 5); // abcde
         }
 
@@ -113,7 +115,9 @@ namespace Lucene.Net.Analysis.Ngram
         [Test]
         public virtual void TestBackRangeOfNgrams()
         {
+#pragma warning disable 612, 618
             Tokenizer tokenizer = new Lucene43EdgeNGramTokenizer(Version.LUCENE_43, input, Lucene43EdgeNGramTokenizer.Side.BACK, 1, 3);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[] { "e", "de", "cde" }, new int[] { 4, 3, 2 }, new int[] { 5, 5, 5 }, null, null, null, 5, false); // abcde
         }
 
@@ -178,7 +182,9 @@ namespace Lucene.Net.Analysis.Ngram
 
             public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
             {
+#pragma warning disable 612, 618
                 Tokenizer tokenizer = new Lucene43EdgeNGramTokenizer(Version.LUCENE_43, reader, Lucene43EdgeNGramTokenizer.Side.BACK, 2, 4);
+#pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer, tokenizer);
             }
         }
@@ -186,7 +192,9 @@ namespace Lucene.Net.Analysis.Ngram
         [Test]
         public virtual void TestTokenizerPositions()
         {
+#pragma warning disable 612, 618
             Tokenizer tokenizer = new Lucene43EdgeNGramTokenizer(Version.LUCENE_43, input, Lucene43EdgeNGramTokenizer.Side.FRONT, 1, 3);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 1, 2, 3 }, null, new int[] { 1, 0, 0 }, null, null, false);
 
             tokenizer = new EdgeNGramTokenizer(TEST_VERSION_CURRENT, new StringReader("abcde"), 1, 3);

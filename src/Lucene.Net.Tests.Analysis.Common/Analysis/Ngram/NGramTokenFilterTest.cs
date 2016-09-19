@@ -213,7 +213,9 @@ namespace Lucene.Net.Analysis.Ngram
         [Test]
         public virtual void TestLucene43()
         {
+#pragma warning disable 612, 618
             NGramTokenFilter filter = new NGramTokenFilter(LuceneVersion.LUCENE_43, input, 2, 3);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(filter, new string[] { "ab", "bc", "cd", "de", "abc", "bcd", "cde" }, new int[] { 0, 1, 2, 3, 0, 1, 2 }, new int[] { 2, 3, 4, 5, 3, 4, 5 }, null, new int[] { 1, 1, 1, 1, 1, 1, 1 }, null, null, false);
         }
 

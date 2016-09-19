@@ -1076,8 +1076,10 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         private class EmptyCharArrayMap<V> : UnmodifiableCharArrayMap<V>
         {
-            public EmptyCharArrayMap() 
+            public EmptyCharArrayMap()
+#pragma warning disable 612, 618
                 : base(new CharArrayMap<V>(LuceneVersion.LUCENE_CURRENT, 0, false))
+#pragma warning restore 612, 618
             {
             }
 

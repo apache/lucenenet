@@ -98,17 +98,17 @@ namespace Lucene.Net.Analysis.Ngram
               : base(input)
         {
 
-            if (version == null)
-            {
-                throw new System.ArgumentException("version must not be null");
-            }
+            //if (version == null)
+            //{
+            //    throw new System.ArgumentException("version must not be null");
+            //}
 
             if (version.OnOrAfter(LuceneVersion.LUCENE_44) && side == Side.BACK)
             {
                 throw new System.ArgumentException("Side.BACK is not supported anymore as of Lucene 4.4, use ReverseStringFilter up-front and afterward");
             }
 
-            if (side == null)
+            if (!Enum.IsDefined(typeof(Side), side))
             {
                 throw new System.ArgumentException("sideLabel must be either front or back");
             }
@@ -157,7 +157,9 @@ namespace Lucene.Net.Analysis.Ngram
         /// <param name="minGram"> the smallest n-gram to generate </param>
         /// <param name="maxGram"> the largest n-gram to generate </param>
         public EdgeNGramTokenFilter(LuceneVersion version, TokenStream input, int minGram, int maxGram)
+#pragma warning disable 612, 618
               : this(version, input, Side.FRONT, minGram, maxGram)
+#pragma warning restore 612, 618
         {
         }
 
@@ -179,7 +181,9 @@ namespace Lucene.Net.Analysis.Ngram
                         curGramSize = minGram;
                         tokStart = offsetAtt.StartOffset();
                         tokEnd = offsetAtt.EndOffset();
+#pragma warning disable 612, 618
                         if (version.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
                         {
                             // Never update offsets
                             updateOffsets = false;

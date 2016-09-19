@@ -154,7 +154,9 @@ namespace Lucene.Net.Analysis.Core
 
             // 2.4 should not show the bug. But, alas, it's also obsolete,
             // so we check latest released (Robert's gonna break this on 4.0 soon :) )
+#pragma warning disable 612, 618
             a2 = new ClassicAnalyzer(LuceneVersion.LUCENE_31);
+#pragma warning restore 612, 618
             AssertAnalyzesTo(a2, "www.nutch.org.", new string[] { "www.nutch.org" }, new string[] { "<HOST>" });
         }
 
@@ -267,7 +269,9 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestJava14BWCompatibility()
         {
+#pragma warning disable 612, 618
             ClassicAnalyzer sa = new ClassicAnalyzer(LuceneVersion.LUCENE_30);
+#pragma warning restore 612, 618
             AssertAnalyzesTo(sa, "test\u02C6test", new string[] { "test", "test" });
         }
 
@@ -298,8 +302,9 @@ namespace Lucene.Net.Analysis.Core
                     doc.Add(new TextField("content", "abc bbb ccc", Field.Store.NO));
                     writer.AddDocument(doc);
                 }
-
+#pragma warning disable 612, 618
                 using (IndexReader reader = IndexReader.Open(dir))
+#pragma warning restore 612, 618
                 {
 
                     // Make sure all terms < max size were indexed
@@ -331,7 +336,9 @@ namespace Lucene.Net.Analysis.Core
                 {
                     writer.AddDocument(doc);
                 }
+#pragma warning disable 612, 618
                 using (var reader = IndexReader.Open(dir))
+#pragma warning restore 612, 618
                 {
                     assertEquals(1, reader.DocFreq(new Term("content", bigTerm)));
                 }

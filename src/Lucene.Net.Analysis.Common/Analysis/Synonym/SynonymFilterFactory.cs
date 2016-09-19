@@ -63,10 +63,12 @@ namespace Lucene.Net.Analysis.Synonym
             : base(args)
         {
             AssureMatchVersion();
+#pragma warning disable 612, 618
             if (luceneMatchVersion.OnOrAfter(Lucene.Net.Util.LuceneVersion.LUCENE_34))
             {
                 delegator = new FSTSynonymFilterFactory(new Dictionary<string, string>(OriginalArgs));
             }
+#pragma warning restore 612, 618
             else
             {
                 // check if you use the new optional arg "format". this makes no sense for the old one, 
@@ -75,7 +77,9 @@ namespace Lucene.Net.Analysis.Synonym
                 {
                     throw new System.ArgumentException("You must specify luceneMatchVersion >= 3.4 to use alternate synonyms formats");
                 }
+#pragma warning disable 612, 618
                 delegator = new SlowSynonymFilterFactory(new Dictionary<string, string>(OriginalArgs));
+#pragma warning restore 612, 618
             }
         }
 

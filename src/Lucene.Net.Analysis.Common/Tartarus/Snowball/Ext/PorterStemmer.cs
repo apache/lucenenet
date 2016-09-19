@@ -747,7 +747,7 @@
                 }
                 replab2:;
             } while (false);
-            lab1:
+            //lab1: // not referenced
             cursor = v_2;
             I_p1 = limit;
             I_p2 = limit;

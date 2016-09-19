@@ -34,7 +34,11 @@ namespace Lucene.Net.Analysis.Core
         {
             StringReader reader = new StringReader("121 is palindrome, while 123 is not");
             ISet<string> stopTypes = AsSet("<NUM>");
-            TokenStream stream = new TypeTokenFilter(TEST_VERSION_CURRENT, true, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopTypes);
+            TokenStream stream =
+#pragma warning disable 612, 618
+                new TypeTokenFilter(
+#pragma warning restore 612, 618
+                    TEST_VERSION_CURRENT, true, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopTypes);
             AssertTokenStreamContents(stream, new string[] { "is", "palindrome", "while", "is", "not" });
         }
 
@@ -68,7 +72,11 @@ namespace Lucene.Net.Analysis.Core
 
             // without increments
             reader = new StringReader(sb.ToString());
-            typeTokenFilter = new TypeTokenFilter(LuceneVersion.LUCENE_43, false, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopSet);
+            typeTokenFilter =
+#pragma warning disable 612, 618
+                new TypeTokenFilter(LuceneVersion.LUCENE_43, 
+#pragma warning restore 612, 618
+                    false, new StandardTokenizer(TEST_VERSION_CURRENT, reader), stopSet);
             TestPositons(typeTokenFilter);
 
         }

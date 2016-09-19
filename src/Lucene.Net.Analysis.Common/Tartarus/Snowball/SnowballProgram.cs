@@ -333,15 +333,15 @@ namespace Lucene.Net.Tartarus.Snowball
                     bool res;
                     try
                     {
-                        Object resobj = w.method.Invoke(w.methodobject, EMPTY_ARGS);
+                        object resobj = w.method.Invoke(w.methodobject, EMPTY_ARGS);
                         res = resobj.ToString().Equals("true");
                     }
-                    catch (TargetInvocationException e)
+                    catch (TargetInvocationException /*e*/)
                     {
                         res = false;
                         // FIXME - debug message
                     }
-                    catch (Exception e)
+                    catch (Exception /*e*/)
                     {
                         res = false;
                         // FIXME - debug message
@@ -418,12 +418,12 @@ namespace Lucene.Net.Tartarus.Snowball
                         object resobj = w.method.Invoke(w.methodobject, EMPTY_ARGS);
                         res = resobj.ToString().Equals("true");
                     }
-                    catch (TargetInvocationException e)
+                    catch (TargetInvocationException /*e*/)
                     {
                         res = false;
                         // FIXME - debug message
                     }
-                    catch (Exception e)
+                    catch (Exception /*e*/)
                     {
                         res = false;
                         // FIXME - debug message

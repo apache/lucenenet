@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             internal ICharTermAttribute termAtt;
             internal IPositionIncrementAttribute posIncAtt;
 
-            protected internal LargePosIncTokenFilter(TestLucene47WordDelimiterFilter outerInstance, TokenStream input) : base(input)
+            public LargePosIncTokenFilter(TestLucene47WordDelimiterFilter outerInstance, TokenStream input) : base(input)
             {
                 this.outerInstance = outerInstance;
                 this.termAtt = AddAttribute<ICharTermAttribute>();

@@ -30650,6 +30650,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /** the number of characters up to the start of the matched text */
         private int yychar;
 
+#pragma warning disable 169, 414
         /**
          * the number of characters from the last newline up to the start of the 
          * matched text
@@ -30660,6 +30661,8 @@ namespace Lucene.Net.Analysis.CharFilters
          * zzAtBOL == true <=> the scanner is currently at the beginning of a line
          */
         private bool zzAtBOL = true;
+
+#pragma warning restore 169, 414
 
         /** zzAtEOF == true <=> the scanner is at the EOF */
         private bool zzAtEOF;
@@ -30680,7 +30683,9 @@ namespace Lucene.Net.Analysis.CharFilters
             };
 
         private static readonly CharArrayMap<char> entityValues
+#pragma warning disable 612, 618
             = new CharArrayMap<char>(LuceneVersion.LUCENE_CURRENT, 253, false);
+#pragma warning restore 612, 618
 
         static HTMLStripCharFilter()
         {
@@ -30836,7 +30841,9 @@ namespace Lucene.Net.Analysis.CharFilters
                     {
                         if (null == this.escapedTags)
                         {
+#pragma warning disable 612, 618
                             this.escapedTags = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 16, true);
+#pragma warning restore 612, 618
                         }
                         this.escapedTags.Add(tag);
                     }
@@ -31138,7 +31145,7 @@ namespace Lucene.Net.Analysis.CharFilters
             {
                 message = ZZ_ERROR_MSG[errorCode];
             }
-            catch (IndexOutOfRangeException e)
+            catch (IndexOutOfRangeException /*e*/)
             {
                 message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
             }
@@ -31377,7 +31384,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 {
                                     codePoint = int.Parse(decimalCharRef, CultureInfo.InvariantCulture);
                                 }
-                                catch (Exception e)
+                                catch (Exception /*e*/)
                                 {
                                     Debug.Assert(false, "Exception parsing code point '" + decimalCharRef + "'");
                                 }
@@ -31637,7 +31644,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 {
                                     codePoint = int.Parse(hexCharRef, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
                                 }
-                                catch (Exception e)
+                                catch (Exception /*e*/)
                                 {
                                     Debug.Assert(false, "Exception parsing hex code point '" + hexCharRef + "'");
                                 }
@@ -31900,7 +31907,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             {
                                 highSurrogate = (char)int.Parse(surrogatePair.Substring(2, 6 - 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
                             }
-                            catch (Exception e)
+                            catch (Exception /*e*/)
                             { // should never happen
                                 Debug.Assert(false, "Exception parsing high surrogate '"
                                             + surrogatePair.Substring(2, 6 - 2) + "'");
@@ -31909,7 +31916,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             {
                                 outputSegment.UnsafeWrite((char)int.Parse(surrogatePair.Substring(10, 14 - 10), NumberStyles.HexNumber, CultureInfo.InvariantCulture));
                             }
-                            catch (Exception e)
+                            catch (Exception /*e*/)
                             { // should never happen
                                 Debug.Assert(false, "Exception parsing low surrogate '" + surrogatePair.Substring(10, 14 - 10) + "'");
                             }
@@ -31931,7 +31938,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             {
                                 highSurrogate = (char)int.Parse(surrogatePair.Substring(2, 6 - 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
                             }
-                            catch (Exception e)
+                            catch (Exception /*e*/)
                             { // should never happen
                                 Debug.Assert(false, "Exception parsing high surrogate '"
                                             + surrogatePair.Substring(2, 6 - 2) + "'");
@@ -31940,7 +31947,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             { // Low surrogates are in decimal range [56320, 57343]
                                 lowSurrogate = (char)int.Parse(surrogatePair.Substring(9, 14 - 9), CultureInfo.InvariantCulture);
                             }
-                            catch (Exception e)
+                            catch (Exception /*e*/)
                             { // should never happen
                                 Debug.Assert(false, "Exception parsing low surrogate '"
                                             + surrogatePair.Substring(9, 14 - 9) + "'");
@@ -31972,7 +31979,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             { // High surrogates are in decimal range [55296, 56319]
                                 highSurrogate = (char)int.Parse(surrogatePair.Substring(1, 6 - 1), CultureInfo.InvariantCulture);
                             }
-                            catch (Exception e)
+                            catch (Exception /*e*/)
                             { // should never happen
                                 Debug.Assert(false, "Exception parsing high surrogate '"
                                             + surrogatePair.Substring(1, 6 - 1) + "'");
@@ -31985,7 +31992,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 {
                                     outputSegment.UnsafeWrite((char)int.Parse(surrogatePair.Substring(10, 14 - 10), NumberStyles.HexNumber, CultureInfo.InvariantCulture));
                                 }
-                                catch (Exception e)
+                                catch (Exception /*e*/)
                                 { // should never happen
                                     Debug.Assert(false, "Exception parsing low surrogate '"
                                                 + surrogatePair.Substring(10, 14 - 10) + "'");
@@ -32012,7 +32019,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             { // High surrogates are in decimal range [55296, 56319]
                                 highSurrogate = (char)int.Parse(surrogatePair.Substring(1, 6 - 1), CultureInfo.InvariantCulture);
                             }
-                            catch (Exception e)
+                            catch (Exception /*e*/)
                             { // should never happen
                                 Debug.Assert(false, "Exception parsing high surrogate '"
                                             + surrogatePair.Substring(1, 6 - 1) + "'");
@@ -32024,7 +32031,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 { // Low surrogates are in decimal range [56320, 57343]
                                     lowSurrogate = (char)int.Parse(surrogatePair.Substring(9, 14 - 9), CultureInfo.InvariantCulture);
                                 }
-                                catch (Exception e)
+                                catch (Exception /*e*/)
                                 { // should never happen
                                     Debug.Assert(false, "Exception parsing low surrogate '"
                                                 + surrogatePair.Substring(9, 14 - 9) + "'");

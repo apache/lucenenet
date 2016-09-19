@@ -87,7 +87,11 @@ namespace Lucene.Net.Analysis.Th
         /// </summary>
         /// <param name="matchVersion"> lucene compatibility version </param>
         public ThaiAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ? DefaultSetHolder.DEFAULT_STOP_SET : StopAnalyzer.ENGLISH_STOP_WORDS_SET)
+              : this(matchVersion,
+#pragma warning disable 612, 618
+                    matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
+#pragma warning restore 612, 618
+                    DefaultSetHolder.DEFAULT_STOP_SET : StopAnalyzer.ENGLISH_STOP_WORDS_SET)
         {
         }
 
@@ -123,11 +127,15 @@ namespace Lucene.Net.Analysis.Th
             {
                 Tokenizer source = new StandardTokenizer(matchVersion, reader);
                 TokenStream result = new StandardFilter(matchVersion, source);
+#pragma warning disable 612, 618
                 if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
                 {
                     result = new LowerCaseFilter(matchVersion, result);
                 }
+#pragma warning disable 612, 618
                 result = new ThaiWordFilter(matchVersion, result);
+#pragma warning restore 612, 618
                 return new TokenStreamComponents(source, new StopFilter(matchVersion, result, stopwords));
             }
         }

@@ -50,7 +50,9 @@ namespace Lucene.Net.Analysis.Core
                 // LUCENENET: Added this specialized BufferedCharFilter which doesn't need a factory
                 typeof(BufferedCharFilter)
             });
+#pragma warning disable 612, 618
             deprecatedDuplicatedComponents.addAll(new Type[] { typeof(DutchStemFilter), typeof(FrenchStemFilter), typeof(IndicTokenizer) });
+#pragma warning restore 612, 618
             oddlyNamedComponents.addAll(new Type[] { typeof(ReversePathHierarchyTokenizer), typeof(SnowballFilter), typeof(PatternKeywordMarkerFilter), typeof(SetKeywordMarkerFilter) }); // this is called SnowballPorterFilterFactory -  this is supported via an option to PathHierarchyTokenizer's factory
         }
 

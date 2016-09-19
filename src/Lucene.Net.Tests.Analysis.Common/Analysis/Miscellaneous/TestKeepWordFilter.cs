@@ -49,12 +49,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             // Test Stopwords
             stream = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
             stream = new KeepWordFilter(LuceneVersion.LUCENE_43, false, stream, new CharArraySet(TEST_VERSION_CURRENT, words, true));
             AssertTokenStreamContents(stream, new string[] { "aaa", "BBB" }, new int[] { 1, 1 });
 
             // Now force case
             stream = new MockTokenizer(new StringReader(input), MockTokenizer.WHITESPACE, false);
             stream = new KeepWordFilter(LuceneVersion.LUCENE_43, false, stream, new CharArraySet(TEST_VERSION_CURRENT, words, false));
+#pragma warning restore 612, 618
             AssertTokenStreamContents(stream, new string[] { "aaa" }, new int[] { 1 });
         }
 

@@ -408,7 +408,9 @@ namespace Lucene.Net.Analysis.En
             DictEntry defaultEntry;
             DictEntry entry;
 
+#pragma warning disable 612, 618
             CharArrayMap<DictEntry> d = new CharArrayMap<DictEntry>(LuceneVersion.LUCENE_CURRENT, 1000, false);
+#pragma warning restore 612, 618
             for (int i = 0; i < exceptionWords.Length; i++)
             {
                 if (!d.ContainsKey(exceptionWords[i]))

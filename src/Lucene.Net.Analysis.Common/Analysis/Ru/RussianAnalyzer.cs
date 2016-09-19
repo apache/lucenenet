@@ -69,7 +69,9 @@ namespace Lucene.Net.Analysis.Ru
                 {
                     DEFAULT_STOP_SET = WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), typeof(SnowballFilter).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8),
+#pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
+#pragma warning restore 612, 618
                 }
                 catch (IOException ex)
                 {
@@ -95,7 +97,10 @@ namespace Lucene.Net.Analysis.Ru
         }
 
         public RussianAnalyzer(LuceneVersion matchVersion)
-            : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? DefaultSetHolder.DEFAULT_STOP_SET : DefaultSetHolder.DEFAULT_STOP_SET_30)
+#pragma warning disable 612, 618
+            : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? 
+                  DefaultSetHolder.DEFAULT_STOP_SET : DefaultSetHolder.DEFAULT_STOP_SET_30)
+#pragma warning restore 612, 618
         {
         }
 
@@ -137,7 +142,9 @@ namespace Lucene.Net.Analysis.Ru
         ///         provided, and <seealso cref="SnowballFilter"/> </returns>
         public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 Tokenizer source = new StandardTokenizer(matchVersion, reader);
                 TokenStream result = new StandardFilter(matchVersion, source);
@@ -152,7 +159,9 @@ namespace Lucene.Net.Analysis.Ru
             }
             else
             {
+#pragma warning disable 612, 618
                 Tokenizer source = new RussianLetterTokenizer(matchVersion, reader);
+#pragma warning restore 612, 618
                 TokenStream result = new LowerCaseFilter(matchVersion, source);
                 result = new StopFilter(matchVersion, result, stopwords);
                 if (stemExclusionSet.Count > 0)

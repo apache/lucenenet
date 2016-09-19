@@ -134,6 +134,7 @@ namespace Lucene.Net.Analysis.Standard
         private IStandardTokenizerInterface GetScannerFor(LuceneVersion matchVersion)
         {
             // best effort NPE if you dont call reset
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_47))
             {
                 return new UAX29URLEmailTokenizerImpl(input);
@@ -154,6 +155,7 @@ namespace Lucene.Net.Analysis.Standard
             {
                 return new UAX29URLEmailTokenizerImpl31(input);
             }
+#pragma warning restore 612, 618
         }
 
         // this tokenizer generates three attributes:

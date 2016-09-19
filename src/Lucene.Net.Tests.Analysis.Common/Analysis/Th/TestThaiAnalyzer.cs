@@ -55,7 +55,11 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestBackwardsStopWords()
         {
-            AssertAnalyzesTo(new ThaiAnalyzer(LuceneVersion.LUCENE_35), "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 3, 6, 9, 13, 17, 20, 23 }, new int[] { 3, 6, 9, 13, 17, 20, 23, 25 });
+            AssertAnalyzesTo(
+#pragma warning disable 612, 618
+                new ThaiAnalyzer(LuceneVersion.LUCENE_35),
+#pragma warning restore 612, 618
+                "การที่ได้ต้องแสดงว่างานดี", new string[] { "การ", "ที่", "ได้", "ต้อง", "แสดง", "ว่า", "งาน", "ดี" }, new int[] { 0, 3, 6, 9, 13, 17, 20, 23 }, new int[] { 3, 6, 9, 13, 17, 20, 23, 25 });
         }
 
         /// <summary>
@@ -144,7 +148,9 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestAttributeReuse()
         {
+#pragma warning disable 612, 618
             ThaiAnalyzer analyzer = new ThaiAnalyzer(LuceneVersion.LUCENE_30);
+#pragma warning restore 612, 618
             // just consume
             TokenStream ts = analyzer.TokenStream("dummy", "ภาษาไทย");
             AssertTokenStreamContents(ts, new string[] { "ภาษา", "ไทย" });

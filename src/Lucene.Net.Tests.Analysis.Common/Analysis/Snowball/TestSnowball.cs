@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.Snowball
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+#pragma warning disable 612, 618
     public class TestSnowball : BaseTokenStreamTestCase
     {
 
@@ -217,4 +217,5 @@ namespace Lucene.Net.Analysis.Snowball
             }
         }
     }
+#pragma warning restore 612, 618
 }

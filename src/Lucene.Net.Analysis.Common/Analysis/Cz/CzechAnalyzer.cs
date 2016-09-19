@@ -75,8 +75,10 @@ namespace Lucene.Net.Analysis.Cz
                 {
                     DEFAULT_SET = WordlistLoader.GetWordSet(
                         IOUtils.GetDecodingReader(typeof(CzechAnalyzer), typeof(CzechAnalyzer).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8), 
-                        "#", 
+                        "#",
+#pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
+#pragma warning restore 612, 618
                 }
                 catch (IOException)
                 {
@@ -145,7 +147,9 @@ namespace Lucene.Net.Analysis.Cz
             TokenStream result = new StandardFilter(matchVersion, source);
             result = new LowerCaseFilter(matchVersion, result);
             result = new StopFilter(matchVersion, result, stopwords);
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 if (this.stemExclusionTable.Any())
                 {

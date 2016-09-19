@@ -49,7 +49,10 @@ namespace Lucene.Net.Analysis.Pattern
             pattern = GetPattern(args, "pattern");
             replacement = Get(args, "replacement", "");
             // TODO: warn if you set maxBlockChars or blockDelimiters ?
-            maxBlockChars = GetInt(args, "maxBlockChars", PatternReplaceCharFilter.DEFAULT_MAX_BLOCK_CHARS);
+            maxBlockChars = GetInt(args, "maxBlockChars",
+#pragma warning disable 612, 618
+                PatternReplaceCharFilter.DEFAULT_MAX_BLOCK_CHARS);
+#pragma warning restore 612, 618
             if (args.TryGetValue("blockDelimiters", out blockDelimiters))
             {
                 args.Remove("blockDelimiters");
@@ -62,7 +65,9 @@ namespace Lucene.Net.Analysis.Pattern
 
         public override TextReader Create(TextReader input)
         {
+#pragma warning disable 612, 618
             return new PatternReplaceCharFilter(pattern, replacement, maxBlockChars, blockDelimiters, input);
+#pragma warning restore 612, 618
         }
     }
 }

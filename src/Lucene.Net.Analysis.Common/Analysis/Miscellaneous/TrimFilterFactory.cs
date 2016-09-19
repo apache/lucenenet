@@ -50,7 +50,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public override TokenStream Create(TokenStream input)
         {
+#pragma warning disable 612, 618
             var filter = new TrimFilter(luceneMatchVersion, input, updateOffsets);
+#pragma warning restore 612, 618
             return filter;
         }
     }

@@ -69,7 +69,10 @@ namespace Lucene.Net.Analysis.Fr
 
         /// <summary>
         /// Default set of articles for ElisionFilter </summary>
-        public static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT,
+        public static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             new string[] { "l", "m", "t", "qu", "n", "s", "j", "d", "c", "jusqu", "quoiqu", "lorsqu", "puisqu" }, true));
 
         /// <summary>
@@ -99,8 +102,10 @@ namespace Lucene.Net.Analysis.Fr
                 try
                 {
                     DEFAULT_STOP_SET = WordlistLoader.GetSnowballWordSet(
-                        IOUtils.GetDecodingReader(typeof(SnowballFilter), typeof(SnowballFilter).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8), 
+                        IOUtils.GetDecodingReader(typeof(SnowballFilter), typeof(SnowballFilter).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8),
+#pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
+#pragma warning restore 612, 618
                 }
                 catch (IOException)
                 {
@@ -115,7 +120,10 @@ namespace Lucene.Net.Analysis.Fr
         /// Builds an analyzer with the default stop words (<seealso cref="#getDefaultStopSet"/>).
         /// </summary>
         public FrenchAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? DefaultSetHolder.DEFAULT_STOP_SET : DefaultSetHolder.DEFAULT_STOP_SET_30)
+#pragma warning disable 612, 618
+              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? 
+                    DefaultSetHolder.DEFAULT_STOP_SET : DefaultSetHolder.DEFAULT_STOP_SET_30)
+#pragma warning restore 612, 618
         {
         }
 
@@ -160,7 +168,9 @@ namespace Lucene.Net.Analysis.Fr
         ///         
         public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 Tokenizer source = new StandardTokenizer(matchVersion, reader);
                 TokenStream result = new StandardFilter(matchVersion, source);
@@ -171,7 +181,9 @@ namespace Lucene.Net.Analysis.Fr
                 {
                     result = new SetKeywordMarkerFilter(result, excltable);
                 }
+#pragma warning disable 612, 618
                 if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
+#pragma warning restore 612, 618
                 {
                     result = new FrenchLightStemFilter(result);
                 }
@@ -190,7 +202,9 @@ namespace Lucene.Net.Analysis.Fr
                 {
                     result = new SetKeywordMarkerFilter(result, excltable);
                 }
+#pragma warning disable 612, 618
                 result = new FrenchStemFilter(result);
+#pragma warning restore 612, 618
                 // Convert to lowercase after stemming!
                 return new TokenStreamComponents(source, new LowerCaseFilter(matchVersion, result));
             }

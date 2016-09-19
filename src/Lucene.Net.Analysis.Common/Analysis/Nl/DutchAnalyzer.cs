@@ -83,8 +83,10 @@ namespace Lucene.Net.Analysis.Nl
                 try
                 {
                     DEFAULT_STOP_SET = WordlistLoader.GetSnowballWordSet(
-                        IOUtils.GetDecodingReader(typeof(SnowballFilter), typeof(SnowballFilter).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8), 
+                        IOUtils.GetDecodingReader(typeof(SnowballFilter), typeof(SnowballFilter).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8),
+#pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
+#pragma warning restore 612, 618
                 }
                 catch (IOException)
                 {
@@ -92,8 +94,9 @@ namespace Lucene.Net.Analysis.Nl
                     // distribution (JAR)
                     throw new Exception("Unable to load default stopword set");
                 }
-
+#pragma warning disable 612, 618
                 DEFAULT_STEM_DICT = new CharArrayMap<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
+#pragma warning restore 612, 618
                 DEFAULT_STEM_DICT.Put("fiets", "fiets"); //otherwise fiet
                 DEFAULT_STEM_DICT.Put("bromfiets", "bromfiets"); //otherwise bromfiet
                 DEFAULT_STEM_DICT.Put("ei", "eier");
@@ -131,7 +134,10 @@ namespace Lucene.Net.Analysis.Nl
 
         public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords)
               : this(matchVersion, stopwords, CharArraySet.EMPTY_SET,
-                    matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ? DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayMap<string>.EmptyMap())
+#pragma warning disable 612, 618
+                    matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
+#pragma warning restore 612, 618
+                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayMap<string>.EmptyMap())
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6
@@ -139,7 +145,10 @@ namespace Lucene.Net.Analysis.Nl
 
         public DutchAnalyzer(LuceneVersion matchVersion, CharArraySet stopwords, CharArraySet stemExclusionTable)
               : this(matchVersion, stopwords, stemExclusionTable,
-                    matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ? DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayMap<string>.EmptyMap())
+#pragma warning disable 612, 618
+                    matchVersion.OnOrAfter(LuceneVersion.LUCENE_36) ?
+#pragma warning restore 612, 618
+                    DefaultSetHolder.DEFAULT_STEM_DICT : CharArrayMap<string>.EmptyMap())
         {
             // historically, this ctor never the stem dict!!!!!
             // so we populate it only for >= 3.6
@@ -150,7 +159,9 @@ namespace Lucene.Net.Analysis.Nl
             this.matchVersion = matchVersion;
             this.stoptable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stopwords));
             this.excltable = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionTable));
+#pragma warning disable 612, 618
             if (stemOverrideDict.Count == 0 || !matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 this.stemdict = null;
                 this.origStemdict = CharArrayMap<string>.UnmodifiableMap(CharArrayMap<string>.Copy(matchVersion, stemOverrideDict));
@@ -189,7 +200,9 @@ namespace Lucene.Net.Analysis.Nl
         ///   <seealso cref="StemmerOverrideFilter"/>, and <seealso cref="SnowballFilter"/> </returns>
         public override TokenStreamComponents CreateComponents(string fieldName, TextReader aReader)
         {
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 Tokenizer source = new StandardTokenizer(matchVersion, aReader);
                 TokenStream result = new StandardFilter(matchVersion, source);
@@ -215,7 +228,9 @@ namespace Lucene.Net.Analysis.Nl
                 {
                     result = new SetKeywordMarkerFilter(result, excltable);
                 }
+#pragma warning disable 612, 618
                 result = new DutchStemFilter(result, origStemdict);
+#pragma warning restore 612, 618
                 return new TokenStreamComponents(source, result);
             }
         }

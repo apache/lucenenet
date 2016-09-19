@@ -98,6 +98,7 @@ namespace Lucene.Net.Analysis.Core
         // StandardAnalyzer constants remain publicly accessible
         public virtual void _TestStandardConstants()
         {
+#pragma warning disable 219, 612, 618
             int x = StandardTokenizer.ALPHANUM;
             x = StandardTokenizer.APOSTROPHE;
             x = StandardTokenizer.ACRONYM;
@@ -107,6 +108,7 @@ namespace Lucene.Net.Analysis.Core
             x = StandardTokenizer.NUM;
             x = StandardTokenizer.CJ;
             string[] y = StandardTokenizer.TOKEN_TYPES;
+#pragma warning restore 219, 612, 618
         }
 
         private class LowerCaseWhitespaceAnalyzer : Analyzer

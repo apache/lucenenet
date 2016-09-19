@@ -53,7 +53,9 @@ namespace Lucene.Net.Analysis.Ngram
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
+#pragma warning disable 612, 618
             if (luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
             {
                 EdgeNGramTokenFilter.Side sideEnum;
                 if (!Enum.TryParse(this.side, true, out sideEnum))
@@ -64,7 +66,9 @@ namespace Lucene.Net.Analysis.Ngram
             }
             else
             {
+#pragma warning disable 612, 618
                 return new Lucene43EdgeNGramTokenizer(luceneMatchVersion, input, side, minGramSize, maxGramSize);
+#pragma warning restore 612, 618
             }
         }
     }

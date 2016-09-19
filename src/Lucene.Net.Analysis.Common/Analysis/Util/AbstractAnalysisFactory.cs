@@ -61,7 +61,11 @@ namespace Lucene.Net.Analysis.Util
             string version = Get(args, LUCENE_MATCH_VERSION_PARAM);
             // LUCENENET TODO: What should we do if the version is null?
             //luceneMatchVersion = version == null ? (LuceneVersion?)null : LuceneVersionHelpers.ParseLeniently(version);
-            luceneMatchVersion = version == null ? LuceneVersion.LUCENE_CURRENT : LuceneVersionHelpers.ParseLeniently(version);
+            luceneMatchVersion = version == null ?
+#pragma warning disable 612, 618
+                LuceneVersion.LUCENE_CURRENT :
+#pragma warning restore 612, 618
+                LuceneVersionHelpers.ParseLeniently(version);
             args.Remove(CLASS_NAME); // consume the class arg
         }
 

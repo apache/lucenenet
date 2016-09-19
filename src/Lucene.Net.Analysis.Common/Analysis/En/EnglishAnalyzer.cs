@@ -101,7 +101,9 @@ namespace Lucene.Net.Analysis.En
             Tokenizer source = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new StandardFilter(matchVersion, source);
             // prior to this we get the classic behavior, standardfilter does it for us.
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 result = new EnglishPossessiveFilter(matchVersion, result);
             }

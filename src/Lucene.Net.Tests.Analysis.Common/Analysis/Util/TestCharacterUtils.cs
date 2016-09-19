@@ -33,7 +33,9 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestCodePointAtCharSequenceInt()
         {
+#pragma warning disable 612, 618
             var java4 = CharacterUtils.GetInstance(LuceneVersion.LUCENE_30);
+#pragma warning restore 612, 618
             var cpAt3 = "Abc\ud801\udc1c";
             var highSurrogateAt3 = "Abc\ud801";
             assertEquals((int)'A', java4.CodePointAt(cpAt3, 0));
@@ -66,7 +68,9 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestCodePointAtCharArrayIntInt()
         {
+#pragma warning disable 612, 618
             var java4 = CharacterUtils.GetInstance(LuceneVersion.LUCENE_30);
+#pragma warning restore 612, 618
             var cpAt3 = "Abc\ud801\udc1c".ToCharArray();
             var highSurrogateAt3 = "Abc\ud801".ToCharArray();
             assertEquals((int)'A', java4.CodePointAt(cpAt3, 0, 2));
@@ -187,7 +191,9 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestFillNoHighSurrogate()
         {
+#pragma warning disable 612, 618
             var versions = new LuceneVersion[] { LuceneVersion.LUCENE_30, TEST_VERSION_CURRENT };
+#pragma warning restore 612, 618
             foreach (var version in versions)
             {
                 var instance = CharacterUtils.GetInstance(version);
@@ -233,7 +239,9 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestFillJava14()
         {
             var input = "1234\ud801\udc1c789123\ud801\ud801\udc1c\ud801";
+#pragma warning disable 612, 618
             var instance = CharacterUtils.GetInstance(LuceneVersion.LUCENE_30);
+#pragma warning restore 612, 618
             var reader = new StringReader(input);
             var buffer = CharacterUtils.NewCharacterBuffer(5);
             assertTrue(instance.Fill(buffer, reader));

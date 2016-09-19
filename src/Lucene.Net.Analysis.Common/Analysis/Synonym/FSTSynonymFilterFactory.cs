@@ -113,8 +113,10 @@ namespace Lucene.Net.Analysis.Synonym
 
             public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
+#pragma warning disable 612, 618
                 Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader) : factory.Create(reader);
                 TokenStream stream = outerInstance.ignoreCase ? (TokenStream)new LowerCaseFilter(LuceneVersion.LUCENE_CURRENT, tokenizer) : tokenizer;
+#pragma warning restore 612, 618
                 return new Analyzer.TokenStreamComponents(tokenizer, stream);
             }
         }

@@ -130,6 +130,7 @@ namespace Lucene.Net.Analysis.Hi
         public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source;
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
             {
                 source = new StandardTokenizer(matchVersion, reader);
@@ -138,6 +139,7 @@ namespace Lucene.Net.Analysis.Hi
             {
                 source = new IndicTokenizer(matchVersion, reader);
             }
+#pragma warning restore 612, 618
             TokenStream result = new LowerCaseFilter(matchVersion, source);
             if (stemExclusionSet.Count > 0)
             {

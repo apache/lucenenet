@@ -140,7 +140,11 @@ namespace Lucene.Net.Analysis.Ar
         ///         if a stem exclusion set is provided and <seealso cref="ArabicStemFilter"/>. </returns>
         public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            Tokenizer source = matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? new StandardTokenizer(matchVersion, reader) : (Tokenizer)new ArabicLetterTokenizer(matchVersion, reader);
+#pragma warning disable 612, 618
+            Tokenizer source = matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) 
+                ? new StandardTokenizer(matchVersion, reader) 
+                : (Tokenizer)new ArabicLetterTokenizer(matchVersion, reader);
+#pragma warning restore 612, 618
             TokenStream result = new LowerCaseFilter(matchVersion, source);
             // the order here is important: the stopword list is not normalized!
             result = new StopFilter(matchVersion, result, stopwords);

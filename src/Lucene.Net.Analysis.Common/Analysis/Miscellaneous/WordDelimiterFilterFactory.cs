@@ -130,7 +130,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             else
             {
-                return new Lucene47WordDelimiterFilter(input, typeTable ?? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, protectedWords);
+#pragma warning disable 612, 618
+                return new Lucene47WordDelimiterFilter(
+#pragma warning restore 612, 618
+                    input, typeTable ?? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, protectedWords);
             }
         }
 

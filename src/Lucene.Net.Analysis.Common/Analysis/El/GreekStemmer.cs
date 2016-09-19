@@ -256,7 +256,9 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
+#pragma warning disable 612, 618
         private static readonly CharArraySet exc4 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList("θ", "δ", "ελ", "γαλ", "ν", "π", "ιδ", "παρ"), false);
+#pragma warning restore 612, 618
 
         private int Rule4(char[] s, int len)
         {
@@ -294,7 +296,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc6 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc6 =
+#pragma warning disable 612, 618
+            new CharArraySet(LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("αλ", "αδ", "ενδ", "αμαν", "αμμοχαλ", "ηθ", "ανηθ", 
                 "αντιδ", "φυσ", "βρωμ", "γερ", "εξωδ", "καλπ", "καλλιν", "καταδ", 
                 "μουλ", "μπαν", "μπαγιατ", "μπολ", "μποσ", "νιτ", "ξικ", "συνομηλ", 
@@ -327,7 +332,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc7 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc7 =
+#pragma warning disable 612, 618
+            new CharArraySet(LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("αναπ", "αποθ", "αποκ", "αποστ", "βουβ", "ξεθ", "ουλ", 
                 "πεθ", "πικρ", "ποτ", "σιχ", "χ"), false);
 
@@ -365,10 +373,16 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc8a = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc8a = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("τρ", "τσ"), false);
 
-        private static readonly CharArraySet exc8b = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc8b = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("βετερ", "βουλκ", "βραχμ", "γ", "δραδουμ", "θ", "καλπουζ", 
                 "καστελ", "κορμορ", "λαοπλ", "μωαμεθ", "μ", "μουσουλμ", "ν", "ουλ", 
                 "π", "πελεκ", "πλ", "πολισ", "πορτολ", "σαρακατσ", "σουλτ", 
@@ -437,7 +451,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc9 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc9 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("αβαρ", "βεν", "εναρ", "αβρ", "αδ", "αθ", "αν", "απλ", 
                 "βαρον", "ντρ", "σκ", "κοπ", "μπορ", "νιφ", "παγ", "παρακαλ", "σερπ", 
                 "σκελ", "συρφ", "τοκ", "υ", "δ", "εμ", "θαρρ", "θ"), false);
@@ -539,11 +556,13 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
+#pragma warning disable 612, 618
         private static readonly CharArraySet exc12a = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
             Arrays.AsList("π", "απ", "συμπ", "ασυμπ", "ακαταπ", "αμεταμφ"), false);
 
         private static readonly CharArraySet exc12b = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
             Arrays.AsList("αλ", "αρ", "εκτελ", "ζ", "μ", "ξ", "παρακαλ", "αρ", "προ", "νισ"), false);
+#pragma warning restore 612, 618
 
         private int Rule12(char[] s, int len)
         {
@@ -568,7 +587,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc13 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc13 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("διαθ", "θ", "παρακαταθ", "προσθ", "συνθ"), false);
 
         private int Rule13(char[] s, int len)
@@ -609,7 +631,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc14 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc14 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("φαρμακ", "χαδ", "αγκ", "αναρρ", "βρομ", "εκλιπ", "λαμπιδ", 
                 "λεχ", "μ", "πατ", "ρ", "λ", "μεδ", "μεσαζ", "υποτειν", "αμ", "αιθ", 
                 "ανηκ", "δεσποζ", "ενδιαφερ", "δε", "δευτερευ", "καθαρευ", "πλε", "τσα"), false);
@@ -651,7 +676,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc15a = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc15a = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("αβαστ", "πολυφ", "αδηφ", "παμφ", "ρ", "ασπ", "αφ", "αμαλ", 
                 "αμαλλι", "ανυστ", "απερ", "ασπαρ", "αχαρ", "δερβεν", "δροσοπ", 
                 "ξεφ", "νεοπ", "νομοτ", "ολοπ", "ομοτ", "προστ", "προσωποπ", "συμπ", 
@@ -659,7 +687,11 @@ namespace Lucene.Net.Analysis.El
                 "αρτιπ", "διατ", "εν", "επιτ", "κροκαλοπ", "σιδηροπ", "λ", "ναυ", 
                 "ουλαμ", "ουρ", "π", "τρ", "μ"), false);
 
-        private static readonly CharArraySet exc15b = new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList("ψοφ", "ναυλοχ"), false);
+        private static readonly CharArraySet exc15b = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("ψοφ", "ναυλοχ"), false);
 
         private int Rule15(char[] s, int len)
         {
@@ -700,7 +732,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc16 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc16 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("ν", "χερσον", "δωδεκαν", "ερημον", "μεγαλον", "επταν"), false);
 
         private int Rule16(char[] s, int len)
@@ -725,7 +760,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc17 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc17 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("ασβ", "σβ", "αχρ", "χρ", "απλ", "αειμν", "δυσχρ", "ευχρ", "κοινοχρ", "παλιμψ"), false);
 
         private int Rule17(char[] s, int len)
@@ -742,7 +780,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc18 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc18 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("ν", "ρ", "σπι", "στραβομουτσ", "κακομουτσ", "εξων"), false);
 
         private int Rule18(char[] s, int len)
@@ -770,7 +811,10 @@ namespace Lucene.Net.Analysis.El
             return len;
         }
 
-        private static readonly CharArraySet exc19 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
+        private static readonly CharArraySet exc19 = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
             Arrays.AsList("παρασουσ", "φ", "χ", "ωριοπλ", "αζ", "αλλοσουσ", "ασουσ"), false);
 
         private int Rule19(char[] s, int len)

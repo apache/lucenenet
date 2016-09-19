@@ -50,7 +50,9 @@ namespace Lucene.Net.Analysis.Ca
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
         private static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(
+#pragma warning disable 612, 618
             new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList("d", "l", "m", "n", "s", "t"), true));
+#pragma warning restore 612, 618
 
         /// <summary>
         /// Returns an unmodifiable instance of the default stop words set. </summary>
@@ -134,7 +136,9 @@ namespace Lucene.Net.Analysis.Ca
         {
             Tokenizer source = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new StandardFilter(matchVersion, source);
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
+#pragma warning restore 612, 618
             {
                 result = new ElisionFilter(result, DEFAULT_ARTICLES);
             }

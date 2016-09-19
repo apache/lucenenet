@@ -338,7 +338,9 @@ namespace Lucene.Net.Analysis.Core
 
             public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
+#pragma warning disable 612, 618
                 Tokenizer tokenizer = new StandardTokenizer(LuceneVersion.LUCENE_36, reader);
+#pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer);
             }
         }
@@ -365,7 +367,9 @@ namespace Lucene.Net.Analysis.Core
 
             public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
+#pragma warning disable 612, 618
                 Tokenizer tokenizer = new StandardTokenizer(LuceneVersion.LUCENE_40, reader);
+#pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer);
             }
         }

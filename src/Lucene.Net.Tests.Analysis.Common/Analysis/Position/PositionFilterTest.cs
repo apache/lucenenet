@@ -71,21 +71,30 @@ namespace Lucene.Net.Analysis.Position
         public virtual void TestFilter()
         {
 
-            AssertTokenStreamContents(new PositionFilter(new TestTokenStream(this, TEST_TOKEN)), TEST_TOKEN, TEST_TOKEN_POSITION_INCREMENTS);
+            AssertTokenStreamContents(
+#pragma warning disable 612, 618
+                new PositionFilter(
+#pragma warning restore 612, 618
+                    new TestTokenStream(this, TEST_TOKEN)), TEST_TOKEN, TEST_TOKEN_POSITION_INCREMENTS);
         }
 
         [Test]
         public virtual void TestNonZeroPositionIncrement()
         {
 
-            AssertTokenStreamContents(new PositionFilter(new TestTokenStream(this, TEST_TOKEN), 5), TEST_TOKEN, TEST_TOKEN_NON_ZERO_POSITION_INCREMENTS);
+            AssertTokenStreamContents(
+#pragma warning disable 612, 618
+                new PositionFilter(
+#pragma warning restore 612, 618
+                    new TestTokenStream(this, TEST_TOKEN), 5), TEST_TOKEN, TEST_TOKEN_NON_ZERO_POSITION_INCREMENTS);
         }
 
         [Test]
         public virtual void TestReset()
         {
-
+#pragma warning disable 612, 618
             PositionFilter filter = new PositionFilter(new TestTokenStream(this, TEST_TOKEN));
+#pragma warning restore 612, 618
             AssertTokenStreamContents(filter, TEST_TOKEN, TEST_TOKEN_POSITION_INCREMENTS);
             filter.Reset();
             // Make sure that the reset filter provides correct position increments
@@ -101,7 +110,11 @@ namespace Lucene.Net.Analysis.Position
         {
 
             ShingleFilter filter = new ShingleFilter(new TestTokenStream(this, TEST_TOKEN), 6);
-            AssertTokenStreamContents(new PositionFilter(filter), SIX_GRAM_NO_POSITIONS_TOKENS, SIX_GRAM_NO_POSITIONS_INCREMENTS);
+            AssertTokenStreamContents
+#pragma warning disable 612, 618
+                (new PositionFilter(filter),
+#pragma warning restore 612, 618
+                SIX_GRAM_NO_POSITIONS_TOKENS, SIX_GRAM_NO_POSITIONS_INCREMENTS);
         }
     }
 }

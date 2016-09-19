@@ -46,7 +46,9 @@ namespace Lucene.Net.Analysis.Ngram
             bool gotException = false;
             try
             {
+#pragma warning disable 612, 618
                 new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, 0, 0);
+#pragma warning restore 612, 618
             }
             catch (System.ArgumentException)
             {
@@ -61,7 +63,9 @@ namespace Lucene.Net.Analysis.Ngram
             bool gotException = false;
             try
             {
+#pragma warning disable 612, 618
                 new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, 2, 1);
+#pragma warning restore 612, 618
             }
             catch (System.ArgumentException)
             {
@@ -76,7 +80,9 @@ namespace Lucene.Net.Analysis.Ngram
             bool gotException = false;
             try
             {
+#pragma warning disable 612, 618
                 new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, -1, 2);
+#pragma warning restore 612, 618
             }
             catch (System.ArgumentException)
             {
@@ -88,35 +94,45 @@ namespace Lucene.Net.Analysis.Ngram
         [Test]
         public virtual void TestFrontUnigram()
         {
+#pragma warning disable 612, 618
             EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, 1, 1);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[] { "a" }, new int[] { 0 }, new int[] { 5 });
         }
 
         [Test]
         public virtual void TestBackUnigram()
         {
+#pragma warning disable 612, 618
             EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(LuceneVersion.LUCENE_43, input, EdgeNGramTokenFilter.Side.BACK, 1, 1);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[] { "e" }, new int[] { 4 }, new int[] { 5 });
         }
 
         [Test]
         public virtual void TestOversizedNgrams()
         {
+#pragma warning disable 612, 618
             EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, 6, 6);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[0], new int[0], new int[0]);
         }
 
         [Test]
         public virtual void TestFrontRangeOfNgrams()
         {
+#pragma warning disable 612, 618
             EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, 1, 3);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 5, 5, 5 });
         }
 
         [Test]
         public virtual void TestBackRangeOfNgrams()
         {
+#pragma warning disable 612, 618
             EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(LuceneVersion.LUCENE_43, input, EdgeNGramTokenFilter.Side.BACK, 1, 3);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[] { "e", "de", "cde" }, new int[] { 4, 3, 2 }, new int[] { 5, 5, 5 }, null, null, null, null, false);
         }
 
@@ -124,7 +140,9 @@ namespace Lucene.Net.Analysis.Ngram
         public virtual void TestFilterPositions()
         {
             TokenStream ts = new MockTokenizer(new StringReader("abcde vwxyz"), MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
             EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, ts, EdgeNGramTokenFilter.Side.FRONT, 1, 3);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[] { "a", "ab", "abc", "v", "vw", "vwx" }, new int[] { 0, 0, 0, 6, 6, 6 }, new int[] { 5, 5, 5, 11, 11, 11 }, null, new int[] { 1, 0, 0, 1, 0, 0 }, null, null, false);
         }
 
@@ -171,7 +189,9 @@ namespace Lucene.Net.Analysis.Ngram
         {
             TokenStream ts = new MockTokenizer(new StringReader("a abc"), MockTokenizer.WHITESPACE, false);
             ts = new PositionFilter(ts); // All but first token will get 0 position increment
+#pragma warning disable 612, 618
             EdgeNGramTokenFilter filter = new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, ts, EdgeNGramTokenFilter.Side.FRONT, 2, 3);
+#pragma warning restore 612, 618
             // The first token "a" will not be output, since it's smaller than the mingram size of 2.
             // The second token on input to EdgeNGramTokenFilter will have position increment of 0,
             // which should be increased to 1, since this is the first output token in the stream.
@@ -182,7 +202,9 @@ namespace Lucene.Net.Analysis.Ngram
         public virtual void TestSmallTokenInStream()
         {
             input = new MockTokenizer(new StringReader("abc de fgh"), MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
             EdgeNGramTokenFilter tokenizer = new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, 3, 3);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(tokenizer, new string[] { "abc", "fgh" }, new int[] { 0, 7 }, new int[] { 3, 10 });
         }
 
@@ -190,7 +212,9 @@ namespace Lucene.Net.Analysis.Ngram
         public virtual void TestReset()
         {
             WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader("abcde"));
+#pragma warning disable 612, 618
             EdgeNGramTokenFilter filter = new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, EdgeNGramTokenFilter.Side.FRONT, 1, 3);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(filter, new string[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 5, 5, 5 });
             tokenizer.Reader = new StringReader("abcde");
             AssertTokenStreamContents(filter, new string[] { "a", "ab", "abc" }, new int[] { 0, 0, 0 }, new int[] { 5, 5, 5 });
@@ -220,7 +244,9 @@ namespace Lucene.Net.Analysis.Ngram
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filters = new ASCIIFoldingFilter(tokenizer);
+#pragma warning disable 612, 618
                 filters = new EdgeNGramTokenFilter(LuceneVersion.LUCENE_43, filters, EdgeNGramTokenFilter.Side.FRONT, 2, 15);
+#pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer, filters);
             }
         }
@@ -276,7 +302,9 @@ namespace Lucene.Net.Analysis.Ngram
             public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
                 return new TokenStreamComponents(tokenizer, new EdgeNGramTokenFilter(LuceneVersion.LUCENE_43, tokenizer, EdgeNGramTokenFilter.Side.BACK, 2, 4));
+#pragma warning restore 612, 618 
             }
         }
 
@@ -303,7 +331,9 @@ namespace Lucene.Net.Analysis.Ngram
             public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
+#pragma warning disable 612, 618
                 return new TokenStreamComponents(tokenizer, new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, EdgeNGramTokenFilter.Side.FRONT, 2, 15));
+#pragma warning restore 612, 618
             }
         }
 
@@ -319,7 +349,9 @@ namespace Lucene.Net.Analysis.Ngram
             public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
+#pragma warning disable 612, 618
                 return new TokenStreamComponents(tokenizer, new EdgeNGramTokenFilter(LuceneVersion.LUCENE_43, tokenizer, EdgeNGramTokenFilter.Side.BACK, 2, 15));
+#pragma warning restore 612, 618
             }
         }
 

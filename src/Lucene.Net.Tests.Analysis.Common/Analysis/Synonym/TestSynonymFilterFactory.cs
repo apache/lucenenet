@@ -132,11 +132,13 @@ namespace Lucene.Net.Analysis.Synonym
         {
             // diff versions produce diff delegator behavior,
             // all should be (mostly) equivilent for our test purposes.
+#pragma warning disable 612, 618
             DoTestTokenizerFactoryArguments(Version.LUCENE_33, typeof(SlowSynonymFilterFactory));
             DoTestTokenizerFactoryArguments(Version.LUCENE_34, typeof(FSTSynonymFilterFactory));
             DoTestTokenizerFactoryArguments(Version.LUCENE_35, typeof(FSTSynonymFilterFactory));
 
             DoTestTokenizerFactoryArguments(Version.LUCENE_CURRENT, typeof(FSTSynonymFilterFactory));
+#pragma warning restore 612, 618
         }
 
         protected internal virtual void DoTestTokenizerFactoryArguments(Version ver, Type delegatorClass)
@@ -180,7 +182,9 @@ namespace Lucene.Net.Analysis.Synonym
             assertNotNull(factory);
             assertTrue("factory not expected class: " + factory.GetType(), factory is SynonymFilterFactory);
             SynonymFilterFactory synFac = (SynonymFilterFactory)factory;
+#pragma warning disable 612, 618
             object delegator = synFac.Delegator;
+#pragma warning restore 612, 618
             assertNotNull(delegator);
             assertTrue("delegator not expected class: " + delegator.GetType(), delegatorClass.IsInstanceOfType(delegator));
 

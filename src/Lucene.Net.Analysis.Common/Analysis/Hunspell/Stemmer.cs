@@ -109,7 +109,10 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 return stems;
             }
-            CharArraySet terms = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 8, dictionary.ignoreCase);
+            CharArraySet terms = new CharArraySet(
+#pragma warning disable 612, 618
+                LuceneVersion.LUCENE_CURRENT, 8, dictionary.ignoreCase);
+#pragma warning restore 612, 618
             IList<CharsRef> deduped = new List<CharsRef>();
             foreach (CharsRef s in stems)
             {

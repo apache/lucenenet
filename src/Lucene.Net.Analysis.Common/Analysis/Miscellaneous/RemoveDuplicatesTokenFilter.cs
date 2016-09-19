@@ -32,7 +32,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly IPositionIncrementAttribute posIncAttribute;
 
         // use a fixed version, as we don't care about case sensitivity.
-        private readonly CharArraySet previous = new CharArraySet(LuceneVersion.LUCENE_31, 8, false);
+        private readonly CharArraySet previous = new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_31, 8, false);
+#pragma warning restore 612, 618
 
         /// <summary>
         /// Creates a new RemoveDuplicatesTokenFilter

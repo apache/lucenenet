@@ -80,7 +80,9 @@ namespace Lucene.Net.Analysis.It
         [Test]
         public virtual void TestContractionsBackwards()
         {
+#pragma warning disable 612, 618
             Analyzer a = new ItalianAnalyzer(LuceneVersion.LUCENE_31);
+#pragma warning restore 612, 618
             AssertAnalyzesTo(a, "dell'Italia", new string[] { "dell'ital" });
             AssertAnalyzesTo(a, "l'Italiano", new string[] { "l'ital" });
         }

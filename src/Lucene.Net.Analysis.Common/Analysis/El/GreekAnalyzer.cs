@@ -119,12 +119,14 @@ namespace Lucene.Net.Analysis.El
         {
             Tokenizer source = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new GreekLowerCaseFilter(matchVersion, source);
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
             {
                 result = new StandardFilter(matchVersion, result);
             }
             result = new StopFilter(matchVersion, result, stopwords);
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 result = new GreekStemFilter(result);
             }

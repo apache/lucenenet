@@ -103,7 +103,9 @@ namespace Lucene.Net.Analysis.Ngram
         public virtual void TestEdgeNGramTokenizer3()
         {
             Reader reader = new StringReader("ready");
+#pragma warning disable 612, 618
             TokenStream stream = TokenizerFactory("EdgeNGram", LuceneVersion.LUCENE_43, "side", "back").Create(reader);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(stream, new string[] { "y" });
         }
 
@@ -139,7 +141,9 @@ namespace Lucene.Net.Analysis.Ngram
         {
             Reader reader = new StringReader("ready");
             TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+#pragma warning disable 612, 618
             stream = TokenFilterFactory("EdgeNGram", LuceneVersion.LUCENE_43, "side", "back").Create(stream);
+#pragma warning restore 612, 618
             AssertTokenStreamContents(stream, new string[] { "y" });
         }
 

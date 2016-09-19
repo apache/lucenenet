@@ -357,6 +357,7 @@ namespace Lucene.Net.Analysis.Standard
         /// the number of characters up to the start of the matched text </summary>
         private int yyChar;
 
+#pragma warning disable 169, 414
         /// <summary>
         /// the number of characters from the last newline up to the start of the 
         /// matched text
@@ -376,9 +377,12 @@ namespace Lucene.Net.Analysis.Standard
         /// denotes if the user-EOF-code has already been executed </summary>
         private bool zzEOFDone;
 
+#pragma warning restore 169, 414
+
         /* user code: */
 
         public static readonly int ALPHANUM = StandardTokenizer.ALPHANUM;
+#pragma warning disable 612, 618
         public static readonly int APOSTROPHE = StandardTokenizer.APOSTROPHE;
         public static readonly int ACRONYM = StandardTokenizer.ACRONYM;
         public static readonly int COMPANY = StandardTokenizer.COMPANY;
@@ -387,6 +391,7 @@ namespace Lucene.Net.Analysis.Standard
         public static readonly int NUM = StandardTokenizer.NUM;
         public static readonly int CJ = StandardTokenizer.CJ;
         public static readonly int ACRONYM_DEP = StandardTokenizer.ACRONYM_DEP;
+#pragma warning restore 612, 618
 
         public static readonly string[] TOKEN_TYPES = StandardTokenizer.TOKEN_TYPES;
 
@@ -746,7 +751,7 @@ namespace Lucene.Net.Analysis.Standard
                         { // Break so we don't hit fall-through warning:
                             break; // ignore
                         }
-                        goto case 11;
+                        //goto case 11; // unreachable
                     case 11:
                         break;
                     case 2:

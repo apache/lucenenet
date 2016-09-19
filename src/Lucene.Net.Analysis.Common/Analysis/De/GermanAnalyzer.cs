@@ -91,7 +91,9 @@ namespace Lucene.Net.Analysis.De
                 {
                     DEFAULT_SET = WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), typeof(SnowballFilter).Namespace + "." + DEFAULT_STOPWORD_FILE, Encoding.UTF8),
+#pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
+#pragma warning restore 612, 618
                 }
                 catch (IOException)
                 {
@@ -116,7 +118,10 @@ namespace Lucene.Net.Analysis.De
         /// <seealso cref="#getDefaultStopSet()"/>.
         /// </summary>
         public GermanAnalyzer(LuceneVersion matchVersion)
-              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? DefaultSetHolder.DEFAULT_SET : DefaultSetHolder.DEFAULT_SET_30)
+#pragma warning disable 612, 618
+              : this(matchVersion, matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? 
+                    DefaultSetHolder.DEFAULT_SET : DefaultSetHolder.DEFAULT_SET_30)
+#pragma warning restore 612, 618
         {
         }
 
@@ -164,12 +169,14 @@ namespace Lucene.Net.Analysis.De
             result = new LowerCaseFilter(matchVersion, result);
             result = new StopFilter(matchVersion, result, stopwords);
             result = new SetKeywordMarkerFilter(result, exclusionSet);
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))
             {
                 result = new GermanNormalizationFilter(result);
                 result = new GermanLightStemFilter(result);
             }
             else if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 result = new SnowballFilter(result, new German2Stemmer());
             }

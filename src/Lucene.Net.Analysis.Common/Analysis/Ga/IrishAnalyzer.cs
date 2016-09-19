@@ -39,14 +39,22 @@ namespace Lucene.Net.Analysis.Ga
         /// File containing default Irish stopwords. </summary>
         public const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
-        private static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList("d", "m", "b"), true));
+        private static readonly CharArraySet DEFAULT_ARTICLES = CharArraySet.UnmodifiableSet(new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("d", "m", "b"), true));
 
         /// <summary>
         /// When StandardTokenizer splits t‑athair into {t, athair}, we don't
         /// want to cause a position increment, otherwise there will be problems
         /// with phrase queries versus tAthair (which would not have a gap).
         /// </summary>
-        private static readonly CharArraySet HYPHENATIONS = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList("h", "n", "t"), true));
+        private static readonly CharArraySet HYPHENATIONS = CharArraySet.UnmodifiableSet(new CharArraySet(
+#pragma warning disable 612, 618
+            LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+            Arrays.AsList("h", "n", "t"), true));
 
         /// <summary>
         /// Returns an unmodifiable instance of the default stop words set. </summary>
@@ -130,7 +138,9 @@ namespace Lucene.Net.Analysis.Ga
             Tokenizer source = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new StandardFilter(matchVersion, source);
             StopFilter s = new StopFilter(matchVersion, result, HYPHENATIONS);
+#pragma warning disable 612, 618
             if (!matchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
             {
                 s.EnablePositionIncrements = false;
             }

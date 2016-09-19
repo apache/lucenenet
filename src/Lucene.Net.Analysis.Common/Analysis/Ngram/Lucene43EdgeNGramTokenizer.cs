@@ -159,12 +159,12 @@ namespace Lucene.Net.Analysis.Ngram
 
         private void Init(LuceneVersion version, Side side, int minGram, int maxGram)
         {
-            if (version == null)
-            {
-                throw new System.ArgumentException("version must not be null");
-            }
+            //if (version == null)
+            //{
+            //    throw new System.ArgumentException("version must not be null");
+            //}
 
-            if (side == null)
+            if (!Enum.IsDefined(typeof(Side), side))
             {
                 throw new System.ArgumentException("sideLabel must be either front or back");
             }

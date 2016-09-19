@@ -55,7 +55,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Create a new <seealso cref="TrimFilter"/> on top of <code>in</code>. </summary>
         public TrimFilter(LuceneVersion version, TokenStream @in)
+#pragma warning disable 612, 618
             : this(version, @in, false)
+#pragma warning restore 612, 618
         {
         }
 

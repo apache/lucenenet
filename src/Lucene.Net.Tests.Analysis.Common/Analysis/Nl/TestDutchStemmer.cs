@@ -146,7 +146,9 @@ namespace Lucene.Net.Analysis.Nl
         [Test]
         public virtual void TestExclusionTableViaCtor()
         {
+#pragma warning disable 612, 618
             CharArraySet set = new CharArraySet(LuceneVersion.LUCENE_30, 1, true);
+#pragma warning restore 612, 618
             set.add("lichamelijk");
             DutchAnalyzer a = new DutchAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET, set);
             AssertAnalyzesTo(a, "lichamelijk lichamelijke", new string[] { "lichamelijk", "licham" });
@@ -216,7 +218,9 @@ namespace Lucene.Net.Analysis.Nl
         [Test]
         public virtual void TestStopwordsCasing()
         {
+#pragma warning disable 612, 618
             DutchAnalyzer a = new DutchAnalyzer(LuceneVersion.LUCENE_31);
+#pragma warning restore 612, 618
             AssertAnalyzesTo(a, "Zelf", new string[] { });
         }
 

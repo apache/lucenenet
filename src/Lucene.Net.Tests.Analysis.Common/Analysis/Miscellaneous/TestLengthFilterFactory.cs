@@ -31,7 +31,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             Reader reader = new StringReader("foo foobar super-duper-trooper");
             TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-            stream = TokenFilterFactory("Length", LuceneVersion.LUCENE_43, new ClasspathResourceLoader(this.GetType()), "min", "4", "max", "10", "enablePositionIncrements", "false").Create(stream);
+#pragma warning disable 612, 618
+            stream = TokenFilterFactory("Length", LuceneVersion.LUCENE_43,
+#pragma warning restore 612, 618
+                new ClasspathResourceLoader(this.GetType()), "min", "4", "max", "10", "enablePositionIncrements", "false").Create(stream);
             AssertTokenStreamContents(stream, new string[] { "foobar" }, new int[] { 1 });
         }
 

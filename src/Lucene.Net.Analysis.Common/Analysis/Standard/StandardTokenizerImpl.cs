@@ -944,6 +944,7 @@ namespace Lucene.Net.Analysis.Standard
         /// the number of characters up to the start of the matched text </summary>
         private int yyChar;
 
+#pragma warning disable 169, 414
         /// <summary>
         /// the number of characters from the last newline up to the start of the 
         /// matched text
@@ -962,6 +963,8 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// denotes if the user-EOF-code has already been executed </summary>
         private bool zzEOFDone;
+
+#pragma warning restore 169, 414
 
         /* user code: */
         /// <summary>
@@ -1346,7 +1349,7 @@ namespace Lucene.Net.Analysis.Standard
                         { // Break so we don't hit fall-through warning:
                             break; // Not numeric, word, ideographic, hiragana, or SE Asian -- ignore it.
                         }
-                        goto case 9;
+                        // goto case 9; // unreachable
                     case 9:
                         break;
                     case 2:

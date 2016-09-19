@@ -46,7 +46,9 @@ namespace Lucene.Net.Analysis.Util
         ///         <seealso cref="LuceneVersion"/> instance. </returns>
         public static CharacterUtils GetInstance(LuceneVersion matchVersion)
         {
+#pragma warning disable 612, 618
             return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? JAVA_5 : JAVA_4;
+#pragma warning restore 612, 618
         }
 
         /// <summary>

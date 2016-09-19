@@ -54,7 +54,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public override TokenStream Create(TokenStream input)
         {
+#pragma warning disable 612, 618
             var filter = new LengthFilter(luceneMatchVersion, enablePositionIncrements, input, min, max);
+#pragma warning restore 612, 618
             return filter;
         }
     }

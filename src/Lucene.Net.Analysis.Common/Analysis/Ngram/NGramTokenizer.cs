@@ -126,11 +126,16 @@ namespace Lucene.Net.Analysis.Ngram
 
         private void Init(LuceneVersion version, int minGram, int maxGram, bool edgesOnly)
         {
+#pragma warning disable 612, 618
             if (!version.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
             {
                 throw new System.ArgumentException("This class only works with Lucene 4.4+. To emulate the old (broken) behavior of NGramTokenizer, use Lucene43NGramTokenizer/Lucene43EdgeNGramTokenizer");
             }
-            charUtils = version.OnOrAfter(LuceneVersion.LUCENE_44) ? CharacterUtils.GetInstance(version) : CharacterUtils.Java4Instance;
+#pragma warning disable 612, 618
+            charUtils = version.OnOrAfter(LuceneVersion.LUCENE_44) ?
+#pragma warning restore 612, 618
+                CharacterUtils.GetInstance(version) : CharacterUtils.Java4Instance;
             if (minGram < 1)
             {
                 throw new System.ArgumentException("minGram must be greater than zero");

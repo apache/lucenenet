@@ -3233,6 +3233,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /** the number of characters up to the start of the matched text */
         private int yychar;
 
+#pragma warning disable 169, 414
         /**
          * the number of characters from the last newline up to the start of the 
          * matched text
@@ -3249,6 +3250,8 @@ namespace Lucene.Net.Analysis.Standard.Std31
 
         /** denotes if the user-EOF-code has already been executed */
         private bool zzEOFDone;
+
+#pragma warning restore 169, 414
 
         /* user code: */
         /** Alphanumeric sequences */
@@ -3481,7 +3484,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
             {
                 message = ZZ_ERROR_MSG[errorCode];
             }
-            catch (IndexOutOfRangeException e)
+            catch (IndexOutOfRangeException /*e*/)
             {
                 message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
             }

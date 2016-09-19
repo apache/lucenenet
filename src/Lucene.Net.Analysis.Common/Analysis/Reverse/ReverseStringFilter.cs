@@ -179,9 +179,12 @@ namespace Lucene.Net.Analysis.Reverse
         ///        buffer should be reversed </param>
         public static void Reverse(LuceneVersion matchVersion, char[] buffer, int start, int len)
         {
+#pragma warning disable 612, 618
             if (!matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+
             {
                 ReverseUnicode3(buffer, start, len);
+#pragma warning restore 612, 618
                 return;
             }
             /* modified version of Apache Harmony AbstractStringBuilder reverse0() */

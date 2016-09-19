@@ -44,7 +44,9 @@ namespace Lucene.Net.Analysis.Standard
 
         public override sealed bool IncrementToken()
         {
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 return input.IncrementToken(); // TODO: add some niceties for the new grammar
             }

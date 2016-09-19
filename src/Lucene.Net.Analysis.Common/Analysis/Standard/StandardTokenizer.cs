@@ -142,6 +142,7 @@ namespace Lucene.Net.Analysis.Standard
 
         private void Init(Version matchVersion)
         {
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(Version.LUCENE_47))
             {
                 this.scanner = new StandardTokenizerImpl(input);
@@ -158,6 +159,7 @@ namespace Lucene.Net.Analysis.Standard
             {
                 this.scanner = new StandardTokenizerImpl31(input);
             }
+#pragma warning restore 612, 618
             else
             {
                 this.scanner = new ClassicTokenizerImpl(input);
@@ -206,9 +208,11 @@ namespace Lucene.Net.Analysis.Standard
                     // This 'if' should be removed in the next release. For now, it converts
                     // invalid acronyms to HOST. When removed, only the 'else' part should
                     // remain.
+#pragma warning disable 612, 618
                     if (tokenType == StandardTokenizer.ACRONYM_DEP)
                     {
                         typeAtt.Type = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.HOST];
+#pragma warning restore 612, 618
                         termAtt.Length = termAtt.Length - 1; // remove extra '.'
                     }
                     else

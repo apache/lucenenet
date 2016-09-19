@@ -836,6 +836,7 @@ namespace Lucene.Net.Analysis.Synonym
             posLenAtt = tokensOut.AddAttribute<IPositionLengthAttribute>();
             offsetAtt = tokensOut.AddAttribute<IOffsetAttribute>();
 
+#pragma warning disable 162
             if (keepOrig)
             {
                 Verify("xyzzy bbb pot of gold", "xyzzy bbb/bbbb1 pot/bbbb2 of gold");
@@ -846,6 +847,7 @@ namespace Lucene.Net.Analysis.Synonym
                 Verify("xyzzy bbb pot of gold", "xyzzy bbbb1 pot/bbbb2 of gold");
                 Verify("xyzzy aaa pot of gold", "xyzzy aaaa1 pot/aaaa2 of/aaaa3 gold");
             }
+#pragma warning restore 612, 618
         }
 
         [Test]

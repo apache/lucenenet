@@ -608,7 +608,9 @@ namespace Lucene.Net.Analysis.Util
             set.add("test2");
             assertTrue(set.ToString().Contains(", "));
 
+#pragma warning disable 612, 618
             set = CharArraySet.Copy(Version.LUCENE_30, Collections.Singleton("test"));
+#pragma warning restore 612, 618
             assertEquals("[test]", set.ToString());
             set.add("test2");
             assertTrue(set.ToString().Contains(", "));

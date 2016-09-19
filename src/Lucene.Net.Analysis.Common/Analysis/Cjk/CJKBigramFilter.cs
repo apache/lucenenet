@@ -71,13 +71,13 @@ namespace Lucene.Net.Analysis.Cjk
         private static readonly string HANGUL_TYPE = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.HANGUL];
 
         // sentinel value for ignoring a script 
-        private static readonly object NO = new object();
+        private static readonly string NO = "<NO>";
 
         // these are set to either their type or NO if we want to pass them thru
-        private readonly object doHan;
-        private readonly object doHiragana;
-        private readonly object doKatakana;
-        private readonly object doHangul;
+        private readonly string doHan;
+        private readonly string doHiragana;
+        private readonly string doKatakana;
+        private readonly string doHangul;
 
         // true if we should output unigram tokens always
         private readonly bool outputUnigrams;

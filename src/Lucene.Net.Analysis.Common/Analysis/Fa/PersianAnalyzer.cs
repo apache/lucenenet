@@ -120,13 +120,17 @@ namespace Lucene.Net.Analysis.Fa
         public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source;
+#pragma warning disable 612, 618
             if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31))
+#pragma warning restore 612, 618
             {
                 source = new StandardTokenizer(matchVersion, reader);
             }
             else
             {
+#pragma warning disable 612, 618
                 source = new ArabicLetterTokenizer(matchVersion, reader);
+#pragma warning restore 612, 618
             }
             TokenStream result = new LowerCaseFilter(matchVersion, source);
             result = new ArabicNormalizationFilter(result);
@@ -144,7 +148,10 @@ namespace Lucene.Net.Analysis.Fa
         /// </summary>
         public override TextReader InitReader(string fieldName, TextReader reader)
         {
-            return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? new PersianCharFilter(reader) : reader;
+#pragma warning disable 612, 618
+            return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ?
+#pragma warning restore 612, 618
+                new PersianCharFilter(reader) : reader;
         }
     }
 }

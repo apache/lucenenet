@@ -281,7 +281,9 @@ namespace Lucene.Net.Analysis.Core
             { typeof(Regex[]), new RegexArrayArgProducer() },
             { typeof(IPayloadEncoder), new PayloadEncoderArgProducer() },
             { typeof(Dictionary), new DictionaryArgProducer() },
+            #pragma warning disable 612, 618 
             { typeof(Lucene43EdgeNGramTokenizer.Side), new Lucene43SideArgProducer() },
+            #pragma warning restore 612, 618 
             { typeof(EdgeNGramTokenFilter.Side), new SideArgProducer() },
             { typeof(HyphenationTree), new HyphenationTreeArgProducer() },
             { typeof(SnowballProgram), new SnowballProgramArgProducer() },
@@ -470,7 +472,9 @@ namespace Lucene.Net.Analysis.Core
                         catch (Exception ex)
                         {
                             throw ex;
+#pragma warning disable 162
                             return null; // unreachable code
+#pragma warning restore 162
                         }
                     }
                 }
@@ -482,8 +486,10 @@ namespace Lucene.Net.Analysis.Core
             public object Create(Random random)
             {
                 return random.nextBoolean()
+#pragma warning disable 612, 618
                     ? Lucene43EdgeNGramTokenizer.Side.FRONT
                     : Lucene43EdgeNGramTokenizer.Side.BACK;
+#pragma warning restore 612, 618
             }
         }
 
@@ -493,7 +499,9 @@ namespace Lucene.Net.Analysis.Core
             {
                 return random.nextBoolean()
                     ? EdgeNGramTokenFilter.Side.FRONT
+#pragma warning disable 612, 618
                     : EdgeNGramTokenFilter.Side.BACK;
+#pragma warning restore 612, 618
             }
         }
 
@@ -513,7 +521,9 @@ namespace Lucene.Net.Analysis.Core
                 catch (Exception ex)
                 {
                     throw ex;
+#pragma warning disable 162
                     return null; // unreachable code
+#pragma warning restore 162
                 }
             }
         }
@@ -531,7 +541,9 @@ namespace Lucene.Net.Analysis.Core
                 catch (Exception ex)
                 {
                     throw ex;
+#pragma warning disable 162
                     return null; // unreachable code
+#pragma warning restore 162
                 }
             }
         }
@@ -635,7 +647,9 @@ namespace Lucene.Net.Analysis.Core
                 catch (Exception ex)
                 {
                     throw ex;
+#pragma warning disable 162
                     return null; // unreachable code
+#pragma warning restore 162
                 }
             }
         }
@@ -657,7 +671,9 @@ namespace Lucene.Net.Analysis.Core
                 catch (Exception ex)
                 {
                     throw ex;
+#pragma warning disable 162
                     return null; // unreachable code
+#pragma warning restore 162
                 }
             }
 

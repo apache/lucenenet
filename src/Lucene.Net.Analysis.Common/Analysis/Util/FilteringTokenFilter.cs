@@ -36,7 +36,10 @@ namespace Lucene.Net.Analysis.Util
 
         private static void CheckPositionIncrement(LuceneVersion version, bool enablePositionIncrements)
         {
-            if (!enablePositionIncrements && version.OnOrAfter(LuceneVersion.LUCENE_44))
+            if (!enablePositionIncrements &&
+#pragma warning disable 612, 618
+                version.OnOrAfter(LuceneVersion.LUCENE_44))
+#pragma warning restore 612, 618
             {
                 throw new System.ArgumentException("enablePositionIncrements=false is not supported anymore as of Lucene 4.4 as it can create broken token streams");
             }

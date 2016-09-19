@@ -76,11 +76,13 @@ namespace Lucene.Net.Analysis.Core
             CharArraySet stopSet = StopFilter.MakeStopSet(TEST_VERSION_CURRENT, stopWords);
             // with increments
             StringReader reader = new StringReader(sb.ToString());
+#pragma warning disable 612, 618
             StopFilter stpf = new StopFilter(Version.LUCENE_40, new MockTokenizer(reader, MockTokenizer.WHITESPACE, false), stopSet);
             DoTestStopPositons(stpf, true);
             // without increments
             reader = new StringReader(sb.ToString());
             stpf = new StopFilter(Version.LUCENE_43, new MockTokenizer(reader, MockTokenizer.WHITESPACE, false), stopSet);
+#pragma warning restore 612, 618
             DoTestStopPositons(stpf, false);
             // with increments, concatenating two stop filters
             List<string> a0 = new List<string>();
@@ -222,7 +224,9 @@ namespace Lucene.Net.Analysis.Core
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filter = new MockSynonymFilter(outerInstance, tokenizer);
+#pragma warning disable 612, 618
                 StopFilter stopfilter = new StopFilter(Version.LUCENE_43, filter, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+#pragma warning restore 612, 618
                 stopfilter.EnablePositionIncrements = false;
                 return new TokenStreamComponents(tokenizer, stopfilter);
             }

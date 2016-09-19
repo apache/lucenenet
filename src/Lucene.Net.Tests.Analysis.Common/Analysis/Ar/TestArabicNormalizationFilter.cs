@@ -113,7 +113,9 @@ namespace Lucene.Net.Analysis.Ar
 
         private void Check(string input, string expected)
         {
+#pragma warning disable 612, 618
             ArabicLetterTokenizer tokenStream = new ArabicLetterTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
+#pragma warning restore 612, 618
             ArabicNormalizationFilter filter = new ArabicNormalizationFilter(tokenStream);
             AssertTokenStreamContents(filter, new string[] { expected });
         }

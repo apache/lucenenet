@@ -137,7 +137,11 @@ namespace Lucene.Net.Analysis.Pt
                         throw new Exception("useless exception '" + exceptions[i] + "' does not end with '" + suffix + "'");
                     }
                 }
-                this.exceptions = new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList(exceptions), false);
+                this.exceptions = new CharArraySet(
+#pragma warning disable 612, 618
+                    LuceneVersion.LUCENE_CURRENT,
+#pragma warning restore 612, 618
+                    Arrays.AsList(exceptions), false);
             }
 
             public override bool Matches(char[] s, int len)

@@ -1845,7 +1845,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 // setmark p2, line 206
                 I_p2 = cursor;
             } while (false);
-            lab0:
+            //lab0: // not referenced
             cursor = v_1;
             // do, line 208
             v_2 = cursor;
@@ -2136,7 +2136,7 @@ namespace Lucene.Net.Tartarus.Snowball.Ext
                 }
                 replab2:;
             } while (false);
-            lab1:
+            //lab1: // not referenced
             cursor = v_2;
             // call measure, line 221
             if (!r_measure())
