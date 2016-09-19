@@ -8,7 +8,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lucene.Net.QueryParser.Simple
+namespace Lucene.Net.QueryParsers.Simple
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

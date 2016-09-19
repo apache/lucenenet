@@ -2,7 +2,7 @@
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser.Flexible.Standard;
+using Lucene.Net.QueryParsers.Flexible.Standard;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -12,7 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

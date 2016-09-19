@@ -7,13 +7,13 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser.Classic;
+using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.QueryParser.Analyzing
+namespace Lucene.Net.QueryParsers.Analyzing
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

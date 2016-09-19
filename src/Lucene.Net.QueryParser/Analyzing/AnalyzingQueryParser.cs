@@ -1,12 +1,12 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.QueryParser.Classic;
+using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Lucene.Net.QueryParser.Analyzing
+namespace Lucene.Net.QueryParsers.Analyzing
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

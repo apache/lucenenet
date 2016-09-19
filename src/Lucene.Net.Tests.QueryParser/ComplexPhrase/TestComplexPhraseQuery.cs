@@ -8,7 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace Lucene.Net.QueryParser.ComplexPhrase
+namespace Lucene.Net.QueryParsers.ComplexPhrase
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -1,9 +1,9 @@
-﻿using Lucene.Net.QueryParser.Surround.Query;
+﻿using Lucene.Net.QueryParsers.Surround.Query;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lucene.Net.QueryParser.Surround.Parser
+namespace Lucene.Net.QueryParsers.Surround.Parser
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

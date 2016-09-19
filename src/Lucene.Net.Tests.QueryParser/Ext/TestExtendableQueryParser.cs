@@ -1,10 +1,10 @@
 ﻿using Lucene.Net.Analysis;
-using Lucene.Net.QueryParser.Classic;
+using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System.Globalization;
 
-namespace Lucene.Net.QueryParser.Ext
+namespace Lucene.Net.QueryParsers.Ext
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

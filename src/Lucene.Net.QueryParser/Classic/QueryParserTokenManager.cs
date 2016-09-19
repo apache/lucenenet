@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

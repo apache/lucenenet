@@ -1,6 +1,6 @@
 using System;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

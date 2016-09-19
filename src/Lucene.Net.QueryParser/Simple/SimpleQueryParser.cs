@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Lucene.Net.QueryParser.Simple
+namespace Lucene.Net.QueryParsers.Simple
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

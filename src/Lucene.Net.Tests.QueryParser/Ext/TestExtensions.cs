@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 
-namespace Lucene.Net.QueryParser.Ext
+namespace Lucene.Net.QueryParsers.Ext
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

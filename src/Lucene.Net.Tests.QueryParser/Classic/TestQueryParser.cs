@@ -1,15 +1,15 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
-using Lucene.Net.QueryParser.Flexible.Standard;
-using Lucene.Net.QueryParser.Util;
+using Lucene.Net.QueryParsers.Flexible.Standard;
+using Lucene.Net.QueryParsers.Util;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

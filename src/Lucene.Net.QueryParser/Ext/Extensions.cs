@@ -1,9 +1,9 @@
-﻿using Lucene.Net.QueryParser.Classic;
+﻿using Lucene.Net.QueryParsers.Classic;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lucene.Net.QueryParser.Ext
+namespace Lucene.Net.QueryParsers.Ext
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

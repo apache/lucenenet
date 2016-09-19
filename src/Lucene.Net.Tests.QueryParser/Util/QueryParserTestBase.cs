@@ -2,8 +2,8 @@
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParser.Classic;
-using Lucene.Net.QueryParser.Flexible.Standard;
+using Lucene.Net.QueryParsers.Classic;
+using Lucene.Net.QueryParsers.Flexible.Standard;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lucene.Net.QueryParser.Util
+namespace Lucene.Net.QueryParsers.Util
 {
     /// <summary>
     /// In .NET the abstact members were moved to AbstractQueryParserTestBase

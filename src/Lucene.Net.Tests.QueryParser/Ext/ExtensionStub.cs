@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 
-namespace Lucene.Net.QueryParser.Ext
+namespace Lucene.Net.QueryParsers.Ext
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

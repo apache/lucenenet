@@ -3,7 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
 using System.Runtime.CompilerServices;
 
-namespace Lucene.Net.QueryParser.Surround.Query
+namespace Lucene.Net.QueryParsers.Surround.Query
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

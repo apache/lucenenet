@@ -9,7 +9,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 
-namespace Lucene.Net.QueryParser.Classic
+namespace Lucene.Net.QueryParsers.Classic
 {
     [TestFixture]
     public class TestMultiAnalyzer_ : BaseTokenStreamTestCase
